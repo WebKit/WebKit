@@ -44,10 +44,10 @@ namespace WebKit {
 
 struct LoadParameters {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, LoadParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LoadParameters&);
 
     void platformEncode(IPC::Encoder&) const;
-    static bool platformDecode(IPC::Decoder&, LoadParameters&);
+    static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, LoadParameters&);
 
     uint64_t navigationID;
 

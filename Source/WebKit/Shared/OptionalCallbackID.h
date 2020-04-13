@@ -73,7 +73,7 @@ public:
         encoder << m_id;
     }
 
-    template<class Decoder> static bool decode(Decoder& decoder, OptionalCallbackID& callbackID)
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, OptionalCallbackID& callbackID)
     {
         auto result = decoder.decode(callbackID.m_id);
         RELEASE_ASSERT(callbackID.isValid());

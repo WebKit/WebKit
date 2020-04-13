@@ -48,7 +48,7 @@ public:
     size_t size() const;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, MediaDeviceSandboxExtensions&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, MediaDeviceSandboxExtensions&);
 
 private:
     Vector<String> m_ids;

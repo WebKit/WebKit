@@ -960,7 +960,7 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 #endif
 }
 
-static bool decodeSessionHistoryEntryData(const uint8_t* buffer, size_t bufferSize, FrameState& mainFrameState)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(const uint8_t* buffer, size_t bufferSize, FrameState& mainFrameState)
 {
     HistoryEntryDataDecoder decoder { buffer, bufferSize };
 
@@ -975,12 +975,12 @@ static bool decodeSessionHistoryEntryData(const uint8_t* buffer, size_t bufferSi
     return decoder.finishDecoding();
 }
 
-static bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
 {
     return decodeSessionHistoryEntryData(CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)), mainFrameState);
 }
 
-static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwardListItemState& backForwardListItemState)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwardListItemState& backForwardListItemState)
 {
     auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
     if (!title)
@@ -1018,7 +1018,7 @@ static bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwa
     return true;
 }
 
-static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForwardListItemState>& entries)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForwardListItemState>& entries)
 {
     for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
         auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
@@ -1035,7 +1035,7 @@ static bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForw
     return true;
 }
 
-static bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+static WARN_UNUSED_RETURN bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
 {
     auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber)
@@ -1071,7 +1071,7 @@ static bool decodeV0SessionHistory(CFDictionaryRef sessionHistoryDictionary, Bac
     return true;
 }
 
-static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
+static WARN_UNUSED_RETURN bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, BackForwardListState& backForwardListState)
 {
     auto currentIndexNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(sessionHistoryDictionary, sessionHistoryCurrentIndexKey));
     if (!currentIndexNumber) {
@@ -1102,7 +1102,7 @@ static bool decodeV1SessionHistory(CFDictionaryRef sessionHistoryDictionary, Bac
     return true;
 }
 
-static bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState)
+static WARN_UNUSED_RETURN bool decodeSessionHistory(CFDictionaryRef backForwardListDictionary, BackForwardListState& backForwardListState)
 {
     auto sessionHistoryVersionNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(backForwardListDictionary, sessionHistoryVersionKey));
     if (!sessionHistoryVersionNumber) {

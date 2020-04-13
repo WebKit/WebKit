@@ -37,7 +37,7 @@ Optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
-template<typename T, typename = IsObjCObject<T>> bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T, typename = IsObjCObject<T>> WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
 

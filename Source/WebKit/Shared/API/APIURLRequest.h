@@ -49,7 +49,7 @@ public:
     static void setDefaultTimeoutInterval(double);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<Object>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     explicit URLRequest(const WebCore::ResourceRequest&);

@@ -3035,6 +3035,16 @@ class CppStyleTest(CppStyleTestBase):
             '    {',
             warning_none)
 
+        self.perform_function_definition_check(
+            'foo.h',
+            '    static bool platformDecode(IPC::Decoder&, WebHitTestResultData&);',
+            warning_expected)
+
+        self.perform_function_definition_check(
+            'foo.h',
+            '    static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, WebHitTestResultData&);',
+            warning_none)
+
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):

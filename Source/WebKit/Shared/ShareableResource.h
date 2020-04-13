@@ -52,7 +52,7 @@ public:
         unsigned size() const { return m_size; }
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Handle&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
 
         RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
 

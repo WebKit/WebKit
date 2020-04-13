@@ -149,7 +149,7 @@ struct FocusedElementInformation {
     FocusedElementIdentifier focusedElementIdentifier { 0 };
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, FocusedElementInformation&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, FocusedElementInformation&);
 };
 #endif
 

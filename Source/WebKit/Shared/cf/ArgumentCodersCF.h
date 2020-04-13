@@ -41,64 +41,64 @@ class Decoder;
 
 // CFArrayRef
 void encode(Encoder&, CFArrayRef);
-bool decode(Decoder&, RetainPtr<CFArrayRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFArrayRef>& result);
 
 // CFBooleanRef
 void encode(Encoder&, CFBooleanRef);
-bool decode(Decoder&, RetainPtr<CFBooleanRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFBooleanRef>& result);
 
 // CFDataRef
 void encode(Encoder&, CFDataRef);
-bool decode(Decoder&, RetainPtr<CFDataRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDataRef>& result);
 
 // CFDateRef
 void encode(Encoder&, CFDateRef);
-bool decode(Decoder&, RetainPtr<CFDateRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDateRef>& result);
 
 // CFDictionaryRef
 void encode(Encoder&, CFDictionaryRef);
-bool decode(Decoder&, RetainPtr<CFDictionaryRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDictionaryRef>& result);
 
 // CFNumberRef
 void encode(Encoder&, CFNumberRef);
-bool decode(Decoder&, RetainPtr<CFNumberRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFNumberRef>& result);
 
 // CFStringRef
 void encode(Encoder&, CFStringRef);
-bool decode(Decoder&, RetainPtr<CFStringRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFStringRef>& result);
 
 // CFTypeRef
 void encode(Encoder&, CFTypeRef);
-bool decode(Decoder&, RetainPtr<CFTypeRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFTypeRef>& result);
 
 // CFURLRef
 void encode(Encoder&, CFURLRef);
-bool decode(Decoder&, RetainPtr<CFURLRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFURLRef>& result);
 
 // SecCertificateRef
 void encode(Encoder&, SecCertificateRef);
-bool decode(Decoder&, RetainPtr<SecCertificateRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecCertificateRef>& result);
 
 // SecIdentityRef
 void encode(Encoder&, SecIdentityRef);
-bool decode(Decoder&, RetainPtr<SecIdentityRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecIdentityRef>& result);
 
 #if HAVE(SEC_KEYCHAIN)
 // SecKeychainItemRef
 void encode(Encoder&, SecKeychainItemRef);
-bool decode(Decoder&, RetainPtr<SecKeychainItemRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecKeychainItemRef>& result);
 #endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
 // SecAccessControlRef
 void encode(Encoder&, SecAccessControlRef);
-bool decode(Decoder&, RetainPtr<SecAccessControlRef>& result);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecAccessControlRef>& result);
 #endif
 
 #if HAVE(SEC_TRUST_SERIALIZATION)
 // SecTrustRef
 void encode(Encoder&, SecTrustRef);
-bool decode(Decoder&, RetainPtr<SecTrustRef>&);
+WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecTrustRef>&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -42,7 +42,7 @@ public:
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
@@ -50,7 +50,7 @@ public:
 #endif
 
 private:
-    bool decode(IPC::Decoder&);
+    WARN_UNUSED_RETURN bool decode(IPC::Decoder&);
     
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
 };

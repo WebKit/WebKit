@@ -102,7 +102,7 @@ struct InteractionInformationAtPosition {
     void mergeCompatibleOptionalInformation(const InteractionInformationAtPosition& oldInformation);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, InteractionInformationAtPosition&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, InteractionInformationAtPosition&);
 };
 
 }

@@ -1,3 +1,96 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in Source/WebKit
+        <https://webkit.org/b/210423>
+        <rdar://problem/61715582>
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * NetworkProcess/Downloads/DownloadID.h:
+        (IPC::ArgumentCoder<WebKit::DownloadID>::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::DataKey::decode):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        (WebKit::NetworkCache::decodeRecordHeader):
+        * Platform/SharedMemory.h:
+        * PluginProcess/PluginCreationParameters.h:
+        * Shared/API/APIData.h:
+        * Shared/API/APIError.h:
+        * Shared/API/APIFrameHandle.h:
+        * Shared/API/APIGeometry.h:
+        * Shared/API/APINumber.h:
+        (API::Number::decode):
+        * Shared/API/APIPageGroupHandle.h:
+        * Shared/API/APIPageHandle.h:
+        * Shared/API/APIURL.h:
+        (API::URL::decode):
+        * Shared/API/APIURLRequest.h:
+        * Shared/API/APIURLResponse.h:
+        * Shared/API/Cocoa/RemoteObjectInvocation.h:
+        * Shared/Cocoa/ArgumentCodersCocoa.h:
+        * Shared/ContextMenuContextData.h:
+        * Shared/Databases/IndexedDB/WebIDBResult.h:
+        * Shared/EditorState.h:
+        * Shared/FocusedElementInformation.h:
+        * Shared/FontInfo.h:
+        * Shared/LayerTreeContext.h:
+        * Shared/LoadParameters.h:
+        * Shared/OptionalCallbackID.h:
+        (WebKit::OptionalCallbackID::decode):
+        * Shared/PlatformPopupMenuData.h:
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/PrintInfo.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.h:
+        * Shared/SessionState.h:
+        * Shared/ShareableBitmap.h:
+        * Shared/ShareableResource.h:
+        * Shared/TouchBarMenuData.h:
+        * Shared/UpdateInfo.h:
+        * Shared/VisibleContentRectUpdateInfo.h:
+        * Shared/WebEvent.h:
+        * Shared/WebHitTestResultData.h:
+        * Shared/WebNavigationDataStore.h:
+        (WebKit::WebNavigationDataStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebsiteData/WebsiteData.h:
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::decodeImage):
+        (IPC::decodeGKeyFile):
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/WebSelectionData.h:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationRequest.h:
+        * Shared/mac/ColorSpaceData.h:
+        * Shared/mac/ObjCObjectGraph.h:
+        * Shared/mac/SecItemRequestData.h:
+        * Shared/mac/WebGestureEvent.h:
+        * UIProcess/Cocoa/SessionStateCoding.h:
+        * UIProcess/LegacySessionStateCoding.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeSessionHistoryEntryData):
+        (WebKit::decodeSessionHistoryEntry):
+        (WebKit::decodeSessionHistoryEntries):
+        (WebKit::decodeV0SessionHistory):
+        (WebKit::decodeV1SessionHistory):
+        (WebKit::decodeSessionHistory):
+        * WebProcess/GPU/GPUProcessConnectionInfo.h:
+        (WebKit::GPUProcessConnectionInfo::decode):
+        * WebProcess/GPU/media/RemoteAudioBusData.h:
+        (WebKit::RemoteAudioBusData::decode):
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.h:
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::decode):
+        * WebProcess/Plugins/Plugin.h:
+        - Add WARN_UNUSED_RETURN to all decode functions.
+
 2020-04-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add message filtering to all iokit open rules

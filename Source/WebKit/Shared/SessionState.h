@@ -73,7 +73,7 @@ struct HTTPBody {
     };
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, HTTPBody&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, HTTPBody&);
 
     String contentType;
     Vector<Element> elements;
@@ -119,7 +119,7 @@ struct FrameState {
 
 struct PageState {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, PageState&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PageState&);
 
     String title;
     FrameState mainFrameState;

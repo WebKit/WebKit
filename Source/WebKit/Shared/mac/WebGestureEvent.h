@@ -60,7 +60,7 @@ public:
     float gestureRotation() const { return m_gestureRotation; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebGestureEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebGestureEvent&);
     
 private:
     bool isGestureEventType(Type) const;

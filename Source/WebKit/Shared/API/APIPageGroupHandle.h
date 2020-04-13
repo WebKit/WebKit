@@ -45,7 +45,7 @@ public:
     const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<Object>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     explicit PageGroupHandle(WebKit::WebPageGroupData&&);

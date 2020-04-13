@@ -82,8 +82,8 @@ struct WebHitTestResultData {
 
     void encode(IPC::Encoder&) const;
     void platformEncode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebHitTestResultData&);
-    static bool platformDecode(IPC::Decoder&, WebHitTestResultData&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebHitTestResultData&);
+    static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, WebHitTestResultData&);
 
     WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
 };

@@ -93,7 +93,7 @@ public:
 #endif
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Parameters&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Parameters&);
     };
 
     // Sets the active plug-in controller and initializes the plug-in.

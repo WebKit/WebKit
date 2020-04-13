@@ -49,7 +49,7 @@ struct NetworkProcessCreationParameters {
     NetworkProcessCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
 

@@ -55,7 +55,7 @@ struct InteractionInformationRequest {
     bool isApproximatelyValidForRequest(const InteractionInformationRequest&, int radius);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, InteractionInformationRequest&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, InteractionInformationRequest&);
 };
 
 }

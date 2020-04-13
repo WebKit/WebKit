@@ -44,7 +44,7 @@ struct WebNavigationDataStore {
         encoder << response;
     }
 
-    static bool decode(IPC::Decoder& decoder, WebNavigationDataStore& store)
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, WebNavigationDataStore& store)
     {
         if (!decoder.decode(store.url))
             return false;

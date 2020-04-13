@@ -50,7 +50,7 @@ struct GPUProcessCreationParameters {
     ProcessID parentPID;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, GPUProcessCreationParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessCreationParameters&);
 };
 
 } // namespace WebKit

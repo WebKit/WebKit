@@ -433,7 +433,7 @@ struct RecordMetaData {
     uint64_t headerOffset { 0 };
 };
 
-static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
+static WARN_UNUSED_RETURN bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
 {
     bool success = false;
     fileData.apply([&metaData, &success](const uint8_t* data, size_t size) {
@@ -497,7 +497,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
     return success;
 }
 
-static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& headerData, const Salt& salt)
+static WARN_UNUSED_RETURN bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& headerData, const Salt& salt)
 {
     if (!decodeRecordMetaData(metaData, fileData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) meta data decode failure");

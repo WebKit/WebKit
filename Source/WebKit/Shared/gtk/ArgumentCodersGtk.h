@@ -39,14 +39,14 @@ class SelectionData;
 namespace IPC {
 
 void encode(Encoder&, GtkPrintSettings*);
-bool decode(Decoder&, GRefPtr<GtkPrintSettings>&);
+WARN_UNUSED_RETURN bool decode(Decoder&, GRefPtr<GtkPrintSettings>&);
 
 void encode(Encoder&, GtkPageSetup*);
-bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
+WARN_UNUSED_RETURN bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
 
 template<> struct ArgumentCoder<WebCore::SelectionData> {
     static void encode(Encoder&, const WebCore::SelectionData&);
-    static bool decode(Decoder&, WebCore::SelectionData&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::SelectionData&);
 };
 
 } // namespace IPC

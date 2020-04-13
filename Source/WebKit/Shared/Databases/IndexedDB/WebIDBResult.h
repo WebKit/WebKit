@@ -58,7 +58,7 @@ public:
     const SandboxExtension::HandleArray& handles() const { return m_handles; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebIDBResult&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebIDBResult&);
 
 private:
     WebCore::IDBResultData m_resultData;

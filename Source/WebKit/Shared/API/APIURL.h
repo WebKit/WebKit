@@ -89,7 +89,7 @@ public:
         encoder << m_string;
     }
 
-    static bool decode(IPC::Decoder& decoder, RefPtr<Object>& result)
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, RefPtr<Object>& result)
     {
         WTF::String string;
         if (!decoder.decode(string))

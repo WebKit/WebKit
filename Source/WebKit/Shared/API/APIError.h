@@ -106,7 +106,7 @@ public:
     const WebCore::ResourceError& platformError() const { return m_platformError; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<Object>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     Error()

@@ -48,7 +48,7 @@ public:
     ~LayerTreeContext();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, LayerTreeContext&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LayerTreeContext&);
 
     bool isEmpty() const;
 

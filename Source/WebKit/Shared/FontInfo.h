@@ -39,7 +39,7 @@ namespace WebKit {
     
 struct FontInfo {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, FontInfo&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, FontInfo&);
     
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> fontAttributeDictionary;

@@ -47,7 +47,7 @@ public:
     UpdateInfo& operator=(UpdateInfo&&) = default;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, UpdateInfo&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, UpdateInfo&);
 
     // The size of the web view.
     WebCore::IntSize viewSize;

@@ -63,7 +63,7 @@ template<> struct ArgumentCoder<WebKit::DownloadID> {
     {
         encoder << downloadID.downloadID();
     }
-    static bool decode(Decoder& decoder, WebKit::DownloadID& downloadID)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WebKit::DownloadID& downloadID)
     {
         uint64_t id;
         if (!decoder.decode(id))

@@ -47,7 +47,7 @@ public:
         encoder << m_value;
     }
 
-    static bool decode(IPC::Decoder& decoder, RefPtr<Object>& result)
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, RefPtr<Object>& result)
     {
         NumberType value;
         if (!decoder.decode(value))

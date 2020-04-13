@@ -70,7 +70,7 @@ struct NetworkProcessConnectionInfo {
 #endif
     }
     
-    static bool decode(IPC::Decoder& decoder, NetworkProcessConnectionInfo& info)
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, NetworkProcessConnectionInfo& info)
     {
         if (!decoder.decode(info.connection))
             return false;

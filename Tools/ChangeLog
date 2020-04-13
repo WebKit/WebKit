@@ -1,3 +1,18 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in Source/WebKit
+        <https://webkit.org/b/210423>
+        <rdar://problem/61715582>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition):
+        - Add check for platformDecode() methods.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        - Add tests for platformDecode() methods.
+
 2020-04-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve handling of unexpected network issues while communicating with Bugzilla

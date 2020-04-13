@@ -71,7 +71,7 @@ struct WebProcessCreationParameters {
     WebProcessCreationParameters& operator=(WebProcessCreationParameters&&);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebProcessCreationParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebProcessCreationParameters&);
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;

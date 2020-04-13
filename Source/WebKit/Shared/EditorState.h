@@ -133,14 +133,14 @@ struct EditorState {
         bool canPaste { false };
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, PostLayoutData&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PostLayoutData&);
     };
 
     const PostLayoutData& postLayoutData() const;
     PostLayoutData& postLayoutData();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, EditorState&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, EditorState&);
 
 private:
     PostLayoutData m_postLayoutData;

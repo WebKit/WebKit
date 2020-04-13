@@ -117,7 +117,7 @@ protected:
     WebEvent(Type, OptionSet<Modifier>, WallTime timestamp);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebEvent&);
 
 private:
     uint32_t m_type;
@@ -161,7 +161,7 @@ public:
     SyntheticClickType syntheticClickType() const { return static_cast<SyntheticClickType>(m_syntheticClickType); }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebMouseEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebMouseEvent&);
 
 private:
     static bool isMouseEventType(Type);
@@ -224,7 +224,7 @@ public:
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebWheelEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebWheelEvent&);
 
 private:
     static bool isWheelEventType(Type);
@@ -287,7 +287,7 @@ public:
     bool isSystemKey() const { return m_isSystemKey; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebKeyboardEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebKeyboardEvent&);
 
     static bool isKeyboardEventType(Type);
 
@@ -414,7 +414,7 @@ public:
     bool allTouchPointsAreReleased() const;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebTouchEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebTouchEvent&);
     
 private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
@@ -481,7 +481,7 @@ public:
     bool allTouchPointsAreReleased() const;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebTouchEvent&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebTouchEvent&);
   
 private:
     static bool isTouchEventType(Type);

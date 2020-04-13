@@ -117,7 +117,7 @@ public:
         LayerProperties(const LayerProperties& other);
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, LayerProperties&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LayerProperties&);
 
         void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
         {
@@ -183,7 +183,7 @@ public:
     RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RemoteLayerTreeTransaction&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerTreeTransaction&);
 
     WebCore::GraphicsLayer::PlatformLayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID);

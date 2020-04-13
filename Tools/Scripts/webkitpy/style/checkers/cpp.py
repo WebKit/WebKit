@@ -1813,7 +1813,8 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
         return
 
     # Check for decode() functions that don't have WARN_UNUSED_RETURN attribute.
-    if function_state.current_function.split('..')[-1].startswith('decode'):
+    function_name = function_state.current_function.split('..')[-1]
+    if function_name.startswith('decode') or function_name.startswith('platformDecode'):
         if file_extension == 'h' or (function_state.is_static() or function_state.is_declaration):
             if function_state.has_return_type('(auto|bool)'):
                 if not function_state.has_attribute('WARN_UNUSED_RETURN'):

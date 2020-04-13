@@ -80,7 +80,7 @@ public:
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, ContextMenuContextData&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
 
 private:
     Type m_type;

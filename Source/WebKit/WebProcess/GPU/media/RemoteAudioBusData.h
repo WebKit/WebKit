@@ -51,7 +51,7 @@ struct RemoteAudioBusData {
     }
 
     template<typename Decoder>
-    static bool decode(Decoder& decoder, RemoteAudioBusData& result)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, RemoteAudioBusData& result)
     {
         uint64_t framesToProcess;
         if (!decoder.decode(framesToProcess))

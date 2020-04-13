@@ -68,7 +68,7 @@ public:
 #endif
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Configuration&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Configuration&);
     };
 
     class Handle {
@@ -83,7 +83,7 @@ public:
         void clear();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Handle&);
+        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
 
     private:
         friend class ShareableBitmap;

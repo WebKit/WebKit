@@ -50,7 +50,7 @@ static void encodeImage(Encoder& encoder, Image& image)
     encoder << handle;
 }
 
-static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
+static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
@@ -183,7 +183,7 @@ static void encodeGKeyFile(Encoder& encoder, GKeyFile* keyFile)
     encoder << DataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
 }
 
-static bool decodeGKeyFile(Decoder& decoder, GUniquePtr<GKeyFile>& keyFile)
+static WARN_UNUSED_RETURN bool decodeGKeyFile(Decoder& decoder, GUniquePtr<GKeyFile>& keyFile)
 {
     DataReference dataReference;
     if (!decoder.decode(dataReference))

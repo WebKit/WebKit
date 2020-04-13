@@ -54,7 +54,7 @@ public:
     const Vector<TouchBarMenuItemData>& items() const { return m_items; }
     
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, TouchBarMenuData&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, TouchBarMenuData&);
     
     void setID(const String& identifier) { m_id = identifier; }
     bool isPageCustomized() const { return m_isPageCustomized; }

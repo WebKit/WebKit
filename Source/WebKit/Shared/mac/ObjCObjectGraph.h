@@ -55,11 +55,11 @@ public:
     static RetainPtr<id> transform(id, const Transformer&);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<API::Object>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     static void encode(IPC::Encoder&, id);
-    static bool decode(IPC::Decoder&, RetainPtr<id>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RetainPtr<id>&);
 
     explicit ObjCObjectGraph(id rootObject)
         : m_rootObject(rootObject)

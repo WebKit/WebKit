@@ -43,7 +43,7 @@ public:
     PluginCreationParameters();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, PluginCreationParameters&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PluginCreationParameters&);
 
     // The unique ID of this plug-in instance.
     uint64_t pluginInstanceID;

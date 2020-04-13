@@ -68,7 +68,7 @@ struct GPUProcessConnectionInfo {
 #endif
     }
     
-    static bool decode(IPC::Decoder& decoder, GPUProcessConnectionInfo& info)
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, GPUProcessConnectionInfo& info)
     {
         if (!decoder.decode(info.connection))
             return false;

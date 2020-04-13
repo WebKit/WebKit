@@ -61,7 +61,7 @@ struct WebsiteData {
     HashSet<String> hostNamesWithHSTSCache;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebsiteData&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebsiteData&);
     static WebsiteDataProcessType ownerProcess(WebsiteDataType);
     static OptionSet<WebsiteDataType> filter(OptionSet<WebsiteDataType>, WebsiteDataProcessType);
 };

@@ -49,7 +49,7 @@ public:
     bool isAutoconverting() const { return m_isAutoconverting; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, RefPtr<Object>&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
     const WebCore::FrameIdentifier m_frameID;

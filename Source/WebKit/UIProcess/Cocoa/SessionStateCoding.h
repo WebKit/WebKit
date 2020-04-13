@@ -34,7 +34,7 @@ struct FrameState;
 struct SessionState;
 
 RetainPtr<NSData> encodeSessionState(const SessionState&);
-bool decodeSessionState(NSData *, SessionState&);
+WARN_UNUSED_RETURN bool decodeSessionState(NSData *, SessionState&);
 
 }
 

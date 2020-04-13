@@ -41,7 +41,7 @@ struct PlatformPopupMenuData {
     PlatformPopupMenuData() = default;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, PlatformPopupMenuData&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PlatformPopupMenuData&);
     static Optional<PlatformPopupMenuData> decode(IPC::Decoder&);
 
 #if PLATFORM(COCOA)

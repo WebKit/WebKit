@@ -37,7 +37,7 @@ struct WebPreferencesStore {
     WebPreferencesStore();
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebPreferencesStore&);
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebPreferencesStore&);
 
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
 
