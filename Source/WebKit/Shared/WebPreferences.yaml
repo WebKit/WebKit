@@ -1128,13 +1128,6 @@ LogsPageMessagesToSystemConsoleEnabled:
   defaultValue: false
   category: debug
 
-IgnoreViewportScalingConstraints:
-  type: bool
-  defaultValue: false
-  category: debug
-  webcoreBinding: none
-  condition: PLATFORM(IOS_FAMILY)
-
 ForceAlwaysUserScalable:
   type: bool
   defaultValue: false

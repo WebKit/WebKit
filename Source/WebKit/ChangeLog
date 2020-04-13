@@ -1,3 +1,33 @@
+2020-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the "IgnoreViewportScalingConstraints" debug WebKit feature
+        https://bugs.webkit.org/show_bug.cgi?id=210440
+
+        Reviewed by Tim Horton.
+
+        Remove the internal WebKit2 feature; this was introduced around iOS 9 to unconditionally force pages to shrink
+        to fit if they specified a responsive viewport, to avoid horizontal scrolling.
+
+        Nowadays, this behavior is instead controlled by the `-[WKWebView _allowsViewportShrinkToFit]` SPI, which
+        ensures that this shrink-to-fit preference is updated in sync with the visible content rect update lifecycle; it
+        is currently used by Safari to scale web pages down to fit in smaller multitasking viewports.
+
+        In contrast, this preference has no internal clients. Instead of maintaining two different ways for clients to
+        control shrink-to-fit behavior, remove support for the preference and make it a no-op.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIgnoreViewportScalingConstraints):
+        (WKPreferencesGetIgnoreViewportScalingConstraints):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Remove this redundant mechanism for shrinking web pages down to fit.
+
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2020-04-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove unused UTType swizzler code

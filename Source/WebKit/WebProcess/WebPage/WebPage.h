@@ -1940,7 +1940,6 @@ private:
     WebCore::ViewportConfiguration m_viewportConfiguration;
     bool m_useTestingViewportConfiguration { false };
     bool m_forceAlwaysUserScalable { false };
-    bool m_ignoreViewportScalingConstraints { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
