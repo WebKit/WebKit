@@ -1047,10 +1047,7 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-termi
 
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html [ Crash ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Crash ]
-webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Crash ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Crash ]
-webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Crash ]
-webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Crash ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Crash ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Crash ]
 webkit.org/b/207741 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Crash ]
@@ -1440,6 +1437,8 @@ webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Fail
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-send.html [ Failure Pass ]
 
 webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
+
+webkit.org/b/210413 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -2358,6 +2357,12 @@ webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 
 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Missing ]
 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Missing ]
+
+webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure ]
+
+webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Failure ]
+webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
+webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
