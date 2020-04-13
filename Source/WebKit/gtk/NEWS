@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.28.1
+================
+
+What's new in WebKitGTK 2.28.1?
+
+  - Fix position of default option element popup windows under Wayland.
+  - Fix rendering after a cross site navigation with PSON enabled and hardware acceleration forced.
+  - Fix a crash in nested wayland compositor when closing a tab with PSON enabled.
+  - Update Chrome and Firefox versions in user agent quirks.
+  - Fix a crash with bubblewrap sandbox enabled.
+  - Fix a crash in JavaScriptCore in ppc64el.
+  - Fix the build with GStreamer 1.12.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.28.0
 ================
 
