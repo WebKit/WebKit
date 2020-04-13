@@ -1,3 +1,110 @@
+2020-04-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Turn all instances of NavigatingToAppBoundDomain into Optionals
+        https://bugs.webkit.org/show_bug.cgi?id=210363
+        <rdar://problem/61612861>
+
+        Reviewed by Brent Fulgham.
+
+        NavigatingToAppBoundDomain should be an Optional when passed to the
+        Network Process to distinguish the case of an empty app-bound domain
+        list versus an actual app-bound domain navigation. An empty list and
+        an app-bound navigation should have the same behavior in NetworkSessionCocoa,
+        but we will need distinguished behavior in the future.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        (WebKit::NetworkProcess::downloadRequest):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/cache/AsyncRevalidation.cpp:
+        (WebKit::NetworkCache::AsyncRevalidation::AsyncRevalidation):
+        * NetworkProcess/cache/AsyncRevalidation.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::startAsyncRevalidationIfNeeded):
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        We should treat an empty WKAppBoundDomains list like an app-bound domain
+        navigation in the network session, so this sets
+        NavigatingToAppBoundDomain to Yes if the Optional is WTF::nullopt.
+
+        (WebKit::NetworkSessionCocoa::appBoundSession): Deleted.
+        (WebKit::NetworkSessionCocoa::isolatedSession): Deleted.
+        (WebKit::NetworkSessionCocoa::hasIsolatedSession const): Deleted.
+        (WebKit::NetworkSessionCocoa::clearIsolatedSessions): Deleted.
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel): Deleted.
+        (WebKit::NetworkSessionCocoa::clearCredentials): Deleted.
+        (WebKit::certificatesMatch): Deleted.
+        (WebKit::NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost): Deleted.
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge): Deleted.
+        (WebKit::NetworkSessionCocoa::deviceManagementPolicyMonitor): Deleted.
+        (WebKit::NetworkSessionCocoa::createWebSocketTask): Deleted.
+        (WebKit::NetworkSessionCocoa::addWebSocketTask): Deleted.
+        (WebKit::NetworkSessionCocoa::removeWebSocketTask): Deleted.
+        (WebKit::NetworkSessionCocoa::hostNamesWithAlternativeServices const): Deleted.
+        (WebKit::NetworkSessionCocoa::deleteAlternativeServicesForHostNames): Deleted.
+        (WebKit::NetworkSessionCocoa::clearAlternativeServices): Deleted.
+        * Shared/LoadParameters.h:
+        * Shared/PolicyDecision.h:
+        (WebKit::PolicyDecision::decode):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain):
+        Set this to WTF::nullopt instead of NavigatingToAppBoundDomain::Yes
+        so the two cases are distinguished.
+
+        (WebKit::WebPageProxy::isNavigatingToAppBoundDomainTesting):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isNavigatingToAppBoundDomain const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataImpl):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPage::isNavigatingToAppBoundDomain const):
+
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings about unused instance variables in WebIconDatabase, WKView

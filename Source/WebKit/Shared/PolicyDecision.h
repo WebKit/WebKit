@@ -36,7 +36,7 @@ enum class NavigatedAwayFromAppBoundDomain : bool { Yes, No};
 
 struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
-    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };
@@ -63,7 +63,7 @@ struct PolicyDecision {
         if (!decodedIdentifier)
             return WTF::nullopt;
         
-        Optional<NavigatingToAppBoundDomain> decodedIsNavigatingToAppBoundDomain;
+        Optional<Optional<NavigatingToAppBoundDomain>> decodedIsNavigatingToAppBoundDomain;
         decoder >> decodedIsNavigatingToAppBoundDomain;
         if (!decodedIsNavigatingToAppBoundDomain)
             return WTF::nullopt;

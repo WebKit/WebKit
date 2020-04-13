@@ -282,7 +282,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
     auto policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = { };
 
-    auto isAppBound = NavigatingToAppBoundDomain::No;
+    Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     if (page())
         isAppBound = page()->isNavigatingToAppBoundDomain();
     
@@ -308,7 +308,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     else
         mainResourceLoadIdentifier = 0;
 
-    auto isAppBound = NavigatingToAppBoundDomain::No;
+    Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     if (page())
         isAppBound = page()->isNavigatingToAppBoundDomain();
         

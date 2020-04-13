@@ -303,7 +303,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     result.userContentControllerIdentifier = *userContentControllerIdentifier;
 #endif
 
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
+    Optional<Optional<NavigatingToAppBoundDomain>> isNavigatingToAppBoundDomain;
     decoder >> isNavigatingToAppBoundDomain;
     if (!isNavigatingToAppBoundDomain)
         return WTF::nullopt;

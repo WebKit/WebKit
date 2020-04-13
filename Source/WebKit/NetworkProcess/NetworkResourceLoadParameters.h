@@ -76,7 +76,7 @@ public:
     Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
     
-    NavigatingToAppBoundDomain isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
 };
 
 } // namespace WebKit
