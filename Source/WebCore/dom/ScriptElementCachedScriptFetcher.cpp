@@ -31,12 +31,15 @@
 
 namespace WebCore {
 
+const ASCIILiteral ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule { "anonymous"_s };
+
 CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, String&& integrity) const
 {
-    // https://github.com/tc39/proposal-dynamic-import/blob/master/HTML Integration.md
-    // If the fetcher is not module script, credential mode is always "omit".
+    // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
+    // If the fetcher is not module script, credential mode is always "same-origin" ("anonymous").
+    // This code is for dynamic module import (`import` operator).
 
-    return requestScriptWithCache(document, sourceURL, isClassicScript() ? "omit"_s : m_crossOriginMode, WTFMove(integrity), { });
+    return requestScriptWithCache(document, sourceURL, isClassicScript() ? defaultCrossOriginModeForModule : m_crossOriginMode, WTFMove(integrity), { });
 }
 
 }

@@ -31,6 +31,8 @@ namespace WebCore {
 
 class ScriptElementCachedScriptFetcher : public CachedScriptFetcher {
 public:
+    static const ASCIILiteral defaultCrossOriginModeForModule;
+
     virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL, String&& integrity) const;
 
     virtual bool isClassicScript() const = 0;
