@@ -1,3 +1,13 @@
+2020-04-13  Aakash Jain  <aakash_jain@apple.com>
+
+        ews status-bubble hover-over message include unhelpful message 'Crash collection has quiesced'
+        https://bugs.webkit.org/show_bug.cgi?id=210378
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+
 2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail
