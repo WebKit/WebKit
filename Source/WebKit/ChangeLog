@@ -1,5 +1,17 @@
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
+        Fix clang static analyzer warnings about unused instance variables in WebIconDatabase, WKView
+        <https://webkit.org/b/210427>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKView.h:
+        (WKView._unused):
+        - Use WK_UNUSED_INSTANCE_VARIABLE to ignore unused instance
+          variable.
+
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
         Add WARN_UNUSED_RETURN to decode methods in Source/WebKit
         <https://webkit.org/b/210423>
         <rdar://problem/61715582>

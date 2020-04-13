@@ -1,3 +1,15 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Fix clang static analyzer warnings about unused instance variables in WebIconDatabase, WKView
+        <https://webkit.org/b/210427>
+
+        Reviewed by Alex Christensen.
+
+        * Misc/WebIconDatabase.h:
+        (WebIconDatabase._private):
+        - Use WK_UNUSED_INSTANCE_VARIABLE to ignore unused instance
+          variable.
+
 2020-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK1] Touch Bar flashes when typing in Vietnamese in Mail

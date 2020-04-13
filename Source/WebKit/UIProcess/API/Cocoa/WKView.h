@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,10 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WKDeclarationSpecifiers.h>
 
+#if !defined(WK_UNUSED_INSTANCE_VARIABLE)
+#define WK_UNUSED_INSTANCE_VARIABLE
+#endif
+
 @class WKBrowsingContextController;
 @class WKBrowsingContextGroup;
 @class WKProcessGroup;
@@ -39,7 +43,7 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, 10.14.4), ios(8.0
 @interface WKView : NSView <NSTextInputClient> {
 @private
     WKViewData *_data;
-    unsigned _unused;
+    WK_UNUSED_INSTANCE_VARIABLE unsigned _unused;
 }
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;

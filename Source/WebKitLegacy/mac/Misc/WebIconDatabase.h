@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 #endif
 
 #define ICON_DATABASE_DEPRECATED __deprecated_msg("WebIconDatabase is not API and no longer handles icon loading. It will be removed in a future release.")
+
+#if !defined(WK_UNUSED_INSTANCE_VARIABLE)
+#define WK_UNUSED_INSTANCE_VARIABLE
+#endif
 
 extern NSString *WebIconDatabaseDidAddIconNotification;
 
@@ -69,7 +73,7 @@ ICON_DATABASE_DEPRECATED
 @interface WebIconDatabase : NSObject {
 
 @private
-    WebIconDatabasePrivate *_private;
+    WK_UNUSED_INSTANCE_VARIABLE WebIconDatabasePrivate *_private;
 }
 
 
