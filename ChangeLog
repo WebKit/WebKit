@@ -1,3 +1,21 @@
+2020-04-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][CMake] Introduce an USE_GTK4 build option
+        https://bugs.webkit.org/show_bug.cgi?id=210154
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do the bare minimum changes to build against GTK4 and produce a WebKit port library with a
+        different name than GTK3 builds. Note that this does not attempt to make the built artifacts
+        parallel-installable yet, though at least the main library, headers, and the pkg-config .pc
+        file should be safe to install. The final names for built artifacts for GTK4 builds may
+        still change.
+
+        * Source/cmake/OptionsGTK.cmake: Add a new USE_GTK4 public build option, which defaults
+        to FALSE for now, and depending on its value choose the required version of GTK and set
+        a different API version versions. This is enough to build a library with a different
+        name (libwebkit2gtk-5.0 vs. libwebkit2gtk-4.0) when GTK4 is in use.
+
 2020-04-10  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Improved sccache support

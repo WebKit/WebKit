@@ -1,10 +1,21 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 29 0)
-set(WEBKITGTK_API_VERSION 4.0)
+WEBKIT_OPTION_BEGIN()
+WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 82 0 45)
+SET_PROJECT_VERSION(2 29 0)
+
+if (USE_GTK4)
+    set(WEBKITGTK_API_VERSION 5.0)
+    set(GTK_MINIMUM_VERSION 3.98.2)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 0 0 0)
+else ()
+    set(WEBKITGTK_API_VERSION 4.0)
+    set(GTK_MINIMUM_VERSION 3.22.0)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 82 0 45)
+endif ()
+
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 35 0 17)
 
 # These are shared variables, but we special case their definition so that we can use the
@@ -27,7 +38,7 @@ find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
 find_package(GLIB 2.44.0 REQUIRED COMPONENTS gio gio-unix gobject gthread gmodule)
-find_package(GTK 3.22.0 REQUIRED)
+find_package(GTK ${GTK_MINIMUM_VERSION} REQUIRED)
 find_package(HarfBuzz 0.9.18 REQUIRED COMPONENTS ICU)
 find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
@@ -44,8 +55,6 @@ find_package(EGL)
 find_package(GTKUnixPrint)
 find_package(OpenGL)
 find_package(OpenGLES2)
-
-WEBKIT_OPTION_BEGIN()
 
 include(GStreamerDefinitions)
 
