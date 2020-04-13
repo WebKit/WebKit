@@ -589,6 +589,7 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
         CGLSetCurrentContext(0);
         CGLDestroyContext(cglContext);
 #elif USE(ANGLE)
+        [m_webGLLayer releaseGLResources];
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
 #endif

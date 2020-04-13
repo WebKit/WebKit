@@ -195,12 +195,19 @@ static void freeData(void *, const void *data, size_t /* size */)
     _eglConfig = config;
 }
 
-- (void)dealloc
+- (void)releaseGLResources
 {
+    if (!_context)
+        return;
+
+    if (_context->makeContextCurrent() && _latchedPbuffer) {
+        EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER);
+        _latchedPbuffer = nullptr;
+    }
+
     EGL_DestroySurface(_eglDisplay, _contentsPbuffer);
     EGL_DestroySurface(_eglDisplay, _drawingPbuffer);
     EGL_DestroySurface(_eglDisplay, _sparePbuffer);
-    [super dealloc];
 }
 #endif
 

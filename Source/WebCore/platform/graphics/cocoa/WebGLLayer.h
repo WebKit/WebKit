@@ -79,7 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 #if USE(ANGLE)
 - (void)setEGLDisplay:(void*)eglDisplay config:(void*)eglConfig;
-- (void)dealloc;
+- (void)releaseGLResources;
 #endif
 
 @end

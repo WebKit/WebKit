@@ -1,3 +1,20 @@
+2020-04-13  Kenneth Russell  <kbr@chromium.org>
+
+        Clean up more resources during WebGLLayer teardown
+        https://bugs.webkit.org/show_bug.cgi?id=210222
+
+        Reviewed by Dean Jackson.
+
+        Release OpenGL resources just before destruction of the underlying
+        OpenGL context.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer releaseGLResources]):
+        (-[WebGLLayer dealloc]): Deleted.
+
 2020-04-13  Noam Rosenthal  <noam@webkit.org>
 
         Background images should figure into visually non empty heuristic
