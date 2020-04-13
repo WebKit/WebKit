@@ -2812,12 +2812,19 @@ webkit.org/b/208300 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-st
 
 webkit.org/b/208301 editing/pasteboard/4922709.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/5028447.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/copy-null-characters.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/copy-text-with-backgroundcolor.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/page-zoom.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-before-tab-span.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/paste-blockquote-and-paragraph-break.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-line-endings-003.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-line-endings-007.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/paste-text-005.html [ Failure Pass ]
 webkit.org/b/208301 editing/pasteboard/pasting-into-p-should-not-nest-p.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/preserve-line-break-at-end-of-pasted-content.html [ Failure Pass ]
+webkit.org/b/208301 editing/pasteboard/testcase-9507.html [ Failure Pass ]
 
 webkit.org/b/208305 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Failure Pass ]
 
@@ -4029,7 +4036,9 @@ webkit.org/b/168552 fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure ]
+webkit.org/b/169075 editing/deleting/5729680.html [ Failure Pass ]
+webkit.org/b/169075 editing/deleting/forward-delete-key.html [ Failure Pass ]
+webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure Pass ]
 
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
