@@ -1116,6 +1116,7 @@
             (allow xpc-message-send (message-number 712))
             (allow xpc-message-send (message-number 718))
             (allow xpc-message-send (message-number 800))
+            (allow xpc-message-send (message-number 802))
             (allow xpc-message-send (message-number 803))
             (allow xpc-message-send (message-number 804))
             (allow xpc-message-send (message-number 805))
@@ -1148,6 +1149,7 @@
         (machtrap-number MSC_mach_generate_activity_id)
         (machtrap-number MSC_mach_msg_trap)
         (machtrap-number MSC_mach_reply_port)
+        (machtrap-number MSC_mach_timebase_info_trap)
         (machtrap-number MSC_mach_voucher_extract_attr_recipe_trap)
         (machtrap-number MSC_mk_timer_arm)
         (machtrap-number MSC_mk_timer_arm_leeway)
@@ -1161,6 +1163,7 @@
         (machtrap-number MSC_swtch_pri)
         (machtrap-number MSC_syscall_thread_switch)
         (machtrap-number MSC_task_name_for_pid)
+        (machtrap-number MSC_task_self_trap)
         (machtrap-number MSC_thread_get_special_reply_port)
         (machtrap-number MSC_thread_self_trap)
     )
@@ -1172,7 +1175,9 @@
             (allow mach-message-send (with report) (with telemetry))
             (allow mach-message-send (kernel-mig-routine
                 _mach_make_memory_entry
+                host_get_clock_service
                 host_get_io_master
+                host_get_special_port
                 host_info
                 host_request_notification
                 io_connect_async_method
@@ -1184,11 +1189,13 @@
                 io_registry_entry_get_property_bytes
                 io_registry_entry_get_registry_entry_id
                 io_server_version
+                io_service_add_notification_bin_64
                 io_service_close
                 io_service_get_matching_service_bin
                 io_service_get_matching_services_bin
                 io_service_open_extended
                 mach_port_get_context_from_user
+                mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
@@ -1198,7 +1205,9 @@
                 semaphore_destroy
                 task_get_special_port_from_user
                 task_info_from_user
+                task_restartable_ranges_register
                 task_restartable_ranges_synchronize
+                task_set_special_port
                 thread_get_state_to_user
                 thread_info
                 thread_policy
