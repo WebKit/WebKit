@@ -1,3 +1,23 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        KeyedDecoder functions in ResourceLoadStatistics.{cpp,h} should return bool and use WARN_UNUSED_RETURN
+        <https://webkit.org/b/210414>
+        <rdar://problem/61693118>
+
+        Reviewed by Alex Christensen.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::decodeHashCountedSet):
+        (WebCore::decodeHashSet):
+        (WebCore::decodeOptionSet):
+        (WebCore::decodeFontHashSet):
+        (WebCore::decodeCanvasActivityRecord):
+        (WebCore::ResourceLoadStatistics::decode):
+        * loader/ResourceLoadStatistics.h:
+        - Change decode functions to return `bool`.
+        - Add WARN_UNUSED_RETURN to all decode functions.
+        - Check the return value of all decode functions.
+
 2020-04-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         When drawing an image srcRect and imageRect have to be in the orientation of destRect

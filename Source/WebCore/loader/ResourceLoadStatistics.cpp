@@ -123,10 +123,10 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 #endif
 }
 
-static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<RegistrableDomain>& hashCountedSet)
+static WARN_UNUSED_RETURN bool decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<RegistrableDomain>& hashCountedSet)
 {
     Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& domain) {
+    return decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& domain) {
         if (!decoderInner.decodeString("origin", domain))
             return false;
         
@@ -139,10 +139,10 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
     });
 }
 
-static void decodeHashSet(KeyedDecoder& decoder, const String& label, const String& key, HashSet<RegistrableDomain>& hashSet)
+static WARN_UNUSED_RETURN bool decodeHashSet(KeyedDecoder& decoder, const String& label, const String& key, HashSet<RegistrableDomain>& hashSet)
 {
     Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashSet, &key](KeyedDecoder& decoderInner, String& domain) {
+    return decoder.decodeObjects(label, ignore, [&hashSet, &key](KeyedDecoder& decoderInner, String& domain) {
         if (!decoderInner.decodeString(key, domain))
             return false;
         
@@ -152,22 +152,24 @@ static void decodeHashSet(KeyedDecoder& decoder, const String& label, const Stri
 }
 
 template<typename T>
-static void decodeOptionSet(KeyedDecoder& decoder, const String& label, OptionSet<T>& optionSet)
+static WARN_UNUSED_RETURN bool decodeOptionSet(KeyedDecoder& decoder, const String& label, OptionSet<T>& optionSet)
 {
     uint64_t optionSetBitMask = 0;
-    decoder.decodeUInt64(label, optionSetBitMask);
+    if (!decoder.decodeUInt64(label, optionSetBitMask))
+        return false;
     optionSet = OptionSet<T>::fromRaw(optionSetBitMask);
+    return true;
 }
 
 #if ENABLE(WEB_API_STATISTICS)
-static void decodeFontHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
+static WARN_UNUSED_RETURN bool decodeFontHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
 {
-    decodeHashSet(decoder, label, "font", hashSet);
+    return decodeHashSet(decoder, label, "font", hashSet);
 }
     
-static void decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& label, CanvasActivityRecord& canvasActivityRecord)
+static WARN_UNUSED_RETURN bool decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& label, CanvasActivityRecord& canvasActivityRecord)
 {
-    decoder.decodeObject(label, canvasActivityRecord, [] (KeyedDecoder& decoderInner, CanvasActivityRecord& canvasActivityRecord) {
+    return decoder.decodeObject(label, canvasActivityRecord, [] (KeyedDecoder& decoderInner, CanvasActivityRecord& canvasActivityRecord) {
         if (!decoderInner.decodeBool("wasDataRead", canvasActivityRecord.wasDataRead))
             return false;
         Vector<String> ignore;
@@ -199,68 +201,85 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         return false;
 
     // Storage access
-    if (modelVersion >= 15)
-        decodeHashSet(decoder, "storageAccessUnderTopFrameDomains", "domain", storageAccessUnderTopFrameDomains);
-    else
-        decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", "origin", storageAccessUnderTopFrameDomains);
+    if (modelVersion >= 15) {
+        if (!decodeHashSet(decoder, "storageAccessUnderTopFrameDomains", "domain", storageAccessUnderTopFrameDomains))
+            return false;
+    } else {
+        if (!decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", "origin", storageAccessUnderTopFrameDomains))
+            return false;
+    }
 
     // Top frame stats
     if (modelVersion >= 15) {
-        decodeHashSet(decoder, "topFrameUniqueRedirectsTo", "domain", topFrameUniqueRedirectsTo);
-        decodeHashSet(decoder, "topFrameUniqueRedirectsFrom", "domain", topFrameUniqueRedirectsFrom);
+        if (!decodeHashSet(decoder, "topFrameUniqueRedirectsTo", "domain", topFrameUniqueRedirectsTo))
+            return false;
+        if (!decodeHashSet(decoder, "topFrameUniqueRedirectsFrom", "domain", topFrameUniqueRedirectsFrom))
+            return false;
     } else if (modelVersion >= 11) {
         HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsToCounted;
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsToCounted);
+        if (!decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsToCounted))
+            return false;
         for (auto& domain : topFrameUniqueRedirectsToCounted.values())
             topFrameUniqueRedirectsTo.add(domain);
         
         HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsFromCounted;
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFromCounted);
+        if (!decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFromCounted))
+            return false;
         for (auto& domain : topFrameUniqueRedirectsFromCounted.values())
             topFrameUniqueRedirectsFrom.add(domain);
     }
 
     if (modelVersion >= 16) {
-        decodeHashSet(decoder, "topFrameLinkDecorationsFrom", "domain", topFrameLinkDecorationsFrom);
+        if (!decodeHashSet(decoder, "topFrameLinkDecorationsFrom", "domain", topFrameLinkDecorationsFrom))
+            return false;
         if (!decoder.decodeBool("gotLinkDecorationFromPrevalentResource", gotLinkDecorationFromPrevalentResource))
             return false;
     }
 
     if (modelVersion >= 17) {
         HashCountedSet<RegistrableDomain> topFrameLoadedThirdPartyScriptsCounted;
-        decodeHashCountedSet(decoder, "topFrameLoadedThirdPartyScripts", topFrameLoadedThirdPartyScriptsCounted);
+        if (!decodeHashCountedSet(decoder, "topFrameLoadedThirdPartyScripts", topFrameLoadedThirdPartyScriptsCounted))
+            return false;
         for (auto& domain : topFrameLoadedThirdPartyScriptsCounted.values())
             topFrameLoadedThirdPartyScripts.add(domain);
     }
 
     // Subframe stats
-    if (modelVersion >= 15)
-        decodeHashSet(decoder, "subframeUnderTopFrameDomains", "domain", subframeUnderTopFrameDomains);
-    else if (modelVersion >= 14) {
+    if (modelVersion >= 15) {
+        if (!decodeHashSet(decoder, "subframeUnderTopFrameDomains", "domain", subframeUnderTopFrameDomains))
+            return false;
+    } else if (modelVersion >= 14) {
         HashCountedSet<RegistrableDomain> subframeUnderTopFrameDomainsCounted;
-        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameDomainsCounted);
+        if (!decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameDomainsCounted))
+            return false;
         for (auto& domain : subframeUnderTopFrameDomainsCounted.values())
             subframeUnderTopFrameDomains.add(domain);
     }
 
     // Subresource stats
     if (modelVersion >= 15) {
-        decodeHashSet(decoder, "subresourceUnderTopFrameDomains", "domain", subresourceUnderTopFrameDomains);
-        decodeHashSet(decoder, "subresourceUniqueRedirectsTo", "domain", subresourceUniqueRedirectsTo);
-        decodeHashSet(decoder, "subresourceUniqueRedirectsFrom", "domain", subresourceUniqueRedirectsFrom);
+        if (!decodeHashSet(decoder, "subresourceUnderTopFrameDomains", "domain", subresourceUnderTopFrameDomains))
+            return false;
+        if (!decodeHashSet(decoder, "subresourceUniqueRedirectsTo", "domain", subresourceUniqueRedirectsTo))
+            return false;
+        if (!decodeHashSet(decoder, "subresourceUniqueRedirectsFrom", "domain", subresourceUniqueRedirectsFrom))
+            return false;
     } else {
         HashCountedSet<RegistrableDomain> subresourceUnderTopFrameDomainsCounted;
-        decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameDomainsCounted);
+        if (!decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameDomainsCounted))
+            return false;
         for (auto& domain : subresourceUnderTopFrameDomainsCounted.values())
             subresourceUnderTopFrameDomains.add(domain);
 
         HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsToCounted;
-        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsToCounted);
+        if (!decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsToCounted))
+            return false;
         for (auto& domain : subresourceUniqueRedirectsToCounted.values())
             subresourceUniqueRedirectsTo.add(domain);
         if (modelVersion >= 11) {
             HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsFromCounted;
-            decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFromCounted);
+            if (!decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFromCounted))
+                return false;
             for (auto& domain : subresourceUniqueRedirectsFromCounted.values())
                 subresourceUniqueRedirectsFrom.add(domain);
         }
@@ -299,20 +318,26 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
     lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
 
     if (modelVersion >= 11) {
-        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction))
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction)) {
             timesAccessedAsFirstPartyDueToUserInteraction = 0;
-        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
+            return false;
+        }
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI)) {
             timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
+            return false;
+        }
     }
 
 #if ENABLE(WEB_API_STATISTICS)
     if (modelVersion >= 13) {
-        decodeFontHashSet(decoder, "fontsFailedToLoad", fontsFailedToLoad);
-        decodeFontHashSet(decoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
-        decodeHashCountedSet(decoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs);
-        decodeCanvasActivityRecord(decoder, "canvasActivityRecord", canvasActivityRecord);
-        decodeOptionSet(decoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed);
-        decodeOptionSet(decoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed);
+        if (!(decodeFontHashSet(decoder, "fontsFailedToLoad", fontsFailedToLoad)
+            && decodeFontHashSet(decoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded)
+            && decodeHashCountedSet(decoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs)
+            && decodeCanvasActivityRecord(decoder, "canvasActivityRecord", canvasActivityRecord)
+            && decodeOptionSet(decoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed)
+            && decodeOptionSet(decoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed))) {
+            return false;
+        }
     }
 #endif
 
