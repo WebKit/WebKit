@@ -1,3 +1,13 @@
+2020-04-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Remove unused UTType swizzler code
+        https://bugs.webkit.org/show_bug.cgi?id=210435
+
+        Unreviewed rollout of r258120.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/UTIFromTag.mm: Removed.
+
 2020-04-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Make WTR::AccessibilityUIElement methods run on AX secondary thread.

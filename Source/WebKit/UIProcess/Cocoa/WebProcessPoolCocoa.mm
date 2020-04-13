@@ -429,10 +429,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderTheme::singleton().focusRingColor(OptionSet<StyleColor::Options>());
     parameters.localizedDeviceModel = localizedDeviceModel();
-#if USE(UTTYPE_SWIZZLER)
-    if (WebCore::IOSApplication::isMobileSafari())
-        parameters.vectorOfUTTypeItem = createVectorOfUTTypeItem();
-#endif
 #endif
     
     // Allow microphone access if either preference is set because WebRTC requires microphone access.

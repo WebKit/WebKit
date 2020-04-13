@@ -181,9 +181,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cssValueToSystemColorMap;
     encoder << focusRingColor;
     encoder << localizedDeviceModel;
-#if USE(UTTYPE_SWIZZLER)
-    encoder << vectorOfUTTypeItem;
-#endif
 #endif
 
 #if PLATFORM(COCOA)
@@ -504,14 +501,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     
     if (!decoder.decode(parameters.localizedDeviceModel))
         return false;
-    
-#if USE(UTTYPE_SWIZZLER)
-    Optional<Vector<WebCore::UTTypeItem>> vectorOfUTTypeItem;
-    decoder >> vectorOfUTTypeItem;
-    if (!vectorOfUTTypeItem)
-        return false;
-    parameters.vectorOfUTTypeItem = WTFMove(*vectorOfUTTypeItem);
-#endif
 #endif
 
 #if PLATFORM(COCOA)

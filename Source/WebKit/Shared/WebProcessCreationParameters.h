@@ -50,7 +50,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/RenderThemeIOS.h>
-#include <WebCore/UTTypeRecordSwizzler.h>
 #endif
 
 namespace API {
@@ -222,9 +221,6 @@ struct WebProcessCreationParameters {
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
     String localizedDeviceModel;
-#if USE(UTTYPE_SWIZZLER)
-    Vector<WebCore::UTTypeItem> vectorOfUTTypeItem;
-#endif
 #endif
 
 #if PLATFORM(COCOA)

@@ -111,7 +111,6 @@
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIAccessibility.h>
-#import <WebCore/UTTypeRecordSwizzler.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
@@ -321,13 +320,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
         
-#if USE(UTTYPE_SWIZZLER)
-    if (!parameters.vectorOfUTTypeItem.isEmpty()) {
-        swizzleUTTypeRecord();
-        setVectorOfUTTypeItem(WTFMove(parameters.vectorOfUTTypeItem));
-    }
-#endif
-
     WebCore::sleepDisablerClient() = makeUnique<WebSleepDisablerClient>();
 
     updateProcessName();
