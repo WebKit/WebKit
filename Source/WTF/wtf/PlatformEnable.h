@@ -576,11 +576,9 @@
 #define ENABLE_JIT 1
 #endif
 #else
-/* Disable JIT and force C_LOOP on all other 32bit architectures. */
+/* Disable JIT on all other 32bit architectures. */
 #undef ENABLE_JIT
 #define ENABLE_JIT 0
-#undef ENABLE_C_LOOP
-#define ENABLE_C_LOOP 1
 #endif
 #endif
 

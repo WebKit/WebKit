@@ -5091,6 +5091,7 @@
 		FE0D4A051AB8DD0A002F54BF /* ExecutionTimeLimitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionTimeLimitTest.h; path = API/tests/ExecutionTimeLimitTest.h; sourceTree = "<group>"; };
 		FE0D4A071ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalContextWithFinalizerTest.cpp; path = API/tests/GlobalContextWithFinalizerTest.cpp; sourceTree = "<group>"; };
 		FE0D4A081ABA2437002F54BF /* GlobalContextWithFinalizerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalContextWithFinalizerTest.h; path = API/tests/GlobalContextWithFinalizerTest.h; sourceTree = "<group>"; };
+		FE0DA1022429417F00A884A6 /* generate_settings_extractor.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = generate_settings_extractor.rb; sourceTree = "<group>"; };
 		FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeStack.cpp; sourceTree = "<group>"; };
 		FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeStack.h; sourceTree = "<group>"; };
 		FE10AAED1F44D946009DEDC5 /* ProbeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeContext.h; sourceTree = "<group>"; };
@@ -8821,6 +8822,7 @@
 				FEF3475A20362B1E00B7C0EF /* cloop.rb */,
 				FEF3475D20362B1F00B7C0EF /* config.rb */,
 				FEF3476420362B2300B7C0EF /* generate_offset_extractor.rb */,
+				FE0DA1022429417F00A884A6 /* generate_settings_extractor.rb */,
 				FEF3475E20362B1F00B7C0EF /* instructions.rb */,
 				FEF3475C20362B1E00B7C0EF /* mips.rb */,
 				FEF3476120362B2100B7C0EF /* offsets.rb */,

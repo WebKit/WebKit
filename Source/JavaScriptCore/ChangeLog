@@ -1,3 +1,26 @@
+2020-04-12  Mark Lam  <mark.lam@apple.com>
+
+        Enable the ability to build the ASM LLInt for ARMv7k.
+        https://bugs.webkit.org/show_bug.cgi?id=210412
+
+        Reviewed by Sam Weinig.
+
+        Fix the offlineasm so that it can build the ASM LLInt for ARMv7k.  This patch does
+        not actually enable the ASM LLInt.  The ARMv7k port still build the C Loop LLInt.
+
+        Also, the ARMv7k ASM LLInt is still broken and needs additional work before it
+        can run.  This patch only fixes things so that it will build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Added generate_settings_extractor.rb to the project so that we can view it from
+          inside Xcode.
+
+        * offlineasm/arm.rb:
+        - Added support for the globaladdr LLInt instruction for ARMv7k.
+
+        * offlineasm/backends.rb:
+        - Fix the backend to enable ARMV7 also when building for ARMv7k.
+
 2020-04-12  Darin Adler  <darin@apple.com>
 
         Fix a few mispellings of descendant and propagation
