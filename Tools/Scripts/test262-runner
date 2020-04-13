@@ -38,8 +38,14 @@ BEGIN {
     use lib $FindBin::Bin;
     use File::Spec::Functions qw(catfile);
 
+    my $want_jhbuild = 0;
+
+    if (defined $ENV{'WEBKIT_JHBUILD'}) {
+        $want_jhbuild = $ENV{'WEBKIT_JHBUILD'};
+    }
+
     my $osName = $Config{osname};
-    if ($osName eq "linux" && !grep(/^--no-flatpak-check$/, @ARGV)) {
+    if (!$want_jhbuild && $osName eq "linux" && !grep(/^--no-flatpak-check$/, @ARGV)) {
         if (eval {require webkitdirs; 1;}) {
             webkitdirs->import(qw(shouldUseFlatpak runInFlatpak sourceDir));
             if (shouldUseFlatpak()) {
