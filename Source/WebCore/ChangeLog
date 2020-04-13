@@ -1,3 +1,19 @@
+2020-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Pre-fill columnIntrinsicWidths vector
+        https://bugs.webkit.org/show_bug.cgi?id=210415
+
+        Reviewed by Antti Koivisto.
+
+        Vector<ColumnMinimumWidth> has a fixed number of entries (number of columns in the table).
+        (This patch also flips the shouldFlex flag to isFixedWidth. It reads better in the context of minimum _widths_).
+
+        Test: fast/layoutformattingcontext/table-with-column-spanner-first-row.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+
 2020-04-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Fix usage of GDK event functions in PlatformWheelEventGtk

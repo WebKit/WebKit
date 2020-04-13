@@ -277,11 +277,10 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
         fixedWidthColumns.append(fixedWidth());
     }
 
-    Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths;
+    Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
     // 3. Collect he min/max width for each column but ignore column spans for now.
     Vector<SlotPosition> spanningCellPositionList;
     for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-        columnIntrinsicWidths.append(FormattingContext::IntrinsicWidthConstraints { });
         for (size_t rowIndex = 0; rowIndex < grid.rows().size(); ++rowIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
             if (slot.hasColumnSpan()) {
@@ -335,9 +334,9 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
         // 1. Collect minimum widths driven by <td> across columns but ignore spanning cells first.
         struct ColumnMinimumWidth {
             float value { 0 };
-            bool shouldFlex { true };
+            bool isFixed { false };
         };
-        Vector<ColumnMinimumWidth> columnMinimumWidths;
+        Vector<ColumnMinimumWidth> columnMinimumWidths(columnList.size());
         Vector<SlotPosition> spanningCellPositionList;
         for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
             for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
@@ -348,13 +347,10 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
                 }
                 if (slot.isColumnSpanned())
                     continue;
-                if (!rowIndex)
-                    columnMinimumWidths.append({ slot.widthConstraints().minimum, !columns.list()[columnIndex].isFixedWidth() });
-                else
-                    columnMinimumWidths[columnIndex].value = std::max<float>(columnMinimumWidths[columnIndex].value, slot.widthConstraints().minimum);
+                columnMinimumWidths[columnIndex].value = std::max<float>(columnMinimumWidths[columnIndex].value, slot.widthConstraints().minimum);
             }
         }
-        // 2. Adjust the minimum width with fixed column widths (<col> vs. <td>) and also manage all-fixed-width-column content.
+        // 2. Adjust the <td> minimum widths with fixed column widths (<col> vs. <td>) and also manage all-fixed-width-column content.
         auto hasFixedColumnsOnly = columns.hasFixedColumnsOnly();
         for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
             auto& column = columnList[columnIndex];
@@ -363,8 +359,8 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
             // This is the column width based on <col width=""> and not <td style="width: ">.
             auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt; 
             columnMinimumWidths[columnIndex].value = std::max(columnMinimumWidths[columnIndex].value, columnFixedWidth.valueOr(0).toFloat());
-            // Fixed columns flex when there are no other flexable columns.
-            columnMinimumWidths[columnIndex].shouldFlex = hasFixedColumnsOnly | columnMinimumWidths[columnIndex].shouldFlex;
+            // Fixed columns flex when there are no other flexing columns.
+            columnMinimumWidths[columnIndex].isFixed = !hasFixedColumnsOnly;
         }
 
         // 3. Distribute the spanning cells' mimimum widths across the columns using the non-spanning minimum widths.
@@ -396,7 +392,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
         // Unless there are no flexing column at all, then they start flexing as if they were not fixed at all.
         float adjustabledHorizontalSpace = 0;
         for (auto& columnMinimumWidth : columnMinimumWidths) {
-            if (!columnMinimumWidth.shouldFlex)
+            if (columnMinimumWidth.isFixed)
                 continue;
             adjustabledHorizontalSpace += columnMinimumWidth.value;
         }
@@ -406,7 +402,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& column = columns.list()[columnIndex];
             auto minimumWidth = columnMinimumWidths[columnIndex].value;
-            if (!columnMinimumWidths[columnIndex].shouldFlex) {
+            if (columnMinimumWidths[columnIndex].isFixed) {
                 column.setLogicalWidth(LayoutUnit { minimumWidth });
                 continue;
             }
