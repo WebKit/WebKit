@@ -313,12 +313,10 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 
 bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 {
-    // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
-    // Module is always CORS request. If attribute is not given, it should be same-origin credential.
     String nonce = m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr);
     String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
-        crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
+        crossOriginMode = "omit"_s;
 
     if (hasSourceAttribute()) {
         String sourceURL = sourceAttributeValue();

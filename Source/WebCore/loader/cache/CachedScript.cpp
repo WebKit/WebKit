@@ -57,7 +57,7 @@ String CachedScript::encoding() const
 StringView CachedScript::script()
 {
     if (!m_data)
-        return emptyString();
+        return { };
 
     if (m_decodingState == NeverDecoded
         && TextEncoding(encoding()).isByteBasedEncoding()

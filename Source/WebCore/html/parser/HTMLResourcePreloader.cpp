@@ -29,7 +29,6 @@
 #include "CachedResourceLoader.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
-#include "ScriptElementCachedScriptFetcher.h"
 
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
@@ -58,7 +57,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     String crossOriginMode = m_crossOriginMode;
     if (m_moduleScript == ModuleScript::Yes) {
         if (crossOriginMode.isNull())
-            crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
+            crossOriginMode = "omit"_s;
     }
     if (m_resourceType == CachedResource::Type::Script)
         options.referrerPolicy = m_referrerPolicy;
