@@ -35,6 +35,8 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSString;
 #include <wtf/RetainPtr.h>
 using PlatformUIElement = id;
 #elif HAVE(ACCESSIBILITY) && USE(ATK)
@@ -48,7 +50,15 @@ typedef void* PlatformUIElement;
 
 namespace WTR {
 
+class AccessibilityController;
+
 class AccessibilityUIElement : public JSWrappable {
+#if PLATFORM(COCOA)
+    // Helper functions that dispatch the corresponding AccessibilityObjectWrapper method to the AX secondary thread when appropriate.
+    friend NSArray* supportedAttributes(id);
+    friend id attributeValue(id, NSString*);
+#endif
+
 public:
     static Ref<AccessibilityUIElement> create(PlatformUIElement);
     static Ref<AccessibilityUIElement> create(const AccessibilityUIElement&);
@@ -360,10 +370,13 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;
+    static RefPtr<AccessibilityController> s_controller;
 
     void getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >&);
     void getDocumentLinks(Vector<RefPtr<AccessibilityUIElement> >&);
-    
+    RefPtr<AccessibilityUIElement> elementForAttribute(NSString*) const;
+    RefPtr<AccessibilityUIElement> elementForAttributeAtIndex(NSString*, unsigned) const;
+
     void getUIElementsWithAttribute(JSStringRef, Vector<RefPtr<AccessibilityUIElement> >&) const;
 #endif
 

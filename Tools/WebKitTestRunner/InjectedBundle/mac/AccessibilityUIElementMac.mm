@@ -92,9 +92,13 @@ static JSRetainPtr<JSStringRef> createEmptyJSString()
     return adopt(JSStringCreateWithCharacters(nullptr, 0));
 }
 
+RefPtr<AccessibilityController> AccessibilityUIElement::s_controller;
+
 AccessibilityUIElement::AccessibilityUIElement(id element)
     : m_element(element)
 {
+    if (!s_controller)
+        s_controller = InjectedBundle::singleton().accessibilityController();
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
@@ -113,11 +117,37 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
         return false;
     return platformUIElement() == otherElement->platformUIElement();
 }
-    
-static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObject)
+
+NSArray* supportedAttributes(id element)
+{
+    NSArray* attributes;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    AccessibilityUIElement::s_controller->executeOnAXThreadIfPossible([&attributes, &element] {
+        attributes = [element accessibilityAttributeNames];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return attributes;
+}
+
+id attributeValue(id element, NSString* attribute)
+{
+    id value;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    AccessibilityUIElement::s_controller->executeOnAXThreadIfPossible([&element, &attribute, &value] {
+        value = [element accessibilityAttributeValue:attribute];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return value;
+}
+
+static NSString* descriptionOfValue(id valueObject, id element)
 {
     if (!valueObject)
-        return NULL;
+        return nil;
 
     if ([valueObject isKindOfClass:[NSArray class]])
         return [NSString stringWithFormat:@"<array of size %lu>", static_cast<unsigned long>([(NSArray*)valueObject count])];
@@ -146,42 +176,38 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
 
     // Strip pointer locations
     if ([description rangeOfString:@"0x"].length) {
-        NSString* role = [focusedAccessibilityObject accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-        NSString* title = [focusedAccessibilityObject accessibilityAttributeValue:NSAccessibilityTitleAttribute];
-        if ([title length])
+        NSString* role = attributeValue(element, NSAccessibilityRoleAttribute);
+        NSString* title = attributeValue(element, NSAccessibilityTitleAttribute);
+        if (title.length)
             return [NSString stringWithFormat:@"<%@: '%@'>", role, title];
         return [NSString stringWithFormat:@"<%@>", role];
     }
-    
+
     return [valueObject description];
 }
 
 static NSString *attributesOfElement(id accessibilityObject)
 {
-    NSArray *supportedAttributes = [accessibilityObject accessibilityAttributeNames];
+    NSArray* attributes = supportedAttributes(accessibilityObject);
 
     NSMutableString* attributesString = [NSMutableString string];
-    for (NSUInteger i = 0; i < [supportedAttributes count]; ++i) {
-        NSString* attribute = [supportedAttributes objectAtIndex:i];
-        
+    for (NSUInteger i = 0; i < attributes.count; ++i) {
+        NSString* attribute = [attributes objectAtIndex:i];
+
         // Right now, position provides useless and screen-specific information, so we do not
         // want to include it for the sake of universally passing tests.
         if ([attribute isEqualToString:@"AXPosition"])
             continue;
-        
+
         // Skip screen-specific information.
         if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"] || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
 
-        // accessibilityAttributeValue: can throw an if an attribute is not returned.
-        // For DumpRenderTree's purpose, we should ignore those exceptions
-        BEGIN_AX_OBJC_EXCEPTIONS
-        id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
+        id valueObject = attributeValue(accessibilityObject, attribute);
         NSString* value = descriptionOfValue(valueObject, accessibilityObject);
         [attributesString appendFormat:@"%@: %@\n", attribute, value];
-        END_AX_OBJC_EXCEPTIONS
     }
-    
+
     return attributesString;
 }
 
@@ -317,45 +343,34 @@ static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(Accessib
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement>>& elementVector)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* linkedElements = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(linkedElements);
-    END_AX_OBJC_EXCEPTIONS
+    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), NSAccessibilityLinkedUIElementsAttribute));
 }
 
 void AccessibilityUIElement::getDocumentLinks(Vector<RefPtr<AccessibilityUIElement>>& elementVector)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* linkElements = [m_element accessibilityAttributeValue:@"AXLinkUIElements"];
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(linkElements);
-    END_AX_OBJC_EXCEPTIONS
+    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), @"AXLinkUIElements"));
 }
 
 void AccessibilityUIElement::getUIElementsWithAttribute(JSStringRef attribute, Vector<RefPtr<AccessibilityUIElement>>& elements) const
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    id value = attributeValue(m_element.get(), [NSString stringWithJSStringRef:attribute]);
     if ([value isKindOfClass:[NSArray class]])
         elements = makeVector<RefPtr<AccessibilityUIElement>>(value);
-    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children);
-    END_AX_OBJC_EXCEPTIONS
+    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(m_element.get(), NSAccessibilityChildrenAttribute));
 }
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto accessibilityController = InjectedBundle::singleton().accessibilityController();
-    accessibilityController->executeOnAXThreadIfPossible([&elementVector, location, length, this] {
-        NSArray* children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
-        elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children);
+    NSArray* children;
+    s_controller->executeOnAXThreadIfPossible([&children, location, length, this] {
+        children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     });
+    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -366,7 +381,7 @@ JSValueRef AccessibilityUIElement::rowHeaders() const
     
     BEGIN_AX_OBJC_EXCEPTIONS
     Vector<RefPtr<AccessibilityUIElement>> elements;
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityRowHeaderUIElementsAttribute];
+    id value = attributeValue(m_element.get(), NSAccessibilityRowHeaderUIElementsAttribute);
     if ([value isKindOfClass:[NSArray class]])
         elements = makeVector<RefPtr<AccessibilityUIElement>>(value);
     return convertVectorToObjectArray<RefPtr<AccessibilityUIElement>>(context, elements);
@@ -380,7 +395,7 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
 
     BEGIN_AX_OBJC_EXCEPTIONS
     Vector<RefPtr<AccessibilityUIElement>> elements;
-    id value = [m_element accessibilityAttributeValue:NSAccessibilityColumnHeaderUIElementsAttribute];
+    id value = attributeValue(m_element.get(), NSAccessibilityColumnHeaderUIElementsAttribute);
     if ([value isKindOfClass:[NSArray class]])
         elements = makeVector<RefPtr<AccessibilityUIElement>>(value);
     return convertVectorToObjectArray<RefPtr<AccessibilityUIElement>>(context, elements);
@@ -397,16 +412,25 @@ int AccessibilityUIElement::childrenCount()
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    id element = [m_element accessibilityHitTest:NSMakePoint(x, y)];
+    id element;
+    s_controller->executeOnAXThreadIfPossible([&x, &y, &element, this] {
+        element = [m_element accessibilityHitTest:NSMakePoint(x, y)];
+    });
+
     if (!element)
         return nullptr;
-    
+
     return AccessibilityUIElement::create(element);
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
 {
-    return [m_element accessibilityIndexOfChild:element->platformUIElement()];
+    unsigned index;
+    id platformElement = element->platformUIElement();
+    s_controller->executeOnAXThreadIfPossible([&platformElement, &index, this] {
+        index = [m_element accessibilityIndexOfChild:platformElement];
+    });
+    return index;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
@@ -419,153 +443,94 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned ind
     return nullptr;
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementForAttribute(NSString* attribute) const
+{
+    id element = attributeValue(m_element.get(), attribute);
+    return element ? AccessibilityUIElement::create(element) : RefPtr<AccessibilityUIElement>();
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementForAttributeAtIndex(NSString* attribute, unsigned index) const
+{
+    NSArray* elements = attributeValue(m_element.get(), attribute);
+    return index < elements.count ? AccessibilityUIElement::create([elements objectAtIndex:index]) : RefPtr<AccessibilityUIElement>();
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    if (index < [objects count])
-        return AccessibilityUIElement::create([objects objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilityLinkedUIElementsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityOwnsAttribute];
-    if (index < [objects count])
-        return AccessibilityUIElement::create([objects objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilityOwnsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* objects = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    if (index < [objects count])
-        return AccessibilityUIElement::create([objects objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilityLinkedUIElementsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* ariaControls = [m_element accessibilityAttributeValue:@"AXARIAControls"];
-    if (index < [ariaControls count])
-        return AccessibilityUIElement::create([ariaControls objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    return nullptr;
+    return elementForAttributeAtIndex(@"AXARIAControls", index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* details = [m_element accessibilityAttributeValue:@"AXDetailsElements"];
-    if (index < [details count])
-        return AccessibilityUIElement::create([details objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    return nullptr;
+    return elementForAttributeAtIndex(@"AXDetailsElements", index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* errorMessages = [m_element accessibilityAttributeValue:@"AXErrorMessageElements"];
-    if (index < [errorMessages count])
-        return AccessibilityUIElement::create([errorMessages objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    return nullptr;
+    return elementForAttributeAtIndex(@"AXErrorMessageElements", index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedRowsAttribute];
-    if (index < [rows count])
-        return AccessibilityUIElement::create([rows objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilityDisclosedRowsAttribute, index);
 }
-    
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
-    if (index < [rows count])
-        return AccessibilityUIElement::create([rows objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilityRowsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* array = [m_element accessibilityAttributeValue:NSAccessibilitySelectedChildrenAttribute];
-    if (index < [array count])
-        return AccessibilityUIElement::create([array objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilitySelectedChildrenAttribute, index);
 }
 
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
+    unsigned count = 0;
+
     BEGIN_AX_OBJC_EXCEPTIONS
-    return [m_element accessibilityArrayAttributeCount:NSAccessibilitySelectedChildrenAttribute];
+    s_controller->executeOnAXThreadIfPossible([&count, this] {
+        count = [m_element accessibilityArrayAttributeCount:NSAccessibilitySelectedChildrenAttribute];
+    });
     END_AX_OBJC_EXCEPTIONS
 
-    return 0;
+    return count;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilitySelectedRowsAttribute];
-    if (index < [rows count])
-        return AccessibilityUIElement::create([rows objectAtIndex:index]);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttributeAtIndex(NSAccessibilitySelectedRowsAttribute, index);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityTitleUIElementAttribute];
-    if (accessibilityObject)
-        return AccessibilityUIElement::create(accessibilityObject);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttribute(NSAccessibilityTitleUIElementAttribute);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityParentAttribute];
-    if (accessibilityObject)
-        return AccessibilityUIElement::create(accessibilityObject);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttribute(NSAccessibilityParentAttribute);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow()
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityDisclosedByRowAttribute];
-    if (accessibilityObject)
-        return AccessibilityUIElement::create(accessibilityObject);
-    END_AX_OBJC_EXCEPTIONS
-    
-    return nullptr;
+    return elementForAttribute(NSAccessibilityDisclosedByRowAttribute);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfLinkedUIElements()
@@ -617,18 +582,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id value;
-
-    auto accessibilityController = InjectedBundle::singleton().accessibilityController();
-    accessibilityController->executeOnAXThreadIfPossible([&attribute, &value, this] {
-        value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
-    });
-
+    id value = attributeValue(m_element.get(), [NSString stringWithJSStringRef:attribute]);
     if ([value isKindOfClass:[NSNumber class]])
         return [value doubleValue];
-    END_AX_OBJC_EXCEPTIONS
-
     return 0;
 }
 
@@ -689,9 +645,9 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    return [[m_element accessibilityAttributeNames] containsObject:[NSString stringWithJSStringRef:attribute]];
+    return [supportedAttributes(m_element.get()) containsObject:[NSString stringWithJSStringRef:attribute]];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return false;
 }
 
@@ -988,12 +944,9 @@ bool AccessibilityUIElement::isFocused() const
 
 bool AccessibilityUIElement::isSelected() const
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    id value = [m_element accessibilityAttributeValue:NSAccessibilitySelectedAttribute];
+    id value = attributeValue(m_element.get(), NSAccessibilitySelectedAttribute);
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
-    END_AX_OBJC_EXCEPTIONS
-    
     return false;
 }
 
@@ -1235,8 +1188,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContex
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings, replacementString, activity);
     id result;
-    auto accessibilityController = InjectedBundle::singleton().accessibilityController();
-    accessibilityController->executeOnAXThreadIfPossible([&parameterizedAttribute, &result, this] {
+    s_controller->executeOnAXThreadIfPossible([&parameterizedAttribute, &result, this] {
         result = [m_element accessibilityAttributeValue:@"AXSelectTextWithCriteria" forParameter:parameterizedAttribute];
     });
     if ([result isKindOfClass:[NSString class]])
