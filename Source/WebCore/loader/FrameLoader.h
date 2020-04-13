@@ -155,7 +155,7 @@ public:
     void stopForBackForwardCache();
     void stop();
     void stopLoading(UnloadEventPolicy);
-    bool closeURL();
+    void closeURL();
     void cancelAndClear();
     void clearProvisionalLoadForPolicyCheck();
     // FIXME: clear() is trying to do too many things. We should break it down into smaller functions (ideally with fewer raw Boolean parameters).

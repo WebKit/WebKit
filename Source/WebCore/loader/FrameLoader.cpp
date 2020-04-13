@@ -552,7 +552,7 @@ void FrameLoader::willTransitionToCommitted()
     }
 }
 
-bool FrameLoader::closeURL()
+void FrameLoader::closeURL()
 {
     history().saveDocumentState();
 
@@ -569,7 +569,6 @@ bool FrameLoader::closeURL()
     stopLoading(unloadEventPolicy);
     
     m_frame.editor().clearUndoRedoOperations();
-    return true;
 }
 
 bool FrameLoader::didOpenURL()
