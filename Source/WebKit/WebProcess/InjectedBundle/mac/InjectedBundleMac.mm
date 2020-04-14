@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,27 @@ static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const IPC::DataReference& d
     return createUnarchiver(data.data(), data.size());
 }
 
+bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
+{
+    if (!bundleParameterDataPtr)
+        return true;
+
+    auto unarchiver = createUnarchiver(*bundleParameterDataPtr);
+
+    NSDictionary *dictionary = nil;
+    @try {
+        dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
+        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode bundle parameters: %@." , exception);
+        return false;
+    }
+    
+    ASSERT(!m_bundleParameters || m_bundleParameters.get());
+    m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
+    return true;
+}
+
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
     if (m_sandboxExtension) {
@@ -121,14 +142,17 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
+    WKBundleAdditionalClassesForParameterCoderFunctionPtr additionalClassesForParameterCoderFunction = nullptr;
     WKBundleInitializeFunctionPtr initializeFunction = nullptr;
     if (RetainPtr<CFURLRef> executableURL = adoptCF(CFBundleCopyExecutableURL([m_platformBundle _cfBundle]))) {
         static constexpr size_t maxPathSize = 4096;
         char pathToExecutable[maxPathSize];
         if (CFURLGetFileSystemRepresentation(executableURL.get(), true, bitwise_cast<uint8_t*>(pathToExecutable), maxPathSize)) {
             // We don't hold onto this handle anywhere more permanent since we never dlcose.
-            if (void* handle = dlopen(pathToExecutable, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST))
+            if (void* handle = dlopen(pathToExecutable, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
+                additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(dlsym(handle, "WKBundleAdditionalClassesForParameterCoder"));
                 initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
+            }
         }
     }
         
@@ -139,19 +163,14 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         }
     }
 
-    if (parameters.bundleParameterData) {
-        NSDictionary *dictionary = nil;
-        auto unarchiver = createUnarchiver(*parameters.bundleParameterData);
-        @try {
-            dictionary = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
-            ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-        } @catch (NSException *exception) {
-            LOG_ERROR("Failed to decode bundle parameters: %@", exception);
-        }
+    if (!additionalClassesForParameterCoderFunction)
+        additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleAdditionalClassesForParameterCoder")));
 
-        ASSERT(!m_bundleParameters);
-        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
-    }
+    // Update list of valid classes for the parameter coder
+    if (additionalClassesForParameterCoderFunction)
+        additionalClassesForParameterCoderFunction(toAPI(this), toAPI(initializationUserData));
+
+    decodeBundleParameters(parameters.bundleParameterData.get());
     
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
@@ -188,6 +207,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
     [plugInController _setPrincipalClassInstance:instance];
+
+    if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)]) {
+        [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
+        decodeBundleParameters(parameters.bundleParameterData.get());
+    }
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;
@@ -265,13 +289,15 @@ void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
     NSDictionary *parameters = nil;
     auto unarchiver = createUnarchiver(value);
     @try {
-        parameters = [unarchiver decodeObjectOfClass:[NSDictionary class] forKey:@"parameters"];
+        parameters = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
     }
 
     if (!parameters)
         return;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION([parameters isKindOfClass:[NSDictionary class]]);
 
     if (!m_bundleParameters) {
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters]);

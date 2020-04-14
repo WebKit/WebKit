@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleInitialize_h
-#define WKBundleInitialize_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -35,8 +34,9 @@ extern "C" {
 // NOTE: Must be implemented by InjectedBundle's as a function named "WKBundleInitialize".
 typedef void (*WKBundleInitializeFunctionPtr)(WKBundleRef, WKTypeRef);
 
+// NOTE: Must be implemented by InjectedBundle's as a function named "WKBundleAdditionalClassesForParameterCoder".
+typedef void (*WKBundleAdditionalClassesForParameterCoderFunctionPtr)(WKBundleRef, WKTypeRef);
+
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKBundleInitialize_h */
