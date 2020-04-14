@@ -292,16 +292,6 @@ webkit.org/b/169916 css3/blending/blend-mode-isolated-group-3.html [ Missing Fai
 webkit.org/b/169916 css3/blending/blend-mode-layers.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-reflection.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-simple-composited.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-color-burn.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-color-dodge.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-darken.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-difference.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-exclusion.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-lighten.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-multiply.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-overlay.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-screen.html [ Missing Failure ]
-webkit.org/b/169916 css3/blending/svg-blend-soft-light.html [ Missing Failure ]
 webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
 
 # Failures related with compositing tests.
@@ -1432,6 +1422,10 @@ webkit.org/b/209533 storage/indexeddb/modern/idbobjectstore-delete-1-private.htm
 webkit.org/b/209533 svg/animations/animation-leak-list-property-instances.html [ Failure Pass ]
 webkit.org/b/209533 svg/hittest/svg-clip-path-child-element-with-use.html [ Failure Pass ]
 webkit.org/b/209533 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure Pass ]
+
+webkit.org/b/210515 svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg [ Failure ]
+webkit.org/b/210515 svg/W3C-SVG-1.1-SE/types-dom-05-b.svg [ Failure ]
+webkit.org/b/210515 svg/custom/glyph-transformation-with-hkern.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -3540,9 +3534,6 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure P
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/90738 css3/filters/effect-reference.html [ ImageOnlyFailure ]
-webkit.org/b/90738 css3/images/cross-fade-invalidation.html [ ImageOnlyFailure ]
  
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
@@ -4601,7 +4592,6 @@ webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Failure ]
 
 webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
 webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
@@ -4700,8 +4690,6 @@ fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
-
-transitions/svg-text-shadow-transition.html [ Crash DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
@@ -4825,6 +4813,9 @@ imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-b
 
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
+
+# Passing since r260062.
+imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
