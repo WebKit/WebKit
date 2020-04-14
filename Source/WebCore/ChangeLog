@@ -1,3 +1,22 @@
+2020-04-14  Charlie Turner  <cturner@igalia.com>
+
+        [EME][CDMProxy] Fix waitingForKey logic
+        https://bugs.webkit.org/show_bug.cgi?id=210437
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        startedWaitingForKey() was incorrectly flagged. It needs to signal on
+        the 0->1 transition, here it was only signalling on N->N+1 where N>0.
+
+        Also break ASSERTs into separate statements, it makes it easier in a
+        crash dump to see which conjuct fired.
+
+        Test: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::CDMInstanceProxy::startedWaitingForKey):
+        (WebCore::CDMInstanceProxy::stoppedWaitingForKey):
+
 2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bring back support for rendering scrollbars using the system appearance

@@ -260,19 +260,23 @@ Optional<Vector<uint8_t>> CDMProxy::getOrWaitForKey(const Vector<uint8_t>& keyID
 
 void CDMInstanceProxy::startedWaitingForKey()
 {
-    ASSERT(!isMainThread() && m_player);
+    ASSERT(!isMainThread());
+    ASSERT(m_player);
+
     bool wasWaitingForKey = m_numDecryptorsWaitingForKey > 0;
     m_numDecryptorsWaitingForKey++;
 
     callOnMainThread([player = m_player, wasWaitingForKey] {
-        if (player && wasWaitingForKey)
+        if (player && !wasWaitingForKey)
             player->waitingForKeyChanged();
     });
 }
 
 void CDMInstanceProxy::stoppedWaitingForKey()
 {
-    ASSERT(!isMainThread() && m_player && m_numDecryptorsWaitingForKey > 0);
+    ASSERT(!isMainThread());
+    ASSERT(m_player);
+    ASSERT(m_numDecryptorsWaitingForKey > 0);
     m_numDecryptorsWaitingForKey--;
     bool isNobodyWaitingForKey = !m_numDecryptorsWaitingForKey;
 
