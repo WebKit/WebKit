@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-12 124 907 405" width="907" height="405">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-12 124 866 405" width="866" height="405">
   <defs>
     <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
       <font-face-src>
@@ -19,11 +19,11 @@
     </marker>
   </defs>
   <metadata> Produced by OmniGraffle 7.15 
-    <dc:date>2020-04-14 23:57:26 +0000</dc:date>
+    <dc:date>2020-04-14 23:59:02 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
-    <rect fill="white" x="-12" y="124" width="907" height="405"/>
+    <rect fill="white" x="-12" y="124" width="866" height="405"/>
     <g id="Canvas_1: Layer 1">
       <title>Layer 1</title>
       <g id="Graphic_2">
@@ -55,9 +55,9 @@
         </text>
       </g>
       <g id="Graphic_6">
-        <rect x="633.91935" y="345.5" width="179.5" height="36" fill="white"/>
-        <rect x="633.91935" y="345.5" width="179.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(638.91935 355.49902)" fill="black">
+        <rect x="609.5484" y="345.5" width="179.5" height="36" fill="white"/>
+        <rect x="609.5484" y="345.5" width="179.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(614.5484 355.49902)" fill="black">
           <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="1.9365234" y="12">Branch(isNumber(right))</tspan>
         </text>
       </g>
@@ -104,9 +104,9 @@
         </text>
       </g>
       <g id="Graphic_14">
-        <rect x="715" y="432" width="179.5" height="36" fill="white"/>
-        <rect x="715" y="432" width="179.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(720 441.999)" fill="black">
+        <rect x="674" y="432" width="179.5" height="36" fill="white"/>
+        <rect x="674" y="432" width="179.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(679 441.999)" fill="black">
           <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="30.74121" y="12">Call(slow path)</tspan>
         </text>
       </g>
@@ -135,7 +135,7 @@
         <line x1="505.46725" y1="381.5" x2="518.04526" y2="409.94566" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_23">
-        <line x1="676.2421" y1="381.5" x2="586.6911" y2="415.48716" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="657.8395" y1="381.5" x2="580.54796" y2="415.05733" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_24">
         <line x1="370.8132" y1="161" x2="461.6737" y2="195.02789" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
@@ -144,22 +144,22 @@
         <line x1="531.25296" y1="234.5" x2="551.1948" y2="263.81446" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_26">
-        <path d="M 542.3324 234.5 C 555.9053 240.4962 577.3762 247.3406 611.3407 253.96925 C 703.2846 271.91343 788.7546 224.30222 843.5484 279.8387 C 881.9117 318.72196 847.537 386.56996 823.4722 423.7637" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 545.0951 234.5 C 558.8481 240.55686 579.72714 247.4371 611.3407 253.96925 C 695.9735 271.4565 774.5636 222.68932 817.7419 278.2258 C 848.105 317.27912 809.0668 386.3487 783.2192 423.90804" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_27">
         <line x1="551.49786" y1="308" x2="521.9214" y2="338.40376" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_28">
-        <line x1="606.8843" y1="308" x2="676.8515" y2="341.25064" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="600.9159" y1="308" x2="658.76795" y2="340.63577" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_29">
-        <line x1="740.5416" y1="381.5" x2="781.1073" y2="424.77704" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="712.7103" y1="381.5" x2="744.423" y2="424.0614" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_30">
-        <path d="M 296.9095 308 C 313.06822 314.60985 345.25062 321.56598 408.0393 326.05217 C 559.6098 336.88173 705.86794 293.11077 818.2581 328.2258 C 892.28 351.35312 862.9384 396.83896 834.2782 425.19993" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 297.97585 308 C 314.1253 314.78345 346.01742 321.86443 408.0393 326.05217 C 554.8941 335.96784 700.8383 289.88496 801.6129 325 C 868.9811 348.47452 829.3567 396.42554 795.683 425.63713" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_31">
-        <line x1="715" y1="461.2653" x2="422.3229" y2="498.00174" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="674" y1="462.31264" x2="422.30813" y2="496.8418" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
     </g>
   </g>
