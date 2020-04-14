@@ -1,3 +1,29 @@
+2020-04-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Do more checking before reusing precompiled sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=210304
+        <rdar://problem/61155623>
+
+        Reviewed by Darin Adler.
+
+        We recently discovered that the system sandbox framework version does not always change
+        when breaking changes in the sandbox format are made. This can lead to the precompiled
+        version of a sandbox not working properly when a sandbox version changes.
+
+        To guard against this, make the following changes:
+
+        1. Compare the SANDBOX_BUILD_ID in place when the sandbox was compiled to the value on
+           the current system. SANDBOX_BUILD_ID, which is a GUID, is always regenerated when the
+           sandbox framework is rebuilt.
+
+        2. Compare the OS version in place when the sandbox was compiled to the value on the current
+           system. This will trigger us recompiling sandboxes even when the sandbox framework did not
+           change, but this is a small performance cost that would only happen after a software update.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::compileAndCacheSandboxProfile):
+        (WebKit::tryApplyCachedSandbox):
+
 2020-04-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Content filtering needs access to the frontboard service
