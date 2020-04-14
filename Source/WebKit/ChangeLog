@@ -1,3 +1,16 @@
+2020-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address review comments after r260035
+        https://bugs.webkit.org/show_bug.cgi?id=210440
+
+        Reviewed by David Kilzer.
+
+        Omit unused argument names.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIgnoreViewportScalingConstraints):
+        (WKPreferencesGetIgnoreViewportScalingConstraints):
+
 2020-04-14  Megan Gardner  <megan_gardner@apple.com>
 
         YouTube sometimes navigates unexpectedly when invoking a context menu on a video link. 
