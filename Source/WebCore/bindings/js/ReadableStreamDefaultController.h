@@ -92,7 +92,12 @@ inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& 
     auto length = buffer->byteLength();
     auto chunk = JSC::Uint8Array::create(WTFMove(buffer), 0, length);
     enqueue(lexicalGlobalObject, toJS(&lexicalGlobalObject, &globalObject, chunk.ptr()));
-    scope.assertNoException();
+
+    if (UNLIKELY(scope.exception())) {
+        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+        return false;
+    }
+
     return true;
 }
 
