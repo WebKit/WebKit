@@ -45,10 +45,10 @@ enum class SelectorContext {
     QuerySelector
 };
 
-typedef unsigned (*RuleCollectorSimpleSelectorChecker)(const Element*);
+typedef unsigned (*RuleCollectorSimpleSelectorChecker)(const Element*, unsigned*);
 typedef unsigned (*QuerySelectorSimpleSelectorChecker)(const Element*);
 
-typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(const Element*, SelectorChecker::CheckingContext*);
+typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(const Element*, SelectorChecker::CheckingContext*, unsigned*);
 typedef unsigned (*QuerySelectorSelectorCheckerWithCheckingContext)(const Element*, const SelectorChecker::CheckingContext*);
 
 void compileSelector(CompiledSelector&, const CSSSelector*, SelectorContext);

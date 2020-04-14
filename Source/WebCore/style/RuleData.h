@@ -35,6 +35,14 @@ enum PropertyWhitelistType {
 #endif
 };
 
+enum class MatchBasedOnRuleHash : unsigned {
+    None,
+    Universal,
+    ClassA,
+    ClassB,
+    ClassC
+};
+
 class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
@@ -54,7 +62,7 @@ public:
     unsigned selectorListIndex() const { return m_selectorListIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
-    bool matchesBasedOnRuleHash() const { return m_matchesBasedOnRuleHash; }
+    MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned linkMatchType() const { return m_linkMatchType; }
     PropertyWhitelistType propertyWhitelistType() const { return static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
@@ -72,7 +80,7 @@ private:
     unsigned m_selectorListIndex : 16;
     // If we have more rules than 2^bitcount here we'll get confused about rule order.
     unsigned m_position : 22;
-    unsigned m_matchesBasedOnRuleHash : 1;
+    unsigned m_matchBasedOnRuleHash : 3;
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask

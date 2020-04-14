@@ -419,13 +419,31 @@ static const CSSSelector* findSlottedPseudoElementSelector(const CSSSelector* se
     return nullptr;
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
+inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity)
 {
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
-    auto matchesBasedOnRuleHash = ruleData.matchesBasedOnRuleHash();
-    if (matchesBasedOnRuleHash && element().isHTMLElement()) {
+    auto matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
+    if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
         ASSERT_WITH_MESSAGE(m_pseudoElementRequest.pseudoId == PseudoId::None, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
+
+        switch (matchBasedOnRuleHash) {
+        case MatchBasedOnRuleHash::None:
+            ASSERT_NOT_REACHED();
+            break;
+        case MatchBasedOnRuleHash::Universal:
+            specificity = 0;
+            break;
+        case MatchBasedOnRuleHash::ClassA:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassA);
+            break;
+        case MatchBasedOnRuleHash::ClassB:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
+            break;
+        case MatchBasedOnRuleHash::ClassC:
+            specificity = static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
+            break;
+        }
         return true;
     }
 
@@ -440,9 +458,10 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 
         auto selectorChecker = SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction(compiledSelector);
 #if !ASSERT_MSG_DISABLED
-        ASSERT_WITH_MESSAGE(!selectorChecker(&element()) || m_pseudoElementRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+        unsigned ignoreSpecificity;
+        ASSERT_WITH_MESSAGE(!selectorChecker(&element(), &ignoreSpecificity) || m_pseudoElementRequest.pseudoId == PseudoId::None, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
-        bool selectorMatches = selectorChecker(&element());
+        bool selectorMatches = selectorChecker(&element(), &specificity);
 
         if (selectorMatches && ruleData.containsUncommonAttributeSelector())
             m_didMatchUncommonAttributeSelector = true;
@@ -464,7 +483,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         compiledSelector.wasUsed();
 
         auto selectorChecker = SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext(compiledSelector);
-        selectorMatches = selectorChecker(&element(), &context);
+        selectorMatches = selectorChecker(&element(), &context, &specificity);
     } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {
@@ -476,7 +495,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         }
         // Slow path.
         SelectorChecker selectorChecker(element().document());
-        selectorMatches = selectorChecker.match(*selector, element(), context);
+        selectorMatches = selectorChecker.match(*selector, element(), context, specificity);
     }
 
     if (ruleData.containsUncommonAttributeSelector()) {
@@ -515,8 +534,9 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (properties && properties->isEmpty() && !m_shouldIncludeEmptyRules)
             continue;
 
-        if (ruleMatches(ruleData))
-            addMatchedRule(ruleData, ruleData.selector()->computeSpecificity(), matchRequest.styleScopeOrdinal);
+        unsigned specificity;
+        if (ruleMatches(ruleData, specificity))
+            addMatchedRule(ruleData, specificity, matchRequest.styleScopeOrdinal);
     }
 }
 

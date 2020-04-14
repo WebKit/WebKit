@@ -170,8 +170,10 @@ SelectorChecker::SelectorChecker(Document& document)
 {
 }
 
-bool SelectorChecker::match(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext) const
+bool SelectorChecker::match(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
 {
+    specificity = 0;
+
     LocalContext context(selector, element, checkingContext.resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled, checkingContext.pseudoId);
 
     if (checkingContext.isMatchingHostPseudoClass) {
@@ -180,7 +182,7 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
     }
 
     PseudoIdSet pseudoIdSet;
-    MatchResult result = matchRecursively(checkingContext, context, pseudoIdSet);
+    MatchResult result = matchRecursively(checkingContext, context, pseudoIdSet, specificity);
     if (result.match != Match::SelectorMatches)
         return false;
     if (checkingContext.pseudoId != PseudoId::None && !pseudoIdSet.has(checkingContext.pseudoId))
@@ -198,18 +200,22 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
     return true;
 }
 
-bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext) const
+bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
 {
     ASSERT(element.shadowRoot());
     ASSERT(selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost);
+
+    specificity = selector.simpleSelectorSpecificity();
 
     if (auto* selectorList = selector.selectorList()) {
         LocalContext context(*selectorList->first(), element, VisitedMatchType::Enabled, PseudoId::None);
         context.inFunctionalPseudoClass = true;
         context.pseudoElementEffective = false;
         PseudoIdSet ignoreDynamicPseudo;
-        if (matchRecursively(checkingContext, context, ignoreDynamicPseudo).match != Match::SelectorMatches)
+        unsigned subselectorSpecificity = 0;
+        if (matchRecursively(checkingContext, context, ignoreDynamicPseudo, subselectorSpecificity).match != Match::SelectorMatches)
             return false;
+        specificity = CSSSelector::addSpecificities(specificity, subselectorSpecificity);
     }
     return true;
 }
@@ -257,12 +263,12 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
 // * SelectorFailsLocally     - the selector fails for the element e
 // * SelectorFailsAllSiblings - the selector fails for e and any sibling of e
 // * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
-SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& checkingContext, const LocalContext& context, PseudoIdSet& dynamicPseudoIdSet) const
+SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& checkingContext, const LocalContext& context, PseudoIdSet& dynamicPseudoIdSet, unsigned& specificity) const
 {
     MatchType matchType = MatchType::Element;
 
     // The first selector has to match.
-    if (!checkOne(checkingContext, context, matchType))
+    if (!checkOne(checkingContext, context, matchType, specificity))
         return MatchResult::fails(Match::SelectorFailsLocally);
 
     if (context.selector->match() == CSSSelector::PseudoElement) {
@@ -330,8 +336,12 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         for (; nextContext.element; nextContext = localContextForParent(nextContext)) {
             PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+            unsigned descendantsSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, descendantsSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, descendantsSpecificity);
 
             if (result.match == Match::SelectorMatches || result.match == Match::SelectorFailsCompletely)
                 return MatchResult::updateWithMatchType(result, matchType);
@@ -345,8 +355,12 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
             PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+            unsigned childSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, childSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, childSpecificity);
 
             if (result.match == Match::SelectorMatches || result.match == Match::SelectorFailsCompletely)
                 return MatchResult::updateWithMatchType(result, matchType);
@@ -367,8 +381,12 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             nextContext.element = previousElement;
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
             PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+            unsigned adjacentSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, adjacentSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, adjacentSpecificity);
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
@@ -382,8 +400,12 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             addStyleRelation(checkingContext, *nextContext.element, Style::Relation::AffectsNextSibling);
 
             PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+            unsigned indirectAdjacentSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, indirectAdjacentSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, indirectAdjacentSpecificity);
 
             if (result.match == Match::SelectorMatches || result.match == Match::SelectorFailsAllSiblings || result.match == Match::SelectorFailsCompletely)
                 return MatchResult::updateWithMatchType(result, matchType);
@@ -402,7 +424,11 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
                 && !(nextContext.hasScrollbarPseudo && nextContext.selector->match() == CSSSelector::PseudoClass))
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
-            MatchResult result = matchRecursively(checkingContext, nextContext, dynamicPseudoIdSet);
+            unsigned subselectorSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, dynamicPseudoIdSet, subselectorSpecificity);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, subselectorSpecificity);
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
@@ -417,7 +443,11 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
             nextContext.isSubjectOrAdjacentElement = false;
             PseudoIdSet ignoreDynamicPseudo;
-            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo);
+            unsigned shadowDescendantSpecificity = 0;
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, shadowDescendantSpecificity);
+
+            if (result.match == Match::SelectorMatches)
+                specificity = CSSSelector::addSpecificities(specificity, shadowDescendantSpecificity);
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
@@ -621,10 +651,12 @@ static inline bool tagMatches(const Element& element, const CSSSelector& simpleS
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }
 
-bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalContext& context, MatchType& matchType) const
+bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalContext& context, MatchType& matchType, unsigned& specificity) const
 {
     const Element& element = *context.element;
     const CSSSelector& selector = *context.selector;
+
+    specificity = CSSSelector::addSpecificities(specificity, selector.simpleSelectorSpecificity());
 
     if (context.mayMatchHostPseudoClass) {
         // :host doesn't combine with anything except pseudo elements.
@@ -672,7 +704,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 subcontext.firstSelectorOfTheFragment = selectorList->first();
                 PseudoIdSet ignoreDynamicPseudo;
 
-                if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches) {
+                unsigned ignoredSpecificity;
+                if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches) {
                     ASSERT(!ignoreDynamicPseudo);
                     return false;
                 }
@@ -800,6 +833,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassMatches:
             {
                 bool hasMatchedAnything = false;
+                unsigned maxSpecificity = 0;
 
                 MatchType localMatchType = MatchType::VirtualPseudoElementOnly;
                 for (const CSSSelector* subselector = selector.selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
@@ -810,21 +844,26 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     subcontext.firstSelectorOfTheFragment = subselector;
                     subcontext.pseudoId = PseudoId::None;
                     PseudoIdSet localDynamicPseudoIdSet;
-                    MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet);
+                    unsigned localSpecificity = 0;
+                    MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet, localSpecificity);
 
                     // Pseudo elements are not valid inside :is()/:matches()
                     if (localDynamicPseudoIdSet)
                         continue;
 
                     if (result.match == Match::SelectorMatches) {
+                        maxSpecificity = std::max(maxSpecificity, localSpecificity);
+
                         if (result.matchType == MatchType::Element)
                             localMatchType = MatchType::Element;
 
                         hasMatchedAnything = true;
                     }
                 }
-                if (hasMatchedAnything)
+                if (hasMatchedAnything) {
                     matchType = localMatchType;
+                    specificity = CSSSelector::addSpecificities(specificity, maxSpecificity);
+                }
                 return hasMatchedAnything;
             }
         case CSSSelector::PseudoClassPlaceholderShown:
@@ -842,14 +881,17 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 break; // FIXME: Add the support for specifying relations on ShadowRoot.
 
             if (const CSSSelectorList* selectorList = selector.selectorList()) {
-                if (!matchSelectorList(checkingContext, context, element, *selectorList))
+                unsigned selectorListSpecificity;
+                if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
                     return false;
+                specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
             }
 
             int count = 1;
             if (const CSSSelectorList* selectorList = selector.selectorList()) {
                 for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList))
+                    unsigned ignoredSpecificity;
+                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
                         ++count;
                 }
             } else {
@@ -879,8 +921,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             if (is<Element>(parent)) {
                 auto& parentElement = downcast<Element>(*parent);
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
-                    if (!matchSelectorList(checkingContext, context, element, *selectorList))
+                    unsigned selectorListSpecificity;
+                    if (!matchSelectorList(checkingContext, context, element, *selectorList, selectorListSpecificity))
                         return false;
+                    specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
 
                     addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByPropertyBasedBackwardPositionalRules);
                 } else {
@@ -895,7 +939,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             int count = 1;
             if (const CSSSelectorList* selectorList = selector.selectorList()) {
                 for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
-                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList))
+                    unsigned ignoredSpecificity;
+                    if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
                         ++count;
                 }
             } else
@@ -929,7 +974,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 for (subcontext.selector = selector.selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
                     subcontext.firstSelectorOfTheFragment = subcontext.selector;
                     PseudoIdSet ignoreDynamicPseudo;
-                    if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches)
+                    unsigned ingoredSpecificity = 0;
+                    if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, ingoredSpecificity).match == Match::SelectorMatches)
                         return true;
                 }
             }
@@ -1044,7 +1090,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassHost: {
             if (!context.mayMatchHostPseudoClass)
                 return false;
-            return matchHostPseudoClass(selector, element, checkingContext);
+            unsigned hostSpecificity;
+            if (!matchHostPseudoClass(selector, element, checkingContext, hostSpecificity))
+                return false;
+            specificity = CSSSelector::addSpecificities(specificity, hostSpecificity);
+            return true;
         }
         case CSSSelector::PseudoClassDefined:
             return isDefinedElement(element);
@@ -1097,7 +1147,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 subcontext.inFunctionalPseudoClass = true;
                 subcontext.pseudoElementEffective = false;
                 PseudoIdSet ignoredDynamicPseudo;
-                if (matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo).match == Match::SelectorMatches)
+                unsigned ignoredSpecificity = 0;
+                if (matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches)
                     return true;
             }
             return false;
@@ -1153,8 +1204,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
     return true;
 }
 
-bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const LocalContext& context, const Element& element, const CSSSelectorList& selectorList) const
+bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const LocalContext& context, const Element& element, const CSSSelectorList& selectorList, unsigned& specificity) const
 {
+    specificity = 0;
     bool hasMatchedAnything = false;
 
     for (const CSSSelector* subselector = selectorList.first(); subselector; subselector = CSSSelectorList::next(subselector)) {
@@ -1165,10 +1217,12 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
         subcontext.pseudoElementEffective = false;
         subcontext.firstSelectorOfTheFragment = subselector;
         PseudoIdSet ignoreDynamicPseudo;
-        if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches) {
+        unsigned localSpecificity = 0;
+        if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, localSpecificity).match == Match::SelectorMatches) {
             ASSERT(!ignoreDynamicPseudo);
 
             hasMatchedAnything = true;
+            specificity = std::max(specificity, localSpecificity);
         }
     }
     return hasMatchedAnything;

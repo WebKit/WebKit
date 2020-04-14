@@ -1,3 +1,18 @@
+2020-04-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r260024.
+        https://bugs.webkit.org/show_bug.cgi?id=210480
+
+        Regressed performance due to loss of specificity caching
+        (Requested by anttik on #webkit).
+
+        Reverted changeset:
+
+        "[CSS Selectors] Selectors Level 4 specificity calculation for
+        pseudo classes"
+        https://bugs.webkit.org/show_bug.cgi?id=210419
+        https://trac.webkit.org/changeset/260024
+
 2020-04-13  Antti Koivisto  <antti@apple.com>
 
         [CSS Selectors] Selectors Level 4 specificity calculation for pseudo classes
