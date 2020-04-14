@@ -1,3 +1,54 @@
+2020-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Custom scrollbars on gmail don't show
+        https://bugs.webkit.org/show_bug.cgi?id=210438
+        <rdar://problem/61722541>
+
+        Reviewed by Tim Horton.
+
+        Layer tree dumps changed because of scrollbar and scroll corner layers.
+
+        * compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt:
+        * compositing/layer-creation/clipping-scope/nested-scroller-overlap-expected.txt:
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-scroller-expected.txt:
+        * compositing/layer-creation/clipping-scope/overlap-constrained-inside-stacking-context-scroller-expected.txt:
+        * compositing/layer-creation/clipping-scope/scroller-with-negative-z-children-expected.txt:
+        * compositing/layer-creation/clipping-scope/shared-layers-in-scroller-expected.txt:
+        * compositing/overflow/overflow-auto-with-touch-expected.txt:
+        * compositing/overflow/overflow-overlay-with-touch-expected.txt:
+        * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * compositing/overflow/stacking-context-composited-scroller-with-foreground-paint-phases-expected.txt:
+        * compositing/overflow/textarea-scroll-touch-expected.txt:
+        * compositing/repaint/scroller-with-foreground-layer-repaints-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-clipped-by-scroll-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/clipped-layer-in-overflow-nested-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-for-negative-z-in-scroller-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-hidden-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-clip-to-visible-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-gain-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-in-clipped-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/layer-in-overflow-lose-clipping-layer-expected.txt:
+        * compositing/scrolling/async-overflow-scrolling/visibility-hidden-scrollers-expected.txt:
+        * compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+        * compositing/shared-backing/overflow-scroll/absolute-in-stacking-relative-in-scroller-expected.txt:
+        * compositing/shared-backing/overflow-scroll/composited-absolute-in-absolute-in-relative-in-scroller-expected.txt:
+        * compositing/shared-backing/overflow-scroll/nested-absolute-with-clipping-in-stacking-overflow-expected.txt:
+        * compositing/shared-backing/overflow-scroll/previous-sibling-prevents-inclusiveness-expected.txt:
+        * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-clipping-expected.txt:
+        * compositing/shared-backing/overflow-scroll/relative-in-clipping-in-scroller-in-relative-clipping-expected.txt:
+        * compositing/shared-backing/overflow-scroll/relative-in-div-in-overflow-scroll-expected.txt:
+        * compositing/shared-backing/overflow-scroll/scrolled-contents-has-painted-content-expected.txt:
+        * fast/scrolling/mac/event-region-scrolled-contents-layer-expected.txt:
+        * platform/mac/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt:
+        * scrollbars/async-overflow-custom-scrollbar-expected.html: Added.
+        * scrollbars/async-overflow-custom-scrollbar.html: Added.
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage-expected.txt:
+        * tiled-drawing/scrolling/overflow/overflow-tile-coverage-expected.txt:
+
 2020-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, mark several MSE tests as flaky

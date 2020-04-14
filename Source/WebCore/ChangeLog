@@ -1,3 +1,27 @@
+2020-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Custom scrollbars on gmail don't show
+        https://bugs.webkit.org/show_bug.cgi?id=210438
+        <rdar://problem/61722541>
+
+        Reviewed by Tim Horton.
+
+        Custom scrollbars painted into the backing store of the scrolling element, but that
+        might have become an empty "simple container layer" causing the scroll bars to not
+        be painted anywhere.
+
+        Fix by making compositing layers for custom scrollbars. This is better than giving
+        backing store to the scroller's element, because that might be huge.
+
+        Test: scrollbars/async-overflow-custom-scrollbar.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::requiresLayerForScrollbar const):
+        (WebCore::RenderLayerBacking::requiresHorizontalScrollbarLayer const):
+        (WebCore::RenderLayerBacking::requiresVerticalScrollbarLayer const):
+        (WebCore::RenderLayerBacking::requiresScrollCornerLayer const):
+        * rendering/RenderLayerBacking.h:
+
 2020-04-14  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Adapt to GdkVisual deprecation and removal

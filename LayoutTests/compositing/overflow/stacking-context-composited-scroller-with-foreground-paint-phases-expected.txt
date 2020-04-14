@@ -14,7 +14,7 @@ Scrolled contents
           (bounds 322.00 322.00)
           (drawsContent 1)
           (paintingPhases [background, composited-scroll])
-          (children 1
+          (children 4
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
@@ -42,6 +42,24 @@ Scrolled contents
                   )
                 )
               )
+            )
+            (GraphicsLayer
+              (position 1.00 306.00)
+              (bounds 305.00 15.00)
+              (drawsContent 1)
+              (paintingPhases [background, foreground])
+            )
+            (GraphicsLayer
+              (position 306.00 1.00)
+              (bounds 15.00 305.00)
+              (drawsContent 1)
+              (paintingPhases [background, foreground])
+            )
+            (GraphicsLayer
+              (position 306.00 306.00)
+              (bounds 15.00 15.00)
+              (drawsContent 1)
+              (paintingPhases [background, foreground])
             )
           )
         )

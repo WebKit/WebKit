@@ -1779,25 +1779,33 @@ void RenderLayerBacking::setRequiresBackgroundLayer(bool requiresBackgroundLayer
     m_owningLayer.setNeedsCompositingConfigurationUpdate();
 }
 
+bool RenderLayerBacking::requiresLayerForScrollbar(Scrollbar* scrollbar) const
+{
+    return scrollbar && (scrollbar->isOverlayScrollbar()
+#if !PLATFORM(IOS_FAMILY) // FIXME: This should be an #if ENABLE(): webkit.org/b/210460
+        || renderer().settings().asyncOverflowScrollingEnabled()
+#endif
+        );
+}
+
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars())
-        return false;
-    return m_owningLayer.horizontalScrollbar();
+    return requiresLayerForScrollbar(m_owningLayer.horizontalScrollbar());
 }
 
 bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars())
-        return false;
-    return m_owningLayer.verticalScrollbar();
+    return requiresLayerForScrollbar(m_owningLayer.verticalScrollbar());
 }
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
 {
-    if (!m_owningLayer.hasOverlayScrollbars())
+    if (m_owningLayer.scrollCornerAndResizerRect().isEmpty())
         return false;
-    return !m_owningLayer.scrollCornerAndResizerRect().isEmpty();
+
+    auto verticalScrollbar = m_owningLayer.verticalScrollbar();
+    auto scrollbar = verticalScrollbar ? verticalScrollbar : m_owningLayer.horizontalScrollbar();
+    return requiresLayerForScrollbar(scrollbar);
 }
 
 bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)

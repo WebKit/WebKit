@@ -26,7 +26,7 @@
           (coverage rect -58.00, -50.00 785.00 x 600.00)
           (intersects coverage rect 1)
           (contentsScale 1.00)
-          (children 1
+          (children 2
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
@@ -53,6 +53,15 @@
                   (in window 1)
                 )
               )
+            )
+            (GraphicsLayer
+              (position 386.00 1.00)
+              (bounds 15.00 512.00)
+              (drawsContent 1)
+              (visible rect 0.00, 0.00 15.00 x 512.00)
+              (coverage rect -444.00, -51.00 785.00 x 600.00)
+              (intersects coverage rect 1)
+              (contentsScale 1.00)
             )
           )
         )
