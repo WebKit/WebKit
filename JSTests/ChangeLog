@@ -1,3 +1,17 @@
+2020-04-14  Saam Barati  <sbarati@apple.com>
+
+        Skip all low executable memory wasm tests on arm64
+        https://bugs.webkit.org/show_bug.cgi?id=210522
+
+        Reviewed by Tadeu Zagallo.
+
+        In my original JIT islands patch, I only skipped one of the "low executable
+        memory" tests. But the others are also causing problems on the iOS JSC test
+        runners, so let's just skip them all.
+
+        * wasm/lowExecutableMemory/exports-oom.js:
+        * wasm/lowExecutableMemory/imports-oom.js:
+
 2020-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reduce iteration count and introduce early return to make typed-array-subarray-can-throw-oom-error.js execution time short while throwing an error
