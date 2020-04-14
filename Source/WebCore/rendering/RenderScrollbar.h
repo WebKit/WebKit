@@ -30,8 +30,6 @@
 #include "Scrollbar.h"
 #include <wtf/HashMap.h>
 
-#if ENABLE(CUSTOM_SCROLLBARS)
-
 namespace WebCore {
 
 class Frame;
@@ -96,5 +94,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderScrollbar)
     static bool isType(const WebCore::Scrollbar& scrollbar) { return scrollbar.isCustomScrollbar(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(CUSTOM_SCROLLBARS)

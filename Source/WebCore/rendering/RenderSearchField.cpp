@@ -359,11 +359,9 @@ HostWindow* RenderSearchField::hostWindow() const
 
 Ref<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &inputElement());
-#endif
     return Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
 }
 

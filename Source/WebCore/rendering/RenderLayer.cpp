@@ -3489,14 +3489,11 @@ Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
     ASSERT(rendererForScrollbar(renderer()));
-#if ENABLE(CUSTOM_SCROLLBARS)
     auto& actualRenderer = *rendererForScrollbar(renderer());
     bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, downcast<RenderBox>(actualRenderer).element());
-    else
-#endif
-    {
+    else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
         if (page().isMonitoringWheelEvents())
@@ -6814,7 +6811,6 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 
 void RenderLayer::updateScrollCornerStyle()
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
     auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
 
@@ -6830,23 +6826,18 @@ void RenderLayer::updateScrollCornerStyle()
         m_scrollCorner->initializeStyle();
     } else
         m_scrollCorner->setStyle(WTFMove(*corner));
-#endif
 }
 
 void RenderLayer::clearScrollCorner()
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     if (!m_scrollCorner)
         return;
     m_scrollCorner->setParent(nullptr);
     m_scrollCorner = nullptr;
-#endif
-
 }
 
 void RenderLayer::updateResizerStyle()
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
     auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
 
@@ -6862,17 +6853,14 @@ void RenderLayer::updateResizerStyle()
         m_resizer->initializeStyle();
     } else
         m_resizer->setStyle(WTFMove(*resizer));
-#endif
 }
 
 void RenderLayer::clearResizer()
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     if (!m_resizer)
         return;
     m_resizer->setParent(nullptr);
     m_resizer = nullptr;
-#endif
 }
 
 RenderLayer* RenderLayer::reflectionLayer() const

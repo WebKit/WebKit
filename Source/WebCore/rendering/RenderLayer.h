@@ -77,14 +77,11 @@ class RenderLayerCompositor;
 class RenderLayerFilters;
 class RenderMarquee;
 class RenderReplica;
+class RenderScrollbarPart;
 class RenderStyle;
 class RenderView;
 class Scrollbar;
 class TransformationMatrix;
-
-#if ENABLE(CUSTOM_SCROLLBARS)
-class RenderScrollbarPart;
-#endif
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
@@ -1353,11 +1350,9 @@ private:
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
 
-#if ENABLE(CUSTOM_SCROLLBARS)
     // Renderers to hold our custom scroll corner and resizer.
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
     RenderPtr<RenderScrollbarPart> m_resizer;
-#endif
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     WeakPtr<RenderLayer> m_enclosingPaginationLayer;

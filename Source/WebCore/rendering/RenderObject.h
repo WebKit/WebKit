@@ -265,9 +265,7 @@ public:
     virtual bool isRenderMultiColumnFlow() const { return false; }
     virtual bool isRenderMultiColumnSpannerPlaceholder() const { return false; }
 
-#if ENABLE(CUSTOM_SCROLLBARS)
     virtual bool isRenderScrollbarPart() const { return false; }
-#endif
 
     bool isDocumentElementRenderer() const { return document().documentElement() == &m_node; }
     bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }

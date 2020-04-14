@@ -632,13 +632,11 @@ RenderBlock* RenderObject::containingBlock() const
     if (is<RenderText>(*this))
         return containingBlockForObjectInFlow();
 
-#if ENABLE(CUSTOM_SCROLLBARS)
     if (!parent() && is<RenderScrollbarPart>(*this)) {
         if (auto* scrollbarPart = downcast<RenderScrollbarPart>(*this).rendererOwningScrollbar())
             return containingBlockForRenderer(*scrollbarPart);
         return nullptr;
     }
-#endif
     return containingBlockForRenderer(downcast<RenderElement>(*this));
 }
 

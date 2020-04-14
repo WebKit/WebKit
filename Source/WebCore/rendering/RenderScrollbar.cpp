@@ -26,8 +26,6 @@
 #include "config.h"
 #include "RenderScrollbar.h"
 
-#if ENABLE(CUSTOM_SCROLLBARS)
-
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderScrollbarPart.h"
@@ -369,6 +367,3 @@ bool RenderScrollbar::isHiddenByStyle() const
 }
 
 }
-
-#endif // ENABLE(CUSTOM_SCROLLBARS)
-

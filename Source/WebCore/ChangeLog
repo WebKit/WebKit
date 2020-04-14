@@ -1,3 +1,18 @@
+2020-04-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r260052.
+        https://bugs.webkit.org/show_bug.cgi?id=210479
+
+        Breaks iOS tests, needs more work (Requested by smfr on
+        #webkit).
+
+        Reverted changeset:
+
+        "Add ENABLE_CUSTOM_SCROLLBARS and define it for macOS and for
+        non-Cocoa platforms"
+        https://bugs.webkit.org/show_bug.cgi?id=210460
+        https://trac.webkit.org/changeset/260052
+
 2020-04-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Use ThemeAdwaita instead of ThemeGtk

@@ -28,8 +28,6 @@
 #include "RenderBlock.h"
 #include "ScrollTypes.h"
 
-#if ENABLE(CUSTOM_SCROLLBARS)
-
 namespace WebCore {
 
 class RenderScrollbar;
@@ -78,5 +76,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderScrollbarPart, isRenderScrollbarPart())
-
-#endif // ENABLE(CUSTOM_SCROLLBARS)

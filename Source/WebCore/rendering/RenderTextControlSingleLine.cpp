@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "RenderLayer.h"
+#include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "StyleResolver.h"

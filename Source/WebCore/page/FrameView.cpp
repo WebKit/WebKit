@@ -554,7 +554,6 @@ RefPtr<Element> FrameView::rootElementForCustomScrollbarPartStyle(PseudoId partP
 
 Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     if (auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, element.get());
     
@@ -563,7 +562,6 @@ Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
     RenderWidget* frameRenderer = frame().ownerRenderer();
     if (frameRenderer && frameRenderer->style().hasPseudoStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, &frame());
-#endif
 
     // Nobody set a custom style, so we just use a native scrollbar.
     return ScrollView::createScrollbar(orientation);
@@ -3951,7 +3949,6 @@ bool FrameView::scrollAnimatorEnabled() const
 
 void FrameView::updateScrollCorner()
 {
-#if ENABLE(CUSTOM_SCROLLBARS)
     RenderElement* renderer = nullptr;
     std::unique_ptr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
@@ -3992,7 +3989,6 @@ void FrameView::updateScrollCorner()
             m_scrollCorner->setStyle(WTFMove(*cornerStyle));
         invalidateScrollCorner(cornerRect);
     }
-#endif
 }
 
 void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
