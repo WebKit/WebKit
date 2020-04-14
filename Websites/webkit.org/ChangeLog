@@ -1,3 +1,10 @@
+2020-04-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, check in some more files for a blog post.
+
+        * blog-files/speculation-in-jsc/ftl-pipeline-dark.graffle: Added.
+        * blog-files/speculation-in-jsc/ftl-pipeline-dark.svg: Added.
+
 2020-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, check in some files for a blog post.
