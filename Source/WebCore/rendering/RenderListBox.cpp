@@ -918,10 +918,13 @@ String RenderListBox::debugDescription() const
 Ref<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;
+#if ENABLE(CUSTOM_SCROLLBARS)
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(*this, VerticalScrollbar, &selectElement());
-    else {
+    else
+#endif
+    {
         widget = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
         if (page().isMonitoringWheelEvents())

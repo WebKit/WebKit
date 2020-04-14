@@ -1,3 +1,15 @@
+2020-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE_CUSTOM_SCROLLBARS and define it for macOS and for non-Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=210460
+
+        Reviewed by Tim Horton.
+
+        Define ENABLE_CUSTOM_SCROLLBARS for PLATFORM(MAC) and other non-Cocoa platforms.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Fix clang static analyzer warnings about unused instance variables in WebIconDatabase, WKView

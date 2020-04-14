@@ -76,7 +76,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "LegacyTileCache.h"
-#include "RenderScrollbar.h"
 #endif
 
 #if PLATFORM(MAC)

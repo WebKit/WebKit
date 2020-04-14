@@ -1,3 +1,39 @@
+2020-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE_CUSTOM_SCROLLBARS and define it for macOS and for non-Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=210460
+
+        Reviewed by Tim Horton.
+
+        Wrap all custom scrollbar and custom scroll corner code in ENABLE(CUSTOM_SCROLLBARS).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::updateScrollCorner):
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::createScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock const):
+        * rendering/RenderObject.h:
+        * rendering/RenderScrollbar.cpp:
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarPart.cpp:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderScrollbarTheme.cpp:
+        * rendering/RenderScrollbarTheme.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::createScrollbar):
+        * rendering/RenderTextControlSingleLine.cpp:
+        * style/StyleResolver.cpp:
+
 2020-04-13  Kenneth Russell  <kbr@chromium.org>
 
         Clean up more resources during WebGLLayer teardown

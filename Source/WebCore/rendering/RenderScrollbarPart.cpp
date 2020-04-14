@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderScrollbarPart.h"
 
+#if ENABLE(CUSTOM_SCROLLBARS)
+
 #include "PaintInfo.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
@@ -201,3 +203,4 @@ RenderBox* RenderScrollbarPart::rendererOwningScrollbar() const
 }
 
 }
+#endif // ENABLE(CUSTOM_SCROLLBARS)

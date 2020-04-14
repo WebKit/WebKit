@@ -27,6 +27,8 @@
 
 #include "ScrollbarThemeComposite.h"
 
+#if ENABLE(CUSTOM_SCROLLBARS)
+
 namespace WebCore {
 
 class PlatformMouseEvent;
@@ -81,3 +83,5 @@ protected:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(CUSTOM_SCROLLBARS)

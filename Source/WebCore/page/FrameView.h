@@ -502,7 +502,9 @@ public:
     WEBCORE_EXPORT FloatRect clientToLayoutViewportRect(FloatRect) const;
     WEBCORE_EXPORT FloatPoint clientToLayoutViewportPoint(FloatPoint) const;
 
+#if ENABLE(CUSTOM_SCROLLBARS)
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner.get() == &scrollCorner; }
+#endif
 
     // isScrollable() takes an optional Scrollability parameter that allows the caller to define what they mean by 'scrollable.'
     // Most callers are interested in the default value, Scrollability::Scrollable, which means that there is actually content
@@ -841,8 +843,10 @@ private:
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
     RefPtr<Node> m_nodeToDraw;
 
+#if ENABLE(CUSTOM_SCROLLBARS)
     // Renderer to hold our custom scroll corner.
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
+#endif
 
     Timer m_updateEmbeddedObjectsTimer;
     Timer m_updateWidgetPositionsTimer;

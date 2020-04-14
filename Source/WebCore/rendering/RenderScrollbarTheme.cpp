@@ -25,6 +25,9 @@
 
 #include "config.h"
 #include "RenderScrollbarTheme.h"
+
+#if ENABLE(CUSTOM_SCROLLBARS)
+
 #include "RenderScrollbar.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -162,3 +165,5 @@ void RenderScrollbarTheme::paintTickmarks(GraphicsContext& context, Scrollbar& s
 }
 
 }
+
+#endif // ENABLE(CUSTOM_SCROLLBARS)
