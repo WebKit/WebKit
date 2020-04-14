@@ -428,6 +428,7 @@ public:
     void finishParsingChildren() override;
     void beginParsingChildren() final;
 
+    PseudoElement& ensurePseudoElement(PseudoId);
     WEBCORE_EXPORT PseudoElement* beforePseudoElement() const;
     WEBCORE_EXPORT PseudoElement* afterPseudoElement() const;
     bool childNeedsShadowWalker() const;
@@ -552,8 +553,6 @@ public:
     const RenderStyle* existingComputedStyle() const;
     WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle() const;
 
-    void setBeforePseudoElement(Ref<PseudoElement>&&);
-    void setAfterPseudoElement(Ref<PseudoElement>&&);
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
     void resetComputedStyle();

@@ -107,21 +107,10 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return;
     }
 
-    RefPtr<PseudoElement> newPseudoElement;
-    if (!pseudoElement) {
-        newPseudoElement = PseudoElement::create(current, pseudoId);
-        pseudoElement = newPseudoElement.get();
-    }
-
     if (update->change == Style::NoChange)
         return;
 
-    if (newPseudoElement) {
-        if (pseudoId == PseudoId::Before)
-            current.setBeforePseudoElement(newPseudoElement.releaseNonNull());
-        else
-            current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
-    }
+    pseudoElement = &current.ensurePseudoElement(pseudoId);
 
     if (update->style->display() == DisplayType::Contents) {
         // For display:contents we create an inline wrapper that inherits its

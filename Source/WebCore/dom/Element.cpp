@@ -3481,6 +3481,20 @@ void Element::normalizeAttributes()
         attrNode->normalize();
 }
 
+PseudoElement& Element::ensurePseudoElement(PseudoId pseudoId)
+{
+    if (pseudoId == PseudoId::Before) {
+        if (!beforePseudoElement())
+            ensureElementRareData().setBeforePseudoElement(PseudoElement::create(*this, pseudoId));
+        return *beforePseudoElement();
+    }
+
+    ASSERT(pseudoId == PseudoId::After);
+    if (!afterPseudoElement())
+        ensureElementRareData().setAfterPseudoElement(PseudoElement::create(*this, pseudoId));
+    return *afterPseudoElement();
+}
+
 PseudoElement* Element::beforePseudoElement() const
 {
     return hasRareData() ? elementRareData()->beforePseudoElement() : nullptr;
@@ -3489,16 +3503,6 @@ PseudoElement* Element::beforePseudoElement() const
 PseudoElement* Element::afterPseudoElement() const
 {
     return hasRareData() ? elementRareData()->afterPseudoElement() : nullptr;
-}
-
-void Element::setBeforePseudoElement(Ref<PseudoElement>&& element)
-{
-    ensureElementRareData().setBeforePseudoElement(WTFMove(element));
-}
-
-void Element::setAfterPseudoElement(Ref<PseudoElement>&& element)
-{
-    ensureElementRareData().setAfterPseudoElement(WTFMove(element));
 }
 
 static void disconnectPseudoElement(PseudoElement* pseudoElement)

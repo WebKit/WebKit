@@ -268,17 +268,7 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()))
         return { };
 
-    PseudoElement* pseudoElement = pseudoId == PseudoId::Before ? element.beforePseudoElement() : element.afterPseudoElement();
-    if (!pseudoElement) {
-        auto newPseudoElement = PseudoElement::create(element, pseudoId);
-        pseudoElement = newPseudoElement.ptr();
-        if (pseudoId == PseudoId::Before)
-            element.setBeforePseudoElement(WTFMove(newPseudoElement));
-        else
-            element.setAfterPseudoElement(WTFMove(newPseudoElement));
-    }
-
-    return createAnimatedElementUpdate(WTFMove(pseudoStyle), *pseudoElement, elementUpdate.change);
+    return createAnimatedElementUpdate(WTFMove(pseudoStyle), element.ensurePseudoElement(pseudoId), elementUpdate.change);
 }
 
 const RenderStyle* TreeResolver::parentBoxStyle() const
