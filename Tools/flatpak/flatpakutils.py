@@ -898,6 +898,9 @@ def is_sandboxed():
 
 
 def run_in_sandbox_if_available(args):
+    if os.environ.get('WEBKIT_JHBUILD', '0') == '1':
+        return None
+
     if not os.path.isdir(FLATPAK_USER_DIR_PATH):
         return None
 
