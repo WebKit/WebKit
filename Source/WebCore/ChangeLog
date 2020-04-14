@@ -1,3 +1,28 @@
+2020-04-14  Youenn Fablet  <youenn@apple.com>
+
+        Add a timer to AVVideoCaptureSource to verify reception of frames
+        https://bugs.webkit.org/show_bug.cgi?id=210335
+
+        Reviewed by Eric Carlson.
+
+        Count the number of frames being captured.
+        Add a timer repeating every 3 seconds.
+        Timer starts/stops based on whether the session is running/is interrupted.
+        If the number of frames did not increase, fail the source.
+        Manually tested.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::captureFailed):
+        Explicitly call stop() instead of just setting m_isProducingData.
+        This ensures we release all resources and that we may not restart capturing after captureFailed().
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::verifyIsCapturing):
+        (WebCore::AVVideoCaptureSource::updateVerifyCapturingTimer):
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        (WebCore::AVVideoCaptureSource::captureSessionIsRunningDidChange):
+
 2020-04-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260024.

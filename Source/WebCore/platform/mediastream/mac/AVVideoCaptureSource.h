@@ -30,6 +30,7 @@
 #include "IntSizeHash.h"
 #include "OrientationNotifier.h"
 #include "RealtimeVideoCaptureSource.h"
+#include "Timer.h"
 #include <wtf/Lock.h>
 #include <wtf/text/StringHash.h>
 
@@ -115,6 +116,9 @@ private:
     const char* logClassName() const override { return "AVVideoCaptureSource"; }
 #endif
 
+    void updateVerifyCapturingTimer();
+    void verifyIsCapturing();
+
     RefPtr<MediaSample> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
@@ -133,9 +137,15 @@ private:
     RefPtr<AVVideoPreset> m_currentPreset;
     IntSize m_currentSize;
     double m_currentFrameRate;
-    int m_framesToDropAtStartup { 0 };
     bool m_interrupted { false };
     bool m_isRunning { false };
+
+    static constexpr Seconds verifyCaptureInterval = 3_s;
+    static const uint64_t framesToDropWhenStarting = 4;
+
+    Timer m_verifyCapturingTimer;
+    uint64_t m_framesCount { 0 };
+    uint64_t m_lastFramesCount { 0 };
 };
 
 } // namespace WebCore

@@ -129,6 +129,7 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* device, String&& id,
     : RealtimeVideoCaptureSource(device.localizedName, WTFMove(id), WTFMove(hashSalt))
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
+    , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
 {
     [m_device.get() addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
 }
@@ -148,6 +149,33 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
         [m_session stopRunning];
 
     clearSession();
+}
+
+void AVVideoCaptureSource::verifyIsCapturing()
+{
+    ASSERT(m_isRunning);
+    if (m_lastFramesCount != m_framesCount) {
+        m_lastFramesCount = m_framesCount;
+        return;
+    }
+
+    RELEASE_LOG_ERROR(WebRTC, "AVVideoCaptureSource::verifyIsCapturing - no frame received in %d seconds, failing", static_cast<int>(m_verifyCapturingTimer.repeatInterval().value()));
+    captureFailed();
+}
+
+void AVVideoCaptureSource::updateVerifyCapturingTimer()
+{
+    if (!m_isRunning) {
+        m_verifyCapturingTimer.stop();
+        return;
+    }
+
+    if (m_verifyCapturingTimer.isActive())
+        return;
+
+    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval);
+    m_framesCount = 0;
+    m_lastFramesCount = 0;
 }
 
 void AVVideoCaptureSource::clearSession()
@@ -526,7 +554,7 @@ void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef sampleBuffer, AVCaptureConnection* captureConnection)
 {
-    if (m_framesToDropAtStartup && m_framesToDropAtStartup--)
+    if (++m_framesCount <= framesToDropWhenStarting)
         return;
 
     auto sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
@@ -537,15 +565,14 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
 {
-    scheduleDeferredTask([this, state] {
-        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, state);
+    scheduleDeferredTask([this, logIdentifier = LOGIDENTIFIER, state] {
+        ALWAYS_LOG_IF(loggerPtr(), logIdentifier, state);
         if ((state == m_isRunning) && (state == !muted()))
             return;
 
         m_isRunning = state;
-        if (m_isRunning)
-            m_framesToDropAtStartup = 4;
 
+        updateVerifyCapturingTimer();
         notifyMutedChange(!m_isRunning);
     });
 }

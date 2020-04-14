@@ -266,9 +266,9 @@ void RealtimeMediaSource::captureFailed()
 {
     ERROR_LOG_IF(m_logger, LOGIDENTIFIER);
 
-    m_isProducingData = false;
     m_captureDidFailed = true;
 
+    stop();
     forEachObserver([](auto& observer) {
         observer.sourceStopped();
     });
