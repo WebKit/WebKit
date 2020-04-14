@@ -68,6 +68,9 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_usesBackForwardCache = this->m_usesBackForwardCache;
     copy->m_customWebContentServiceBundleIdentifier = this->m_customWebContentServiceBundleIdentifier;
     copy->m_usesSingleWebProcess = m_usesSingleWebProcess;
+#if PLATFORM(GTK) && !USE(GTK4)
+    copy->m_useSystemAppearanceForScrollbars = m_useSystemAppearanceForScrollbars;
+#endif
 
     return copy;
 }

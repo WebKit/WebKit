@@ -229,6 +229,10 @@ struct WebProcessCreationParameters {
     Optional<SandboxExtension::Handle> preferencesExtensionHandle;
 #endif
 #endif
+
+#if PLATFORM(GTK)
+    bool useSystemAppearanceForScrollbars { false };
+#endif
 };
 
 } // namespace WebKit

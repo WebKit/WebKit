@@ -135,6 +135,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif
+
+#if PLATFORM(GTK)
+    parameters.useSystemAppearanceForScrollbars = m_configuration->useSystemAppearanceForScrollbars();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

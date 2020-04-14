@@ -46,6 +46,10 @@
 #include <wpe/wpe.h>
 #endif
 
+#if PLATFORM(GTK) && !USE(GTK4)
+#include <WebCore/ScrollbarThemeGtk.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -89,6 +93,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if USE(GSTREAMER)
     WebCore::initializeGStreamer(WTFMove(parameters.gstreamerOptions));
 #endif
+
+#if PLATFORM(GTK) && !USE(GTK4)
+    setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
@@ -104,5 +112,12 @@ void WebProcess::sendMessageToWebExtension(UserMessage&& message)
     if (auto* extension = WebKitExtensionManager::singleton().extension())
         webkitWebExtensionDidReceiveUserMessage(extension, WTFMove(message));
 }
+
+#if PLATFORM(GTK) && !USE(GTK4)
+void WebProcess::setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
+{
+    static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).setUseSystemAppearance(useSystemAppearanceForScrollbars);
+}
+#endif
 
 } // namespace WebKit

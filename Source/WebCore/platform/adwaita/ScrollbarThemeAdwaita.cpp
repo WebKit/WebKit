@@ -220,10 +220,12 @@ ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollba
     return ScrollbarButtonPressAction::None;
 }
 
+#if !PLATFORM(GTK) || USE(GTK4)
 ScrollbarTheme& ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeAdwaita theme;
     return theme;
 }
+#endif
 
 } // namespace WebCore

@@ -190,6 +190,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << preferencesExtensionHandle;
 #endif
 #endif
+
+#if PLATFORM(GTK)
+    encoder << useSystemAppearanceForScrollbars;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -519,6 +523,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.preferencesExtensionHandle = WTFMove(*preferencesExtensionHandle);
 #endif
+#endif
+
+#if PLATFORM(GTK)
+    Optional<bool> useSystemAppearanceForScrollbars;
+    decoder >> useSystemAppearanceForScrollbars;
+    if (!useSystemAppearanceForScrollbars)
+        return false;
+    parameters.useSystemAppearanceForScrollbars = WTFMove(*useSystemAppearanceForScrollbars);
 #endif
 
     return true;

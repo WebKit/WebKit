@@ -1,3 +1,38 @@
+2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bring back support for rendering scrollbars using the system appearance
+        https://bugs.webkit.org/show_bug.cgi?id=209805
+
+        Reviewed by Michael Catanzaro.
+
+        Add WebKitWebContext:use-system-appearance-for-scrollbars property. It's enabled by default to keep backwards
+        compatibility.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Encode useSystemAppearanceForScrollbars.
+        (WebKit::WebProcessCreationParameters::decode): Decode useSystemAppearanceForScrollbars.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy): Copy m_useSystemAppearanceForScrollbars;
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        (webkit_web_context_set_use_system_appearance_for_scrollbars):
+        (webkit_web_context_get_use_system_appearance_for_scrollbars):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Initialize useSystemAppearanceForScrollbars parameter.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Call setUseSystemAppearanceForScrollbars to set
+        useSystemAppearanceForScrollbars parameter.
+        (WebKit::WebProcess::setUseSystemAppearanceForScrollbars): Call ScrollbarThemeGtk::setUseSystemAppearance().
+
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
         WebSocketChannel should remove itself from its manager map

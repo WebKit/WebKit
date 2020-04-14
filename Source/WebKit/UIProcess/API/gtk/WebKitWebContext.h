@@ -324,6 +324,13 @@ WEBKIT_API void
 webkit_web_context_send_message_to_all_extensions   (WebKitWebContext              *context,
                                                      WebKitUserMessage             *message);
 
+WEBKIT_API void
+webkit_web_context_set_use_system_appearance_for_scrollbars (WebKitWebContext      *context,
+                                                             gboolean               enabled);
+
+WEBKIT_API gboolean
+webkit_web_context_get_use_system_appearance_for_scrollbars (WebKitWebContext      *context);
+
 G_END_DECLS
 
 #endif

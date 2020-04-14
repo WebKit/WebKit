@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-class ScrollbarThemeAdwaita final : public ScrollbarThemeComposite {
+class ScrollbarThemeAdwaita : public ScrollbarThemeComposite {
 public:
     ScrollbarThemeAdwaita() = default;
     virtual ~ScrollbarThemeAdwaita() = default;
 
-private:
+protected:
     bool usesOverlayScrollbars() const override;
     bool invalidateOnMouseEnterExit() override { return usesOverlayScrollbars(); }
 

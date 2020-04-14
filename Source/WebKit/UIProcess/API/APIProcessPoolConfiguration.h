@@ -131,6 +131,11 @@ public:
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
 
+#if PLATFORM(GTK) && !USE(GTK4)
+    bool useSystemAppearanceForScrollbars() const { return m_useSystemAppearanceForScrollbars; }
+    void setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars) { m_useSystemAppearanceForScrollbars = useSystemAppearanceForScrollbars; }
+#endif
+
 private:
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_customClassesForParameterCoder;
@@ -157,6 +162,9 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
+#if PLATFORM(GTK) && !USE(GTK4)
+    bool m_useSystemAppearanceForScrollbars { false };
+#endif
 };
 
 } // namespace API

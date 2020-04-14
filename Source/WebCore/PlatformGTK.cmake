@@ -50,6 +50,8 @@ if (USE_WPE_RENDERER)
 endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/adwaita/ScrollbarThemeAdwaita.h
+
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
     platform/graphics/x11/XUniquePtr.h
@@ -59,6 +61,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gtk/GUniquePtrGtk.h
     platform/gtk/GtkUtilities.h
     platform/gtk/PasteboardHelper.h
+    platform/gtk/ScrollbarThemeGtk.h
     platform/gtk/SelectionData.h
 
     platform/text/enchant/TextCheckerEnchant.h

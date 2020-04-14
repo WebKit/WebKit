@@ -173,4 +173,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     UnblockPreferenceService(WebKit::SandboxExtension::Handle handle)
 #endif
 #endif
+
+#if PLATFORM(GTK) && !USE(GTK4)
+    SetUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
+#endif
 }

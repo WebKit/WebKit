@@ -1,3 +1,72 @@
+2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bring back support for rendering scrollbars using the system appearance
+        https://bugs.webkit.org/show_bug.cgi?id=209805
+
+        Reviewed by Michael Catanzaro.
+
+        Bring back ScrollbarThemeGtk, RenderThemeGadget and RenderThemeWidget (renamed as RenderThemeScrollbar),
+        including only the code needed to render the scrollbars. ScrollbarThemeGtk inherits from ScrollbarThemeAdwaita
+        that is used when system appearance is disabled.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        * platform/adwaita/ScrollbarThemeAdwaita.h:
+        * platform/gtk/RenderThemeGadget.cpp: Added.
+        (WebCore::RenderThemeGadget::create):
+        (WebCore::createStyleContext):
+        (WebCore::appendElementToPath):
+        (WebCore::RenderThemeGadget::RenderThemeGadget):
+        (WebCore::RenderThemeGadget::marginBox const):
+        (WebCore::RenderThemeGadget::borderBox const):
+        (WebCore::RenderThemeGadget::paddingBox const):
+        (WebCore::RenderThemeGadget::contentsBox const):
+        (WebCore::RenderThemeGadget::color const):
+        (WebCore::RenderThemeGadget::backgroundColor const):
+        (WebCore::RenderThemeGadget::opacity const):
+        (WebCore::RenderThemeGadget::state const):
+        (WebCore::RenderThemeGadget::setState):
+        (WebCore::RenderThemeGadget::minimumSize const):
+        (WebCore::RenderThemeGadget::preferredSize const):
+        (WebCore::RenderThemeGadget::render):
+        (WebCore::RenderThemeBoxGadget::RenderThemeBoxGadget):
+        (WebCore::RenderThemeBoxGadget::preferredSize const):
+        (WebCore::RenderThemeScrollbarGadget::RenderThemeScrollbarGadget):
+        (WebCore::RenderThemeScrollbarGadget::renderStepper):
+        * platform/gtk/RenderThemeGadget.h: Added.
+        (WebCore::RenderThemeGadget::context const):
+        * platform/gtk/RenderThemeScrollbar.cpp: Added.
+        (WebCore::widgetMap):
+        (WebCore::RenderThemeScrollbar::getOrCreate):
+        (WebCore::RenderThemeScrollbar::clearCache):
+        (WebCore::RenderThemeScrollbar::RenderThemeScrollbar):
+        (WebCore::RenderThemeScrollbar::stepper):
+        * platform/gtk/RenderThemeScrollbar.h: Added.
+        (WebCore::RenderThemeScrollbar::scrollbar const):
+        (WebCore::RenderThemeScrollbar::contents const):
+        (WebCore::RenderThemeScrollbar::slider const):
+        (WebCore::RenderThemeScrollbar::trough const):
+        * platform/gtk/ScrollbarThemeGtk.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::themeChangedCallback):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        (WebCore::ScrollbarThemeGtk::setUseSystemAppearance):
+        (WebCore::ScrollbarThemeGtk::themeChanged):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::hasButtons):
+        (WebCore::scrollbarPartStateFlags):
+        (WebCore::widgetTypeForScrollbar):
+        (WebCore::contentsRectangle):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::backButtonRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::paint):
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        (WebCore::ScrollbarThemeGtk::minimumThumbLength):
+        * platform/gtk/ScrollbarThemeGtk.h: Added.
+
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
         Add a timer to AVVideoCaptureSource to verify reception of frames

@@ -115,6 +115,9 @@ platform/gtk/PlatformMouseEventGtk.cpp
 platform/gtk/PlatformPasteboardGtk.cpp
 platform/gtk/PlatformScreenGtk.cpp
 platform/gtk/PlatformWheelEventGtk.cpp
+platform/gtk/RenderThemeGadget.cpp
+platform/gtk/RenderThemeScrollbar.cpp
+platform/gtk/ScrollbarThemeGtk.cpp
 platform/gtk/SelectionData.cpp
 platform/gtk/ThemeGtk.cpp
 platform/gtk/WidgetGtk.cpp

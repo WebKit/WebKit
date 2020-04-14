@@ -503,6 +503,10 @@ private:
     void sendMessageToWebExtension(UserMessage&&);
 #endif
 
+#if PLATFORM(GTK) && !USE(GTK4)
+    void setUseSystemAppearanceForScrollbars(bool);
+#endif
+
     bool isAlwaysOnLoggingAllowed() { return m_sessionID ? m_sessionID->isAlwaysOnLoggingAllowed() : true; }
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
