@@ -659,12 +659,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     _shouldConsiderObjectLossless(object)
     {
-        if (object.type === "string") {
-            const description = object.description;
-            const maxLength = WI.FormattedValue.MAX_PREVIEW_STRING_LENGTH;
-            const longOrMultiLineString = description.length > maxLength || description.slice(0, maxLength).includes("\n");
-            return !longOrMultiLineString;
-        }
+        if (object.type === "string")
+            return WI.FormattedValue.isSimpleString(object.description);
 
         return object.type !== "object" || object.subtype === "null" || object.subtype === "regexp";
     }

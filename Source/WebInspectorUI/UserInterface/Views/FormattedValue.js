@@ -25,16 +25,26 @@
 
 WI.FormattedValue = {};
 
+WI.FormattedValue.MaxPreviewStringLength = 140;
+
+WI.FormattedValue.isSimpleString = function(string)
+{
+    return string.length <= WI.FormattedValue.MaxPreviewStringLength
+        && !string.slice(0, WI.FormattedValue.MaxPreviewStringLength).includes("\n");
+};
+
 WI.FormattedValue.hasSimpleDisplay = function(object)
 {
     switch (object.type) {
     case "boolean":
     case "number":
-    case "string":
     case "symbol":
     case "bigint":
     case "undefined":
         return true;
+
+    case "string":
+        return WI.FormattedValue.isSimpleString(object.description);
 
     case "function":
         return false;
@@ -229,7 +239,7 @@ WI.FormattedValue.createElementForTypesAndValue = function(type, subtype, displa
 
     // String: quoted and replace newlines as nice unicode symbols.
     if (type === "string") {
-        displayString = displayString.truncate(WI.FormattedValue.MAX_PREVIEW_STRING_LENGTH);
+        displayString = displayString.truncate(WI.FormattedValue.MaxPreviewStringLength);
         span.textContent = doubleQuotedString(displayString.replace(/\n/g, "\u21B5"));
         return span;
     }
@@ -312,5 +322,3 @@ WI.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = function(obj
 
     return WI.FormattedValue.createElementForRemoteObject(object);
 };
-
-WI.FormattedValue.MAX_PREVIEW_STRING_LENGTH = 140;
