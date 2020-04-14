@@ -70,20 +70,27 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
 
 void LibWebRTCSocketClient::sendTo(const WebCore::SharedBuffer& buffer, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
 {
-    m_socket->SendTo(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size(), socketAddress, options);
+    auto result = m_socket->SendTo(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size(), socketAddress, options);
+    UNUSED_PARAM(result);
+    RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::sendTo failed with error %d", m_socket->GetError());
 }
 
 void LibWebRTCSocketClient::close()
 {
     ASSERT(m_socket);
-    m_socket->Close();
+    auto result = m_socket->Close();
+    UNUSED_PARAM(result);
+    RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::close failed with error %d", m_socket->GetError());
+
     m_rtcProvider.takeSocket(m_identifier);
 }
 
 void LibWebRTCSocketClient::setOption(int option, int value)
 {
     ASSERT(m_socket);
-    m_socket->SetOption(static_cast<rtc::Socket::Option>(option), value);
+    auto result = m_socket->SetOption(static_cast<rtc::Socket::Option>(option), value);
+    UNUSED_PARAM(result);
+    RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::setOption(%d, %d) failed with error %d", option, value, m_socket->GetError());
 }
 
 void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
