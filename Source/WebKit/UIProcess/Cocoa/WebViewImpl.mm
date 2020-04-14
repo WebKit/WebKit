@@ -3815,7 +3815,7 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     // This is the process-swap case. We add the new layer behind the existing root layer and mark it as hidden.
     // This way, the new layer gets accelerated compositing but won't be visible until
     // setAcceleratedCompositingRootLayerAfterFlush() is called, in order to prevent flashing.
-    if (m_rootLayer && rootLayer) {
+    if (m_rootLayer && rootLayer && m_rootLayer != rootLayer) {
         if (m_thumbnailView)
             return;
 
