@@ -1,3 +1,18 @@
+2020-04-14  Megan Gardner  <megan_gardner@apple.com>
+
+        YouTube sometimes navigates unexpectedly when invoking a context menu on a video link. 
+        https://bugs.webkit.org/show_bug.cgi?id=210467
+        <rdar://problem/58841584>
+
+        Reviewed by Tim Horton.
+
+        Cancel any outstanding touches tracked by WebTouchEventsGestureRecognizer, so that we dispatch
+        `touchcancel` to the page instead of `touchend`, so that the page does not misinterpret
+        context menu invocation as a tap.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
         Do not process RTC Network messages coming from NetworkProcess if LibWebRTCNetwork is not active

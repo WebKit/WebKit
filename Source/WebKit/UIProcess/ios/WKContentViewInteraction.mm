@@ -9095,6 +9095,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
     [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    [self _cancelTouchEventGestureRecognizer];
     return [self _createTargetedContextMenuHintPreviewIfPossible];
 }
 
