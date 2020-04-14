@@ -1,3 +1,19 @@
+2020-04-14  James Craig  <jcraig@apple.com>
+
+        AX: Smart Invert doesn't handle the picture elements on foxnews.com
+        <https://webkit.org/b/210472>
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibilty/smart-invert.html
+               accessibilty/smart-invert-reference.html
+
+        Filled out more variants in the test cases, and removed the unnecessary :not() selector.
+
+        * css/html.css:  
+        (@media (inverted-colors) img, picture, video):
+        (@media (inverted-colors) img:not(picture>img), picture, video): Deleted.
+
 2020-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Wikipedia articles lay out incorrectly in 1/3 multitasking window

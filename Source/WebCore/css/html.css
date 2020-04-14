@@ -1302,5 +1302,5 @@ attachment {
 
 /* Default support for "Smart Invert" where all content color except media is inverted. */ 
 @media (inverted-colors) {
-    img:not(picture>img), picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+    img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
 }

@@ -1,3 +1,17 @@
+2020-04-14  James Craig  <jcraig@apple.com>
+
+        AX: Smart Invert doesn't handle the picture elements on foxnews.com
+        <https://webkit.org/b/210472>
+
+        Reviewed by Chris Fleizach.
+
+        Filled out more variants in the test cases, and removed the unnecessary :not() selector.
+
+        * accessibility/smart-invert-expected.txt:
+        * accessibility/smart-invert-reference-expected.html:
+        * accessibility/smart-invert-reference.html:
+        * accessibility/smart-invert.html:
+
 2020-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Scroll snap in subframes is often broken

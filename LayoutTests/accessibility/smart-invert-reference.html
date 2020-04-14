@@ -2,6 +2,7 @@
 <head>
 <title>Smart Invert Images and Video Ref Test</title>
 <style type="text/css">
+    picture, img, video { width: 150px; }
     /* Testing explicit author overrides. */
     .no-invert { filter: none; }
     .preserve-filter { filter: grayscale(1); }
@@ -38,20 +39,32 @@ window.addEventListener("load", runTest, false);
 </head>
 <body>
 
-  <img id="a" src="../compositing/resources/simple_image.png" alt="">
-  <picture id="b"><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
-  <video id="c" poster="../compositing/resources/simple_image.png"></video>
-  <video id="d" poster="../compositing/resources/simple_image.png" controls></video>
+  <img id="a" src="../compositing/resources/simple_image_opaque.png" alt="">
+  <picture id="b"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+  <picture id="c">
+    <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+    <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+  </picture>
+  <video id="d" poster="../compositing/resources/simple_image_opaque.png"></video>
+  <video id="e" poster="../compositing/resources/simple_image_opaque.png" controls></video>
   <br>
-  <img class="no-invert" src="../compositing/resources/simple_image.png">
-  <picture class="no-invert"><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
-  <video class="no-invert" poster="../compositing/resources/simple_image.png"></video>
-  <video class="no-invert" poster="../compositing/resources/simple_image.png" controls></video>
+  <img class="no-invert" src="../compositing/resources/simple_image_opaque.png">
+  <picture class="no-invert"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+  <picture class="no-invert">
+    <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+    <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+  </picture>
+  <video class="no-invert" poster="../compositing/resources/simple_image_opaque.png"></video>
+  <video class="no-invert" poster="../compositing/resources/simple_image_opaque.png" controls></video>
   <br>
-  <img class="preserve-filter" src="../compositing/resources/simple_image.png" alt="">
-  <picture class="preserve-filter"><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
-  <video class="preserve-filter" poster="../compositing/resources/simple_image.png"></video>
-  <video class="preserve-filter" poster="../compositing/resources/simple_image.png" controls></video>
+  <img class="preserve-filter" src="../compositing/resources/simple_image_opaque.png" alt="">
+  <picture class="preserve-filter"><img class="fallback" src="../compositing/resources/simple_image_opaque.png" alt=""></picture>
+  <picture class="preserve-filter">
+    <source media="screen" srcset="../compositing/resources/simple_image_opaque.png 150w">
+    <img class="fallback" src="../compositing/resources/simple_image.png" alt="">
+  </picture>
+  <video class="preserve-filter" poster="../compositing/resources/simple_image_opaque.png"></video>
+  <video class="preserve-filter" poster="../compositing/resources/simple_image_opaque.png" controls></video>
   
   <div id="result"></div>
 </body>
