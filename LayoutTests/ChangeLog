@@ -1,3 +1,115 @@
+2020-04-14  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [Gtk] Update pixel tests baseline for all tests containing or referencing SVGs (except WPT)
+        https://bugs.webkit.org/show_bug.cgi?id=210282
+
+        Rubber-stamped by Žan Doberšek.
+
+        This extends the work from webkit.org/b/209136 to have a pixel test baseline
+        for all layout tests, even outside the svg/ directory, that contain or
+        reference SVGs.
+
+        This is mainly useful for developing webkit.org/b/90738, to ease
+        comparison of the SVG PoC branch with vanilla WebKit. In future we
+        should rather convert more and more tests to reftests instead of
+        relying on pixel tests - which SVG does for many features right now.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/blending/background-blend-mode-image-svg-expected.png: Added.
+        * platform/gtk/css3/blending/background-blend-mode-svg-color-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-color-burn-expected.png: Copied from LayoutTests/platform/gtk/svg/filters/filter-hidden-content-expected.png.
+        * platform/gtk/css3/blending/svg-blend-color-burn-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-color-dodge-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-color-dodge-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-darken-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-darken-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-difference-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-difference-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-exclusion-expected.png: Copied from LayoutTests/platform/gtk/svg/filters/filter-hidden-content-expected.png.
+        * platform/gtk/css3/blending/svg-blend-exclusion-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-hard-light-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-lighten-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-lighten-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-multiply-alpha-expected.png:
+        * platform/gtk/css3/blending/svg-blend-multiply-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-multiply-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-overlay-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-overlay-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-screen-expected.png: Copied from LayoutTests/platform/gtk/svg/filters/filter-hidden-content-expected.png.
+        * platform/gtk/css3/blending/svg-blend-screen-expected.txt: Added.
+        * platform/gtk/css3/blending/svg-blend-soft-light-expected.png: Added.
+        * platform/gtk/css3/blending/svg-blend-soft-light-expected.txt: Added.
+        * platform/gtk/css3/filters/effect-reference-composite-expected.png:
+        * platform/gtk/css3/filters/effect-reference-composite-hw-expected.png:
+        * platform/gtk/css3/filters/effect-reference-external-expected.png: Added.
+        * platform/gtk/css3/filters/effect-reference-hw-expected.png:
+        * platform/gtk/css3/filters/effect-reference-ordering-expected.png:
+        * platform/gtk/css3/filters/effect-reference-ordering-hw-expected.png:
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-20-expected.png: Copied from LayoutTests/platform/gtk/svg/filters/filter-hidden-content-expected.png.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-20-expected.txt: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-50-expected.png: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-50-expected.txt: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-70-expected.png: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-70-expected.txt: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-expected.png: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/left-half-rectangle-expected.txt: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/right-half-rectangle-70-expected.png: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/right-half-rectangle-70-expected.txt: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/right-half-rectangle-expected.png: Added.
+        * platform/gtk/css3/shapes/shape-outside/shape-image/support/right-half-rectangle-expected.txt: Added.
+        * platform/gtk/css3/shapes/spec-examples/support/rounded-triangle-expected.png: Added.
+        * platform/gtk/css3/shapes/spec-examples/support/rounded-triangle-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/animated-svg-as-mask-expected.png:
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-expected.txt: Added.
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/gtk/fast/harness/render-tree-as-text-options-expected.png: Added.
+        * platform/gtk/imported/w3c/canvas/2d.fillStyle.parse.svg-1-expected.png: Added.
+        * platform/gtk/imported/w3c/canvas/2d.fillStyle.parse.svg-2-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png:
+        * platform/gtk/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/gtk/svg/as-background-image/svg-as-background-4-expected.txt: Added.
+        * platform/gtk/svg/custom/circular-marker-reference-2-expected.png:
+        * platform/gtk/svg/custom/circular-marker-reference-2-expected.txt: Added.
+        * platform/gtk/svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * platform/gtk/svg/custom/non-circular-marker-reference-expected.png:
+        * platform/gtk/svg/custom/non-circular-marker-reference-expected.txt: Added.
+        * platform/gtk/svg/custom/text-clip-expected.png:
+        * platform/gtk/svg/filters/filter-hidden-content-expected.png:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png:
+        * platform/gtk/svg/text/select-x-list-4-expected.png:
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.png:
+        * platform/gtk/svg/text/selection-tripleclick-expected.png:
+        * platform/gtk/svg/text/text-align-01-b-expected.png:
+        * platform/gtk/svg/text/text-align-02-b-expected.png:
+        * platform/gtk/svg/text/text-align-03-b-expected.png:
+        * platform/gtk/svg/text/text-align-04-b-expected.png:
+        * platform/gtk/svg/text/text-align-05-b-expected.png:
+        * platform/gtk/svg/text/text-align-06-b-expected.png:
+        * platform/gtk/svg/text/text-deco-01-b-expected.png:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.png:
+        * platform/gtk/svg/text/text-fonts-02-t-expected.png:
+        * platform/gtk/svg/text/text-intro-05-t-expected.png:
+        * platform/gtk/svg/text/text-path-01-b-expected.png:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-01-b-expected.png:
+        * platform/gtk/svg/text/text-text-03-b-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-07-t-expected.png:
+        * platform/gtk/svg/text/text-text-08-b-expected.png:
+        * platform/gtk/svg/text/text-tref-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-01-b-expected.png:
+        * platform/gtk/svg/text/text-tselect-02-f-expected.png:
+        * platform/gtk/svg/text/text-tspan-01-b-expected.png:
+        * platform/gtk/svg/text/text-ws-01-t-expected.png:
+        * platform/gtk/svg/text/text-ws-02-t-expected.png:
+
 2020-04-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260024.
