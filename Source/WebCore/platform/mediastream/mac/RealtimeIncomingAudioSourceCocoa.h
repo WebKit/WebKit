@@ -29,6 +29,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "CAAudioStreamDescription.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -36,8 +37,6 @@
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
-
-class WebAudioSourceProviderAVFObjC;
 
 class RealtimeIncomingAudioSourceCocoa final : public RealtimeIncomingAudioSource {
 public:

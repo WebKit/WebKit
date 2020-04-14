@@ -183,7 +183,7 @@ platform/audio/mac/AudioBusMac.mm
 platform/audio/mac/AudioDestinationMac.cpp
 platform/audio/mac/AudioFileReaderMac.cpp
 platform/audio/mac/AudioHardwareListenerMac.cpp
-platform/audio/mac/AudioSessionMac.cpp
+platform/audio/mac/AudioSessionMac.mm
 platform/audio/mac/CARingBuffer.cpp
 platform/audio/mac/FFTFrameMac.cpp
 

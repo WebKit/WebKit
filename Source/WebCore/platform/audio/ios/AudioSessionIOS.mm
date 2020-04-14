@@ -96,25 +96,6 @@
 
 namespace WebCore {
 
-#if !LOG_DISABLED
-static const char* categoryName(AudioSession::CategoryType category)
-{
-#define CASE(category) case AudioSession::category: return #category
-    switch (category) {
-        CASE(None);
-        CASE(AmbientSound);
-        CASE(SoloAmbientSound);
-        CASE(MediaPlayback);
-        CASE(RecordAudio);
-        CASE(PlayAndRecord);
-        CASE(AudioProcessing);
-    }
-    
-    ASSERT_NOT_REACHED();
-    return "";
-}
-#endif
-
 class AudioSessionPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -155,7 +136,7 @@ void AudioSession::setCategory(CategoryType newCategory, RouteSharingPolicy poli
         policy = RouteSharingPolicy::LongFormAudio;
 #endif
 
-    LOG(Media, "AudioSession::setCategory() - category = %s", categoryName(newCategory));
+    LOG(Media, "AudioSession::setCategory() - category = %s", convertEnumerationToString(newCategory).ascii().data());
 
     if (categoryOverride() && categoryOverride() != newCategory) {
         LOG(Media, "AudioSession::setCategory() - override set, NOT changing");

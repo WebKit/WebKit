@@ -124,7 +124,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 

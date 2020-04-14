@@ -1,3 +1,15 @@
+2020-04-14  Peng Liu  <peng.liu6@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+
+        Reviewed by Eric Carlson.
+
+        Add softlink for AVAudioRoutingArbiter.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2020-04-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove unused UTType swizzler code

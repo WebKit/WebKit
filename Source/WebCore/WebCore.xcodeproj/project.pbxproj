@@ -13946,7 +13946,7 @@
 		CD5393D2175E018600C07123 /* JSMemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMemoryInfo.h; sourceTree = "<group>"; };
 		CD54A760180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateMediaSourceAVFObjC.cpp; sourceTree = "<group>"; };
 		CD54A761180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateMediaSourceAVFObjC.h; sourceTree = "<group>"; };
-		CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionMac.cpp; sourceTree = "<group>"; };
+		CD54DE4917469C6D005E5B36 /* AudioSessionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionMac.mm; sourceTree = "<group>"; };
 		CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFileReaderIOS.cpp; sourceTree = "<group>"; };
 		CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderIOS.h; sourceTree = "<group>"; };
 		CD58949321874064004F424A /* ImageBufferUtilitiesCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferUtilitiesCG.cpp; sourceTree = "<group>"; };
@@ -29164,7 +29164,7 @@
 				073B87631E43859D0071C0EC /* AudioSampleBufferList.h */,
 				073B87651E43859D0071C0EC /* AudioSampleDataSource.h */,
 				073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */,
-				CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */,
+				CD54DE4917469C6D005E5B36 /* AudioSessionMac.mm */,
 				073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */,
 				073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */,
 				CDC734121977896C0046BFC5 /* CARingBuffer.cpp */,

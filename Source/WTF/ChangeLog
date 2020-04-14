@@ -1,3 +1,14 @@
+2020-04-14  Peng Liu  <peng.liu6@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+
+        Reviewed by Eric Carlson.
+
+        Add macro HAVE_AVAUDIO_ROUTING_ARBITER.
+
+        * wtf/PlatformHave.h:
+
 2020-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260052.

@@ -1707,6 +1707,8 @@
 		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD2865EE2255562000606AC7 /* ProcessTaskStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */; };
 		CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */; };
+		CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */; };
+		CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */; };
 		CD46618324010A670047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD466181240105640047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp */; };
 		CD491B081E70D05F00009066 /* UserMediaCaptureManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */; };
 		CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD491B0B1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp */; };
@@ -1721,6 +1723,7 @@
 		CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1131DB7D7ED0014A2DE /* FullscreenClient.h */; };
 		CD78E1171DB7DC0A0014A2DE /* APIFullscreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */; };
 		CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD7CF3612444CCA6003BC4D5 /* AudioSessionRoutingArbitratorProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD4570DE2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxyCocoa.mm */; };
 		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
 		CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */; };
 		CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */; };
@@ -5032,6 +5035,15 @@
 		CD19D2E92046406F0017074A /* FullscreenTouchSecheuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FullscreenTouchSecheuristic.cpp; path = ios/fullscreen/FullscreenTouchSecheuristic.cpp; sourceTree = "<group>"; };
 		CD2865EC2255562000606AC7 /* ProcessTaskStateObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessTaskStateObserver.h; sourceTree = "<group>"; };
 		CD2865ED2255562000606AC7 /* ProcessTaskStateObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessTaskStateObserver.mm; sourceTree = "<group>"; };
+		CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionRoutingArbitrator.h; sourceTree = "<group>"; };
+		CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionRoutingArbitrator.cpp; sourceTree = "<group>"; };
+		CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionRoutingArbitratorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD4570D12441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionRoutingArbitratorProxyMessages.h; sourceTree = "<group>"; };
+		CD4570D22441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionRoutingArbitratorProxyMessagesReplies.h; sourceTree = "<group>"; };
+		CD4570DB2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionRoutingArbitratorProxy.h; sourceTree = "<group>"; };
+		CD4570DC2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioSessionRoutingArbitratorProxy.messages.in; sourceTree = "<group>"; };
+		CD4570DD2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionRoutingArbitratorProxy.cpp; sourceTree = "<group>"; };
+		CD4570DE2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionRoutingArbitratorProxyCocoa.mm; sourceTree = "<group>"; };
 		CD46617F240104580047CA35 /* RemoteCDMInstanceSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCDMInstanceSession.messages.in; sourceTree = "<group>"; };
 		CD466180240105640047CA35 /* RemoteCDMInstanceSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCDMInstanceSessionMessagesReplies.h; sourceTree = "<group>"; };
 		CD466181240105640047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMInstanceSessionMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -8309,6 +8321,8 @@
 		7C6E70F818B2D47E00F24E2E /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
+				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
@@ -8841,6 +8855,7 @@
 				2DA944A81884E9AB00ED86DB /* ios */,
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
+				CD4570D82444CA1700A3DCEB /* Media */,
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
@@ -9896,6 +9911,9 @@
 			isa = PBXGroup;
 			children = (
 				2D7DEBE221269E4B00B9F73C /* unified-sources */,
+				CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */,
+				CD4570D12441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessages.h */,
+				CD4570D22441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessagesReplies.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				9955A6F01C79866400EB6A93 /* AutomationBackendDispatchers.cpp */,
@@ -10210,6 +10228,25 @@
 				2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */,
 			);
 			name = forms;
+			sourceTree = "<group>";
+		};
+		CD4570D82444CA1700A3DCEB /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				CD4570D92444CA5800A3DCEB /* cocoa */,
+				CD4570DD2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.cpp */,
+				CD4570DB2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.h */,
+				CD4570DC2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxy.messages.in */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
+		CD4570D92444CA5800A3DCEB /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				CD4570DE2444CA5800A3DCEB /* AudioSessionRoutingArbitratorProxyCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		CD6178111E6DE98000FDA57D /* cocoa */ = {
@@ -12579,6 +12616,9 @@
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
+				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
+				CD7CF3612444CCA6003BC4D5 /* AudioSessionRoutingArbitratorProxyCocoa.mm in Sources */,
+				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,

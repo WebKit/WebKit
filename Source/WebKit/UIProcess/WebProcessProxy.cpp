@@ -87,6 +87,10 @@
 #include "SecItemShimProxy.h"
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION)
+#include "AudioSessionRoutingArbitratorProxy.h"
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 
@@ -187,6 +191,9 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
+#if ENABLE(ROUTING_ARBITRATION)
+    , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
+#endif
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)

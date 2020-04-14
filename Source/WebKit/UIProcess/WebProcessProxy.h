@@ -77,6 +77,7 @@ enum class ThirdPartyCookieBlockingMode : uint8_t;
 
 namespace WebKit {
 
+class AudioSessionRoutingArbitratorProxy;
 class NetworkProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
@@ -535,6 +536,10 @@ private:
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
+
+#if ENABLE(ROUTING_ARBITRATION)
+    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
+#endif
 
 #if PLATFORM(COCOA)
     bool m_hasSentMessageToUnblockAccessibilityServer { false };

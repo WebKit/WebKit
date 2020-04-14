@@ -93,6 +93,7 @@ $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in

@@ -521,7 +521,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     // FIXME: Remove disabling of the audio session category managemeent once we move all media playing to GPUProcess.
     if (m_shouldCaptureInGPUProcess)
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);

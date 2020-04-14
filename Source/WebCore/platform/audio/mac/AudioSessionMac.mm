@@ -23,17 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AudioSession.h"
+#import "config.h"
+#import "AudioSession.h"
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
-#include "FloatConversion.h"
-#include "Logging.h"
-#include "NotImplemented.h"
-#include <CoreAudio/AudioHardware.h>
-#include <wtf/MainThread.h>
-#include <wtf/text/WTFString.h>
+#import "FloatConversion.h"
+#import "Logging.h"
+#import "NotImplemented.h"
+#import <CoreAudio/AudioHardware.h>
+#import <wtf/MainThread.h>
+#import <wtf/text/WTFString.h>
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
@@ -59,6 +61,10 @@ public:
         : lastMutedState(mutedState) { }
     bool lastMutedState;
     AudioSession::CategoryType category { AudioSession::None };
+#if ENABLE(ROUTING_ARBITRATION)
+    bool setupArbitrationOngoing { false };
+#endif
+    AudioSession::CategoryType m_categoryOverride;
 };
 
 AudioSession::AudioSession()
@@ -75,18 +81,61 @@ AudioSession::CategoryType AudioSession::category() const
 
 void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
 {
+#if ENABLE(ROUTING_ARBITRATION)
+    if (category == AmbientSound || category == SoloAmbientSound || category == AudioProcessing) {
+        m_private->category = category;
+        return;
+    }
+
+    if (category == m_private->category)
+        return;
+
+    if (m_private->setupArbitrationOngoing) {
+        RELEASE_LOG_ERROR(Media, "AudioSession::setCategory() - a beginArbitrationWithCategory is still ongoing");
+        return;
+    }
+
+    if (!m_routingArbitrationClient)
+        return;
+
+    if (m_private->category != None)
+        m_routingArbitrationClient->leaveRoutingAbritration();
+
     m_private->category = category;
+    if (m_private->category == None)
+        return;
+
+    using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;
+    using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
+
+    m_routingArbitrationClient->beginRoutingArbitrationWithCategory(m_private->category, [this] (RoutingArbitrationError error, DefaultRouteChanged defaultRouteChanged) {
+        m_private->setupArbitrationOngoing = false;
+        if (error != RoutingArbitrationError::None) {
+            RELEASE_LOG_ERROR(Media, "AudioSession::setCategory() - beginArbitrationWithCategory:%s failed with error %s", convertEnumerationToString(m_private->category).ascii().data(), convertEnumerationToString(error).ascii().data());
+            return;
+        }
+
+        // FIXME: Do we need to reset sample rate and buffer size for the new default device?
+        if (defaultRouteChanged == DefaultRouteChanged::Yes)
+            LOG(Media, "AudioSession::setCategory() - defaultRouteChanged!");
+    });
+#else
+    m_private->category = category;
+#endif
 }
 
 AudioSession::CategoryType AudioSession::categoryOverride() const
 {
-    notImplemented();
-    return None;
+    return m_private->m_categoryOverride;
 }
 
-void AudioSession::setCategoryOverride(CategoryType)
+void AudioSession::setCategoryOverride(CategoryType category)
 {
-    notImplemented();
+    if (m_private->m_categoryOverride == category)
+        return;
+
+    m_private->m_categoryOverride = category;
+    setCategory(category, RouteSharingPolicy::Default);
 }
 
 float AudioSession::sampleRate() const

@@ -184,6 +184,10 @@
 #include "RemoteMediaSessionHelper.h"
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION)
+#include "AudioSessionRoutingArbitrator.h"
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -257,6 +261,10 @@ WebProcess::WebProcess()
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     addSupplement<RemoteLegacyCDMFactory>();
+#endif
+
+#if ENABLE(ROUTING_ARBITRATION)
+    addSupplement<AudioSessionRoutingArbitrator>();
 #endif
 
     Gigacage::forbidDisablingPrimitiveGigacage();

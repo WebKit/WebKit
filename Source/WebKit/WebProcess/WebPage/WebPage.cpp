@@ -560,7 +560,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updatePreferences(parameters.store);
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     if (!m_page->settings().useGPUProcessForMedia())
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif

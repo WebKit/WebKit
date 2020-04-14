@@ -271,6 +271,7 @@ struct ElementContext;
 }
 
 namespace WebKit {
+class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
 class EditableImageController;
 class GamepadData;
@@ -2776,6 +2777,10 @@ private:
     NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
     bool m_ignoresAppBoundDomains { false };
     bool m_userScriptsNotified { false };
+
+#if ENABLE(ROUTING_ARBITRATION)
+    std::unique_ptr<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
+#endif
 };
 
 } // namespace WebKit

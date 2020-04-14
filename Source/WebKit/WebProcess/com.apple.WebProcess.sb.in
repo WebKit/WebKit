@@ -914,6 +914,7 @@
             "com.apple.cfprefsd.daemon"
             "com.apple.tccd"
             "com.apple.lsd.mapdb"
+            "com.apple.BluetoothServices"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.audio.AudioComponentRegistrar" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"

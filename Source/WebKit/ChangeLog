@@ -1,3 +1,58 @@
+2020-04-14  Jer Noble  <jer.noble@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+        <rdar://problem/59113994>
+
+        Reviewed by Eric Carlson.
+
+        Add a new cross-process object pair, AudioSessionRouterAbitrator/Proxy which passes routing
+        arbitration commands from WebContent -> UIProcess. Because the UIProcess can represent
+        multiple WebContent processes, it must track all outstanding arbitration requests globally.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * Sources.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp: Added.
+        (WebKit::AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy):
+        (WebKit::AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy):
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+        (WebKit::AudioSessionRoutingArbitratorProxy::leaveRoutingArbitration):
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h: Added.
+        (WebKit::AudioSessionRoutingArbitratorProxy::category const):
+        (WebKit::AudioSessionRoutingArbitratorProxy::destinationId):
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in: Added.
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm: Added.
+        (WebKit::SharedArbitrator::sharedInstance):
+        (WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator):
+        (WebKit::SharedArbitrator::leaveRoutingArbitrationForArbitrator):
+        (WebKit::AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy):
+        (WebKit::AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy):
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+        (WebKit::AudioSessionRoutingArbitratorProxy::leaveRoutingArbitration):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_processDisplayName):
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp: Added.
+        (WebKit::AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator):
+        (WebKit::AudioSessionRoutingArbitrator::supplementName):
+        (WebKit::AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory):
+        (WebKit::AudioSessionRoutingArbitrator::leaveRoutingAbritration):
+        * WebProcess/cocoa/AudioSessionRoutingArbitrator.h: Added.
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-14  David Kilzer  <ddkilzer@apple.com>
 
         createArchiveList() in WebCoreArgumentCodersMac.mm should do more validity checks

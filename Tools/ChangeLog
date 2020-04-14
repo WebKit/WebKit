@@ -1,3 +1,15 @@
+2020-04-14  Peng Liu  <peng.liu6@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+
+        Reviewed by Eric Carlson.
+
+        Add test for softlink of AVAudioRoutingArbiter.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Content filtering needs access to the frontboard service

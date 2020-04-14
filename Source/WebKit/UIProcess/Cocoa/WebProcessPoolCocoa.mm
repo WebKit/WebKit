@@ -256,7 +256,7 @@ static const Vector<String>& mediaRelatedMachServices()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.coremedia.endpointstream.xpc", "com.apple.coremedia.endpointplaybacksession.xpc",
         "com.apple.coremedia.endpointremotecontrolsession.xpc", "com.apple.coremedia.videodecoder",
-        "com.apple.coremedia.videoencoder"
+        "com.apple.coremedia.videoencoder", "com.apple.BluetoothServices"
 #endif
     });
     return services;

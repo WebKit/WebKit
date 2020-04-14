@@ -75,6 +75,10 @@ TEST(AVFoundationSoftLink, Classes)
     EXPECT_NE(PAL::getAVSpeechSynthesisVoiceClass(), nullptr);
 #endif
 
+#if HAVE(AVAUDIO_ROUTING_ARBITER)
+    EXPECT_NE(PAL::getAVAudioRoutingArbiterClass(), nullptr);
+#endif
+
 #if HAVE(MEDIA_PLAYER) && !PLATFORM(WATCHOS)
     EXPECT_NE(PAL::getAVRouteDetectorClass(), nullptr);
 #endif

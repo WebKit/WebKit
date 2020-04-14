@@ -28,6 +28,7 @@
 #if USE(AUDIO_SESSION)
 
 #include <memory>
+#include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
@@ -45,6 +46,8 @@ enum class RouteSharingPolicy : uint8_t {
     Independent,
     LongFormVideo
 };
+
+class AudioSessionRoutingArbitrationClient;
 
 class WEBCORE_EXPORT AudioSession {
     WTF_MAKE_FAST_ALLOCATED;
@@ -113,6 +116,8 @@ public:
 
     virtual bool isActive() const { return m_active; }
 
+    void setRoutingArbitrationClient(WeakPtr<AudioSessionRoutingArbitrationClient>&& client) { m_routingArbitrationClient = client; }
+
 protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
@@ -124,11 +129,28 @@ protected:
 #if PLATFORM(IOS_FAMILY)
     WeakHashSet<InterruptionObserver> m_interruptionObservers;
 #endif
+
+    WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
     bool m_active { false }; // Used only for testing.
 };
 
-String convertEnumerationToString(RouteSharingPolicy);
-String convertEnumerationToString(AudioSession::CategoryType);
+class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient {
+public:
+    virtual ~AudioSessionRoutingArbitrationClient() = default;
+
+    enum class RoutingArbitrationError : uint8_t { None, Failed, Cancelled };
+    enum class DefaultRouteChanged : bool { No, Yes };
+
+    virtual void beginRoutingArbitrationWithCategory(AudioSession::CategoryType, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&&) = 0;
+    virtual void leaveRoutingAbritration() = 0;
+
+    using WeakValueType = AudioSessionRoutingArbitrationClient;
+};
+
+WEBCORE_EXPORT String convertEnumerationToString(RouteSharingPolicy);
+WEBCORE_EXPORT String convertEnumerationToString(AudioSession::CategoryType);
+WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError);
+WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged);
 
 } // namespace WebCore
 
@@ -164,6 +186,23 @@ template <> struct EnumTraits<WebCore::AudioSession::MayResume> {
     >;
 };
 
+template <> struct EnumTraits<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError> {
+    using values = EnumValues <
+    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError,
+    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::None,
+    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Failed,
+    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Cancelled
+    >;
+};
+
+template <> struct EnumTraits<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged> {
+    using values = EnumValues <
+    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged,
+    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged::No,
+    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged::Yes
+    >;
+};
+
 template<typename Type>
 struct LogArgument;
 
@@ -180,6 +219,21 @@ struct LogArgument<WebCore::AudioSession::CategoryType> {
     static String toString(const WebCore::AudioSession::CategoryType category)
     {
         return convertEnumerationToString(category);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError> {
+    static String toString(const WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError error)
+    {
+        return convertEnumerationToString(error);
+    }
+};
+template <>
+struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged> {
+    static String toString(const WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged changed)
+    {
+        return convertEnumerationToString(changed);
     }
 };
 

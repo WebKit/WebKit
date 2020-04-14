@@ -1,3 +1,23 @@
+2020-04-14  Peng Liu  <peng.liu6@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+
+        Reviewed by Eric Carlson.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::categoryName): Deleted.
+        * platform/audio/mac/AudioSessionMac.mm: Renamed from Source/WebCore/platform/audio/mac/AudioSessionMac.cpp.
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::categoryOverride const):
+        (WebCore::AudioSession::setCategoryOverride):
+
+        Fix unified build failures.
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.h:
+
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
         ReadableStreamDefaultController::enqueue should check for worker terminated exception
