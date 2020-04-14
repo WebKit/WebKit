@@ -261,9 +261,9 @@ class PerfTest(object):
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
         # Speedometer 2.0
-        re.compile(r'CONSOLE MESSAGE: line \d+: DEBUG: -------------------------------'),
-        re.compile(r'CONSOLE MESSAGE: line \d+: DEBUG: Ember\s+: (\d\.)+'),
-        re.compile(r'CONSOLE MESSAGE: line \d+: DEBUG: jQuery\s+: (\d\.)+'),
+        re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: -------------------------------'),
+        re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: Ember\s+: (\d\.)+'),
+        re.compile(r'CONSOLE MESSAGE: (line \d+: )?DEBUG: jQuery\s+: (\d\.)+'),
     ]
 
     _errors_to_ignore_in_sierra = [
