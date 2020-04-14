@@ -607,7 +607,7 @@ public:
     bool putDirectAccessor(JSGlobalObject*, PropertyName, GetterSetter*, unsigned attributes);
     JS_EXPORT_PRIVATE bool putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
 
-    JS_EXPORT_PRIVATE bool putGetter(JSGlobalObject*, PropertyName, JSValue, unsigned attributes);
+    bool putGetter(JSGlobalObject*, PropertyName, JSValue, unsigned attributes);
     bool putSetter(JSGlobalObject*, PropertyName, JSValue, unsigned attributes);
 
     JS_EXPORT_PRIVATE bool hasProperty(JSGlobalObject*, PropertyName) const;

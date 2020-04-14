@@ -486,7 +486,6 @@ public:
 protected:
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
-        auto catchScope = DECLARE_CATCH_SCOPE(vm);
         Base::finishCreation(vm);
 
         addFunction(vm, "debug", functionDebug, 1);
@@ -597,10 +596,12 @@ protected:
         addFunction(vm, dollar, "evalScript", functionDollarEvalScript, 1);
         
         dollar->putDirect(vm, Identifier::fromString(vm, "global"), this);
-
-        JSFunction* IsHTMLDDAGetter = JSFunction::create(vm, this, 0, "IsHTMLDDA"_s, functionMakeMasquerader);
-        dollar->putGetter(this, Identifier::fromString(vm, "IsHTMLDDA"), IsHTMLDDAGetter, static_cast<unsigned>(PropertyAttribute::Accessor));
-        catchScope.releaseAssertNoException();
+        dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
+            CustomGetterSetter::create(vm, [](JSGlobalObject* globalObject, EncodedJSValue, PropertyName) {
+                return functionMakeMasquerader(globalObject, nullptr);
+            }, nullptr),
+            static_cast<unsigned>(PropertyAttribute::CustomValue)
+        );
 
         JSObject* agent = JSFinalObject::create(vm, plainObjectStructure);
         dollar->putDirect(vm, Identifier::fromString(vm, "agent"), agent);

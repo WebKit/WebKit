@@ -1,3 +1,19 @@
+2020-04-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r259587): bterlson/eshost throws during init in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=210470
+
+        Reviewed by Ross Kirsling.
+
+        This change makes $262.IsHTMLDDA of JSC shell a CustomValue, allowing it to be reassigned
+        and restoring compatibility with any version of https://github.com/bterlson/eshost.
+
+        Since putDirectCustomAccessor() is now used instead of putGetter(), scope exception assert
+        is no longer needed and can be safely removed, as well as JSObject::putGetter() export.
+
+        * jsc.cpp:
+        * runtime/JSObject.h:
+
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Replace use of Checked<size_t, RecordOverflow> with CheckedSize
