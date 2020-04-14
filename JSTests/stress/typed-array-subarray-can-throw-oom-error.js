@@ -5,6 +5,7 @@ function foo() {
   Object.freeze(arguments);
 }
 
+let counter = 0;
 function canThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -16,6 +17,11 @@ function canThrow(func, errorMessage) {
     }
     if (errorThrown && String(error) !== errorMessage)
         throw new Error(`bad error: ${String(error)}`);
+    if (errorThrown) {
+        if (counter++ > 20)
+            return true;
+    }
+    return false;
 }
 
 foo();
@@ -26,16 +32,18 @@ a0.length = 2**24
 Object.defineProperty(a0, 0, {get: bar});
 
 function bar() {
-  new ArrayBuffer(1000);
+  new ArrayBuffer(100000);
   new Int16Array(a0);
 }
 
-for (let i=0; i<10000; i++) {
+for (let i=0; i<100; i++) {
   new Promise(bar);
 }
 
-for (let i=0; i<100000; i++) {
-    canThrow(() => {
+for (let i=0; i<10000; i++) {
+    let result = canThrow(() => {
         new Uint32Array(1000).subarray();
     }, `Error: Out of memory`);
+    if (result)
+        break;
 }

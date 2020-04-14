@@ -1,3 +1,13 @@
+2020-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, reduce iteration count and introduce early return to make typed-array-subarray-can-throw-oom-error.js execution time short while throwing an error
+        https://bugs.webkit.org/show_bug.cgi?id=210507
+
+        * stress/typed-array-subarray-can-throw-oom-error.js:
+        (canThrow):
+        (bar):
+        (get bar):
+
 2020-04-13  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Allow for Unicode named capture group identifiers in non-Unicode regular expressions
