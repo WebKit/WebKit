@@ -40,6 +40,7 @@ static const unsigned scrollbarSize = 13;
 static const unsigned hoveredScrollbarBorderSize = 1;
 static const unsigned thumbBorderSize = 1;
 static const unsigned overlayThumbSize = 5;
+static const unsigned minimumThumbSize = 40;
 static const unsigned thumbSize = 6;
 static const double scrollbarOpacity = 0.8;
 static const Color scrollbarBackgroundColor = makeRGB(252, 252, 252);
@@ -67,7 +68,7 @@ int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarControlSize, ScrollbarExp
 
 int ScrollbarThemeAdwaita::minimumThumbLength(Scrollbar&)
 {
-    return 0;
+    return minimumThumbSize;
 }
 
 bool ScrollbarThemeAdwaita::hasButtons(Scrollbar&)

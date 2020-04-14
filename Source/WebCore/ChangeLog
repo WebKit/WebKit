@@ -1,5 +1,17 @@
 2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Scrollbar handle has no minimum size
+        https://bugs.webkit.org/show_bug.cgi?id=209962
+
+        Reviewed by Adrian Perez de Castro.
+
+        Set a minimum thumb length.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::minimumThumbLength):
+
+2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] New scrollbar click behavior
         https://bugs.webkit.org/show_bug.cgi?id=210002
 
