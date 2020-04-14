@@ -596,6 +596,9 @@ class _FunctionState(object):
         elided = self._clean_lines.elided
         return SingleLineView(elided, self.parameter_end_position, self.body_start_position).single_line.strip()
 
+    def attributes_after_definition(self, attribute_regex):
+        return re.findall(attribute_regex, self.post_modifiers())
+
     def has_attribute(self, attribute_regex):
         regex = r'\b{attribute_regex}\b'.format(attribute_regex=attribute_regex)
         return bool(search(regex, self.modifiers_and_return_type())) or bool(search(regex, self.post_modifiers()))
@@ -1820,6 +1823,14 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
                 if not function_state.has_attribute('WARN_UNUSED_RETURN'):
                     error(line_number, 'security/missing_warn_unused_return', 5,
                           'decode() function returning a value is missing WARN_UNUSED_RETURN attribute')
+
+    attributes = function_state.attributes_after_definition(r'(\bWARN_[0-9A-Z_]+\b|__attribute__\(\(__[a-z_]+__\)\))')
+    if len(attributes) > 0:
+        attribute_text = ', '.join(attributes)
+        plural = 's' if len(attributes) > 1 else ''
+        error(line_number, 'readability/function', 5,
+              'Function attribute{plural} ({attributes}) should appear before the function definition'.
+              format(attributes=attribute_text, plural=plural))
 
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:

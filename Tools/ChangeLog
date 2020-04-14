@@ -1,3 +1,24 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should warn about attributes that appear after function definitions
+        <https://webkit.org/b/210459>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.attributes_after_definition): Add.
+        - Return list of attributes that appear after a function
+          definition.
+        (check_function_definition):
+        - Add new check for attributes that appear after a function
+          definition.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_decode_functions_missing_warn_unused_return):
+        - Update test to fix new warning.
+        (CppStyleTest.test_function_readability_for_attributes): Add.
+        - Add tests.
+
 2020-04-13  Kate Cheney  <katherine_cheney@apple.com>
 
         http/tests/in-app-browser-privacy/app-bound-domain.html is a constant failure on iOS

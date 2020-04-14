@@ -3000,7 +3000,7 @@ class CppStyleTest(CppStyleTestBase):
             warning_expected)
         self.perform_function_definition_check(
             'Source/WTF/wtf/foo.h',
-            'WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&) WARN_UNUSED_RETURN;',
+            'WTF_EXPORT_PRIVATE static WARN_UNUSED_RETURN bool decode(Decoder&, AtomString&);',
             warning_none)
 
         self.perform_function_definition_check(
@@ -3044,6 +3044,24 @@ class CppStyleTest(CppStyleTestBase):
             'foo.h',
             '    static WARN_UNUSED_RETURN bool platformDecode(IPC::Decoder&, WebHitTestResultData&);',
             warning_none)
+
+    def test_function_readability_for_attributes(self):
+        self.perform_function_definition_check(
+            'Source/WTF/wtf/foo.h',
+            'WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&) WARN_UNUSED_RETURN;',
+            'Function attribute (WARN_UNUSED_RETURN) should appear before the function definition'
+            '  [readability/function] [5]')
+
+        self.perform_function_definition_check(
+            'foo.h',
+            'static __attribute__((__warn_unused_result__)) bool check(Decoder&, AtomString&);',
+            '')
+
+        self.perform_function_definition_check(
+            'foo.h',
+            'static bool check(Decoder&, AtomString&) __attribute__((__warn_unused_result__));',
+            'Function attribute (__attribute__((__warn_unused_result__))) should appear before the function definition'
+            '  [readability/function] [5]')
 
 
 class CleansedLinesTest(unittest.TestCase):
