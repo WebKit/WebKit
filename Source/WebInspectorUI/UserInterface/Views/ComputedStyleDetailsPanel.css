@@ -47,6 +47,7 @@
 
 .sidebar > .panel.details.css-style > .content > .computed .property {
     position: relative;
+    text-indent: -13px; /* width of "--" in `11px Menlo` */
 }
 
 .sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow {
