@@ -53,7 +53,7 @@ namespace WebCore {
 
 static WARN_UNUSED_RETURN AudioBufferList* createAudioBufferList(size_t numberOfBuffers)
 {
-    Checked<size_t, RecordOverflow> bufferListSize = sizeof(AudioBufferList) - sizeof(AudioBuffer);
+    CheckedSize bufferListSize = sizeof(AudioBufferList) - sizeof(AudioBuffer);
     bufferListSize += numberOfBuffers * sizeof(AudioBuffer);
 
     AudioBufferList* bufferList = static_cast<AudioBufferList*>(calloc(1, bufferListSize.unsafeGet()));

@@ -1,3 +1,19 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Replace use of Checked<size_t, RecordOverflow> with CheckedSize
+        <https://webkit.org/b/210461>
+
+        Reviewed by Mark Lam.
+
+        * platform/audio/ios/AudioFileReaderIOS.cpp:
+        (WebCore::createAudioBufferList):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::calculateBackendSize):
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::createDirect2DImageSurfaceWithData):
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::copyNativeImage const):
+
 2020-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE_CUSTOM_SCROLLBARS and define it for macOS and for non-Cocoa platforms

@@ -135,7 +135,7 @@ namespace Gigacage {
 
 void* tryMallocArray(Kind kind, size_t numElements, size_t elementSize)
 {
-    Checked<size_t, RecordOverflow> checkedSize = elementSize;
+    CheckedSize checkedSize = elementSize;
     checkedSize *= numElements;
     if (checkedSize.hasOverflowed())
         return nullptr;

@@ -51,7 +51,7 @@ IntSize ImageBufferBackend::calculateBackendSize(const FloatSize& size, float re
     if (bytesPerRow.hasOverflowed())
         return { };
 
-    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
     if (numBytes.hasOverflowed())
         return { };
 

@@ -525,7 +525,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 {
     // FIXME: Change this to use SaturatedArithmetic when available.
     // https://bugs.webkit.org/show_bug.cgi?id=170411
-    Checked<size_t, RecordOverflow> checkedNewSize = m_deprecatedExtraMemorySize;
+    CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
     m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
     reportExtraMemoryAllocatedSlowCase(size);
@@ -836,7 +836,7 @@ size_t Heap::extraMemorySize()
 {
     // FIXME: Change this to use SaturatedArithmetic when available.
     // https://bugs.webkit.org/show_bug.cgi?id=170411
-    Checked<size_t, RecordOverflow> checkedTotal = m_extraMemorySize;
+    CheckedSize checkedTotal = m_extraMemorySize;
     checkedTotal += m_deprecatedExtraMemorySize;
     checkedTotal += m_arrayBuffers.size();
     size_t total = UNLIKELY(checkedTotal.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedTotal.unsafeGet();
@@ -2280,7 +2280,7 @@ void Heap::updateAllocationLimits()
     // extra memory reporting.
     currentHeapSize += extraMemorySize();
     if (ASSERT_ENABLED) {
-        Checked<size_t, RecordOverflow> checkedCurrentHeapSize = m_totalBytesVisited;
+        CheckedSize checkedCurrentHeapSize = m_totalBytesVisited;
         checkedCurrentHeapSize += extraMemorySize();
         ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize.unsafeGet() == currentHeapSize);
     }
@@ -2585,7 +2585,7 @@ void Heap::reportExtraMemoryVisited(size_t size)
         size_t oldSize = *counter;
         // FIXME: Change this to use SaturatedArithmetic when available.
         // https://bugs.webkit.org/show_bug.cgi?id=170411
-        Checked<size_t, RecordOverflow> checkedNewSize = oldSize;
+        CheckedSize checkedNewSize = oldSize;
         checkedNewSize += size;
         size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
         if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, newSize))

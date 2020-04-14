@@ -51,9 +51,9 @@ MachMessage::~MachMessage()
         ::mach_msg_destroy(header());
 }
 
-Checked<size_t, RecordOverflow> MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
+CheckedSize MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
 {
-    Checked<size_t, RecordOverflow> messageSize = sizeof(mach_msg_header_t);
+    CheckedSize messageSize = sizeof(mach_msg_header_t);
     messageSize += bodySize;
 
     if (portDescriptorCount || memoryDescriptorCount) {

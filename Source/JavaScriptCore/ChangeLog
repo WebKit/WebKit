@@ -1,3 +1,19 @@
+2020-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        Replace use of Checked<size_t, RecordOverflow> with CheckedSize
+        <https://webkit.org/b/210461>
+
+        Reviewed by Mark Lam.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deprecatedReportExtraMemorySlowCase):
+        (JSC::Heap::extraMemorySize):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::reportExtraMemoryVisited):
+        * heap/SlotVisitor.h:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+
 2020-04-10  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Allow for Unicode named capture group identifiers in non-Unicode regular expressions

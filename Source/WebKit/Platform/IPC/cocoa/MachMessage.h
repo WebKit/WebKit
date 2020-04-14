@@ -40,7 +40,7 @@ public:
     static std::unique_ptr<MachMessage> create(CString&& messageReceiverName, CString&& messageName, size_t);
     ~MachMessage();
 
-    static Checked<size_t, RecordOverflow> messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
+    static CheckedSize messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
 
     size_t size() const { return m_size; }
     mach_msg_header_t* header() { return m_messageHeader; }

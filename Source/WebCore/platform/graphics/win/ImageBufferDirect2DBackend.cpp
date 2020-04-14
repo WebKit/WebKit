@@ -123,7 +123,7 @@ NativeImagePtr ImageBufferDirect2DBackend::copyNativeImage(BackingStoreCopy copy
     if (copyBehavior == CopyBackingStore && m_data.data.isEmpty())
         copyBehavior = DontCopyBackingStore;
 
-    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(m_data.backingStoreSize.height()) * m_data.bytesPerRow;
+    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(m_data.backingStoreSize.height()) * m_data.bytesPerRow;
     if (numBytes.hasOverflowed())
         return nullptr;
 

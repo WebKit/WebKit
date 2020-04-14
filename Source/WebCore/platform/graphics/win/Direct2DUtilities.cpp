@@ -126,7 +126,7 @@ unsigned bitsPerPixel(GUID bitmapFormat)
 
 COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize& size, unsigned stride)
 {
-    Checked<size_t, RecordOverflow> numBytes = Checked<unsigned, RecordOverflow>(size.height()) * stride;
+    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(size.height()) * stride;
     if (numBytes.hasOverflowed())
         return nullptr;
 

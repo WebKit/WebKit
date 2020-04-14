@@ -238,7 +238,7 @@ private:
     size_t m_bytesVisited;
     size_t m_visitCount;
     size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
-    Checked<size_t, RecordOverflow> m_extraMemorySize { 0 };
+    CheckedSize m_extraMemorySize { 0 };
     bool m_isInParallelMode;
     bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
 
