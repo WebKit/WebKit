@@ -8,10 +8,7 @@
         border: 5px solid black;
     }
 
-    /* The following :is() gets a different class of specificity. Depending on what
-       matches, the later rules may override this or not. */
-    :is(.classB, target, #classA, *) {
-        background-color: red;
+    :is(.classB, target, *) {
         color: purple;
         border: none;
     }
@@ -33,14 +30,13 @@
 </style>
 </head>
 <body>
-    <p>This test checks the dynamic specificity of :is() changing the order in which rules are applied depending on the element. Each element should have the colors described in the text and no border.</p>
-    <nottarget>Purple text on red background.</nottarget>
-    <target>White text on green background.</target>
-    <nottarget id="classA">Purple text on red background.</nottarget>
-    <target id="classA">Purple text on red background.</target>
-    <nottarget class="classB">Purple text on blue background.</nottarget>
-    <target class="classB">Purple text on blue background.</target>
-    <nottarget id="classA" class="classB">Purple text on red background.</nottarget>
-    <target id="classA" class="classB">Purple text on red background.</target>
+    <nottarget>Text</nottarget>
+    <target>Text</target>
+    <nottarget id="classA">Text</nottarget>
+    <target id="classA">Text</target>
+    <nottarget class="classB">Text</nottarget>
+    <target class="classB">Text</target>
+    <nottarget id="classA" class="classB">Text</nottarget>
+    <target id="classA" class="classB">Text</target>
 </body>
 </html>

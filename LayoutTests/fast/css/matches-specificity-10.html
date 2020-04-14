@@ -2,8 +2,8 @@
 <html>
 <head>
 <style>
-    /* Specificity (2, 0, 2). */
-    #f#f > padding > target {
+    /* Specificity (3, 0, 2). */
+    #f#f#f > padding > target {
         background-color: purple;
     }
 
@@ -23,21 +23,30 @@
         border: 5px blue solid;
     }
 
+    /* Specificity (3, 0, 1) */
     :matches(aBlock, #b) > :matches(#c, d) > :matches(e, #f) target {
         background-color: green;
         color: white;
         border: none;
     }
+
+    /* Specificity (3, 0, 2) */
+    #c#c#c padding target {
+        background-color: green;
+    }
+
+    /* Specificity (3, 0, 1) */
+    #f#f#f target {
+        background-color: green;
+    }
+
+    /* Specificity (3, 0, 2) */
+    a #f#f#f target {
+        color: green;
+    }
 </style>
 </head>
 <body>
-    <p>This test the dynamic specificity of :matches() with a simple descendant backtracking case. The test pass if each block has style matching its description. None of the result should have a border.</p>
-
-    <!--
-     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
-     like "#a > #c > e target"
-     with the specificity (2, 0, 2).
-     -->
     <foo id="b">
         <foo id="c">
             <e> <!-- Success case from here. -->
@@ -64,11 +73,6 @@
         </foo>
     </foo>
 
-    <!--
-     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
-     like "#a > d > e target"
-     with the specificity (1, 0, 3).
-     -->
     <foo id="b">
         <d>
             <e> <!-- Success case from here. -->
@@ -95,11 +99,6 @@
         </d>
     </foo>
 
-    <!--
-     This case should match ":matches(a, #b) > :matches(#c, d) > matches(e, #f) target"
-     like "a > d > e target"
-     with the specificity (0, 0, 4).
-     -->
     <aBlock>
         <d>
             <e> <!-- Success case from here. -->

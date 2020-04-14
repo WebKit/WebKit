@@ -495,7 +495,9 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
         }
         // Slow path.
         SelectorChecker selectorChecker(element().document());
-        selectorMatches = selectorChecker.match(*selector, element(), context, specificity);
+        selectorMatches = selectorChecker.match(*selector, element(), context);
+        if (selectorMatches)
+            specificity = selector->computeSpecificity();
     }
 
     if (ruleData.containsUncommonAttributeSelector()) {

@@ -1,3 +1,94 @@
+2020-04-14  Antti Koivisto  <antti@apple.com>
+
+        [CSS Selectors] Selectors Level 4 specificity calculation for pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=210419
+
+        Reviewed by Simon Fraser.
+
+        CSS selector specification drafts at some point had a concept of "dynamic specificity" where
+        the specificity of a selector depended on the element it matched. It was only ever used with
+        :matches and :nth-child pseudo classes and has subsequently been removed. Selector specificity
+        can now always be computed statically.
+
+        There is a ton of code to support this obsolete feature. Remove it.
+
+        https://drafts.csswg.org/selectors-4/#specificity-rules
+
+            "The specificity of an :is(), :not(), or :has() pseudo-class is replaced by the specificity
+            of the most specific complex selector in its selector list argument.
+
+            Analogously, the specificity of an :nth-child() or :nth-last-child() selector is the specificity
+            of the pseudo class itself (counting as one pseudo-class selector) plus the specificity of the
+            most specific complex selector in its selector list argument (if any)."
+
+        * css/html.css:
+
+        Reorganize a :matches rule into a selector list to keep the exact specificites.
+        It matters here to select between listbox and menulist correctly based on the 'size' and 'multiple' attributes.
+
+        * css/CSSSelector.cpp:
+        (WebCore::selectorSpecificity):
+        (WebCore::maxSpecificity):
+        (WebCore::simpleSelectorSpecificityInternal):
+        (WebCore::CSSSelector::simpleSelectorSpecificity const):
+
+        Also handle nth here.
+
+        (WebCore::CSSSelector::specificity const):
+        (WebCore::simpleSelectorFunctionalPseudoClassStaticSpecificity): Deleted.
+        (WebCore::functionalPseudoClassStaticSpecificity): Deleted.
+        (WebCore::staticSpecificityInternal): Deleted.
+        (WebCore::CSSSelector::staticSpecificity const): Deleted.
+
+        Rename to just computeSpecificity(), there is no other kind than static.
+
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match const):
+        (WebCore::SelectorChecker::matchHostPseudoClass const):
+        (WebCore::SelectorChecker::matchRecursively const):
+        (WebCore::SelectorChecker::checkOne const):
+        (WebCore::SelectorChecker::matchSelectorList const):
+
+        SelectorChecker doesn't need to deal with specificity anymore.
+
+        * css/SelectorChecker.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addNthChildType):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+
+        Neither does SelectorCompiler.
+
+        * cssjit/SelectorCompiler.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches const):
+        (WebCore::SelectorDataList::selectorClosest const):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelector):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::hasDynamicSpecificity): Deleted.
+        * inspector/InspectorStyleSheet.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::ruleMatches):
+
+        Switch to get the specificity from the selector instead of computing it during selector checking.
+
+        * style/ElementRuleCollector.h:
+
 2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Fix race condition in FileMonitor implementation

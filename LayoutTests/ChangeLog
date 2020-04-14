@@ -1,3 +1,43 @@
+2020-04-14  Antti Koivisto  <antti@apple.com>
+
+        [CSS Selectors] Selectors Level 4 specificity calculation for pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=210419
+
+        Reviewed by Simon Fraser.
+
+        Update specificity tests for static behavior, trying to also keep them useful.
+
+        * fast/css/is-specificity-10-expected.html:
+        * fast/css/is-specificity-10.html:
+        * fast/css/is-specificity-2-expected.html:
+        * fast/css/is-specificity-2.html:
+        * fast/css/is-specificity-3-expected.html:
+        * fast/css/is-specificity-3.html:
+        * fast/css/is-specificity-4-expected.html:
+        * fast/css/is-specificity-4.html:
+        * fast/css/is-specificity-5.html:
+        * fast/css/matches-specificity-10-expected.html:
+        * fast/css/matches-specificity-10.html:
+        * fast/css/matches-specificity-2-expected.html:
+        * fast/css/matches-specificity-2.html:
+        * fast/css/matches-specificity-3-expected.html:
+        * fast/css/matches-specificity-3.html:
+        * fast/css/matches-specificity-4-expected.html:
+        * fast/css/matches-specificity-4.html:
+        * fast/css/matches-specificity-5.html:
+        * fast/css/nth-child-specificity-2-expected.html:
+        * fast/css/nth-child-specificity-2.html:
+        * fast/css/nth-child-specificity-3-expected.html:
+        * fast/css/nth-child-specificity-3.html:
+        * fast/css/nth-child-specificity-4-expected.html:
+        * fast/css/nth-child-specificity-4.html:
+        * fast/css/nth-last-child-specificity-2-expected.html:
+        * fast/css/nth-last-child-specificity-2.html:
+        * fast/css/nth-last-child-specificity-3-expected.html:
+        * fast/css/nth-last-child-specificity-3.html:
+        * fast/css/nth-last-child-specificity-4-expected.html:
+        * fast/css/nth-last-child-specificity-4.html:
+
 2020-04-14  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [Gtk] Update pixel tests baseline for all tests containing or referencing SVGs (except WPT)

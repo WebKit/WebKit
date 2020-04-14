@@ -970,7 +970,7 @@ select {
 }
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-select:matches([size], [multiple], [size][multiple]) {
+select:matches([size], [multiple]), select[size][multiple] {
     -webkit-appearance: listbox;
     align-items: flex-start;
     border: 1px inset gray;

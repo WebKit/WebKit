@@ -137,7 +137,7 @@ private:
 
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
-    bool ruleMatches(const RuleData&, unsigned &specificity);
+    bool ruleMatches(const RuleData&, unsigned& specificity);
 
     void sortMatchedRules();
 

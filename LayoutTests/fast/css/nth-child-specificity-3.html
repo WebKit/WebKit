@@ -2,7 +2,7 @@
 <html>
 <head>
 <style>
-    /* The specifity varies with the element being matched. */
+    /* (1, 2, 1) */
     :nth-child(even of target.foo, .foo#bar, target.foo#bar, target#bar) {
         background-color: red;
         color: white;
@@ -34,12 +34,11 @@
 </style>
 </head>
 <body>
-    <p>This test the specificity of :nth-child() with dynamic specificity of compound selectors. If the test pass, the style of each line should match its text description.</p>
     <div>
         <target>Black text.</target>
         <target>Black text.</target>
         <target class="foo">Red text with black border.</target>
-        <target class="foo">White text on red background with black border.</target>
+        <target class="foo">White text on red background with purple border.</target>
         <target id="bar">Black text with blue border.</target>
         <target id="bar">White text on red background with purple border.</target>
         <target class="foo" id="bar">Red text on green background with blue border.</target>
