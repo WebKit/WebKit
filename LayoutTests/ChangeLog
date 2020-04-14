@@ -1,3 +1,12 @@
+2020-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, mark several MSE tests as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=210499
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-14  Antti Koivisto  <antti@apple.com>
 
         [CSS Selectors] Selectors Level 4 specificity calculation for pseudo classes
