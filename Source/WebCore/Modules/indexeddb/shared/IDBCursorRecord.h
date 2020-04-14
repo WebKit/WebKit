@@ -38,7 +38,7 @@ struct IDBCursorRecord {
     IDBValue value;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBCursorRecord&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBCursorRecord&);
 
     IDBCursorRecord isolatedCopy() const;
     size_t size() const { return key.size() + primaryKey.size() + value.size(); }

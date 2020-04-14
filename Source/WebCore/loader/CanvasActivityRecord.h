@@ -37,7 +37,7 @@ struct CanvasActivityRecord {
     void mergeWith(const CanvasActivityRecord&);
     
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static bool decode(Decoder&, CanvasActivityRecord&);
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, CanvasActivityRecord&);
 };
     
 template <class Encoder>

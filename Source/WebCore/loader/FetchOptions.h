@@ -47,7 +47,7 @@ struct FetchOptions {
     FetchOptions isolatedCopy() const { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
-    template<class Decoder> static bool decodePersistent(Decoder&, FetchOptions&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<FetchOptions> decode(Decoder&);
 
@@ -182,7 +182,7 @@ inline void FetchOptions::encodePersistent(Encoder& encoder) const
 }
 
 template<class Decoder>
-inline WARN_UNUSED_RETURN bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& options)
+inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& options)
 {
     Optional<FetchOptions::Destination> destination;
     decoder >> destination;

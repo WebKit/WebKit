@@ -37,7 +37,7 @@ struct ExceptionData {
     WEBCORE_EXPORT ExceptionData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ExceptionData&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ExceptionData&);
 
     Exception toException() const
     {

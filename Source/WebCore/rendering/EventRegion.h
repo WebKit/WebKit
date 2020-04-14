@@ -87,7 +87,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<EventRegion> decode(Decoder&);
     // FIXME: Remove legacy decode.
-    template<class Decoder> static bool decode(Decoder&, EventRegion&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, EventRegion&);
 
     void dump(TextStream&) const;
 

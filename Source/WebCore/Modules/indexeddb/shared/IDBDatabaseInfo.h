@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT IDBDatabaseInfo();
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBDatabaseInfo&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBDatabaseInfo&);
 
     void setMaxIndexID(uint64_t maxIndexID);
     uint64_t generateNextIndexID() { return ++m_maxIndexID; }

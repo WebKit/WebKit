@@ -103,7 +103,7 @@ public:
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, CapabilityValueOrRange&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, CapabilityValueOrRange&);
 
 private:
     ValueUnion m_minOrValue;
@@ -195,7 +195,7 @@ public:
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceCapabilities&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceCapabilities&);
 
 private:
     CapabilityValueOrRange m_width;

@@ -49,7 +49,7 @@ public:
     void rename(const String& newName) { m_name = newName; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBIndexInfo&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBIndexInfo&);
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;

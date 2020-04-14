@@ -47,7 +47,7 @@ struct IDBGetRecordData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBGetRecordData&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetRecordData&);
 };
 
 template<class Encoder>

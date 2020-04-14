@@ -71,7 +71,7 @@ public:
     static void setHTTPPipeliningEnabled(bool) { }
 
     template<class Encoder> void encodeWithPlatformData(Encoder&) const;
-    template<class Decoder> bool decodeWithPlatformData(Decoder&);
+    template<class Decoder> WARN_UNUSED_RETURN bool decodeWithPlatformData(Decoder&);
 
 private:
     friend class ResourceRequestBase;

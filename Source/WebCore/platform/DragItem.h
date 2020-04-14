@@ -53,7 +53,7 @@ struct DragItem final {
     PromisedAttachmentInfo promisedAttachmentInfo;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, DragItem&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, DragItem&);
 };
 
 template<class Encoder>

@@ -102,7 +102,7 @@ public:
     bool supportsConstraint(MediaConstraintType) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSupportedConstraints&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceSupportedConstraints&);
 
 private:
     bool m_supportsWidth { false };

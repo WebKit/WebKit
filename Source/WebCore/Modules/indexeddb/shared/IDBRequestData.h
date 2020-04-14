@@ -76,7 +76,7 @@ public:
     WEBCORE_EXPORT IDBRequestData();
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBRequestData&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBRequestData&);
 
 private:
     static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);

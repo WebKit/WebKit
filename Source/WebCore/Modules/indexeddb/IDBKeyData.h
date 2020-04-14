@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT IDBKeyData isolatedCopy() const;
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyData&);
+    WEBCORE_EXPORT static WARN_UNUSED_RETURN bool decode(KeyedDecoder&, IDBKeyData&);
 
     // compare() has the same semantics as strcmp().
     //   - Returns negative if this IDBKeyData is less than other.

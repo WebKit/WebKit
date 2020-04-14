@@ -45,7 +45,7 @@ struct ServiceWorkerFetchResult {
     ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ServiceWorkerFetchResult&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ServiceWorkerFetchResult&);
 };
 
 inline ServiceWorkerFetchResult serviceWorkerFetchError(ServiceWorkerJobDataIdentifier jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, ResourceError&& error)

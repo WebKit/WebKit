@@ -203,7 +203,7 @@ public:
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ResourceResponseBase&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ResourceResponseBase&);
 
     bool isRangeRequested() const { return m_isRangeRequested; }
     void setAsRangeRequested() { m_isRangeRequested = true; }
@@ -308,7 +308,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool WARN_UNUSED_RETURN ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& response)
+bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& response)
 {
     ASSERT(response.m_isNull);
     Optional<bool> responseIsNull;

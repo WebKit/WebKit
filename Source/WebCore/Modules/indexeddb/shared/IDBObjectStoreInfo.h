@@ -62,7 +62,7 @@ public:
     void deleteIndex(uint64_t indexIdentifier);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBObjectStoreInfo&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBObjectStoreInfo&);
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;

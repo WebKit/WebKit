@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT IDBError isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBError&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBError&);
 
 private:
     Optional<ExceptionCode> m_code;

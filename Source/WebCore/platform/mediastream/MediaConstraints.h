@@ -60,7 +60,7 @@ public:
         encoder.encodeEnum(m_dataType);
     }
 
-    template <class Decoder> static bool decode(Decoder& decoder, MediaConstraint& constraint)
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, MediaConstraint& constraint)
     {
         if (!decoder.decodeEnum(constraint.m_constraintType))
             return false;
@@ -343,7 +343,7 @@ public:
         encoder << m_ideal;
     }
 
-    template <class Decoder> static bool decode(Decoder& decoder, NumericConstraint& constraint)
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, NumericConstraint& constraint)
     {
         if (!MediaConstraint::decode(decoder, constraint))
             return false;
@@ -513,7 +513,7 @@ public:
         encoder << m_ideal;
     }
 
-    template <class Decoder> static bool decode(Decoder& decoder, BooleanConstraint& constraint)
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, BooleanConstraint& constraint)
     {
         if (!MediaConstraint::decode(decoder, constraint))
             return false;
@@ -597,7 +597,7 @@ public:
         encoder << m_ideal;
     }
 
-    template <class Decoder> static bool decode(Decoder& decoder, StringConstraint& constraint)
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, StringConstraint& constraint)
     {
         if (!MediaConstraint::decode(decoder, constraint))
             return false;

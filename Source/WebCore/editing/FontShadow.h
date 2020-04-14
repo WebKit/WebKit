@@ -37,7 +37,7 @@ namespace WebCore {
 
 struct FontShadow {
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, FontShadow&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, FontShadow&);
 
 #if PLATFORM(COCOA)
     RetainPtr<NSShadow> createShadow() const;

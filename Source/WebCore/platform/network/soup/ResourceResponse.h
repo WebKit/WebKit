@@ -73,7 +73,7 @@ public:
     void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ResourceResponse&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ResourceResponse&);
 
 private:
     friend class ResourceResponseBase;

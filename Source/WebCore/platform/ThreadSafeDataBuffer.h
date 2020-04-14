@@ -94,7 +94,7 @@ public:
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ThreadSafeDataBuffer&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ThreadSafeDataBuffer&);
 
 private:
     explicit ThreadSafeDataBuffer(Vector<uint8_t>&& data)

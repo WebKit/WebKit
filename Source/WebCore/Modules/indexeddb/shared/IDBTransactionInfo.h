@@ -69,7 +69,7 @@ public:
 
     WEBCORE_EXPORT IDBTransactionInfo();
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBTransactionInfo&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBTransactionInfo&);
 
 #if !LOG_DISABLED
     String loggingString() const;

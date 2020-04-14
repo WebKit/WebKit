@@ -79,7 +79,7 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Region> decode(Decoder&);
     // FIXME: Remove legacy decode.
-    template<class Decoder> static bool decode(Decoder&, Region&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, Region&);
 
 private:
     struct Span {

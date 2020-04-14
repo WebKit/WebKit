@@ -67,7 +67,7 @@ public:
     bool isValid() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, GeolocationPositionData&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, GeolocationPositionData&);
 };
 
 template<class Encoder>

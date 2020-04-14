@@ -717,7 +717,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int error)
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
-static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
+static WARN_UNUSED_RETURN bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
 {
     return a.second->decodeTime() < b.second->decodeTime();
 }

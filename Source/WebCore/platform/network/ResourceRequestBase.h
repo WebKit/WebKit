@@ -187,7 +187,7 @@ public:
     bool encodingRequiresPlatformData() const { return true; }
 #endif
     template<class Encoder> void encodeWithoutPlatformData(Encoder&) const;
-    template<class Decoder> bool decodeWithoutPlatformData(Decoder&);
+    template<class Decoder> WARN_UNUSED_RETURN bool decodeWithoutPlatformData(Decoder&);
 
     WEBCORE_EXPORT static double defaultTimeoutInterval(); // May return 0 when using platform default.
     WEBCORE_EXPORT static void setDefaultTimeoutInterval(double);
@@ -226,7 +226,7 @@ protected:
     void updateResourceRequest(HTTPBodyUpdatePolicy = HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) const;
 
     template<class Encoder> void encodeBase(Encoder&) const;
-    template<class Decoder> bool decodeBase(Decoder&);
+    template<class Decoder> WARN_UNUSED_RETURN bool decodeBase(Decoder&);
 
     // The ResourceRequest subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }

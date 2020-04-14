@@ -292,7 +292,7 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
     return SharedBuffer::create(WTFMove(data));
 }
 
-static bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& result)
+static WARN_UNUSED_RETURN bool decodeKey(const uint8_t*& data, const uint8_t* end, IDBKeyData& result)
 {
     if (!data || data >= end)
         return false;

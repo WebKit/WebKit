@@ -62,7 +62,7 @@ public:
     void addValue(IDBValue&&);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBGetAllResult&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetAllResult&);
 
     WEBCORE_EXPORT Vector<String> allBlobFilePaths() const;
 

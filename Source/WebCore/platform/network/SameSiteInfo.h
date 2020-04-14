@@ -37,7 +37,7 @@ struct SameSiteInfo {
     bool isSafeHTTPMethod { false };
 
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static bool decode(Decoder&, SameSiteInfo&);
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, SameSiteInfo&);
 };
 
 template <class Encoder>

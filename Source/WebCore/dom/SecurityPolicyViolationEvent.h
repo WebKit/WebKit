@@ -55,7 +55,7 @@ public:
         int columnNumber { 0 };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static bool decode(Decoder&, Init&);
+        template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, Init&);
     };
 
     static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

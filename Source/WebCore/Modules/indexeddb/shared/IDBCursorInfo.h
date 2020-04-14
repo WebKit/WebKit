@@ -68,7 +68,7 @@ public:
 
     WEBCORE_EXPORT IDBCursorInfo();
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBCursorInfo&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBCursorInfo&);
 
 #if !LOG_DISABLED
     String loggingString() const;

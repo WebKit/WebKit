@@ -132,7 +132,7 @@ public:
     void setLabel(const AtomString& label) { m_label = label; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSettings&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceSettings&);
 
     static String convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);
 

@@ -41,7 +41,7 @@ enum class VerticalAlignChange : uint8_t { Superscript, Baseline, Subscript };
 class FontChanges {
 public:
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, FontChanges&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, FontChanges&);
 
     void setFontName(const String& fontName) { m_fontName = fontName; }
     void setFontFamily(const String& fontFamily) { m_fontFamily = fontFamily; }
@@ -72,7 +72,7 @@ private:
 class FontAttributeChanges {
 public:
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, FontAttributeChanges&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, FontAttributeChanges&);
 
     void setVerticalAlign(VerticalAlignChange align) { m_verticalAlign = align; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }

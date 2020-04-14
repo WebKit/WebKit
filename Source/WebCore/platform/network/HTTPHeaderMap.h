@@ -209,7 +209,7 @@ public:
     }
 
     template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static bool decode(Decoder&, HTTPHeaderMap&);
+    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, HTTPHeaderMap&);
 
 private:
     void setUncommonHeader(const String& name, const String& value);

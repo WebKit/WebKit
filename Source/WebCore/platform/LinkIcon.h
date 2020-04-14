@@ -41,7 +41,7 @@ struct LinkIcon {
     Vector<std::pair<String, String>> attributes;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, LinkIcon&);
 };
 
 template<class Encoder>

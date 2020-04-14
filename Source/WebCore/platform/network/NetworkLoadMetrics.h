@@ -139,7 +139,7 @@ public:
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, NetworkLoadMetrics&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, NetworkLoadMetrics&);
 
     String remoteAddress;
     String connectionIdentifier;

@@ -55,7 +55,7 @@ public:
 
     WEBCORE_EXPORT bool needsUIProcess() const;
     WEBCORE_EXPORT void encode(NSCoder *) const;
-    WEBCORE_EXPORT static bool decode(NSCoder *, ContentFilterUnblockHandler&);
+    WEBCORE_EXPORT static WARN_UNUSED_RETURN bool decode(NSCoder *, ContentFilterUnblockHandler&);
     WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
     WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction) const;
     void wrapWithDecisionHandler(const DecisionHandlerFunction&);

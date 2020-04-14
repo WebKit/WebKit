@@ -101,7 +101,7 @@ public:
     bool isDefined() const { return m_isDefined; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBGetResult&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetResult&);
 
 private:
     void dataFromBuffer(SharedBuffer&);

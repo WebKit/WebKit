@@ -44,7 +44,7 @@ struct IDBIterateCursorData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBIterateCursorData&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBIterateCursorData&);
 };
 
 template<class Encoder>

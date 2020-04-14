@@ -74,7 +74,7 @@ public:
         encoder << m_mirrored;
     }
 
-    template<class Decoder> static bool decode(Decoder& decoder, RemoteVideoSample& sample)
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, RemoteVideoSample& sample)
     {
 #if HAVE(IOSURFACE)
         MachSendRight sendRight;

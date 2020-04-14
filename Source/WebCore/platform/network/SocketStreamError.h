@@ -59,7 +59,7 @@ public:
     const String& localizedDescription() const { return m_localizedDescription; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, SocketStreamError&);
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, SocketStreamError&);
 
 private:
     int m_errorCode { 0 };

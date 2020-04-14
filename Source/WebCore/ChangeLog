@@ -1,3 +1,73 @@
+2020-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        Add WARN_UNUSED_RETURN to decode methods in Source/WebCore
+        <https://webkit.org/b/210416>
+        <rdar://problem/61693462>
+
+        Reviewed by Alex Christensen.
+
+        * Modules/geolocation/GeolocationPositionData.h:
+        * Modules/indexeddb/IDBGetAllResult.h:
+        * Modules/indexeddb/IDBGetResult.h:
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::decodeKey):
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        * Modules/indexeddb/shared/IDBCursorRecord.h:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        * Modules/indexeddb/shared/IDBError.h:
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::decodeTimeComparator):
+        * dom/EventInit.h:
+        * dom/ExceptionData.h:
+        * dom/SecurityPolicyViolationEvent.h:
+        * editing/FontAttributeChanges.h:
+        * editing/FontShadow.h:
+        * loader/CanvasActivityRecord.h:
+        * loader/FetchOptions.h:
+        (WebCore::FetchOptions::decodePersistent):
+        * platform/ContentFilterUnblockHandler.h:
+        * platform/DragItem.h:
+        * platform/KeyedCoding.h:
+        * platform/LinkIcon.h:
+        * platform/ThreadSafeDataBuffer.h:
+        * platform/audio/mac/CAAudioStreamDescription.h:
+        * platform/cf/KeyedDecoderCF.h:
+        * platform/generic/KeyedDecoderGeneric.h:
+        * platform/glib/KeyedDecoderGlib.h:
+        * platform/graphics/Region.h:
+        * platform/graphics/RemoteVideoSample.h:
+        (WebCore::RemoteVideoSample::decode):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaConstraint::decode):
+        (WebCore::NumericConstraint::decode):
+        (WebCore::StringConstraint::decode):
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.h:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/NetworkLoadMetrics.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::decode):
+        * platform/network/SameSiteInfo.h:
+        * platform/network/SocketStreamError.h:
+        * platform/network/curl/ResourceRequest.h:
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceResponse.h:
+        * rendering/EventRegion.h:
+        * workers/service/ServiceWorkerFetchResult.h:
+        - Add WARN_UNUSED_RETURN to all decode functions.
+
 2020-04-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Store an Element / PseudoId pair to define the KeyframeEffect target
