@@ -1,5 +1,28 @@
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
+        WebSocketChannel should remove itself from its manager map
+        https://bugs.webkit.org/show_bug.cgi?id=210424
+
+        Reviewed by Alex Christensen.
+
+        WebSocketChannelManager was never removing any entry from its map.
+        To fix this, the manager is now keeping a WeakPtr to each channel.
+        When the channel is destroyed, it will remove itself from its channel manager.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::WebSocketChannel):
+        (WebKit::WebSocketChannel::~WebSocketChannel):
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Network/WebSocketChannelManager.cpp:
+        (WebKit::WebSocketChannelManager::addChannel):
+        (WebKit::WebSocketChannelManager::createWebSocketChannel): Deleted.
+        * WebProcess/Network/WebSocketChannelManager.h:
+        (WebKit::WebSocketChannelManager::removeChannel):
+        * WebProcess/Network/WebSocketProvider.cpp:
+        (WebKit::WebSocketProvider::createWebSocketChannel):
+
+2020-04-14  Youenn Fablet  <youenn@apple.com>
+
         Add logging in case of WebRTC socket error
         https://bugs.webkit.org/show_bug.cgi?id=210428
 

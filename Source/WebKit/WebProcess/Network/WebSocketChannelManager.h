@@ -42,13 +42,15 @@ namespace WebKit {
 class WebSocketChannelManager {
 public:
     WebSocketChannelManager() = default;
-    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&);
 
     void networkProcessCrashed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
+    void addChannel(WebSocketChannel&);
+    void removeChannel(WebSocketChannel& channel) { m_channels.remove(channel.identifier() ); }
+
 private:
-    HashMap<WebSocketIdentifier, Ref<WebSocketChannel>> m_channels;
+    HashMap<WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
 };
 
 } // namespace WebKit
