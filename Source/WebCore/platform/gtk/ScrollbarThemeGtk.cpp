@@ -489,11 +489,8 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     return true;
 }
 
-ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar& scrollbar, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
+ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
-    if (!m_useSystemAppearance)
-        return ScrollbarThemeAdwaita::handleMousePressEvent(scrollbar, event, pressedPart);
-
     gboolean warpSlider = FALSE;
     switch (pressedPart) {
     case BackTrackPart:
