@@ -1,3 +1,24 @@
+2020-04-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Content filtering needs access to the frontboard service
+        https://bugs.webkit.org/show_bug.cgi?id=210505
+
+        Reviewed by Geoffrey Garen.
+
+        Content filtering in the WebContent process needs access to the frontboard service on iOS. Issue an extension
+        to this service when content filtering is enabled.
+
+        API test: WebKit.WebFilterFeatureHasFrontboardServiceAccess
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Wikipedia articles lay out incorrectly in 1/3 multitasking window

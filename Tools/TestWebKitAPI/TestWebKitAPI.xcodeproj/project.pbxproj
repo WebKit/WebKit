@@ -893,6 +893,7 @@
 		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */; };
 		C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DC923D10DAE006E88F7 /* Battery.mm */; };
+		C1FF9EDB244644F000839AE4 /* WebFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1FF9EDA244644F000839AE4 /* WebFilter.mm */; };
 		C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20F88A62295B96700D610FA /* CoreText.framework */; };
 		C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */ = {isa = PBXBuildFile; fileRef = C22FA32A228F8708009D7988 /* TextWidth.mm */; };
 		C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C22FA32C228F877A009D7988 /* TextWidth.html */; };
@@ -2482,6 +2483,7 @@
 		C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceChanges.mm; sourceTree = "<group>"; };
 		C1692DC923D10DAE006E88F7 /* Battery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Battery.mm; sourceTree = "<group>"; };
 		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
+		C1FF9EDA244644F000839AE4 /* WebFilter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFilter.mm; sourceTree = "<group>"; };
 		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		C22FA32A228F8708009D7988 /* TextWidth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextWidth.mm; sourceTree = "<group>"; };
 		C22FA32C228F877A009D7988 /* TextWidth.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = TextWidth.html; sourceTree = "<group>"; };
@@ -2945,6 +2947,7 @@
 				C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */,
 				C149D54F242E9844003EBB12 /* SleepDisabler.mm */,
 				0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */,
+				C1FF9EDA244644F000839AE4 /* WebFilter.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -5167,6 +5170,7 @@
 				830F2E0C209A6A8E00D36FF1 /* WebContentProcessDidTerminate.mm in Sources */,
 				7C83E04C1D0A641800FEBCF3 /* WebCoreNSURLSession.mm in Sources */,
 				57A79857224AB34E00A7F6F1 /* WebCryptoMasterKey.mm in Sources */,
+				C1FF9EDB244644F000839AE4 /* WebFilter.mm in Sources */,
 				5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */,
 				7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */,
 				51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */,

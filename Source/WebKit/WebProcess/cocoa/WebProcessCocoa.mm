@@ -283,6 +283,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
     ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
+
+    if (parameters.frontboardServiceExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

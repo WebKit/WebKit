@@ -420,6 +420,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::Handle handle;
         SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI", WTF::nullopt, handle);
         parameters.contentFilterExtensionHandle = WTFMove(handle);
+
+        SandboxExtension::Handle frontboardServiceExtensionHandle;
+        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices", WTF::nullopt, frontboardServiceExtensionHandle))
+            parameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
     }
 #endif
     
