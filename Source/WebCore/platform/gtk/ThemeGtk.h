@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !USE(GTK4)
+
 #include "Color.h"
 #include "ThemeAdwaita.h"
 
@@ -47,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // !USE(GTK4)

@@ -1,3 +1,17 @@
+2020-04-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Use ThemeAdwaita instead of ThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=210334
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * platform/adwaita/ThemeAdwaita.cpp: Build the Theme::singleton() factory also with USE(GTK4).
+        * platform/gtk/ThemeGtk.cpp: Conditionally build if !USE(GTK4).
+        (WebCore::ThemeGtk::ensurePlatformColors const): Add deprecation ignore guards.
+        * platform/gtk/ThemeGtk.h: Conditionally build if !USE(GTK4).
+
 2020-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow] Get scroll-snap working with async overflow scrolling on macOS

@@ -59,7 +59,7 @@ static const Color spinButtonBackgroundColor = makeRGB(252, 252, 252);
 static const Color spinButtonBackgroundHoveredColor = makeRGBA(46, 52, 54, 50);
 static const Color spinButtonBackgroundPressedColor = makeRGBA(46, 52, 54, 70);
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) || USE(GTK4)
 Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeAdwaita> theme;
