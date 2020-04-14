@@ -1,3 +1,14 @@
+2020-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        Do not cache definite height against perpendicular flex items.
+        https://bugs.webkit.org/show_bug.cgi?id=207603
+        <rdar://problem/59135373>
+
+        Reviewed by Simon Fraser.
+
+        * fast/flexbox/unresolved-height-percentage-crash-expected.txt: Added.
+        * fast/flexbox/unresolved-height-percentage-crash.html: Added.
+
 2020-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update expectations after r260016

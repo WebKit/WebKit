@@ -1,3 +1,19 @@
+2020-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        Do not cache definite height against perpendicular flex items.
+        https://bugs.webkit.org/show_bug.cgi?id=207603
+        <rdar://problem/59135373>
+
+        Reviewed by Simon Fraser.
+
+        RenderFlexibleBox::m_hasDefiniteHeight should not be set when the child we check against is a perpendicular item
+        because a perpendicular box's height is resolved against the containing block's width.
+
+        Test: fast/flexbox/unresolved-height-percentage-crash.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeInnerFlexBaseSizeForChild):
+
 2020-04-13  David Kilzer  <ddkilzer@apple.com>
 
         Replace use of Checked<size_t, RecordOverflow> with CheckedSize

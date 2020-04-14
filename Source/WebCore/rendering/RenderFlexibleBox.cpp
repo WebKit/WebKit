@@ -767,6 +767,10 @@ bool RenderFlexibleBox::mainAxisLengthIsDefinite(const RenderBox& child, const L
             return true;
         if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
             return false;
+        // Do not cache the definite height state when the child is perpendicular.
+        // The height of a perpendicular child is resolved against the containing block's width which is not the main axis.
+        if (child.isHorizontalWritingMode() != isHorizontalWritingMode())
+            return false;
         bool definite = child.computePercentageLogicalHeight(flexBasis) != WTF::nullopt;
         if (m_inLayout) {
             // We can reach this code even while we're not laying ourselves out, such
