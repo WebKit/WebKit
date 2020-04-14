@@ -1,3 +1,36 @@
+2020-04-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make WTR::AccessibilityUIElements calls to accessibilitySetValue run on AX secondary thread.
+        https://bugs.webkit.org/show_bug.cgi?id=210500
+
+        Reviewed by Chris Fleizach.
+
+        Needed to test accessibility isolated tree mode. Follow up to
+        https://bugs.webkit.org/show_bug.cgi?id=210392.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::setBoolAttributeValue):
+        (AccessibilityUIElement::resetSelectedTextMarkerRange):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::setAttributeValue):
+        (WTR::attributesOfElement):
+        (WTR::descriptionOfElements):
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const):
+        (WTR::AccessibilityUIElement::uiElementAttributeValue const):
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+        (WTR::AccessibilityUIElement::setBoolAttributeValue):
+        (WTR::AccessibilityUIElement::setValue):
+        (WTR::AccessibilityUIElement::setSelectedTextRange):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange):
+        (WTR::AccessibilityUIElement::setSelectedChild const):
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex const):
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex const):
+        (WTR::AccessibilityUIElement::takeFocus):
+        (WTR::AccessibilityUIElement::resetSelectedTextMarkerRange):
+
 2020-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         InjectedBundle parameters often need initialization function called before unarchiving

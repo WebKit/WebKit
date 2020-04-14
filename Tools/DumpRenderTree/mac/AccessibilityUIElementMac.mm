@@ -75,7 +75,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
-- (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName;
 - (void)_accessibilityScrollToMakeVisibleWithSubFocus:(NSRect)rect;
 - (void)_accessibilityScrollToGlobalPoint:(NSPoint)point;
 - (void)_accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName;
@@ -584,7 +583,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef attribute, bool value)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    [m_element _accessibilitySetTestValue:@(value) forAttribute:[NSString stringWithJSStringRef:attribute]];
+    [m_element _accessibilitySetValue:@(value) forAttribute:[NSString stringWithJSStringRef:attribute]];
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -1696,7 +1695,7 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
         return;
     
     BEGIN_AX_OBJC_EXCEPTIONS
-    [m_element _accessibilitySetTestValue:textMarkerRange forAttribute:NSAccessibilitySelectedTextMarkerRangeAttribute];
+    [m_element _accessibilitySetValue:textMarkerRange forAttribute:NSAccessibilitySelectedTextMarkerRangeAttribute];
     END_AX_OBJC_EXCEPTIONS
 }
 

@@ -56,7 +56,8 @@ class AccessibilityUIElement : public JSWrappable {
 #if PLATFORM(COCOA)
     // Helper functions that dispatch the corresponding AccessibilityObjectWrapper method to the AX secondary thread when appropriate.
     friend NSArray* supportedAttributes(id);
-    friend id attributeValue(id, NSString*);
+    friend id attributeValue(id, NSString *);
+    friend void setAttributeValue(id, NSString *, id, bool synchronous);
 #endif
 
 public:

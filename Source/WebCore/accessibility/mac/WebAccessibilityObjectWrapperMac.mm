@@ -3557,13 +3557,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         backingObject->setCaretBrowsingEnabled([number boolValue]);
 }
 
-// Used to set attributes synchronously on accessibility elements within tests.
-// For use with DumpRenderTree only.
-- (void)_accessibilitySetTestValue:(id)value forAttribute:(NSString*)attributeName
-{
-    [self _accessibilitySetValue:value forAttribute:attributeName];
-}
-
 static RenderObject* rendererForView(NSView* view)
 {
     if (![view conformsToProtocol:@protocol(WebCoreFrameView)])

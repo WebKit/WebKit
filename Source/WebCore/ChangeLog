@@ -1,3 +1,16 @@
+2020-04-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make WTR::AccessibilityUIElements calls to accessibilitySetValue  run on AX secondary thread. web content
+        https://bugs.webkit.org/show_bug.cgi?id=210500
+
+        Reviewed by Chris Fleizach.
+
+        Removed _accessibilitySetTestValue since it is no longer used, use
+        _accessibilitySetValue instead.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilitySetTestValue:forAttribute:]): Deleted.
+
 2020-04-14  David Kilzer  <ddkilzer@apple.com>
 
         Add WARN_UNUSED_RETURN to decode methods in Source/WebCore
