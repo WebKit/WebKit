@@ -113,25 +113,25 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::WebRTCSocket::messageReceiverName()) {
-        auto& libWebRTCNetwork = WebProcess::singleton().libWebRTCNetwork();
-        if (libWebRTCNetwork.isActive())
-            libWebRTCNetwork.socket(makeObjectIdentifier<LibWebRTCSocketIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
+        auto& network = WebProcess::singleton().libWebRTCNetwork();
+        if (network.isActive())
+            network.socket(makeObjectIdentifier<LibWebRTCSocketIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCSocket message while libWebRTCNetwork is not active");
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebRTCMonitor::messageReceiverName()) {
-        auto& libWebRTCNetwork = WebProcess::singleton().libWebRTCNetwork();
-        if (libWebRTCNetwork.isActive())
-            libWebRTCNetwork.monitor().didReceiveMessage(connection, decoder);
+        auto& network = WebProcess::singleton().libWebRTCNetwork();
+        if (network.isActive())
+            network.monitor().didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCMonitor message while libWebRTCNetwork is not active");
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
-        auto& libWebRTCNetwork = WebProcess::singleton().libWebRTCNetwork();
-        if (libWebRTCNetwork.isActive())
-            libWebRTCNetwork.resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
+        auto& network = WebProcess::singleton().libWebRTCNetwork();
+        if (network.isActive())
+            network.resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
         return;
@@ -139,9 +139,9 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 #endif
 #if ENABLE(WEB_RTC)
     if (decoder.messageReceiverName() == Messages::WebMDNSRegister::messageReceiverName()) {
-        auto& libWebRTCNetwork = WebProcess::singleton().libWebRTCNetwork();
-        if (libWebRTCNetwork.isActive())
-            libWebRTCNetwork.mdnsRegister().didReceiveMessage(connection, decoder);
+        auto& network = WebProcess::singleton().libWebRTCNetwork();
+        if (network.isActive())
+            network.mdnsRegister().didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebMDNSRegister message while libWebRTCNetwork is not active");
         return;
