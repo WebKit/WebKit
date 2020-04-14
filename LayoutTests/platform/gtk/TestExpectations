@@ -4330,7 +4330,6 @@ webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 webkit.org/b/190990 fast/block/basic/inline-content-with-floating-image.html [ Failure Missing ]
 
 # Regressions from EME enablement
-webkit.org/b/190991 fast/dom/navigator-detached-no-crash.html [ Failure ]
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
