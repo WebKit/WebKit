@@ -81,6 +81,7 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 void MediaStreamTrackPrivate::forEachObserver(const Function<void(Observer&)>& apply) const
 {
     ASSERT(isMainThread());
+    auto protectedThis = makeRef(*this);
     for (auto* observer : copyToVector(m_observers)) {
         if (!m_observers.contains(observer))
             continue;
