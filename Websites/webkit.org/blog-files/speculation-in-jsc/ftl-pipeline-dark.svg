@@ -44,7 +44,7 @@
     </font-face>
   </defs>
   <metadata> Produced by OmniGraffle 7.15 
-    <dc:date>2020-04-14 20:28:34 +0000</dc:date>
+    <dc:date>2020-04-14 23:28:05 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
@@ -711,8 +711,8 @@
       <g id="Graphic_125">
         <rect x="287.5" y="1121" width="532" height="75" fill="black"/>
         <path d="M 287.5 1121 L 819.5 1121 L 819.5 1196 L 287.5 1196 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
-        <text transform="translate(292.5 1126)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="235.944" y="15">Legend</tspan>
+        <text transform="translate(292.5 1126)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="white" x="235.944" y="15">Legend</tspan>
         </text>
       </g>
       <g id="Graphic_116">

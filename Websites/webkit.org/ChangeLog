@@ -2,6 +2,15 @@
 
         Unreviewed, check in some more files for a blog post.
 
+        * blog-files/speculation-in-jsc/dfg-pipeline-dark.graffle: Added.
+        * blog-files/speculation-in-jsc/dfg-pipeline-dark.svg: Added.
+        * blog-files/speculation-in-jsc/ftl-pipeline-dark.graffle
+        * blog-files/speculation-in-jsc/ftl-pipeline-dark.svg:
+
+2020-04-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, check in some more files for a blog post.
+
         * blog-files/speculation-in-jsc/ftl-pipeline-dark.graffle: Added.
         * blog-files/speculation-in-jsc/ftl-pipeline-dark.svg: Added.
 
