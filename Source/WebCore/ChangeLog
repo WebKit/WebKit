@@ -1,3 +1,21 @@
+2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Fix race condition in FileMonitor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210483
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is causing flaky timeouts when running resource load statistics layout tests. The problem is that we assume
+        FileMonitor has the last reference of the platform monitor and it's deleted on g_object_unref(), but GLib keeps
+        another reference that is released later on a different thread if the monitor is still active. We just need to
+        ensure we cancel the monitor before calling g_object_unref().
+
+        * platform/FileMonitor.h:
+        * platform/glib/FileMonitorGLib.cpp:
+        (WebCore::FileMonitor::~FileMonitor):
+        (WebCore::FileMonitor::didChange):
+        (WebCore::FileMonitor::cancel):
+
 2020-04-14  Charlie Turner  <cturner@igalia.com>
 
         [EME][CDMProxy] Fix waitingForKey logic

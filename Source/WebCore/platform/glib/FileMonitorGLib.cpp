@@ -66,12 +66,14 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
 FileMonitor::~FileMonitor()
 {
     // The monitor can be destroyed in the work queue thread.
-    if (&m_handlerQueue->runLoop() == &RunLoop::current())
+    if (&m_handlerQueue->runLoop() == &RunLoop::current()) {
+        cancel();
         return;
+    }
 
     BinarySemaphore semaphore;
     m_handlerQueue->dispatch([&] {
-        m_platformMonitor = nullptr;
+        cancel();
         semaphore.signal();
     });
     semaphore.wait();
@@ -96,8 +98,17 @@ void FileMonitor::didChange(FileChangeType type)
 {
     ASSERT(!isMainThread());
     if (type == FileChangeType::Removal)
-        m_platformMonitor = nullptr;
+        cancel();
     m_modificationHandler(type);
+}
+
+void FileMonitor::cancel()
+{
+    if (!m_platformMonitor)
+        return;
+
+    g_file_monitor_cancel(m_platformMonitor.get());
+    m_platformMonitor = nullptr;
 }
 
 } // namespace WebCore
