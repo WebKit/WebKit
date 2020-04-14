@@ -46,7 +46,7 @@ WI.TabBarItem = class TabBarItem
         this._element.createChild("div", "flex-space");
 
         this.displayName = displayName;
-        this.title = title || displayName;
+        this.title = title;
         this.image = image;
     }
 
@@ -130,7 +130,10 @@ WI.TabBarItem = class TabBarItem
 
         this._title = title;
 
-        this._element.title = this._title;
+        if (!this._title)
+            this._element.removeAttribute("title");
+        else
+            this._element.title = this._title;
     }
 };
 

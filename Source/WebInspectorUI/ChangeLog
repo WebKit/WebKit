@@ -1,3 +1,19 @@
+2020-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Don't show tooltips for tabs
+        https://bugs.webkit.org/show_bug.cgi?id=210464
+
+        Reviewed by Devin Rousso.
+
+        Don't show tooltips when they match the name of the tab. We no longer truncate tab names
+        so the tooltip is redundant.
+
+        Only show tooltips for settings and search (pinned tabs).
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem):
+        (WI.TabBarItem.prototype.set title):
+
 2020-04-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: Computed: de-indent items in the Variables section so that wrapped content doesn't line up with the `--`
