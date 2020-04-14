@@ -1,3 +1,22 @@
+2020-04-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Adapt to GdkVisual deprecation and removal
+        https://bugs.webkit.org/show_bug.cgi?id=210489
+
+        Reviewed by Adrian Perez de Castro.
+
+        No new tests needed.
+
+        Update the GdkVisual used to get the screen depth per component in
+        GTK3 and use default values for GTK4, as visuals as an abstraction
+        are gone from GTK4. The use in WK is very limited so there's no
+        much gain from peeking into backend-specific values.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth): Guard GdkVisual call and leave
+        default value for GTK4.
+        (WebCore::screenDepthPerComponent): Update API and ditto.
+
 2020-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Scrollbar handle has no minimum size

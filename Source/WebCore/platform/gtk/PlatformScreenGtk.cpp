@@ -46,6 +46,7 @@
 
 namespace WebCore {
 
+#if !USE(GTK4)
 static GdkVisual* systemVisual()
 {
     if (auto* screen = gdk_screen_get_default())
@@ -53,19 +54,27 @@ static GdkVisual* systemVisual()
 
     return nullptr;
 }
+#endif
 
 int screenDepth(Widget*)
 {
+#if !USE(GTK4)
     if (auto* visual = systemVisual())
         return gdk_visual_get_depth(visual);
+#endif
 
     return 24;
 }
 
 int screenDepthPerComponent(Widget*)
 {
-    if (auto* visual = systemVisual())
-        return gdk_visual_get_bits_per_rgb(visual);
+#if !USE(GTK4)
+    if (auto* visual = systemVisual()) {
+        int redDepth;
+        gdk_visual_get_red_pixel_details(visual, nullptr, nullptr, &redDepth);
+        return redDepth;
+    }
+#endif
 
     return 8;
 }
