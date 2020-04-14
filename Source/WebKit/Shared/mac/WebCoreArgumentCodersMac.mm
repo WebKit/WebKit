@@ -112,8 +112,17 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
     if (!archiveListArray)
         return false;
 
-    *objectCount = CFArrayGetCount(archiveListArray);
-    *objects = (CFTypeRef*)malloc(sizeof(CFTypeRef) * *objectCount);
+    auto archiveListArrayCount = CFArrayGetCount(archiveListArray);
+    if (!isInBounds<size_t>(archiveListArrayCount))
+        return false;
+
+    auto bufferSize = CheckedSize(sizeof(CFTypeRef)) * static_cast<size_t>(archiveListArrayCount);
+    if (bufferSize.hasOverflowed())
+        return false;
+
+    *objectCount = archiveListArrayCount;
+    *objects = static_cast<CFTypeRef*>(malloc(bufferSize.unsafeGet()));
+
     for (CFIndex i = 0; i < *objectCount; ++i) {
         CFTypeRef object = CFArrayGetValueAtIndex(archiveListArray, i);
         if (object == tokenNull)

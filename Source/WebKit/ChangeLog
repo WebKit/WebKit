@@ -1,3 +1,14 @@
+2020-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        createArchiveList() in WebCoreArgumentCodersMac.mm should do more validity checks
+        <https://webkit.org/b/210448>
+        <rdar://problem/61677029>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createArchiveList): Add more validity checks.
+
 2020-04-14  Brent Fulgham  <bfulgham@apple.com>
 
         Do more checking before reusing precompiled sandbox
