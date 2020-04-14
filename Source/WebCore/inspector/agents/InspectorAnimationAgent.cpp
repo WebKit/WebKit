@@ -122,7 +122,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Animation::Keyframe>> buildObjectF
         auto* renderer = keyframeEffect.renderer();
 
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
-        ComputedStyleExtractor computedStyleExtractor(target);
+        ComputedStyleExtractor computedStyleExtractor(target, false, target->pseudoId());
 
         for (size_t i = 0; i < blendingKeyframes.size(); ++i) {
             auto& blendingKeyframe = blendingKeyframes[i];
@@ -299,7 +299,7 @@ void InspectorAnimationAgent::requestEffectTarget(ErrorString& errorString, cons
 
     auto& keyframeEffect = downcast<KeyframeEffect>(*effect);
 
-    auto* target = keyframeEffect.target();
+    auto* target = keyframeEffect.targetElementOrPseudoElement();
     if (!target) {
         errorString = "Animation for given animationId does not have a target"_s;
         return;

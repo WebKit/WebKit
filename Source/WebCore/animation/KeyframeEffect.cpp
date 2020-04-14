@@ -46,6 +46,7 @@
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
+#include "PseudoElement.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -475,7 +476,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, Optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
 
     if (options) {
         OptionalEffectTiming timing;
@@ -510,24 +511,26 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&& source)
 {
-    auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr, PseudoId::None));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
     return keyframeEffect;
 }
 
-Ref<KeyframeEffect> KeyframeEffect::create(const Element& target)
+Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, PseudoId pseudoId)
 {
-    return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target)));
+    return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target), pseudoId));
 }
 
-KeyframeEffect::KeyframeEffect(Element* target)
+KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
     : m_target(makeWeakPtr(target))
+    , m_pseudoId(pseudoId)
 {
 }
 
 void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 {
     m_target = source->m_target;
+    m_pseudoId = source->m_pseudoId;
     m_compositeOperation = source->m_compositeOperation;
     m_iterationCompositeOperation = source->m_iterationCompositeOperation;
 
@@ -581,10 +584,10 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
     // 3. For each keyframe in keyframes perform the following steps:
     if (is<DeclarativeAnimation>(animation())) {
-        auto* target = this->target();
+        auto* target = m_target.get();
         auto* renderer = this->renderer();
 
-        auto computedStyleExtractor = ComputedStyleExtractor(target);
+        auto computedStyleExtractor = ComputedStyleExtractor(target, false, m_pseudoId);
 
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
@@ -793,11 +796,12 @@ bool KeyframeEffect::forceLayoutIfNeeded()
     if (!m_needsForcedLayout || !m_target)
         return false;
 
-    auto* renderer = m_target->renderer();
+    auto* renderer = this->renderer();
     if (!renderer || !renderer->parent())
         return false;
 
-    auto* frameView = m_target->document().view();
+    ASSERT(document());
+    auto* frameView = document()->view();
     if (!frameView)
         return false;
 
@@ -936,6 +940,7 @@ void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderSt
 void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle)
 {
     ASSERT(is<CSSAnimation>(animation()));
+    ASSERT(document());
 
     auto cssAnimation = downcast<CSSAnimation>(animation());
     auto& backingAnimation = cssAnimation->backingAnimation();
@@ -947,7 +952,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList.keyframes()) {
         if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
-            Style::loadPendingResources(*style, m_target->document(), m_target.get());
+            Style::loadPendingResources(*style, *document(), m_target.get());
     }
 
     m_blendingKeyframesSource = BlendingKeyframesSource::CSSAnimation;
@@ -957,6 +962,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     ASSERT(is<CSSTransition>(animation()));
+    ASSERT(document());
 
     if (!oldStyle || m_blendingKeyframes.size())
         return;
@@ -965,7 +971,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
 
     auto toStyle = RenderStyle::clonePtr(newStyle);
     if (m_target)
-        Style::loadPendingResources(*toStyle, m_target->document(), m_target.get());
+        Style::loadPendingResources(*toStyle, *document(), m_target.get());
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
     keyframeList.addProperty(property);
@@ -1023,13 +1029,13 @@ void KeyframeEffect::computeStackingContextImpact()
 
 void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
 {
-    if (!m_target)
+    if (!targetElementOrPseudoElement())
         return;
 
     if (timeline)
-        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
+        m_inTargetEffectStack = targetElementOrPseudoElement()->ensureKeyframeEffectStack().addEffect(*this);
     else {
-        m_target->ensureKeyframeEffectStack().removeEffect(*this);
+        targetElementOrPseudoElement()->ensureKeyframeEffectStack().removeEffect(*this);
         m_inTargetEffectStack = false;
     }
 }
@@ -1041,14 +1047,14 @@ void KeyframeEffect::animationTimingDidChange()
 
 void KeyframeEffect::updateEffectStackMembership()
 {
-    if (!m_target)
+    if (!targetElementOrPseudoElement())
         return;
 
     bool isRelevant = animation() && animation()->isRelevant();
     if (isRelevant && !m_inTargetEffectStack)
-        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
+        m_inTargetEffectStack = targetElementOrPseudoElement()->ensureKeyframeEffectStack().addEffect(*this);
     else if (!isRelevant && m_inTargetEffectStack) {
-        m_target->ensureKeyframeEffectStack().removeEffect(*this);
+        targetElementOrPseudoElement()->ensureKeyframeEffectStack().removeEffect(*this);
         m_inTargetEffectStack = false;
     }
 }
@@ -1066,15 +1072,38 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
     updateEffectStackMembership();
 }
 
+Element* KeyframeEffect::targetElementOrPseudoElement() const
+{
+    if (m_pseudoId == PseudoId::None)
+        return m_target.get();
+
+    ASSERT(m_target.get());
+
+    if (m_pseudoId == PseudoId::Before)
+        return m_target->beforePseudoElement();
+
+    if (m_pseudoId == PseudoId::After)
+        return m_target->afterPseudoElement();
+
+    // We only support targeting ::before and ::after pseudo-elements at the moment.
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
-    if (m_target.get() == newTarget.get())
+    auto* previousTarget = targetElementOrPseudoElement();
+    if (previousTarget == newTarget.get())
         return;
 
-    auto previousTarget = std::exchange(m_target, makeWeakPtr(newTarget.get()));
+    m_target = makeWeakPtr(newTarget.get());
+
+    // Until we support pseudo-elements via the Web Animations API, changing target means we should reset m_pseudoId.
+    // https://bugs.webkit.org/show_bug.cgi?id=207290
+    m_pseudoId = PseudoId::None;
 
     if (auto* effectAnimation = animation())
-        effectAnimation->effectTargetDidChange(previousTarget.get(), m_target.get());
+        effectAnimation->effectTargetDidChange(previousTarget, targetElementOrPseudoElement());
 
     clearBlendingKeyframes();
 
@@ -1084,14 +1113,14 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 
     // Likewise, we need to invalidate styles on the previous target so that
     // any animated styles are removed immediately.
-    invalidateElement(previousTarget.get());
+    invalidateElement(previousTarget);
 
     if (previousTarget) {
         previousTarget->ensureKeyframeEffectStack().removeEffect(*this);
         m_inTargetEffectStack = false;
     }
-    if (m_target)
-        m_inTargetEffectStack = m_target->ensureKeyframeEffectStack().addEffect(*this);
+    if (targetElementOrPseudoElement())
+        m_inTargetEffectStack = targetElementOrPseudoElement()->ensureKeyframeEffectStack().addEffect(*this);
 }
 
 void KeyframeEffect::apply(RenderStyle& targetStyle)
@@ -1104,7 +1133,7 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
     auto computedTiming = getComputedTiming();
     m_phaseAtLastApplication = computedTiming.phase;
 
-    InspectorInstrumentation::willApplyKeyframeEffect(*m_target, *this, computedTiming);
+    InspectorInstrumentation::willApplyKeyframeEffect(*targetElementOrPseudoElement(), *this, computedTiming);
 
     if (!computedTiming.progress)
         return;
@@ -1133,7 +1162,7 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
 
 void KeyframeEffect::invalidate()
 {
-    invalidateElement(m_target.get());
+    invalidateElement(targetElementOrPseudoElement());
 }
 
 void KeyframeEffect::computeAcceleratedPropertiesState()
@@ -1161,7 +1190,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
 
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    if (!m_target || !renderer() || !animation())
+    if (!renderer() || !animation())
         return;
 
     auto progress = getComputedTiming().progress;
@@ -1483,8 +1512,9 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             renderer->animationSeeked(timeOffset, m_blendingKeyframes.animationName());
             break;
         case AcceleratedAction::Stop:
+            ASSERT(document());
             renderer->animationFinished(m_blendingKeyframes.animationName());
-            if (!m_target->document().renderTreeBeingDestroyed())
+            if (!document()->renderTreeBeingDestroyed())
                 m_target->invalidateStyleAndLayerComposition();
             m_isRunningAccelerated = false;
             break;
@@ -1540,9 +1570,14 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
     return animation;
 }
 
+Document* KeyframeEffect::document() const
+{
+    return m_target ? &m_target->document() : nullptr;
+}
+
 RenderElement* KeyframeEffect::renderer() const
 {
-    return m_target ? m_target->renderer() : nullptr;
+    return targetElementOrPseudoElement() ? targetElementOrPseudoElement()->renderer() : nullptr;
 }
 
 const RenderStyle& KeyframeEffect::currentStyle() const

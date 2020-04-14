@@ -545,7 +545,7 @@ void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
     ASSERT(transition);
     removeAnimation(*transition);
     if (is<KeyframeEffect>(transition->effect())) {
-        if (auto* target = downcast<KeyframeEffect>(transition->effect())->target())
+        if (auto* target = downcast<KeyframeEffect>(transition->effect())->targetElementOrPseudoElement())
             target->ensureCompletedTransitionsByProperty().set(transition->property(), transition);
     }
 }
@@ -669,7 +669,7 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
 
     if (is<KeyframeEffect>(animation.effect())) {
-        if (auto* target = downcast<KeyframeEffect>(animation.effect())->target())
+        if (auto* target = downcast<KeyframeEffect>(animation.effect())->targetElementOrPseudoElement())
             updateListOfElementsWithRunningAcceleratedAnimationsForElement(*target);
     }
 

@@ -8129,7 +8129,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
     for (auto& animation : m_timeline->getAnimations()) {
         auto* effect = animation->effect();
         ASSERT(is<KeyframeEffect>(animation->effect()));
-        auto* target = downcast<KeyframeEffect>(*effect).target();
+        auto* target = downcast<KeyframeEffect>(*effect).targetElementOrPseudoElement();
         ASSERT(target);
         if (function(*target))
             animations.append(animation);

@@ -197,11 +197,11 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
 
     Element* previousTarget = nullptr;
     if (is<KeyframeEffect>(oldEffect))
-        previousTarget = downcast<KeyframeEffect>(oldEffect.get())->target();
+        previousTarget = downcast<KeyframeEffect>(oldEffect.get())->targetElementOrPseudoElement();
 
     Element* newTarget = nullptr;
     if (is<KeyframeEffect>(m_effect))
-        newTarget = downcast<KeyframeEffect>(m_effect.get())->target();
+        newTarget = downcast<KeyframeEffect>(m_effect.get())->targetElementOrPseudoElement();
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
@@ -235,7 +235,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     if (is<KeyframeEffect>(m_effect)) {
         auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
-        auto* target = keyframeEffect->target();
+        auto* target = keyframeEffect->targetElementOrPseudoElement();
         if (target) {
             // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
             // while the timeline was set via the API, the element still has a transition or animation set up and we must
@@ -1348,7 +1348,7 @@ void WebAnimation::persist()
     if (previousReplaceState == ReplaceState::Removed && m_timeline) {
         if (is<KeyframeEffect>(m_effect)) {
             auto& keyframeEffect = downcast<KeyframeEffect>(*m_effect);
-            auto& target = *keyframeEffect.target();
+            auto& target = *keyframeEffect.targetElementOrPseudoElement();
             m_timeline->animationWasAddedToElement(*this, target);
             target.ensureKeyframeEffectStack().addEffect(keyframeEffect);
         }

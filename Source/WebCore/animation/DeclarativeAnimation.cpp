@@ -108,7 +108,12 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
 
     ASSERT(m_owningElement);
 
-    setEffect(KeyframeEffect::create(*m_owningElement));
+    if (is<PseudoElement>(m_owningElement.get())) {
+        auto& pseudoOwningElement = downcast<PseudoElement>(*m_owningElement);
+        ASSERT(pseudoOwningElement.hostElement());
+        setEffect(KeyframeEffect::create(*pseudoOwningElement.hostElement(), pseudoOwningElement.pseudoId()));
+    } else
+        setEffect(KeyframeEffect::create(*m_owningElement, m_owningElement->pseudoId()));
     setTimeline(&m_owningElement->document().timeline());
     downcast<KeyframeEffect>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();

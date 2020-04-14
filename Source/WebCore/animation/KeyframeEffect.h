@@ -50,7 +50,7 @@ class KeyframeEffect : public AnimationEffect
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeEffectOptions>>&&);
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&&);
-    static Ref<KeyframeEffect> create(const Element&);
+    static Ref<KeyframeEffect> create(const Element&, PseudoId);
     ~KeyframeEffect() { }
 
     bool isKeyframeEffect() const final { return true; }
@@ -102,6 +102,7 @@ public:
     const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }
 
     Element* target() const { return m_target.get(); }
+    Element* targetElementOrPseudoElement() const;
     void setTarget(RefPtr<Element>&&);
 
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
@@ -158,12 +159,13 @@ public:
     const RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
 private:
-    KeyframeEffect(Element*);
+    KeyframeEffect(Element*, PseudoId);
 
     enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
 
+    Document* document() const;
     void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
@@ -192,7 +194,7 @@ private:
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     WeakPtr<Element> m_target;
-
+    PseudoId m_pseudoId { PseudoId::None };
     std::unique_ptr<const RenderStyle> m_unanimatedStyle;
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };

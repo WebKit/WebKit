@@ -1,3 +1,54 @@
+2020-04-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Store an Element / PseudoId pair to define the KeyframeEffect target
+        https://bugs.webkit.org/show_bug.cgi?id=210491
+
+        Reviewed by Antti Koivisto.
+
+        In preparation for webkit.org/b/207290 where we will expose the `pseudoElement` JS API on KeyframeEffect we now
+        use an Element / PseudoId (m_target / m_pseudoId) pair to specify an effect's target. In the cases where it matters,
+        such as accessing the various animation collections exposed through Element and the KeyframeEffectStack, we now use
+        the new KeyframeEffect::targetElementOrPseudoElement() method to access the Element or PseudoElement targeted with
+        the Element / PseudoId pair.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimation):
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::initialize):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::transitionDidComplete):
+        (WebCore::DocumentTimeline::animationAcceleratedRunningStateDidChange):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::getKeyframes):
+        (WebCore::KeyframeEffect::forceLayoutIfNeeded):
+        (WebCore::KeyframeEffect::computeCSSAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSTransitionBlendingKeyframes):
+        (WebCore::KeyframeEffect::animationTimelineDidChange):
+        (WebCore::KeyframeEffect::updateEffectStackMembership):
+        (WebCore::KeyframeEffect::targetElementOrPseudoElement const):
+        (WebCore::KeyframeEffect::setTarget):
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::invalidate):
+        (WebCore::KeyframeEffect::getAnimatedStyle):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        (WebCore::KeyframeEffect::document const):
+        (WebCore::KeyframeEffect::renderer const):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::addEffect):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffectInternal):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::persist):
+        * dom/Document.cpp:
+        (WebCore::Document::matchingAnimations):
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        (WebCore::buildObjectForKeyframes):
+        (WebCore::InspectorAnimationAgent::requestEffectTarget):
+
 2020-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Custom scrollbars on gmail don't show
