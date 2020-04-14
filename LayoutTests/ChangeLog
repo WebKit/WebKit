@@ -1,3 +1,18 @@
+2020-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Get scroll-snap working with async overflow scrolling on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210471
+        <rdar://problem/61643199>
+
+        Reviewed by Wenson Hsieh.
+
+        Clone some overflow scroll-snap tests, and enable async scrolling for them.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow-stateless-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow-stateless.html: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html: Added.
+
 2020-04-13  Zalan Bujtas  <zalan@apple.com>
 
         Do not cache definite height against perpendicular flex items.

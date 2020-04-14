@@ -57,28 +57,6 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac() = default;
 
-#if ENABLE(CSS_SCROLL_SNAP)
-static inline Vector<LayoutUnit> convertToLayoutUnits(const Vector<float>& snapOffsetsAsFloat)
-{
-    Vector<LayoutUnit> snapOffsets;
-    snapOffsets.reserveInitialCapacity(snapOffsetsAsFloat.size());
-    for (auto offset : snapOffsetsAsFloat)
-        snapOffsets.uncheckedAppend(offset);
-
-    return snapOffsets;
-}
-
-static inline Vector<ScrollOffsetRange<LayoutUnit>> convertToLayoutUnits(const Vector<ScrollOffsetRange<float>>& snapOffsetRangesAsFloat)
-{
-    Vector<ScrollOffsetRange<LayoutUnit>> snapOffsetRanges;
-    snapOffsetRanges.reserveInitialCapacity(snapOffsetRangesAsFloat.size());
-    for (auto range : snapOffsetRangesAsFloat)
-        snapOffsetRanges.uncheckedAppend({ LayoutUnit(range.start), LayoutUnit(range.end) });
-
-    return snapOffsetRanges;
-}
-#endif
-
 void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
@@ -110,21 +88,6 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
         scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
     m_delegate.updateFromStateNode(scrollingStateNode);
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    // FIXME: this should move to the delegate and be shared with overflow.
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalSnapOffsetRanges))
-        m_delegate.updateScrollSnapPoints(ScrollEventAxis::Horizontal, convertToLayoutUnits(scrollingStateNode.horizontalSnapOffsets()), convertToLayoutUnits(scrollingStateNode.horizontalSnapOffsetRanges()));
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalSnapOffsetRanges))
-        m_delegate.updateScrollSnapPoints(ScrollEventAxis::Vertical, convertToLayoutUnits(scrollingStateNode.verticalSnapOffsets()), convertToLayoutUnits(scrollingStateNode.verticalSnapOffsetRanges()));
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex))
-        m_delegate.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, scrollingStateNode.currentHorizontalSnapPointIndex());
-    
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex))
-        m_delegate.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Vertical, scrollingStateNode.currentVerticalSnapPointIndex());
-#endif
 
     m_hadFirstUpdate = true;
 }

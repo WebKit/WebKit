@@ -1,3 +1,24 @@
+2020-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Get scroll-snap working with async overflow scrolling on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210471
+        <rdar://problem/61643199>
+
+        Reviewed by Wenson Hsieh.
+
+        Obey the FIXME and move scroll-snap related code to the delegate so that it works for
+        both frame and overflow nodes.
+
+        Tests: tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow-stateless.html
+               tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::convertToLayoutUnits): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::convertToLayoutUnits):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode):
+
 2020-04-13  Zalan Bujtas  <zalan@apple.com>
 
         Do not cache definite height against perpendicular flex items.
