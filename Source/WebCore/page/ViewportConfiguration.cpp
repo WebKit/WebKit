@@ -270,6 +270,8 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
         static const double maximumContentWidthBeforePreferringExplicitWidthToAvoidExcessiveScaling = 1920;
         if (width > maximumContentWidthBeforePreferringExplicitWidthToAvoidExcessiveScaling && m_configuration.widthIsSet && 0 < m_configuration.width && m_configuration.width < width)
             initialScale = m_viewLayoutSize.width() / m_configuration.width;
+        else if (shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints())
+            initialScale = effectiveLayoutSizeScaleFactor();
         else if (width > 0)
             initialScale = m_viewLayoutSize.width() / width;
     }
@@ -615,6 +617,21 @@ bool ViewportConfiguration::setMinimumEffectiveDeviceWidth(double width)
     m_minimumEffectiveDeviceWidth = width;
 
     if (shouldIgnoreMinimumEffectiveDeviceWidth())
+        return false;
+
+    updateMinimumLayoutSize();
+    updateConfiguration();
+    return true;
+}
+
+bool ViewportConfiguration::setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints(double width)
+{
+    if (WTF::areEssentiallyEqual(m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints, width))
+        return false;
+
+    bool wasShrinkingToFitMinimumEffectiveDeviceWidth = shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints();
+    m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints = width;
+    if (wasShrinkingToFitMinimumEffectiveDeviceWidth == shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints())
         return false;
 
     updateMinimumLayoutSize();

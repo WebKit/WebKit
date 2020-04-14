@@ -3880,6 +3880,21 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (m_viewportConfiguration.setCanIgnoreScalingConstraints(visibleContentRectUpdateInfo.allowShrinkToFit()))
         viewportConfigurationChanged();
 
+    double minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints = ([&] {
+        auto document = makeRefPtr(frame.document());
+        if (!document)
+            return 0;
+
+        if (!document->quirks().shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints())
+            return 0;
+
+        // This value is chosen to be close to the minimum width of a Safari window on macOS.
+        return 500;
+    })();
+
+    if (m_viewportConfiguration.setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints(minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints))
+        viewportConfigurationChanged();
+
     frameView.setUnobscuredContentSize(visibleContentRectUpdateInfo.unobscuredContentRect().size());
     m_page->setContentInsets(visibleContentRectUpdateInfo.contentInsets());
     m_page->setObscuredInsets(visibleContentRectUpdateInfo.obscuredInsets());

@@ -88,12 +88,13 @@ public:
     WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);
     constexpr bool canIgnoreScalingConstraints() const { return m_canIgnoreScalingConstraints; }
 
+    WEBCORE_EXPORT bool setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints(double);
     WEBCORE_EXPORT bool setMinimumEffectiveDeviceWidth(double);
     constexpr double minimumEffectiveDeviceWidth() const
     {
         if (shouldIgnoreMinimumEffectiveDeviceWidth())
             return 0;
-        return m_minimumEffectiveDeviceWidth;
+        return m_canIgnoreScalingConstraints ? m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints : m_minimumEffectiveDeviceWidth;
     }
 
     constexpr bool isKnownToLayOutWiderThanViewport() const { return m_isKnownToLayOutWiderThanViewport; }
@@ -101,6 +102,9 @@ public:
 
     constexpr bool shouldIgnoreMinimumEffectiveDeviceWidth() const
     {
+        if (shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints())
+            return false;
+
         if (m_canIgnoreScalingConstraints)
             return true;
 
@@ -111,6 +115,11 @@ public:
             return true;
 
         return false;
+    }
+
+    constexpr bool shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints() const
+    {
+        return m_canIgnoreScalingConstraints && m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints;
     }
 
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
@@ -192,6 +201,7 @@ private:
 
     double m_layoutSizeScaleFactor { 1 };
     double m_minimumEffectiveDeviceWidth { 0 };
+    double m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints { 0 };
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
     bool m_isKnownToLayOutWiderThanViewport { false };

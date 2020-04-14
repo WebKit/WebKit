@@ -1,3 +1,61 @@
+2020-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Wikipedia articles lay out incorrectly in 1/3 multitasking window
+        https://bugs.webkit.org/show_bug.cgi?id=210501
+        <rdar://problem/54856323>
+
+        Reviewed by Tim Horton.
+
+        In a 1/3 multitasking window, Safari currently uses the `-[WKWebView _allowsViewportShrinkToFit]` SPI to force
+        pages to shrink down by fitting the content width to the view width. This legacy method of shrinking to fit
+        involves laying the page out at the normal view width (320px in 1/3 multitasking), and then scaling the page
+        down such that any amount of horizontal overflow fits within the view.
+
+        In iOS 13, a new style of shrinking to fit was introduced in support of two new features: page zoom controls
+        (accessible via the page formatting menu), and on-by-default page scaling when loading desktop sites on certain
+        models of iPad where the page width is less than cutoffs of 1112px (in landscape) and 1024px (in portrait). This
+        new method of shrinking to fit involves laying out at a larger width (computed from a combination of the minimum
+        effective device width and layout size scale factor), and scaling to fit the effective layout size scale factor
+        instead of the entire contents of the page. This means that while we may still get horizontal scrolling after
+        shrinking to fit, the overall layout of the page is preserved.
+
+        Currently, in 1/3 multitasking, Safari still relies on the former to scale pages down to fit, which means that
+        Wikipedia articles (among other websites) do not lay out sensibly. Moreover, even if Safari adopted the second
+        mechanism for shrinking to fit, layout issues would still exist (albeit to a lesser degree), since we'd still
+        attempt to shrink the content width down to fit due to the fact that the desktop version of Wikipedia doesn't
+        have a meta viewport. While we wouldn't get a broken layout, we'd still have a blank column running down the
+        right side of the page, which is less than ideal.
+
+        It's clear that in this case, attempting to shrink page content down to fit the view is suboptimal (at best, it
+        leads to a large portion of the page being blank; at worst, it completely breaks page layout). To address this
+        bug for now, add a parallel minimumEffectiveDeviceWidth value that takes effect when ignoring scaling
+        constraints (i.e. when we're in a multitasking window), and scale the page down to fit this value instead of
+        fitting the full content width when computing initial scale in `ViewportConfiguration::initialScaleFromSize`.
+        Maintaining this value separately from m_minimumEffectiveDeviceWidth makes it much easier to ensure that the
+        effects of this change are only ever active when the quirk is applied, and also when the view is embedded in a
+        multitasking window.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints const):
+
+        Introduce a quirk to fix layout issues in multitasking mode on the desktop version of Wikipedia.
+
+        * page/Quirks.h:
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::initialScaleFromSize const):
+        (WebCore::ViewportConfiguration::setMinimumEffectiveDeviceWidth):
+        (WebCore::ViewportConfiguration::setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints):
+        * page/ViewportConfiguration.h:
+
+        Add a minimum effective device width value that only takes effect when ignoring scaling constraints, and update
+        `shouldIgnoreMinimumEffectiveDeviceWidth()` and `minimumEffectiveDeviceWidth()` to not always return `true` and
+        `0` (respectively) when ignoring scaling constraints, if m_minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints
+        is set.
+
+        (WebCore::ViewportConfiguration::minimumEffectiveDeviceWidth const):
+        (WebCore::ViewportConfiguration::shouldIgnoreMinimumEffectiveDeviceWidth const):
+        (WebCore::ViewportConfiguration::shouldShrinkToFitMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints const):
+
 2020-04-14  Antoine Quint  <graouts@apple.com>
 
         Factor PseudoElement creation calls into a single Element::ensurePseudoElement(pseudoId) method

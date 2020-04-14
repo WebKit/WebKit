@@ -72,6 +72,7 @@ public:
     WEBCORE_EXPORT bool shouldAvoidScrollingWhenFocusedContentIsVisible() const;
     WEBCORE_EXPORT bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation() const;
     WEBCORE_EXPORT bool shouldIgnoreAriaForFastPathContentObservationCheck() const;
+    WEBCORE_EXPORT bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const;
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
     

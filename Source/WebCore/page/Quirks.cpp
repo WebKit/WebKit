@@ -750,4 +750,14 @@ bool Quirks::needsCanPlayAfterSeekedQuirk() const
     return m_needsCanPlayAfterSeekedQuirk.value();
 }
 
+bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const
+{
+    if (!needsQuirks())
+        return false;
+
+    // FIXME: We should consider replacing this with a heuristic to determine whether
+    // or not the edges of the page mostly lack content after shrinking to fit.
+    return m_document->url().host().endsWithIgnoringASCIICase(".wikipedia.org");
+}
+
 }
