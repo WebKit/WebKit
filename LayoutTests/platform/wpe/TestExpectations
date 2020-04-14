@@ -477,8 +477,6 @@ webkit.org/b/153707 imported/w3c/web-platform-tests/dom/events/EventTarget-dispa
 
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
-webkit.org/b/190991 fast/dom/navigator-detached-no-crash.html [ Failure ]
-
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]

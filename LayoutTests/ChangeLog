@@ -1,3 +1,13 @@
+2020-04-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Fix navigator-detached-no-crash expectations
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        Upload the correct expectation file.
+        * platform/wpe/TestExpectations: Removed failing expectation.
+
 2020-04-14  James Craig  <jcraig@apple.com>
 
         AX: Smart Invert doesn't handle the picture elements on foxnews.com
