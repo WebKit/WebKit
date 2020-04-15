@@ -200,7 +200,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighR
 
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
-    auto highResNowMs = Performance::reduceTimeResolution(Seconds { timestamp }).milliseconds();
+    auto highResNowMs = std::round(1000 * timestamp);
     if (m_document && m_document->quirks().needsMillisecondResolutionForHighResTimeStamp())
         highResNowMs += 0.1;
 
