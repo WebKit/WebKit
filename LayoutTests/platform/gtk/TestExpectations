@@ -2920,6 +2920,8 @@ webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-
 
 webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
+webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Pass Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
