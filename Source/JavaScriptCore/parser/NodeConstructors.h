@@ -718,6 +718,16 @@ namespace JSC {
     {
     }
 
+    inline ShortCircuitReadModifyResolveNode::ShortCircuitReadModifyResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : ExpressionNode(location)
+        , ThrowableExpressionData(divot, divotStart, divotEnd)
+        , m_ident(ident)
+        , m_right(right)
+        , m_operator(oper)
+        , m_rightHasAssignments(rightHasAssignments)
+    {
+    }
+
     inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* right, AssignmentContext assignmentContext)
         : ExpressionNode(location)
         , m_ident(ident)
@@ -728,6 +738,18 @@ namespace JSC {
 
 
     inline ReadModifyBracketNode::ReadModifyBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : ExpressionNode(location)
+        , ThrowableSubExpressionData(divot, divotStart, divotEnd)
+        , m_base(base)
+        , m_subscript(subscript)
+        , m_right(right)
+        , m_operator(oper)
+        , m_subscriptHasAssignments(subscriptHasAssignments)
+        , m_rightHasAssignments(rightHasAssignments)
+    {
+    }
+
+    inline ShortCircuitReadModifyBracketNode::ShortCircuitReadModifyBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableSubExpressionData(divot, divotStart, divotEnd)
         , m_base(base)
@@ -761,6 +783,17 @@ namespace JSC {
     }
 
     inline ReadModifyDotNode::ReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : ExpressionNode(location)
+        , ThrowableSubExpressionData(divot, divotStart, divotEnd)
+        , m_base(base)
+        , m_ident(ident)
+        , m_right(right)
+        , m_operator(oper)
+        , m_rightHasAssignments(rightHasAssignments)
+    {
+    }
+
+    inline ShortCircuitReadModifyDotNode::ShortCircuitReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableSubExpressionData(divot, divotStart, divotEnd)
         , m_base(base)

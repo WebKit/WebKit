@@ -1,3 +1,58 @@
+2020-04-15  Devin Rousso  <drousso@apple.com>
+
+        [ESNext] Implement logical assignment operators
+        https://bugs.webkit.org/show_bug.cgi?id=209716
+
+        Reviewed by Ross Kirsling.
+
+        Implement the logical assignment operators proposal, which is now Stage 3. It introduces
+        three new assignment operators which will only store the result of the rhs in the lhs if the
+        lhs meets the given condition:
+         - `??=`, for if the lhs is nullish (`null` or `undefined`)
+         - `||=`, for if the lhs is falsy
+         - `&&=`, for if the lhs is truthy
+
+        This short circuiting can be beneficial as it can avoid a redundant store when used in the
+        common JavaScript programming pattern of "defaulting" a parameter.
+
+        ```js
+            function foo(x) {
+                x = x || 42;
+            }
+        ```
+
+        If `x` is a truthy value, it would result in the rhs `x` being stored back into the lhs `x`.
+        In some situations, this can have negative unintended side-effects, such as for `innerHTML`.
+
+        Logical assignment operators, however, are defined such that they only store if the rhs is
+        to actually be needed/used, skipping the redundant store and simply returning lhs otherwise.
+
+        In the case of readonly references, this means that an error is only thrown when the
+        assignment occurs, meaning that if the lhs already satisfies the condition it will be used
+        and returned with no error.
+
+        * parser/ParserTokens.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/Nodes.h:
+        * parser/NodeConstructors.h:
+        (JSC::ShortCircuitReadModifyResolveNode::ShortCircuitReadModifyResolveNode): Added.
+        (JSC::ShortCircuitReadModifyBracketNode::ShortCircuitReadModifyBracketNode): Added.
+        (JSC::ShortCircuitReadModifyDotNode::ShortCircuitReadModifyDotNode): Added.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitShortCircuitAssignment): Added.
+        (JSC::ShortCircuitReadModifyResolveNode::emitBytecode): Added.
+        (JSC::ShortCircuitReadModifyDotNode::emitBytecode): Added.
+        (JSC::ShortCircuitReadModifyBracketNode::emitBytecode): Added.
+
+        * runtime/OptionsList.h:
+        Add a `useLogicalAssignmentOperators` setting for controlling this feature.
+
 2020-04-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: add a Step next that steps by expression

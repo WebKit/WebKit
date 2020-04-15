@@ -1,3 +1,22 @@
+2020-04-15  Devin Rousso  <drousso@apple.com>
+
+        [ESNext] Implement logical assignment operators
+        https://bugs.webkit.org/show_bug.cgi?id=209716
+
+        Reviewed by Ross Kirsling.
+
+        * stress/logical-assignment-operator-and.js: Added.
+        * stress/logical-assignment-operator-nullish.js: Added.
+        * stress/logical-assignment-operator-or.js: Added.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        Right now, test262 expects an early error to be thrown if the lhs is not simple, which does
+        not match what we do with other read-modify assignment operators. This is likely to change
+        in the future to match existing behavior (throw a `ReferenceError`) [1].
+
+        [1]: <https://github.com/tc39/ecma262/issues/257#issuecomment-502878708>
+
 2020-04-14  Saam Barati  <sbarati@apple.com>
 
         Skip all low executable memory wasm tests on arm64

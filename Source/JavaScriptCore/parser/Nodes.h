@@ -68,6 +68,9 @@ namespace JSC {
         BitOrEq,
         ModEq,
         PowEq,
+        NullishEq,
+        OrEq,
+        AndEq,
         LShift,
         RShift,
         URShift
@@ -1389,6 +1392,19 @@ namespace JSC {
         bool m_rightHasAssignments;
     };
 
+    class ShortCircuitReadModifyResolveNode final : public ExpressionNode, public ThrowableExpressionData {
+    public:
+        ShortCircuitReadModifyResolveNode(const JSTokenLocation&, const Identifier&, Operator, ExpressionNode*  right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        const Identifier& m_ident;
+        ExpressionNode* m_right;
+        Operator m_operator;
+        bool m_rightHasAssignments;
+    };
+
     class AssignResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         AssignResolveNode(const JSTokenLocation&, const Identifier&, ExpressionNode* right, AssignmentContext);
@@ -1406,6 +1422,21 @@ namespace JSC {
     class ReadModifyBracketNode final : public ExpressionNode, public ThrowableSubExpressionData {
     public:
         ReadModifyBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_base;
+        ExpressionNode* m_subscript;
+        ExpressionNode* m_right;
+        Operator m_operator;
+        bool m_subscriptHasAssignments : 1;
+        bool m_rightHasAssignments : 1;
+    };
+
+    class ShortCircuitReadModifyBracketNode final : public ExpressionNode, public ThrowableSubExpressionData {
+    public:
+        ShortCircuitReadModifyBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1448,6 +1479,20 @@ namespace JSC {
     class ReadModifyDotNode final : public ExpressionNode, public ThrowableSubExpressionData {
     public:
         ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_base;
+        const Identifier& m_ident;
+        ExpressionNode* m_right;
+        Operator m_operator;
+        bool m_rightHasAssignments : 1;
+    };
+
+    class ShortCircuitReadModifyDotNode final : public ExpressionNode, public ThrowableSubExpressionData {
+    public:
+        ShortCircuitReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;

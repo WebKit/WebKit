@@ -787,6 +787,10 @@ def runMiniMode(*optionalTestSpecificOptions)
     run("mini-mode", "--forceMiniVMMode=true", *optionalTestSpecificOptions)
 end
 
+def runLogicalAssignmentOperatorsEnabled(*optionalTestSpecificOptions)
+    run("logical-assignment-operators-enabled", "--useLogicalAssignmentOperators=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
+end
+
 def defaultRun
     if $mode == "quick"
         defaultQuickRun

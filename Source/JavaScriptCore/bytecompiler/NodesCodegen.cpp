@@ -2862,6 +2862,109 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     return returnResult;
 }
 
+// ------------------------------ ShortCircuitReadModifyResolveNode -----------------------------------
+
+static ALWAYS_INLINE void emitShortCircuitAssignment(BytecodeGenerator& generator, RegisterID* value, Operator oper, Label& afterAssignment)
+{
+    switch (oper) {
+    case Operator::NullishEq:
+        generator.emitJumpIfFalse(generator.emitIsUndefinedOrNull(generator.newTemporary(), value), afterAssignment);
+        break;
+
+    case Operator::OrEq:
+        generator.emitJumpIfTrue(value, afterAssignment);
+        break;
+
+    case Operator::AndEq:
+        generator.emitJumpIfFalse(value, afterAssignment);
+        break;
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    JSTextPosition newDivot = divotStart() + m_ident.length();
+
+    Variable var = generator.variable(m_ident);
+    bool isReadOnly = var.isReadOnly();
+
+    if (RefPtr<RegisterID> local = var.local()) {
+        generator.emitTDZCheckIfNecessary(var, local.get(), nullptr);
+
+        if (isReadOnly) {
+            RefPtr<RegisterID> result = local;
+
+            Ref<Label> afterAssignment = generator.newLabel();
+            emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+            result = generator.emitNode(result.get(), m_right); // Execute side effects first.
+            bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
+
+            if (!threwException)
+                generator.emitProfileType(result.get(), divotStart(), divotEnd());
+
+            generator.emitLabel(afterAssignment.get());
+            return generator.move(dst, result.get());
+        }
+
+        if (generator.leftHandSideNeedsCopy(m_rightHasAssignments, m_right->isPure(generator))) {
+            RefPtr<RegisterID> result = generator.tempDestination(dst);
+            generator.move(result.get(), local.get());
+
+            Ref<Label> afterAssignment = generator.newLabel();
+            emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+            result = generator.emitNode(result.get(), m_right);
+            generator.move(local.get(), result.get());
+            generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+
+            generator.emitLabel(afterAssignment.get());
+            return generator.move(dst, result.get());
+        }
+
+        RefPtr<RegisterID> result = local;
+
+        Ref<Label> afterAssignment = generator.newLabel();
+        emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+        result = generator.emitNode(result.get(), m_right);
+        generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+
+        generator.emitLabel(afterAssignment.get());
+        return generator.move(dst, result.get());
+    }
+
+    generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
+    RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
+
+    RefPtr<RegisterID> result = generator.emitGetFromScope(generator.tempDestination(dst), scope.get(), var, ThrowIfNotFound);
+    generator.emitTDZCheckIfNecessary(var, result.get(), nullptr);
+
+    Ref<Label> afterAssignment = generator.newLabel();
+    emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+    result = generator.emitNode(result.get(), m_right); // Execute side effects first.
+
+    bool threwException = isReadOnly ? generator.emitReadOnlyExceptionIfNeeded(var) : false;
+
+    if (!threwException)
+        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+
+    if (!isReadOnly) {
+        result = generator.emitPutToScope(scope.get(), var, result.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+        generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+    }
+
+    generator.emitLabel(afterAssignment.get());
+    return generator.move(dst, result.get());
+}
+
+// ------------------------------ AssignResolveNode -----------------------------------
+
 static InitializationMode initializationModeForAssignmentContext(AssignmentContext assignmentContext)
 {
     switch (assignmentContext) {
@@ -2876,8 +2979,6 @@ static InitializationMode initializationModeForAssignmentContext(AssignmentConte
     ASSERT_NOT_REACHED();
     return InitializationMode::NotInitialization;
 }
-
-// ------------------------------ AssignResolveNode -----------------------------------
 
 RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
@@ -2978,6 +3079,37 @@ RegisterID* ReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, Regist
     return ret;
 }
 
+// ------------------------------ ShortCircuitReadModifyDotNode -----------------------------------
+
+RegisterID* ShortCircuitReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_rightHasAssignments, m_right->isPure(generator));
+    RefPtr<RegisterID> thisValue;
+
+    RefPtr<RegisterID> result;
+
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+    if (m_base->isSuperNode()) {
+        thisValue = generator.ensureThis();
+        result = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), m_ident);
+    } else
+        result = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
+
+    Ref<Label> afterAssignment = generator.newLabel();
+    emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+    result = generator.emitNode(result.get(), m_right);
+    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    if (m_base->isSuperNode())
+        result = generator.emitPutById(base.get(), thisValue.get(), m_ident, result.get());
+    else
+        result = generator.emitPutById(base.get(), m_ident, result.get());
+    generator.emitProfileType(result.get(), divotStart(), divotEnd());
+
+    generator.emitLabel(afterAssignment.get());
+    return generator.move(dst, result.get());
+}
+
 // ------------------------------ AssignErrorNode -----------------------------------
 
 RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
@@ -3040,6 +3172,38 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
     generator.emitProfileType(updatedValue, divotStart(), divotEnd());
 
     return updatedValue;
+}
+
+// ------------------------------ ShortCircuitReadModifyBracketNode -----------------------------------
+
+RegisterID* ShortCircuitReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments || m_rightHasAssignments, m_subscript->isPure(generator) && m_right->isPure(generator));
+    RefPtr<RegisterID> property = generator.emitNodeForLeftHandSideForProperty(m_subscript, m_rightHasAssignments, m_right->isPure(generator));
+    RefPtr<RegisterID> thisValue;
+
+    RefPtr<RegisterID> result;
+
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+    if (m_base->isSuperNode()) {
+        thisValue = generator.ensureThis();
+        result = generator.emitGetByVal(generator.tempDestination(dst), base.get(), thisValue.get(), property.get());
+    } else
+        result = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
+
+    Ref<Label> afterAssignment = generator.newLabel();
+    emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+
+    result = generator.emitNode(result.get(), m_right);
+    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+    if (m_base->isSuperNode())
+        result = generator.emitPutByVal(base.get(), thisValue.get(), property.get(), result.get());
+    else
+        result = generator.emitPutByVal(base.get(), property.get(), result.get());
+    generator.emitProfileType(result.get(), divotStart(), divotEnd());
+
+    generator.emitLabel(afterAssignment.get());
+    return generator.move(dst, result.get());
 }
 
 // ------------------------------ CommaNode ------------------------------------

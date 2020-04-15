@@ -2718,6 +2718,12 @@ test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-lo
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
+test/language/expressions/logical-assignment/lgcl-and-assignment-operator-non-simple-lhs.js:
+  default: "Test262: This statement should not be evaluated."
+test/language/expressions/logical-assignment/lgcl-nullish-assignment-operator-non-simple-lhs.js:
+  default: "Test262: This statement should not be evaluated."
+test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-simple-lhs.js:
+  default: "Test262: This statement should not be evaluated."
 test/language/expressions/new/ctorExpr-fn-ref-before-args-eval-fn-wrapup.js:
   default: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
   strict mode: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
