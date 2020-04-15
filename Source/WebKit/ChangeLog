@@ -1,3 +1,30 @@
+2020-04-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r260101. rdar://problem/61853298
+
+    createArchiveList() in WebCoreArgumentCodersMac.mm should do more validity checks
+    <https://webkit.org/b/210448>
+    <rdar://problem/61677029>
+    
+    Reviewed by Darin Adler.
+    
+    * Shared/mac/WebCoreArgumentCodersMac.mm:
+    (IPC::createArchiveList): Add more validity checks.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260101 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-14  David Kilzer  <ddkilzer@apple.com>
+
+            createArchiveList() in WebCoreArgumentCodersMac.mm should do more validity checks
+            <https://webkit.org/b/210448>
+            <rdar://problem/61677029>
+
+            Reviewed by Darin Adler.
+
+            * Shared/mac/WebCoreArgumentCodersMac.mm:
+            (IPC::createArchiveList): Add more validity checks.
+
 2020-04-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259316. rdar://problem/61269751
