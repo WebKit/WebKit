@@ -47,6 +47,7 @@ public:
     const AnimationList* cssAnimationList() const { return m_cssAnimationList.get(); }
     void setCSSAnimationList(RefPtr<const AnimationList>&&);
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
+    bool requiresPseudoElement() const;
 
 private:
     void ensureEffectsAreSorted();

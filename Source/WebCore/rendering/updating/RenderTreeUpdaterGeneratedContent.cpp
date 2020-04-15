@@ -71,12 +71,16 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
 
 static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style)
 {
-    ASSERT(style.contentData());
-
-    for (const ContentData* content = style.contentData(); content; content = content->next()) {
-        auto child = content->createContentRenderer(pseudoRenderer.document(), style);
-        if (pseudoRenderer.isChildAllowed(*child, style))
-            builder.attach(pseudoRenderer, WTFMove(child));
+    if (auto* contentData = style.contentData()) {
+        for (const ContentData* content = contentData; content; content = content->next()) {
+            auto child = content->createContentRenderer(pseudoRenderer.document(), style);
+            if (pseudoRenderer.isChildAllowed(*child, style))
+                builder.attach(pseudoRenderer, WTFMove(child));
+        }
+    } else {
+        // The only valid scenario where this method is called without the "content" property being set
+        // is the case where a pseudo-element has animations set on it via the Web Animations API.
+        ASSERT(is<PseudoElement>(pseudoRenderer.element()) && downcast<PseudoElement>(*pseudoRenderer.element()).isTargetedByKeyframeEffectRequiringPseudoElement());
     }
 }
 
@@ -97,7 +101,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    if (!needsPseudoElement(update)) {
+    if (!needsPseudoElement(update) && (!pseudoElement || !pseudoElement->isTargetedByKeyframeEffectRequiringPseudoElement())) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);

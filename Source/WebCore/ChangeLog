@@ -1,3 +1,65 @@
+2020-04-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add support for `pseudoElement` on `KeyframeEffect` and `KeyframeEffectOptions`
+        https://bugs.webkit.org/show_bug.cgi?id=207290
+        <rdar://problem/59199003>
+
+        Reviewed by Antti Koivisto.
+
+        We add the required IDL bindings such that JS-originated Web Animations can target pseudo-elements, either via the KeyframeEffect.pseudoElement
+        property, or via the KeyframeEffectOptions.pseudoElement property, which is set on the object passed to the KeyframeEffect constrcutor and
+        Element.animate().
+
+        This means that a PseudoElement can be targeted by an animation even if it's not been created through style resolution by virtue of a ::before
+        or ::after selector and a "content" style rule. This means that when either the "target" or "pseudoElement" property of KeyframeEffect is set,
+        we ensure a PseudoElement is created and set on the host element if required. And additionally, we ensure that during style resolution, animations
+        are applied to such pseudo-elements with a new PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement() method that indicates that a
+        JS-originated KeyframeEffect targets this pseudo-element.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create): Handle the new KeyframeEffectOptions.pseudoElement property in the KeyframeEffect constructor.
+        (WebCore::KeyframeEffect::targetsPseudoElement const): Indicates whether this effect targets a pseudo-element and not a regular
+        element or a null target.
+        (WebCore::KeyframeEffect::targetElementOrPseudoElement const): Use the new targetsPseudoElement() method to determine whether a
+        pseudo-element is targeted. We also remove an assertion that only made sense when m_pseudoId could only be set via a CSS-originated
+        animation and another one when the only possible m_pseudoId values were PseudoId::Before and PseudoId::After.
+        (WebCore::KeyframeEffect::setTarget): Call the new didChangeTargetElementOrPseudoElement() method if the provided value differs
+        from the stored value for m_target.
+        (WebCore::KeyframeEffect::pseudoElement const): Return the matching normalized string with a `::` prefix for m_pseudoId if the target
+        is a pseudo-element. Note that PseudoElement::pseudoElementNameForEvents() will only return a string for "::before" and "::after" since
+        we only know how to animate these pseudo-elements.
+        (WebCore::KeyframeEffect::setPseudoElement): Determine a matching PseudoId, if any, for the provided string, and call the new
+        didChangeTargetElementOrPseudoElement() method if the provided value differs from the stored value for m_pseudoId.
+        (WebCore::KeyframeEffect::didChangeTargetElementOrPseudoElement): New method called when either m_target or m_pseudoId is changed
+        such that we can ensure the required PseudoElement is created if the animation targets a pseudo-element. Then we run the same logic
+        that we used to in KeyframeEffect::setTarget().
+        (WebCore::KeyframeEffect::requiresPseudoElement const): Indicates whether a PseudoElement must remain created for this KeyframeEffect,
+        which is only necessary for JS-originated effects targeting a pseudo-element.
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectOptions.h:
+        * animation/KeyframeEffectOptions.idl:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::requiresPseudoElement const): Indicates whether one or more JS-originated keyframe effects in the stack target
+        the PseudoElement owning this stack.
+        * animation/KeyframeEffectStack.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::commitStyles): Use KeyframeEffect::targetsPseudoElement() to determine whether the animation's effect's target is a
+        pseudo-element, in which case we need to throw a NoModificationAllowedError exception.
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::rendererIsNeeded): Return true also when one or more JS-originated keyframe effects in the stack target this pseudo-element.
+        (WebCore::PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement): Return true when one or more JS-originated keyframe effects in the stack
+        target this pseudo-element.
+        * dom/PseudoElement.h:
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::createContentRenderers): Remove the assertion that the "content" property was set since it's valid for this function to now be called
+        due to JS-originated keyframe effects targeting the given pseudo-element. Instead we add an assertion that there are such keyframe effects in
+        case no "content" property was set.
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement): Only remove pseudo-elements if there are no JS-originated keyframe effects
+        targeting the specified pseudo-element.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolvePseudoStyle): Allow animated style resolution for pseudo-elements targeted by JS-originated keyframe effects.
+
 2020-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Fix use of gtk init functions

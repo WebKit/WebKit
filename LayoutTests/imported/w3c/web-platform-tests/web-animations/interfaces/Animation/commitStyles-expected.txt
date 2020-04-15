@@ -11,16 +11,12 @@ FAIL Commits the intermediate value of an animation in the middle of stack asser
 FAIL Commit composites on top of the underlying value assert_approx_equals: expected 0.5 +/- 0.0001 but got 0.20000000298023224
 PASS Triggers mutation observers when updating style 
 FAIL Does NOT trigger mutation observers when the change to style is redundant assert_equals: Should have no mutation records expected 0 but got 1
-FAIL Throws if the target element is a pseudo element assert_throws_dom: function "() => {
-    animation.commitStyles();
-  }" did not throw
+PASS Throws if the target element is a pseudo element 
 PASS Throws if the target element is not something with a style attribute 
 PASS Throws if the target effect is display:none 
 PASS Throws if the target effect's ancestor is display:none 
 PASS Treats display:contents as rendered 
 PASS Treats display:contents in a display:none subtree as not rendered 
 PASS Throws if the target effect is disconnected 
-FAIL Checks the pseudo element condition before the not rendered condition assert_throws_dom: function "() => {
-    animation.commitStyles();
-  }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+PASS Checks the pseudo element condition before the not rendered condition 
 

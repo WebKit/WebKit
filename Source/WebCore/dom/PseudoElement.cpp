@@ -32,6 +32,7 @@
 #include "ContentData.h"
 #include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffectStack.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
@@ -100,7 +101,14 @@ void PseudoElement::clearHostElement()
 
 bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return pseudoElementRendererIsNeeded(&style);
+    return pseudoElementRendererIsNeeded(&style) || isTargetedByKeyframeEffectRequiringPseudoElement();
+}
+
+bool PseudoElement::isTargetedByKeyframeEffectRequiringPseudoElement()
+{
+    if (auto* stack = keyframeEffectStack())
+        return stack->requiresPseudoElement();
+    return false;
 }
 
 } // namespace

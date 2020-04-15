@@ -59,6 +59,15 @@ void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
     m_effects.removeFirst(&effect);
 }
 
+bool KeyframeEffectStack::requiresPseudoElement() const
+{
+    for (auto& effect : m_effects) {
+        if (effect->requiresPseudoElement())
+            return true;
+    }
+    return false;
+}
+
 bool KeyframeEffectStack::isCurrentlyAffectingProperty(CSSPropertyID property) const
 {
     for (auto& effect : m_effects) {

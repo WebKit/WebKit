@@ -13,5 +13,5 @@ PASS Finished but not filling CSS Animations are not returned
 PASS Yet-to-start CSS Animations are returned 
 PASS CSS Animations canceled via the API are not returned 
 PASS CSS Animations canceled and restarted via the API are returned 
-FAIL CSS Animations targetting (pseudo-)elements should have correct order after sorting assert_equals: Animation #1 has null pseudo type expected (object) null but got (undefined) undefined
+PASS CSS Animations targetting (pseudo-)elements should have correct order after sorting 
 

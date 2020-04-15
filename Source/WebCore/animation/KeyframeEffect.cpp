@@ -32,6 +32,7 @@
 #include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
+#include "CSSSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransition.h"
@@ -486,6 +487,11 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
             timing.duration = duration;
         } else {
             auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);
+
+            auto setPseudoElementResult = keyframeEffect->setPseudoElement(keyframeEffectOptions.pseudoElement);
+            if (setPseudoElementResult.hasException())
+                return setPseudoElementResult.releaseException();
+
             timing = {
                 keyframeEffectOptions.duration,
                 keyframeEffectOptions.iterations,
@@ -1072,12 +1078,15 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
     updateEffectStackMembership();
 }
 
+bool KeyframeEffect::targetsPseudoElement() const
+{
+    return m_target.get() && m_pseudoId != PseudoId::None;
+}
+
 Element* KeyframeEffect::targetElementOrPseudoElement() const
 {
-    if (m_pseudoId == PseudoId::None)
+    if (!targetsPseudoElement())
         return m_target.get();
-
-    ASSERT(m_target.get());
 
     if (m_pseudoId == PseudoId::Before)
         return m_target->beforePseudoElement();
@@ -1086,24 +1095,76 @@ Element* KeyframeEffect::targetElementOrPseudoElement() const
         return m_target->afterPseudoElement();
 
     // We only support targeting ::before and ::after pseudo-elements at the moment.
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
-    auto* previousTarget = targetElementOrPseudoElement();
-    if (previousTarget == newTarget.get())
+    if (m_target.get() == newTarget.get())
         return;
 
+    auto* previousTargetElementOrPseudoElement = targetElementOrPseudoElement();
     m_target = makeWeakPtr(newTarget.get());
+    didChangeTargetElementOrPseudoElement(previousTargetElementOrPseudoElement);
+}
 
-    // Until we support pseudo-elements via the Web Animations API, changing target means we should reset m_pseudoId.
-    // https://bugs.webkit.org/show_bug.cgi?id=207290
-    m_pseudoId = PseudoId::None;
+const String KeyframeEffect::pseudoElement() const
+{
+    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
+
+    // The target pseudo-selector. null if this effect has no effect target or if the effect target is an element (i.e. not a pseudo-element).
+    // When the effect target is a pseudo-element, this specifies the pseudo-element selector (e.g. ::before).
+    if (targetsPseudoElement())
+        return PseudoElement::pseudoElementNameForEvents(m_pseudoId);
+    return { };
+}
+
+ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
+{
+    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
+
+    // On setting, sets the target pseudo-selector of the animation effect to the provided value after applying the following exceptions:
+    //
+    // - If the provided value is not null and is an invalid <pseudo-element-selector>, the user agent must throw a DOMException with error
+    // name SyntaxError and leave the target pseudo-selector of this animation effect unchanged. Note, that invalid in this context follows
+    // the definition of an invalid selector defined in [SELECTORS-4] such that syntactically invalid pseudo-elements as well as pseudo-elements
+    // for which the user agent has no usable level of support are both deemed invalid.
+    // - If one of the legacy Selectors Level 2 single-colon selectors (':before', ':after', ':first-letter', or ':first-line') is specified,
+    // the target pseudo-selector must be set to the equivalent two-colon selector (e.g. '::before').
+    auto pseudoId = PseudoId::None;
+    if (!pseudoElement.isNull()) {
+        auto isLegacy = pseudoElement == ":before" || pseudoElement == ":after" || pseudoElement == ":first-letter" || pseudoElement == ":first-line";
+        if (!isLegacy && !pseudoElement.startsWith("::"))
+            return Exception { SyntaxError };
+        auto pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substring(isLegacy ? 1 : 2));
+        if (pseudoType == CSSSelector::PseudoElementUnknown)
+            return Exception { SyntaxError };
+        pseudoId = CSSSelector::pseudoId(pseudoType);
+    }
+
+    if (pseudoId == m_pseudoId)
+        return { };
+
+    auto* previousTargetElementOrPseudoElement = targetElementOrPseudoElement();
+    m_pseudoId = pseudoId;
+    didChangeTargetElementOrPseudoElement(previousTargetElementOrPseudoElement);
+
+    return { };
+}
+
+void KeyframeEffect::didChangeTargetElementOrPseudoElement(Element* previousTargetElementOrPseudoElement)
+{
+    auto* newTargetElementOrPseudoElement = targetElementOrPseudoElement();
+
+    // We must ensure a PseudoElement exists for this m_target / m_pseudoId pair if both are specified.
+    if (!newTargetElementOrPseudoElement && m_target.get() && m_pseudoId != PseudoId::None) {
+        // We only support targeting ::before and ::after pseudo-elements at the moment.
+        if (m_pseudoId == PseudoId::Before || m_pseudoId == PseudoId::After)
+            newTargetElementOrPseudoElement = &m_target->ensurePseudoElement(m_pseudoId);
+    }
 
     if (auto* effectAnimation = animation())
-        effectAnimation->effectTargetDidChange(previousTarget, targetElementOrPseudoElement());
+        effectAnimation->effectTargetDidChange(previousTargetElementOrPseudoElement, newTargetElementOrPseudoElement);
 
     clearBlendingKeyframes();
 
@@ -1113,14 +1174,14 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 
     // Likewise, we need to invalidate styles on the previous target so that
     // any animated styles are removed immediately.
-    invalidateElement(previousTarget);
+    invalidateElement(previousTargetElementOrPseudoElement);
 
-    if (previousTarget) {
-        previousTarget->ensureKeyframeEffectStack().removeEffect(*this);
+    if (previousTargetElementOrPseudoElement) {
+        previousTargetElementOrPseudoElement->ensureKeyframeEffectStack().removeEffect(*this);
         m_inTargetEffectStack = false;
     }
-    if (targetElementOrPseudoElement())
-        m_inTargetEffectStack = targetElementOrPseudoElement()->ensureKeyframeEffectStack().addEffect(*this);
+    if (newTargetElementOrPseudoElement)
+        m_inTargetEffectStack = newTargetElementOrPseudoElement->ensureKeyframeEffectStack().addEffect(*this);
 }
 
 void KeyframeEffect::apply(RenderStyle& targetStyle)
@@ -1696,6 +1757,11 @@ bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& renderer
 
     bounds = LayoutRect(transform.mapRect(bounds));
     return true;
+}
+
+bool KeyframeEffect::requiresPseudoElement() const
+{
+    return m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation && targetsPseudoElement();
 }
 
 } // namespace WebCore

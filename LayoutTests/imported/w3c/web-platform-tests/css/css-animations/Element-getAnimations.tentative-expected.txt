@@ -17,8 +17,8 @@ PASS getAnimations returns objects with the same identity
 PASS getAnimations for CSS Animations that are canceled 
 PASS getAnimations for CSS Animations follows animation-name order 
 PASS { subtree: false } on a leaf element returns the element's animations and ignore pseudo-elements 
-FAIL { subtree: true } on a leaf element returns the element's animations and its pseudo-elements' animations assert_equals: The animation targeting the parent element should be returned first expected (object) null but got (undefined) undefined
+PASS { subtree: true } on a leaf element returns the element's animations and its pseudo-elements' animations 
 PASS { subtree: false } on an element with a child returns only the element's animations 
-FAIL { subtree: true } on an element with a child returns animations from the element, its pseudo-elements, its child and its child pseudo-elements assert_equals: The animation targeting the parent element should be returned first expected (object) null but got (undefined) undefined
+FAIL { subtree: true } on an element with a child returns animations from the element, its pseudo-elements, its child and its child pseudo-elements assert_equals: The animation targeting the ::after pesudo-element should be returned third expected (string) "::after" but got (object) null
 FAIL { subtree: true } on an element with many descendants returns animations from all the descendants assert_equals: The animation targeting the child1 element should be returned second expected Element node <div id="child1" style="animation: anim1 100s;"><div id="... but got Element node <div id="grandchild1" style="animation: anim1 100s;"></div>
 

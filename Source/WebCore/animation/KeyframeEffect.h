@@ -105,6 +105,10 @@ public:
     Element* targetElementOrPseudoElement() const;
     void setTarget(RefPtr<Element>&&);
 
+    bool targetsPseudoElement() const;
+    const String pseudoElement() const;
+    ExceptionOr<void> setPseudoElement(const String&);
+
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
     ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
 
@@ -158,6 +162,8 @@ public:
 
     const RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
+    bool requiresPseudoElement() const;
+
 private:
     KeyframeEffect(Element*, PseudoId);
 
@@ -168,6 +174,7 @@ private:
     Document* document() const;
     void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
+    void didChangeTargetElementOrPseudoElement(Element*);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
     void updateAcceleratedActions();

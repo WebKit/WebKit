@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef USVString CSSOMString;
+
 [
     EnabledAtRuntime=WebAnimations,
     Exposed=Window,
@@ -33,6 +35,7 @@
     Constructor(KeyframeEffect source)
 ] interface KeyframeEffect : AnimationEffect {
     attribute Element? target;
+    [MayThrowException] attribute CSSOMString? pseudoElement;
     [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute IterationCompositeOperation iterationComposite;
     [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute CompositeOperation composite;
     [CallWith=GlobalObject] sequence<object> getKeyframes();

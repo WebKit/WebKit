@@ -1367,7 +1367,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     //
     // 2.1 If target is not an element capable of having a style attribute (for example, it is a pseudo-element or is an element in a
     // document format for which style attributes are not defined) throw a "NoModificationAllowedError" DOMException and abort these steps.
-    if (!is<StyledElement>(target))
+    if (!is<StyledElement>(target) || effect->targetsPseudoElement())
         return Exception { NoModificationAllowedError };
 
     auto& styledElement = downcast<StyledElement>(*target);

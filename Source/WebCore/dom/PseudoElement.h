@@ -41,6 +41,7 @@ public:
     void clearHostElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;
+    bool isTargetedByKeyframeEffectRequiringPseudoElement();
 
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }

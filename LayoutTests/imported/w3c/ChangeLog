@@ -1,3 +1,22 @@
+2020-04-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add support for `pseudoElement` on `KeyframeEffect` and `KeyframeEffectOptions`
+        https://bugs.webkit.org/show_bug.cgi?id=207290
+        <rdar://problem/59199003>
+
+        Reviewed by Antti Koivisto.
+
+        Mark 23 additional WPT tests as PASS.
+
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/web-animations/idlharness.window-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt:
+
 2020-04-14  Youenn Fablet  <youenn@apple.com>
 
         Resync featurepolicy.js to fix WPT mediacapture-streams/MediaStream-default-feature-policy.https.html
