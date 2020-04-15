@@ -752,12 +752,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     auto delegate = _delegate.get();
     CGPoint center = CGPointZero;
+    
+    if ([delegate respondsToSelector:@selector(createTargetedContextMenuHintForActionSheetAssistant:)])
+        return [delegate createTargetedContextMenuHintForActionSheetAssistant:self];
+    
     if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)])
         center = [delegate contextMenuPresentationLocationForActionSheetAssistant:self];
     RetainPtr<UIPreviewParameters> unusedPreviewParameters = adoptNS([[UIPreviewParameters alloc] init]);
     RetainPtr<UIPreviewTarget> previewTarget = adoptNS([[UIPreviewTarget alloc] initWithContainer:_view.getAutoreleased() center:center]);
     RetainPtr<UITargetedPreview> preview = adoptNS([[UITargetedPreview alloc] initWithView:_view.getAutoreleased() parameters:unusedPreviewParameters.get() target:previewTarget.get()]);
-
     return preview.autorelease();
 }
 

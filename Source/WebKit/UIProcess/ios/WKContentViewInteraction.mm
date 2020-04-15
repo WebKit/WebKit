@@ -6899,6 +6899,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return [self lastInteractionLocation];
 }
 
+- (UITargetedPreview *)createTargetedContextMenuHintForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return [self _createTargetedContextMenuHintPreviewIfPossible];
+}
+
 - (BOOL)_shouldUseContextMenus
 {
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
@@ -9264,8 +9269,11 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         // and removing the hint container view will cause the animation to break.
         if (strongSelf->_contextMenuElementInfo)
             return;
-        // We are also using this container for the file upload panel
+        // We are also using this container for the file upload panel...
         if (strongSelf->_fileUploadPanel)
+            return;
+        // and the action sheet assistant.
+        if (strongSelf->_actionSheetAssistant)
             return;
         [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
     }];

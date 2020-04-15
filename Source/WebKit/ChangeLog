@@ -1,3 +1,20 @@
+2020-04-14  Megan Gardner  <megan_gardner@apple.com>
+
+        Data Detected Actions sheets are presented from odd locations.
+        https://bugs.webkit.org/show_bug.cgi?id=210531
+        <rdar://problem/60941346>
+
+        Reviewed by Wenson Hsieh.
+
+        Use the existing context menu targeted preview code to ensure that the
+        data detected menus are presented in a good location.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+
 2020-04-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Potential crash under WebProcess::platformInitializeWebProcess

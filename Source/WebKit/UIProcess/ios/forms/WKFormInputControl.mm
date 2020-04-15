@@ -361,8 +361,9 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         CGFloat popoverWidth = [datePicker _contentWidth];
         CGFloat popoverHeight = _viewController.get().view.frame.size.height;
         [_viewController setPreferredContentSize:CGSizeMake(popoverWidth, popoverHeight)];
-    } else
-        [_viewController setPreferredContentSize:datePicker.frame.size];
+    } else {
+        [_viewController setPreferredContentSize:CGSizeMake(datePicker.frame.size.width+16, datePicker.frame.size.height)];
+    }
     
     [_viewController setEdgesForExtendedLayout:UIRectEdgeNone];
     [_viewController setTitle:_view.focusedElementInformation.title];

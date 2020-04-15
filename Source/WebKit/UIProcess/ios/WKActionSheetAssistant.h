@@ -63,6 +63,7 @@ struct InteractionInformationAtPosition;
 - (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant getAlternateURLForImage:(UIImage *)image completion:(void (^)(NSURL *alternateURL, NSDictionary *userInfo))completion;
 - (CGPoint)contextMenuPresentationLocationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
+- (UITargetedPreview *)createTargetedContextMenuHintForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 
 @end
 
