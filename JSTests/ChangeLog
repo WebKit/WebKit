@@ -1,3 +1,18 @@
+2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Fix Intl.DateTimeFormat patterns and fields in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=209783
+
+        Reviewed by Keith Miller.
+
+        * stress/date-toLocaleString.js:
+        * stress/intl-datetimeformat.js:
+        Add tests and fix some existing ones.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        Mark eight test cases passing...but skip half of them due to outdated CLDR data in macOS system ICU.
+
 2020-04-15  Devin Rousso  <drousso@apple.com>
 
         [ESNext] Implement logical assignment operators

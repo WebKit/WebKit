@@ -502,7 +502,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     m_hourCycle = resolved.get("hc"_s);
     m_numberingSystem = resolved.get("nu"_s);
-    String dataLocale = resolved.get("dataLocale"_s);
+    CString dataLocaleWithExtensions = makeString(resolved.get("dataLocale"_s), "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
 
     JSValue tzValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, void());
@@ -631,7 +631,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     // Always use ICU date format generator, rather than our own pattern list and matcher.
     UErrorCode status = U_ZERO_ERROR;
-    UDateTimePatternGenerator* generator = udatpg_open(dataLocale.utf8().data(), &status);
+    UDateTimePatternGenerator* generator = udatpg_open(dataLocaleWithExtensions.data(), &status);
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
         return;
@@ -683,7 +683,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     status = U_ZERO_ERROR;
     StringView timeZoneView(m_timeZone);
-    m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, m_locale.utf8().data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
+    m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
         return;
@@ -932,9 +932,10 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_ERA_FIELD:
         return "era"_s;
     case UDAT_YEAR_FIELD:
-    case UDAT_YEAR_NAME_FIELD:
     case UDAT_EXTENDED_YEAR_FIELD:
         return "year"_s;
+    case UDAT_YEAR_NAME_FIELD:
+        return "yearName"_s;
     case UDAT_MONTH_FIELD:
     case UDAT_STANDALONE_MONTH_FIELD:
         return "month"_s;
@@ -966,6 +967,8 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_TIMEZONE_ISO_FIELD:
     case UDAT_TIMEZONE_ISO_LOCAL_FIELD:
         return "timeZoneName"_s;
+    case UDAT_RELATED_YEAR_FIELD:
+        return "relatedYear"_s;
     // These should not show up because there is no way to specify them in DateTimeFormat options.
     // If they do, they don't fit well into any of known part types, so consider it an "unknown".
     case UDAT_DAY_OF_YEAR_FIELD:
@@ -977,7 +980,6 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     case UDAT_MILLISECONDS_IN_DAY_FIELD:
     case UDAT_QUARTER_FIELD:
     case UDAT_STANDALONE_QUARTER_FIELD:
-    case UDAT_RELATED_YEAR_FIELD:
     case UDAT_TIME_SEPARATOR_FIELD:
     // Any newer additions to the UDateFormatField enum should just be considered an "unknown" part.
     default:

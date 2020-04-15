@@ -306,26 +306,26 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar, 'islamic-rgsa');
 
 // Calendar-sensitive format().
-shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2558');
-shouldBe(Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/32');
-shouldBe(Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/1732');
-shouldBe(Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/32');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/2008');
+shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2558 BE');
+shouldBe(Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
+shouldBe(Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/1732 ERA1');
+shouldBe(Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
+shouldBe(Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
+shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/2008 ERA1');
 shouldBe(Intl.DateTimeFormat('en-u-ca-gregory', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
-shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/13/5776');
-shouldBe(Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1937');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437');
+shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '13 Tevet 5776');
+shouldBe(Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1937 Saka');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
-shouldBe(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/27');
-shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394');
-shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437');
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437');
+shouldBe(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/27 H');
+shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394 AP');
+shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104 Minguo');
+shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 
 shouldBe(Intl.DateTimeFormat('en', { numberingSystem: 'gujr' }).resolvedOptions().numberingSystem, 'gujr');
 shouldBe(Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale, 'en');
@@ -386,7 +386,7 @@ shouldBe(Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric' }).resolvedOptions
 shouldBe(Intl.DateTimeFormat('en-u-hc-h24', { hour: 'numeric', timeZone: 'UTC' }).format(0), '24')
 
 // Tests multiple keys in extension.
-shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '٣/١٤/١٤٣٧');
+shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '٣/١٤/١٤٣٧ AH');
 
 shouldThrow(() => Intl.DateTimeFormat('en', { weekday: { toString() { throw new Error() } } }), Error);
 shouldThrow(() => Intl.DateTimeFormat('en', { weekday: 'invalid' }), RangeError);
@@ -634,3 +634,14 @@ shouldBe(
         { type: 'timeZoneName', value: 'Pacific Standard Time' }
     ])
 );
+
+// Tests for relativeYear and yearName
+const parts = JSON.stringify([
+    { type: 'relatedYear', value: '1969' },
+    { type: 'yearName', value: '己酉' },
+    { type: 'literal', value: '年' }
+]);
+shouldBe(Intl.DateTimeFormat('zh-u-ca-chinese', { era: 'short', year: 'numeric' }).format(0), '1969己酉年');
+shouldBe(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric', calendar: 'chinese' }).format(0), '1969己酉年');
+shouldBe(JSON.stringify(Intl.DateTimeFormat('zh-u-ca-chinese', { era: 'short', year: 'numeric' }).formatToParts(0)), parts);
+shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric', calendar: 'chinese' }).formatToParts(0)), parts);
