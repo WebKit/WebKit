@@ -1,3 +1,22 @@
+2020-04-15  Jer Noble  <jer.noble@apple.com>
+
+        isNullFunctionPointer() can fail for symbols not explicitly marked as weakly linked.
+        https://bugs.webkit.org/show_bug.cgi?id=210532
+
+        Reviewed by Tim Horton.
+
+        Symbols whose declarations are explicitly marked as weakly imported are guaranteed to be
+        NULL when the library containing those symbols is not available at runtime, or when the
+        symbol itself isn't present in the version of the library which is available at runtime. For
+        symbols which are not explicitly marked as weakly imported (because, e.g., the framework
+        itself is weakly imported), this technique can fail. Rather than test the nullity of a
+        random static C++ class method with isNullFunctionPointer(), explicitly mark as weak_import
+        a utility method added by the WebKit project, which conveniently is already used from within
+        LibWebRTCProviderCocoa, and test the nullity of that method instead.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+
 2020-04-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Make PlatformScreen::screenDPI() GTK4-ready

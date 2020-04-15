@@ -76,7 +76,7 @@ bool LibWebRTCProvider::webRTCAvailable()
 #if PLATFORM(IOS)
     return true;
 #else
-    return !isNullFunctionPointer(rtc::LogMessage::LogToDebug);
+    return !isNullFunctionPointer(webrtc::setApplicationStatus);
 #endif
 }
 
