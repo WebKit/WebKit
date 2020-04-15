@@ -1,3 +1,16 @@
+2020-04-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed, reverting r259891.
+
+        Causes significant iOS MotionMark regression
+
+        Reverted changeset:
+
+        "Switch unused IOKit classes from allow-with-report to deny-
+        with-report"
+        https://bugs.webkit.org/show_bug.cgi?id=210136
+        https://trac.webkit.org/changeset/259891
+
 2020-04-14  Megan Gardner  <megan_gardner@apple.com>
 
         File Upload Menus presented from odd locations.

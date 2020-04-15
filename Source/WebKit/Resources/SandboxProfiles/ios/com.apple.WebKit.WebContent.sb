@@ -214,7 +214,7 @@
 ;;;
 (define-once (opengl)
     ;; Items not seen in testing
-    (deny iokit-open (with telemetry-backtrace)
+    (allow iokit-open (with report) (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
@@ -374,7 +374,9 @@
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
-    (deny iokit-open (with telemetry-backtrace)
+    ; UIKit-required IOKit nodes.
+    (allow iokit-open  (with report) (with telemetry)
+        (iokit-user-client-class "AppleJPEGDriverUserClient")
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 
