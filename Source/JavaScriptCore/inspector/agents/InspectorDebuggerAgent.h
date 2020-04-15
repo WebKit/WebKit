@@ -72,6 +72,7 @@ public:
     void removeBreakpoint(ErrorString&, const String& breakpointIdentifier) final;
     void continueUntilNextRunLoop(ErrorString&) final;
     void continueToLocation(ErrorString&, const JSON::Object& location) final;
+    void stepNext(ErrorString&) final;
     void stepOver(ErrorString&) final;
     void stepInto(ErrorString&) final;
     void stepOut(ErrorString&) final;

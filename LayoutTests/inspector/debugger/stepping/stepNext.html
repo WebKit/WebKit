@@ -8,29 +8,27 @@ function a() { return "a"; }
 function b() { return "b"; }
 function c() { return "c"; }
 
-function testFunctions() {
+function testStatements() {
     debugger;
     let x = 1;
     let y = 2;
 }
 
-function testEval() {
+function testFunctions() {
+    debugger;
     let before = 1;
-    eval("debugger");
+    a();
+    let after = 2;
+}
+
+function testEval() {
+    debugger;
+    let before = 1;
+    eval("1 + 1");
     let after = 2;
 }
 
 function testInnerFunction() {
-    function alpha() {
-        beta();
-    }
-    function beta() {
-        debugger;
-    }
-    alpha();
-}
-
-function testAnonymousFunction() {
     (function() {
         debugger;
         let inner = 1;
@@ -56,14 +54,14 @@ function testChainedExpressions() {
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Debugger.stepOut");
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepNext");
 
-    // Always step-out when call frames change.
+    // Always step-next when call frames change.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
         if (!WI.debuggerManager.activeCallFrame)
             return;
         logPauseLocation();
-        WI.debuggerManager.stepOut();
+        WI.debuggerManager.stepNext();
     });
 
     function addTestCase({name, description, expression}) {
@@ -83,38 +81,38 @@ function test()
     }
 
     addTestCase({
-        name: "Debugger.stepOut.function",
-        description: "step-out should leave a function.",
+        name: "Debugger.stepNext.statements",
+        description: "step-next should step over statements.",
+        expression: "setTimeout(testStatements)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepNext.function",
+        description: "step-next should step over function calls.",
         expression: "setTimeout(testFunctions)",
     });
 
     addTestCase({
-        name: "Debugger.stepOut.eval",
-        description: "step-out should step leave an eval program.",
+        name: "Debugger.stepNext.eval",
+        description: "step-next should step over an eval program.",
         expression: "setTimeout(testEval)",
     });
 
     addTestCase({
-        name: "Debugger.stepOut.innerFunction",
-        description: "step-out should leave a function and end up after its callsite.",
+        name: "Debugger.stepNext.innerFunction",
+        description: "step-next should step out of a function to its caller.",
         expression: "setTimeout(testInnerFunction)",
     });
 
     addTestCase({
-        name: "Debugger.stepOut.anonymousFunction",
-        description: "step-out should leave an anonymous function and end up after its callsite.",
-        expression: "setTimeout(testAnonymousFunction)",
-    });
-
-    addTestCase({
-        name: "Debugger.stepOut.commas",
-        description: "step-out should not enter any comma separated function calls.",
+        name: "Debugger.stepNext.commas",
+        description: "step-next should step to each sub-expression within comma expressions.",
         expression: "setTimeout(testCommas)",
     });
 
     addTestCase({
-        name: "Debugger.stepOut.chainedExpressions",
-        description: "step-out should not enter any function calls in a chained expression.",
+        name: "Debugger.stepNext.chainedExpressions",
+        description: "step-next should step to each sub-expression within chained expressions.",
         expression: "setTimeout(testChainedExpressions)",
     });
 
@@ -125,6 +123,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Checking pause locations when stepping with "stepOut".</p>
+<p>Checking pause locations when stepping with "stepNext".</p>
 </body>
 </html>

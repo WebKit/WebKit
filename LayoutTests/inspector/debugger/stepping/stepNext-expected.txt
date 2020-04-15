@@ -1,8 +1,8 @@
-Checking pause locations when stepping with "stepOver".
+Checking pause locations when stepping with "stepNext".
 
 
-== Running test suite: Debugger.stepOver
--- Running test case: Debugger.stepOver.statements
+== Running test suite: Debugger.stepNext
+-- Running test case: Debugger.stepNext.statements
 PAUSED (debugger-statement)
 PAUSE AT testStatements:12:5
       8    function c() { return "c"; }
@@ -42,7 +42,7 @@ PAUSE AT testStatements:15:2
 
 RESUMED
 
--- Running test case: Debugger.stepOver.function
+-- Running test case: Debugger.stepNext.function
 PAUSED (debugger-statement)
 PAUSE AT testFunctions:18:5
      14    }
@@ -91,7 +91,7 @@ PAUSE AT testFunctions:22:2
 
 RESUMED
 
--- Running test case: Debugger.stepOver.eval
+-- Running test case: Debugger.stepNext.eval
 PAUSED (debugger-statement)
 PAUSE AT testEval:25:5
      21    }
@@ -140,7 +140,7 @@ PAUSE AT testEval:29:2
 
 RESUMED
 
--- Running test case: Debugger.stepOver.innerFunction
+-- Running test case: Debugger.stepNext.innerFunction
 PAUSED (debugger-statement)
 PAUSE AT <anonymous>:33:9
      29    
@@ -189,7 +189,7 @@ PAUSE AT testInnerFunction:37:2
 
 RESUMED
 
--- Running test case: Debugger.stepOver.commas
+-- Running test case: Debugger.stepNext.commas
 PAUSED (debugger-statement)
 PAUSE AT testCommas:40:5
      36    }
@@ -301,7 +301,7 @@ PAUSE AT testCommas:46:2
 
 RESUMED
 
--- Running test case: Debugger.stepOver.chainedExpressions
+-- Running test case: Debugger.stepNext.chainedExpressions
 PAUSED (debugger-statement)
 PAUSE AT testChainedExpressions:49:5
      45    }
@@ -317,6 +317,24 @@ PAUSE AT testChainedExpressions:50:5
      47    function testChainedExpressions() {
      48        debugger;
  ->  49        |a() && b() && c();
+     50    }
+     51    
+     52    // ---------
+
+PAUSE AT testChainedExpressions:50:12
+     46    
+     47    function testChainedExpressions() {
+     48        debugger;
+ ->  49        a() && |b() && c();
+     50    }
+     51    
+     52    // ---------
+
+PAUSE AT testChainedExpressions:50:19
+     46    
+     47    function testChainedExpressions() {
+     48        debugger;
+ ->  49        a() && b() && |c();
      50    }
      51    
      52    // ---------

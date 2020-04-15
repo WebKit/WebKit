@@ -106,6 +106,17 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._debuggerStepOutButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.debuggerStepOut, this);
         this._debuggerStepOutButtonItem.enabled = false;
 
+        // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.stepNext")) {
+            this._debuggerStepNextButtonItem = createButtonNavigationitem({
+                identifier: "debugger-step-next",
+                toolTipOrLabel: WI.UIString("Step (%s or %s)").format(WI.stepNextKeyboardShortcut.displayName, WI.stepNextAlternateKeyboardShortcut.displayName),
+                image: "Images/StepNext.svg",
+            });
+            this._debuggerStepNextButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.debuggerStepNext, this);
+            this._debuggerStepNextButtonItem.enabled = false;
+        }
+
         this._timelineRecordingWarningElement = null;
         this._auditTestWarningElement = null;
         this._breakpointsDisabledWarningElement = null;
@@ -2345,6 +2356,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._debuggerStepOverButtonItem.enabled = true;
         this._debuggerStepIntoButtonItem.enabled = true;
         this._debuggerStepOutButtonItem.enabled = true;
+        if (this._debuggerStepNextButtonItem)
+            this._debuggerStepNextButtonItem.enabled = true;
 
         this.element.classList.add("paused");
     }
@@ -2360,6 +2373,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._debuggerStepOverButtonItem.enabled = false;
         this._debuggerStepIntoButtonItem.enabled = false;
         this._debuggerStepOutButtonItem.enabled = false;
+        if (this._debuggerStepNextButtonItem)
+            this._debuggerStepNextButtonItem.enabled = false;
 
         this.element.classList.remove("paused");
     }

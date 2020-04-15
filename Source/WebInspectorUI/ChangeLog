@@ -1,3 +1,30 @@
+2020-04-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: add a Step next that steps by expression
+        https://bugs.webkit.org/show_bug.cgi?id=210324
+
+        Reviewed by Timothy Hatcher.
+
+        Step next is a hybrid of Step over and Step into which continues execution to the next pause
+        opportunity within the current (or ancestor) call frame. It is especially useful when trying
+        to debug minified code, such as trying to continue to `c()` in `a() && b() && c();`, where
+        Step over would continue to the next statement (i.e. after the `;`) and Step in would
+        continue to the first line inside `a()` (and would require a Step out to get back).
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.stepNext): Added.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.debuggerStepNext): Added.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/StepNext.svg: Added.
+
 2020-04-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Don't show tooltips for tabs

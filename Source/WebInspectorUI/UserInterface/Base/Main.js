@@ -362,6 +362,12 @@ WI.contentLoaded = function()
     WI.stepIntoAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Semicolon, WI.debuggerStepInto);
     WI.stepOutAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Semicolon, WI.debuggerStepOut);
 
+    // COMPATIBILITY (iOS 13.4): Debugger.stepNext did not exist yet.
+    if (InspectorBackend.hasCommand("Debugger.stepNext")) {
+        WI.stepNextKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.F9, WI.debuggerStepNext);
+        WI.stepNextAlternateKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.SingleQuote, WI.debuggerStepNext);
+    }
+
     WI.settingsKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Comma, WI._handleSettingsKeyboardShortcut);
 
     WI._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", WI._togglePreviousDockConfiguration);
@@ -1523,6 +1529,11 @@ WI.debuggerPauseResumeToggle = function(event)
         WI.debuggerManager.resume();
     else
         WI.debuggerManager.pause();
+};
+
+WI.debuggerStepNext = function(event)
+{
+    WI.debuggerManager.stepNext();
 };
 
 WI.debuggerStepOver = function(event)

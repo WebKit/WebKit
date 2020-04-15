@@ -108,6 +108,7 @@ public:
     void setPauseOnNextStatement(bool);
     void breakProgram();
     void continueProgram();
+    void stepNextExpression();
     void stepIntoStatement();
     void stepOverStatement();
     void stepOutOfFunction();
@@ -230,6 +231,7 @@ private:
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseOnDebuggerStatements : 1;
     bool m_pauseAtNextOpportunity : 1;
+    bool m_pauseOnStepNext : 1;
     bool m_pauseOnStepOut : 1;
     bool m_pastFirstExpressionInStatement : 1;
     bool m_isPaused : 1;

@@ -4,36 +4,50 @@
 <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../resources/log-pause-location.js"></script>
 <script>
-function testAlert(str) {
-    alert(str);
-}
+function a() { return "a"; }
+function b() { return "b"; }
+function c() { return "c"; }
 
-function entry1() {
+function testStatements() {
     debugger;
     let x = 1;
     let y = 2;
 }
 
-function entry2() {
+function testFunctions() {
     debugger;
     let before = 1;
-    testAlert("log 1");
+    a();
     let after = 2;
 }
 
-function entry3() {
+function testEval() {
     debugger;
     let before = 1;
     eval("1 + 1");
     let after = 2;
 }
 
-function entry4() {
+function testInnerFunction() {
     (function() {
         debugger;
         let inner = 1;
     })();
     let outer = 2;
+}
+
+function testCommas() {
+    debugger;
+    let x = 1,
+        y = 2,
+        z = 3;
+    a(), b(), c();
+    true && (a(), b(), c());
+}
+
+function testChainedExpressions() {
+    debugger;
+    a() && b() && c();
 }
 
 // ---------
@@ -69,25 +83,37 @@ function test()
     addTestCase({
         name: "Debugger.stepInto.statements",
         description: "step-into should step over statements.",
-        expression: "setTimeout(entry1)",
+        expression: "setTimeout(testStatements)",
     });
 
     addTestCase({
         name: "Debugger.stepInto.function",
         description: "step-into should step into function calls.",
-        expression: "setTimeout(entry2)",
+        expression: "setTimeout(testFunctions)",
     });
 
     addTestCase({
         name: "Debugger.stepInto.eval",
         description: "step-into should step into an eval program.",
-        expression: "setTimeout(entry3)",
+        expression: "setTimeout(testEval)",
     });
 
     addTestCase({
         name: "Debugger.stepInto.innerFunction",
         description: "step-into should step out of a function to its caller.",
-        expression: "setTimeout(entry4)",
+        expression: "setTimeout(testInnerFunction)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepInto.commas",
+        description: "step-into should step into each sub-expression within comma expressions.",
+        expression: "setTimeout(testCommas)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepInto.chainedExpressions",
+        description: "step-into should step into each sub-expression within chained expressions.",
+        expression: "setTimeout(testChainedExpressions)",
     });
 
     loadMainPageContent().then(() => {

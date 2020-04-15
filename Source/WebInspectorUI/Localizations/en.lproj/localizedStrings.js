@@ -1179,6 +1179,7 @@ localizedStrings["State"] = "State";
 localizedStrings["Statistics"] = "Statistics";
 localizedStrings["Status"] = "Status";
 localizedStrings["Step"] = "Step";
+localizedStrings["Step (%s or %s)"] = "Step (%s or %s)";
 localizedStrings["Step into (%s or %s)"] = "Step into (%s or %s)";
 localizedStrings["Step out (%s or %s)"] = "Step out (%s or %s)";
 localizedStrings["Step over (%s or %s)"] = "Step over (%s or %s)";

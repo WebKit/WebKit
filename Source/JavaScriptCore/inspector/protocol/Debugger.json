@@ -196,6 +196,10 @@
             ]
         },
         {
+            "name": "stepNext",
+            "description": "Steps over the expression. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
             "name": "stepOver",
             "description": "Steps over the statement. This will trigger either a Debugger.paused or Debugger.resumed event."
         },

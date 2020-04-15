@@ -767,6 +767,15 @@ void InspectorDebuggerAgent::resume(ErrorString& errorString)
     m_conditionToDispatchResumed = ShouldDispatchResumed::WhenContinued;
 }
 
+void InspectorDebuggerAgent::stepNext(ErrorString& errorString)
+{
+    if (!assertPaused(errorString))
+        return;
+
+    willStepAndMayBecomeIdle();
+    m_scriptDebugServer.stepNextExpression();
+}
+
 void InspectorDebuggerAgent::stepOver(ErrorString& errorString)
 {
     if (!assertPaused(errorString))

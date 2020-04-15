@@ -609,6 +609,17 @@ void Debugger::continueProgram()
     notifyDoneProcessingDebuggerEvents();
 }
 
+void Debugger::stepNextExpression()
+{
+    if (!m_isPaused)
+        return;
+
+    m_pauseOnCallFrame = m_currentCallFrame;
+    m_pauseOnStepNext = true;
+    setSteppingMode(SteppingModeEnabled);
+    notifyDoneProcessingDebuggerEvents();
+}
+
 void Debugger::stepIntoStatement()
 {
     if (!m_isPaused)
@@ -803,8 +814,8 @@ void Debugger::atExpression(CallFrame* callFrame)
         return;
     }
 
-    // Only pause at the next expression with step-in and step-out, not step-over.
-    bool shouldAttemptPause = m_pauseAtNextOpportunity || m_pauseOnStepOut;
+    // Only pause at the next expression with step-in, step-next, and step-out.
+    bool shouldAttemptPause = m_pauseAtNextOpportunity || m_pauseOnStepNext || m_pauseOnStepOut;
 
     PauseReasonDeclaration reason(*this, PausedAtExpression);
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, shouldAttemptPause ? AttemptPause : NoPause);
@@ -910,6 +921,7 @@ void Debugger::clearNextPauseState()
 {
     m_pauseOnCallFrame = nullptr;
     m_pauseAtNextOpportunity = false;
+    m_pauseOnStepNext = false;
     m_pauseOnStepOut = false;
     m_afterBlackboxedScript = false;
 }

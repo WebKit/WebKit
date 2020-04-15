@@ -568,6 +568,27 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return Promise.all([managerResult, ...promises]);
     }
 
+    stepNext()
+    {
+        if (!this.paused)
+            return Promise.reject(new Error("Cannot step next because debugger is not paused."));
+
+        let listener = new WI.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WI.debuggerManager, WI.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
+        });
+
+        let protocolResult = this._activeCallFrame.target.DebuggerAgent.stepNext()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.stepNext failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
     stepOver()
     {
         if (!this.paused)

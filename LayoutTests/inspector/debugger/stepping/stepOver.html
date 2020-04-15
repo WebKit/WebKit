@@ -4,9 +4,9 @@
 <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../resources/log-pause-location.js"></script>
 <script>
-function testAlert(str) {
-    alert(str);
-}
+function a() { return "a"; }
+function b() { return "b"; }
+function c() { return "c"; }
 
 function testStatements() {
     debugger;
@@ -28,7 +28,7 @@ function testEval() {
     let after = 2;
 }
 
-function testLocalFunction() {
+function testInnerFunction() {
     (function() {
         debugger;
         let inner = 1;
@@ -45,9 +45,10 @@ function testCommas() {
     true && (a(), b(), c());
 }
 
-function a() { }
-function b() { }
-function c() { }
+function testChainedExpressions() {
+    debugger;
+    a() && b() && c();
+}
 
 // ---------
 
@@ -100,13 +101,19 @@ function test()
     addTestCase({
         name: "Debugger.stepOver.innerFunction",
         description: "step-over should step out of a function to its caller.",
-        expression: "setTimeout(testLocalFunction)",
+        expression: "setTimeout(testInnerFunction)",
     });
 
     addTestCase({
         name: "Debugger.stepOver.commas",
         description: "step-over should step over comma expressions, treating them as statements.",
         expression: "setTimeout(testCommas)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.chainedExpressions",
+        description: "step-over should step over chained expressions as a single statement.",
+        expression: "setTimeout(testChainedExpressions)",
     });
 
     loadMainPageContent().then(() => {
