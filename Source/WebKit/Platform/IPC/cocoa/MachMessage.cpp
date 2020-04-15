@@ -34,7 +34,10 @@ namespace IPC {
 
 std::unique_ptr<MachMessage> MachMessage::create(CString&& messageReceiverName, CString&& messageName, size_t size)
 {
-    void* memory = WTF::fastZeroedMalloc(sizeof(MachMessage) + size);
+    auto bufferSize = CheckedSize(sizeof(MachMessage)) + size;
+    if (bufferSize.hasOverflowed())
+        return nullptr;
+    void* memory = WTF::fastZeroedMalloc(bufferSize.unsafeGet());
     return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { WTFMove(messageReceiverName), WTFMove(messageName), size } };
 }
 

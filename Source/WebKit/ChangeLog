@@ -1,3 +1,19 @@
+2020-04-15  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC Hardening] MachMessage::create() should use checked arithmetic
+        <https://webkit.org/b/210572>
+        <rdar://problem/61729947>
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        - Add nullptr check since MachMessage::create() can return an
+          empty std::unique_ptr<> now.
+        * Platform/IPC/cocoa/MachMessage.cpp:
+        (IPC::MachMessage::create):
+        - Use CheckedSize to compute the buffer size.
+
 2020-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed PLT fix after r260081.
