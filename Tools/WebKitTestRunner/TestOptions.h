@@ -100,8 +100,8 @@ struct TestOptions {
     bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
     bool enableCaptureVideoInUIProcess { false };
-    bool enableCaptureVideoInGPUProcess { true };
-    bool enableCaptureAudioInGPUProcess { true };
+    bool enableCaptureVideoInGPUProcess { false };
+    bool enableCaptureAudioInGPUProcess { false };
     bool allowTopNavigationToDataURLs { true };
     bool enableInAppBrowserPrivacy { false };
 
