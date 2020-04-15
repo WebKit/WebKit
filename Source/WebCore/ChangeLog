@@ -1,3 +1,16 @@
+2020-04-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r258977): Crash under Document::visibilityStateChanged
+        https://bugs.webkit.org/show_bug.cgi?id=210555
+
+        Reviewed by Youenn Fablet.
+
+        Re-introduce null check of page in Document::visibilityStateChanged() which got inadvertently
+        dropped in r258977.
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+
 2020-04-15  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION( r260114): [ Mac and iOS ] imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html is failing.
