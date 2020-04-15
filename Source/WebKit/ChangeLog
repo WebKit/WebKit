@@ -1,3 +1,22 @@
+2020-04-15  Ben Nham  <nham@apple.com>
+
+        DidFirstLayerFlush IPC can be head-of-line-blocked and delay first paint by 200+ ms on process swap
+        https://bugs.webkit.org/show_bug.cgi?id=210571
+
+        Reviewed by Geoffrey Garen.
+
+        When we process swap, the layer swap/unhiding for the new hosted layer is gated by the
+        DidFirstLayerFlush IPC. But actually sending this IPC can be head-of-line blocked for an
+        arbitrarily long time because we append it to the queue of messages for the main run loop to
+        process. In some cases, e.g. for the NYT PLT content, this blocks first paint by 200 ms
+        while the WebProcess main thread is busy doing other things (like executing deferred
+        scripts).
+
+        To fix this, use a CATransaction commit handler to send the IPC right after we commit.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded):
+
 2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the watchOS and tvOS builds after r260146

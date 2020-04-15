@@ -110,13 +110,13 @@ void TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded()
     m_needsSendDidFirstLayerFlush = false;
 
     // Let the first commit complete before sending.
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+    [CATransaction addCommitHandler:[this, weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
         LayerTreeContext layerTreeContext;
         layerTreeContext.contextID = m_layerHostingContext->contextID();
         send(Messages::DrawingAreaProxy::DidFirstLayerFlush(0, layerTreeContext));
-    });
+    } forPhase:kCATransactionPhasePostCommit];
 }
 
 void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded()
