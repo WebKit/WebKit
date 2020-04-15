@@ -254,6 +254,9 @@ webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Pass Crash ]
 webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Crash ]
 webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html [ Pass Crash ]
+webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ Pass Crash ]
+webkit.org/b/210498 imported/w3c/web-platform-tests/media-source/mediasource-sourcebufferlist.html [ Pass Crash ]
+webkit.org/b/210498 media/media-source/media-source-restrictions.html [ Pass Crash ]
 webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
@@ -1378,6 +1381,7 @@ webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-orde
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-004.html [ Failure Pass ]
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-005.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-008.html [ Failure ImageOnlyFailure Pass ]
+webkit.org/b/209533 editing/pasteboard/paste-line-endings-009.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/209533 fast/repaint/animation-after-layer-scroll.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/appcache/xhr-foreign-resource.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site.html [ Failure Pass ]
@@ -2448,10 +2452,14 @@ webkit.org/b/198830 media/media-fragments/TC0005.html [ Pass Crash ]
 webkit.org/b/198830 media/media-fragments/TC0006.html [ Pass Crash ]
 webkit.org/b/198830 media/media-fragments/TC0030.html [ Pass Crash ]
 webkit.org/b/198830 media/media-fragments/TC0032.html [ Pass Crash ]
+webkit.org/b/198830 media/media-fragments/TC0066.html [ Pass Crash ]
+webkit.org/b/198830 media/media-fragments/TC0067.html [ Pass Crash ]
 webkit.org/b/198830 media/media-fragments/TC0076.html [ Pass Crash ]
 webkit.org/b/198830 media/media-fragments/TC0093.html [ Pass Crash ]
 webkit.org/b/198830 media/track/audio/audio-track-mkv-vorbis-addtrack.html [ Pass Crash ]
 webkit.org/b/198830 media/track/track-css-matching-lang.html [ Pass Crash ]
+webkit.org/b/198830 media/track/track-css-visible-stroke.html [ Pass Crash ]
+webkit.org/b/198830 media/track/track-long-captions-file.html [ Pass Crash ]
 webkit.org/b/198830 media/track/track-mode-disabled-crash.html [ Pass Crash ]
 webkit.org/b/198830 media/video-concurrent-playback.html [ Pass Crash ]
 webkit.org/b/198830 media/video-dom-src.html [ Pass Crash ]
@@ -2459,12 +2467,16 @@ webkit.org/b/198830 media/video-inactive-playback.html [ Pass Crash ]
 webkit.org/b/198830 media/video-load-preload-metadata-naturalsize.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/audio/events/event_canplay_manual.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/audio/events/event_canplaythrough.html [ Pass Crash ]
+webkit.org/b/198830 media/W3C/audio/events/event_loadeddata.html [ Pass Crash ]
+webkit.org/b/198830 media/W3C/video/events/event_canplaythrough_manual.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/video/events/event_loadeddata_manual.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/video/events/event_loadeddata.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/video/events/event_loadedmetadata.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/video/events/event_loadstart.html [ Pass Crash ]
 webkit.org/b/198830 media/W3C/video/events/event_timeupdate.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html [ Pass Crash ]
+webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadedmetadata_loadeddata.html [ Pass Crash ]
+webkit.org/b/198830 userscripts/user-script-video-document.html [ Pass Crash ]
 
 # From builds 12695-12698
 webkit.org/b/198830 [ Release ] fast/spatial-navigation/snav-media-elements.html [ Pass Crash ]
@@ -2921,6 +2933,15 @@ webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-
 webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Pass Crash ]
+
+webkit.org/b/210535 storage/domstorage/events/basic-setattribute.html [ Failure Pass ]
+
+webkit.org/b/210536 fast/forms/color/color-type-change-on-input-crash.html [ Pass Crash ]
+
+webkit.org/b/210537 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure Pass ]
+webkit.org/b/210538 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
