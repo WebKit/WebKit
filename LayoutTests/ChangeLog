@@ -1,3 +1,16 @@
+2020-04-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, emit baselines after r260139
+        https://bugs.webkit.org/show_bug.cgi?id=210573
+
+        Unreviewed gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt: Added.
+
 2020-04-15  Jack Lee  <shihchieh_lee@apple.com>
 
         Infinite loop in InsertListCommand::doApply()
