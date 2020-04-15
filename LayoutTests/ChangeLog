@@ -1,3 +1,12 @@
+2020-04-15  Truitt Savell  <tsavell@apple.com>
+
+        Remove expectations for imported/blink/storage/indexeddb/blob-basics-metadata.html
+        https://bugs.webkit.org/show_bug.cgi?id=199117
+        
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-15  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html is flaky timing out

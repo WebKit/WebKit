@@ -816,8 +816,6 @@ imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ I
 fast/images/animated-heics-draw.html [ Skip ]
 fast/images/animated-heics-verify.html [ Skip ]
 
-webkit.org/b/200002 [ Debug ] imported/blink/storage/indexeddb/blob-basics-metadata.html [ Timeout ]
-
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
 
