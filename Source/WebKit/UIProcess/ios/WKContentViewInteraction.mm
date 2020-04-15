@@ -9264,6 +9264,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         // and removing the hint container view will cause the animation to break.
         if (strongSelf->_contextMenuElementInfo)
             return;
+        // We are also using this container for the file upload panel
+        if (strongSelf->_fileUploadPanel)
+            return;
         [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
     }];
 }

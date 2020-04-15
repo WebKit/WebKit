@@ -1,3 +1,18 @@
+2020-04-14  Megan Gardner  <megan_gardner@apple.com>
+
+        File Upload Menus presented from odd locations.
+        https://bugs.webkit.org/show_bug.cgi?id=210523
+        <rdar://problem/60390846>
+
+        Use the existing context menu targeted preview code to ensure that the
+        file menus are presented in a good location.
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+
 2020-04-14  David Kilzer  <ddkilzer@apple.com>
 
         dictionaryValueOfType() in WebCoreArgumentCodersMac.mm can be replaced with dynamic_cf_cast<>()

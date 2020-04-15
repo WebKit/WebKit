@@ -610,6 +610,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #else
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 #endif
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_registerPreview;
 - (void)_unregisterPreview;
 @end
