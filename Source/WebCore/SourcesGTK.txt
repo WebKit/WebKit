@@ -85,7 +85,6 @@ platform/graphics/glx/GLContextGLX.cpp
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
-platform/graphics/gtk/IconGtk.cpp
 platform/graphics/gtk/ImageGtk.cpp
 
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
