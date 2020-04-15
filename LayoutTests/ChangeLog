@@ -1,3 +1,17 @@
+2020-04-15  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: !selectionToDelete.isNone() in TypingCommand::forwardDeleteKeyPressed 
+        when deleting a UserSelect::None element.
+        https://bugs.webkit.org/show_bug.cgi?id=210530
+        <rdar://problem/58591480>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test for the crash.
+
+        * editing/deleting/forward-delete-UserSelect-None-element-expected.txt: Added.
+        * editing/deleting/forward-delete-UserSelect-None-element.html: Added.
+
 2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Some pages indefinitely zoom in and out due to idempotent text autosizing

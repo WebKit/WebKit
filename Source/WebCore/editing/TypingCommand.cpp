@@ -801,6 +801,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         FrameSelection selection;
         selection.setSelection(endingSelection());
         selection.modify(FrameSelection::AlterationExtend, DirectionForward, granularity);
+        if (selection.isNone())
+            return;
         if (shouldAddToKillRing && selection.isCaret() && granularity != CharacterGranularity)
             selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
 
