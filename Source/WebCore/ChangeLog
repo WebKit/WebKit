@@ -1,3 +1,19 @@
+2020-04-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Adapt to cursor API changes
+        https://bugs.webkit.org/show_bug.cgi?id=210453
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::fallbackCursor): Utility function which returns the "default" cursor for GTK4.
+        (WebCore::createNamedCursor): Adapt to the changes in the gdk_cursor_new_from_name().
+        (WebCore::createCustomCursor): Create a GdkTexture directly when the given Cairo surface is
+        in one of the pixel formats supported by gdk_memory_texture_new(), otherwise convert first;
+        then create a GdkCursor from the GdkTexture.
+
 2020-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Backgrounds missing on gmail sometimes
