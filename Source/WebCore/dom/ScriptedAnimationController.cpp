@@ -37,6 +37,8 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Performance.h"
+#include "Quirks.h"
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
 #include <algorithm>
@@ -198,8 +200,9 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighR
 
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
-    // We round this to the nearest microsecond so that we can return a time that matches what is returned by document.timeline.currentTime.
-    DOMHighResTimeStamp highResNowMs = std::round(1000 * timestamp);
+    auto highResNowMs = Performance::reduceTimeResolution(Seconds { timestamp }).milliseconds();
+    if (m_document && m_document->quirks().needsMillisecondResolutionForHighResTimeStamp())
+        highResNowMs += 0.1;
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.

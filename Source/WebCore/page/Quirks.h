@@ -64,6 +64,8 @@ public:
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
 
+    bool needsMillisecondResolutionForHighResTimeStamp() const;
+
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;

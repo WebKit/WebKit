@@ -158,6 +158,15 @@ bool Quirks::shouldDisableContentChangeObserverTouchEventAdjustment() const
     return host.endsWith(".youtube.com") || host == "youtube.com";
 }
 
+bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
+{
+    if (!needsQuirks())
+        return false;
+    // webkit.org/b/210527
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "www.icourse163.org");
+}
+
 bool Quirks::shouldStripQuotationMarkInFontFaceSetFamily() const
 {
     if (!needsQuirks())
