@@ -1,3 +1,12 @@
+2020-04-15  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=210351
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         import.meta.url: baseURL for a module script should be response URL, not request URL
