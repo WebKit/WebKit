@@ -1,3 +1,12 @@
+2020-04-15  Justin Michaud  <justin@justinmichaud.com>
+
+        stress/delete-property-dfg-inline.js.ftl-no-cjit-small-pool consistently timing out on debug JSC bot
+        https://bugs.webkit.org/show_bug.cgi?id=210513
+
+        Reviewed by Saam Barati.
+
+        * stress/delete-property-dfg-inline.js:
+
 2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Fix Intl.DateTimeFormat patterns and fields in WebKit
