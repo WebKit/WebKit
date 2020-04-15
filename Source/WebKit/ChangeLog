@@ -1,3 +1,12 @@
+2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the watchOS and tvOS builds after r260146
+
+        Move some code for controlling the presentation of context menus on iOS behind USE(UICONTEXTMENU).
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 2020-04-15  Peng Liu  <peng.liu6@apple.com>
 
         Video elements don't return to the correct position when exiting fullscreen

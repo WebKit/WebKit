@@ -6899,10 +6899,14 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return [self lastInteractionLocation];
 }
 
+#if USE(UICONTEXTMENU)
+
 - (UITargetedPreview *)createTargetedContextMenuHintForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     return [self _createTargetedContextMenuHintPreviewIfPossible];
 }
+
+#endif // USE(UICONTEXTMENU)
 
 - (BOOL)_shouldUseContextMenus
 {
