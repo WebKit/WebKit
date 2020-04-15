@@ -601,6 +601,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetProcessDisplayName() -> (String displayName) Async
 
     SetShouldFireResizeEvents(bool shouldFireResizeEvents)
+    SetNeedsDOMWindowResizeEvent()
 
     SetHasResourceLoadClient(bool has)
 }

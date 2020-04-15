@@ -775,8 +775,10 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
         _webViewPlaceholder.get().parent = nil;
         [_webViewPlaceholder removeFromSuperview];
 
-        if (auto page = [self._webView _page])
+        if (auto page = [self._webView _page]) {
             page->setSuppressVisibilityUpdates(false);
+            page->setNeedsDOMWindowResizeEvent();
+        }
     });
 
     if (auto page = [self._webView _page])

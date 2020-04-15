@@ -1685,6 +1685,7 @@ private:
     void urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceError&);
 
     void setShouldFireResizeEvents(bool);
+    void setNeedsDOMWindowResizeEvent();
 
     void setIsSuspended(bool);
 

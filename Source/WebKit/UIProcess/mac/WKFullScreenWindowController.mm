@@ -574,6 +574,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     
     _repaintCallback = nullptr;
     _page->setSuppressVisibilityUpdates(false);
+    _page->setNeedsDOMWindowResizeEvent();
 
     [CATransaction commit];
     [CATransaction flush];

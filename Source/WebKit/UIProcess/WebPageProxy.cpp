@@ -10043,6 +10043,11 @@ void WebPageProxy::setShouldFireResizeEvents(bool shouldFireResizeEvents)
     send(Messages::WebPage::SetShouldFireResizeEvents(shouldFireResizeEvents));
 }
 
+void WebPageProxy::setNeedsDOMWindowResizeEvent()
+{
+    send(Messages::WebPage::SetNeedsDOMWindowResizeEvent());
+}
+
 #if !PLATFORM(IOS_FAMILY)
 bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 {

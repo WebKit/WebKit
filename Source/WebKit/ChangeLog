@@ -1,3 +1,30 @@
+2020-04-15  Peng Liu  <peng.liu6@apple.com>
+
+        Video elements don't return to the correct position when exiting fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=210529
+
+        Reviewed by Jer Noble.
+
+        Some web pages use the "resize" event handler to calculate the element size after
+        they exit fullscreen, and the calculation is based on the container element size which
+        might be affected by the fullscreen mode.
+
+        We need to call WebPageProxy::setNeedsDOMWindowResizeEvent() to fire the "resize" event
+        in the repaint callback after the exiting fullscreen process is completed and the
+        possible layout change due to exiting fullscreen is done. Otherwise the size calculation
+        might be wrong.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setNeedsDOMWindowResizeEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Some pages indefinitely zoom in and out due to idempotent text autosizing

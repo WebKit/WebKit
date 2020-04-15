@@ -3314,6 +3314,15 @@ void WebPage::setShouldFireResizeEvents(bool shouldFireResizeEvents)
         m_page->setShouldFireResizeEvents(shouldFireResizeEvents);
 }
 
+void WebPage::setNeedsDOMWindowResizeEvent()
+{
+    if (!m_page)
+        return;
+
+    if (auto* document = m_page->mainFrame().document())
+        document->setNeedsDOMWindowResizeEvent();
+}
+
 String WebPage::userAgent(const URL& webCoreURL) const
 {
     String userAgent = platformUserAgent(webCoreURL);
