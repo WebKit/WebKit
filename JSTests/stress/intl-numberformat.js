@@ -220,7 +220,7 @@ shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf({ length: 4, 1: 'en
 // Deduplicates tags.
 shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])), '["en","pt","es"]');
 // Canonicalizes tags.
-shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved"]');
+shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-x-reserved"]');
 // Replaces outdated tags.
 shouldBe(JSON.stringify(Intl.NumberFormat.supportedLocalesOf('no-bok')), '["nb"]');
 // Doesn't throw, but ignores private tags.

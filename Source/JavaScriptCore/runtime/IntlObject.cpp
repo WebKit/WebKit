@@ -534,8 +534,12 @@ static String canonicalLangTag(const Vector<String>& parts)
 
             ++currentIndex;
             ++numExtParts;
-            extension.append('-');
-            extension.append(extPart.convertToASCIILowercase());
+
+            auto lowercase = extPart.convertToASCIILowercase();
+            if (lowercase != "true"_s) {
+                extension.append('-');
+                extension.append(lowercase);
+            }
         }
 
         // Requires at least one production.
@@ -885,6 +889,7 @@ HashMap<String, String> resolveLocale(JSGlobalObject* globalObject, const HashSe
                     }
                 } else if (keyLocaleData.contains(static_cast<String>("true"_s))) {
                     value = "true"_s;
+                    supportedExtensionAddition = makeString('-', key);
                 }
             }
         }

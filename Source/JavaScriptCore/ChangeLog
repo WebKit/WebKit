@@ -1,5 +1,26 @@
 2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
 
+        [ECMA-402] Extension values should default to true, canonicalize without "-true"
+        https://bugs.webkit.org/show_bug.cgi?id=210457
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements two simple intertwining updates to ECMA-402:
+
+          - Valueless extension keys should not be dropped when resolving locale
+            https://tc39.es/ecma402/#sec-resolvelocale (9.h.4.b)
+
+          - Following UTS 35, "-true" should not appear in canonicalized locale ids
+            https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
+            https://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers
+            ('Any type or tfield value "true" is removed.')
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalLangTag):
+        (JSC::resolveLocale):
+
+2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
+
         [ECMA-402] Fix Intl.DateTimeFormat patterns and fields in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=209783
 

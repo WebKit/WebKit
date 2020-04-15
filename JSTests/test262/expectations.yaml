@@ -1911,9 +1911,6 @@ test/built-ins/WeakRef/proto-from-ctor-realm.js:
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
-test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
-  default: 'Test262Error: "kn" should be returned in locale. Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: "kn" should be returned in locale. Expected SameValue(«false», «true») to be true'
 test/intl402/Collator/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
