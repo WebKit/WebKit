@@ -178,18 +178,20 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 
 #if PLATFORM(IOS_FAMILY)
-    auto extension = SandboxExtension::create(WTFMove(*parameters.runningboardExtensionHandle));
-    bool consumed = extension->consume();
-    ASSERT_UNUSED(consumed, consumed);
+    if (parameters.runningboardExtensionHandle) {
+        auto extension = SandboxExtension::create(WTFMove(*parameters.runningboardExtensionHandle));
+        bool consumed = extension->consume();
+        ASSERT_UNUSED(consumed, consumed);
 
-    ASSERT(!m_uiProcessDependencyProcessAssertion);
-    if (auto remoteProcessID = parentProcessConnection()->remoteProcessID())
-        m_uiProcessDependencyProcessAssertion = makeUnique<ProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s, ProcessAssertionType::DependentProcessLink);
-    else
-        RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process dependency assertion on UIProcess because remoteProcessID is 0");
+        ASSERT(!m_uiProcessDependencyProcessAssertion);
+        if (auto remoteProcessID = parentProcessConnection()->remoteProcessID())
+            m_uiProcessDependencyProcessAssertion = makeUnique<ProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s, ProcessAssertionType::DependentProcessLink);
+        else
+            RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process dependency assertion on UIProcess because remoteProcessID is 0");
 
-    bool revoked = extension->revoke();
-    ASSERT_UNUSED(revoked, revoked);
+        bool revoked = extension->revoke();
+        ASSERT_UNUSED(revoked, revoked);
+    }
 #endif
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED

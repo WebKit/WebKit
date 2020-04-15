@@ -390,8 +390,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 
     SandboxExtension::Handle runningboardExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport);
-    parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
+    if (SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport))
+        parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
 #endif
     
 #if PLATFORM(COCOA)
