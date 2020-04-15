@@ -523,6 +523,10 @@ if ($coverage) {
     }
 }
 
+if (isAppleMacWebKit()) {
+    $envVars .= " JSC_useKernTCSM=false";
+}
+
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).

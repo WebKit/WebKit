@@ -902,6 +902,8 @@ class Port(object):
             'DYLD_LIBRARY_PATH',
             '__XPC_DYLD_FRAMEWORK_PATH',
             '__XPC_DYLD_LIBRARY_PATH',
+            'JSC_useKernTCSM',
+            '__XPC_JSC_useKernTCSM',
 
             # CYGWIN:
             'HOMEDRIVE',

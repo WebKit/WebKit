@@ -438,6 +438,9 @@ class Driver(object):
         environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = os.path.realpath(environment['DUMPRENDERTREE_TEMP'])
         environment['__XPC_SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS']
 
+        environment['JSC_useKernTCSM'] = 'false'
+        environment['__XPC_JSC_useKernTCSM'] = environment['JSC_useKernTCSM']
+
         if sys.platform.startswith('linux'):
             # Currently on WebKit2, there is no API for setting the application cache directory.
             # Each worker should have it's own and it should be cleaned afterwards.
