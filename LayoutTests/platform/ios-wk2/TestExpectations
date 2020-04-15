@@ -9,6 +9,7 @@
 compositing/ios [ Pass ]
 compositing/shared-backing/overflow-scroll [ Pass ]
 compositing/scrolling/async-overflow-scrolling [ Pass ]
+compositing/scrolling/async-overflow-scrolling/mac [ Skip ]
 compositing/layer-creation/clipping-scope [ Pass ]
 fast/device-orientation [ Pass ]
 fast/history/ios [ Pass ]

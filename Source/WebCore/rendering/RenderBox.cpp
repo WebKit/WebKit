@@ -4848,18 +4848,6 @@ LayoutRect RenderBox::flippedClientBoxRect() const
     return rect;
 }
 
-LayoutRect RenderBox::overflowRectForPaintRejection() const
-{
-    LayoutRect overflowRect = visualOverflowRect();
-    
-    if (!m_overflow || !usesCompositedScrolling())
-        return overflowRect;
-
-    overflowRect.unite(layoutOverflowRect());
-    overflowRect.moveBy(-scrollPosition());
-    return overflowRect;
-}
-
 LayoutUnit RenderBox::offsetLeft() const
 {
     return adjustedPositionRelativeToOffsetParent(topLeftLocation()).x();

@@ -54,20 +54,21 @@ enum class PaintPhase : uint8_t {
 };
 
 enum class PaintBehavior : uint16_t {
-    Normal                      = 0,
-    SelectionOnly               = 1 << 0,
-    SkipSelectionHighlight      = 1 << 1,
-    ForceBlackText              = 1 << 2,
-    ForceWhiteText              = 1 << 3,
-    RenderingSVGMask            = 1 << 4,
-    SkipRootBackground          = 1 << 5,
-    RootBackgroundOnly          = 1 << 6,
-    SelectionAndBackgroundsOnly = 1 << 7,
-    ExcludeSelection            = 1 << 8,
-    FlattenCompositingLayers    = 1 << 9, // Paint doesn't stop at compositing layer boundaries.
-    Snapshotting                = 1 << 10,
-    TileFirstPaint              = 1 << 11,
-    AnnotateLinks               = 1 << 12, // Collect all renderers with links to annotate their URLs (e.g. PDFs)
+    Normal                              = 0,
+    SelectionOnly                       = 1 << 0,
+    SkipSelectionHighlight              = 1 << 1,
+    ForceBlackText                      = 1 << 2,
+    ForceWhiteText                      = 1 << 3,
+    RenderingSVGMask                    = 1 << 4,
+    SkipRootBackground                  = 1 << 5,
+    RootBackgroundOnly                  = 1 << 6,
+    SelectionAndBackgroundsOnly         = 1 << 7,
+    ExcludeSelection                    = 1 << 8,
+    FlattenCompositingLayers            = 1 << 9, // Paint doesn't stop at compositing layer boundaries.
+    Snapshotting                        = 1 << 10,
+    TileFirstPaint                      = 1 << 11,
+    CompositedOverflowScrollContent     = 1 << 12,
+    AnnotateLinks                       = 1 << 13, // Collect all renderers with links to annotate their URLs (e.g. PDFs)
 };
 
 } // namespace WebCore

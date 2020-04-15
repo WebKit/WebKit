@@ -4684,6 +4684,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         if (paintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
             paintBehavior.add(PaintBehavior::ExcludeSelection);
 
+        if (isPaintingScrollingContent && isPaintingOverflowContents)
+            paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
+
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
         if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion) {
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
@@ -4760,6 +4763,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         
         if (paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
             paintBehavior.add(PaintBehavior::TileFirstPaint);
+
+        if (isPaintingScrollingContent && isPaintingOverflowContents)
+            paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
@@ -5092,6 +5098,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     else
         localPaintBehavior = paintBehavior;
 
+    // FIXME: It's unclear if this flag copying is necessary.
     if (localPaintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
         localPaintBehavior.add(PaintBehavior::ExcludeSelection);
     
@@ -5100,6 +5107,9 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     
     if (localPaintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
         localPaintBehavior.add(PaintBehavior::TileFirstPaint);
+
+    if (localPaintingInfo.paintBehavior & PaintBehavior::CompositedOverflowScrollContent)
+        localPaintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();

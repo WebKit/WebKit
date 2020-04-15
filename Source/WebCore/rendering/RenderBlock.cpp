@@ -1092,16 +1092,11 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // Check if we need to do anything at all.
     // FIXME: Could eliminate the isDocumentElementRenderer() check if we fix background painting so that the RenderView
     // paints the root's background.
-    if (!isDocumentElementRenderer()) {
-        LayoutRect overflowBox = overflowRectForPaintRejection();
+    if (!isDocumentElementRenderer() && !paintInfo.paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent)) {
+        LayoutRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
-        if (!overflowBox.intersects(paintInfo.rect)
-#if PLATFORM(IOS_FAMILY)
-            // FIXME: This may be applicable to non-iOS ports.
-            && (!hasLayer() || !layer()->isComposited())
-#endif
-        )
+        if (!overflowBox.intersects(paintInfo.rect))
             return;
     }
 

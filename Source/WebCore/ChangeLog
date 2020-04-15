@@ -1,3 +1,37 @@
+2020-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Backgrounds missing on gmail sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=210506
+        <rdar://problem/60523869>
+
+        Reviewed by Zalan Bujtas.
+
+        When painting the scrolled contents layers of accelerated overflow:scroll, RenderBlock::paint()
+        needs to not short-circuit when the dirty rect is outside a clipping rect, because accelerated
+        overflow involves overdraw for tiles outside the visible area.
+
+        There were two code paths that made this mostly work: overflowRectForPaintRejection() tested for
+        usesCompositedScrolling(), and the #if PLATFORM(IOS_FAMILY) made it work on iOS.
+
+        For content involving flexbox, overflowRectForPaintRejection() gave the wrong answer because 
+        flex layout would sometimes clear m_overflow, even on an overflow:scroll element.
+        
+        So remove overflowRectForPaintRejection(), and instead revert to the simple visualOverflowRect(),
+        but first check a bit that's passed down from compositing code that indicates that
+        we're painting the contents of composited scroll
+
+        Test: compositing/scrolling/async-overflow-scrolling/mac/overflow-in-flex-empty-tiles.html
+
+        * rendering/PaintPhase.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overflowRectForPaintRejection const): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+
 2020-04-14  Zalan Bujtas  <zalan@apple.com>
 
         Content expanding is broken on icourse163.org
