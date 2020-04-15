@@ -104,18 +104,8 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject,
     String specifier = asString(moduleNameValue)->value(jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    URL baseURL;
-    if (isRootModule(importerModuleKey))
-        baseURL = m_document.baseURL();
-    else {
-        ASSERT(importerModuleKey.isString());
-        URL importerModuleRequestURL(URL(), asString(importerModuleKey)->value(jsGlobalObject));
-        ASSERT_WITH_MESSAGE(importerModuleRequestURL.isValid(), "Invalid module referrer never starts importing dependent modules.");
-
-        auto iterator = m_requestURLToResponseURLMap.find(importerModuleRequestURL);
-        ASSERT_WITH_MESSAGE(iterator != m_requestURLToResponseURLMap.end(), "Module referrer must register itself to the map before starting importing dependent modules.");
-        baseURL = iterator->value;
-    }
+    URL baseURL = responseURLFromRequestURL(*jsGlobalObject, importerModuleKey);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
     if (!result) {
@@ -192,6 +182,27 @@ URL ScriptModuleLoader::moduleURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSVa
     return URL(URL(), asString(moduleKeyValue)->value(&jsGlobalObject));
 }
 
+URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSValue moduleKeyValue)
+{
+    JSC::VM& vm = jsGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (isRootModule(moduleKeyValue))
+        return m_document.baseURL();
+
+    ASSERT(!isRootModule(moduleKeyValue));
+    ASSERT(moduleKeyValue.isString());
+    String requestURL = asString(moduleKeyValue)->value(&jsGlobalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    ASSERT_WITH_MESSAGE(URL(URL(), requestURL).isValid(), "Invalid module referrer never starts importing dependent modules.");
+
+    auto iterator = m_requestURLToResponseURLMap.find(requestURL);
+    ASSERT_WITH_MESSAGE(iterator != m_requestURLToResponseURLMap.end(), "Module referrer must register itself to the map before starting importing dependent modules.");
+    URL result = iterator->value;
+    ASSERT(result.isValid());
+    return result;
+}
+
 JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
 {
     JSC::VM& vm = jsGlobalObject->vm();
@@ -265,13 +276,13 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
     auto& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    URL sourceURL = moduleURL(*jsGlobalObject, moduleKeyValue);
-    ASSERT(sourceURL.isValid());
-
     auto* metaProperties = JSC::constructEmptyObject(vm, jsGlobalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"), JSC::jsString(vm, sourceURL.string()));
+    URL responseURL = responseURLFromRequestURL(*jsGlobalObject, moduleKeyValue);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"), JSC::jsString(vm, responseURL.string()));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
@@ -318,7 +329,17 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
         }
     }
 
-    m_requestURLToResponseURLMap.add(WTFMove(sourceURL), cachedScript.response().url());
+    URL responseURL = cachedScript.response().url();
+    // If we do not have redirection, we must reserve the source URL's fragment explicitly here since ResourceResponse::url() is the one when we first cache it to MemoryCache.
+    // FIXME: We should track fragments through redirections.
+    // https://bugs.webkit.org/show_bug.cgi?id=158420
+    // https://bugs.webkit.org/show_bug.cgi?id=210490
+    if (!cachedScript.hasRedirections() && cachedScript.response().source() != ResourceResponse::Source::ServiceWorker) {
+        if (sourceURL.hasFragmentIdentifier())
+            responseURL.setFragmentIdentifier(sourceURL.fragmentIdentifier());
+    }
+
+    m_requestURLToResponseURLMap.add(sourceURL.string(), WTFMove(responseURL));
     promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
         return JSC::JSSourceCode::create(jsGlobalObject.vm(),
             JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });

@@ -1,3 +1,30 @@
+2020-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        import.meta.url: baseURL for a module script should be response URL, not request URL
+        https://bugs.webkit.org/show_bug.cgi?id=205294
+
+        Reviewed by Youenn Fablet.
+
+        AppleWin networking does not properly propagate fragment if redirect location clears it. This is a known issue[1].
+
+        [1]: See `http/tests/navigation/redirect-to-fragment2.html [ Failure ]` in platform/win/TestExpectations.
+
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-redirect-expected.txt: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-redirect-with-fragment-expected.txt: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-redirect-with-fragment.html: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-redirect.html: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-with-fragment-expected.txt: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-with-fragment.html: Added.
+        * http/wpt/html/semantics/scripting-1/the-script-element/module/resources/import-meta-url-expose.js: Added.
+        * http/wpt/resources/redirect.py: Added.
+        (main):
+        * http/wpt/service-workers/module-meta-url-fragment-worker.js: Added.
+        (async e):
+        * http/wpt/service-workers/module-meta-url-fragment.https-expected.txt: Added.
+        * http/wpt/service-workers/module-meta-url-fragment.https.html: Added.
+        * http/wpt/service-workers/resources/module-meta-url-fragment.html: Added.
+        * platform/win/http/wpt/html/semantics/scripting-1/the-script-element/module/module-meta-url-redirect-with-fragment-expected.txt: Added.
+
 2020-04-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening of flaky failures
