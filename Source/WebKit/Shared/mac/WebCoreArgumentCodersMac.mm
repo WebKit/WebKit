@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #import <WebCore/SerializedPlatformDataCueMac.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetContext.h>
@@ -91,24 +92,27 @@ static RetainPtr<CFMutableDictionaryRef> createSerializableRepresentation(CFInde
     return dictionary;
 }
 
-static CFTypeRef dictionaryValueOfType(CFDictionaryRef dictionary, CFStringRef key, CFTypeID type)
+template<typename ValueType> bool extractDictionaryValue(CFDictionaryRef dictionary, CFStringRef key, ValueType* result)
 {
-    CFTypeRef value = CFDictionaryGetValue(dictionary, key);
-    if (value && CFGetTypeID(value) == type)
-        return value;
-    return nullptr;
+    auto untypedValue = CFDictionaryGetValue(dictionary, key);
+    auto value = dynamic_cf_cast<ValueType>(untypedValue);
+    if (untypedValue && !value)
+        return false;
+    if (result)
+        *result = value;
+    return true;
 }
 
 static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNull, CFIndex* version, CFTypeRef** objects, CFIndex* objectCount, CFDictionaryRef* protocolProperties, CFNumberRef* expectedContentLength, CFStringRef* mimeType)
 {
-    CFNumberRef versionNumber = (CFNumberRef)dictionaryValueOfType(representation, CFSTR("version"), CFNumberGetTypeID());
+    auto versionNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(representation, CFSTR("version")));
     if (!versionNumber)
         return false;
 
     if (!CFNumberGetValue(versionNumber, kCFNumberCFIndexType, version))
         return false;
 
-    CFArrayRef archiveListArray = (CFArrayRef)dictionaryValueOfType(representation, CFSTR("archiveList"), CFArrayGetTypeID());
+    auto archiveListArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(representation, CFSTR("archiveList")));
     if (!archiveListArray)
         return false;
 
@@ -129,14 +133,12 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
             (*objects)[i] = nullptr;
     }
 
-    if (protocolProperties)
-        *protocolProperties = (CFDictionaryRef)dictionaryValueOfType(representation, CFSTR("protocolProperties"), CFDictionaryGetTypeID());
-
-    if (expectedContentLength)
-        *expectedContentLength = (CFNumberRef)dictionaryValueOfType(representation, CFSTR("expectedContentLength"), CFNumberGetTypeID());
-
-    if (mimeType)
-        *mimeType = (CFStringRef)dictionaryValueOfType(representation, CFSTR("mimeType"), CFStringGetTypeID());
+    if (!extractDictionaryValue(representation, CFSTR("protocolProperties"), protocolProperties))
+        return false;
+    if (!extractDictionaryValue(representation, CFSTR("expectedContentLength"), expectedContentLength))
+        return false;
+    if (!extractDictionaryValue(representation, CFSTR("mimeType"), mimeType))
+        return false;
 
     return true;
 }

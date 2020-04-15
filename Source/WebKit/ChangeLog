@@ -1,5 +1,22 @@
 2020-04-14  David Kilzer  <ddkilzer@apple.com>
 
+        dictionaryValueOfType() in WebCoreArgumentCodersMac.mm can be replaced with dynamic_cf_cast<>()
+        <https://webkit.org/b/210456>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::dictionaryValueOfType): Delete.
+        (IPC::extractDictionaryValue): Add.
+        - Use dynamic_cf_cast<>() in place of manually checking the
+          CFTypeID of each object.
+        (IPC::createArchiveList):
+        - Call new extractDictionaryValue() template function to verify
+          values are the correct types in the dictionary and to set the
+          output variables.
+
+2020-04-14  David Kilzer  <ddkilzer@apple.com>
+
         Use CFArrayGetValues() in createArchiveList() in WebCoreArgumentCodersMac.mm
         <https://webkit.org/b/210519>
 
