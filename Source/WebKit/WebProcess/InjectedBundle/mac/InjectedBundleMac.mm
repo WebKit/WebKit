@@ -101,7 +101,12 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
 
     NSDictionary *dictionary = nil;
     @try {
+#if PLATFORM(IOS_FAMILY)
+        dictionary = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
+        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
+#else
         dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
+#endif
         ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameters: %@." , exception);

@@ -1,3 +1,10 @@
+2020-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed PLT fix after r260081.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::decodeBundleParameters):
+
 2020-04-15  Ben Nham  <nham@apple.com>
 
         DidFirstLayerFlush IPC can be head-of-line-blocked and delay first paint by 200+ ms on process swap
