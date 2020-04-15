@@ -88,7 +88,7 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
 
     m_currentCategory = requestedCategory;
 
-    AVAudioRoutingArbitrationCategory arbitrationCategory;
+    AVAudioRoutingArbitrationCategory arbitrationCategory = AVAudioRoutingArbitrationCategoryPlayback;
     switch (requestedCategory) {
     case AudioSession::MediaPlayback:
         arbitrationCategory = AVAudioRoutingArbitrationCategoryPlayback;

@@ -1,3 +1,15 @@
+2020-04-15  Peng Liu  <peng.liu6@apple.com>
+
+        Adopt interface AVAudioRoutingArbiter for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=210167
+
+        Reviewed by Jer Noble.
+
+        A follow-up patch to fix a build error.
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator):
+
 2020-04-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Provide an alternative to gtk_widget_{get,is}_toplevel()
