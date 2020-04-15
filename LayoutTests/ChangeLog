@@ -1,3 +1,12 @@
+2020-04-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening of flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=210563
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-15  Truitt Savell  <tsavell@apple.com>
 
         Remove expectations for imported/blink/storage/indexeddb/blob-basics-metadata.html

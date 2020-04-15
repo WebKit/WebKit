@@ -950,7 +950,7 @@ webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Pass F
 webkit.org/b/154390 http/tests/media/video-redirect.html [ Timeout Pass ]
 webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
-webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
+webkit.org/b/154390 webkit.org/b/198830 http/tests/security/local-video-source-from-remote.html [ Crash Timeout Pass ]
 
 webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 
@@ -1384,6 +1384,7 @@ webkit.org/b/209533 editing/pasteboard/paste-line-endings-004.html [ Failure Pas
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-005.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-008.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/209533 editing/pasteboard/paste-line-endings-009.html [ Failure ImageOnlyFailure Pass ]
+webkit.org/b/209533 editing/pasteboard/paste-line-endings-010.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/209533 fast/repaint/animation-after-layer-scroll.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/appcache/xhr-foreign-resource.html [ Failure Pass ]
 webkit.org/b/209533 http/tests/cookies/same-site/popup-cross-site.html [ Failure Pass ]
@@ -1419,6 +1420,7 @@ webkit.org/b/209533 js/dom/date-big-constructor.html [ Failure Pass ]
 webkit.org/b/209533 js/dom/date-big-setmonth.html [ Failure Pass ]
 webkit.org/b/209533 media/W3C/audio/events/event_canplaythrough_manual.html [ Failure Pass ]
 webkit.org/b/209533 media/W3C/audio/events/event_loadeddata_manual.html [ Failure Pass ]
+webkit.org/b/209533 media/W3C/audio/events/event_loadedmetadata.html [ Failure Pass ]
 webkit.org/b/209533 storage/indexeddb/modern/date-basic.html [ Failure Pass ]
 webkit.org/b/209533 storage/indexeddb/modern/date-basic-private.html [ Failure Pass ]
 webkit.org/b/209533 storage/indexeddb/modern/get-keyrange.html [ Failure Pass ]
@@ -1535,6 +1537,7 @@ webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Crash ]
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Pass Crash ]
+webkit.org/b/203078 media/media-source/media-source-seek-complete.html [ Pass Crash ]
 webkit.org/b/203078 media/media-source/media-source-seek-detach-crash.html [ Pass Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
@@ -1554,6 +1557,7 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-termi
 webkit.org/b/207737 imported/w3c/web-platform-tests/media-source/mediasource-h264-play-starved.html [ Pass Crash ]
 
 # Tests crashing in EWS but not in test bot.
+webkit.org/b/209533 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 webkit.org/b/209533 http/tests/contentextensions/video-element-resource-type.html [ Crash Pass ]
 webkit.org/b/209533 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Crash Pass ]
 webkit.org/b/209533 media/track/track-automatic-subtitles.html [ Crash Pass ]
