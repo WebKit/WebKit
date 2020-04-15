@@ -92,21 +92,39 @@ bool screenHasInvertedColors()
 double screenDPI()
 {
     static const double defaultDpi = 96;
+#if !USE(GTK4)
     GdkScreen* screen = gdk_screen_get_default();
-    if (!screen)
-        return defaultDpi;
+    if (screen) {
+        double dpi = gdk_screen_get_resolution(screen);
+        if (dpi != -1)
+            return dpi;
+    }
+#endif
 
-    double dpi = gdk_screen_get_resolution(screen);
-    if (dpi != -1)
-        return dpi;
+    static GtkSettings* gtkSettings = gtk_settings_get_default();
+    if (gtkSettings) {
+        int gtkXftDpi;
+        g_object_get(gtkSettings, "gtk-xft-dpi", &gtkXftDpi, nullptr);
+        return gtkXftDpi / 1024.0;
+    }
 
     static double cachedDpi = 0;
     if (cachedDpi)
         return cachedDpi;
 
     static const double millimetresPerInch = 25.4;
-    double diagonalInPixels = std::hypot(gdk_screen_get_width(screen), gdk_screen_get_height(screen));
-    double diagonalInInches = std::hypot(gdk_screen_get_width_mm(screen), gdk_screen_get_height_mm(screen)) / millimetresPerInch;
+
+    GdkDisplay* display = gdk_display_get_default();
+    if (!display)
+        return defaultDpi;
+    GdkMonitor* monitor = gdk_display_get_monitor(display, 0);
+    if (!monitor)
+        return defaultDpi;
+
+    GdkRectangle geometry;
+    gdk_monitor_get_geometry(monitor, &geometry);
+    double diagonalInPixels = std::hypot(geometry.width, geometry.height);
+    double diagonalInInches = std::hypot(gdk_monitor_get_width_mm(monitor), gdk_monitor_get_height_mm(monitor)) / millimetresPerInch;
     cachedDpi = diagonalInPixels / diagonalInInches;
 
     return cachedDpi;

@@ -1,3 +1,30 @@
+2020-04-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Make PlatformScreen::screenDPI() GTK4-ready
+        https://bugs.webkit.org/show_bug.cgi?id=210543
+
+        Reviewed by Adrian Perez de Castro.
+
+        No new tests needed.
+
+        This method is using deprecated and removed APIs
+        from GDK. Guard the removed API usage so that it's only
+        used in GTK3 and update to use the replacement APIs otherwise.
+
+        Also, make it to also use the gtk-xft-dpi GtkSettings property.
+        This method is mostly used in response to a change in this
+        property, so ignoring its value doesn't seem a good idea.
+
+        The following priority is used:
+
+        1. (GTK3 only) query gdk_screen_get_resolution().
+        2. Use the GtkSettings::gtk-xft-dpi property.
+        3. Calculate the actual DPI from the monitor 0's properties.
+        4. If none of these succeed, use the default DPI, 96.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDPI):
+
 2020-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove IconGtk
