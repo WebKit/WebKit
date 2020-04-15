@@ -19,11 +19,26 @@
 #include "config.h"
 #include "GtkUtilities.h"
 
+#include "GtkVersioning.h"
 #include "IntPoint.h"
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
+
+static IntPoint gtkWindowGetOrigin(GtkWidget* window)
+{
+    int x = 0, y = 0;
+
+#if USE(GTK4)
+    UNUSED_PARAM(window);
+#else
+    if (auto* gdkWindow = gtk_widget_get_window(window))
+        gdk_window_get_origin(gdkWindow, &x, &y);
+#endif // !USE(GTK4)
+
+    return IntPoint(x, y);
+}
 
 IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& point)
 {
@@ -35,22 +50,23 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& poin
     if (!toplevelWidget || !gtk_widget_is_toplevel(toplevelWidget) || !GTK_IS_WINDOW(toplevelWidget))
         return point;
 
-    GdkWindow* gdkWindow = gtk_widget_get_window(toplevelWidget);
-    if (!gdkWindow)
-        return point;
-
     int xInWindow, yInWindow;
     gtk_widget_translate_coordinates(widget, toplevelWidget, point.x(), point.y(), &xInWindow, &yInWindow);
 
-    int windowOriginX, windowOriginY;
-    gdk_window_get_origin(gdkWindow, &windowOriginX, &windowOriginY);
-
-    return IntPoint(windowOriginX + xInWindow, windowOriginY + yInWindow);
+    const auto origin = gtkWindowGetOrigin(toplevelWidget);
+    return IntPoint(origin.x() + xInWindow, origin.y() + yInWindow);
 }
 
 bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
 {
-    return widget && gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
+    const bool isToplevelWidget = widget && gtk_widget_is_toplevel(widget);
+
+#if USE(GTK4)
+    // A toplevel widget in GTK4 is always a window, there is no need for further checks.
+    return isToplevelWidget;
+#else
+    return isToplevelWidget && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
+#endif // USE(GTK4)
 }
 
 template<>

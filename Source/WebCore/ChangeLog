@@ -1,5 +1,27 @@
 2020-04-15  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [GTK4] Provide an alternative to gtk_widget_{get,is}_toplevel()
+        https://bugs.webkit.org/show_bug.cgi?id=210463
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adapt utility functions to GTK4, and provide replacement implementations for the
+        gtk_widget_get_tolevel() and gtk_widget_is_toplevel() functions for GTK4 builds.
+
+        No new tests needed.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::gtkWindowGetOrigin): Added.
+        (WebCore::convertWidgetPointToScreenPoint): Move code used to find the window position
+        into a separate function, and use it to avoid the USE(GTK4) conditional here.
+        (WebCore::widgetIsOnscreenToplevelWindow): Adapt to make it work with GTK4.
+        * platform/gtk/GtkVersioning.h: Added.
+        (gtk_widget_is_toplevel): Alternative implementation for GTK4.
+        (gtk_widget_get_toplevel): Ditto.
+        (gtk_window_get_position): Ditto.
+
+2020-04-15  Adrian Perez de Castro  <aperez@igalia.com>
+
         [GTK4] Adapt to cursor API changes
         https://bugs.webkit.org/show_bug.cgi?id=210453
 

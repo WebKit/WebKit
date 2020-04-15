@@ -139,7 +139,7 @@ private:
         webkitWindowPropertiesSetResizable(webkit_web_view_get_window_properties(m_webView), resizable);
     }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     static gboolean windowConfigureEventCallback(GtkWindow* window, GdkEventConfigure*, GdkRectangle* targetGeometry)
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
@@ -165,7 +165,7 @@ private:
     {
         RunLoop::current().stop();
     }
-#endif
+#endif // PLATFORM(GTK) && !USE(GTK4)
 
     void setWindowFrame(WebPageProxy&, const WebCore::FloatRect& frame) final
     {
@@ -174,10 +174,12 @@ private:
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
         if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
             bool needsMove = false;
+            // Querying and setting window positions is not supported in GTK4.
+#if !USE(GTK4)
             // Position a toplevel window is not supported under wayland.
 #if PLATFORM(WAYLAND)
             if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
-#endif
+#endif // PLATFORM(WAYLAND)
             {
                 if (geometry.x >= 0 && geometry.y >= 0) {
                     int x, y;
@@ -185,6 +187,7 @@ private:
                     needsMove = x != geometry.x || y != geometry.y;
                 }
             }
+#endif // !USE(GTK4)
 
             bool needsResize = false;
             if (geometry.width > 0 && geometry.height > 0) {
@@ -196,9 +199,12 @@ private:
             if (!needsMove && !needsResize)
                 return;
 
+            // There is no GtkWidget::configure-event in GTK4, move is not supported.
+#if !USE(GTK4)
             auto signalID = g_signal_connect(window, "configure-event", G_CALLBACK(windowConfigureEventCallback), &geometry);
             if (needsMove)
                 gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
+#endif // !USE(GTK4)
             if (needsResize)
                 gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
 
@@ -212,7 +218,7 @@ private:
             g_signal_handler_disconnect(window, signalID);
         } else
             webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
-#endif
+#endif // PLATFORM(GTK)
     }
 
     void windowFrame(WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler) final
