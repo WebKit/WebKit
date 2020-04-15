@@ -1,3 +1,14 @@
+2020-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Fix use of gtk init functions
+        https://bugs.webkit.org/show_bug.cgi?id=210550
+
+        Reviewed by Adrian Perez de Castro.
+
+        Include GtkVersioning.h instead of gtk.h
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+
 2020-04-15  Peng Liu  <peng.liu6@apple.com>
 
         Adopt interface AVAudioRoutingArbiter for Mac

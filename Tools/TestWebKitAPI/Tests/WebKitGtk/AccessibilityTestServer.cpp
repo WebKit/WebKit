@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#include <gtk/gtk.h>
+#include <WebCore/GtkVersioning.h>
 #include <webkit2/webkit2.h>
 
 static const char introspectionXML[] =

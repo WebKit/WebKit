@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestsController.h"
 
-#include <gtk/gtk.h>
+#include <WebCore/GtkVersioning.h>
 
 int main(int argc, char** argv)
 {

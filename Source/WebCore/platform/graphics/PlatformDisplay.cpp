@@ -47,7 +47,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <gtk/gtk.h>
+#include "GtkVersioning.h"
 #endif
 
 #if PLATFORM(GTK) && PLATFORM(X11)

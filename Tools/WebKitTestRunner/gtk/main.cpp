@@ -26,8 +26,8 @@
 #include "config.h"
 
 #include "TestController.h"
+#include <WebCore/GtkVersioning.h>
 #include <WebKit/WKTextCheckerGtk.h>
-#include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
 
 int main(int argc, char** argv)

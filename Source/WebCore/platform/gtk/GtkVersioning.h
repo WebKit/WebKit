@@ -45,4 +45,16 @@ gtk_window_get_position(GtkWindow*, int* x, int* y)
     *x = *y = 0;
 }
 
+static inline void
+gtk_init(int*, char***)
+{
+    gtk_init();
+}
+
+static inline gboolean
+gtk_init_check(int*, char***)
+{
+    return gtk_init_check();
+}
+
 #endif // USE(GTK4)
