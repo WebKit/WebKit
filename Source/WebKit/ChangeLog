@@ -1,3 +1,15 @@
+2020-04-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r259610): WebGL does not work at all on iOS (was: Google Maps tiles turn black after initial load)
+        <rdar://problem/61794480>
+
+        Unreviewed, partial revert of r259610 because it broke Google Maps.
+        Stop using RunningBoard for the "Foreground" assertion because it fails to
+        give the target GPU access.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::runningBoardNameForAssertionType):
+
 2020-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Fix use of gtk init functions
