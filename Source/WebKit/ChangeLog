@@ -1,3 +1,14 @@
+2020-04-14  David Kilzer  <ddkilzer@apple.com>
+
+        Use CFArrayGetValues() in createArchiveList() in WebCoreArgumentCodersMac.mm
+        <https://webkit.org/b/210519>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createArchiveList):
+        - Use CFArrayGetValues() to copy array more efficiently.
+
 2020-04-14  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r259898): Tabs occasionally go blank and get stuck that way

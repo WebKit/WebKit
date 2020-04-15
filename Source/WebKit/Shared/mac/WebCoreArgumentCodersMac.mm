@@ -123,12 +123,10 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
     *objectCount = archiveListArrayCount;
     *objects = static_cast<CFTypeRef*>(malloc(bufferSize.unsafeGet()));
 
+    CFArrayGetValues(archiveListArray, CFRangeMake(0, *objectCount), *objects);
     for (CFIndex i = 0; i < *objectCount; ++i) {
-        CFTypeRef object = CFArrayGetValueAtIndex(archiveListArray, i);
-        if (object == tokenNull)
+        if ((*objects)[i] == tokenNull)
             (*objects)[i] = nullptr;
-        else
-            (*objects)[i] = object;
     }
 
     if (protocolProperties)
