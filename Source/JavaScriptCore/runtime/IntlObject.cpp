@@ -536,10 +536,8 @@ static String canonicalLangTag(const Vector<String>& parts)
             ++numExtParts;
 
             auto lowercase = extPart.convertToASCIILowercase();
-            if (lowercase != "true"_s) {
-                extension.append('-');
-                extension.append(lowercase);
-            }
+            if (lowercase != "true"_s)
+                extension = makeString(extension, '-', lowercase);
         }
 
         // Requires at least one production.

@@ -1,5 +1,12 @@
 2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed, address Darin's feedback on r260151.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalLangTag):
+
+2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
+
         [ECMA-402] Extension values should default to true, canonicalize without "-true"
         https://bugs.webkit.org/show_bug.cgi?id=210457
 
