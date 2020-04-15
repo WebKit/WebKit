@@ -1,3 +1,18 @@
+2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Some pages indefinitely zoom in and out due to idempotent text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=210551
+        <rdar://problem/56820674>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to verify that on a page with a single line of text, if idempotent text autosizing is enabled,
+        the text size is boosted by idempotent autosizing, but we don't end up getting into a state where the computed
+        font size flickers between multiple values.
+
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-reaches-stable-state-expected.txt: Added.
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-reaches-stable-state.html: Added.
+
 2020-04-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening of flaky failures

@@ -1,3 +1,51 @@
+2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Some pages indefinitely zoom in and out due to idempotent text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=210551
+        <rdar://problem/56820674>
+
+        Reviewed by Tim Horton.
+
+        On a non-responsive web page with one or lines of non-wrapping text of a specific length (just under 1920px),
+        it's possible for the combination of idempotent text autosizing heuristics and viewport shrink-to-fit to cause
+        the single line of text to grow and shrink in size indefinitely, and additionally cause the initial scale to
+        thrash between multiple values indefinitely. This manifests in the entire page repeatedly zooming in and out
+        immediately after page load.
+
+        Consider the following scenario:
+
+        (1) A viewport configuration change (e.g. due to parsing the viewport meta tag) schedules the timer to reset
+            idempotent text autosizing. Let's suppose the page has a really long line of non-wrapping 12px text that is
+            below 1920px wide.
+
+        (2) The timer fires, invalidating styles and recomputing text autosizing given the current initial scale. The
+            current initial scale is below 1, since ViewportConfiguration will attempt to shrink to fit the page to
+            avoid horizontal scrolling. This causes text autosizing to boost the long line of text to a larger value
+            (let's say 17px).
+
+        (3) The next time we perform style recomputation and layout, we discover that the content width of the page is
+            now larger than 1920px, which is the maximum width which we'll attempt to shrink to fit; when computing
+            initial scale, we give up trying to shrink down to avoid making the inital scale too small, and instead just
+            keep it at 1.
+
+        (4) This change in viewport configuration then schedules another idempotent text autosizing reset. When this
+            timer fires, it sees that the initial scale is now 1, which means that the text is no longer boosted, so we
+            make the single line of text small again (12px).
+
+        (5) After the next style recomputation and layout, this causes the content width of the page to dip below the
+            1920px threshold, causing the initial scale to dip below 1 again. As detailed above, this schedules another
+            idempotent text autosizing update, which now boosts font size once again, and the cycle continues.
+
+        To fix this, instead of consulting the initial scale (`ViewportConfiguration::initialScale()`) when computing
+        the boosted font size for idempotent text autosizing, we can instead ask for the initial scale ignoring content
+        size (`ViewportConfiguration::initialScaleIgnoringContentSize()`). This prevents changes in content size due to
+        idempotent autosizing from affecting the idempotent autosizing heuristic (through the different initial scale),
+        and ensures that this method of text autosizing actually remains idempotent.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetIdempotentTextAutosizingIfNeeded):
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2020-04-14  Megan Gardner  <megan_gardner@apple.com>
 
         Data Detected Actions sheets are presented from odd locations.

@@ -3527,10 +3527,10 @@ void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
         return;
 
     const float minimumScaleChangeBeforeRecomputingTextAutosizing = 0.01;
-    if (std::abs(previousInitialScale - m_page->initialScale()) < minimumScaleChangeBeforeRecomputingTextAutosizing)
+    if (std::abs(previousInitialScale - m_page->initialScaleIgnoringContentSize()) < minimumScaleChangeBeforeRecomputingTextAutosizing)
         return;
 
-    if (m_page->initialScale() >= 1 && previousInitialScale >= 1)
+    if (m_page->initialScaleIgnoringContentSize() >= 1 && previousInitialScale >= 1)
         return;
 
     if (!m_page->mainFrame().view())
@@ -3646,10 +3646,11 @@ bool WebPage::shouldIgnoreMetaViewport() const
 void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)
 {
     double initialScale = m_viewportConfiguration.initialScale();
+    double initialScaleIgnoringContentSize = m_viewportConfiguration.initialScaleIgnoringContentSize();
 #if ENABLE(TEXT_AUTOSIZING)
-    double previousInitialScale = m_page->initialScale();
-    m_page->setInitialScale(initialScale);
-    resetIdempotentTextAutosizingIfNeeded(previousInitialScale);
+    double previousInitialScaleIgnoringContentSize = m_page->initialScaleIgnoringContentSize();
+    m_page->setInitialScaleIgnoringContentSize(initialScaleIgnoringContentSize);
+    resetIdempotentTextAutosizingIfNeeded(previousInitialScaleIgnoringContentSize);
 
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize()))
         resetTextAutosizing();

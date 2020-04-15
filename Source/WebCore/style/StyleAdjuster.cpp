@@ -577,7 +577,7 @@ auto Adjuster::adjustmentForTextAutosizing(const RenderStyle& style, const Eleme
     if (style.textSizeAdjust().isNone())
         return adjustmentForTextAutosizing;
 
-    float initialScale = document.page() ? document.page()->initialScale() : 1;
+    float initialScale = document.page() ? document.page()->initialScaleIgnoringContentSize() : 1;
     auto adjustLineHeightIfNeeded = [&](auto computedFontSize) {
         auto lineHeight = style.specifiedLineHeight();
         constexpr static unsigned eligibleFontSize = 12;

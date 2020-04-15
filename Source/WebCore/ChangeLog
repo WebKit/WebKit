@@ -1,3 +1,25 @@
+2020-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Some pages indefinitely zoom in and out due to idempotent text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=210551
+        <rdar://problem/56820674>
+
+        Reviewed by Tim Horton.
+
+        Rename m_initialScale and initialScale() on Page to m_initialScaleIgnoringContentSize and
+        initialScaleIgnoringContentSize(), respectively. See WebKit/ChangeLog for more details.
+
+        Test: fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-reaches-stable-state.html
+
+        * page/Page.cpp:
+        (WebCore::Page::setInitialScaleIgnoringContentSize):
+        (WebCore::Page::setInitialScale): Deleted.
+        * page/Page.h:
+        (WebCore::Page::initialScaleIgnoringContentSize const):
+        (WebCore::Page::initialScale const): Deleted.
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustmentForTextAutosizing):
+
 2020-04-15  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r258977): Crash under Document::visibilityStateChanged

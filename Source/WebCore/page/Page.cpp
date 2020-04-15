@@ -1105,9 +1105,9 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 
-void Page::setInitialScale(float initialScale)
+void Page::setInitialScaleIgnoringContentSize(float scale)
 {
-    m_initialScale = initialScale;
+    m_initialScaleIgnoringContentSize = scale;
 }
 
 void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection)
