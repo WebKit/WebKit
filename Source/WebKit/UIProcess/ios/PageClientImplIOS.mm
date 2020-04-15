@@ -608,10 +608,8 @@ void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInform
         auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
         unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
         @try {
-            if (auto* allowedClasses = m_webView.get()->_page->process().processPool().allowedClassesForParameterCoding())
-                userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
-            else
-                userObject = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"userObject"];
+            auto* allowedClasses = m_webView.get()->_page->process().processPool().allowedClassesForParameterCoding();
+            userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
         } @catch (NSException *exception) {
             LOG_ERROR("Failed to decode user data: %@", exception);
         }

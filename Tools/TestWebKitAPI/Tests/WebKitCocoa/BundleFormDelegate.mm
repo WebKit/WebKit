@@ -98,9 +98,9 @@ TEST(WebKit, WKWebProcessPlugInWithoutRegisteredCustomClass)
     TestWebKitAPI::Util::run(&didGetFocus);
     TestWebKitAPI::Util::run(&didGetUserObject);
 
-    // We should have serialized the NSUnitConverterLinear, since we did not indicate we wanted
-    // to limit serialization.
-    EXPECT_TRUE([delegate->_userObject isKindOfClass:[NSUnitConverterLinear class]]);
+    // We should not have serialized the NSUnitConverterLinear, since we did not specify it as a valid
+    // class for our plugin.
+    EXPECT_NULL(delegate->_userObject);
 }
 
 TEST(WebKit, WKWebProcessPlugInWithRegisteredCustomClass)
