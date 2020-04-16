@@ -26,6 +26,7 @@
 #pragma once
 
 #import "APICustomProtocolManagerClient.h"
+#import "LegacyCustomProtocolID.h"
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
@@ -41,11 +42,11 @@ class LegacyCustomProtocolManagerProxy;
 
 class LegacyCustomProtocolManagerClient final : public API::CustomProtocolManagerClient {
 private:
-    void startLoading(LegacyCustomProtocolManagerProxy&, uint64_t /*customProtocolID*/, const WebCore::ResourceRequest&) final;
-    void stopLoading(LegacyCustomProtocolManagerProxy&, uint64_t /*customProtocolID*/) final;
+    void startLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID, const WebCore::ResourceRequest&) final;
+    void stopLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID) final;
     void invalidate(LegacyCustomProtocolManagerProxy&) final;
 
-    HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
+    HashMap<LegacyCustomProtocolID, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
 };
 
 } // namespace WebKit

@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
-
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -54,27 +54,22 @@ public:
     LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();
 
-    void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
-    void stopLoading(uint64_t customProtocolID);
+    void startLoading(LegacyCustomProtocolID, const WebCore::ResourceRequest&);
+    void stopLoading(LegacyCustomProtocolID);
 
     void invalidate();
 
-    void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
-    void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
-    void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
-    void didFinishLoading(uint64_t customProtocolID);
+    void wasRedirectedToRequest(LegacyCustomProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void didReceiveResponse(LegacyCustomProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
+    void didLoadData(LegacyCustomProtocolID, const IPC::DataReference&);
+    void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
+    void didFinishLoading(LegacyCustomProtocolID);
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     NetworkProcessProxy& m_networkProcessProxy;
-
-#if PLATFORM(COCOA)
-    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> LoaderMap;
-    LoaderMap m_loaderMap;
-#endif
 };
 
 } // namespace WebKit

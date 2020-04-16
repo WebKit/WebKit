@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include <wtf/HashMap.h>
@@ -69,10 +70,10 @@ public:
     typedef RetainPtr<WKCustomProtocol> CustomProtocol;
 #endif
 
-    uint64_t addCustomProtocol(CustomProtocol&&);
-    void removeCustomProtocol(uint64_t customProtocolID);
-    void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
-    void stopLoading(uint64_t customProtocolID);
+    LegacyCustomProtocolID addCustomProtocol(CustomProtocol&&);
+    void removeCustomProtocol(LegacyCustomProtocolID);
+    void startLoading(LegacyCustomProtocolID, const WebCore::ResourceRequest&);
+    void stopLoading(LegacyCustomProtocolID);
 
 #if PLATFORM(COCOA)
     void registerProtocolClass(NSURLSessionConfiguration*);
@@ -86,17 +87,17 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
-    void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
-    void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
-    void didFinishLoading(uint64_t customProtocolID);
-    void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
+    void didLoadData(LegacyCustomProtocolID, const IPC::DataReference&);
+    void didReceiveResponse(LegacyCustomProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
+    void didFinishLoading(LegacyCustomProtocolID);
+    void wasRedirectedToRequest(LegacyCustomProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
 
     void registerProtocolClass();
 
     NetworkProcess& m_networkProcess;
 
-    typedef HashMap<uint64_t, CustomProtocol> CustomProtocolMap;
+    typedef HashMap<LegacyCustomProtocolID, CustomProtocol> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;
     Lock m_customProtocolMapMutex;
 
@@ -106,7 +107,7 @@ private:
 
     // WKCustomProtocol objects can be removed from the m_customProtocolMap from multiple threads.
     // We return a RetainPtr here because it is unsafe to return a raw pointer since the object might immediately be destroyed from a different thread.
-    RetainPtr<WKCustomProtocol> protocolForID(uint64_t customProtocolID);
+    RetainPtr<WKCustomProtocol> protocolForID(LegacyCustomProtocolID);
 #endif
 };
 

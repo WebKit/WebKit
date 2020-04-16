@@ -35,17 +35,17 @@
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
     WeakPtr<WebKit::LegacyCustomProtocolManagerProxy> _customProtocolManagerProxy;
-    uint64_t _customProtocolID;
+    WebKit::LegacyCustomProtocolID _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
     NSURLConnection *_urlConnection;
 }
-- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(WebKit::LegacyCustomProtocolID)customProtocolID request:(NSURLRequest *)request;
 - (void)cancel;
 @end
 
 @implementation WKCustomProtocolLoader
 
-- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(WebKit::LegacyCustomProtocolID)customProtocolID request:(NSURLRequest *)request
 {
     self = [super init];
     if (!self)
@@ -139,7 +139,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, uint64_t customProtocolID, const ResourceRequest& coreRequest)
+void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, WebKit::LegacyCustomProtocolID customProtocolID, const ResourceRequest& coreRequest)
 {
     NSURLRequest *request = coreRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     if (!request)
@@ -152,7 +152,7 @@ void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManager
     [loader release];
 }
 
-void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerProxy&, uint64_t customProtocolID)
+void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerProxy&, WebKit::LegacyCustomProtocolID customProtocolID)
 {
     m_loaderMap.remove(customProtocolID);
 }

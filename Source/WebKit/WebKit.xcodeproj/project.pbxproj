@@ -930,6 +930,7 @@
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4459984122833E6000E61373 /* SyntheticEditingCommandType.h */; };
 		449D90DA21FDC30B00F677C0 /* LocalAuthenticationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */; };
+		44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */; };
 		460F488F1F996F7100CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */; };
 		460F48901F996F7100CF4B87 /* WebSWContextManagerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */; };
 		461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */; };
@@ -3513,6 +3514,7 @@
 		4459984122833E6000E61373 /* SyntheticEditingCommandType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticEditingCommandType.h; sourceTree = "<group>"; };
 		449D90D821FD63FE00F677C0 /* LocalAuthenticationSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalAuthenticationSoftLink.mm; sourceTree = "<group>"; };
 		44A481C621F2D27B00F2F919 /* ClientCertificateAuthenticationXPCConstants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCertificateAuthenticationXPCConstants.cpp; sourceTree = "<group>"; };
+		44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCustomProtocolID.h; sourceTree = "<group>"; };
 		4603011A234BE31D009C8217 /* WebBackForwardCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardCache.cpp; sourceTree = "<group>"; };
 		4603011B234BE31E009C8217 /* WebBackForwardCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCache.h; sourceTree = "<group>"; };
 		460F488D1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSWContextManagerConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSWContextManagerConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8217,6 +8219,7 @@
 			isa = PBXGroup;
 			children = (
 				5C14271A1C23F8BF00D41183 /* Cocoa */,
+				44E936FC2447C256009FA3E3 /* LegacyCustomProtocolID.h */,
 				5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */,
 				5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */,
 				5C1427151C23F8B000D41183 /* LegacyCustomProtocolManager.messages.in */,
@@ -10809,6 +10812,7 @@
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
+				44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */,
 				5C1427181C23F8B700D41183 /* LegacyCustomProtocolManager.h in Headers */,
 				7A821F4C1E2F673900604577 /* LegacyCustomProtocolManagerClient.h in Headers */,
 				2984F589164BA095004BC0C6 /* LegacyCustomProtocolManagerMessages.h in Headers */,

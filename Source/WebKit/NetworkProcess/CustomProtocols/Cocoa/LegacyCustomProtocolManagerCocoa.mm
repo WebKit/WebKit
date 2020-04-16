@@ -60,10 +60,10 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 @interface WKCustomProtocol : NSURLProtocol {
 @private
-    uint64_t _customProtocolID;
+    LegacyCustomProtocolID _customProtocolID;
     RetainPtr<CFRunLoopRef> _initializationRunLoop;
 }
-@property (nonatomic, readonly) uint64_t customProtocolID;
+@property (nonatomic, readonly) LegacyCustomProtocolID customProtocolID;
 @property (nonatomic, readonly) CFRunLoopRef initializationRunLoop;
 @end
 
@@ -163,7 +163,7 @@ static inline void dispatchOnInitializationRunLoop(WKCustomProtocol* protocol, v
     CFRunLoopWakeUp(runloop);
 }
 
-void LegacyCustomProtocolManager::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
+void LegacyCustomProtocolManager::didFailWithError(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceError& error)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
@@ -178,7 +178,7 @@ void LegacyCustomProtocolManager::didFailWithError(uint64_t customProtocolID, co
     removeCustomProtocol(customProtocolID);
 }
 
-void LegacyCustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
+void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProtocolID, const IPC::DataReference& data)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
@@ -191,7 +191,7 @@ void LegacyCustomProtocolManager::didLoadData(uint64_t customProtocolID, const I
     });
 }
 
-void LegacyCustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
+void LegacyCustomProtocolManager::didReceiveResponse(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
@@ -204,7 +204,7 @@ void LegacyCustomProtocolManager::didReceiveResponse(uint64_t customProtocolID, 
     });
 }
 
-void LegacyCustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::didFinishLoading(LegacyCustomProtocolID customProtocolID)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
@@ -217,7 +217,7 @@ void LegacyCustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
     removeCustomProtocol(customProtocolID);
 }
 
-void LegacyCustomProtocolManager::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+void LegacyCustomProtocolManager::wasRedirectedToRequest(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)
@@ -231,7 +231,7 @@ void LegacyCustomProtocolManager::wasRedirectedToRequest(uint64_t customProtocol
     });
 }
 
-RetainPtr<WKCustomProtocol> LegacyCustomProtocolManager::protocolForID(uint64_t customProtocolID)
+RetainPtr<WKCustomProtocol> LegacyCustomProtocolManager::protocolForID(LegacyCustomProtocolID customProtocolID)
 {
     LockHolder locker(m_customProtocolMapMutex);
 

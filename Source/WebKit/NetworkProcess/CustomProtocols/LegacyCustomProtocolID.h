@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,11 @@
 
 #pragma once
 
-#include "LegacyCustomProtocolID.h"
-#include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
-class LegacyCustomProtocolManagerProxy;
+
+enum LegacyCustomProtocolIDType { };
+using LegacyCustomProtocolID = ObjectIdentifier<LegacyCustomProtocolIDType>;
+
 }
-
-namespace WebCore {
-class ResourceRequest;
-}
-
-namespace API {
-
-class CustomProtocolManagerClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~CustomProtocolManagerClient() { }
-
-    virtual void startLoading(WebKit::LegacyCustomProtocolManagerProxy&, WebKit::LegacyCustomProtocolID, const WebCore::ResourceRequest&) { }
-    virtual void stopLoading(WebKit::LegacyCustomProtocolManagerProxy&, WebKit::LegacyCustomProtocolID) { }
-
-    virtual void invalidate(WebKit::LegacyCustomProtocolManagerProxy&) { }
-};
-
-} // namespace API

@@ -36,12 +36,6 @@
 
 namespace WebKit {
 
-static uint64_t generateCustomProtocolID()
-{
-    static uint64_t uniqueCustomProtocolID = 0;
-    return ++uniqueCustomProtocolID;
-}
-
 const char* LegacyCustomProtocolManager::supplementName()
 {
     return "LegacyCustomProtocolManager";
@@ -61,26 +55,26 @@ void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParamet
         registerScheme(scheme);
 }
 
-uint64_t LegacyCustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtocol)
+LegacyCustomProtocolID LegacyCustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtocol)
 {
     LockHolder locker(m_customProtocolMapMutex);
-    auto customProtocolID = generateCustomProtocolID();
+    auto customProtocolID = LegacyCustomProtocolID::generate();
     m_customProtocolMap.add(customProtocolID, WTFMove(customProtocol));
     return customProtocolID;
 }
 
-void LegacyCustomProtocolManager::removeCustomProtocol(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::removeCustomProtocol(LegacyCustomProtocolID customProtocolID)
 {
     LockHolder locker(m_customProtocolMapMutex);
     m_customProtocolMap.remove(customProtocolID);
 }
 
-void LegacyCustomProtocolManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
+void LegacyCustomProtocolManager::startLoading(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request)
 {
     m_networkProcess.send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
 }
 
-void LegacyCustomProtocolManager::stopLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManager::stopLoading(LegacyCustomProtocolID customProtocolID)
 {
     m_networkProcess.send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
 }

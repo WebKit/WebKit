@@ -42,12 +42,12 @@ LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
     invalidate();
 }
 
-void LegacyCustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
+void LegacyCustomProtocolManagerProxy::startLoading(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request)
 {
     m_networkProcessProxy.processPool().customProtocolManagerClient().startLoading(*this, customProtocolID, request);
 }
 
-void LegacyCustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID customProtocolID)
 {
     m_networkProcessProxy.processPool().customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
@@ -57,27 +57,27 @@ void LegacyCustomProtocolManagerProxy::invalidate()
     m_networkProcessProxy.processPool().customProtocolManagerClient().invalidate(*this);
 }
 
-void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
     m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
+void LegacyCustomProtocolManagerProxy::didReceiveResponse(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
 {
     m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
+void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, const IPC::DataReference& data)
 {
     m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
+void LegacyCustomProtocolManagerProxy::didFailWithError(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceError& error)
 {
     m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didFinishLoading(uint64_t customProtocolID)
+void LegacyCustomProtocolManagerProxy::didFinishLoading(LegacyCustomProtocolID customProtocolID)
 {
     m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidFinishLoading(customProtocolID), 0);
 }

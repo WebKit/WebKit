@@ -1,3 +1,53 @@
+2020-04-16  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC Hardening] Use ObjectIdentifier<> for LegacyCustomProtocol
+        <https://webkit.org/b/210580>
+        <rdar://problem/61791686>
+
+        Reviewed by Chris Dumez.
+
+        Replace uses of uint64_t with LegacyCustomProtocolID.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        (WebKit::LegacyCustomProtocolManager::didFailWithError):
+        (WebKit::LegacyCustomProtocolManager::didLoadData):
+        (WebKit::LegacyCustomProtocolManager::didReceiveResponse):
+        (WebKit::LegacyCustomProtocolManager::didFinishLoading):
+        (WebKit::LegacyCustomProtocolManager::wasRedirectedToRequest):
+        (WebKit::LegacyCustomProtocolManager::protocolForID):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolID.h: Add.
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp:
+        (WebKit::LegacyCustomProtocolManager::addCustomProtocol):
+        (WebKit::LegacyCustomProtocolManager::removeCustomProtocol):
+        (WebKit::LegacyCustomProtocolManager::startLoading):
+        (WebKit::LegacyCustomProtocolManager::stopLoading):
+        (WebKit::generateCustomProtocolID): Delete.
+        - Replace with LegacyCustomProtocolID::generate().
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in:
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/APICustomProtocolManagerClient.h:
+        (API::CustomProtocolManagerClient::startLoading):
+        (API::CustomProtocolManagerClient::stopLoading):
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.h:
+        * UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm:
+        (-[WKCustomProtocolLoader initWithLegacyCustomProtocolManagerProxy:customProtocolID:request:]):
+        (WebKit::LegacyCustomProtocolManagerClient::startLoading):
+        (WebKit::LegacyCustomProtocolManagerClient::stopLoading):
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp:
+        (WebKit::LegacyCustomProtocolManagerProxy::startLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::stopLoading):
+        (WebKit::LegacyCustomProtocolManagerProxy::wasRedirectedToRequest):
+        (WebKit::LegacyCustomProtocolManagerProxy::didReceiveResponse):
+        (WebKit::LegacyCustomProtocolManagerProxy::didLoadData):
+        (WebKit::LegacyCustomProtocolManagerProxy::didFailWithError):
+        (WebKit::LegacyCustomProtocolManagerProxy::didFinishLoading):
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h:
+        - Remove unused typedef and instance variable.
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add LegacyCustomProtocolID.h to project.
+
 2020-04-16  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r259898): WebKit-based Books views are all blank

@@ -21,11 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> LegacyCustomProtocolManager NotRefCounted {
-    DidFailWithError(uint64_t customProtocolID, WebCore::ResourceError error)
-    DidLoadData(uint64_t customProtocolID, IPC::DataReference data)
-    DidReceiveResponse(uint64_t customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
-    DidFinishLoading(uint64_t customProtocolID)
-    WasRedirectedToRequest(uint64_t customProtocolID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse);
+    DidFailWithError(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceError error)
+    DidLoadData(WebKit::LegacyCustomProtocolID customProtocolID, IPC::DataReference data)
+    DidReceiveResponse(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
+    DidFinishLoading(WebKit::LegacyCustomProtocolID customProtocolID)
+    WasRedirectedToRequest(WebKit::LegacyCustomProtocolID customProtocolID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse);
 
     RegisterScheme(String name)
     UnregisterScheme(String name)
