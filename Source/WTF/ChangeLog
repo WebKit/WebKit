@@ -1,3 +1,12 @@
+2020-04-16  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed, set CeilingOnPageSize for MIPS64
+
+        This fixes a build failure ("Must set CeilingOnPageSize in
+        PageBlock.h").
+
+        * wtf/PageBlock.h:
+
 2020-04-15  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] MachMessage::messageSize() should use checked arithmetic
