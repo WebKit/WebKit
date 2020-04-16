@@ -106,7 +106,7 @@ void Coder<String>::encode(Encoder& encoder, const String& string)
 }
 
 template <typename CharacterType>
-static inline bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
+static inline WARN_UNUSED_RETURN bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))

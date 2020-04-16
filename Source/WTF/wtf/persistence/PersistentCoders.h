@@ -45,7 +45,7 @@ template<typename T, typename U> struct Coder<std::pair<T, U>> {
         encoder << pair.first << pair.second;
     }
 
-    static bool decode(Decoder& decoder, std::pair<T, U>& pair)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, std::pair<T, U>& pair)
     {
         T first;
         if (!decoder.decode(first))
@@ -73,7 +73,7 @@ template<typename T> struct Coder<Optional<T>> {
         encoder << optional.value();
     }
     
-    static bool decode(Decoder& decoder, Optional<T>& optional)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Optional<T>& optional)
     {
         bool isEngaged;
         if (!decoder.decode(isEngaged))
@@ -99,7 +99,7 @@ template<typename KeyType, typename ValueType> struct Coder<WTF::KeyValuePair<Ke
         encoder << pair.key << pair.value;
     }
 
-    static bool decode(Decoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
         KeyType key;
         if (!decoder.decode(key))
@@ -125,7 +125,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
             encoder << vector[i];
     }
 
-    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t size;
         if (!decoder.decode(size))
@@ -153,7 +153,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
     }
     
-    static bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Vector<T, inlineCapacity>& vector)
     {
         uint64_t decodedSize;
         if (!decoder.decode(decodedSize))
@@ -170,7 +170,8 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
         Vector<T, inlineCapacity> temp;
         temp.grow(size);
 
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T));
+        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T)))
+            return false;
 
         vector.swap(temp);
         return true;
@@ -189,7 +190,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             encoder << *it;
     }
 
-    static bool decode(Decoder& decoder, HashMapType& hashMap)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, HashMapType& hashMap)
     {
         uint64_t hashMapSize;
         if (!decoder.decode(hashMapSize))
@@ -226,7 +227,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
             encoder << *it;
     }
 
-    static bool decode(Decoder& decoder, HashSetType& hashSet)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, HashSetType& hashSet)
     {
         uint64_t hashSetSize;
         if (!decoder.decode(hashSetSize))
@@ -255,7 +256,7 @@ template<> struct Coder<Seconds> {
         encoder << seconds.value();
     }
 
-    static bool decode(Decoder& decoder, Seconds& result)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Seconds& result)
     {
         double value;
         if (!decoder.decode(value))
@@ -272,7 +273,7 @@ template<> struct Coder<WallTime> {
         encoder << time.secondsSinceEpoch().value();
     }
 
-    static bool decode(Decoder& decoder, WallTime& result)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WallTime& result)
     {
         double value;
         if (!decoder.decode(value))
@@ -285,22 +286,22 @@ template<> struct Coder<WallTime> {
 
 template<> struct Coder<AtomString> {
     WTF_EXPORT_PRIVATE static void encode(Encoder&, const AtomString&);
-    WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&);
+    WTF_EXPORT_PRIVATE static bool decode(Decoder&, AtomString&) WARN_UNUSED_RETURN;
 };
 
 template<> struct Coder<CString> {
     WTF_EXPORT_PRIVATE static void encode(Encoder&, const CString&);
-    WTF_EXPORT_PRIVATE static bool decode(Decoder&, CString&);
+    WTF_EXPORT_PRIVATE static bool decode(Decoder&, CString&) WARN_UNUSED_RETURN;
 };
 
 template<> struct Coder<String> {
     WTF_EXPORT_PRIVATE static void encode(Encoder&, const String&);
-    WTF_EXPORT_PRIVATE static bool decode(Decoder&, String&);
+    WTF_EXPORT_PRIVATE static bool decode(Decoder&, String&) WARN_UNUSED_RETURN;
 };
 
 template<> struct Coder<SHA1::Digest> {
     WTF_EXPORT_PRIVATE static void encode(Encoder&, const SHA1::Digest&);
-    WTF_EXPORT_PRIVATE static bool decode(Decoder&, SHA1::Digest&);
+    WTF_EXPORT_PRIVATE static bool decode(Decoder&, SHA1::Digest&) WARN_UNUSED_RETURN;
 };
 
 }

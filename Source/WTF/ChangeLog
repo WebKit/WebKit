@@ -1,3 +1,68 @@
+2020-04-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259814. rdar://problem/61888315
+
+    WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+    <https://webkit.org/b/210238>
+    <rdar://problem/61491575>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/cache/NetworkCacheEntry.cpp:
+    (WebKit::NetworkCache::Entry::decodeStorageRecord):
+    - Add missing return value check for decode.decode().
+    
+    Source/WTF:
+    
+    * wtf/persistence/PersistentCoders.cpp:
+    (WTF::Persistence::decodeStringText):
+    - Add WARN_UNUSED_RETURN.
+    
+    * wtf/persistence/PersistentCoders.h:
+    (WTF::Persistence::Coder<Optional<T>>::decode):
+    (WTF::Persistence::Coder<Seconds>::decode):
+    (WTF::Persistence::Coder<WallTime>::decode):
+    - Add WARN_UNUSED_RETURN.
+    - Add missing return value check for
+      decode.decodeFixedLengthData().
+    
+    * wtf/persistence/PersistentDecoder.h:
+    (WTF::Persistence::Decoder::decode):
+    (WTF::Persistence::Decoder::decodeEnum):
+    (WTF::Persistence::Decoder::bufferIsLargeEnoughToContain const):
+    - Add WARN_UNUSED_RETURN.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259814 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-09  David Kilzer  <ddkilzer@apple.com>
+
+            WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+            <https://webkit.org/b/210238>
+            <rdar://problem/61491575>
+
+            Reviewed by Darin Adler.
+
+            * wtf/persistence/PersistentCoders.cpp:
+            (WTF::Persistence::decodeStringText):
+            - Add WARN_UNUSED_RETURN.
+
+            * wtf/persistence/PersistentCoders.h:
+            (WTF::Persistence::Coder<Optional<T>>::decode):
+            (WTF::Persistence::Coder<Seconds>::decode):
+            (WTF::Persistence::Coder<WallTime>::decode):
+            - Add WARN_UNUSED_RETURN.
+            - Add missing return value check for
+              decode.decodeFixedLengthData().
+
+            * wtf/persistence/PersistentDecoder.h:
+            (WTF::Persistence::Decoder::decode):
+            (WTF::Persistence::Decoder::decodeEnum):
+            (WTF::Persistence::Decoder::bufferIsLargeEnoughToContain const):
+            - Add WARN_UNUSED_RETURN.
+
 2020-04-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259316. rdar://problem/61269751

@@ -135,8 +135,9 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
             return nullptr;
     }
 
-    decoder.decode(entry->m_maxAgeCap);
-    
+    if (!decoder.decode(entry->m_maxAgeCap))
+        return nullptr;
+
     if (!decoder.verifyChecksum()) {
         LOG(NetworkCache, "(NetworkProcess) checksum verification failure\n");
         return nullptr;
