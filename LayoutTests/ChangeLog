@@ -1,3 +1,37 @@
+2020-04-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r259621. rdar://problem/59461792
+
+    [Cocoa] REGRESSION(r254389): fast/text/international/system-language/declarative-language.html is failing
+    https://bugs.webkit.org/show_bug.cgi?id=208023
+    <rdar://problem/59461792>
+    
+    Reviewed by Simon Fraser.
+    
+    minimizedLanguagesFromLanguages() is supposed to minimize the language list;
+    that's its whole raison d'être
+    
+    * fast/text/international/system-language/declarative-language-expected.txt:
+    * fast/text/international/system-language/declarative-language.html:
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259621 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] REGRESSION(r254389): fast/text/international/system-language/declarative-language.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=208023
+            <rdar://problem/59461792>
+
+            Reviewed by Simon Fraser.
+
+            minimizedLanguagesFromLanguages() is supposed to minimize the language list;
+            that's its whole raison d'être
+
+            * fast/text/international/system-language/declarative-language-expected.txt:
+            * fast/text/international/system-language/declarative-language.html:
+            * platform/mac/TestExpectations:
+
 2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r257821. rdar://problem/61408640
