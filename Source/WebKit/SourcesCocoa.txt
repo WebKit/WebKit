@@ -504,6 +504,8 @@ UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
 
+UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm
+
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
 UIProcess/Plugins/mac/PluginInfoStoreMac.mm

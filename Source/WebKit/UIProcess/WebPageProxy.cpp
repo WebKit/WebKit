@@ -278,6 +278,10 @@
 #include "DataDetectionResult.h"
 #endif
 
+#if ENABLE(MEDIA_USAGE)
+#include "MediaUsageManager.h"
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyAdditions.h>
 #else
@@ -7460,6 +7464,11 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         m_fullScreenManager->close();
         m_fullScreenManager = nullptr;
     }
+#endif
+
+#if ENABLE(MEDIA_USAGE)
+    if (m_mediaUsageManager)
+        m_mediaUsageManager->reset();
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

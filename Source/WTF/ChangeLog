@@ -1,3 +1,16 @@
+2020-04-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Update ScreenTime as playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=210518
+        <rdar://problem/61181092>
+
+        Reviewed by Jer Noble.
+        
+        Define HAVE_MEDIA_USAGE_FRAMEWORK and ENABLE_MEDIA_USAGE
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
 2020-04-16  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed, set CeilingOnPageSize for MIPS64

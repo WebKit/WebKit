@@ -1,3 +1,65 @@
+2020-04-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Update ScreenTime as playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=210518
+        <rdar://problem/61181092>
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-usage-state.html
+        
+        Pass media element state to the UI process whenever it changes.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::mediaSessionUniqueIdentifier const):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::MediaElementSession):
+        (WebCore::MediaElementSession::~MediaElementSession):
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged):
+        * html/MediaElementSession.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::addMediaUsageManagerSession):
+        (WebCore::ChromeClient::updateMediaUsageManagerSessionState):
+        (WebCore::ChromeClient::removeMediaUsageManagerSession):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSession::updateMediaUsageIfChanged):
+        (WebCore::PlatformMediaSession::mediaSessionIdentifier const):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::scheduleUpdateSessionStatus):
+        (WebCore::PlatformMediaSessionManager::sessionDidEndRemoteScrubbing):
+        (WebCore::PlatformMediaSessionManager::scheduleUpdateNowPlayingInfo): Deleted.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::scheduleUpdateSessionStatus):
+        (WebCore::MediaSessionManagerCocoa::sessionWillBeginPlayback):
+        (WebCore::MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing):
+        (WebCore::MediaSessionManagerCocoa::removeSession):
+        (WebCore::MediaSessionManagerCocoa::sessionWillEndPlayback):
+        (WebCore::MediaSessionManagerCocoa::clientCharacteristicsChanged):
+        (WebCore::MediaSessionManagerCocoa::sessionCanProduceAudioChanged):
+        (WebCore::MediaSessionManagerCocoa::scheduleUpdateNowPlayingInfo): Deleted.
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions):
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback):
+        * platform/graphics/MediaUsageInfo.h: Added.
+        (WebCore::MediaUsageInfo::operator== const):
+        (WebCore::MediaUsageInfo::operator!= const):
+        (WebCore::MediaUsageInfo::encode const):
+        (WebCore::MediaUsageInfo::decode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions):
+        (WebCore::Internals::mediaUsageState const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement JSMapIterator/JSSetIterator with JSInternalFieldObjectImpl

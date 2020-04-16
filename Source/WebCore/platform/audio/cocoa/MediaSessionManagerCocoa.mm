@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,10 +134,15 @@ void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
     providePresentingApplicationPIDIfNecessary();
 }
 
-void MediaSessionManagerCocoa::scheduleUpdateNowPlayingInfo()
+void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()
 {
-    if (!m_nowPlayingUpdateTaskQueue.hasPendingTasks())
-        m_nowPlayingUpdateTaskQueue.enqueueTask(std::bind(&MediaSessionManagerCocoa::updateNowPlayingInfo, this));
+    m_taskQueue.enqueueTask([this] () mutable {
+        updateNowPlayingInfo();
+
+        forEachSession([] (auto& session) {
+            session.updateMediaUsageIfChanged();
+        });
+    });
 }
 
 bool MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSession& session)
@@ -145,13 +150,13 @@ bool MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSession& se
     if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
         return false;
 
-    scheduleUpdateNowPlayingInfo();
+    scheduleSessionStatusUpdate();
     return true;
 }
 
-void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(const PlatformMediaSession&)
+void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(PlatformMediaSession&)
 {
-    scheduleUpdateNowPlayingInfo();
+    scheduleSessionStatusUpdate();
 }
 
 void MediaSessionManagerCocoa::addSession(PlatformMediaSession& session)
@@ -174,7 +179,7 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
         m_audioHardwareListener = nullptr;
     }
 
-    scheduleUpdateNowPlayingInfo();
+    scheduleSessionStatusUpdate();
 }
 
 void MediaSessionManagerCocoa::setCurrentSession(PlatformMediaSession& session)
@@ -188,23 +193,30 @@ void MediaSessionManagerCocoa::setCurrentSession(PlatformMediaSession& session)
 void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
-    if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No) {
+
+    m_taskQueue.enqueueTask([&session] {
+        session.updateMediaUsageIfChanged();
+    });
+
+    if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No)
         updateNowPlayingInfo();
-        return;
+    else {
+        m_taskQueue.enqueueTask([this] {
+            updateNowPlayingInfo();
+        });
     }
-    scheduleUpdateNowPlayingInfo();
 }
 
 void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
-    scheduleUpdateNowPlayingInfo();
+    scheduleSessionStatusUpdate();
 }
 
 void MediaSessionManagerCocoa::sessionCanProduceAudioChanged()
 {
     PlatformMediaSessionManager::sessionCanProduceAudioChanged();
-    scheduleUpdateNowPlayingInfo();
+    scheduleSessionStatusUpdate();
 }
 
 void MediaSessionManagerCocoa::clearNowPlayingInfo()

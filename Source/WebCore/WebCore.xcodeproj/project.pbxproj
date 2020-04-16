@@ -132,6 +132,7 @@
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
 		0754A5EA215EA3B8002D3A99 /* RealtimeMediaSourceFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0754A5E8215EA3B7002D3A99 /* RealtimeMediaSourceFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0757B13E214AE79900794B0D /* VideoPreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0757B13C214AE79700794B0D /* VideoPreset.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07611DC12440E59B00D80704 /* MediaUsageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 07611DB8243FB75C00D80704 /* MediaUsageInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07638A971884487200E15A1B /* MediaSessionManagerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
@@ -5570,6 +5571,7 @@
 		0754A5E8215EA3B7002D3A99 /* RealtimeMediaSourceFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeMediaSourceFactory.h; sourceTree = "<group>"; };
 		0754A5EB215EADF3002D3A99 /* RealtimeMediaSourceFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeMediaSourceFactory.cpp; sourceTree = "<group>"; };
 		0757B13C214AE79700794B0D /* VideoPreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreset.h; sourceTree = "<group>"; };
+		07611DB8243FB75C00D80704 /* MediaUsageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaUsageInfo.h; sourceTree = "<group>"; };
 		07638A971884487200E15A1B /* MediaSessionManagerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSessionManagerIOS.h; sourceTree = "<group>"; };
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
@@ -25360,6 +25362,7 @@
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
 				CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */,
 				CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */,
+				07611DB8243FB75C00D80704 /* MediaUsageInfo.h */,
 				07B93FFB23B92AAB0036F8EA /* MIMETypeCache.cpp */,
 				07B93FF923B92AAA0036F8EA /* MIMETypeCache.h */,
 				314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */,
@@ -31915,6 +31918,7 @@
 				07FFDE69181AED420072D409 /* MediaStreamTrackPrivate.h in Headers */,
 				932CC0B71DFFD158004C0F9F /* MediaTrackConstraints.h in Headers */,
 				07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */,
+				07611DC12440E59B00D80704 /* MediaUsageInfo.h in Headers */,
 				51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
 				517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */,

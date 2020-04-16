@@ -1159,6 +1159,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlayer.h
     platform/graphics/MediaPlayerEnums.h
     platform/graphics/MediaPlayerPrivate.h
+    platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h

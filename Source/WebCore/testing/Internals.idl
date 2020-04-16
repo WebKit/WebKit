@@ -115,6 +115,44 @@ enum CompositingPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary MediaUsageState {
+    DOMString mediaURL;
+    boolean isPlaying;
+    boolean canShowControlsManager;
+    boolean canShowNowPlayingControls;
+    boolean isSuspended;
+    boolean isInActiveDocument;
+    boolean isFullscreen;
+    boolean isMuted;
+    boolean isMediaDocumentInMainFrame;
+    boolean isVideo;
+    boolean isAudio;
+    boolean hasVideo;
+    boolean hasAudio;
+    boolean hasRenderer;
+    boolean audioElementWithUserGesture;
+    boolean userHasPlayedAudioBefore;
+    boolean isElementRectMostlyInMainFrame;
+    boolean playbackPermitted;
+    boolean pageMediaPlaybackSuspended;
+    boolean isMediaDocumentAndNotOwnerElement;
+    boolean pageExplicitlyAllowsElementToAutoplayInline;
+    boolean requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
+    boolean hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
+    boolean isVideoAndRequiresUserGestureForVideoRateChange;
+    boolean isAudioAndRequiresUserGestureForAudioRateChange;
+    boolean isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
+    boolean noUserGestureRequired;
+    boolean requiresPlaybackAndIsNotPlaying;
+    boolean hasEverNotifiedAboutPlaying;
+    boolean outsideOfFullscreen;
+    boolean isLargeEnoughForMainContent;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary FullscreenInsets {
     double top;
@@ -794,6 +832,8 @@ enum CompositingPolicy {
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
+
+    [Conditional=VIDEO, MayThrowException] MediaUsageState mediaUsageState(HTMLMediaElement element);
 
     DOMString ongoingLoadsDescriptions();
     void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);

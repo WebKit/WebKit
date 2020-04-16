@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DocumentIdentifier.h"
+#include "MediaSessionIdentifier.h"
 #include "Timer.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
@@ -188,6 +189,9 @@ public:
     };
 
     virtual Optional<NowPlayingInfo> nowPlayingInfo() const;
+    virtual void updateMediaUsageIfChanged() { }
+
+    MediaSessionIdentifier mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
 
 protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
@@ -200,6 +204,7 @@ private:
 
     WeakPtr<PlatformMediaSessionManager> m_manager;
     PlatformMediaSessionClient& m_client;
+    MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state;
     State m_stateToRestore;
     InterruptionType m_interruptionType { NoInterruption };

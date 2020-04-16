@@ -68,7 +68,7 @@ void MediaSessionManageriOS::resetRestrictions()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    PlatformMediaSessionManager::resetRestrictions();
+    MediaSessionManagerCocoa::resetRestrictions();
 
     if (ramSize() < systemMemoryRequiredForVideoInBackgroundTabs) {
         ALWAYS_LOG(LOGIDENTIFIER, "restricting video in background tabs because system memory = ", ramSize());
@@ -122,7 +122,7 @@ void MediaSessionManageriOS::providePresentingApplicationPID()
 
 bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
-    if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
+    if (!MediaSessionManagerCocoa::sessionWillBeginPlayback(session))
         return false;
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)

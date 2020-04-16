@@ -68,6 +68,11 @@ class WAKResponder;
 #endif
 #endif
 
+#if ENABLE(MEDIA_USAGE)
+#include "MediaSessionIdentifier.h"
+#include "MediaUsageInfo.h"
+#endif
+
 OBJC_CLASS NSResponder;
 
 namespace WebCore {
@@ -354,6 +359,12 @@ public:
     virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode, bool standby) { UNUSED_PARAM(standby); }
     virtual void setUpPlaybackControlsManager(HTMLMediaElement&) { }
     virtual void clearPlaybackControlsManager() { }
+#endif
+
+#if ENABLE(MEDIA_USAGE)
+    virtual void addMediaUsageManagerSession(MediaSessionIdentifier, const String&, const URL&) { }
+    virtual void updateMediaUsageManagerSessionState(MediaSessionIdentifier, const MediaUsageInfo&) { }
+    virtual void removeMediaUsageManagerSession(MediaSessionIdentifier) { }
 #endif
 
     virtual void exitVideoFullscreenForVideoElement(HTMLVideoElement&) { }

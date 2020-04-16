@@ -7071,6 +7071,23 @@ bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
     return false;
 }
 
+#if ENABLE(MEDIA_USAGE)
+void WebPage::addMediaUsageManagerSession(MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)
+{
+    send(Messages::WebPageProxy::AddMediaUsageManagerSession(identifier, bundleIdentifier, pageURL));
+}
+
+void WebPage::updateMediaUsageManagerSessionState(MediaSessionIdentifier identifier, const MediaUsageInfo& usage)
+{
+    send(Messages::WebPageProxy::UpdateMediaUsageManagerSessionState(identifier, usage));
+}
+
+void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
+{
+    send(Messages::WebPageProxy::RemoveMediaUsageManagerSession(identifier));
+}
+#endif // ENABLE(MEDIA_USAGE)
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

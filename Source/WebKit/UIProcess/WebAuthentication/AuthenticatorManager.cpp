@@ -35,6 +35,7 @@
 #include "NfcService.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
+#include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>

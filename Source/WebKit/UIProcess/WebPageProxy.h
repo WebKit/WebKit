@@ -167,6 +167,10 @@ class MediaSessionMetadata;
 interface ID3D11Device1;
 #endif
 
+#if ENABLE(MEDIA_USAGE)
+#include <WebCore/MediaSessionIdentifier.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -237,6 +241,7 @@ struct FileChooserSettings;
 struct GlobalWindowIdentifier;
 struct LinkIcon;
 struct MediaStreamRequest;
+struct MediaUsageInfo;
 struct MockWebAuthenticationConfiguration;
 struct PrewarmInformation;
 struct SecurityOriginData;
@@ -275,6 +280,7 @@ class AudioSessionRoutingArbitratorProxy;
 class DrawingAreaProxy;
 class EditableImageController;
 class GamepadData;
+class MediaUsageManager;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
@@ -1729,6 +1735,13 @@ public:
     void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
+#if ENABLE(MEDIA_USAGE)
+    MediaUsageManager& mediaUsageManager();
+    void addMediaUsageManagerSession(WebCore::MediaSessionIdentifier, const String&, const URL&);
+    void updateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&);
+    void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2352,6 +2365,10 @@ private:
 #if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<PlaybackSessionManagerProxy> m_playbackSessionManager;
     RefPtr<VideoFullscreenManagerProxy> m_videoFullscreenManager;
+#endif
+
+#if ENABLE(MEDIA_USAGE)
+    std::unique_ptr<MediaUsageManager> m_mediaUsageManager;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

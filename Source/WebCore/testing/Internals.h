@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -813,6 +813,41 @@ public:
         bool registeredAsNowPlayingApplication;
     };
     ExceptionOr<NowPlayingState> nowPlayingState() const;
+
+    struct MediaUsageState {
+        String mediaURL;
+        bool isPlaying;
+        bool canShowControlsManager;
+        bool canShowNowPlayingControls;
+        bool isSuspended;
+        bool isInActiveDocument;
+        bool isFullscreen;
+        bool isMuted;
+        bool isMediaDocumentInMainFrame;
+        bool isVideo;
+        bool isAudio;
+        bool hasVideo;
+        bool hasAudio;
+        bool hasRenderer;
+        bool audioElementWithUserGesture;
+        bool userHasPlayedAudioBefore;
+        bool isElementRectMostlyInMainFrame;
+        bool playbackPermitted;
+        bool pageMediaPlaybackSuspended;
+        bool isMediaDocumentAndNotOwnerElement;
+        bool pageExplicitlyAllowsElementToAutoplayInline;
+        bool requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
+        bool hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
+        bool isVideoAndRequiresUserGestureForVideoRateChange;
+        bool isAudioAndRequiresUserGestureForAudioRateChange;
+        bool isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
+        bool noUserGestureRequired;
+        bool requiresPlaybackAndIsNotPlaying;
+        bool hasEverNotifiedAboutPlaying;
+        bool outsideOfFullscreen;
+        bool isLargeEnoughForMainContent;
+    };
+    ExceptionOr<MediaUsageState> mediaUsageState(HTMLMediaElement&) const;
 
 #if ENABLE(VIDEO)
     using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;

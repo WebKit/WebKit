@@ -459,7 +459,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_logger(&document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-    , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
 {
     allMediaElements().add(this);
 
@@ -7505,7 +7504,7 @@ String HTMLMediaElement::mediaSessionTitle() const
 
 MediaSessionIdentifier HTMLMediaElement::mediaSessionUniqueIdentifier() const
 {
-    return m_mediaSessionIdentifier;
+    return m_mediaSession->mediaSessionIdentifier();
 }
 
 void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)

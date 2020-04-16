@@ -735,6 +735,9 @@ webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ Image
 
 webkit.org/b/210263 fast/layoutformattingcontext/out-of-flow-positioned-line-breaks.html [ ImageOnlyFailure ]
 
+# Currently enabled on Mac only
+media/media-usage-state.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

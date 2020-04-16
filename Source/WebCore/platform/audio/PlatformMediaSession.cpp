@@ -116,6 +116,7 @@ std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMedia
 PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager& manager, PlatformMediaSessionClient& client)
     : m_manager(makeWeakPtr(manager))
     , m_client(client)
+    , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
     , m_state(Idle)
     , m_stateToRestore(Idle)
     , m_notifyingClient(false)

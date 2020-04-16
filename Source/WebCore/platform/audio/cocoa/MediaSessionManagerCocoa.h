@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,8 +60,10 @@ public:
     static WEBCORE_EXPORT void clearNowPlayingInfo();
     static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&);
 
+    static WEBCORE_EXPORT void updateMediaUsage(PlatformMediaSession&);
+
 protected:
-    void scheduleUpdateNowPlayingInfo() final;
+    void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo();
 
     void removeSession(PlatformMediaSession&) final;
@@ -70,7 +72,7 @@ protected:
 
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) override;
-    void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) final;
+    void sessionDidEndRemoteScrubbing(PlatformMediaSession&) final;
     void clientCharacteristicsChanged(PlatformMediaSession&) final;
     void sessionCanProduceAudioChanged() final;
 
@@ -105,7 +107,7 @@ private:
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     MediaSessionIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
-    GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
+    GenericTaskQueue<Timer> m_taskQueue;
 
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;

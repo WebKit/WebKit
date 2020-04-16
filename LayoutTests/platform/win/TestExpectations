@@ -1166,6 +1166,9 @@ media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 # Screen obscured by opaque layer:
 #media/video-frame-accurate-seek.html [ Failure ]
 
+# Currently enabled on Mac only
+media/media-usage-state.html [ Skip ]
+
 ################################################################################
 ############################   End Media Failures   ############################
 ################################################################################

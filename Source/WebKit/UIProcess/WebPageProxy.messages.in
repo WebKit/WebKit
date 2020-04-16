@@ -587,4 +587,10 @@ messages -> WebPageProxy {
 
     DidFindTextManipulationItems(Vector<WebCore::TextManipulationController::ManipulationItem> items)
 
+#if ENABLE(MEDIA_USAGE)
+    AddMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, String bundleIdentifier, URL pageURL);
+    UpdateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier identifier, struct WebCore::MediaUsageInfo info);
+    RemoveMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier);
+#endif
+
 }

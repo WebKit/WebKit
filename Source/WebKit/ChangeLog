@@ -1,3 +1,56 @@
+2020-04-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Update ScreenTime as playback state changes
+        https://bugs.webkit.org/show_bug.cgi?id=210518
+        <rdar://problem/61181092>
+
+        Reviewed by Jer Noble.
+
+        Add a manager that gets media element state changes, and a Cocoa-specific
+        implementation that passes that state to ScreenTime.
+
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::mediaUsageManager):
+        (WebKit::WebPageProxy::addMediaUsageManagerSession):
+        (WebKit::WebPageProxy::updateMediaUsageManagerSessionState):
+        (WebKit::WebPageProxy::removeMediaUsageManagerSession):
+        * UIProcess/Media/MediaUsageManager.cpp: Added.
+        (WebKit::MediaUsageManager::create):
+        (WebKit::reset):
+        (WebKit::MediaUsageManager::addMediaSession):
+        (WebKit::MediaUsageManager::removeMediaSession):
+        (WebKit::MediaUsageManager::updateMediaUsage):
+        * UIProcess/Media/MediaUsageManager.h: Added.
+        * UIProcess/Media/cocoa/MediaUsageManagerCocoa.h: Added.
+        (WebKit::MediaUsageManagerCocoa::SessionMediaUsage::SessionMediaUsage):
+        * UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm: Added.
+        (WebKit::usageTrackingAvailable):
+        (WebKit::MediaUsageManager::create):
+        (WebKit::MediaUsageManagerCocoa::~MediaUsageManagerCocoa):
+        (WebKit::MediaUsageManagerCocoa::reset):
+        (WebKit::MediaUsageManagerCocoa::addMediaSession):
+        (WebKit::MediaUsageManagerCocoa::removeMediaSession):
+        (WebKit::MediaUsageManagerCocoa::updateMediaUsage):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addMediaUsageManagerSession):
+        (WebKit::WebChromeClient::updateMediaUsageManagerSessionState):
+        (WebKit::WebChromeClient::removeMediaUsageManagerSession):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addMediaUsageManagerSession):
+        (WebKit::WebPage::updateMediaUsageManagerSessionState):
+        (WebKit::WebPage::removeMediaUsageManagerSession):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-04-16  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] DrawingArea::updateBackingStoreState() is not used on Apple platforms

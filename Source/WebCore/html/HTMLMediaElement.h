@@ -1197,7 +1197,6 @@ private:
     bool m_isPlayingToWirelessTarget { false };
     bool m_playingOnSecondScreen { false };
     bool m_removedBehaviorRestrictionsAfterFirstUserGesture { false };
-    MediaSessionIdentifier m_mediaSessionIdentifier;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

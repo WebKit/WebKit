@@ -2155,6 +2155,10 @@
 		07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerProxyMessages.h; sourceTree = "<group>"; };
 		07923147239CBCB7009598E2 /* RemoteMediaPlayerManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerManagerMessages.h; sourceTree = "<group>"; };
 		0792314E239D5F53009598E2 /* MediaPlayerPrivateRemoteIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateRemoteIdentifier.h; sourceTree = "<group>"; };
+		0794B4AB24451BB90001B9C4 /* MediaUsageManagerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaUsageManagerCocoa.mm; sourceTree = "<group>"; };
+		0794B4AC24451BB90001B9C4 /* MediaUsageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaUsageManager.h; sourceTree = "<group>"; };
+		0794B4AE244524B00001B9C4 /* MediaUsageManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaUsageManager.cpp; sourceTree = "<group>"; };
+		0794B4AF24452A2C0001B9C4 /* MediaUsageManagerCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaUsageManagerCocoa.h; sourceTree = "<group>"; };
 		07A5EBB91C7BA43E00B9CA69 /* WKFrameHandleRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFrameHandleRef.cpp; sourceTree = "<group>"; };
 		07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameHandleRef.h; sourceTree = "<group>"; };
 		07B1D04B23D38FCE00399A6E /* MediaPlayerPrivateRemote.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaPlayerPrivateRemote.messages.in; sourceTree = "<group>"; };
@@ -5519,6 +5523,25 @@
 			path = media;
 			sourceTree = "<group>";
 		};
+		0794B4A924451BB90001B9C4 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				0794B4AA24451BB90001B9C4 /* cocoa */,
+				0794B4AE244524B00001B9C4 /* MediaUsageManager.cpp */,
+				0794B4AC24451BB90001B9C4 /* MediaUsageManager.h */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
+		0794B4AA24451BB90001B9C4 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				0794B4AF24452A2C0001B9C4 /* MediaUsageManagerCocoa.h */,
+				0794B4AB24451BB90001B9C4 /* MediaUsageManagerCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		07C75C172399A3DB0088E65B /* media */ = {
 			isa = PBXGroup;
 			children = (
@@ -8855,6 +8878,7 @@
 				2DA944A81884E9AB00ED86DB /* ios */,
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
+				0794B4A924451BB90001B9C4 /* Media */,
 				CD4570D82444CA1700A3DCEB /* Media */,
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
