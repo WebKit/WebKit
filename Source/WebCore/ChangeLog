@@ -1,3 +1,41 @@
+2020-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] background-attachment:fixed needs to disable async overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=210581
+
+        Reviewed by Zalan Bujtas.
+
+        Start setting synchronousScrollingReasons on overflow scrolling nodes if the scrolling would move content
+        that has background-attachment:fixed (we can't use async scrolling there, because such content needs painting
+        on each scroll).
+
+        When style changes, we call FrameView::{add|remove}SlowRepaintObject(). That sets the "needsScrollingTreeUpdate"
+        compositing bit on the enclosing RenderLayer (note, any RenderLayer, not necessarily a scrolling one).
+        Setting that bit will ensure that RenderLayerCompositor does an "update backing and hierarchy" traversal,
+        and during this traversal, if we see a layer with the bit set, scrollingTreeState.needSynchronousScrollingReasonsUpdate
+        becomes true. At the end of the traversal this is used as a signal to call updateSynchronousScrollingNodes().
+
+        updateSynchronousScrollingNodes() needs to clear synchronousScrollingReasons on nodes that no longer need
+        to slow-scroll, and set it on those that do. To achieve this we use the set of slow-repaint renders from
+        FrameView, and the set of layers with scrolling nodes from RenderLayerCompositor, starting with the set of
+        all nodes, and pruning those known to be slow. synchronousScrollingReasons are cleared on the remainder.
+
+        Tests: scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-dynamic.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-on-overflow.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setSynchronousScrollingReasons):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::updateSynchronousScrollingNodes):
+        * rendering/RenderLayerCompositor.h:
+
 2020-04-15  Andres Gonzalez  <andresg_22@apple.com>
 
         Add logging to core accessibility.

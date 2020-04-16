@@ -61,7 +61,6 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScrollingConstraints.h"
-#include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
@@ -107,6 +106,7 @@ using namespace HTMLNames;
 struct ScrollingTreeState {
     Optional<ScrollingNodeID> parentNodeID;
     size_t nextChildIndex { 0 };
+    bool needSynchronousScrollingReasonsUpdate { false };
 };
 
 struct RenderLayerCompositor::OverlapExtent {
@@ -825,6 +825,9 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         Vector<Ref<GraphicsLayer>> childList;
         updateBackingAndHierarchy(*updateRoot, childList, traversalState, scrollingTreeState);
 
+        if (scrollingTreeState.needSynchronousScrollingReasonsUpdate)
+            updateSynchronousScrollingNodes();
+
         // Host the document layer in the RenderView's root layer.
         appendDocumentOverlayLayers(childList);
         // Even when childList is empty, don't drop out of compositing mode if there are
@@ -1223,6 +1226,9 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     ScrollingTreeState scrollingStateForDescendants = scrollingTreeState;
     UpdateBackingTraversalState traversalStateForDescendants = traversalState.stateForDescendants();
 
+    if (layer.needsScrollingTreeUpdate())
+        scrollingTreeState.needSynchronousScrollingReasonsUpdate = true;
+
     auto* layerBacking = layer.backing();
     if (layerBacking) {
         updateLevel.remove(UpdateLevel::CompositedChildren);
@@ -1317,6 +1323,9 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         
         for (auto* renderLayer : layer.positiveZOrderLayers())
             updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
+
+        // Pass needSynchronousScrollingReasonsUpdate back up.
+        scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateForDescendants.needSynchronousScrollingReasonsUpdate;
     } else if (requiresChildRebuild)
         appendForegroundLayerIfNecessary();
 
@@ -4687,6 +4696,69 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForPositioningRole(Ren
     }
 
     return newNodeID;
+}
+
+void RenderLayerCompositor::updateSynchronousScrollingNodes()
+{
+    if (!hasCoordinatedScrolling())
+        return;
+
+    if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
+        return;
+
+    auto scrollingCoordinator = this->scrollingCoordinator();
+    ASSERT(scrollingCoordinator);
+
+    auto rootScrollingNodeID = m_renderView.frameView().scrollingNodeID();
+    HashSet<ScrollingNodeID> nodesToClear;
+    nodesToClear.reserveInitialCapacity(m_scrollingNodeToLayerMap.size());
+    for (auto key : m_scrollingNodeToLayerMap.keys())
+        nodesToClear.add(key);
+    
+    auto clearSynchronousReasonsOnNodes = [&]() {
+        for (auto nodeID : nodesToClear) {
+            // ScrollingCoordinator handles updating synchronous scrolling reasons for the FrameView.
+            if (nodeID == rootScrollingNodeID)
+                continue;
+
+            // Harmless to call setSynchronousScrollingReasons on a non-scrolling node.
+            scrollingCoordinator->setSynchronousScrollingReasons(nodeID, { });
+        }
+    };
+    
+    auto slowRepaintObjects = m_renderView.frameView().slowRepaintObjects();
+    if (!slowRepaintObjects) {
+        clearSynchronousReasonsOnNodes();
+        return;
+    }
+
+    auto relevantScrollingScope = [](const RenderObject& renderer, const RenderLayer& layer) {
+        if (&layer.renderer() == &renderer)
+            return layer.boxScrollingScope();
+        return layer.contentsScrollingScope();
+    };
+
+    auto rootScrollingScope = m_renderView.layer()->contentsScrollingScope();
+
+    for (auto& renderer : *slowRepaintObjects) {
+        auto layer = renderer.enclosingLayer();
+        if (!layer)
+            continue;
+
+        auto scrollingScope = relevantScrollingScope(renderer, *layer);
+        if (scrollingScope != rootScrollingScope) {
+            auto enclosingScrollingNodeID = asyncScrollableContainerNodeID(renderer);
+            ASSERT(enclosingScrollingNodeID);
+            
+            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - node " << enclosingScrollingNodeID << " slow-scrolling because of fixed backgrounds");
+
+            // HasSlowRepaintObjects is the only reason that can exist for overflow nodes.
+            scrollingCoordinator->setSynchronousScrollingReasons(enclosingScrollingNodeID, { SynchronousScrollingReason::HasSlowRepaintObjects });
+            nodesToClear.remove(enclosingScrollingNodeID);
+        }
+    }
+    
+    clearSynchronousReasonsOnNodes();
 }
 
 ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const

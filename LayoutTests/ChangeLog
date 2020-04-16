@@ -1,3 +1,17 @@
+2020-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] background-attachment:fixed needs to disable async overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=210581
+
+        Reviewed by Zalan Bujtas.
+
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-dynamic-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-dynamic.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-on-overflow-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-on-overflow.html: Added.
+
 2020-04-15  John Wilander  <wilander@apple.com>
 
         Add SPI to configure WebsiteDataStores with a URL for standalone web applications and use it to disable first-party website data removal in ITP

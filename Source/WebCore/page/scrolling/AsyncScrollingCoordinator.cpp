@@ -755,10 +755,11 @@ void AsyncScrollingCoordinator::setRelatedOverflowScrollingNodes(ScrollingNodeID
 
 void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID nodeID, OptionSet<SynchronousScrollingReason> reasons)
 {
-    auto* scrollingStateNode = static_cast<ScrollingStateScrollingNode*>(m_scrollingStateTree->stateNodeForID(nodeID));
-    if (!scrollingStateNode)
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!is<ScrollingStateScrollingNode>(node))
         return;
 
+    auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(*node);
     if (reasons && is<ScrollingStateFrameScrollingNode>(scrollingStateNode)) {
         // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
         // at this point. So we'll update it before we switch back to main thread scrolling
@@ -769,7 +770,7 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID n
 
     // FIXME: Ideally all the "synchronousScrollingReasons" functions should be #ifdeffed.
 #if ENABLE(SCROLLING_THREAD)
-    scrollingStateNode->setSynchronousScrollingReasons(reasons);
+    scrollingStateNode.setSynchronousScrollingReasons(reasons);
 #endif
 }
 
