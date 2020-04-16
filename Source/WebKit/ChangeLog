@@ -1,3 +1,39 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        Move -_requestTextInputContextsInRect to WKContentView to simplify implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210398
+        <rdar://problem/61656931>
+
+        Reviewed by Darin Adler.
+
+        -_requestTextInputContextsInRect is not needed on Mac, but supporting it complicates
+        its implementation: it has to deal with coordinate space differences due to differences
+        in what is the root view on Mac and iOS + it has to know about iOS's custom content views.
+        While this function was in the "SPI" header, there is no software at Apple that was using
+        these outside of WebKit, and I will assume no non-Apple software was using them either.
+        Moving this function to WKContentView lets me simplify the implementation.
+
+        * Platform/spi/ios/UIKitSPI.h: Add more forward declarations.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _convertRectFromRootViewCoordinates:]): Deleted.
+        (-[WKWebView _convertRectToRootViewCoordinates:]): Deleted.
+        (-[WKWebView _mayContainEditableElementsInRect:]): Deleted; moved to WKWebViewTestingIOS.mm.
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]): Deleted; moved to WKContentViewInteraction.mm.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]): Added. Turns around and
+        calls the function of the same name on the WKContentView. It takes care to convert the specified
+        rect from WKWebView coordinates to WKContentView coordinates and fixes up the bounding rects
+        for the returned contexts to be in WKWebView coordinates. This keeps existings tests passing
+        as mekes using this function intuitive since callers specify and get rects in WKWebView coordinates.
+        (-[WKWebView _requestDocumentContext:completionHandler:]): Added.
+        (-[WKWebView _adjustSelectionWithDelta:completionHandler:]): Added.
+        (-[WKWebView _mayContainEditableElementsInRect:]): Moved from WKWebView.mm.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requestTextInputContextsInRect:completionHandler:]): Moved from WKWebView.mm and simplified.
+
 2020-04-16  David Kilzer  <ddkilzer@apple.com>
 
         [IPC Hardening] Use ObjectIdentifier<> for LegacyCustomProtocol

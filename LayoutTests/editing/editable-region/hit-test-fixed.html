@@ -29,12 +29,16 @@ async function runTest()
         return;
     }
 
+    debug("Before scroll:");
     await shouldHaveEditableElementsInRect(0, 0, 200, 40);
-    await shouldNotHaveEditableElementsInRect(0, 100, 50, 50);
+    await shouldNotHaveEditableElementsInRect(0, 200, 200, 40);
 
-    window.scrollTo(0, 200);
+    let newYOffset = 200;
+    window.scrollTo(0, newYOffset);
 
-    await shouldHaveEditableElementsInRect(0, 0, 200, 40);
+    debug("<br>After scroll:");
+    await shouldNotHaveEditableElementsInRect(0, 0, 200, 40);
+    await shouldHaveEditableElementsInRect(0, newYOffset, 200, 40);
 
     let testContainer = document.getElementById("test-container");
     document.body.removeChild(testContainer);

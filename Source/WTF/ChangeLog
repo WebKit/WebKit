@@ -1,3 +1,17 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        Move -_requestTextInputContextsInRect to WKContentView to simplify implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210398
+        <rdar://problem/61656931>
+
+        Reviewed by Darin Adler.
+
+        Add a convenience function to create an NSArray from a WTF::Vector with a transform function.
+        The tranform function can either return a RetainPtr or an id.
+
+        * wtf/cocoa/VectorCocoa.h:
+        (WTF::createNSArray): Added.
+
 2020-04-16  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update ScreenTime as playback state changes

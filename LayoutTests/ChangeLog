@@ -1,3 +1,23 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        Move -_requestTextInputContextsInRect to WKContentView to simplify implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210398
+        <rdar://problem/61656931>
+
+        Reviewed by Darin Adler.
+
+        Update test and expected results now that UIScriptController.mayContainEditableElementsInRect()
+        expects the passed rect to be in content coordinates.
+
+        I replaced one sub-test of a rect pre-scroll with another that tests the location
+        of a rect that will have editable elements after scroll. The purpose of that sub-test
+        hasn't changed, but it now makes the sub-tests' rects symmetric for before and after
+        scroll. I also added debug() statements to demarcate the before scroll and after scroll
+        sub-tests in the results to make it easier to understand what this test file is testing.
+
+        * editing/editable-region/hit-test-fixed-expected.txt:
+        * editing/editable-region/hit-test-fixed.html:
+
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scrolling] Slow-repaint overflow scroll have force their enclosing scrollers to be slow too

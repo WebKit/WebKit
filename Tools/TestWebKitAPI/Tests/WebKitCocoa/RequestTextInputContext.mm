@@ -25,17 +25,18 @@
 
 #import "config.h"
 
+#if PLATFORM(IOS_FAMILY)
+
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebKit.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
 
-@implementation WKWebView (SynchronousTextInputContext)
+@implementation TestWKWebView (SynchronousTextInputContext)
 
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
 {
@@ -263,3 +264,5 @@ TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)
     [webView synchronouslyLoadHTMLString:@""];
     EXPECT_FALSE([webView synchronouslyFocusTextInputContext:textArea.get()]);
 }
+
+#endif // PLATFORM(IOS_FAMILY)

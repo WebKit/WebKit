@@ -1,3 +1,24 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        Move -_requestTextInputContextsInRect to WKContentView to simplify implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210398
+        <rdar://problem/61656931>
+
+        Reviewed by Darin Adler.
+
+        Update test now that -_requestTextInputContextsInRect has moved from WKWebView to WKContentView.
+        I expose new testing-only WKWebView SPI to access it on the content view.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (-[TestWKWebView synchronouslyRequestDocumentContext:]): Added; due to category name change.
+        (-[TestWKWebView synchronouslyAdjustSelectionWithDelta:]): Added; due to category name change.
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (-[WKWebView synchronouslyRequestTextInputContextsInRect:]): Deleted; due to category name change.
+        (-[WKWebView synchronouslyFocusTextInputContext:]): Deleted; due to category name change.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::mayContainEditableElementsInRect): Convert from content coordinates
+        to WKWebView coordinates now that -_mayContainEditableElementsInRect expects it.
+
 2020-04-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK clean build fix after r260132.

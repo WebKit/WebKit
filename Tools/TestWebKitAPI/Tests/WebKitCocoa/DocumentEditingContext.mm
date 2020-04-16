@@ -29,12 +29,9 @@
 
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
-#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
-#import <WebKit/WKPreferencesRefPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebKit.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -46,11 +43,6 @@
 #define EXPECT_ATTRIBUTED_STRING_EQ(expected, actual) \
     EXPECT_TRUE([actual isKindOfClass:[NSAttributedString class]]); \
     EXPECT_WK_STREQ(expected, [(NSAttributedString *)actual string]);
-
-@interface WKContentView ()
-- (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
-- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
-@end
 
 static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGranularity granularity, NSInteger granularityCount, CGRect documentRect = CGRectZero, id <NSCopying> inputElementIdentifier = nil)
 {
@@ -130,7 +122,7 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 {
     __block bool finished = false;
     __block RetainPtr<UIWKDocumentContext> result;
-    [[self wkContentView] requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
+    [self _requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
         result = context;
         finished = true;
     }];
@@ -141,7 +133,7 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
 - (void)synchronouslyAdjustSelectionWithDelta:(NSRange)range
 {
     __block bool finished = false;
-    [[self wkContentView] adjustSelectionWithDelta:range completionHandler:^() {
+    [self _adjustSelectionWithDelta:range completionHandler:^() {
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);

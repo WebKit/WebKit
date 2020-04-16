@@ -29,13 +29,53 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "UIKitSPI.h"
+#import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowController.h"
 #import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKTextInputContextInternal.h"
+#import <WebCore/ElementContext.h>
 
 @implementation WKWebView (WKTestingIOS)
+
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+{
+    // Adjust returned bounding rects to be in WKWebView coordinates.
+    auto adjustedRect = [self convertRect:rect toView:_contentView.get()];
+    [_contentView _requestTextInputContextsInRect:adjustedRect completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = makeBlockPtr(completionHandler)](NSArray<_WKTextInputContext *> *contexts) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || !contexts.count) {
+            completionHandler(@[ ]);
+            return;
+        }
+        auto adjustedContexts = adoptNS([[NSMutableArray alloc] initWithCapacity:contexts.count]);
+        for (_WKTextInputContext *context in contexts) {
+            auto adjustedContext = context._textInputContext;
+            adjustedContext.boundingRect = [strongSelf convertRect:adjustedContext.boundingRect fromView:strongSelf->_contentView.get()];
+            [adjustedContexts addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:adjustedContext]).get()];
+        }
+        completionHandler(adjustedContexts.autorelease());
+    }];
+}
+
+- (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
+{
+    [_contentView requestDocumentContext:request completionHandler:completionHandler];
+}
+
+- (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+{
+    [_contentView adjustSelectionWithDelta:deltaRange completionHandler:completionHandler];
+}
+
+- (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
+{
+    return WebKit::mayContainEditableElementsInRect(_contentView.get(), [self convertRect:rect toView:_contentView.get()]);
+}
 
 - (void)keyboardAccessoryBarNext
 {
