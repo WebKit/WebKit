@@ -1,5 +1,12 @@
 2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, reduce # of iteration since this test is timed out in slow devices
+        https://bugs.webkit.org/show_bug.cgi?id=210023
+
+        * stress/map-iteration-oas.js:
+
+2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement JSMapIterator/JSSetIterator with JSInternalFieldObjectImpl
         https://bugs.webkit.org/show_bug.cgi?id=210023
 
