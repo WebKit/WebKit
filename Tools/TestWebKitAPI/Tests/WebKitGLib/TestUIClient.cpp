@@ -307,6 +307,15 @@ public:
         m_windowProperties = windowProperties;
     }
 
+#if PLATFORM(GTK)
+    void setCreateNewWebViewsInWindowsWithDefaultSize(int width = 800, int height = 600)
+    {
+        m_shouldCreateWebViewsInNewWindowsAutomatically = true;
+        m_DefaultGeometryNewWindows.width = width;
+        m_DefaultGeometryNewWindows.height = height;
+    }
+#endif
+
     WebKitHitTestResult* moveMouseAndWaitUntilMouseTargetChanged(int x, int y, unsigned mouseModifiers = 0)
     {
         m_waitingForMouseTargetChange = true;
@@ -349,6 +358,16 @@ public:
         g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShowCallback), this);
         g_signal_connect(newWebView, "close", G_CALLBACK(viewCloseCallback), this);
 
+#if PLATFORM(GTK)
+        if (m_shouldCreateWebViewsInNewWindowsAutomatically) {
+            g_assert_null(m_parentWindow);
+            m_parentWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+            gtk_window_set_default_size(GTK_WINDOW(m_parentWindow), m_DefaultGeometryNewWindows.width, m_DefaultGeometryNewWindows.height);
+            gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(newWebView));
+            gtk_widget_show(GTK_WIDGET(newWebView));
+            gtk_widget_show(m_parentWindow);
+        }
+#endif
         return WEBKIT_WEB_VIEW(newWebView);
     }
 
@@ -388,6 +407,11 @@ public:
     unsigned m_mouseTargetModifiers;
     GUniquePtr<char> m_permissionResult;
     bool m_waitingForMouseTargetChange { false };
+
+#if PLATFORM(GTK)
+    bool m_shouldCreateWebViewsInNewWindowsAutomatically { false };
+    cairo_rectangle_int_t m_DefaultGeometryNewWindows;
+#endif
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -651,12 +675,12 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 
 static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
 {
-    static const char* windowProrpertiesString = "left=100,top=150,width=400,height=400,location=no,menubar=no,status=no,toolbar=no,scrollbars=no";
+    static const char* windowPropertiesString = "left=100,top=150,width=400,height=400,location=no,menubar=no,status=no,toolbar=no,scrollbars=no";
     cairo_rectangle_int_t geometry = { 100, 150, 400, 400 };
     test->setExpectedWindowProperties(UIClientTest::WindowProperties(&geometry, false, false, false, false, false, true, false));
 
-    GUniquePtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowProrpertiesString));
-    test->loadHtml(htmlString.get(), 0);
+    GUniquePtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowPropertiesString));
+    test->loadHtml(htmlString.get(), nullptr);
     test->waitUntilMainLoopFinishes();
 
     static const char* propertiesChanged[] = {
@@ -674,6 +698,29 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[1], ==, UIClientTest::ReadyToShow);
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
+
+#if PLATFORM(GTK)
+static void testWebViewOpenWindowDefaultSize(UIClientTest* test, gconstpointer)
+{
+    // If no size specified for window.open(), then new windows open with the default window size.
+    cairo_rectangle_int_t expectedGeometry = { 0, 0, 623, 715 };
+    test->setCreateNewWebViewsInWindowsWithDefaultSize(expectedGeometry.width, expectedGeometry.height);
+    test->setExpectedWindowProperties(UIClientTest::WindowProperties(&expectedGeometry, false, false, false, false, false, true, false));
+    test->loadHtml("<html><body onLoad=\"window.open('', '', 'left=0,top=0,location=no,menubar=no,status=no,toolbar=no,scrollbars=no').close();\"></body></html>", nullptr);
+    test->waitUntilMainLoopFinishes();
+}
+
+static void testWebViewOpenWindowNoDefaultSize(UIClientTest* test, gconstpointer)
+{
+    // If no size specified for window.open(), and new windows are not set to a specific default size with gtk_window_set_default_size()
+    // on the create signal, then new windows open with the size of the previous window.
+    cairo_rectangle_int_t expectedGeometry = { 0, 0, 527, 671 };
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL, expectedGeometry.width, expectedGeometry.height);
+    test->setExpectedWindowProperties(UIClientTest::WindowProperties(&expectedGeometry, false, false, false, false, false, true, false));
+    test->loadHtml("<html><body onLoad=\"window.open('', '', 'left=0,top=0,location=no,menubar=no,status=no,toolbar=no,scrollbars=no').close();\"></body></html>", nullptr);
+    test->waitUntilMainLoopFinishes();
+}
+#endif
 
 #if PLATFORM(GTK)
 static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
@@ -1230,6 +1277,11 @@ void beforeAll()
     ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
+#if PLATFORM(GTK)
+    // FIXME: Implement webkit_window_properties_get_geometry() in WPE.
+    UIClientTest::add("WebKitWebView", "open-window-default-size", testWebViewOpenWindowDefaultSize);
+    UIClientTest::add("WebKitWebView", "open-window-no-default-size", testWebViewOpenWindowNoDefaultSize);
+#endif
     // FIXME: Implement mouse move in WPE.
 #if PLATFORM(GTK)
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);

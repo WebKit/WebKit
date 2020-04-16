@@ -1,3 +1,41 @@
+2020-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] MiniBrowser opens new windows too small causing failures on some WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=210206
+
+        Reviewed by Carlos Garcia Campos.
+
+        Some WPT tests (when executed with the WPT runner via WebDriver)
+        open new browser windows via JavaScript invoking Window.open()
+        and then run the test on this new window.
+        The size of the new window is not specified, and we were failing
+        to provide a default window size, so it was using the minimum of
+        100x100 which its just too small for some test that later call
+        document.elementFromPoint() on some coordinates
+        that are outside of that size.
+
+        To fix that provide the size of the default GTK window to WebCore
+        if the application sets one via gtk_window_set_default_size().
+        And if not, then use the size of the previous window.
+
+        Also change the way we position the new window to work better when
+        the system uses more than one monitor. Previously to get the default
+        coordinates of the new window we were using gdk_display_get_monitor()
+        with just the first monitor available.
+        This causes issues in the calculation of the available space when
+        using several monitors. Instead get the monitor in use by looking
+        at the current GDK root window.
+
+        Tests: TestWebKitAPI/WebKit2Gtk/TestUIClient:/webkit/WebKitWebView/open-window-default-size
+        and TestWebKitAPI/WebKit2Gtk/TestUIClient:/webkit/WebKitWebView/open-window-no-default-size
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getCurrentScreenMonitor):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2020-04-16  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         TextureMapper renders video element with "object-fit: cover" incorrectly
