@@ -101,15 +101,13 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
 
     NSDictionary *dictionary = nil;
     @try {
-#if PLATFORM(IOS_FAMILY)
-        dictionary = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
-        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-#else
         dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
-#endif
-        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
+        if (![dictionary isKindOfClass:[NSDictionary class]]) {
+            WTFLogAlways("InjectedBundle::decodeBundleParameters failed - Resulting object was not an NSDictionary.\n");
+            return false;
+        }
     } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode bundle parameters: %@." , exception);
+        LOG_ERROR("InjectedBundle::decodeBundleParameters failed to decode bundle parameters: %@." , exception);
         return false;
     }
     
@@ -168,6 +166,9 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         }
     }
 
+    if (!initializeFunction)
+        initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
+
     if (!additionalClassesForParameterCoderFunction)
         additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleAdditionalClassesForParameterCoder")));
 
@@ -175,19 +176,16 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (additionalClassesForParameterCoderFunction)
         additionalClassesForParameterCoderFunction(toAPI(this), toAPI(initializationUserData));
 
-    decodeBundleParameters(parameters.bundleParameterData.get());
-    
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
     Method method = class_getClassMethod([NSEvent class], @selector(modifierFlags));
     method_setImplementation(method, reinterpret_cast<IMP>(currentModifierFlags));
 #endif
-    
-    if (!initializeFunction)
-        initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
 
     // First check to see if the bundle has a WKBundleInitialize function.
     if (initializeFunction) {
+        if (!decodeBundleParameters(parameters.bundleParameterData.get()))
+            return false;
         initializeFunction(toAPI(this), toAPI(initializationUserData));
         return true;
     }
@@ -213,10 +211,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
     [plugInController _setPrincipalClassInstance:instance];
 
-    if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)]) {
+    if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
         [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
-        decodeBundleParameters(parameters.bundleParameterData.get());
-    }
+
+    if (!decodeBundleParameters(parameters.bundleParameterData.get()))
+        return false;
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;

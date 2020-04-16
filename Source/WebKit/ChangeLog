@@ -1,3 +1,35 @@
+2020-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r260081) Broke iOS PLT due to InjectedBundle initialization (edit)
+        https://bugs.webkit.org/show_bug.cgi?id=210582
+        <rdar://problem/61838584>
+
+        Reviewed by Darin Adler.
+
+        The changes in r260081 began enforcing NSSecureCoding best practices, triggering
+        a bug in InjectedBundleMac.mm, which is used by iOS as well.
+
+        This patch does the following:
+
+        1. Delays parameter decoding until we use the appropriate InjectedBundle mechanism
+           for expressing the valid classes to use in the Unarchiver.
+        2. Removes a temporary workaround needed to get PLT running on iOS again.
+
+        This patch also moves the check of the CFBundleGetFunctionPointerForName slightly earlier
+        so we can use a single function pointer check, and only invoke the parameter decoding
+        if we are using the C API.
+        
+        If not, we delay parameter decoding until we have constructed the WKWebProcessPlugIn
+        object so we can consume it's 'additionalClassesForParameterCoder' before calling
+        its initialization method.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::decodeBundleParameters): Remove temporary workaround
+        needed to get PLT working again. Instead of using a debug assert, return as
+        a decoding failure if the resulting object is not an NSDictionary.
+        (WebKit::InjectedBundle::initialize): Delay decoding the bundle parameters on
+        iOS until the Plugin's additionalClassesForParameterCoder method can be called.
+
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add a way to focus a text input and place a caret
