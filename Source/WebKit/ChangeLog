@@ -1,3 +1,18 @@
+2020-04-16  David Kilzer  <ddkilzer@apple.com>
+
+        Rollout: [IPC Hardening] MachMessage::create() should use checked arithmetic
+        <https://webkit.org/b/210572>
+        <rdar://problem/61729947>
+
+        Unreviewed rollout of r260160.
+
+        Appears to have caused 8 API test failures on iOS.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/cocoa/MachMessage.cpp:
+        (IPC::MachMessage::create):
+
 2020-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r260081) Broke iOS PLT due to InjectedBundle initialization (edit)
