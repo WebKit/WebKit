@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2136,7 +2136,10 @@ static EncodedJSValue JSC_HOST_CALL functionIsHavingABadTime(JSGlobalObject* glo
 static void callWithStackSizeProbeFunction(Probe::State* state)
 {
     JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
-    JSFunction* function = bitwise_cast<JSFunction*>(state->probeFunction);
+    // The bits loaded from state->probeFunction will be tagged like
+    // a C function. So, we'll need to untag it to extract the bits
+    // for the JSFunction*.
+    JSFunction* function = bitwise_cast<JSFunction*>(untagCodePtr<CFunctionPtrTag>(state->probeFunction));
     state->initializeStackFunction = nullptr;
     state->initializeStackArg = nullptr;
 
