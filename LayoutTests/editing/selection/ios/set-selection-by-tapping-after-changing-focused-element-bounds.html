@@ -51,6 +51,10 @@ addEventListener("load", async () => {
 
     await UIHelper.activateElementAndWaitForInputSession(editor);
     await UIHelper.activateElement(button);
+
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.waitForDoubleTapDelay();
+
     await tapAndWaitForSelectionChange(30, 30);
 
     shouldBe("getSelection().rangeCount", "1");

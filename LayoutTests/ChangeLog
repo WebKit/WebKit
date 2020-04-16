@@ -1,3 +1,34 @@
+2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r257821. rdar://problem/61408640
+
+    REGRESSION(iOS): editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html is always timing out
+    https://bugs.webkit.org/show_bug.cgi?id=208556
+    
+    Reviewed by Wenson Hsieh.
+    
+    Wait for the dobule tap delay between the initial tap and the second tap on the editable region
+    so that the second tap would result in a selection change instead of both taps to be recognized
+    as a single dobule tap.
+    
+    * editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@257821 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(iOS): editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html is always timing out
+            https://bugs.webkit.org/show_bug.cgi?id=208556
+
+            Reviewed by Wenson Hsieh.
+
+            Wait for the dobule tap delay between the initial tap and the second tap on the editable region
+            so that the second tap would result in a selection change instead of both taps to be recognized
+            as a single dobule tap.
+
+            * editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html:
+
 2020-04-10  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259802. rdar://problem/61477495
