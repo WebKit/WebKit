@@ -1,3 +1,26 @@
+2020-04-16  Antoine Quint  <graouts@apple.com>
+
+        [ Mac wk2 Debug ] media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=210349
+        <rdar://problem/61594098>
+
+        Reviewed by Eric Carlson.
+
+        This test had several things wrong about it. First, it manually created a MediaController in the test page and set a custom auto-hide delay on it.
+        However, it would test the proper behavior of the auto-hide behavior on the MediaController created by the media element, querying the state of
+        the media controls markup within that media element's shadow root. In that world, the auto-hide delay was the default delay, and not the custom
+        one set on the page-created MediaController.
+
+        The cause of the timeout was that the media clip used in this test is barely longer than the auto-hide delay, and it could happen that under slow
+        conditions, the media would end and the auto-hide timer would never have a chance to fire since it would be canceled due to auto-hide being disabled
+        when the media is not playing, such as when it ended.
+
+        We make this test saner and more realistic by not customizing the auto-hide delay, removing the page MediaController and simply setting "loop" on the
+        media element such that it never stops playing, givin the auto-hide timer additional time to fire with no risk of it being canceled by the media ending.
+
+        * media/modern-media-controls/media-controller/media-controller-auto-hide.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-04-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, mark several animations test as failure
