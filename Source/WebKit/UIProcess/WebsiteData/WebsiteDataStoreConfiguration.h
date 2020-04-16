@@ -159,6 +159,9 @@ public:
     bool requiresSecureHTTPSProxyConnection() const { return m_requiresSecureHTTPSProxyConnection; };
     void setRequiresSecureHTTPSProxyConnection(bool requires) { m_requiresSecureHTTPSProxyConnection = requires; }
 
+    const URL& standaloneApplicationURL() const { return m_standaloneApplicationURL; }
+    void setStandaloneApplicationURL(URL&& url) { m_standaloneApplicationURL = WTFMove(url); }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -203,6 +206,7 @@ private:
     bool m_preventsSystemHTTPProxyAuthentication { false };
     bool m_requiresSecureHTTPSProxyConnection { false };
     unsigned m_testSpeedMultiplier { 1 };
+    URL m_standaloneApplicationURL;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

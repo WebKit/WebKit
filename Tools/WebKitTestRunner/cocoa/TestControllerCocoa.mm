@@ -51,6 +51,7 @@
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/MainThread.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -154,10 +155,15 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableEditableImages)
         [copiedConfiguration _setEditableImagesEnabled:YES];
 
-    if (options.useEphemeralSession) {
-        auto ephemeralWebsiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
-        [ephemeralWebsiteDataStore _setResourceLoadStatisticsEnabled:YES];
-        [copiedConfiguration setWebsiteDataStore:ephemeralWebsiteDataStore];
+    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length()) {
+        auto websiteDataStoreConfig = options.useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        if (!options.useEphemeralSession)
+            configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
+        if (options.standaloneWebApplicationURL.length())
+            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
+        auto websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
+        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+        [copiedConfiguration setWebsiteDataStore:websiteDataStore];
     }
 
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs];

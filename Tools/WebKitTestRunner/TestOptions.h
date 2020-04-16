@@ -111,6 +111,7 @@ struct TestOptions {
     std::string applicationManifest;
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
+    std::string standaloneWebApplicationURL;
     HashMap<String, bool> experimentalFeatures;
     HashMap<String, bool> internalDebugFeatures;
     String contentMode;
@@ -170,7 +171,8 @@ struct TestOptions {
             || enableCaptureVideoInGPUProcess != options.enableCaptureVideoInGPUProcess
             || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess
             || allowTopNavigationToDataURLs != options.allowTopNavigationToDataURLs
-            || enableInAppBrowserPrivacy != options.enableInAppBrowserPrivacy)
+            || enableInAppBrowserPrivacy != options.enableInAppBrowserPrivacy
+            || standaloneWebApplicationURL != options.standaloneWebApplicationURL)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

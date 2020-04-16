@@ -47,6 +47,7 @@ struct ResourceLoadStatisticsParameters {
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
+    WebCore::RegistrableDomain standaloneApplicationDomain { };
     WebCore::RegistrableDomain manualPrevalentResource { };
     
     void encode(IPC::Encoder& encoder) const
@@ -63,6 +64,7 @@ struct ResourceLoadStatisticsParameters {
         encoder << sameSiteStrictEnforcementEnabled;
 #endif
         encoder << firstPartyWebsiteDataRemovalMode;
+        encoder << standaloneApplicationDomain;
         encoder << manualPrevalentResource;
     }
 
@@ -120,6 +122,11 @@ struct ResourceLoadStatisticsParameters {
         if (!firstPartyWebsiteDataRemovalMode)
             return WTF::nullopt;
 
+        Optional<WebCore::RegistrableDomain> standaloneApplicationDomain;
+        decoder >> standaloneApplicationDomain;
+        if (!standaloneApplicationDomain)
+            return WTF::nullopt;
+
         Optional<WebCore::RegistrableDomain> manualPrevalentResource;
         decoder >> manualPrevalentResource;
         if (!manualPrevalentResource)
@@ -138,6 +145,7 @@ struct ResourceLoadStatisticsParameters {
             WTFMove(*sameSiteStrictEnforcementEnabled),
 #endif
             WTFMove(*firstPartyWebsiteDataRemovalMode),
+            WTFMove(*standaloneApplicationDomain),
             WTFMove(*manualPrevalentResource),
         }};
     }

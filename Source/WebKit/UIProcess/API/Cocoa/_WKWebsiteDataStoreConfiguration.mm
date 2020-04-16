@@ -443,6 +443,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);
 }
 
+- (NSURL *)standaloneApplicationURL
+{
+    return _configuration->standaloneApplicationURL();
+}
+
+- (void)setStandaloneApplicationURL:(NSURL *)url
+{
+    _configuration->setStandaloneApplicationURL(url);
+}
+
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
 {
     return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();

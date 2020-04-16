@@ -635,6 +635,26 @@ void WebResourceLoadStatisticsStore::setFirstPartyWebsiteDataRemovalMode(FirstPa
     });
 }
 
+void WebResourceLoadStatisticsStore::setStandaloneApplicationDomain(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral() || domain.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::setStandaloneApplicationDomain() called with non-empty domain.");
+
+    postTask([this, domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->setStandaloneApplicationDomain(WTFMove(domain));
+        postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
     ASSERT(RunLoop::isMain());

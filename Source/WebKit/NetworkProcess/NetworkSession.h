@@ -164,6 +164,7 @@ protected:
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled m_sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
+    WebCore::RegistrableDomain m_standaloneApplicationDomain;
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;

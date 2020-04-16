@@ -1,3 +1,16 @@
+2020-04-15  John Wilander  <wilander@apple.com>
+
+        Add SPI to configure WebsiteDataStores with a URL for standalone web applications and use it to disable first-party website data removal in ITP
+        https://bugs.webkit.org/show_bug.cgi?id=209634
+        <rdar://problem/60943970>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html: Added.
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html: Added.
+
 2020-04-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, emit baselines after r260139

@@ -521,28 +521,33 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     return configuration;
 }
 
+void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
+        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+
+        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
+        WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Cache").get());
+        WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "CacheStorage").get());
+        WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
+        WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "LocalStorage").get());
+        WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());
+        WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
+        WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
+        WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
+        WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
+        WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
+        WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
+        WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration, true);
+    }
+}
+
 WKWebsiteDataStoreRef TestController::defaultWebsiteDataStore()
 {
     static WKWebsiteDataStoreRef dataStore = nullptr;
     if (!dataStore) {
         auto configuration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
-        if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-            String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-
-            WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
-            WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Cache").get());
-            WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "CacheStorage").get());
-            WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
-            WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "LocalStorage").get());
-            WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());
-            WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
-            WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
-            WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
-            WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration.get(), 400 * 1024);
-            WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration.get(), true);
-            WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration.get(), true);
-            WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration.get(), true);
-        }
+        configureWebsiteDataStoreTemporaryDirectories(configuration.get());
         dataStore = WKWebsiteDataStoreCreateWithConfiguration(configuration.get());
     }
     return dataStore;
@@ -1360,6 +1365,11 @@ static std::string parseStringTestHeaderValueAsRelativePath(const std::string& v
     return toSTD(adoptWK(WKURLCopyPath(relativeURL.get())));
 }
 
+static std::string parseStringTestHeaderValueAsURL(const std::string& value)
+{
+    return toSTD(adoptWK(WKURLCopyString(createTestURL(value.c_str()))));
+}
+
 static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL, const std::string& absolutePath)
 {
     std::string filename = absolutePath;
@@ -1515,7 +1525,9 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.allowTopNavigationToDataURLs = parseBooleanTestHeaderValue(value);
         else if (key == "enableInAppBrowserPrivacy")
             testOptions.enableInAppBrowserPrivacy = parseBooleanTestHeaderValue(value);
-        
+        else if (key == "standaloneWebApplicationURL")
+            testOptions.standaloneWebApplicationURL = parseStringTestHeaderValueAsURL(value);
+
         pairStart = pairEnd + 1;
     }
 }

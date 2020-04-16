@@ -980,6 +980,8 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     auto oldestUserInteraction = now;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
+        if (statistic.registrableDomain == standaloneApplicationDomain())
+            continue;
         oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);

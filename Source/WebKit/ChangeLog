@@ -1,3 +1,54 @@
+2020-04-15  John Wilander  <wilander@apple.com>
+
+        Add SPI to configure WebsiteDataStores with a URL for standalone web applications and use it to disable first-party website data removal in ITP
+        https://bugs.webkit.org/show_bug.cgi?id=209634
+        <rdar://problem/60943970>
+
+        Reviewed by Alex Christensen.
+
+        This change adds a new property to _WKWebsiteDataStoreConfiguration.h called
+        standaloneApplicationURL with which the hosting application can inform the
+        website data store that it's running as a standalone web application.
+
+        This change also forwards an existing standaloneApplicationURL as a
+        WebCore::RegistrableDomain into ITP so that explicit exemptions can be made
+        to first parties of standalone web applications. The exemptions made here
+        all for all of ITP's website data removal. This part of the change is
+        covered by the new layout tests.
+
+        Tests: http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html
+               http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::setStandaloneApplicationDomain):
+        (WebKit::ResourceLoadStatisticsStore::standaloneApplicationDomain const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setStandaloneApplicationDomain):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::forwardResourceLoadStatisticsSettings):
+        * NetworkProcess/NetworkSession.h:
+        * Shared/ResourceLoadStatisticsParameters.h:
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration standaloneApplicationURL]):
+        (-[_WKWebsiteDataStoreConfiguration setStandaloneApplication:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::standaloneApplicationURL const):
+        (WebKit::WebsiteDataStoreConfiguration::setStandaloneApplicationURL):
+
 2020-04-15  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] MachMessage::messageSize() should use checked arithmetic

@@ -88,6 +88,7 @@ private:
 class TestController {
 public:
     static TestController& singleton();
+    static void configureWebsiteDataStoreTemporaryDirectories(WKWebsiteDataStoreConfigurationRef);
     static WKWebsiteDataStoreRef defaultWebsiteDataStore();
 
     static const unsigned viewWidth;
