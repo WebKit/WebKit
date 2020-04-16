@@ -66,6 +66,7 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasTextFillBox                    = 1LLU  << 28,
     FlowHasBorderFitLines                 = 1LLU  << 29,
     FlowHasNonAutoLineBreak               = 1LLU  << 30,
+    FlowHasTextSecurity                   = 1LLU  << 31,
     FlowHasSVGFont                        = 1LLU  << 32,
     FlowTextIsEmpty                       = 1LLU  << 33,
     FlowTextHasSoftHyphen                 = 1LLU  << 34,

@@ -318,6 +318,8 @@ public:
 
     virtual bool shouldResetChildLogicalHeightBeforeLayout(const RenderBox&) const { return false; }
 
+    static String updateSecurityDiscCharacters(const RenderStyle&, String&&);
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     void willBeDestroyed() override;

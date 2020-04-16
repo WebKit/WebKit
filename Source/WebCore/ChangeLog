@@ -1,3 +1,35 @@
+2020-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Password obscuring dots drawn with the system font are too small
+        https://bugs.webkit.org/show_bug.cgi?id=209692
+        <rdar://problem/60788385>
+
+        Reviewed by Darin Adler.
+
+        The system font's U+2022 BULLET glyph got smaller. Instead, we should match
+        the native platform's behavior of using U+F79A. However, U+F79A is a PUA
+        character, meaning different fonts will draw it in arbitrary different ways.
+        Therefore, we should only use this character if we're drawing it with the
+        system font. Otherwise, we can take the old codepath and use U+2022 BULLET.
+
+        Tests: fast/text/text-security-disc-bullet-pua.html
+               platform/mac/fast/text/text-security-disc-bullet-pua-mac.html
+               platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html
+               platform/ios/fast/text/text-security-disc-bullet-pua-ios-old.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::text const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/SimpleLineLayoutCoverage.cpp:
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutCoverage.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::computeTextSecurityDiscShouldUsePUACodePoint const):
+        * rendering/style/RenderStyle.h:
+
 2020-04-15  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r260102): ASSERTION FAILED: m_arbitrators.contains(proxy) in WebKit::SharedArbitrator::endRoutingArbitrationForArbitrator

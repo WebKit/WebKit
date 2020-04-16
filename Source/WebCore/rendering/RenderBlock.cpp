@@ -3124,7 +3124,13 @@ TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& 
         if (flags & RespectDirectionOverride)
             directionalOverride |= isOverride(style.unicodeBidi());
     }
-    return TextRun(stringView, 0, 0, expansion, textDirection, directionalOverride);
+
+    // This works because:
+    // 1. TextRun owns its text string. Its member is a String, not a StringView
+    // 2. This replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
+    // How convenient.
+    auto updatedString = RenderBlock::updateSecurityDiscCharacters(style, stringView.toStringWithoutCopying());
+    return TextRun(WTFMove(updatedString), 0, 0, expansion, textDirection, directionalOverride);
 }
 
 TextRun RenderBlock::constructTextRun(const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
@@ -3501,6 +3507,30 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
         childHitTest = HitTestChildBlockBackground;
     LayoutPoint childPoint = flipForWritingModeForChild(legend, accumulatedOffset);
     return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
+}
+
+String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, String&& string)
+{
+#if !PLATFORM(COCOA)
+    return WTFMove(string);
+#else
+    if (style.textSecurity() == TextSecurity::None)
+        return WTFMove(string);
+    // This PUA character in the system font is used to render password field dots on Cocoa platforms.
+    constexpr UChar textSecurityDiscPUACodePoint = 0xF79A;
+    auto& font = style.fontCascade().primaryFont();
+    if (!(font.platformData().isSystemFont() && font.glyphForCharacter(textSecurityDiscPUACodePoint)))
+        return WTFMove(string);
+
+    // See RenderText::setRenderedText()
+#if PLATFORM(IOS_FAMILY)
+    constexpr UChar discCharacterToReplace = blackCircle;
+#else
+    constexpr UChar discCharacterToReplace = bullet;
+#endif
+
+    return string.replace(discCharacterToReplace, textSecurityDiscPUACodePoint);
+#endif
 }
     
 } // namespace WebCore

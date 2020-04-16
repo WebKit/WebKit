@@ -1166,6 +1166,8 @@ void RenderText::setRenderedText(const String& newText)
     if (style.textTransform() != TextTransform::None)
         m_text = applyTextTransform(style, m_text, previousCharacter());
 
+    // At rendering time, if certain fonts are used, these characters get swapped out with higher-quality PUA characters.
+    // See RenderBlock::updateSecurityDiscCharacters().
     switch (style.textSecurity()) {
     case TextSecurity::None:
         break;

@@ -240,6 +240,10 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoLineBreak, reasons, includeReasons);
     if (style.nbspMode() != NBSPMode::Normal)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasWebKitNBSPMode, reasons, includeReasons);
+    // Special handling of text-security:disc is not yet implemented in the simple line layout code path.
+    // See RenderBlock::updateSecurityDiscCharacters.
+    if (style.textSecurity() != TextSecurity::None)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextSecurity, reasons, includeReasons);
     if (style.hyphens() == Hyphens::Auto) {
         auto textReasons = canUseForText(style.hyphenString(), style.fontCascade(), WTF::nullopt, false, includeReasons);
         if (textReasons != NoReason)

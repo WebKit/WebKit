@@ -1414,17 +1414,23 @@ TextRun InlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen)
 
 String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 {
+    String result;
     if (auto* combinedText = this->combinedText()) {
         if (ignoreCombinedText)
-            return renderer().text().substring(m_start, m_len);
-        return combinedText->combinedStringForRendering();
-    }
-    if (hasHyphen()) {
+            result = renderer().text().substring(m_start, m_len);
+        else
+            result = combinedText->combinedStringForRendering();
+    } else if (hasHyphen()) {
         if (ignoreHyphen)
-            return renderer().text().substring(m_start, m_len);
-        return makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
-    }
-    return renderer().text().substring(m_start, m_len);
+            result = renderer().text().substring(m_start, m_len);
+        else
+            result = makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
+    } else
+        result = renderer().text().substring(m_start, m_len);
+
+    // This works because this replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
+    // How convenient.
+    return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTFMove(result));
 }
 
 inline const RenderCombineText* InlineTextBox::combinedText() const

@@ -135,6 +135,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasNonAutoLineBreak:
         stream << "line-break is not auto";
         break;
+    case FlowHasTextSecurity:
+        stream << "text-security is not none";
+        break;
     case FlowHasSVGFont:
         stream << "SVG font";
         break;
