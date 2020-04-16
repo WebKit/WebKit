@@ -1,5 +1,12 @@
 2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed build fix for r260161.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalLangTag):
+
+2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed, address Darin's feedback on r260151.
 
         * runtime/IntlObject.cpp:
