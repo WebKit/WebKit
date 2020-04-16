@@ -38,6 +38,7 @@ namespace WebCore {
 #endif
 
 #define WEBCORE_LOG_CHANNELS(M) \
+    M(Accessibility) \
     M(AdClickAttribution) \
     M(Animations) \
     M(ApplePay) \

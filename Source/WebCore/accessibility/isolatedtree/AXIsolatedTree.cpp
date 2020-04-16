@@ -29,6 +29,7 @@
 #include "AXIsolatedTree.h"
 
 #include "AXIsolatedObject.h"
+#include "AXLogger.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -69,28 +70,36 @@ HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& AXIsolatedTree::treeIDCache()
 AXIsolatedTree::AXIsolatedTree()
     : m_treeID(newTreeID())
 {
+    AXTRACE("AXIsolatedTree::AXIsolatedTree");
 }
 
-AXIsolatedTree::~AXIsolatedTree() = default;
+AXIsolatedTree::~AXIsolatedTree()
+{
+    AXTRACE("AXIsolatedTree::~AXIsolatedTree");
+}
 
 Ref<AXIsolatedTree> AXIsolatedTree::create()
 {
+    AXTRACE("AXIsolatedTree::create");
     ASSERT(isMainThread());
     return adoptRef(*new AXIsolatedTree());
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeInTreeForID(AXIsolatedTreeID treeID, AXID axID)
 {
+    AXTRACE("AXIsolatedTree::nodeInTreeForID");
     return treeForID(treeID)->nodeForID(axID);
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
 {
+    AXTRACE("AXIsolatedTree::treeForID");
     return treeIDCache().get(treeID);
 }
 
 Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
 {
+    AXTRACE("AXIsolatedTree::createTreeForPageID");
     LockHolder locker(s_cacheLock);
     ASSERT(!treePageCache().contains(pageID));
 
@@ -102,6 +111,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createTreeForPageID(PageIdentifier pageID)
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 {
+    AXTRACE("AXIsolatedTree::removeTreeForPageID");
     ASSERT(isMainThread());
     LockHolder locker(s_cacheLock);
 
@@ -119,6 +129,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
+    AXTRACE("AXIsolatedTree::treeForPageID");
     LockHolder locker(s_cacheLock);
 
     if (auto tree = treePageCache().get(pageID))
@@ -129,11 +140,13 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
 {
+    AXTRACE("AXIsolatedTree::nodeForID");
     return axID != InvalidAXID ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
 Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) const
 {
+    AXTRACE("AXIsolatedTree::objectsForIDs");
     Vector<RefPtr<AXCoreObject>> result;
     result.reserveCapacity(axIDs.size());
 
@@ -147,6 +160,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(Vector<AXID> axIDs) c
 
 void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXID parentID, bool attachWrapper)
 {
+    AXTRACE("AXIsolatedTree::generateSubtree");
     ASSERT(isMainThread());
     Vector<NodeChange> nodeChanges;
     auto object = createSubtree(axObject, parentID, attachWrapper, nodeChanges);
@@ -159,6 +173,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXID parentID, bool
 
 Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID parentID, bool attachWrapper, Vector<NodeChange>& nodeChanges)
 {
+    AXTRACE("AXIsolatedTree::createSubtree");
     ASSERT(isMainThread());
     auto object = AXIsolatedObject::create(axObject, m_treeID, parentID);
     if (attachWrapper) {
@@ -181,6 +196,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
 
 void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 {
+    AXTRACE("AXIsolatedTree::updateNode");
     ASSERT(isMainThread());
     AXID axID = axObject.objectID();
     auto* axParent = axObject.parentObject();
@@ -201,6 +217,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 
 void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
 {
+    AXTRACE("AXIsolatedTree::updateSubtree");
     ASSERT(isMainThread());
     removeSubtree(axObject.objectID());
     auto* axParent = axObject.parentObject();
@@ -210,6 +227,7 @@ void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
 
 void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 {
+    AXTRACE("AXIsolatedTree::updateChildren");
     ASSERT(isMainThread());
     AXID axObjectID = axObject.objectID();
 
@@ -248,16 +266,19 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedUIElement()
 {
+    AXTRACE("AXIsolatedTree::focusedUIElement");
     return nodeForID(m_focusedNodeID);
 }
     
 RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
 {
+    AXTRACE("AXIsolatedTree::rootNode");
     return nodeForID(m_rootNodeID);
 }
 
 void AXIsolatedTree::setRootNode(Ref<AXIsolatedObject>& root)
 {
+    AXTRACE("AXIsolatedTree::setRootNode");
     LockHolder locker { m_changeLogLock };
     m_rootNodeID = root->objectID();
     m_readerThreadNodeMap.add(root->objectID(), WTFMove(root));
@@ -265,6 +286,7 @@ void AXIsolatedTree::setRootNode(Ref<AXIsolatedObject>& root)
     
 void AXIsolatedTree::setFocusedNode(AXID axID)
 {
+    AXTRACE("AXIsolatedTree::setFocusedNode");
     ASSERT(isMainThread());
     LockHolder locker { m_changeLogLock };
     m_focusedNodeID = axID;
@@ -286,30 +308,35 @@ void AXIsolatedTree::setFocusedNode(AXID axID)
 
 void AXIsolatedTree::setFocusedNodeID(AXID axID)
 {
+    AXTRACE("AXIsolatedTree::setFocusedNodeID");
     LockHolder locker { m_changeLogLock };
     m_pendingFocusedNodeID = axID;
 }
 
 void AXIsolatedTree::removeNode(AXID axID)
 {
+    AXTRACE("AXIsolatedTree::removeNode");
     LockHolder locker { m_changeLogLock };
     m_pendingNodeRemovals.append(axID);
 }
 
 void AXIsolatedTree::removeSubtree(AXID axID)
 {
+    AXTRACE("AXIsolatedTree::removeSubtree");
     LockHolder locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(axID);
 }
 
 void AXIsolatedTree::appendNodeChanges(const Vector<NodeChange>& changes)
 {
+    AXTRACE("AXIsolatedTree::appendNodeChanges");
     ASSERT(isMainThread());
     m_pendingAppends.appendVector(changes);
 }
 
 void AXIsolatedTree::applyPendingChanges()
 {
+    AXTRACE("AXIsolatedTree::applyPendingChanges");
     RELEASE_ASSERT(!isMainThread());
     LockHolder locker { m_changeLogLock };
 

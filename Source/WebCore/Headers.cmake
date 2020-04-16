@@ -163,6 +163,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/websockets/WebSocketFrame.h
     Modules/websockets/WebSocketHandshake.h
 
+    accessibility/AXLogger.h
     accessibility/AXObjectCache.h
     accessibility/AXTextStateChangeIntent.h
     accessibility/AccessibilityListBox.h

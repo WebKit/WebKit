@@ -436,6 +436,7 @@ Modules/webxr/XRSessionEvent.cpp @no-unify
 
 #endif
 
+accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
 accessibility/AccessibilityARIAGrid.cpp
 accessibility/AccessibilityARIAGridCell.cpp
