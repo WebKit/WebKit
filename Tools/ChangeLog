@@ -1,3 +1,21 @@
+2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add slack-aware WKR implementation
+        https://bugs.webkit.org/show_bug.cgi?id=210425
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch adds new WKR implementation, which is posting changes to #changes in WebKit slack.
+        Currently, we are polling git.webkit.org's feed once a minute. The more efficient way to implement
+        this bot is introducing post-commit hook, but for now, this polling strategy just works.
+
+        * WKR/.gitignore: Added.
+        * WKR/ReadMe.md: Added.
+        * WKR/WKR.mjs: Added.
+        * WKR/data/.gitignore: Added.
+        * WKR/package-lock.json: Added.
+        * WKR/package.json: Added.
+
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add a way to focus a text input and place a caret
