@@ -36,11 +36,11 @@
 namespace WebKit {
 
 #if USE(APPKIT)
-using PlatformFontDescriptor = NSFontDescriptor;
+using PlatformFont = NSFont;
 #else
-using PlatformFontDescriptor = UIFontDescriptor;
+using PlatformFont = UIFont;
 #endif
 
-PlatformFontDescriptor *fontDescriptorWithFontAttributes(NSDictionary *attributes);
+PlatformFont *fontWithAttributes(NSDictionary *attributes, CGFloat size);
 
 }

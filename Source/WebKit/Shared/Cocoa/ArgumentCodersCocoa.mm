@@ -50,11 +50,32 @@
 #if USE(APPKIT)
 using PlatformColor = NSColor;
 using PlatformFont = NSFont;
-using PlatformFontDescriptor = NSFontDescriptor;
 #else
 using PlatformColor = UIColor;
 using PlatformFont = UIFont;
-using PlatformFontDescriptor = UIFontDescriptor;
+#endif
+
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+
+@interface WKSecureCodingFontAttributeNormalizer : NSObject <NSKeyedArchiverDelegate>
+@end
+
+@implementation WKSecureCodingFontAttributeNormalizer
+
+- (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
+{
+    if ([object isKindOfClass:[NSFont class]]) {
+        NSFont *font = static_cast<NSFont *>(object);
+        // Recreate any serialized fonts after normalizing the
+        // font attributes to work around <rdar://problem/51657880>.
+        return WebKit::fontWithAttributes(font.fontDescriptor.fontAttributes, 0);
+    }
+
+    return object;
+}
+
+@end
+
 #endif
 
 namespace IPC {
@@ -331,8 +352,7 @@ static Optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    PlatformFontDescriptor *fontDescriptor = WebKit::fontDescriptorWithFontAttributes(fontAttributes.get());
-    return { [PlatformFont fontWithDescriptor:fontDescriptor size:0] };
+    return { WebKit::fontWithAttributes(fontAttributes.get(), 0) };
 
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -359,8 +379,18 @@ static inline Optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
 static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureCoding> object)
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
+
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+    auto delegate = adoptNS([[WKSecureCodingFontAttributeNormalizer alloc] init]);
+    [archiver setDelegate:delegate.get()];
+#endif
+
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+    [archiver setDelegate:nil];
+#endif
 
     encode(encoder, (__bridge CFDataRef)[archiver encodedData]);
 }

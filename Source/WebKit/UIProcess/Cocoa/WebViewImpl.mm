@@ -2890,11 +2890,7 @@ void WebViewImpl::updateFontManagerIfNeeded()
         if (!attributeDictionary)
             return;
 
-        PlatformFontDescriptor *descriptor = fontDescriptorWithFontAttributes(attributeDictionary);
-        if (!descriptor)
-            return;
-
-        NSFont *font = [NSFont fontWithDescriptor:descriptor size:fontSize];
+        PlatformFont *font = fontWithAttributes(attributeDictionary, fontSize);
         if (!font)
             return;
 
