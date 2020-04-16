@@ -5078,7 +5078,40 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return CGRectZero;
 }
 
-- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+- (BOOL)_isTextInputContextFocused:(_WKTextInputContext *)context
+{
+    ASSERT(context);
+    // We ignore bounding rect changes as the bounding rect of the focused element is not kept up-to-date.
+    return self._hasFocusedElement && context._textInputContext.isSameElement(_focusedElementInformation.elementContext);
+}
+
+- (void)_focusTextInputContext:(_WKTextInputContext *)context placeCaretAt:(CGPoint)point completionHandler:(void (^)(UIResponder<UITextInput> *))completionHandler
+{
+    ASSERT(context);
+    if (![self becomeFirstResponder]) {
+        completionHandler(nil);
+        return;
+    }
+    if ([self _isTextInputContextFocused:context]) {
+        completionHandler(_focusedElementInformation.isReadOnly ? nil : self);
+        return;
+    }
+    _usingGestureForSelection = YES;
+    auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = [context copy], completionHandler = makeBlockPtr(completionHandler)] (bool success) {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf)
+            strongSelf->_usingGestureForSelection = NO;
+        if (!strongSelf || !success) {
+            completionHandler(nil);
+            return;
+        }
+        bool focusedAndEditable = [strongSelf _isTextInputContextFocused:context] && !strongSelf->_focusedElementInformation.isReadOnly;
+        completionHandler(focusedAndEditable ? strongSelf.autorelease() : nil);
+    };
+    _page->focusTextInputContextAndPlaceCaret(context._textInputContext, WebCore::IntPoint { point }, WTFMove(checkFocusedElement));
+}
+
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler
 {
 #if ENABLE(EDITABLE_REGION)
     if (!self.webView._editable && !WebKit::mayContainEditableElementsInRect(self, rect)) {

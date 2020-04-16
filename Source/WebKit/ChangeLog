@@ -1,3 +1,41 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add a way to focus a text input and place a caret
+        https://bugs.webkit.org/show_bug.cgi?id=210611
+        <rdar://problem/61893062>
+
+        Reviewed by Darin Adler.
+
+        Add some IPI that will be used by code in WebKitAdditions to focus a text input context
+        and place the caret in it. This will replace the existing -focusTextInput SPI, which I
+        will remove in a subsequent commit.
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]): Fix up code style
+        of signature while I am here.
+        (-[WKWebView _focusTextInputContext:placeCaretAt:completionHandler:]): Added.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _isTextInputContextFocused:]): Added.
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]): Added.
+        (-[WKContentView _requestTextInputContextsInRect:completionHandler:]): Fix up code style
+        of signature while I am here.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::focusTextInputContextAndPlaceCaret):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::focusTextInputContext): Use auto now that elementForContext() returns a RefPtr.
+        (WebKit::WebPage::elementForContext const): Have it return a RefPtr instead of a raw
+        pointer so callers don't have to remember to take out a ref of otherwise be mindful
+        of the element's lifetime.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::removeTextPlaceholder): Use auto now that elementForContext() returns a RefPtr.
+        (WebKit::WebPage::requestDocumentEditingContext): Ditto.
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret): Added.
+
 2020-04-16  Chris Dumez  <cdumez@apple.com>
 
         Use safeRoundPage() instead of round_page() in SharedMemory

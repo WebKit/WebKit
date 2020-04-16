@@ -6913,7 +6913,7 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
 
 void WebPage::focusTextInputContext(const WebCore::ElementContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RefPtr<Element> element = elementForContext(textInputContext);
+    auto element = elementForContext(textInputContext);
 
     if (element)
         element->focus();
@@ -6928,7 +6928,7 @@ void WebPage::setCanShowPlaceholder(const WebCore::ElementContext& elementContex
         downcast<HTMLTextFormControlElement>(*element).setCanShowPlaceholder(canShowPlaceholder);
 }
 
-Element* WebPage::elementForContext(const WebCore::ElementContext& elementContext) const
+RefPtr<Element> WebPage::elementForContext(const ElementContext& elementContext) const
 {
     if (elementContext.webPageIdentifier != m_identifier)
         return nullptr;

@@ -42,7 +42,7 @@
 
 @implementation WKWebView (WKTestingIOS)
 
-- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler
 {
     // Adjust returned bounding rects to be in WKWebView coordinates.
     auto adjustedRect = [self convertRect:rect toView:_contentView.get()];
@@ -60,6 +60,12 @@
         }
         completionHandler(adjustedContexts.autorelease());
     }];
+}
+
+- (void)_focusTextInputContext:(_WKTextInputContext *)context placeCaretAt:(CGPoint)point completionHandler:(void (^)(UIResponder<UITextInput> *))completionHandler
+{
+    auto adjustedPoint = [self convertPoint:point toView:_contentView.get()];
+    [_contentView _focusTextInputContext:context placeCaretAt:adjustedPoint completionHandler:completionHandler];
 }
 
 - (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler

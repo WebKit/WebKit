@@ -647,6 +647,8 @@ public:
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 
 #if PLATFORM(IOS_FAMILY)
+    void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
+
     bool shouldRevealCurrentSelectionAfterInsertion() const { return m_shouldRevealCurrentSelectionAfterInsertion; }
     void setShouldRevealCurrentSelectionAfterInsertion(bool);
 
@@ -1250,7 +1252,7 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    WebCore::Element* elementForContext(const WebCore::ElementContext&) const;
+    RefPtr<WebCore::Element> elementForContext(const WebCore::ElementContext&) const;
     Optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
 
     void startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&&, CompletionHandler<void()>&&);

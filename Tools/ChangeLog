@@ -1,5 +1,23 @@
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Add a way to focus a text input and place a caret
+        https://bugs.webkit.org/show_bug.cgi?id=210611
+        <rdar://problem/61893062>
+
+        Reviewed by Darin Adler.
+
+        Add some tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (-[TestWKWebView synchronouslyFocusTextInputContext:placeCaretAt:]): Added.
+        (webViewLoadHTMLStringAndWaitForAllFramesToPaint): Use the bundle's TestWebKitAPI.resources directory
+        as the base URL so that we have a valid file URL. Some of the tests will then
+        call -_setAllowUniversalAccessFromFileURLs to allow the main frame access to
+        the unique-origin child frame contents.
+        (TEST):
+
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r259762): Should always hit test for editable elements if the WKWebView is fully editable
         https://bugs.webkit.org/show_bug.cgi?id=210558
         <rdar://problem/61798347>

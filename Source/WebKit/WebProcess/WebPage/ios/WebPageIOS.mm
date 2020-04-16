@@ -129,6 +129,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/TextPlaceholderElement.h>
 #import <WebCore/UserAgent.h>
+#import <WebCore/UserGestureIndicator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <wtf/MathExtras.h>
@@ -4045,9 +4046,9 @@ void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(
     completionHandler(placeholder ? contextForElement(*placeholder) : WTF::nullopt);
 }
 
-void WebPage::removeTextPlaceholder(const WebCore::ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
+void WebPage::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)
 {
-    if (RefPtr<Element> element = elementForContext(placeholder)) {
+    if (auto element = elementForContext(placeholder)) {
         RELEASE_ASSERT(is<TextPlaceholderElement>(element));
         if (RefPtr<Frame> frame = element->document().frame())
             frame->editor().removeTextPlaceholder(downcast<TextPlaceholderElement>(*element));
@@ -4140,7 +4141,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     bool wantsMarkedTextRects = request.options.contains(DocumentEditingContextRequest::Options::MarkedTextRects);
 
     if (auto textInputContext = request.textInputContext) {
-        RefPtr<Element> element = elementForContext(*textInputContext);
+        auto element = elementForContext(*textInputContext);
         if (!element) {
             completionHandler({ });
             return;
@@ -4294,6 +4295,44 @@ void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCur
         return;
     m_page->revealCurrentSelection();
     scheduleFullEditorStateUpdate();
+}
+
+void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto target = elementForContext(elementContext);
+    if (!target) {
+        completionHandler(false);
+        return;
+    }
+
+    ASSERT(target->document().frame());
+    auto targetFrame = makeRef(*target->document().frame());
+
+    targetFrame->document()->updateLayoutIgnorePendingStylesheets();
+
+    // Performing layout could have could torn down the element's renderer. Check that we still
+    // have one. Otherwise, bail out as this function only focuses elements that have a visual
+    // representation.
+    if (!target->renderer()) {
+        completionHandler(false);
+        return;
+    }
+
+    UserGestureIndicator gestureIndicator { ProcessingUserGesture, &target->document() };
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
+    bool didFocus = m_page->focusController().setFocusedElement(target.get(), targetFrame);
+
+    // Setting the focused element could tear down the element's renderer. Check that we still have one.
+    if (!didFocus || !target->renderer()) {
+        completionHandler(false);
+        return;
+    }
+    ASSERT(m_focusedElement == target);
+    // The function visiblePositionInFocusedNodeForPoint constrains the point to be inside
+    // the bounds of the target element.
+    auto position = visiblePositionInFocusedNodeForPoint(targetFrame, point, true /* isInteractingWithFocusedElement */);
+    targetFrame->selection().setSelectedRange(Range::create(*targetFrame->document(), position, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
+    completionHandler(true);
 }
 
 void WebPage::platformDidScalePage()
