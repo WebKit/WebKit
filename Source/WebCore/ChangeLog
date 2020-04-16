@@ -1,3 +1,18 @@
+2020-04-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Clean a couple of unused-parameters warnings
+        https://bugs.webkit.org/show_bug.cgi?id=210596
+
+        Unreviewed.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::wouldTaintOrigin const): Remove
+        a spurious UNUSED_PARAM() for an actually used parameter.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateSecurityDiscCharacters):
+
 2020-04-16  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update ScreenTime as playback state changes

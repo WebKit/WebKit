@@ -3512,6 +3512,7 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
 String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, String&& string)
 {
 #if !PLATFORM(COCOA)
+    UNUSED_PARAM(style);
     return WTFMove(string);
 #else
     if (style.textSecurity() == TextSecurity::None)
