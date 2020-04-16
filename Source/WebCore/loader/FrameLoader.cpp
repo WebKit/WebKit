@@ -3756,8 +3756,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
             request.setHTTPOrigin(origin);
         }
 
-        // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
-        // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
         addExtraFieldsToRequest(request, IsMainResource::Yes, loadType);
         
         // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
