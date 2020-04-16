@@ -27,6 +27,7 @@
 #include "SimpleRange.h"
 
 #include "CharacterData.h"
+#include "NodeTraversal.h"
 #include "Range.h"
 
 namespace WebCore {

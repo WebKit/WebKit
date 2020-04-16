@@ -46,6 +46,7 @@
 #include "SpeechSynthesisClient.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"
+#include "UserContentURLPattern.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
 #if ENABLE(WEBGL)

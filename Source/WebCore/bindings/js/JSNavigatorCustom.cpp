@@ -28,6 +28,7 @@
 
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ void JSNavigator::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 }
 
 #if ENABLE(MEDIA_STREAM)
-JSValue JSNavigator::getUserMedia(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+JSC::JSValue JSNavigator::getUserMedia(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
     auto* function = globalObject()->builtinInternalFunctions().jsDOMBindingInternals().m_getUserMediaShimFunction.get();
     ASSERT(function);
@@ -50,7 +51,7 @@ JSValue JSNavigator::getUserMedia(JSGlobalObject& lexicalGlobalObject, CallFrame
         arguments.append(callFrame.uncheckedArgument(cptr));
     ASSERT(!arguments.hasOverflowed());
     JSC::call(&lexicalGlobalObject, function, callType, callData, this, arguments);
-    return jsUndefined();
+    return JSC::jsUndefined();
 }
 #endif
 

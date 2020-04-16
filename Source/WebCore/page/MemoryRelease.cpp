@@ -51,6 +51,7 @@
 #include "StyledElement.h"
 #include "TextPainter.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/VM.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/SystemTracing.h>

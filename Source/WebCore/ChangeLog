@@ -1,3 +1,25 @@
+2020-04-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes mid April 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=210599
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * bindings/js/JSNavigatorCustom.cpp: Add missing JavaScriptCore/JSCJSValue.h header.
+        (WebCore::JSNavigator::getUserMedia): Prefix with the JSC:: namespace where needed.
+        * dom/ShadowRoot.cpp: Add missing WebAnimation.h header.
+        * dom/SimpleRange.cpp: Add missing NodeTraversal.h header.
+        * editing/RemoveNodePreservingChildrenCommand.cpp: Add missing Editing.h header.
+        * page/MemoryRelease.cpp: Add missing JavaScriptCore/VM.h header.
+        * page/PageConfiguration.cpp: Add missing UserContentURLPattern.h header.
+        * page/scrolling/ScrollingTree.h: Add missing EventTrackingRegions.h header.
+        * page/scrolling/ScrollingTreeLatchingController.cpp: Add missing Logging.h header.
+        * page/scrolling/ScrollingTreeLatchingController.h: Add missing ScrollTypes.h header,
+        and forward declaration for WebCore::PlatformWheelEvent.
+        * workers/service/server/SWServerJobQueue.cpp: Add missing Logging.h header.
+
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scrolling] Slow-repaint overflow scroll have force their enclosing scrollers to be slow too

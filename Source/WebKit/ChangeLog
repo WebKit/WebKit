@@ -1,3 +1,16 @@
+2020-04-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes mid April 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=210599
+
+        Unreviewed build fix.
+
+        * UIProcess/DeviceIdHashSaltStorage.cpp: Add missing Logging.h header.
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSetForcedAppearance): Add missing WebCore:: namespace
+        prefix.
+        * UIProcess/linux/MemoryPressureMonitor.h: Add missing wtf/text/CString.h header.
+
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r259762): Should always hit test for editable elements if the WKWebView is fully editable

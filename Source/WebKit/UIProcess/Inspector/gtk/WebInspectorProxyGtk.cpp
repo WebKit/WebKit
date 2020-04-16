@@ -332,7 +332,7 @@ bool WebInspectorProxy::platformIsFront()
     return false;
 }
 
-void WebInspectorProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+void WebInspectorProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance)
 {
     notImplemented();
 }

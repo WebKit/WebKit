@@ -29,6 +29,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 
 namespace IPC {
 class Attachment;

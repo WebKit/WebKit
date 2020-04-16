@@ -41,6 +41,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleSheetList.h"
+#include "WebAnimation.h"
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 

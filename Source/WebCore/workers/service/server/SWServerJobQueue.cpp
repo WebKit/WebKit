@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionData.h"
+#include "Logging.h"
 #include "SWServer.h"
 #include "SWServerRegistration.h"
 #include "SWServerWorker.h"

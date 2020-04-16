@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeviceIdHashSaltStorage.h"
 
+#include "Logging.h"
 #include "PersistencyUtils.h"
 
 #include <WebCore/SharedBuffer.h>

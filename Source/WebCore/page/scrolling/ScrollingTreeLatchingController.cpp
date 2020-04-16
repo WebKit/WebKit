@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "FloatPoint.h"
+#include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"

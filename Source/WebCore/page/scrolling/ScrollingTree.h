@@ -27,6 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "EventTrackingRegions.h"
 #include "PageIdentifier.h"
 #include "PlatformWheelEvent.h"
 #include "RectEdges.h"
