@@ -150,7 +150,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
@@ -2070,73 +2069,6 @@ static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipul
         Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
-}
-
-- (CGRect)_convertRectFromRootViewCoordinates:(CGRect)rectInRootViewCoordinates
-{
-    // FIXME: It should be easier to talk about WKWebView coordinates in a consistent and cross-platform way.
-    // Currently, neither "root view" nor "window" mean "WKWebView coordinates" on both platforms.
-    // See https://webkit.org/b/193649 and related bugs.
-#if PLATFORM(IOS_FAMILY)
-    return [self convertRect:rectInRootViewCoordinates fromView:_contentView.get()];
-#else
-    return rectInRootViewCoordinates;
-#endif
-}
-
-- (CGRect)_convertRectToRootViewCoordinates:(CGRect)rectInWebViewCoordinates
-{
-#if PLATFORM(IOS_FAMILY)
-    return [self convertRect:rectInWebViewCoordinates toView:_contentView.get()];
-#else
-    return rectInWebViewCoordinates;
-#endif
-}
-
-- (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
-{
-#if ENABLE(EDITABLE_REGION)
-#if PLATFORM(IOS_FAMILY)
-    if (![self usesStandardContentView])
-        return NO;
-#endif
-    CGRect rectInRootViewCoordinates = [self _convertRectToRootViewCoordinates:rect];
-    return WebKit::mayContainEditableElementsInRect(_contentView.get(), rectInRootViewCoordinates);
-#else
-    return NO;
-#endif
-}
-
-- (void)_requestTextInputContextsInRect:(CGRect)rectInWebViewCoordinates completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
-{
-#if PLATFORM(IOS_FAMILY)
-    if (![self usesStandardContentView]) {
-        completionHandler(@[]);
-        return;
-    }
-#endif
-#if ENABLE(EDITABLE_REGION)
-    if (![self _mayContainEditableElementsInRect:rectInWebViewCoordinates]) {
-        completionHandler(@[]);
-        return;
-    }
-#endif
-
-    CGRect rectInRootViewCoordinates = [self _convertRectToRootViewCoordinates:rectInWebViewCoordinates];
-
-    auto weakSelf = WeakObjCPtr<WKWebView>(self);
-    _page->textInputContextsInRect(rectInRootViewCoordinates, [weakSelf, capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::ElementContext>& contexts) {
-        RetainPtr<NSMutableArray> elements = adoptNS([[NSMutableArray alloc] initWithCapacity:contexts.size()]);
-
-        auto strongSelf = weakSelf.get();
-        for (const auto& context : contexts) {
-            WebCore::ElementContext contextWithWebViewBoundingRect = context;
-            contextWithWebViewBoundingRect.boundingRect = [strongSelf _convertRectFromRootViewCoordinates:context.boundingRect];
-            [elements addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:contextWithWebViewBoundingRect]).get()];
-        }
-
-        capturedCompletionHandler(elements.get());
-    });
 }
 
 - (void)_focusTextInputContext:(_WKTextInputContext *)textInputContext completionHandler:(void(^)(BOOL))completionHandler

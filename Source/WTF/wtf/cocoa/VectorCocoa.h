@@ -47,6 +47,7 @@ namespace WTF {
 //    Optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
 
 template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType&);
+template<typename VectorType, typename MapFunction> RetainPtr<NSArray> createNSArray(const VectorType&, MapFunction);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);
 
 // Implementation details of the function templates above.
@@ -57,6 +58,15 @@ template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType&
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
     for (auto& element : vector)
         [array addObject:getPtr(makeNSArrayElement(element))];
+    return array;
+}
+
+template<typename VectorType, typename MapFunction> RetainPtr<NSArray> createNSArray(const VectorType& vector, MapFunction mapFunction)
+{
+    auto size = vector.size();
+    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
+    for (auto& element : vector)
+        [array addObject:getPtr(mapFunction(element))];
     return array;
 }
 

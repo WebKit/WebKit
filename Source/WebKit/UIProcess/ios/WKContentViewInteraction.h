@@ -567,6 +567,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (WKDrawingCoordinator *)_drawingCoordinator;
 #endif
 
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler;
+
 #if USE(TEXT_INTERACTION_ADDITIONS)
 - (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context;
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context;

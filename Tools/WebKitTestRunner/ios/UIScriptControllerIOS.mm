@@ -838,7 +838,8 @@ JSObjectRef UIScriptControllerIOS::propertiesOfLayerWithID(uint64_t layerID) con
 
 bool UIScriptControllerIOS::mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height)
 {
-    return [webView() _mayContainEditableElementsInRect:CGRectMake(x, y, width, height)];
+    auto contentRect = CGRectMake(x, y, width, height);
+    return [webView() _mayContainEditableElementsInRect:[webView() convertRect:contentRect fromView:platformContentView()]];
 }
 
 static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)

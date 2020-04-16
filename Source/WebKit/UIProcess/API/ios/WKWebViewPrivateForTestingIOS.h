@@ -27,6 +27,10 @@
 
 #if TARGET_OS_IPHONE
 
+@class _WKTextInputContext;
+@class UIWKDocumentContext;
+@class UIWKDocumentRequest;
+
 @interface WKWebView (WKTestingIOS)
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
@@ -43,6 +47,11 @@
 - (void)dismissFormAccessoryView;
 - (void)_dismissFilePicker;
 - (void)selectFormAccessoryPickerRow:(int)rowIndex;
+
+- (BOOL)_mayContainEditableElementsInRect:(CGRect)rect;
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler;
+- (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
+- (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 

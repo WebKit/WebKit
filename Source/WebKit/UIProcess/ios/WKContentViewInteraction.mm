@@ -5078,6 +5078,26 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return CGRectZero;
 }
 
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+{
+#if ENABLE(EDITABLE_REGION)
+    if (!WebKit::mayContainEditableElementsInRect(self, rect)) {
+        completionHandler(@[ ]);
+        return;
+    }
+#endif
+    _page->textInputContextsInRect(rect, [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::ElementContext>& contexts) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || contexts.isEmpty()) {
+            completionHandler(@[ ]);
+            return;
+        }
+        completionHandler(createNSArray(contexts, [] (const auto& context) {
+            return adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:context]);
+        }).get());
+    });
+}
+
 #if USE(TEXT_INTERACTION_ADDITIONS)
 
 - (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
