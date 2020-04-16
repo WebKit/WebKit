@@ -28,7 +28,6 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "JSCPtrTag.h"
 #include "Options.h"
 #include "ProbeContext.h"
 #include <wtf/PrintStream.h>
@@ -56,9 +55,8 @@ static void stdFunctionCallback(Probe::Context& context)
     
 void MacroAssembler::probe(Function<void(Probe::Context&)> func)
 {
-    probe(tagCFunction<JITProbePtrTag>(stdFunctionCallback), new Function<void(Probe::Context&)>(WTFMove(func)));
+    probe(stdFunctionCallback, new Function<void(Probe::Context&)>(WTFMove(func)));
 }
-
 #endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC

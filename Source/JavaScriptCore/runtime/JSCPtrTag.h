@@ -39,10 +39,6 @@ using PtrTag = WTF::PtrTag;
     v(DisassemblyPtrTag) \
     v(ExceptionHandlerPtrTag) \
     v(ExecutableMemoryPtrTag) \
-    v(JITProbePtrTag) \
-    v(JITProbeTrampolinePtrTag) \
-    v(JITProbeExecutorPtrTag) \
-    v(JITProbeStackInitializationFunctionPtrTag) \
     v(JITThunkPtrTag) \
     v(JITStubRoutinePtrTag) \
     v(JSEntryPtrTag) \

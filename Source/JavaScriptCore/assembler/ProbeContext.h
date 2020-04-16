@@ -175,18 +175,10 @@ T CPUState::sp() const
 struct State;
 typedef void (*StackInitializationFunction)(State*);
 
-#if CPU(ARM64E)
-#define PROBE_FUNCTION_PTRAUTH __ptrauth(ptrauth_key_process_dependent_code, 0, JITProbePtrTag)
-#define PROBE_STACK_INITIALIZATION_FUNCTION_PTRAUTH __ptrauth(ptrauth_key_process_dependent_code, 0, JITProbeStackInitializationFunctionPtrTag)
-#else
-#define PROBE_FUNCTION_PTRAUTH
-#define PROBE_STACK_INITIALIZATION_FUNCTION_PTRAUTH
-#endif
-
 struct State {
-    Probe::Function PROBE_FUNCTION_PTRAUTH probeFunction;
+    Probe::Function probeFunction;
     void* arg;
-    StackInitializationFunction PROBE_STACK_INITIALIZATION_FUNCTION_PTRAUTH initializeStackFunction;
+    StackInitializationFunction initializeStackFunction;
     void* initializeStackArg;
     CPUState cpu;
 };
