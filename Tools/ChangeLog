@@ -1,5 +1,46 @@
 2020-04-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r260193. rdar://problem/61897737
+
+    REGRESSION (r259762): Should always hit test for editable elements if the WKWebView is fully editable
+    https://bugs.webkit.org/show_bug.cgi?id=210558
+    <rdar://problem/61798347>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    If the entire WKWebView is marked editable (via SPI -[WKWebView _setEditable]) then
+    always ask the web process to hit test the page because every element is considered
+    editable.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _requestTextInputContextsInRect:completionHandler:]):
+    
+    Tools:
+    
+    Add a test.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260193 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-16  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r259762): Should always hit test for editable elements if the WKWebView is fully editable
+            https://bugs.webkit.org/show_bug.cgi?id=210558
+            <rdar://problem/61798347>
+
+            Reviewed by Wenson Hsieh.
+
+            Add a test.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+            (TEST):
+
+2020-04-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r260192. rdar://problem/61897737
 
     Move -_requestTextInputContextsInRect to WKContentView to simplify implementation

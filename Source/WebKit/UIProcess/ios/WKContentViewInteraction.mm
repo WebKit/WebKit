@@ -5081,7 +5081,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
 {
 #if ENABLE(EDITABLE_REGION)
-    if (!WebKit::mayContainEditableElementsInRect(self, rect)) {
+    if (!self.webView._editable && !WebKit::mayContainEditableElementsInRect(self, rect)) {
         completionHandler(@[ ]);
         return;
     }
