@@ -145,35 +145,7 @@ bool PositionIterator::atEndOfNode() const
 
 bool PositionIterator::isCandidate() const
 {
-    if (!m_anchorNode)
-        return false;
-
-    RenderObject* renderer = m_anchorNode->renderer();
-    if (!renderer)
-        return false;
-    
-    if (renderer->style().visibility() != Visibility::Visible)
-        return false;
-
-    if (renderer->isBR())
-        return !m_offsetInAnchor && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
-
-    if (is<RenderText>(*renderer))
-        return !Position::nodeIsUserSelectNone(m_anchorNode) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
-
-    if (isRenderedTable(m_anchorNode) || editingIgnoresContent(*m_anchorNode))
-        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
-
-    if (!is<HTMLHtmlElement>(*m_anchorNode) && is<RenderBlockFlow>(*renderer)) {
-        RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
-        if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode)) {
-            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);
-            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
-        }
-    }
-
-    return false;
+    return m_anchorNode ? Position(*this).isCandidate() : false;
 }
 
 } // namespace WebCore

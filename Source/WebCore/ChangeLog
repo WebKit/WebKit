@@ -1,3 +1,19 @@
+2020-04-16  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: candidate.isCandidate() in WebCore::canonicalizeCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=130844
+        <rdar://59535009>
+
+        Reviewed by Geoffrey Garen.
+
+        Call Position::isCandidate() in PositionIterator::isCandidate so behavior of
+        candidate search become identical in both classes.
+
+        Test: editing/inserting/insert-in-br.html
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate const):
+
 2020-04-16  Rob Buis  <rbuis@igalia.com>
 
         Remove outdated comment from FrameLoader

@@ -1,3 +1,19 @@
+2020-04-16  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: candidate.isCandidate() in WebCore::canonicalizeCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=130844
+        <rdar://59535009>
+
+        Reviewed by Geoffrey Garen.
+
+        * editing/inserting/insert-in-br-expected.txt: Added.
+        * editing/inserting/insert-in-br.html: Added.
+        Added a regression test for the crash.
+
+        * editing/inserting/insert-list-in-table-cell-07-expected.txt:
+        Update node tree in expected text file due to behavior change in function 
+        PositionIterator::isCandidate. The visual result remains the same.
+
 2020-04-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Need method for setting selected range from NSRange
