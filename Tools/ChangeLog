@@ -1,3 +1,11 @@
+2020-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK clean build fix after r260132.
+
+        * TestWebKitAPI/gtk/main.cpp:
+        (main): Don't use GtkVersioning here. A dependency on the WebCore
+        private headers for this single file is overkill.
+
 2020-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] MiniBrowser opens new windows too small causing failures on some WPT tests
