@@ -1,3 +1,19 @@
+2020-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Use safeRoundPage() instead of round_page() in SharedMemory
+        https://bugs.webkit.org/show_bug.cgi?id=210608
+        <rdar://problem/60600443>
+
+        Reviewed by Geoffrey Garen.
+
+        Use new safeRoundPage() instead of round_page() in SharedMemory, to deal safely with overflows.
+
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::SharedMemory::allocate):
+        (WebKit::makeMemoryEntry):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+
 2020-04-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes mid April 2020 edition
