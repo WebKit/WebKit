@@ -53,6 +53,7 @@
 #include <wtf/Threading.h>
 #include <wtf/dtoa.h>
 #include <wtf/dtoa/cached-powers.h>
+#include <wtf/threads/Signals.h>
 
 namespace JSC {
 
@@ -99,6 +100,11 @@ void initializeThreading()
 
         if (VM::isInMiniMode())
             WTF::fastEnableMiniMode();
+
+#if HAVE(MACH_EXCEPTIONS)
+        // JSLock::lock() can call registerThreadForMachExceptionHandling() which crashes if this has not been called first.
+        WTF::startMachExceptionHandlerThread();
+#endif
     });
 }
 

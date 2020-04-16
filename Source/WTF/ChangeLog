@@ -1,3 +1,17 @@
+2020-04-15  Robin Morisset  <rmorisset@apple.com>
+
+        Flaky Test: fetch/fetch-worker-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=187257
+        <rdar://problem/48527526>
+
+        Reviewed by Yusuke Suzuki.
+
+        Make startMachExceptionHandlerThread visible so that we can make sure it is called whenever initializing JSC.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::startMachExceptionHandlerThread):
+        * wtf/threads/Signals.h:
+
 2020-04-14  Peng Liu  <peng.liu6@apple.com>
 
         Adopt interface AVAudioRoutingArbiter for Mac

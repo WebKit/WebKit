@@ -69,7 +69,7 @@ static struct sigaction oldActions[static_cast<size_t>(Signal::NumberOfSignals)]
 static mach_port_t exceptionPort;
 static constexpr size_t maxMessageSize = 1 * KB;
 
-static void startMachExceptionHandlerThread()
+void startMachExceptionHandlerThread()
 {
     static std::once_flag once;
     std::call_once(once, [] {
