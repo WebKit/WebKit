@@ -1,3 +1,19 @@
+2020-04-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Deprecation-guards fixes
+        https://bugs.webkit.org/show_bug.cgi?id=210600
+
+        Reviewed by Adrian Perez de Castro.
+
+        No new tests needed.
+
+        * platform/gtk/RenderThemeGadget.cpp:
+        (WebCore::RenderThemeGadget::backgroundColor const): Add missing
+        deprecation guards for deprecated GtkStyleContext API.
+        * platform/gtk/ThemeGtk.cpp:
+        (WebCore::ThemeGtk::ensurePlatformColors const): Switch to WK
+        deprecation guards from glib ones.
+
 2020-04-16  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: candidate.isCandidate() in WebCore::canonicalizeCandidate

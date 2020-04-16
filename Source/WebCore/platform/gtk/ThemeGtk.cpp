@@ -47,7 +47,7 @@ void ThemeGtk::ensurePlatformColors() const
     if (m_activeSelectionBackgroundColor.isValid())
         return;
 
-    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     GRefPtr<GtkWidgetPath> entryPath = adoptGRef(gtk_widget_path_new());
     gtk_widget_path_append_type(entryPath.get(), G_TYPE_NONE);
@@ -79,7 +79,7 @@ void ThemeGtk::ensurePlatformColors() const
     gtk_style_context_get_color(selectionContext.get(), gtk_style_context_get_state(selectionContext.get()), &color);
     m_inactiveSelectionForegroundColor = color;
 
-    G_GNUC_END_IGNORE_DEPRECATIONS;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void ThemeGtk::platformColorsDidChange()
