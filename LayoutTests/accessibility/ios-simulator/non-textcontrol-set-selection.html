@@ -1,0 +1,24 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+    
+<div id="result">
+line 1
+line 2
+line 3
+</div>
+    
+<script>
+    description("This test verifies we can set the selected text range on a non text control.");
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var div = accessibilityController.accessibleElementById("result");
+        div.setSelectedTextRange(0,6);
+        
+        shouldBecomeEqual("window.getSelection().toString()", "'line 1'", finishJSTest);
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

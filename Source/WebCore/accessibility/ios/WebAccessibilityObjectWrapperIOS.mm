@@ -2553,7 +2553,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 - (void)_accessibilitySetSelectedTextRange:(NSRange)range
 {
-    if (![self _prepareAccessibilityCall] || !self.axBackingObject->isTextControl())
+    if (![self _prepareAccessibilityCall])
         return;
     
     self.axBackingObject->setSelectedTextRange(PlainTextRange(range.location, range.length));
