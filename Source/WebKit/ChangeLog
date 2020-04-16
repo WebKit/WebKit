@@ -1,3 +1,34 @@
+2020-04-16  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r259898): WebKit-based Books views are all blank
+        https://bugs.webkit.org/show_bug.cgi?id=210590
+        <rdar://problem/61791109>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::enterAcceleratedCompositingWithRootLayer):
+        (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::WebViewImpl::setAcceleratedCompositingRootLayerAfterFlush): Deleted.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::didFirstLayerFlush):
+        The changes to setAcceleratedCompositingRootLayer in r259898 proved
+        to be wrong in a second way (the first being fixed in r260104): when
+        setAcceleratedCompositingRootLayer is called from updateAcceleratedCompositingMode,
+        because the layer hosting mode changed (Books appears to use app-hosted layers),
+        it incorrectly identified the root layer change as a process swap, resulting
+        in the correct layer never being unhidden.
+
+        This is enough mistakes that I'm going to try a different approach:
+        put setAcceleratedCompositingRootLayer back to the way it was before, where
+        it immediately updates the layer without any smarts, remove
+        setAcceleratedCompositingRootLayerAfterFlush, because it's no longer necessary,
+        and add enterAcceleratedCompositingWithRootLayer, which is specifically only
+        called in the case where DrawingArea will for-sure send us a follow-up
+        (didFirstLayerFlush) that will unhide the root layer.
+
 2020-04-16  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update ScreenTime as playback state changes
