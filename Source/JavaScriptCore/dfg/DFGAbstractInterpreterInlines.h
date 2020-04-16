@@ -2861,7 +2861,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:    
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case NewObject:
     case MaterializeNewInternalFieldObject:
         ASSERT(!!node->structure().get());
@@ -2945,7 +2945,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
     case PhantomNewArrayBuffer:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case PhantomNewRegexp:
     case BottomValue: {
         clearForNode(node);

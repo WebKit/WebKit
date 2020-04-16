@@ -100,6 +100,7 @@ class JSTypedArrayViewConstructor;
 class JSTypedArrayViewPrototype;
 class DirectEvalExecutable;
 class LLIntOffsetsExtractor;
+class MapIteratorPrototype;
 class MapPrototype;
 class Microtask;
 class ModuleLoader;
@@ -112,6 +113,7 @@ class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
+class SetIteratorPrototype;
 class SetPrototype;
 class SourceCode;
 class SourceOrigin;
@@ -322,6 +324,8 @@ public:
     WriteBarrier<GeneratorPrototype> m_generatorPrototype;
     WriteBarrier<AsyncGeneratorPrototype> m_asyncGeneratorPrototype;
     WriteBarrier<ArrayIteratorPrototype> m_arrayIteratorPrototype;
+    WriteBarrier<MapIteratorPrototype> m_mapIteratorPrototype;
+    WriteBarrier<SetIteratorPrototype> m_setIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -377,6 +381,8 @@ public:
     WriteBarrier<Structure> m_generatorStructure;
     WriteBarrier<Structure> m_asyncGeneratorStructure;
     WriteBarrier<Structure> m_arrayIteratorStructure;
+    WriteBarrier<Structure> m_mapIteratorStructure;
+    WriteBarrier<Structure> m_setIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_iteratorResultObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
@@ -646,6 +652,8 @@ public:
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
     ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
+    MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
+    SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -754,6 +762,8 @@ public:
     Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
     Structure* asyncGeneratorFunctionStructure() const { return m_asyncGeneratorFunctionStructure.get(); }
     Structure* arrayIteratorStructure() const { return m_arrayIteratorStructure.get(); }    
+    Structure* mapIteratorStructure() const { return m_mapIteratorStructure.get(); }
+    Structure* setIteratorStructure() const { return m_setIteratorStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }

@@ -1462,7 +1462,7 @@ public:
     void compileNewPromise(Node*);
     void compileNewGenerator(Node*);
     void compileNewAsyncGenerator(Node*);
-    void compileNewArrayIterator(Node*);
+    void compileNewInternalFieldObject(Node*);
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
     void compileToNumeric(Node*);
@@ -1478,7 +1478,7 @@ public:
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);
     template<typename JSClass, typename Operation>
-    void compileNewInternalFieldObject(Node*, Operation);
+    void compileNewInternalFieldObjectImpl(Node*, Operation);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

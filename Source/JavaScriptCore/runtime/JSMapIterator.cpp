@@ -27,26 +27,41 @@
 #include "JSMapIterator.h"
 
 #include "JSCInlines.h"
+#include "JSInternalFieldObjectImplInlines.h"
 #include "JSMap.h"
 
 namespace JSC {
 
-const ClassInfo JSMapIterator::s_info = { "Map Iterator", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapIterator) };
+const ClassInfo JSMapIterator::s_info = { "Map Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapIterator) };
 
-void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
+JSMapIterator* JSMapIterator::createWithInitialValues(VM& vm, Structure* structure)
+{
+    JSMapIterator* iterator = new (NotNull, allocateCell<JSMapIterator>(vm.heap)) JSMapIterator(vm, structure);
+    iterator->finishCreation(vm);
+    return iterator;
+}
+
+void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject, IterationKind kind)
 {
     Base::finishCreation(vm);
-    m_map.set(vm, this, iteratedObject);
-    setIterator(vm, m_map->head());
+    internalField(Field::MapBucket).set(vm, this, iteratedObject->head());
+    internalField(Field::IteratedObject).set(vm, this, iteratedObject);
+    internalField(Field::Kind).set(vm, this, jsNumber(static_cast<int32_t>(kind)));
+}
+
+void JSMapIterator::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    auto values = initialValues();
+    for (unsigned index = 0; index < values.size(); ++index)
+        Base::internalField(index).set(vm, this, values[index]);
 }
 
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
+    auto* thisObject = jsCast<JSMapIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_map);
-    visitor.append(thisObject->m_iter);
 }
 
 JSValue JSMapIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSValue value)

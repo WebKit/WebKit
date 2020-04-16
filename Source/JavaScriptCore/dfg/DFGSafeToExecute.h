@@ -549,7 +549,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewArrayWithSize:
     case NewArrayBuffer:
     case NewArrayWithSpread:
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case Spread:
     case NewRegexp:
     case NewSymbol:
@@ -620,7 +620,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomNewRegexp:
     case PutHint:

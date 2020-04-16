@@ -211,7 +211,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomDirectArguments:
     case PhantomCreateRest:
@@ -358,7 +358,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewAsyncGenerator:
     case NewArray:
     case NewArrayWithSpread:
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case Spread:
     case NewArrayWithSize:
     case NewArrayBuffer:

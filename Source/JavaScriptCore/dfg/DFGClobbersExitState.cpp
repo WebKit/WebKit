@@ -60,7 +60,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case NewRegexp:
     case NewSymbol:
     case NewStringObject:
@@ -70,7 +70,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case MaterializeNewInternalFieldObject:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:

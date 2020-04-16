@@ -657,10 +657,10 @@ public:
         children = AdjacencyList();
     }
 
-    void convertToPhantomNewArrayIterator()
+    void convertToPhantomNewInternalFieldObject()
     {
-        ASSERT(m_op == NewArrayIterator);
-        m_op = PhantomNewArrayIterator;
+        ASSERT(m_op == NewInternalFieldObject);
+        m_op = PhantomNewInternalFieldObject;
         m_flags &= ~NodeHasVarArgs;
         m_flags |= NodeMustGenerate;
         m_opInfo = OpInfoWrapper();
@@ -1984,7 +1984,7 @@ public:
         case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
-        case NewArrayIterator:
+        case NewInternalFieldObject:
         case NewStringObject:
             return true;
         default:
@@ -2161,7 +2161,7 @@ public:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncFunction:
         case PhantomNewAsyncGeneratorFunction:
-        case PhantomNewArrayIterator:
+        case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomNewRegexp:
             return true;

@@ -1538,20 +1538,6 @@ DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructi
 
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW
 
-Structure* VM::setIteratorStructureSlow()
-{
-    ASSERT(!m_setIteratorStructure);
-    m_setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
-    return m_setIteratorStructure.get();
-}
-
-Structure* VM::mapIteratorStructureSlow()
-{
-    ASSERT(!m_mapIteratorStructure);
-    m_mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
-    return m_mapIteratorStructure.get();
-}
-
 JSCell* VM::sentinelSetBucketSlow()
 {
     ASSERT(!m_sentinelSetBucket);

@@ -1061,8 +1061,11 @@ private:
         case NewGenerator:
         case CreateAsyncGenerator:
         case NewAsyncGenerator:
-        case NewArrayIterator:
             setPrediction(SpecObjectOther);
+            break;
+
+        case NewInternalFieldObject:
+            setPrediction(speculationFromStructure(m_currentNode->structure().get()));
             break;
             
         case ArraySlice:
@@ -1285,7 +1288,7 @@ private:
         case PhantomSpread:
         case PhantomNewArrayWithSpread:
         case PhantomNewArrayBuffer:
-        case PhantomNewArrayIterator:
+        case PhantomNewInternalFieldObject:
         case PhantomClonedArguments:
         case PhantomNewRegexp:
         case GetMyArgumentByVal:

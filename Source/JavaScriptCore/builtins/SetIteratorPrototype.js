@@ -31,7 +31,7 @@ function setIteratorNext(bucket, kind)
     var value;
 
     bucket = @setBucketNext(bucket);
-    @putByIdDirectPrivate(this, "setBucket", bucket);
+    @putSetIteratorInternalField(this, @setIteratorFieldSetBucket, bucket);
     var done = bucket === @sentinelSetBucket;
     if (!done) {
         value = @setBucketKey(bucket);
@@ -45,11 +45,10 @@ function next()
 {
     "use strict";
 
-    if (@isUndefinedOrNull(this))
-        @throwTypeError("%SetIteratorPrototype%.next requires that |this| not be null or undefined");
-
-    var bucket = @getByIdDirectPrivate(this, "setBucket");
-    if (bucket === @undefined)
+    if (!@isSetIterator(this))
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| be a Set Iterator instance");
-    return @setIteratorNext.@call(this, bucket, @getByIdDirectPrivate(this, "setIteratorKind"));
+
+    var bucket = @getSetIteratorInternalField(this, @setIteratorFieldSetBucket);
+    var kind = @getSetIteratorInternalField(this, @setIteratorFieldKind);
+    return @setIteratorNext.@call(this, bucket, kind);
 }

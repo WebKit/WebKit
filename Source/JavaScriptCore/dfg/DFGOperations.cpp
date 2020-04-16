@@ -2113,6 +2113,24 @@ JSCell* JIT_OPERATION operationNewArrayIterator(VM* vmPointer, Structure* struct
     return JSArrayIterator::createWithInitialValues(vm, structure);
 }
 
+JSCell* JIT_OPERATION operationNewMapIterator(VM* vmPointer, Structure* structure)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSMapIterator::createWithInitialValues(vm, structure);
+}
+
+JSCell* JIT_OPERATION operationNewSetIterator(VM* vmPointer, Structure* structure)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSSetIterator::createWithInitialValues(vm, structure);
+}
+
 JSCell* JIT_OPERATION operationCreateActivationDirect(VM* vmPointer, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)
 {
     VM& vm = *vmPointer;

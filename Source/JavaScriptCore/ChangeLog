@@ -1,3 +1,148 @@
+2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement JSMapIterator/JSSetIterator with JSInternalFieldObjectImpl
+        https://bugs.webkit.org/show_bug.cgi?id=210023
+
+        Reviewed by Keith Miller.
+
+        This patch reimplement JSMapIterator/JSSetIterator with JSInternalFieldObjectImpl.
+        This makes current JSFinalObject-based Map/SetIterator simple and small.
+        We generalize NewArrayIterator/PhantomNewArrayIterator to convert them to NewInternalFieldObject/PhantomNewInternalFieldObject
+        to support JSMapIterator/JSSetIterator too in DFG / FTL. This makes allocation efficient and object-allocation-sinking aware.
+
+        * builtins/BuiltinNames.h:
+        * builtins/MapIteratorPrototype.js:
+        (globalPrivate.mapIteratorNext):
+        (next):
+        * builtins/MapPrototype.js:
+        (globalPrivate.MapIterator): Deleted.
+        (values): Deleted.
+        (keys): Deleted.
+        (entries): Deleted.
+        * builtins/SetIteratorPrototype.js:
+        (globalPrivate.setIteratorNext):
+        (next):
+        * builtins/SetPrototype.js:
+        (globalPrivate.SetIterator): Deleted.
+        (values): Deleted.
+        (entries): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitIsMapIterator):
+        (JSC::BytecodeGenerator::emitIsSetIterator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::mapIteratorInternalFieldIndex):
+        (JSC::setIteratorInternalFieldIndex):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getMapIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getSetIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putMapIteratorInternalField):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putSetIteratorInternalField):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewInternalFieldObject):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::isPhantomAllocation):
+        (JSC::DFG::Node::convertToPhantomNewArrayIterator): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObjectImpl):
+        (JSC::DFG::SpeculativeJIT::compileNewGenerator):
+        (JSC::DFG::SpeculativeJIT::compileNewAsyncGenerator):
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObject):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayIterator): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewInternalFieldObjectImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewAsyncGenerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayIterator): Deleted.
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::cloneMapIteratorObject):
+        (Inspector::cloneSetIteratorObject):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayIterator.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::mapIteratorPrototype const):
+        (JSC::JSGlobalObject::setIteratorPrototype const):
+        (JSC::JSGlobalObject::mapIteratorStructure const):
+        (JSC::JSGlobalObject::setIteratorStructure const):
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::createWithInitialValues):
+        (JSC::JSMapIterator::finishCreation):
+        (JSC::JSMapIterator::visitChildren):
+        * runtime/JSMapIterator.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::createWithInitialValues):
+        (JSC::JSSetIterator::finishCreation):
+        (JSC::JSSetIterator::visitChildren):
+        * runtime/JSSetIterator.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::createMapIteratorObject):
+        (JSC::mapProtoFuncValues):
+        (JSC::mapProtoFuncKeys):
+        (JSC::mapProtoFuncEntries):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::createSetIteratorObject):
+        (JSC::setProtoFuncValues):
+        (JSC::setProtoFuncEntries):
+        * runtime/VM.cpp:
+        (JSC::VM::setIteratorStructureSlow): Deleted.
+        (JSC::VM::mapIteratorStructureSlow): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::setIteratorStructure): Deleted.
+        (JSC::VM::mapIteratorStructure): Deleted.
+
 2020-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use ensureStillAliveHere in FTL when content of storage should be kept alive

@@ -86,6 +86,8 @@
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
+#include "JSMapIterator.h"
+#include "JSSetIterator.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
@@ -1072,8 +1074,8 @@ private:
         case NewAsyncGenerator:
             compileNewAsyncGenerator();
             break;
-        case NewArrayIterator:
-            compileNewArrayIterator();
+        case NewInternalFieldObject:
+            compileNewInternalFieldObject();
             break;
         case NewStringObject:
             compileNewStringObject();
@@ -1597,7 +1599,7 @@ private:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncGeneratorFunction:
         case PhantomNewAsyncFunction:
-        case PhantomNewArrayIterator:
+        case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -6380,7 +6382,7 @@ private:
     }
 
     template<typename JSClass, typename Operation>
-    void compileNewInternalFieldObject(Operation operation)
+    void compileNewInternalFieldObjectImpl(Operation operation)
     {
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
@@ -6406,17 +6408,29 @@ private:
 
     void compileNewGenerator()
     {
-        compileNewInternalFieldObject<JSGenerator>(operationNewGenerator);
+        compileNewInternalFieldObjectImpl<JSGenerator>(operationNewGenerator);
     }
 
     void compileNewAsyncGenerator()
     {
-        compileNewInternalFieldObject<JSAsyncGenerator>(operationNewAsyncGenerator);
+        compileNewInternalFieldObjectImpl<JSAsyncGenerator>(operationNewAsyncGenerator);
     }
 
-    void compileNewArrayIterator()
+    void compileNewInternalFieldObject()
     {
-        compileNewInternalFieldObject<JSArrayIterator>(operationNewArrayIterator);
+        switch (m_node->structure()->typeInfo().type()) {
+        case JSArrayIteratorType:
+            compileNewInternalFieldObjectImpl<JSArrayIterator>(operationNewArrayIterator);
+            break;
+        case JSMapIteratorType:
+            compileNewInternalFieldObjectImpl<JSMapIterator>(operationNewMapIterator);
+            break;
+        case JSSetIteratorType:
+            compileNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
+            break;
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad structure");
+        }
     }
 
     void compileNewStringObject()
@@ -12453,6 +12467,12 @@ private:
         switch (m_node->structure()->typeInfo().type()) {
         case JSArrayIteratorType:
             compileMaterializeNewInternalFieldObjectImpl<JSArrayIterator>(operationNewArrayIterator);
+            break;
+        case JSMapIteratorType:
+            compileMaterializeNewInternalFieldObjectImpl<JSMapIterator>(operationNewMapIterator);
+            break;
+        case JSSetIteratorType:
+            compileMaterializeNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad structure");

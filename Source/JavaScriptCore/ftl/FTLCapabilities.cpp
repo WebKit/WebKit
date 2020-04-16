@@ -81,7 +81,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewSymbol:
     case NewArray:
     case NewArrayWithSpread:
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case Spread:
     case NewArrayBuffer:
     case NewTypedArray:
@@ -292,7 +292,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case PhantomCreateActivation:
     case PhantomNewRegexp:
     case PutHint:

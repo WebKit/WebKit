@@ -694,9 +694,6 @@ public:
     Strong<Structure> bigIntStructure;
     Strong<Structure> executableToCodeBlockEdgeStructure;
 
-    Strong<Structure> m_setIteratorStructure;
-    Strong<Structure> m_mapIteratorStructure;
-
     Strong<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 
     Strong<JSCell> m_sentinelSetBucket;
@@ -728,20 +725,6 @@ public:
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
     Strong<JSBigInt> bigIntConstantOne;
-
-    Structure* setIteratorStructure()
-    {
-        if (LIKELY(m_setIteratorStructure))
-            return m_setIteratorStructure.get();
-        return setIteratorStructureSlow();
-    }
-
-    Structure* mapIteratorStructure()
-    {
-        if (LIKELY(m_mapIteratorStructure))
-            return m_mapIteratorStructure.get();
-        return mapIteratorStructureSlow();
-    }
 
     JSCell* sentinelSetBucket()
     {
@@ -1123,10 +1106,8 @@ private:
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
 
-    JS_EXPORT_PRIVATE Structure* setIteratorStructureSlow();
-    JS_EXPORT_PRIVATE Structure* mapIteratorStructureSlow();
-    JSCell* sentinelSetBucketSlow();
-    JSCell* sentinelMapBucketSlow();
+    JS_EXPORT_PRIVATE JSCell* sentinelSetBucketSlow();
+    JS_EXPORT_PRIVATE JSCell* sentinelMapBucketSlow();
     JSPropertyNameEnumerator* emptyPropertyNameEnumeratorSlow();
 
     void updateStackLimits();

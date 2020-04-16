@@ -1944,7 +1944,7 @@ private:
         case PhantomNewGeneratorFunction:
         case PhantomNewAsyncGeneratorFunction:
         case PhantomNewAsyncFunction:
-        case PhantomNewArrayIterator:
+        case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomCreateRest:
@@ -2536,7 +2536,7 @@ private:
         case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
-        case NewArrayIterator:
+        case NewInternalFieldObject:
         case NewRegexp:
         case IsTypedArrayView:
         case IsEmpty:

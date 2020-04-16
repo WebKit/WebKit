@@ -1,3 +1,33 @@
+2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement JSMapIterator/JSSetIterator with JSInternalFieldObjectImpl
+        https://bugs.webkit.org/show_bug.cgi?id=210023
+
+        Reviewed by Keith Miller.
+
+        * stress/map-iteration-oas.js: Added.
+        (shouldBe):
+        (test):
+        * stress/map-iterator-creation-fail-dfg.js: Added.
+        (shouldThrow):
+        (test2):
+        (test3):
+        * stress/map-iterator-creation-fail.js: Added.
+        (shouldThrow):
+        (i.shouldThrow):
+        (test2):
+        (test3):
+        * stress/set-iteration-oas.js: Added.
+        (shouldBe):
+        * stress/set-iterator-creation-fail-dfg.js: Added.
+        (shouldThrow):
+        (set shouldThrow):
+        * stress/set-iterator-creation-fail.js: Added.
+        (shouldThrow):
+        (i.shouldThrow):
+        (test2):
+        (test3):
+
 2020-04-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Extension values should default to true, canonicalize without "-true"

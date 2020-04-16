@@ -3261,8 +3261,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case NewArrayIterator: {
-        compileNewArrayIterator(node);
+    case NewInternalFieldObject: {
+        compileNewInternalFieldObject(node);
         break;
     }
 
@@ -4219,7 +4219,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomCreateActivation:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case PhantomNewRegexp:
     case PutHint:
     case CheckStructureImmediate:

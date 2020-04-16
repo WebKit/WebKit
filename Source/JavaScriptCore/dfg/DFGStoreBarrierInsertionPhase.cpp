@@ -338,7 +338,7 @@ private:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayBuffer:
-            case NewArrayIterator:
+            case NewInternalFieldObject:
             case NewTypedArray:
             case NewRegexp:
             case NewStringObject:

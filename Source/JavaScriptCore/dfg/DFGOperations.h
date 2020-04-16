@@ -126,6 +126,8 @@ char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(JSGlobalObject*, Str
 char* JIT_OPERATION operationNewFloat64ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewArrayIterator(VM*, Structure*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewMapIterator(VM*, Structure*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewSetIterator(VM*, Structure*) WTF_INTERNAL;
 
 void JIT_OPERATION operationPutByValStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValNonStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;

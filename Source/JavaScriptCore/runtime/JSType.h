@@ -112,6 +112,8 @@ enum JSType : uint8_t {
     JSGeneratorType,
     JSAsyncGeneratorType,
     JSArrayIteratorType,
+    JSMapIteratorType,
+    JSSetIteratorType,
     JSStringIteratorType,
     JSPromiseType,
     JSMapType,

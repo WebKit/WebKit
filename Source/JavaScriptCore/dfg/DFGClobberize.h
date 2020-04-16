@@ -1605,7 +1605,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
-    case NewArrayIterator:
+    case NewInternalFieldObject:
     case NewRegexp:
     case NewSymbol:
     case NewStringObject:
@@ -1615,7 +1615,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
-    case PhantomNewArrayIterator:
+    case PhantomNewInternalFieldObject:
     case MaterializeNewInternalFieldObject:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:

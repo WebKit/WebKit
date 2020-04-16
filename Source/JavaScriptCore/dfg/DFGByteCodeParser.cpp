@@ -60,9 +60,11 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSMapIterator.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSPromiseConstructor.h"
+#include "JSSetIterator.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
 #include "OpcodeInlines.h"
@@ -2416,7 +2418,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             Node* object = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
 
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-            Node* iterator = addToGraph(NewArrayIterator, OpInfo(m_graph.registerStructure(globalObject->arrayIteratorStructure())));
+            Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->arrayIteratorStructure())));
 
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), iterator, object);
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Kind)), iterator, kindNode);
@@ -3178,6 +3180,68 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             addVarArgChild(hash);
             addToGraph(Node::VarArg, MapSet, OpInfo(0), OpInfo(0));
             setResult(base);
+            return true;
+        }
+
+        case JSMapEntriesIntrinsic:
+        case JSMapKeysIntrinsic:
+        case JSMapValuesIntrinsic:
+        case JSSetEntriesIntrinsic:
+        case JSSetValuesIntrinsic: {
+            insertChecks();
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            IterationKind kind = IterationKind::Values;
+            UseKind useKind = MapObjectUse;
+            switch (intrinsic) {
+            case JSMapValuesIntrinsic:
+                kind = IterationKind::Values;
+                useKind = MapObjectUse;
+                break;
+            case JSMapKeysIntrinsic:
+                kind = IterationKind::Keys;
+                useKind = MapObjectUse;
+                break;
+            case JSMapEntriesIntrinsic:
+                kind = IterationKind::Entries;
+                useKind = MapObjectUse;
+                break;
+            case JSSetValuesIntrinsic:
+                kind = IterationKind::Values;
+                useKind = SetObjectUse;
+                break;
+            case JSSetEntriesIntrinsic:
+                kind = IterationKind::Entries;
+                useKind = SetObjectUse;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            addToGraph(Check, Edge(base, useKind));
+            Node* bucket = addToGraph(GetMapBucketHead, Edge(base, useKind));
+
+            Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(kind)));
+
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            Node* iterator = nullptr;
+            if (useKind == MapObjectUse) {
+                iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->mapIteratorStructure())));
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::MapBucket)), iterator, bucket);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::IteratedObject)), iterator, base);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSMapIterator::Field::Kind)), iterator, kindNode);
+            } else {
+                iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->setIteratorStructure())));
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::SetBucket)), iterator, bucket);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::IteratedObject)), iterator, base);
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSSetIterator::Field::Kind)), iterator, kindNode);
+            }
+
+            setResult(iterator);
             return true;
         }
 

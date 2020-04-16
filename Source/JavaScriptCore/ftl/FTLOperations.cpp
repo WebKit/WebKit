@@ -44,6 +44,8 @@
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMapIterator.h"
+#include "JSSetIterator.h"
 #include "RegExpObject.h"
 
 IGNORE_WARNINGS_BEGIN("frame-address")
@@ -118,15 +120,33 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globa
         break;
     }
 
-    case PhantomNewArrayIterator: {
-        JSArrayIterator* arrayIterator = jsCast<JSArrayIterator*>(JSValue::decode(*encodedValue));
+    case PhantomNewInternalFieldObject: {
+        auto materialize = [&] (auto* target) {
+            using JSCellType = std::remove_reference_t<decltype(*target)>;
+            // Figure out what to populate the iterator with
+            for (unsigned i = materialization->properties().size(); i--;) {
+                const ExitPropertyValue& property = materialization->properties()[i];
+                if (property.location().kind() != InternalFieldObjectPLoc)
+                    continue;
+                ASSERT(property.location().info() < JSCellType::numberOfInternalFields);
+                target->internalField(static_cast<typename JSCellType::Field>(property.location().info())).set(vm, target, JSValue::decode(values[i]));
+            }
+        };
 
-        // Figure out what to populate the iterator with
-        for (unsigned i = materialization->properties().size(); i--;) {
-            const ExitPropertyValue& property = materialization->properties()[i];
-            if (property.location().kind() != InternalFieldObjectPLoc)
-                continue;
-            arrayIterator->internalField(static_cast<JSArrayIterator::Field>(property.location().info())).set(vm, arrayIterator, JSValue::decode(values[i]));
+        JSObject* target = jsCast<JSObject*>(JSValue::decode(*encodedValue));
+        switch (target->type()) {
+        case JSArrayIteratorType:
+            materialize(jsCast<JSArrayIterator*>(target));
+            break;
+        case JSMapIteratorType:
+            materialize(jsCast<JSMapIterator*>(target));
+            break;
+        case JSSetIteratorType:
+            materialize(jsCast<JSSetIterator*>(target));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
         break;
     }
@@ -293,7 +313,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
         return result;
     }
 
-    case PhantomNewArrayIterator: {
+    case PhantomNewInternalFieldObject: {
         // Figure out what structure.
         Structure* structure = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
@@ -305,14 +325,29 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
         }
         RELEASE_ASSERT(structure);
 
-        JSArrayIterator* result = JSArrayIterator::createWithInitialValues(vm, structure);
-
-        RELEASE_ASSERT(materialization->properties().size() - 1 == JSArrayIterator::numberOfInternalFields);
-
         // The real values will be put subsequently by
         // operationPopulateNewObjectInOSR. See the PhantomNewObject
         // case for details.
-        return result;
+        switch (structure->typeInfo().type()) {
+        case JSArrayIteratorType: {
+            JSArrayIterator* result = JSArrayIterator::createWithInitialValues(vm, structure);
+            RELEASE_ASSERT(materialization->properties().size() - 1 == JSArrayIterator::numberOfInternalFields);
+            return result;
+        }
+        case JSMapIteratorType: {
+            JSMapIterator* result = JSMapIterator::createWithInitialValues(vm, structure);
+            RELEASE_ASSERT(materialization->properties().size() - 1 == JSMapIterator::numberOfInternalFields);
+            return result;
+        }
+        case JSSetIteratorType: {
+            JSSetIterator* result = JSSetIterator::createWithInitialValues(vm, structure);
+            RELEASE_ASSERT(materialization->properties().size() - 1 == JSSetIterator::numberOfInternalFields);
+            return result;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
+        }
     }
 
     case PhantomCreateRest:

@@ -58,7 +58,9 @@
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMapIterator.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSSetIterator.h"
 #include "LinkBuffer.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
@@ -12970,7 +12972,7 @@ void SpeculativeJIT::compileNewPromise(Node* node)
 }
 
 template<typename JSClass, typename Operation>
-void SpeculativeJIT::compileNewInternalFieldObject(Node* node, Operation operation)
+void SpeculativeJIT::compileNewInternalFieldObjectImpl(Node* node, Operation operation)
 {
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
@@ -12998,17 +13000,29 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node, Operation operati
 
 void SpeculativeJIT::compileNewGenerator(Node* node)
 {
-    compileNewInternalFieldObject<JSGenerator>(node, operationNewGenerator);
+    compileNewInternalFieldObjectImpl<JSGenerator>(node, operationNewGenerator);
 }
 
 void SpeculativeJIT::compileNewAsyncGenerator(Node* node)
 {
-    compileNewInternalFieldObject<JSAsyncGenerator>(node, operationNewAsyncGenerator);
+    compileNewInternalFieldObjectImpl<JSAsyncGenerator>(node, operationNewAsyncGenerator);
 }
 
-void SpeculativeJIT::compileNewArrayIterator(Node* node)
+void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
 {
-    compileNewInternalFieldObject<JSArrayIterator>(node, operationNewArrayIterator);
+    switch (node->structure()->typeInfo().type()) {
+    case JSArrayIteratorType:
+        compileNewInternalFieldObjectImpl<JSArrayIterator>(node, operationNewArrayIterator);
+        break;
+    case JSMapIteratorType:
+        compileNewInternalFieldObjectImpl<JSMapIterator>(node, operationNewMapIterator);
+        break;
+    case JSSetIteratorType:
+        compileNewInternalFieldObjectImpl<JSSetIterator>(node, operationNewSetIterator);
+        break;
+    default:
+        DFG_CRASH(m_graph, node, "Bad structure");
+    }
 }
 
 void SpeculativeJIT::compileToPrimitive(Node* node)
