@@ -1,3 +1,28 @@
+2020-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        A slow-starting swipe always latches on the root node
+        https://bugs.webkit.org/show_bug.cgi?id=210618
+
+        Reviewed by Tim Horton.
+
+        If the first event in a wheel event gesture had zero delta, scrolling thread logic would
+        always latch on the root node and the rest of the gesture would scroll the document.
+
+        Fix by not latching for events with zero delta.
+
+        Test: scrollingcoordinator/mac/latching/zero-delta-began-should-not-latch.html
+
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::nodeDidHandleEvent):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::canScrollWithWheelEvent const):
+        (WebCore::ScrollingTreeScrollingNode::eventCanScrollContents const):
+        (WebCore::ScrollingTreeScrollingNode::scrollLimitReached const): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::shouldConsiderLatching const): FIXME comment. Ideally this would
+        check delta() that that's too scarey at the moment.
+
 2020-04-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix after r260182; guard call to fullscreenManager() for ports which do not

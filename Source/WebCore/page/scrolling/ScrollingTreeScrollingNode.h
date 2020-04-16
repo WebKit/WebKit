@@ -100,7 +100,7 @@ public:
 
     bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
 
-    bool scrollLimitReached(const PlatformWheelEvent&) const;
+    bool eventCanScrollContents(const PlatformWheelEvent&) const;
 
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }

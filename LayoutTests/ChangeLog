@@ -1,3 +1,13 @@
+2020-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        A slow-starting swipe always latches on the root node
+        https://bugs.webkit.org/show_bug.cgi?id=210618
+
+        Reviewed by Tim Horton.
+
+        * scrollingcoordinator/mac/latching/zero-delta-began-should-not-latch-expected.txt: Added.
+        * scrollingcoordinator/mac/latching/zero-delta-began-should-not-latch.html: Added.
+
 2020-04-16  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: candidate.isCandidate() in WebCore::canonicalizeCandidate

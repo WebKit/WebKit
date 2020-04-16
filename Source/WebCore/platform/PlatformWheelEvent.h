@@ -202,6 +202,7 @@ inline bool PlatformWheelEvent::useLatchedEventElement() const
 
 inline bool PlatformWheelEvent::shouldConsiderLatching() const
 {
+    // FIXME: This should disallow latching if the delta is zero.
     return m_phase == PlatformWheelEventPhaseBegan || m_phase == PlatformWheelEventPhaseMayBegin;
 }
 
