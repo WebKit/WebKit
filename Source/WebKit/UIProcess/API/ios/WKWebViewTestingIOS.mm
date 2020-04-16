@@ -80,7 +80,11 @@
 
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
 {
+#if ENABLE(EDITABLE_REGION)
     return WebKit::mayContainEditableElementsInRect(_contentView.get(), [self convertRect:rect toView:_contentView.get()]);
+#else
+    return NO;
+#endif
 }
 
 - (void)keyboardAccessoryBarNext

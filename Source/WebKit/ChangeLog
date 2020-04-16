@@ -1,3 +1,14 @@
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS build when building without EDITABLE_REGION after r260192
+        (https://bugs.webkit.org/show_bug.cgi?id=210398)
+
+        Have -_mayContainEditableElementsInRect compile-time conditionally call WebKit::mayContainEditableElementsInRect().
+        If ENABLE(EDITABLE_REGION) is not enabled then return NO.
+
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _mayContainEditableElementsInRect:]):
+
 2020-04-16  David Kilzer  <ddkilzer@apple.com>
 
         Rollout: [IPC Hardening] MachMessage::create() should use checked arithmetic
