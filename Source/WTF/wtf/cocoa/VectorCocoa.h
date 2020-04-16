@@ -47,26 +47,28 @@ namespace WTF {
 //    Optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
 
 template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType&);
-template<typename VectorType, typename MapFunction> RetainPtr<NSArray> createNSArray(const VectorType&, MapFunction);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);
+
+// This overload of createNSArray takes a function to map each vector element to an Objective-C object.
+// The map function has the same interface as the makeNSArrayElement function above, but can be any
+// function including a lambda, a function-like object, or Function<>.
+template<typename VectorType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(const VectorType&, const MapFunctionType&);
 
 // Implementation details of the function templates above.
 
 template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType& vector)
 {
-    auto size = vector.size();
-    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
+    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
     for (auto& element : vector)
         [array addObject:getPtr(makeNSArrayElement(element))];
     return array;
 }
 
-template<typename VectorType, typename MapFunction> RetainPtr<NSArray> createNSArray(const VectorType& vector, MapFunction mapFunction)
+template<typename VectorType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(const VectorType& vector, const MapFunctionType& function)
 {
-    auto size = vector.size();
-    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
+    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
     for (auto& element : vector)
-        [array addObject:getPtr(mapFunction(element))];
+        [array addObject:getPtr(function(element))];
     return array;
 }
 
@@ -79,6 +81,7 @@ template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArra
         if (auto vectorElement = makeVectorElement(typedNull, element))
             vector.uncheckedAppend(WTFMove(*vectorElement));
     }
+    vector.shrinkToFit();
     return vector;
 }
 

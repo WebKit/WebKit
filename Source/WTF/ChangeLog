@@ -1,5 +1,27 @@
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
+        Clean up VectorCocoa createNSArray overloads and add documentation for createNSArray taking a map function
+        https://bugs.webkit.org/show_bug.cgi?id=210610
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary local variable. Rename "map" type in createNSArray function for clarity
+        and add documentation for createNSArray function that takes a map function.
+
+        I was tempted, but decided not to write the createNSArray function that does not take a
+        map function in terms of the one that did. With the "right" optimization settings the
+        compiler should emit the same code, but I didn't verify this. So, I didn't do it.
+
+        While I am here, update  makeVector() to call shrinkToFit() to reduce the memory footprint
+        of the returned vector should it end of having less entries, due to filtering, than its
+        initial capacity.
+
+        * wtf/cocoa/VectorCocoa.h:
+        (WTF::createNSArray): See above description.
+        (WTF::makeVector): Shrink to fit before returning the vector. See above for more details.
+
+2020-04-16  Daniel Bates  <dabates@apple.com>
+
         Move -_requestTextInputContextsInRect to WKContentView to simplify implementation
         https://bugs.webkit.org/show_bug.cgi?id=210398
         <rdar://problem/61656931>
