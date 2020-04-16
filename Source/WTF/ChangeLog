@@ -1,5 +1,33 @@
 2020-04-16  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259980. rdar://problem/61888315
+
+    Follow-up: WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+    <https://webkit.org/b/210238>
+    <rdar://problem/61491575>
+    
+    Changes based on feedback from Alex Christensen and Darin Adler:
+    - Remove WARN_UNUSED_RETURN from methods returning Optional<>.
+    - Place WARN_UNUSED_RETURN consistently before the return type.
+    
+    * wtf/persistence/PersistentDecoder.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259980 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-12  David Kilzer  <ddkilzer@apple.com>
+
+            Follow-up: WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN
+            <https://webkit.org/b/210238>
+            <rdar://problem/61491575>
+
+            Changes based on feedback from Alex Christensen and Darin Adler:
+            - Remove WARN_UNUSED_RETURN from methods returning Optional<>.
+            - Place WARN_UNUSED_RETURN consistently before the return type.
+
+            * wtf/persistence/PersistentDecoder.h:
+
+2020-04-16  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259814. rdar://problem/61888315
 
     WTF::Persistence::Coder and WTF::Persistence::Decoder should use WARN_UNUSED_RETURN

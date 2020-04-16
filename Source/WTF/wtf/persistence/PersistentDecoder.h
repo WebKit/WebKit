@@ -41,9 +41,9 @@ public:
     size_t length() const { return m_bufferEnd - m_buffer; }
     size_t currentOffset() const { return m_bufferPosition - m_buffer; }
 
-    WTF_EXPORT_PRIVATE bool verifyChecksum() WARN_UNUSED_RETURN;
+    WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool verifyChecksum();
 
-    WTF_EXPORT_PRIVATE bool decodeFixedLengthData(uint8_t*, size_t) WARN_UNUSED_RETURN;
+    WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t*, size_t);
 
     WTF_EXPORT_PRIVATE bool decode(bool&) WARN_UNUSED_RETURN;
     WTF_EXPORT_PRIVATE bool decode(uint8_t&) WARN_UNUSED_RETURN;
@@ -102,8 +102,8 @@ public:
     static constexpr bool isIPCDecoder = false;
 
 private:
-    WTF_EXPORT_PRIVATE bool bufferIsLargeEnoughToContain(size_t) const WARN_UNUSED_RETURN;
-    template<typename Type> bool decodeNumber(Type&) WARN_UNUSED_RETURN;
+    WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContain(size_t) const;
+    template<typename Type> bool decodeNumber(Type&);
 
     const uint8_t* m_buffer;
     const uint8_t* m_bufferPosition;
