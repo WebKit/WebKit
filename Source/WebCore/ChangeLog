@@ -1,3 +1,18 @@
+2020-04-16  Zalan Bujtas  <zalan@apple.com>
+
+        Crash in IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded when min-size can not be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=210584
+        <rdar://problem/56685237>
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Use the initial value of 0 when the min-height can't be resolved.
+
+        Test: fast/css-grid-layout/crash-when-min-height-cant-be-resolved.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::IndefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded const):
+
 2020-04-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes mid April 2020 edition
