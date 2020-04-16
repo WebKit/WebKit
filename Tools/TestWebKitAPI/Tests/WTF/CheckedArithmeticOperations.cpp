@@ -486,4 +486,34 @@ TEST(CheckedArithmeticTest, IsInBounds)
     EXPECT_TRUE(isInBounds<uint16_t>((uint32_t)1));
 }
 
+TEST(CheckedArithmeticTest, Division)
+{
+    CheckedSize size = 100;
+    EXPECT_EQ(100U, size.unsafeGet());
+    size /= 10U;
+    EXPECT_FALSE(size.hasOverflowed());
+    EXPECT_EQ(10U, size.unsafeGet());
+
+    size /= 11U;
+    EXPECT_FALSE(size.hasOverflowed());
+    EXPECT_EQ(0U, size.unsafeGet());
+
+    size = 100;
+    EXPECT_FALSE(size.hasOverflowed());
+
+    size /= 0U;
+    EXPECT_TRUE(size.hasOverflowed());
+
+    size = 100;
+    EXPECT_FALSE(size.hasOverflowed());
+    EXPECT_EQ(100U, size.unsafeGet());
+
+    size /= 10.5;
+    EXPECT_FALSE(size.hasOverflowed());
+    EXPECT_EQ(9U, size.unsafeGet());
+
+    size /= 0.0;
+    EXPECT_TRUE(size.hasOverflowed());
+}
+
 } // namespace TestWebKitAPI

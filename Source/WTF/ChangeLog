@@ -1,3 +1,18 @@
+2020-04-15  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] MachMessage::messageSize() should use checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=210567
+        <rdar://problem/61734355>
+
+        Reviewed by Geoffrey Garen.
+
+        Add operator / to CheckedArithmetic for convenience.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::safeDivide):
+        (WTF::Checked::operator/=):
+        (WTF::operator/):
+
 2020-04-15  Robin Morisset  <rmorisset@apple.com>
 
         Flaky Test: fetch/fetch-worker-crash.html

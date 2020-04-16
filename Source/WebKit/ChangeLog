@@ -1,3 +1,18 @@
+2020-04-15  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] MachMessage::messageSize() should use checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=210567
+        <rdar://problem/61734355>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace call to round_msg() call with a call to our new safeRoundMsg() which does
+        the same alignment up but using checked arithmetic to protect against overflows.
+
+        * Platform/IPC/cocoa/MachMessage.cpp:
+        (IPC::safeRoundMsg):
+        (IPC::MachMessage::messageSize):
+
 2020-04-15  David Kilzer  <ddkilzer@apple.com>
 
         [IPC Hardening] MachMessage::create() should use checked arithmetic

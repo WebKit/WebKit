@@ -391,6 +391,15 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 #endif
     }
 
+    static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    {
+        if (!rhs)
+            return false;
+
+        result = lhs / rhs;
+        return true;
+    }
+
     static inline bool equals(LHS lhs, RHS rhs) { return lhs == rhs; }
 
 };
@@ -449,6 +458,15 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
         result = lhs * rhs;
         return true;
 #endif
+    }
+
+    static inline bool divide(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
+    {
+        if (!rhs)
+            return false;
+
+        result = lhs / rhs;
+        return true;
     }
 
     static inline bool equals(LHS lhs, RHS rhs) { return lhs == rhs; }
@@ -513,6 +531,16 @@ template <typename ResultType> struct ArithmeticOperations<int, unsigned, Result
 #endif
     }
 
+    static inline bool divide(int64_t lhs, int64_t rhs, ResultType& result)
+    {
+        if (!rhs)
+            return false;
+
+        int64_t temp = lhs / rhs;
+        result = static_cast<ResultType>(temp);
+        return true;
+    }
+
     static inline bool equals(int lhs, unsigned rhs)
     {
         return static_cast<int64_t>(lhs) == static_cast<int64_t>(rhs);
@@ -533,6 +561,11 @@ template <typename ResultType> struct ArithmeticOperations<unsigned, int, Result
     static inline bool multiply(int64_t lhs, int64_t rhs, ResultType& result)
     {
         return ArithmeticOperations<int, unsigned, ResultType>::multiply(lhs, rhs, result);
+    }
+
+    static inline bool divide(int64_t lhs, int64_t rhs, ResultType& result)
+    {
+        return ArithmeticOperations<int, unsigned, ResultType>::divide(lhs, rhs, result);
     }
 
     static inline bool equals(unsigned lhs, int rhs)
@@ -581,12 +614,26 @@ template <typename U, typename V, typename R> static inline bool safeMultiply(U 
     return ArithmeticOperations<U, V, R>::multiply(lhs, rhs, result);
 }
 
+template <typename U, typename V, typename R> static inline bool safeDivide(U lhs, V rhs, R& result)
+{
+    return ArithmeticOperations<U, V, R>::divide(lhs, rhs, result);
+}
+
 template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
 static inline bool safeMultiply(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
         return safeMultiply(lhs, rhs, result);
     result = lhs * rhs;
+    return true;
+}
+
+template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
+static inline bool safeDivide(U lhs, V rhs, R& result)
+{
+    if (observesOverflow<OverflowHandler>())
+        return safeDivide(lhs, rhs, result);
+    result = lhs / rhs;
     return true;
 }
 
@@ -754,6 +801,13 @@ public:
         return *this;
     }
 
+    template <typename U> const Checked operator/=(U rhs)
+    {
+        if (!safeDivide<OverflowHandler>(m_value, rhs, m_value))
+            this->overflowed();
+        return *this;
+    }
+
     const Checked operator*=(double rhs)
     {
         double result = rhs * m_value;
@@ -764,9 +818,28 @@ public:
         return *this;
     }
 
+    const Checked operator/=(double rhs)
+    {
+        if (!rhs) {
+            this->overflowed();
+            return *this;
+        }
+        double result = m_value / rhs;
+        // Handle +/- infinity and NaN
+        if (!(std::numeric_limits<T>::min() <= result && std::numeric_limits<T>::max() >= result))
+            this->overflowed();
+        m_value = (T)result;
+        return *this;
+    }
+
     const Checked operator*=(float rhs)
     {
         return *this *= (double)rhs;
+    }
+
+    const Checked operator/=(float rhs)
+    {
+        return *this /= (double)rhs;
     }
     
     template <typename U, typename V> const Checked operator+=(Checked<U, V> rhs)
@@ -903,6 +976,18 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     return result;
 }
 
+template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator/(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)
+{
+    U x = 0;
+    V y = 0;
+    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
+    typename Result<U, V>::ResultType result = 0;
+    overflowed |= !safeDivide<OverflowHandler>(x, y, result);
+    if (overflowed)
+        return ResultOverflowed;
+    return result;
+}
+
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator+(Checked<U, OverflowHandler> lhs, V rhs)
 {
     return lhs + Checked<V, OverflowHandler>(rhs);
@@ -918,6 +1003,11 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     return lhs * Checked<V, OverflowHandler>(rhs);
 }
 
+template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator/(Checked<U, OverflowHandler> lhs, V rhs)
+{
+    return lhs / Checked<V, OverflowHandler>(rhs);
+}
+
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator+(U lhs, Checked<V, OverflowHandler> rhs)
 {
     return Checked<U, OverflowHandler>(lhs) + rhs;
@@ -931,6 +1021,11 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator*(U lhs, Checked<V, OverflowHandler> rhs)
 {
     return Checked<U, OverflowHandler>(lhs) * rhs;
+}
+
+template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator/(U lhs, Checked<V, OverflowHandler> rhs)
+{
+    return Checked<U, OverflowHandler>(lhs) / rhs;
 }
 
 // Convenience typedefs.
