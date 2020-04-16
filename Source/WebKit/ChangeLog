@@ -1,3 +1,31 @@
+2020-04-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r260133. rdar://problem/61856640
+
+    REGRESSION (r259610): WebGL does not work at all on iOS (was: Google Maps tiles turn black after initial load)
+    <rdar://problem/61794480>
+    
+    Unreviewed, partial revert of r259610 because it broke Google Maps.
+    Stop using RunningBoard for the "Foreground" assertion because it fails to
+    give the target GPU access.
+    
+    * UIProcess/ios/ProcessAssertionIOS.mm:
+    (WebKit::runningBoardNameForAssertionType):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260133 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-15  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r259610): WebGL does not work at all on iOS (was: Google Maps tiles turn black after initial load)
+            <rdar://problem/61794480>
+
+            Unreviewed, partial revert of r259610 because it broke Google Maps.
+            Stop using RunningBoard for the "Foreground" assertion because it fails to
+            give the target GPU access.
+
+            * UIProcess/ios/ProcessAssertionIOS.mm:
+            (WebKit::runningBoardNameForAssertionType):
+
 2020-04-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r260104. rdar://problem/61800020

@@ -300,7 +300,7 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     case ProcessAssertionType::UnboundedNetworking:
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:
-        return @"Foreground";
+        return nil; // Not using RunningBoard until <rdar://problem/61830390> is fixed.
     case ProcessAssertionType::DependentProcessLink:
         return @"DependentProcessLink";
     case ProcessAssertionType::MediaPlayback:
