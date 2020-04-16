@@ -820,7 +820,16 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsT
         return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText(behavior);
     }
 
-    return String();
+    return emptyString();
+}
+
+String AsyncScrollingCoordinator::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behavior) const
+{
+    if (!m_scrollingTree)
+        return emptyString();
+
+    m_scrollingTree->waitForScrollingTreeCommit();
+    return m_scrollingTree->scrollingTreeAsText(behavior);
 }
 
 #if PLATFORM(COCOA)

@@ -1,3 +1,17 @@
+2020-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scrolling] Slow-repaint overflow scroll have force their enclosing scrollers to be slow too
+        https://bugs.webkit.org/show_bug.cgi?id=210591
+
+        Reviewed by Antti Koivisto.
+
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-non-cb-overflow-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-non-cb-overflow.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-overflow-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-overflow.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-overflow2-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-nested-overflow2.html: Added.
+
 2020-04-16  Antoine Quint  <graouts@apple.com>
 
         [ Mac wk2 Debug ] media/modern-media-controls/media-controller/media-controller-auto-hide.html is flaky timing out.

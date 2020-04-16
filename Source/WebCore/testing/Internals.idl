@@ -461,6 +461,7 @@ enum CompositingPolicy {
     [MayThrowException] boolean scrollbarUsingDarkAppearance(optional Node? node = null);
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
+    [MayThrowException] DOMString scrollingTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
     [MayThrowException] DOMRectList nonFastScrollableRects();
 

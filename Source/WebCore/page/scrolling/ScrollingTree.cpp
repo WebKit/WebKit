@@ -44,6 +44,18 @@
 
 namespace WebCore {
 
+using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
+
+struct CommitTreeState {
+    // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.
+    // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
+    HashSet<ScrollingNodeID> unvisitedNodes;
+    // Nodes with non-empty synchronousScrollingReasons.
+    HashSet<ScrollingNodeID> synchronousScrollingNodes;
+    // orphanNodes keeps child nodes alive while we rebuild child lists.
+    OrphanScrollingNodeMap orphanNodes;
+};
+
 ScrollingTree::ScrollingTree() = default;
 ScrollingTree::~ScrollingTree() = default;
 
@@ -173,22 +185,19 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::IsMonitoringWheelEvents))
             m_isMonitoringWheelEvents = scrollingStateTree->rootStateNode()->isMonitoringWheelEvents();
     }
-    
-    // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.
-    // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
-    HashSet<ScrollingNodeID> unvisitedNodes;
-    for (auto nodeID : m_nodeMap.keys())
-        unvisitedNodes.add(nodeID);
 
     m_overflowRelatedNodesMap.clear();
     m_activeOverflowScrollProxyNodes.clear();
     m_activePositionedNodes.clear();
 
-    // orphanNodes keeps child nodes alive while we rebuild child lists.
-    OrphanScrollingNodeMap orphanNodes;
-    updateTreeFromStateNode(rootNode, orphanNodes, unvisitedNodes);
-    
-    for (auto nodeID : unvisitedNodes) {
+    CommitTreeState commitState;
+    for (auto nodeID : m_nodeMap.keys())
+        commitState.unvisitedNodes.add(nodeID);
+
+    updateTreeFromStateNodeRecursive(rootNode, commitState);
+    propagateSynchronousScrollingReasons(commitState.synchronousScrollingNodes);
+
+    for (auto nodeID : commitState.unvisitedNodes) {
         m_latchingController.nodeWasRemoved(nodeID);
         
         LOG(Scrolling, "ScrollingTree::commitTreeState - removing unvisited node %" PRIu64, nodeID);
@@ -198,7 +207,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     LOG_WITH_STREAM(Scrolling, stream << "committed ScrollingTree" << scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
 }
 
-void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode, OrphanScrollingNodeMap& orphanNodes, HashSet<ScrollingNodeID>& unvisitedNodes)
+void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)
 {
     if (!stateNode) {
         m_nodeMap.clear();
@@ -214,7 +223,7 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     RefPtr<ScrollingTreeNode> node;
     if (it != m_nodeMap.end()) {
         node = it->value;
-        unvisitedNodes.remove(nodeID);
+        state.unvisitedNodes.remove(nodeID);
     } else {
         node = createScrollingTreeNode(stateNode->nodeType(), nodeID);
         if (!parentNodeID) {
@@ -251,17 +260,22 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     // Move all children into the orphanNodes map. Live ones will get added back as we recurse over children.
     for (auto& childScrollingNode : node->children()) {
         childScrollingNode->setParent(nullptr);
-        orphanNodes.add(childScrollingNode->scrollingNodeID(), childScrollingNode.ptr());
+        state.orphanNodes.add(childScrollingNode->scrollingNodeID(), childScrollingNode.ptr());
     }
     node->removeAllChildren();
 
     // Now update the children if we have any.
     if (auto children = stateNode->children()) {
         for (auto& child : *children)
-            updateTreeFromStateNode(child.get(), orphanNodes, unvisitedNodes);
+            updateTreeFromStateNodeRecursive(child.get(), state);
     }
 
     node->commitStateAfterChildren(*stateNode);
+    
+#if ENABLE(SCROLLING_THREAD)
+    if (is<ScrollingTreeScrollingNode>(*node) && !downcast<ScrollingTreeScrollingNode>(*node).synchronousScrollingReasons().isEmpty())
+        state.synchronousScrollingNodes.add(nodeID);
+#endif
 }
 
 void ScrollingTree::applyLayerPositionsAfterCommit()

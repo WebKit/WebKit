@@ -387,7 +387,12 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
 
 String ScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior) const
 {
-    return String();
+    return emptyString();
+}
+
+String ScrollingCoordinator::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior) const
+{
+    return emptyString();
 }
 
 String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason> reasons)
@@ -396,14 +401,21 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<Synchro
 
     if (reasons & SynchronousScrollingReason::ForcedOnMainThread)
         stringBuilder.appendLiteral("Forced on main thread, ");
+
     if (reasons & SynchronousScrollingReason::HasSlowRepaintObjects)
         stringBuilder.appendLiteral("Has slow repaint objects, ");
+
     if (reasons & SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
         stringBuilder.appendLiteral("Has viewport constrained objects without supporting fixed layers, ");
+
     if (reasons & SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects)
         stringBuilder.appendLiteral("Has non-layer viewport-constrained objects, ");
+
     if (reasons & SynchronousScrollingReason::IsImageDocument)
         stringBuilder.appendLiteral("Is image document, ");
+
+    if (reasons & SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling)
+        stringBuilder.appendLiteral("Has slow repaint descendant scrollers, ");
 
     if (stringBuilder.length())
         stringBuilder.resize(stringBuilder.length() - 2);

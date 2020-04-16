@@ -78,6 +78,8 @@ protected:
 private:
     bool isThreadedScrollingTree() const override { return true; }
     void applyLayerPositions() override;
+    void waitForScrollingTreeCommit() override;
+    void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 

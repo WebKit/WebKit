@@ -74,6 +74,7 @@ public:
     
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
+    void addSynchronousScrollingReason(SynchronousScrollingReason reason) { m_synchronousScrollingReasons.add(reason); }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return !m_synchronousScrollingReasons.isEmpty(); }
 #endif
 

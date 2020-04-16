@@ -393,6 +393,7 @@ public:
     ExceptionOr<bool> scrollbarUsingDarkAppearance(Node*) const;
 
     ExceptionOr<String> scrollingStateTreeAsText() const;
+    ExceptionOr<String> scrollingTreeAsText() const;
     ExceptionOr<String> mainThreadScrollingReasons() const;
     ExceptionOr<Ref<DOMRectList>> nonFastScrollableRects() const;
 

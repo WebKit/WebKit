@@ -2833,6 +2833,26 @@ ExceptionOr<String> Internals::scrollingStateTreeAsText() const
     return page->scrollingStateTreeAsText();
 }
 
+ExceptionOr<String> Internals::scrollingTreeAsText() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { InvalidAccessError };
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    auto page = document->page();
+    if (!page)
+        return String();
+
+    auto scrollingCoordinator = page->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return String();
+
+    scrollingCoordinator->commitTreeStateIfNeeded();
+    return scrollingCoordinator->scrollingTreeAsText();
+}
+
 ExceptionOr<String> Internals::mainThreadScrollingReasons() const
 {
     Document* document = contextDocument();

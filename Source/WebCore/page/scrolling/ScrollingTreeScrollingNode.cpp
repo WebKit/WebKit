@@ -117,6 +117,10 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
         scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
     }
 
+    // This synthetic bit is added back in ScrollingTree::propagateSynchronousScrollingReasons().
+#if ENABLE(SCROLLING_THREAD)
+    m_synchronousScrollingReasons.remove(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
+#endif
     m_isFirstCommit = false;
 }
 

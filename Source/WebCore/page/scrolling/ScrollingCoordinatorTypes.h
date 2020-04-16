@@ -30,11 +30,14 @@
 namespace WebCore {
 
 enum class SynchronousScrollingReason {
+    // Flags for frame scrolling.
     ForcedOnMainThread                                          = 1 << 0,
-    HasSlowRepaintObjects                                       = 1 << 1,
-    HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 2,
-    HasNonLayerViewportConstrainedObjects                       = 1 << 3,
-    IsImageDocument                                             = 1 << 4
+    HasViewportConstrainedObjectsWithoutSupportingFixedLayers   = 1 << 1,
+    HasNonLayerViewportConstrainedObjects                       = 1 << 2,
+    IsImageDocument                                             = 1 << 3,
+    // Flags for frame and overflow scrolling.
+    HasSlowRepaintObjects                                       = 1 << 4,
+    DescendantScrollersHaveSynchronousScrolling                 = 1 << 5,
 };
 
 enum class ScrollingNodeType : uint8_t {

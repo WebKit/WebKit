@@ -170,6 +170,8 @@ public:
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
 
+    virtual void waitForScrollingTreeCommit() { }
+
 protected:
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
@@ -177,8 +179,8 @@ protected:
     WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
 private:
-    using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
-    void updateTreeFromStateNode(const ScrollingStateNode*, OrphanScrollingNodeMap&, HashSet<ScrollingNodeID>& unvisitedNodes);
+    void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&);
+    virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) { }
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&);
 
