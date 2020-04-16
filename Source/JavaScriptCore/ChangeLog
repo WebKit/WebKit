@@ -1,3 +1,22 @@
+2020-04-15  Keith Miller  <keith_miller@apple.com>
+
+        Disable Store-load pair auto-vectorization for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=210574
+
+        Reviewed by Geoffrey Garen.
+
+        slp-vectorization appears to make our slow path code significantly
+        slower. That's because when we materialize our constant bytecode
+        structs into C++ we load all the fields at the same time then
+        widen them to the struct's member C++ size. Since we have 3
+        different possible sizes Clang generates a total mess of
+        code. Disabling this does not appear to be a regression on any
+        platform I tested and improves the performance of slow path code
+        significantly in micro benchmarks.
+
+        * CMakeLists.txt:
+        * Configurations/JavaScriptCore.xcconfig:
+
 2020-04-15  Robin Morisset  <rmorisset@apple.com>
 
         Flaky Test: fetch/fetch-worker-crash.html

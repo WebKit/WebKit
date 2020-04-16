@@ -40,8 +40,8 @@ SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,JavaScriptCore.order;
 
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-OTHER_CFLAGS = $(inherited) --system-header-prefix=unicode/;
-OTHER_CPLUSPLUSFLAGS = $(inherited) --system-header-prefix=unicode/;
+OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/;
+OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/;
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(JAVASCRIPTCORE_FRAMEWORKS_DIR);
