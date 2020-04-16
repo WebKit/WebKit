@@ -1,3 +1,12 @@
+2020-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix GStreamer build warnings.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceDetached):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::handleErrorConditionFromStreamingThread):
+
 2020-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] MiniBrowser opens new windows too small causing failures on some WPT tests

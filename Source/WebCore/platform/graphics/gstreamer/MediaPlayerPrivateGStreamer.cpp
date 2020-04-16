@@ -3779,6 +3779,7 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 
 void MediaPlayerPrivateGStreamer::cdmInstanceDetached(CDMInstance& instance)
 {
+    UNUSED_PARAM(instance);
     ASSERT(isMainThread());
     ASSERT(m_pipeline);
 
