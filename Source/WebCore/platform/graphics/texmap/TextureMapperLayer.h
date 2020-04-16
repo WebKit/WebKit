@@ -81,6 +81,7 @@ public:
     void setSolidColor(const Color&);
     void setContentsTileSize(const FloatSize&);
     void setContentsTilePhase(const FloatSize&);
+    void setContentsClippingRect(const FloatRoundedRect&);
     void setFilters(const FilterOperations&);
 
     bool hasFilters() const
@@ -166,6 +167,7 @@ private:
         FloatRect contentsRect;
         FloatSize contentsTileSize;
         FloatSize contentsTilePhase;
+        FloatRoundedRect contentsClippingRect;
         WeakPtr<TextureMapperLayer> maskLayer;
         WeakPtr<TextureMapperLayer> replicaLayer;
         Color solidColor;

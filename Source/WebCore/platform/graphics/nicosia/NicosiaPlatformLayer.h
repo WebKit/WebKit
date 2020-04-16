@@ -117,6 +117,7 @@ public:
                     bool childrenTransformChanged : 1;
                     bool contentsRectChanged : 1;
                     bool contentsTilingChanged : 1;
+                    bool contentsClippingRectChanged : 1;
                     bool opacityChanged : 1;
                     bool solidColorChanged : 1;
                     bool filtersChanged : 1;
@@ -166,6 +167,7 @@ public:
         WebCore::FloatRect contentsRect;
         WebCore::FloatSize contentsTilePhase;
         WebCore::FloatSize contentsTileSize;
+        WebCore::FloatRoundedRect contentsClippingRect;
 
         float opacity { 0 };
         WebCore::Color solidColor;
@@ -231,6 +233,8 @@ public:
             staging.contentsTilePhase = pending.contentsTilePhase;
             staging.contentsTileSize = pending.contentsTileSize;
         }
+        if (pending.delta.contentsClippingRectChanged)
+            staging.contentsClippingRect = pending.contentsClippingRect;
 
         if (pending.delta.opacityChanged)
             staging.opacity = pending.opacity;

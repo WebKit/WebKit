@@ -1,3 +1,19 @@
+2020-04-16  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        TextureMapper renders video element with "object-fit: cover" incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=210544
+
+        Reviewed by Žan Doberšek.
+
+        Propagate GraphicsLayer::contentsClippingRect information to TextureMapperLayer
+        to properly clip the outside of DOM element when the element has "object-fit: cover".
+
+        Unfortunately, the test is disabled on WebKitGTK due to bug 177536, bug 163528.
+        Test: compositing/video/video-object-fit.html
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+
 2020-04-15  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r260102): ASSERTION FAILED: m_arbitrators.contains(proxy) in WebKit::SharedArbitrator::endRoutingArbitrationForArbitrator

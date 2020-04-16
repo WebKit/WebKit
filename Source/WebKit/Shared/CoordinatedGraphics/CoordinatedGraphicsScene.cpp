@@ -294,6 +294,8 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setContentsTilePhase(layerState.contentsTilePhase);
                             layer.setContentsTileSize(layerState.contentsTileSize);
                         }
+                        if (layerState.delta.contentsClippingRectChanged)
+                            layer.setContentsClippingRect(layerState.contentsClippingRect);
 
                         if (layerState.delta.opacityChanged)
                             layer.setOpacity(layerState.opacity);
