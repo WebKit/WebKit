@@ -9957,16 +9957,6 @@ void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHa
     sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTFMove(completionHandler));
 }
 
-void WebPageProxy::focusTextInputContext(const WebCore::ElementContext& context, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!hasRunningProcess()) {
-        completionHandler(false);
-        return;
-    }
-
-    sendWithAsyncReply(Messages::WebPage::FocusTextInputContext(context), WTFMove(completionHandler));
-}
-
 void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)
 {
     if (hasRunningProcess())

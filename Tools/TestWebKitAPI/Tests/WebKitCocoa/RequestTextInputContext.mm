@@ -51,18 +51,6 @@
     return result.autorelease();
 }
 
-- (BOOL)synchronouslyFocusTextInputContext:(_WKTextInputContext *)context
-{
-    __block bool finished = false;
-    __block bool success = false;
-    [self _focusTextInputContext:context completionHandler:^(BOOL innerSuccess) {
-        success = innerSuccess;
-        finished = true;
-    }];
-    TestWebKitAPI::Util::run(&finished);
-    return success;
-}
-
 - (UIResponder<UITextInput> *)synchronouslyFocusTextInputContext:(_WKTextInputContext *)context placeCaretAt:(CGPoint)point
 {
     __block bool finished = false;
@@ -250,41 +238,6 @@ TEST(RequestTextInputContext, CompositedOverlap)
     // Search rect overlaps both the composited <div> and the editable element.
     contexts = [webView synchronouslyRequestTextInputContextsInRect:squareCenteredAtPoint(270, 400, 200)];
     EXPECT_EQ(1UL, contexts.count);
-}
-
-TEST(RequestTextInputContext, DISABLED_FocusTextInputContext)
-{
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetThreadedScrollingEnabled((WKPreferencesRef)[configuration preferences], false);
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    NSArray<_WKTextInputContext *> *contexts;
-
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<input id='test' type='text' style='width: 50px; height: 50px;'>")];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_EQ(1UL, contexts.count);
-    RetainPtr<_WKTextInputContext> originalInput = contexts[0];
-    EXPECT_TRUE([webView synchronouslyFocusTextInputContext:originalInput.get()]);
-    EXPECT_WK_STREQ("test", [webView objectByEvaluatingJavaScript:@"document.activeElement.id"]);
-
-    // The _WKTextInputContext should still work even after another request.
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_TRUE([contexts[0] isEqual:originalInput.get()]);
-    EXPECT_TRUE([webView synchronouslyFocusTextInputContext:originalInput.get()]);
-
-    // Replace the <input> with a <textarea> with script; the <input> should no longer be focusable.
-    [webView objectByEvaluatingJavaScript:@"document.body.innerHTML = '<textarea id=\"area\">';"];
-    contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    EXPECT_EQ(1UL, contexts.count);
-    RetainPtr<_WKTextInputContext> textArea = contexts[0];
-    EXPECT_FALSE([textArea isEqual:originalInput.get()]);
-    EXPECT_FALSE([webView synchronouslyFocusTextInputContext:originalInput.get()]);
-    EXPECT_TRUE([webView synchronouslyFocusTextInputContext:textArea.get()]);
-    EXPECT_WK_STREQ("area", [webView objectByEvaluatingJavaScript:@"document.activeElement.id"]);
-
-    // Destroy the <textarea> by navigating away; we can no longer focus it.
-    [webView synchronouslyLoadHTMLString:@""];
-    EXPECT_FALSE([webView synchronouslyFocusTextInputContext:textArea.get()]);
 }
 
 TEST(RequestTextInputContext, ReadOnlyField)

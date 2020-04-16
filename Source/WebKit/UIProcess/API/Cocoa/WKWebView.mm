@@ -2071,26 +2071,6 @@ static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipul
     }
 }
 
-- (void)_focusTextInputContext:(_WKTextInputContext *)textInputContext completionHandler:(void(^)(BOOL))completionHandler
-{
-#if PLATFORM(IOS_FAMILY)
-    if (![self usesStandardContentView]) {
-        completionHandler(NO);
-        return;
-    }
-#endif
-
-    auto webContext = [textInputContext _textInputContext];
-    if (webContext.webPageIdentifier != _page->webPageID())
-        [NSException raise:NSInvalidArgumentException format:@"The provided _WKTextInputContext was not created by this WKWebView."];
-
-    [self becomeFirstResponder];
-
-    _page->focusTextInputContext(webContext, [capturedCompletionHandler = makeBlockPtr(completionHandler)](bool success) {
-        capturedCompletionHandler(success);
-    });
-}
-
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
     WKPDFConfiguration *pdfConfiguration = nil;
