@@ -43,6 +43,7 @@ public:
     AudioSessionRoutingArbitratorProxy(WebProcessProxy&);
     virtual ~AudioSessionRoutingArbitratorProxy();
 
+    void processDidTerminate();
     WebCore::AudioSession::CategoryType category() const { return m_category; }
 
     static uint64_t destinationId() { return 1; }

@@ -43,6 +43,11 @@ AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
     notImplemented();
 }
 
+void AudioSessionRoutingArbitratorProxy::processDidTerminate()
+{
+    notImplemented();
+}
+
 void AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&& callback)
 {
     notImplemented();

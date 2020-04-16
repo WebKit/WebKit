@@ -65,6 +65,7 @@ public:
     bool setupArbitrationOngoing { false };
 #endif
     AudioSession::CategoryType m_categoryOverride;
+    bool inRoutingArbitration { false };
 };
 
 AudioSession::AudioSession()
@@ -98,8 +99,10 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
     if (!m_routingArbitrationClient)
         return;
 
-    if (m_private->category != None)
+    if (m_private->inRoutingArbitration) {
+        m_private->inRoutingArbitration = false;
         m_routingArbitrationClient->leaveRoutingAbritration();
+    }
 
     m_private->category = category;
     if (m_private->category == None)
@@ -114,6 +117,8 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
             RELEASE_LOG_ERROR(Media, "AudioSession::setCategory() - beginArbitrationWithCategory:%s failed with error %s", convertEnumerationToString(m_private->category).ascii().data(), convertEnumerationToString(error).ascii().data());
             return;
         }
+
+        m_private->inRoutingArbitration = true;
 
         // FIXME: Do we need to reset sample rate and buffer size for the new default device?
         if (defaultRouteChanged == DefaultRouteChanged::Yes)

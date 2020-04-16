@@ -830,6 +830,10 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
     }
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION)
+    m_routingArbitrator->processDidTerminate();
+#endif
+
     for (auto& page : pages)
         page->processDidTerminate(ProcessTerminationReason::Crash);
 

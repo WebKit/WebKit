@@ -49,6 +49,7 @@ public:
     using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
     using ArbitrationCallback = AudioSessionRoutingArbitratorProxy::ArbitrationCallback;
 
+    bool isInRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy&);
     void beginRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy&, ArbitrationCallback&&);
     void endRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy&);
 
@@ -65,9 +66,14 @@ SharedArbitrator& SharedArbitrator::sharedInstance()
     return instance;
 }
 
+bool SharedArbitrator::isInRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy& proxy)
+{
+    return m_arbitrators.contains(proxy);
+}
+
 void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy& proxy, ArbitrationCallback&& callback)
 {
-    ASSERT(!m_arbitrators.contains(proxy));
+    ASSERT(!isInRoutingArbitrationForArbitrator(proxy));
     m_arbitrators.add(proxy);
 
     if (m_setupArbitrationOngoing) {
@@ -125,7 +131,7 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
 
 void SharedArbitrator::endRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy& proxy)
 {
-    ASSERT(m_arbitrators.contains(proxy));
+    ASSERT(isInRoutingArbitrationForArbitrator(proxy));
     m_arbitrators.remove(proxy);
 
     if (!m_arbitrators.computesEmpty())
@@ -148,6 +154,12 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
 AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 {
     m_process.removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
+}
+
+void AudioSessionRoutingArbitratorProxy::processDidTerminate()
+{
+    if (SharedArbitrator::sharedInstance().isInRoutingArbitrationForArbitrator(*this))
+        SharedArbitrator::sharedInstance().endRoutingArbitrationForArbitrator(*this);
 }
 
 void AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType category, ArbitrationCallback&& callback)
