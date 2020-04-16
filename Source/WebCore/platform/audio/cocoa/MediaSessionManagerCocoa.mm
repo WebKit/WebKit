@@ -194,8 +194,9 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
-    m_taskQueue.enqueueTask([&session] {
-        session.updateMediaUsageIfChanged();
+    m_taskQueue.enqueueTask([weakSession = makeWeakPtr(session)] {
+        if (weakSession)
+            weakSession->updateMediaUsageIfChanged();
     });
 
     if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No)
