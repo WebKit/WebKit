@@ -1697,7 +1697,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
             repaintLayer(layer);
         }
     }
-    
+
 #if ENABLE(VIDEO)
     if (layerChanged && is<RenderVideo>(layer.renderer())) {
         // If it's a video, give the media player a chance to hook up to the layer.

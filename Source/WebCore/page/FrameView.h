@@ -72,6 +72,7 @@ class RenderScrollbarPart;
 class RenderStyle;
 class RenderView;
 class RenderWidget;
+class ScrollingCoordinator;
 
 enum class FrameFlattening;
 
@@ -698,6 +699,7 @@ private:
     void updateCanBlitOnScrollRecursively();
     bool shouldLayoutAfterContentsResized() const;
 
+    ScrollingCoordinator* scrollingCoordinator() const;
     bool shouldUpdateCompositingLayersAfterScrolling() const;
     bool flushCompositingStateForThisFrame(const Frame& rootFrameForFlush);
 

@@ -93,8 +93,8 @@ public:
     using LayoutViewportOriginOrOverrideRect = WTF::Variant<Optional<FloatPoint>, Optional<FloatRect>>;
     virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) { }
 
-    // Should be called whenever the slow repaint objects counter changes between zero and one.
-    void frameViewHasSlowRepaintObjectsDidChange(FrameView&);
+    // Should be called whenever the slow repaint objects set changes.
+    void slowRepaintObjectsDidChange(FrameView&);
 
     // Should be called whenever the set of fixed objects changes.
     void frameViewFixedObjectsDidChange(FrameView&);
@@ -157,6 +157,7 @@ public:
     virtual void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) { }
     virtual void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) { }
     virtual void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) { }
+    virtual void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) { }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
@@ -168,7 +169,6 @@ public:
     // Generated a unique id for scrolling nodes.
     ScrollingNodeID uniqueScrollingNodeID();
 
-    OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(const FrameView&) const;
     bool shouldUpdateScrollLayerPositionSynchronously(const FrameView&) const;
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
@@ -200,9 +200,9 @@ protected:
     Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
-    virtual void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) { }
-
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
+
+    OptionSet<SynchronousScrollingReason> synchronousScrollingReasonsForFrameView(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);
     void updateSynchronousScrollingReasonsForAllFrames();
 

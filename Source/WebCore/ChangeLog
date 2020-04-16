@@ -1,3 +1,50 @@
+2020-04-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Lay the groundwork for SynchronousScrollingReason on overflow nodes
+        https://bugs.webkit.org/show_bug.cgi?id=210565
+
+        Reviewed by Tim Horton.
+
+        Make setSynchronousScrollingReasons() public on ScrollingCoordinator because we're going
+        to be calling it for overflow scrolling nodes.
+        
+        Call ScrollingCoordinator::slowRepaintObjectsDidChange() not just when we go between 
+        none some some slow-repaint objects, but whenever the set changes. slowRepaintObjectsDidChange()
+        is lightweight.
+
+        Minor cleanup in FrameView to avoid testing Page* nullness every time.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::prepareForDetach):
+        (WebCore::FrameView::isScrollSnapInProgress const):
+        (WebCore::FrameView::usesAsyncScrolling const):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::addViewportConstrainedObject):
+        (WebCore::FrameView::removeViewportConstrainedObject):
+        (WebCore::FrameView::scrollingCoordinator const):
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling const):
+        (WebCore::FrameView::isRubberBandInProgress const):
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        (WebCore::FrameView::layoutOrVisualViewportChanged):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::scrollableAreaSetChanged):
+        (WebCore::FrameView::wheelEvent):
+        (WebCore::FrameView::setScrollPinningBehavior):
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::slowRepaintObjectsDidChange):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsForFrameView const):
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously const):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText const):
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange): Deleted.
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons const): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setSynchronousScrollingReasons):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2020-04-15  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: !selectionToDelete.isNone() in TypingCommand::forwardDeleteKeyPressed

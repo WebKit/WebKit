@@ -331,10 +331,8 @@ void FrameView::prepareForDetach()
     // right now, otherwise it won't be able to reach the topDocument()'s axObject cache later.
     removeFromAXObjectCache();
 
-    if (frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = frame().page()->scrollingCoordinator())
-            scrollingCoordinator->willDestroyScrollableArea(*this);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->willDestroyScrollableArea(*this);
 }
 
 void FrameView::detachCustomScrollbars()
@@ -941,11 +939,9 @@ bool FrameView::isScrollSnapInProgress() const
     
     // If the scrolling thread updates the scroll position for this FrameView, then we should return
     // ScrollingCoordinator::isScrollSnapInProgress().
-    if (Page* page = frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
-                return scrollingCoordinator->isScrollSnapInProgress();
-        }
+    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+        if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
+            return scrollingCoordinator->isScrollSnapInProgress();
     }
     
     // If the main thread updates the scroll position for this FrameView, we should return
@@ -1405,10 +1401,8 @@ bool FrameView::usesCompositedScrolling() const
 bool FrameView::usesAsyncScrolling() const
 {
 #if ENABLE(ASYNC_SCROLLING)
-    if (Page* page = frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            return scrollingCoordinator->coordinatesScrollingForFrameView(*this);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->coordinatesScrollingForFrameView(*this);
 #endif
     return false;
 }
@@ -1483,16 +1477,16 @@ void FrameView::addSlowRepaintObject(RenderElement& renderer)
     if (!m_slowRepaintObjects)
         m_slowRepaintObjects = makeUnique<WeakHashSet<RenderElement>>();
 
-    m_slowRepaintObjects->add(renderer);
+    auto addResult = m_slowRepaintObjects->add(renderer);
+    if (addResult.isNewEntry) {
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->slowRepaintObjectsDidChange(*this);
+    }
+
     if (hadSlowRepaintObjects)
         return;
 
     updateCanBlitOnScrollRecursively();
-
-    if (auto* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
-    }
 }
 
 void FrameView::removeSlowRepaintObject(RenderElement& renderer)
@@ -1500,17 +1494,17 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
     if (!m_slowRepaintObjects)
         return;
 
-    m_slowRepaintObjects->remove(renderer);
+    bool removed = m_slowRepaintObjects->remove(renderer);
+    if (removed) {
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->slowRepaintObjectsDidChange(*this);
+    }
+
     if (!m_slowRepaintObjects->computesEmpty())
         return;
 
     m_slowRepaintObjects = nullptr;
     updateCanBlitOnScrollRecursively();
-
-    if (auto* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
-    }
 }
 
 void FrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
@@ -1523,20 +1517,16 @@ void FrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
         if (platformWidget())
             updateCanBlitOnScrollRecursively();
 
-        if (Page* page = frame().page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
-        }
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
     }
 }
 
 void FrameView::removeViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
-        if (Page* page = frame().page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
-        }
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
 
         // FIXME: In addFixedObject() we only call this if there's a platform widget,
         // why isn't the same check being made here?
@@ -2564,6 +2554,11 @@ void FrameView::updateLayerPositionsAfterScrolling()
     }
 }
 
+ScrollingCoordinator* FrameView::scrollingCoordinator() const
+{
+    return frame().page() ? frame().page()->scrollingCoordinator() : nullptr;
+}
+
 bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 {
 #if ENABLE(ASYNC_SCROLLING)
@@ -2576,7 +2571,7 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (&page->mainFrame() != m_frame.ptr())
         return true;
 
-    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
+    auto scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator)
         return true;
 
@@ -2611,11 +2606,9 @@ bool FrameView::isRubberBandInProgress() const
 
     // If the scrolling thread updates the scroll position for this FrameView, then we should return
     // ScrollingCoordinator::isRubberBandInProgress().
-    if (Page* page = frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
-                return scrollingCoordinator->isRubberBandInProgress();
-        }
+    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+        if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
+            return scrollingCoordinator->isRubberBandInProgress();
     }
 
     // If the main thread updates the scroll position for this FrameView, we should return
@@ -2636,10 +2629,8 @@ bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position, Scro
 #endif
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
-    if (Page* page = frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
 #else
     UNUSED_PARAM(position);
 #endif
@@ -2811,10 +2802,8 @@ void FrameView::layoutOrVisualViewportChanged()
     if (auto* window = frame().window())
         window->visualViewport().update();
 
-    if (auto* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewVisualViewportChanged(*this);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewVisualViewportChanged(*this);
 }
 
 void FrameView::unobscuredContentSizeChanged()
@@ -3314,10 +3303,8 @@ void FrameView::performPostLayoutTasks()
 #endif
     m_updateEmbeddedObjectsTimer.startOneShot(0_s);
 
-    if (auto* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewLayoutUpdated(*this);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewLayoutUpdated(*this);
 
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())
@@ -5038,10 +5025,8 @@ bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
 
 void FrameView::scrollableAreaSetChanged()
 {
-    if (auto* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
 }
 
 void FrameView::sendScrollEvent()
@@ -5097,11 +5082,9 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
         return false;
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (Page* page = frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (scrollingCoordinator->coordinatesScrollingForFrameView(*this))
-                return scrollingCoordinator->handleWheelEvent(*this, wheelEvent) != ScrollingEventResult::DidNotHandleEvent;
-        }
+    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+        if (scrollingCoordinator->coordinatesScrollingForFrameView(*this))
+            return scrollingCoordinator->handleWheelEvent(*this, wheelEvent) != ScrollingEventResult::DidNotHandleEvent;
     }
 #endif
 
@@ -5303,10 +5286,8 @@ void FrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
     m_scrollPinningBehavior = pinning;
     
-    if (Page* page = frame().page()) {
-        if (auto* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->setScrollPinningBehavior(pinning);
-    }
+    if (auto scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->setScrollPinningBehavior(pinning);
     
     updateScrollbars(scrollPosition());
 }

@@ -188,7 +188,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegions() const
     return absoluteEventTrackingRegionsForFrame(m_page->mainFrame());
 }
 
-void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView& frameView)
+void ScrollingCoordinator::slowRepaintObjectsDidChange(FrameView& frameView)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -327,16 +327,19 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
     return false;
 }
 
-OptionSet<SynchronousScrollingReason> ScrollingCoordinator::synchronousScrollingReasons(const FrameView& frameView) const
+OptionSet<SynchronousScrollingReason> ScrollingCoordinator::synchronousScrollingReasonsForFrameView(const FrameView& frameView) const
 {
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons;
 
     if (m_forceSynchronousScrollLayerPositionUpdates)
         synchronousScrollingReasons.add(SynchronousScrollingReason::ForcedOnMainThread);
+
     if (frameView.hasSlowRepaintObjects())
         synchronousScrollingReasons.add(SynchronousScrollingReason::HasSlowRepaintObjects);
+
     if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
         synchronousScrollingReasons.add(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects);
+
     if (frameView.frame().mainFrame().document() && frameView.frame().document()->isImageDocument())
         synchronousScrollingReasons.add(SynchronousScrollingReason::IsImageDocument);
 
@@ -346,7 +349,7 @@ OptionSet<SynchronousScrollingReason> ScrollingCoordinator::synchronousScrolling
 void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameView)
 {
     ASSERT(coordinatesScrollingForFrameView(frameView));
-    setSynchronousScrollingReasons(frameView.scrollingNodeID(), synchronousScrollingReasons(frameView));
+    setSynchronousScrollingReasons(frameView.scrollingNodeID(), synchronousScrollingReasonsForFrameView(frameView));
 }
 
 void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()
@@ -371,7 +374,7 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const FrameView& frameView) const
 {
     if (&frameView == m_page->mainFrame().view())
-        return !synchronousScrollingReasons(frameView).isEmpty();
+        return !synchronousScrollingReasonsForFrameView(frameView).isEmpty();
     
     return true;
 }
@@ -410,7 +413,7 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<Synchro
 String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
     if (auto* frameView = m_page->mainFrame().view())
-        return synchronousScrollingReasonsAsText(synchronousScrollingReasons(*frameView));
+        return synchronousScrollingReasonsAsText(synchronousScrollingReasonsForFrameView(*frameView));
 
     return String();
 }
