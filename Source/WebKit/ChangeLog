@@ -1,3 +1,16 @@
+2020-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Switch unused IOKit classes from allow-with-report to deny-with-report
+        https://bugs.webkit.org/show_bug.cgi?id=210136
+        <rdar://problem/61403216>
+
+        Reviewed by Per Arne Vollan.
+
+        After tracking telemetry for several weeks, we can now safely switch the default state
+        of a number of IOKit classes from 'allow with telemetry' to 'deny with telemetry'.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+ 
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build when building without EDITABLE_REGION after r260192
