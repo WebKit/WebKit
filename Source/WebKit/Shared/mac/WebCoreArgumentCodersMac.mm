@@ -113,7 +113,7 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
         return false;
 
     auto archiveListArrayCount = CFArrayGetCount(archiveListArray);
-    if (!isInBounds<size_t>(archiveListArrayCount))
+    if (!WTF::isInBounds<size_t>(archiveListArrayCount))
         return false;
 
     auto bufferSize = CheckedSize(sizeof(CFTypeRef)) * static_cast<size_t>(archiveListArrayCount);
