@@ -1,3 +1,11 @@
+2020-04-16  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix after r260182; guard call to fullscreenManager() for ports which do not
+        ENABLE(FULLSCREEN_API).
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged):
+
 2020-04-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Deprecation-guards fixes

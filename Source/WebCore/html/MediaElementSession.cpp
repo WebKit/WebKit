@@ -1018,7 +1018,11 @@ void MediaElementSession::updateMediaUsageIfChanged()
     if (!page)
         return;
 
-    auto* fullscreenElement = document.fullscreenManager().currentFullscreenElement();
+    bool isOutsideOfFullscreen = false;
+#if ENABLE(FULLSCREEN_API)
+    if (auto* fullscreenElement = document.fullscreenManager().currentFullscreenElement())
+        isOutsideOfFullscreen = !m_element.isDescendantOf(*fullscreenElement);
+#endif
     bool isAudio = client().presentationType() == MediaType::Audio;
     bool isVideo = client().presentationType() == MediaType::Video;
     bool processingUserGesture = document.processingUserGestureForMedia();
@@ -1054,7 +1058,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         !hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || processingUserGesture,
         hasBehaviorRestriction(RequirePlaybackToControlControlsManager) && !isPlaying,
         m_element.hasEverNotifiedAboutPlaying(),
-        fullscreenElement && !m_element.isDescendantOf(*fullscreenElement),
+        isOutsideOfFullscreen,
         isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls),
     };
 
