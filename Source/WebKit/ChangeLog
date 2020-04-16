@@ -1,3 +1,19 @@
+2020-04-16  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] DrawingArea::updateBackingStoreState() is not used on Apple platforms
+        <https://webkit.org/b/210585>
+        <rdar://problem/61802011>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateBackingStoreState):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        - Use USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER) to
+          protect code not used on Apple platforms.
+
 2020-04-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] MiniBrowser opens new windows too small causing failures on some WPT tests

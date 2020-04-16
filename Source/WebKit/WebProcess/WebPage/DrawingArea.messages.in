@@ -21,7 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> DrawingArea NotRefCounted {
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, WebCore::IntSize size, WebCore::IntSize scrollOffset)
+#endif
+
     DidUpdate()
 
 #if PLATFORM(COCOA)

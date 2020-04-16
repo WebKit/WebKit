@@ -31,7 +31,7 @@ messages -> DrawingAreaProxy NotRefCounted {
     DidUpdateGeometry()
 #endif
 
-#if !PLATFORM(COCOA)
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)
     DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)

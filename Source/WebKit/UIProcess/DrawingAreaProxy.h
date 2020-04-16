@@ -73,7 +73,7 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
-#if !PLATFORM(COCOA)
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     // The timeout we use when waiting for a DidUpdateGeometry message.
     static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
 #endif
@@ -153,8 +153,9 @@ private:
     Optional<WebCore::FloatRect> m_viewExposedRect;
     Optional<WebCore::FloatRect> m_lastSentViewExposedRect;
 #endif // PLATFORM(MAC)
+#endif
 
-#else
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
