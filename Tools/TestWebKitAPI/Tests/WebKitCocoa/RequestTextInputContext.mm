@@ -185,6 +185,15 @@ TEST(RequestTextInputContext, Iframe)
     EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 }
 
+TEST(RequestTextInputContext, ViewIsEditable)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body></body>")];
+    [webView _setEditable:YES];
+    EXPECT_GE([webView synchronouslyRequestTextInputContextsInRect:[webView bounds]].count, 1UL);
+}
+
 static CGRect squareCenteredAtPoint(float x, float y, float length)
 {
     return CGRectMake(x - length / 2, y - length / 2, length, length);
