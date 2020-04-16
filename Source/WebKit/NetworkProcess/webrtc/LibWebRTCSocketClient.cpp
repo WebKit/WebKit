@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "Logging.h"
 #include "NetworkRTCProvider.h"
 #include "WebRTCSocketMessages.h"
 #include <WebCore/SharedBuffer.h>

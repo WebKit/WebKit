@@ -30,6 +30,7 @@
 
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
+#include "Document.h"
 #include "ImageBitmap.h"
 #include "JSBlob.h"
 #include "JSDOMPromiseDeferred.h"

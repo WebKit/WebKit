@@ -1,3 +1,9 @@
+2020-04-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix for non unified builds.
+
+        * dfg/DFGOperations.cpp: Added missing includes.
+
 2020-04-16  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Use more PAC diversity for JIT probe code.

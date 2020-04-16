@@ -1,3 +1,14 @@
+2020-04-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix for non unified builds.
+
+        * html/OffscreenCanvas.cpp: Added missing include.
+        * html/canvas/CanvasRenderingContext2DBase.cpp: Ditto.
+        * layout/tableformatting/TableFormattingContextGeometry.cpp: Ditto.
+        * workers/WorkerAnimationController.cpp:
+        (WebCore::WorkerAnimationController::requestAnimationFrame): Added namespace.
+        * workers/WorkerAnimationController.h: Added missing include.
+
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         A slow-starting swipe always latches on the root node

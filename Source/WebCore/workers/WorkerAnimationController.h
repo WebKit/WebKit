@@ -29,6 +29,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "ActiveDOMObject.h"
 #include "DOMHighResTimeStamp.h"
 #include "PlatformScreen.h"
 #include "Timer.h"
@@ -36,7 +37,6 @@
 
 namespace WebCore {
 
-class ActiveDOMObject;
 class RequestAnimationFrameCallback;
 class WorkerGlobalScope;
 

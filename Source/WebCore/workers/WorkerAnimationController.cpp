@@ -30,7 +30,6 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-#include "ActiveDOMObject.h"
 #include "Performance.h"
 #include "RequestAnimationFrameCallback.h"
 #include "WorkerGlobalScope.h"
@@ -85,10 +84,10 @@ void WorkerAnimationController::resume()
     }
 }
 
-CallbackId WorkerAnimationController::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
+WorkerAnimationController::CallbackId WorkerAnimationController::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     // FIXME: There's a lot of missing throttling behaviour that's present on DOMDocument
-    CallbackId callbackId = ++m_nextAnimationCallbackId;
+    WorkerAnimationController::CallbackId callbackId = ++m_nextAnimationCallbackId;
     callback->m_firedOrCancelled = false;
     callback->m_id = callbackId;
     m_animationCallbacks.append(WTFMove(callback));

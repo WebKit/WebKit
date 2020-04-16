@@ -52,6 +52,7 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "OffscreenCanvas.h"
 #include "Path2D.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
