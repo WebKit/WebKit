@@ -1,3 +1,12 @@
+2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r260243) [ Mac and iOS ] imported/w3c/web-platform-tests/css/cssom-view/MediaQueryList-addListener-handleEvent.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=210655
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/cssom-view/MediaQueryList-addListener-handleEvent-expected.txt:
+
 2020-04-17  Oriol Brufau  <obrufau@igalia.com>
 
         Revert "[css-grid] Exclude implicit grid tracks from the resolved value"

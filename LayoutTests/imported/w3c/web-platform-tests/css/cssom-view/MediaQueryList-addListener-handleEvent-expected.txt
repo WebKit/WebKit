@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 102: [object Object]
+CONSOLE MESSAGE: [object Object]
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
