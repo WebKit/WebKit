@@ -1776,9 +1776,7 @@ animations/transition-and-animation-2.html [ Pass Failure ]
 [ Debug ] animations/animation-direction-reverse-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test-transform.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-internals-api.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-shorthand-name-order.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-offscreen-to-onscreen.html [ Skip ] # Debug assertion
 [ Debug ] animations/additive-transform-animations.html [ Skip ] # Debug assertion
@@ -4099,8 +4097,6 @@ webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin-when-cross-o
 webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http.html [ Failure ]
 webkit.org/b/189194 http/tests/referrer-policy-anchor/strict-origin/same-origin.html [ Failure ]
 webkit.org/b/189194 http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html [ Failure ]
-
-webkit.org/b/189550 fast/text/variations/ipc2.html [ Skip ]
 
 webkit.org/b/189834 css-custom-properties-api/registerProperty.html [ Failure ]
 
