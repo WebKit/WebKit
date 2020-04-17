@@ -1,3 +1,14 @@
+2020-04-17  Jer Noble  <jer.noble@apple.com>
+
+        Bring Fullscreen API + alert() behavior from iOS to macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210662
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenAlert.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2020-04-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::WebCore target

@@ -1,3 +1,22 @@
+2020-04-17  Jer Noble  <jer.noble@apple.com>
+
+        Bring Fullscreen API + alert() behavior from iOS to macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210662
+
+        Reviewed by Eric Carlson.
+
+        When a page is showing an alert(), all non-synchronous messages will be blocked until the sync XPC for alert()
+        ends. And when exiting fullscreen, we block completing the fullscreen exit animation until a repaint XPC completes.
+        So a page that is showing an alert() will never fully exit element fullscreen mode.
+
+        On iOS, we fixed this behavior by exiting fullscreen mode whenever the page shows an alert() or prompt(). We should
+        bring this behavior to macOS as well.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+
 2020-04-17  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::WebCore target
