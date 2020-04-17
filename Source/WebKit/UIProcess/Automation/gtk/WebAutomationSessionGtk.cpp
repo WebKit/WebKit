@@ -29,6 +29,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <gtk/gtk.h>
 
 namespace WebKit {
@@ -146,17 +147,19 @@ static void doKeyStrokeEvent(GdkEventType type, GtkWidget* widget, unsigned keyV
     event->key.window = gtk_widget_get_window(widget);
     g_object_ref(event->key.window);
 
-    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(widget))));
+    GdkDisplay* display = gtk_widget_get_display(widget);
+    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(display)));
     event->key.state = state;
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
     GUniqueOutPtr<GdkKeymapKey> keys;
     int keysCount;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount) && keysCount)
+    GdkKeymap* keymap = gdk_keymap_get_for_display(display);
+    if (gdk_keymap_get_entries_for_keyval(keymap, keyVal, &keys.outPtr(), &keysCount) && keysCount)
         event->key.hardware_keycode = keys.get()[0].keycode;
 
     if (state) {
-        gdk_keymap_translate_keyboard_state(gdk_keymap_get_default(), event->key.hardware_keycode, static_cast<GdkModifierType>(state),
+        gdk_keymap_translate_keyboard_state(keymap, event->key.hardware_keycode, static_cast<GdkModifierType>(state),
             0, &event->key.keyval, nullptr, nullptr, nullptr);
     }
 

@@ -1,3 +1,24 @@
+2020-04-17  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Update for GdkKeymap API changes
+        https://bugs.webkit.org/show_bug.cgi?id=210642
+
+        Reviewed by Adrian Perez de Castro.
+
+        No new tests needed.
+
+        gdk_keymap_get_default() is deprecated in GTK+ 3.22, so use
+        gdk_keymap_get_for_display() instead. Since in GTK4 this method is
+        removed to gdk_display_get_keymap(), add a helper to
+        GtkVersioning.h to avoid cluttering with ifdefs all over the
+        place.
+
+        * platform/gtk/GtkVersioning.h:
+        (gdk_keymap_get_for_display):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        (WebCore::PlatformKeyboardEvent::modifiersContainCapsLock):
+
 2020-04-17  Oriol Brufau  <obrufau@igalia.com>
 
         Revert "[css-grid] Exclude implicit grid tracks from the resolved value"

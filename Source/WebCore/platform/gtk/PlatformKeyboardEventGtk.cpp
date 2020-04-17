@@ -31,6 +31,7 @@
 #include "PlatformKeyboardEvent.h"
 
 #include "GtkUtilities.h"
+#include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
 #include "WindowsKeyboardCodes.h"
@@ -1341,7 +1342,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
-    return gdk_keymap_get_caps_lock_state(gdk_keymap_get_default());
+    return gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()));
 }
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
@@ -1369,7 +1370,7 @@ bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
     if (!initialized) {
         GUniqueOutPtr<GdkKeymapKey> keys;
         int entriesCount;
-        lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
+        lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(gdk_display_get_default()), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
     }
     return lockMaskIsCapsLock;
 }

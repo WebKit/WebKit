@@ -57,4 +57,10 @@ gtk_init_check(int*, char***)
     return gtk_init_check();
 }
 
+static inline GdkKeymap*
+gdk_keymap_get_for_display(GdkDisplay *display)
+{
+    return gdk_display_get_keymap(display);
+}
+
 #endif // USE(GTK4)

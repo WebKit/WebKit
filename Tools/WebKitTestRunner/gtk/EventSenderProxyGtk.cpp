@@ -36,6 +36,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -303,11 +304,12 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     pressEvent->key.state = modifiers;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
     g_object_ref(pressEvent->key.window);
-    gdk_event_set_device(pressEvent, gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(pressEvent->key.window))));
+    GdkDisplay* display = gdk_window_get_display(pressEvent->key.window);
+    gdk_event_set_device(pressEvent, gdk_seat_get_pointer(gdk_display_get_default_seat(display)));
 
     GUniqueOutPtr<GdkKeymapKey> keys;
     gint nKeys;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys.outPtr(), &nKeys) && nKeys)
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(display), gdkKeySym, &keys.outPtr(), &nKeys) && nKeys)
         pressEvent->key.hardware_keycode = keys.get()[0].keycode;
 
     GdkEvent* releaseEvent = gdk_event_copy(pressEvent);

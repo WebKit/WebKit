@@ -22,6 +22,7 @@
 #include "WebViewTest.h"
 
 #include <WebCore/GUniquePtrGtk.h>
+#include <WebCore/GtkVersioning.h>
 #include <gtk/gtk.h>
 
 void WebViewTest::platformDestroy()
@@ -142,13 +143,14 @@ void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
     event->key.time = GDK_CURRENT_TIME;
     event->key.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->key.window);
-    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget))));
+    GdkDisplay* display = gtk_widget_get_display(viewWidget);
+    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(display)));
     event->key.state = keyModifiers;
 
     // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
     GUniqueOutPtr<GdkKeymapKey> keys;
     int keysCount;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), keyVal, &keys.outPtr(), &keysCount) && keysCount)
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(display), keyVal, &keys.outPtr(), &keysCount) && keysCount)
         event->key.hardware_keycode = keys.get()[0].keycode;
 
     gtk_main_do_event(event.get());
