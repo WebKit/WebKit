@@ -75,13 +75,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t generateCallbackID()
-{
-    static uint64_t callbackID;
-
-    return ++callbackID;
-}
-
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
@@ -177,7 +170,7 @@ void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
 {
     ASSERT(canSendMessage());
 
-    uint64_t callbackID = generateCallbackID();
+    auto callbackID = CallbackID::generateID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is fetching Website data", this);
 
     m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::fetchWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] (WebsiteData websiteData) mutable {
@@ -194,7 +187,7 @@ void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
 
 void NetworkProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, CompletionHandler<void ()>&& completionHandler)
 {
-    auto callbackID = generateCallbackID();
+    auto callbackID = CallbackID::generateID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data", this);
 
     m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
@@ -212,7 +205,7 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
 {
     ASSERT(canSendMessage());
 
-    uint64_t callbackID = generateCallbackID();
+    auto callbackID = CallbackID::generateID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data for several origins", this);
 
     m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteDataForOrigins"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
@@ -352,21 +345,21 @@ void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
         page->negotiatedLegacyTLS();
 }
 
-void NetworkProcessProxy::didFetchWebsiteData(uint64_t callbackID, const WebsiteData& websiteData)
+void NetworkProcessProxy::didFetchWebsiteData(CallbackID callbackID, const WebsiteData& websiteData)
 {
     MESSAGE_CHECK(m_pendingFetchWebsiteDataCallbacks.isValidKey(callbackID));
     auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
     callback(websiteData);
 }
 
-void NetworkProcessProxy::didDeleteWebsiteData(uint64_t callbackID)
+void NetworkProcessProxy::didDeleteWebsiteData(CallbackID callbackID)
 {
     MESSAGE_CHECK(m_pendingDeleteWebsiteDataCallbacks.isValidKey(callbackID));
     auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
     callback();
 }
 
-void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
+void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(CallbackID callbackID)
 {
     MESSAGE_CHECK(m_pendingDeleteWebsiteDataForOriginsCallbacks.isValidKey(callbackID));
     auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);

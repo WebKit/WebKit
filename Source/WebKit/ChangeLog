@@ -1,3 +1,32 @@
+2020-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Switch NetworkProcess and NetworkProcessProxy messages to use CallbackID class
+        https://bugs.webkit.org/show_bug.cgi?id=210566
+        <rdar://problem/61791784>
+
+        Reviewed by David Kilzer.
+
+        Instead of using the raw uint64_t type to represent callbacks, use the purpose
+        built WebKit::CallbackID type.
+
+        Tested by existing cases.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcessProxy::didFetchWebsiteData):
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteData):
+        (WebKit::NetworkProcessProxy::didDeleteWebsiteDataForOrigins):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2020-04-16  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the macCatalyst build

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AuxiliaryProcessProxy.h"
+#include "CallbackID.h"
 #include "NetworkProcessProxyMessagesReplies.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
@@ -251,9 +252,9 @@ private:
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const Optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, uint64_t challengeID);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
-    void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
-    void didDeleteWebsiteData(uint64_t callbackID);
-    void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
+    void didFetchWebsiteData(CallbackID, const WebsiteData&);
+    void didDeleteWebsiteData(CallbackID);
+    void didDeleteWebsiteDataForOrigins(CallbackID);
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
@@ -290,9 +291,9 @@ private:
 
     WebProcessPool& m_processPool;
 
-    HashMap<uint64_t, CompletionHandler<void(WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
-    HashMap<uint64_t, CompletionHandler<void()>> m_pendingDeleteWebsiteDataCallbacks;
-    HashMap<uint64_t, CompletionHandler<void()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
+    HashMap<CallbackID, CompletionHandler<void(WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
+    HashMap<CallbackID, CompletionHandler<void()>> m_pendingDeleteWebsiteDataCallbacks;
+    HashMap<CallbackID, CompletionHandler<void()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
