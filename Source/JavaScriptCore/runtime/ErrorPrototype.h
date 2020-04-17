@@ -26,7 +26,7 @@ namespace JSC {
 
 class ObjectPrototype;
 
-// Superclass for ErrorPrototype and NativeErrorPrototype.
+// Superclass for ErrorPrototype, NativeErrorPrototype, and AggregateErrorPrototype.
 class ErrorPrototypeBase : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -52,7 +52,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
     static ErrorPrototype* create(VM& vm, JSGlobalObject*, Structure* structure)

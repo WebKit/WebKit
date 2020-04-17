@@ -130,6 +130,7 @@ namespace JSC {
     macro(replaceUsingStringSearch) \
     macro(replaceAllUsingStringSearch) \
     macro(makeTypeError) \
+    macro(AggregateError) \
     macro(mapBucketHead) \
     macro(mapBucketNext) \
     macro(mapBucketKey) \

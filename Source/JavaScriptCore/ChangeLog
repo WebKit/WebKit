@@ -1,3 +1,92 @@
+2020-04-17  Devin Rousso  <drousso@apple.com>
+
+        Implement Promise.any and AggregateError
+        https://bugs.webkit.org/show_bug.cgi?id=202566
+
+        Reviewed by Yusuke Suzuki.
+
+        `Promise.any` resolves when any of the given `promises` resolve, but only rejects if _all_
+        of the given `promises` reject. In order to support aggregating all of the `reason` values
+        for all of the rejections, a new error type `AggregateError` is introduced which has an
+        `get errors` that returns an aggregated array of the `reason` values.
+
+        * builtins/PromiseConstructor.js:
+        (all.newResolveElement):
+        (allSettled.newResolveRejectElements):
+        (any): Added.
+        (any.newRejectElement): Added.
+        * runtime/JSPromiseConstructor.cpp:
+
+        * builtins/BuiltinNames.h:
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::errorStructure const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initializeAggregateErrorConstructor): Added.
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        Expose `@AggregateError` for builtins.
+
+        * runtime/AggregateError.h: Added.
+        (JSC::AggregateError::destroy):
+        (JSC::AggregateError::subspaceFor):
+        (JSC::AggregateError::createStructure):
+        (JSC::AggregateError::create):
+        (JSC::AggregateError::errors const):
+        * runtime/AggregateError.cpp: Added.
+        (JSC::AggregateError::AggregateError):
+        (JSC::AggregateError::visitChildren):
+        (JSC::AggregateError::create):
+        (JSC::AggregateError::finishCreation):
+        * runtime/AggregateErrorPrototype.h: Added.
+        * runtime/AggregateErrorPrototype.cpp: Added.
+        (JSC::AggregateErrorPrototype::AggregateErrorPrototype):
+        (JSC::AggregateErrorPrototype::finishCreation):
+        (JSC::aggregateErrorPrototypeAccessorErrors):
+        * runtime/AggregateErrorConstructor.h: Added.
+        * runtime/AggregateErrorConstructor.cpp: Added.
+        (JSC::callAggregateErrorConstructor):
+        (JSC::constructAggregateErrorConstructor):
+        (JSC::AggregateErrorConstructor::AggregateErrorConstructor):
+        (JSC::AggregateErrorConstructor::finishCreation):
+        * runtime/ErrorType.h:
+        * runtime/ErrorType.cpp:
+        (JSC::errorTypeName):
+
+        * runtime/VM.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        Make an `IsoSubspace` for `AggregateError` as it has a different size than `ErrorInstance`.
+
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::JSWebAssemblyCompileError::create):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::JSWebAssemblyLinkError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::JSWebAssemblyRuntimeError::create):
+        Assign to `ErrorInstance` member variables inside `ErrorInstance::finishCreation` instead of
+        inside `ErrorInstance::create` so that subclasses don't have to do the work as well.
+
+        * runtime/Error.cpp:
+        (JSC::createError):
+
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::createStructure):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::createStructure):
+        Drive-by: fix incorrect usage of `ErrorInstanceType` since `ErrorPrototype` does not inherit
+                  from `ErrorInstance` (and therefore neither does `NativeErrorPrototype`).
+
+        * runtime/ArgList.h:
+        Add `WTF_MAKE_NONMOVABLE` to `MarkedArgumentBuffer`.
+
+        * Sources.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2020-04-17  Ross Kirsling  <ross.kirsling@sony.com>
 
         Clean up some Intl classes following the ICU upgrade

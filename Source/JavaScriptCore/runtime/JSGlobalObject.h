@@ -280,6 +280,7 @@ public:
     LazyClassStructure m_syntaxErrorStructure;
     LazyClassStructure m_typeErrorStructure;
     LazyClassStructure m_URIErrorStructure;
+    LazyClassStructure m_aggregateErrorStructure;
 
     WriteBarrier<ObjectConstructor> m_objectConstructor;
     WriteBarrier<ArrayConstructor> m_arrayConstructor;
@@ -724,6 +725,8 @@ public:
             return m_typeErrorStructure.get(this);
         case ErrorType::URIError:
             return m_URIErrorStructure.get(this);
+        case ErrorType::AggregateError:
+            return m_aggregateErrorStructure.get(this);
         }
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -1043,6 +1046,8 @@ private:
 
     template<ErrorType errorType>
     void initializeErrorConstructor(LazyClassStructure::Initializer&);
+
+    void initializeAggregateErrorConstructor(LazyClassStructure::Initializer&);
 
     JS_EXPORT_PRIVATE void init(VM&);
     void fixupPrototypeChainWithObjectPrototype(VM&);

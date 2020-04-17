@@ -706,6 +706,9 @@ profiler/ProfilerProfiledBytecodes.cpp
 profiler/ProfilerUID.cpp
 
 runtime/AbstractModuleRecord.cpp
+runtime/AggregateError.cpp
+runtime/AggregateErrorConstructor.cpp
+runtime/AggregateErrorPrototype.cpp
 runtime/ArgList.cpp
 runtime/ArrayBuffer.cpp
 runtime/ArrayBufferView.cpp

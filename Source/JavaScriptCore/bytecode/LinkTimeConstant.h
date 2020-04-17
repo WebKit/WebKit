@@ -47,6 +47,7 @@ class JSGlobalObject;
     v(ownKeys, nullptr) \
     v(enqueueJob, nullptr) \
     v(makeTypeError, nullptr) \
+    v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
     v(typedArraySort, nullptr) \

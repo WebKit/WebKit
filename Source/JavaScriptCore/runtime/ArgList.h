@@ -30,6 +30,7 @@ namespace JSC {
 
 class MarkedArgumentBuffer : public RecordOverflow {
     WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
+    WTF_MAKE_NONMOVABLE(MarkedArgumentBuffer);
     WTF_FORBID_HEAP_ALLOCATION;
     friend class VM;
     friend class ArgList;

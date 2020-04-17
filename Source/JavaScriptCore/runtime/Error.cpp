@@ -106,6 +106,8 @@ JSObject* createError(JSGlobalObject* globalObject, ErrorType errorType, const S
         return createTypeError(globalObject, message);
     case ErrorType::URIError:
         return createURIError(globalObject, message);
+    case ErrorType::AggregateError:
+        break;
     }
     ASSERT_NOT_REACHED();
     return nullptr;

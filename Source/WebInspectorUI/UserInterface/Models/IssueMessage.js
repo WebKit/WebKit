@@ -202,6 +202,7 @@ WI.IssueMessage.Event = {
 WI.IssueMessage.Type._prefixTypeMap = {
     "SyntaxError": WI.IssueMessage.Type.SemanticIssue,
     "URIError": WI.IssueMessage.Type.SemanticIssue,
+    "AggregateError": WI.IssueMessage.Type.SemanticIssue,
     "EvalError": WI.IssueMessage.Type.SemanticIssue,
     "INVALID_CHARACTER_ERR": WI.IssueMessage.Type.SemanticIssue,
     "SYNTAX_ERR": WI.IssueMessage.Type.SemanticIssue,

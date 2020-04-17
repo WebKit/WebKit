@@ -39,8 +39,7 @@ function all(iterable)
     function newResolveElement(index)
     {
         var alreadyCalled = false;
-        return function (argument)
-        {
+        return (argument) => {
             if (alreadyCalled)
                 return @undefined;
             alreadyCalled = true;
@@ -52,7 +51,7 @@ function all(iterable)
                 return promiseCapability.@resolve.@call(@undefined, values);
 
             return @undefined;
-        }
+        };
     }
 
     try {
@@ -97,7 +96,7 @@ function allSettled(iterable)
         var alreadyCalled = false;
 
         return [
-            function (value) {
+            (value) => {
                 if (alreadyCalled)
                     return @undefined;
                 alreadyCalled = true;
@@ -116,7 +115,7 @@ function allSettled(iterable)
                 return @undefined;
             },
 
-            function (reason) {
+            (reason) => {
                 if (alreadyCalled)
                     return @undefined;
                 alreadyCalled = true;
@@ -154,6 +153,61 @@ function allSettled(iterable)
         --remainingElementsCount;
         if (remainingElementsCount === 0)
             promiseCapability.@resolve.@call(@undefined, values);
+    } catch (error) {
+        promiseCapability.@reject.@call(@undefined, error);
+    }
+
+    return promiseCapability.@promise;
+}
+
+function any(iterable)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("|this| is not an object");
+
+    var promiseCapability = @newPromiseCapability(this);
+
+    var errors = [];
+    var remainingElementsCount = 1;
+    var index = 0;
+
+    function newRejectElement(index)
+    {
+        var alreadyCalled = false;
+        return (reason) => {
+            if (alreadyCalled)
+                return @undefined;
+            alreadyCalled = true;
+
+            @putByValDirect(errors, index, reason);
+
+            --remainingElementsCount;
+            if (remainingElementsCount === 0)
+                return promiseCapability.@reject.@call(@undefined, new @AggregateError(errors));
+
+            return @undefined;
+        };
+    }
+
+    try {
+        var promiseResolve = this.resolve;
+        if (typeof promiseResolve !== "function")
+            @throwTypeError("Promise resolve is not a function");
+
+        for (var value of iterable) {
+            @putByValDirect(errors, index, @undefined);
+            var nextPromise = promiseResolve.@call(this, value);
+            var rejectElement = newRejectElement(index);
+            ++remainingElementsCount;
+            nextPromise.then(promiseCapability.@resolve, rejectElement);
+            ++index;
+        }
+
+        --remainingElementsCount;
+        if (remainingElementsCount === 0)
+            throw new @AggregateError(errors);
     } catch (error) {
         promiseCapability.@reject.@call(@undefined, error);
     }

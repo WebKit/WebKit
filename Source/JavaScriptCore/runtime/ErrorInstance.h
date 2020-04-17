@@ -56,9 +56,7 @@ public:
     static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
-        instance->m_sourceAppender = appender;
-        instance->m_runtimeTypeForCause = type;
-        instance->finishCreation(globalObject, vm, message, useCurrentFrame);
+        instance->finishCreation(vm, globalObject, message, appender, type, useCurrentFrame);
         return instance;
     }
 
@@ -92,7 +90,7 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*);
 
-    void finishCreation(JSGlobalObject*, VM&, const String&, bool useCurrentFrame = true);
+    void finishCreation(VM&, JSGlobalObject*, const String&, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);

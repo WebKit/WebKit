@@ -37,8 +37,9 @@ enum class ErrorType : uint8_t {
     SyntaxError,
     TypeError,
     URIError,
+    AggregateError,
 };
-static constexpr unsigned NumberOfErrorType { static_cast<unsigned>(ErrorType::URIError) + 1 };
+static constexpr unsigned NumberOfErrorType { static_cast<unsigned>(ErrorType::AggregateError) + 1 };
 ASCIILiteral errorTypeName(ErrorType);
 
 } // namespace JSC

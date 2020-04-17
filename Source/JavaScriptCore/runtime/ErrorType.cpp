@@ -40,6 +40,7 @@ ASCIILiteral errorTypeName(ErrorType errorType)
         "SyntaxError"_s,
         "TypeError"_s,
         "URIError"_s,
+        "AggregateError"_s,
     };
     return errorTypeNames[static_cast<unsigned>(errorType)];
 }

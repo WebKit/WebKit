@@ -110,10 +110,14 @@ static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFra
 
 }
 
-void ErrorInstance::finishCreation(JSGlobalObject* globalObject, VM& vm, const String& message, bool useCurrentFrame)
+void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+
+    m_sourceAppender = appender;
+    m_runtimeTypeForCause = type;
+
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
