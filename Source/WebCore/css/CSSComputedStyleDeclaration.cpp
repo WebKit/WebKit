@@ -892,7 +892,16 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
 
     // Handle the 'none' case.
-    if (trackSizes.isEmpty() && autoRepeatTrackSizes.isEmpty())
+    bool trackListIsEmpty = trackSizes.isEmpty() && autoRepeatTrackSizes.isEmpty();
+    if (isRenderGrid && trackListIsEmpty) {
+        // For grids we should consider every listed track, whether implicitly or explicitly
+        // created. Empty grids have a sole grid line per axis.
+        auto& grid = downcast<RenderGrid>(*renderer);
+        auto& positions = isRowAxis ? grid.columnPositions() : grid.rowPositions();
+        trackListIsEmpty = positions.size() == 1;
+    }
+
+    if (trackListIsEmpty)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();

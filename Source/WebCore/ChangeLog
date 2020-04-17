@@ -1,3 +1,38 @@
+2020-04-17  Oriol Brufau  <obrufau@igalia.com>
+
+        Revert "[css-grid] Exclude implicit grid tracks from the resolved value"
+        https://bugs.webkit.org/show_bug.cgi?id=210617
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Revert r254561 since it appears to be breaking site authoring tools
+        which were relying on the previous behaviour.
+
+        Tests: fast/css-grid-layout/grid-auto-columns-rows-get-set.html
+               fast/css-grid-layout/grid-columns-rows-get-set.html
+               fast/css-grid-layout/grid-template-shorthand-get-set.html
+               fast/css-grid-layout/mark-as-infinitely-growable.html
+               fast/css-grid-layout/named-grid-lines-computed-style-implicit-tracks.html
+               fast/css-grid-layout/negative-growth-share-as-infinity-crash.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-support-flexible-lengths-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-support-grid-template-columns-rows-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-support-named-grid-lines-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-support-repeat-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-template-columns-rows-resolved-values-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-flexible-lengths-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-grid-template-columns-rows-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-named-grid-lines-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-support-repeat-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-layout-properties.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::trackSizesForComputedStyle const):
+
 2020-04-17  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny iokit open access to graphics related classes

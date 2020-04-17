@@ -216,8 +216,8 @@
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "[first] 10px [nav nav2] 15px [nav] 15px [last]", "100px [nav nav2] 25px [nav nav2] 25px [last]", '"a b c" "d e f" "g h i"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumnsWithoutRowsSizes"), "[first] 10px [nav nav2] 15px [nav] 15px [last]", "0px [nav nav2] 0px [nav nav2] 0px [last]", '"a b c" "d e f" "g h i"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithAuto"), "10px", "0px", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormOnlyAreas"), "none", "0px", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNames"), "none", "[first] 0px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormOnlyAreas"), "0px", "0px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNames"), "0px", "[first] 0px", '"a"');
 
     debug("");
     debug("Test getting wrong values for grid-template shorthand through CSS (they should resolve to the default: 'none')");
@@ -268,7 +268,7 @@
     testGridDefinitionsSetJSValues("66px / 18px", "18px", "66px", "none");
     testGridDefinitionsSetJSValues("[head] 'a' 15px [tail] / 10px", "10px", "[head] 15px [tail]", "\"a\"");
     testGridDefinitionsSetJSValues("[foo1 bar1] 'a' 50px [foo2 bar2] [foo3 bar3] 'b' 50px [foo4 bar4] / 100px", "100px", "[foo1 bar1] 50px [foo2 bar2 foo3 bar3] 50px [foo4 bar4]", "\"a\" \"b\"", "100px", "[foo1 bar1] 50px [foo2 bar2] [foo3 bar3] 50px [foo4 bar4]");
-    testGridDefinitionsSetJSValues("'a'", "none", "0px", "\"a\"", "none", "auto");
+    testGridDefinitionsSetJSValues("'a'", "0px", "0px", "\"a\"", "none", "auto");
 
     debug("");
     debug("Test setting grid-template shorthand to bad values through JS");

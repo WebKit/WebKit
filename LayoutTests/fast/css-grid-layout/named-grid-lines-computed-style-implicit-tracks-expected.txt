@@ -1,128 +1,24 @@
-Test that computed style for grid-template-columns and grid-template-rows works as expected, with named grid lines but without implicit tracks. Also test the size and position of the items, since the size of implicit tracks is not exposed
+Test that computed style for grid-template-columns and grid-template-rows works as expected with named grid lines and implicit tracks
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS window.getComputedStyle(gridOneColumnSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b]"
-PASS window.getComputedStyle(gridOneColumnSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y]"
-PASS gridOneColumnSingle.childElementCount is 4
-PASS gridOneColumnSingle.children[0].offsetWidth is 200
-PASS gridOneColumnSingle.children[0].offsetTop is 0
-PASS gridOneColumnSingle.children[0].offsetHeight is 50
-PASS gridOneColumnSingle.children[1].offsetWidth is 200
-PASS gridOneColumnSingle.children[1].offsetTop is 50
-PASS gridOneColumnSingle.children[1].offsetHeight is 50
-PASS gridOneColumnSingle.children[2].offsetWidth is 200
-PASS gridOneColumnSingle.children[2].offsetTop is 100
-PASS gridOneColumnSingle.children[2].offsetHeight is 50
-PASS gridOneColumnSingle.children[3].offsetWidth is 200
-PASS gridOneColumnSingle.children[3].offsetTop is 150
-PASS gridOneColumnSingle.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridTwoColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b]"
-PASS window.getComputedStyle(gridTwoColumnsSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y]"
-PASS gridTwoColumnsSingle.childElementCount is 4
-PASS gridTwoColumnsSingle.children[0].offsetWidth is 200
-PASS gridTwoColumnsSingle.children[0].offsetTop is 0
-PASS gridTwoColumnsSingle.children[0].offsetHeight is 50
-PASS gridTwoColumnsSingle.children[1].offsetWidth is 150
-PASS gridTwoColumnsSingle.children[1].offsetTop is 0
-PASS gridTwoColumnsSingle.children[1].offsetHeight is 50
-PASS gridTwoColumnsSingle.children[2].offsetWidth is 200
-PASS gridTwoColumnsSingle.children[2].offsetTop is 50
-PASS gridTwoColumnsSingle.children[2].offsetHeight is 50
-PASS gridTwoColumnsSingle.children[3].offsetWidth is 150
-PASS gridTwoColumnsSingle.children[3].offsetTop is 50
-PASS gridTwoColumnsSingle.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridThreeColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b]"
-PASS window.getComputedStyle(gridThreeColumnsSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y]"
-PASS gridThreeColumnsSingle.childElementCount is 4
-PASS gridThreeColumnsSingle.children[0].offsetWidth is 200
-PASS gridThreeColumnsSingle.children[0].offsetTop is 0
-PASS gridThreeColumnsSingle.children[0].offsetHeight is 50
-PASS gridThreeColumnsSingle.children[1].offsetWidth is 150
-PASS gridThreeColumnsSingle.children[1].offsetTop is 0
-PASS gridThreeColumnsSingle.children[1].offsetHeight is 50
-PASS gridThreeColumnsSingle.children[2].offsetWidth is 100
-PASS gridThreeColumnsSingle.children[2].offsetTop is 0
-PASS gridThreeColumnsSingle.children[2].offsetHeight is 50
-PASS gridThreeColumnsSingle.children[3].offsetWidth is 200
-PASS gridThreeColumnsSingle.children[3].offsetTop is 50
-PASS gridThreeColumnsSingle.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridFourColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b]"
+PASS window.getComputedStyle(gridOneColumnSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y] 50px 50px 50px"
+PASS window.getComputedStyle(gridTwoColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b] 150px"
+PASS window.getComputedStyle(gridTwoColumnsSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y] 50px"
+PASS window.getComputedStyle(gridThreeColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b] 150px 100px"
+PASS window.getComputedStyle(gridThreeColumnsSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y] 50px"
+PASS window.getComputedStyle(gridFourColumnsSingle, '').getPropertyValue('grid-template-columns') is "[a] 200px [b] 150px 100px 50px"
 PASS window.getComputedStyle(gridFourColumnsSingle, '').getPropertyValue('grid-template-rows') is "[x] 50px [y]"
-PASS gridFourColumnsSingle.childElementCount is 4
-PASS gridFourColumnsSingle.children[0].offsetWidth is 200
-PASS gridFourColumnsSingle.children[0].offsetTop is 0
-PASS gridFourColumnsSingle.children[0].offsetHeight is 50
-PASS gridFourColumnsSingle.children[1].offsetWidth is 150
-PASS gridFourColumnsSingle.children[1].offsetTop is 0
-PASS gridFourColumnsSingle.children[1].offsetHeight is 50
-PASS gridFourColumnsSingle.children[2].offsetWidth is 100
-PASS gridFourColumnsSingle.children[2].offsetTop is 0
-PASS gridFourColumnsSingle.children[2].offsetHeight is 50
-PASS gridFourColumnsSingle.children[3].offsetWidth is 50
-PASS gridFourColumnsSingle.children[3].offsetTop is 0
-PASS gridFourColumnsSingle.children[3].offsetHeight is 50
 PASS window.getComputedStyle(gridOneColumnMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e]"
-PASS window.getComputedStyle(gridOneColumnMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w]"
-PASS gridOneColumnMultiple.childElementCount is 4
-PASS gridOneColumnMultiple.children[0].offsetWidth is 200
-PASS gridOneColumnMultiple.children[0].offsetTop is 0
-PASS gridOneColumnMultiple.children[0].offsetHeight is 50
-PASS gridOneColumnMultiple.children[1].offsetWidth is 200
-PASS gridOneColumnMultiple.children[1].offsetTop is 50
-PASS gridOneColumnMultiple.children[1].offsetHeight is 50
-PASS gridOneColumnMultiple.children[2].offsetWidth is 200
-PASS gridOneColumnMultiple.children[2].offsetTop is 100
-PASS gridOneColumnMultiple.children[2].offsetHeight is 50
-PASS gridOneColumnMultiple.children[3].offsetWidth is 200
-PASS gridOneColumnMultiple.children[3].offsetTop is 150
-PASS gridOneColumnMultiple.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridTwoColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e]"
-PASS window.getComputedStyle(gridTwoColumnsMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w]"
-PASS gridTwoColumnsMultiple.childElementCount is 4
-PASS gridTwoColumnsMultiple.children[0].offsetWidth is 200
-PASS gridTwoColumnsMultiple.children[0].offsetTop is 0
-PASS gridTwoColumnsMultiple.children[0].offsetHeight is 50
-PASS gridTwoColumnsMultiple.children[1].offsetWidth is 150
-PASS gridTwoColumnsMultiple.children[1].offsetTop is 0
-PASS gridTwoColumnsMultiple.children[1].offsetHeight is 50
-PASS gridTwoColumnsMultiple.children[2].offsetWidth is 200
-PASS gridTwoColumnsMultiple.children[2].offsetTop is 50
-PASS gridTwoColumnsMultiple.children[2].offsetHeight is 50
-PASS gridTwoColumnsMultiple.children[3].offsetWidth is 150
-PASS gridTwoColumnsMultiple.children[3].offsetTop is 50
-PASS gridTwoColumnsMultiple.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridThreeColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e]"
-PASS window.getComputedStyle(gridThreeColumnsMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w]"
-PASS gridThreeColumnsMultiple.childElementCount is 4
-PASS gridThreeColumnsMultiple.children[0].offsetWidth is 200
-PASS gridThreeColumnsMultiple.children[0].offsetTop is 0
-PASS gridThreeColumnsMultiple.children[0].offsetHeight is 50
-PASS gridThreeColumnsMultiple.children[1].offsetWidth is 150
-PASS gridThreeColumnsMultiple.children[1].offsetTop is 0
-PASS gridThreeColumnsMultiple.children[1].offsetHeight is 50
-PASS gridThreeColumnsMultiple.children[2].offsetWidth is 100
-PASS gridThreeColumnsMultiple.children[2].offsetTop is 0
-PASS gridThreeColumnsMultiple.children[2].offsetHeight is 50
-PASS gridThreeColumnsMultiple.children[3].offsetWidth is 200
-PASS gridThreeColumnsMultiple.children[3].offsetTop is 50
-PASS gridThreeColumnsMultiple.children[3].offsetHeight is 50
-PASS window.getComputedStyle(gridFourColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e]"
+PASS window.getComputedStyle(gridOneColumnMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w] 50px 50px 50px"
+PASS window.getComputedStyle(gridTwoColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e] 150px"
+PASS window.getComputedStyle(gridTwoColumnsMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w] 50px"
+PASS window.getComputedStyle(gridThreeColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e] 150px 100px"
+PASS window.getComputedStyle(gridThreeColumnsMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w] 50px"
+PASS window.getComputedStyle(gridFourColumnsMultiple, '').getPropertyValue('grid-template-columns') is "[a b c] 200px [d e] 150px 100px 50px"
 PASS window.getComputedStyle(gridFourColumnsMultiple, '').getPropertyValue('grid-template-rows') is "[x y z] 50px [v w]"
-PASS gridFourColumnsMultiple.childElementCount is 4
-PASS gridFourColumnsMultiple.children[0].offsetWidth is 200
-PASS gridFourColumnsMultiple.children[0].offsetTop is 0
-PASS gridFourColumnsMultiple.children[0].offsetHeight is 50
-PASS gridFourColumnsMultiple.children[1].offsetWidth is 150
-PASS gridFourColumnsMultiple.children[1].offsetTop is 0
-PASS gridFourColumnsMultiple.children[1].offsetHeight is 50
-PASS gridFourColumnsMultiple.children[2].offsetWidth is 100
-PASS gridFourColumnsMultiple.children[2].offsetTop is 0
-PASS gridFourColumnsMultiple.children[2].offsetHeight is 50
-PASS gridFourColumnsMultiple.children[3].offsetWidth is 50
-PASS gridFourColumnsMultiple.children[3].offsetTop is 0
-PASS gridFourColumnsMultiple.children[3].offsetHeight is 50
 PASS successfullyParsed is true
 
 TEST COMPLETE

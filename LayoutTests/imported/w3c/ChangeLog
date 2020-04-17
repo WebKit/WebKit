@@ -1,3 +1,26 @@
+2020-04-17  Oriol Brufau  <obrufau@igalia.com>
+
+        Revert "[css-grid] Exclude implicit grid tracks from the resolved value"
+        https://bugs.webkit.org/show_bug.cgi?id=210617
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        WPT tests are not reverted for now, just updating the expectations.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-flexible-lengths-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-grid-template-columns-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-named-grid-lines-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-support-repeat-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-template-columns-rows-resolved-values-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-flexible-lengths-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-grid-template-columns-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-named-grid-lines-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-support-repeat-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-layout-properties-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent-expected.txt:
+
 2020-04-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         MediaQueryList should extend EventTarget

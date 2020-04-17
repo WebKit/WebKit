@@ -85,13 +85,13 @@ testGridAutoDefinitionsValues(document.getElementById("gridAutoAutoInMinMax"), "
 testGridAutoDefinitionsValues(document.getElementById("gridAutoFitContent"), "fit-content(50%)", "fit-content(30px)");
 
 debug("");
-debug("Test that getting grid-template-columns and grid-template-rows set through CSS only lists explicit tracks, but not implicit ones");
+debug("Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created");
 testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithChildren"), "30px", "50px");
-testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithChildren"), "none", "none");
+testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithChildren"), "50px", "30px");
 testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "30px", "40px");
-testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "20px", "15px");
-testGridTemplatesValues(document.getElementById("gridAutoMultipleTracks"), "none", "none");
-testGridTemplatesValues(document.getElementById("gridAutoMultipleTracksNegativeIndexes"), "none", "none");
+testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "20px", "15px", "20px 40px 40px", "15px 30px 30px");
+testGridTemplatesValues(document.getElementById("gridAutoMultipleTracks"), "25px 50px 100px 25px", "10px 20px 30px 10px");
+testGridTemplatesValues(document.getElementById("gridAutoMultipleTracksNegativeIndexes"), "100px 25px 50px 100px", "30px 10px 20px 30px");
 
 debug("");
 debug("Test that grid-template-* definitions are not affected by grid-auto-* definitions");

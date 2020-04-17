@@ -1,5 +1,5 @@
 
-PASS Property grid-template-columns value 'none' computes to 'none' 
+FAIL Property grid-template-columns value 'none' computes to 'none' assert_equals: expected "none" but got "300px"
 PASS Property grid-template-columns value '20%' computes to '60px' 
 PASS Property grid-template-columns value 'calc(-0.5em + 10px)' computes to '0px' 
 PASS Property grid-template-columns value 'calc(0.5em + 10px)' computes to '30px' 

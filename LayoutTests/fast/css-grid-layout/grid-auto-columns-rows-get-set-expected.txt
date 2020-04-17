@@ -15,19 +15,19 @@ PASS window.getComputedStyle(gridAutoAutoInMinMax, '').getPropertyValue('grid-au
 PASS window.getComputedStyle(gridAutoFitContent, '').getPropertyValue('grid-auto-rows') is "fit-content(50%)"
 PASS window.getComputedStyle(gridAutoFitContent, '').getPropertyValue('grid-auto-columns') is "fit-content(30px)"
 
-Test that getting grid-template-columns and grid-template-rows set through CSS only lists explicit tracks, but not implicit ones
+Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created
 PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-auto-rows') is "30px"
 PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-auto-columns') is "50px"
-PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-template-rows') is "none"
+PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-template-columns') is "50px"
+PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('grid-template-rows') is "30px"
 PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-auto-rows') is "30px"
 PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-auto-columns') is "40px"
-PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-template-columns') is "20px"
-PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-template-rows') is "15px"
-PASS window.getComputedStyle(gridAutoMultipleTracks, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(gridAutoMultipleTracks, '').getPropertyValue('grid-template-rows') is "none"
-PASS window.getComputedStyle(gridAutoMultipleTracksNegativeIndexes, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(gridAutoMultipleTracksNegativeIndexes, '').getPropertyValue('grid-template-rows') is "none"
+PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-template-columns') is "20px 40px 40px"
+PASS window.getComputedStyle(gridAutoFixedFixedWithFixedFixedWithChildren, '').getPropertyValue('grid-template-rows') is "15px 30px 30px"
+PASS window.getComputedStyle(gridAutoMultipleTracks, '').getPropertyValue('grid-template-columns') is "25px 50px 100px 25px"
+PASS window.getComputedStyle(gridAutoMultipleTracks, '').getPropertyValue('grid-template-rows') is "10px 20px 30px 10px"
+PASS window.getComputedStyle(gridAutoMultipleTracksNegativeIndexes, '').getPropertyValue('grid-template-columns') is "100px 25px 50px 100px"
+PASS window.getComputedStyle(gridAutoMultipleTracksNegativeIndexes, '').getPropertyValue('grid-template-rows') is "30px 10px 20px 30px"
 
 Test that grid-template-* definitions are not affected by grid-auto-* definitions
 PASS window.getComputedStyle(gridAutoFixedFixed, '').getPropertyValue('grid-template-columns') is "none"
