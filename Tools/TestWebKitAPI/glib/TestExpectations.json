@@ -42,7 +42,7 @@
     "TestWebExtensions": {
         "subtests": {
             "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/147822"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": ["webkit.org/b/147822", "webkit.org/b/210635"]}}
             },
             "/webkit/WebKitWebExtension/form-submission-steps": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205333"}}
@@ -78,6 +78,13 @@
             },
             "/webkit/WebKitWebContext/languages": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188111"}}
+            }
+        }
+    },
+    "TestWebKitWebView": {
+        "subtests": {
+            "/webkit/WebKitWebView/is-playing-audio": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
             }
         }
     },

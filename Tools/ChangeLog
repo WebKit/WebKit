@@ -1,3 +1,11 @@
+2020-04-16  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] A couple of API tests are flaky failing on X11.
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-04-16  Daniel Bates  <dabates@apple.com>
 
         Remove unused -_focusTextInputContext
