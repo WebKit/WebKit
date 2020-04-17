@@ -1,5 +1,16 @@
 2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION ( r254044 ): [ Win ] css1/box_properties/padding_left.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=207480
+
+        Unreviewed test gardening.
+
+        Adjusted this test expectation and others in the Windows category with lint alerts.
+
+        * platform/win/TestExpectations:
+
+2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
+
         Layout Test fast/text/variations/ipc2.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=189550
 

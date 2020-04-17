@@ -2092,7 +2092,7 @@ css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.htm
 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Skip ] #  [ Timeout ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Skip ] #  [ Timeout ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Skip ] #  [ Timeout ]
-css1/box_properties/padding_left.html [ ImageOnlyFailure ]
+css1/box_properties/padding_left.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/140724 css2.1/t1202-counter-04-b.html [ Failure ]
 webkit.org/b/140724 css2.1/t1202-counters-04-b.html [ Failure ]
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
@@ -3254,7 +3254,6 @@ fast/transforms/bounding-rect-zoom.html [ Failure ]
 fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
 fonts/sans-serif.html [ Failure ]
-http/tests/cache/memory-cache-pruning.html [ Failure ]
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/multiple-prioritization.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
@@ -3980,8 +3979,6 @@ webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
 
 webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass Failure ]
 
-webkit.org/b/184649 css3/filters/blur-various-radii.html [ Crash ]
-
 webkit.org/b/184428 http/tests/misc/submit-post-keygen.html [ Skip ]
 
 webkit.org/b/185075 css3/color-filters/color-filter-backgrounds-borders.html [ ImageOnlyFailure ]
@@ -4197,7 +4194,7 @@ webkit.org/b/191366 fast/block/basic/height-percentage-simple.html [ Failure ]
 webkit.org/b/191366 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 
 webkit.org/b/191584 animations/animation-direction-normal.html [ Failure ]
-webkit.org/b/191584 animations/animation-direction-reverse.html [ Failure ]
+webkit.org/b/191584 [ Release ] animations/animation-direction-reverse.html [ Failure ]
 webkit.org/b/191584 animations/dynamic-stylesheet-loading.html [ Failure ]
 webkit.org/b/191584 animations/play-state-paused.html [ Failure ]
 webkit.org/b/191584 animations/transform-non-accelerated.html [ Failure ]
@@ -4451,8 +4448,6 @@ webkit.org/b/207327 webanimations/accelerated-animation-canceled-before-commit.h
 webkit.org/b/207373 fast/loader/data-url-load-denied.html [ Pass Timeout ]
 
 webkit.org/b/207477 animations/stacking-context-not-fill-forwards.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/207480 css1/box_properties/padding_left.html [ Pass Failure ]
 
 webkit.org/b/207495 webanimations/width-and-opacity-separate-animation-yields-compositing.html [ Pass Failure ]
 
