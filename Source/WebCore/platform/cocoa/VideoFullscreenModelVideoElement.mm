@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #import "VideoFullscreenModelVideoElement.h"
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "DOMWindow.h"
 #import "Event.h"

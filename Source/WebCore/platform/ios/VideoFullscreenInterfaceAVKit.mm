@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
+#import "VideoFullscreenInterfaceAVKit.h"
 
 #if PLATFORM(IOS_FAMILY)
-#import "VideoFullscreenInterfaceAVKit.h"
 
 #import "PictureInPictureSupport.h"
 
@@ -1562,7 +1562,7 @@ void WebCore::setSupportsPictureInPicture(bool isSupported)
 
 bool WebCore::supportsPictureInPicture()
 {
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) && !PLATFORM(WATCHOS)
+#if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS)
     if (isPictureInPictureSupported.hasValue())
         return *isPictureInPictureSupported;
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];

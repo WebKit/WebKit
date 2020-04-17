@@ -25,7 +25,7 @@
 #import "config.h"
 #import "VideoFullscreenManager.h"
 
-#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "Attachment.h"
 #import "LayerHostingContext.h"
@@ -570,4 +570,4 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)

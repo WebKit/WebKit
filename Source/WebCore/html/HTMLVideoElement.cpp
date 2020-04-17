@@ -544,7 +544,7 @@ void HTMLVideoElement::setPictureInPictureAPITestEnabled(bool enabled)
 
 #endif
 
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void HTMLVideoElement::setVideoFullscreenFrame(FloatRect frame)
 {
     HTMLMediaElement::setVideoFullscreenFrame(frame);

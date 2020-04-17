@@ -26,7 +26,7 @@
 #import "config.h"
 #import "VideoFullscreenManagerProxy.h"
 
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
@@ -731,4 +731,4 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId
 #undef MESSAGE_CHECK_CONTEXTID
 #undef MESSAGE_CHECK
 
-#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)

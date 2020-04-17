@@ -203,7 +203,7 @@ void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)
 
 void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->setVideoFullscreenGravity(gravity);
 #endif
 }
@@ -246,14 +246,14 @@ void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remote
 // MediaPlayerClient
 void RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage()
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->updateVideoFullscreenInlineImage();
 #endif
 }
 
 void RemoteMediaPlayerProxy::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->setVideoFullscreenMode(mode);
 #endif
 }
@@ -265,7 +265,7 @@ void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy pol
 
 void RemoteMediaPlayerProxy::videoFullscreenStandbyChanged()
 {
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->videoFullscreenStandbyChanged();
 #endif
 }

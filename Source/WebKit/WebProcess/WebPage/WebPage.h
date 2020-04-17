@@ -361,8 +361,11 @@ public:
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlaybackSessionManager& playbackSessionManager();
-    VideoFullscreenManager& videoFullscreenManager();
     void videoControlsManagerDidChange();
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    VideoFullscreenManager& videoFullscreenManager();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1844,7 +1847,7 @@ private:
     RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
     std::unique_ptr<WebPageInspectorTargetController> m_inspectorTargetController;
 
-#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<PlaybackSessionManager> m_playbackSessionManager;
     RefPtr<VideoFullscreenManager> m_videoFullscreenManager;
 #endif

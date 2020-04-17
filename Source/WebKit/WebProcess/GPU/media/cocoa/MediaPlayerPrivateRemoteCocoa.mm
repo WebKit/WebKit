@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 {

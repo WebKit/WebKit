@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "Connection.h"
 #include "MessageReceiver.h"
@@ -166,5 +166,5 @@ protected:
     
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 

@@ -1,3 +1,33 @@
+2020-04-17  Peng Liu  <peng.liu6@apple.com>
+
+        Cleanup the macros for video fullscreen and picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=210638
+
+        Reviewed by Eric Carlson.
+
+        Replace some "#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))"
+        and all "#if (PLATFORM(IOS_FAMILY) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))"
+        with "#if ENABLE(VIDEO_PRESENTATION_MODE)".
+
+        No new tests, no functional change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+        * platform/PictureInPictureSupport.h:
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+        * platform/cocoa/VideoFullscreenModel.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.h:
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (WebCore::supportsPictureInPicture):
+
 2020-04-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Resolve the minimum width for overlapping spanner columns
