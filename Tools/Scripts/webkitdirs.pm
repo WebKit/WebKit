@@ -757,7 +757,11 @@ sub determineConfigurationProductDir
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
         } else {
-            $configurationProductDir = "$baseProductDir/$configuration";
+            if (shouldUseFlatpak()) {
+                $configurationProductDir = "$baseProductDir/$portName/$configuration";
+            } else {
+                $configurationProductDir = "$baseProductDir/$configuration";
+            }
             $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
         }
     }

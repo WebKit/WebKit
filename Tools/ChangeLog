@@ -1,3 +1,13 @@
+2020-04-17  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Not fully hooked in BuildSlaveSupport
+        https://bugs.webkit.org/show_bug.cgi?id=210548
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir): Flatpak SDK builds use a dedicated product directory per port.
+
 2020-04-16  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] A couple of API tests are flaky failing on X11.
