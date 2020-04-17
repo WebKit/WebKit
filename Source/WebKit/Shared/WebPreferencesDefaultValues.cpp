@@ -88,6 +88,10 @@ static bool defaultAsyncFrameAndOverflowScrollingEnabled()
     return os_feature_enabled(WebKit, async_frame_and_overflow_scrolling);
 #endif
 
+#if PLATFORM(MAC)
+    return true;
+#endif
+
     return false;
 }
 

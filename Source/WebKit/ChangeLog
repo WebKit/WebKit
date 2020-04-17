@@ -1,3 +1,21 @@
+2020-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn async frame and overflow scrolling on by default on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210661
+        rdar://problem/60420037
+
+        Reviewed by Tim Horton.
+
+        Flip the plist value and the default value for macOS which is outside of the feature flag #ifdef.
+
+        Testing keeps async overflow scrolling off by default, so this should not affect testing.
+
+        This only impacts WebKit2.
+
+        * FeatureFlags/WebKit.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAsyncFrameAndOverflowScrollingEnabled):
+
 2020-04-17  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Add telemetry to some mach lookup sandbox extensions

@@ -5,7 +5,7 @@
     <key>async_frame_and_overflow_scrolling</key>
     <dict>
         <key>Enabled</key>
-        <false/>
+        <true/>
     </dict>
     <key>canvas_and_media_in_gpu_process</key>
     <dict>
