@@ -1,3 +1,14 @@
+2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+
+        Unreviewed test gardening.
+
+        Removed duplicate test expectations.
+
+        * platform/ios/TestExpectations:
+
 2020-04-17  Oriol Brufau  <obrufau@igalia.com>
 
         Revert "[css-grid] Exclude implicit grid tracks from the resolved value"
