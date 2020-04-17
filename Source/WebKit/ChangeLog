@@ -1,3 +1,17 @@
+2020-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][X11] REGRESSION(r259944): Wrong position of select popup menu in X11
+        https://bugs.webkit.org/show_bug.cgi?id=210603
+
+        Reviewed by Michael Catanzaro.
+
+        gdk_window_move_to_rect expects the given rectangle in coordinates relative to the top-left corner of the window
+        that the popup window is transient for. We were using screen coordinates.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Translate widget coordinates to window coordinates before passing
+        the rectangle to gdk_window_move_to_rect().
+
 2020-04-17  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r256756): -[WKUserDefaults initWithSuiteName:]: Instance variable used while 'self' is not set to the result of '[(super or self) init...]'
