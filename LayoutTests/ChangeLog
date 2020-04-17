@@ -1,5 +1,18 @@
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Scrolling-tree hit-testing is off by top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=210629
+        <rdar://problem/61848883>
+
+        Reviewed by Tim Horton.
+
+        Test for scroller hit-testing with top content inset.
+
+        * fast/scrolling/mac/async-scroll-overflow-top-inset-expected.txt: Added.
+        * fast/scrolling/mac/async-scroll-overflow-top-inset.html: Added.
+
+2020-04-16  Simon Fraser  <simon.fraser@apple.com>
+
         A slow-starting swipe always latches on the root node
         https://bugs.webkit.org/show_bug.cgi?id=210618
 

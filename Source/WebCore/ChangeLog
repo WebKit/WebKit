@@ -1,3 +1,22 @@
+2020-04-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling-tree hit-testing is off by top content inset
+        https://bugs.webkit.org/show_bug.cgi?id=210629
+        <rdar://problem/61848883>
+
+        Reviewed by Tim Horton.
+
+        r259936 added a point conversion from the superlayer of the root content layer,
+        to fix RTL, but this also pulled in top content inset, which we don't want.
+
+        Instead, do the RTL fix by factoring in scroll origin.
+
+        Test: fast/scrolling/mac/async-scroll-overflow-top-inset.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        (ScrollingTreeMac::scrollingNodeForPoint):
+
 2020-04-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix for non unified builds.
