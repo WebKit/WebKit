@@ -96,6 +96,9 @@ WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, GraphicsConte
 WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
+    if (isContextLost())
+        return;
+
     initializeShaderExtensions();
     initializeVertexArrayObjects();
     initializeTransformFeedbackBufferCache();

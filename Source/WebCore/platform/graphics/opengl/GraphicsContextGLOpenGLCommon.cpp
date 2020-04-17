@@ -372,6 +372,13 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
     if (mustRestoreFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 
+    auto error = ::glGetError();
+    if (error != GL_NO_ERROR) {
+        RELEASE_LOG(WebGL, "Fatal: OpenGL error during GraphicsContextGL buffer initialization (%d).", error);
+        forceContextLost();
+        return;
+    }
+
     ::glFlush();
 }
 

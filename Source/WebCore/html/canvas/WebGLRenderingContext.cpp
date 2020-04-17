@@ -99,6 +99,9 @@ WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, GraphicsContext
 WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
+    if (isContextLost())
+        return;
+
     initializeVertexArrayObjects();
 }
 

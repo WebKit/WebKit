@@ -1,3 +1,36 @@
+2020-04-17  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Confirm there are no errors when setting up framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=210632
+        <rdar://problem/61916680>
+
+        Reviewed by Simon Fraser.
+
+        We're seeing crashes on macOS inside GraphicsContextGL::reshape().
+        Specifically when we submit work at the end of the function via
+        glFlush.
+
+        At the moment the cause is a mystery, because we should bail out
+        before then if the multisample renderbuffer was not complete. In
+        the hope that it helps somewhat, add a call to glGetError to double
+        check that there isn't anything horribly wrong before we talk to
+        the GPU.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::WebGL2RenderingContext): If the underlying
+        GCGL context was marked as "LOST" during initialization, skip the rest of our
+        initialization.
+        * html/canvas/WebGLRenderingContext.cpp: Ditto.
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        * html/canvas/WebGLRenderingContextBase.cpp: Ditto.
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp: Check for a GL error during
+        setup and, if there is one, skip directly into a LOST state.
+        (WebCore::GraphicsContextGLOpenGL::reshape):
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::reshape):
+
 2020-04-17  Peng Liu  <peng.liu6@apple.com>
 
         Cleanup the macros for video fullscreen and picture-in-picture
