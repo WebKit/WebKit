@@ -1,3 +1,9 @@
+2020-04-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix.
+
+        * platform/cocoa/AGXCompilerService.cpp:
+
 2020-04-17  Antoine Quint  <graouts@apple.com>
 
         Stop including style rules related to media controls in the UA style sheet when Modern Media Controls are enabled

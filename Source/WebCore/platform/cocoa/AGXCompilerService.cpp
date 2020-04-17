@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AGXCompilerService.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 #include <sys/utsname.h>
 #include <wtf/Optional.h>
