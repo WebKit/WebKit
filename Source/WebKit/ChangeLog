@@ -1,3 +1,16 @@
+2020-04-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add telemetry to some mach lookup sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=210657
+
+        Reviewed by Darin Adler.
+
+        Add telemetry in order to learn more about how some of the mach lookup extensions are being used in the WebContent process on iOS.
+
+        No new tests, since this patch does not change any behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-17  Youenn Fablet  <youenn@apple.com>
 
         Validate socket in NetworkRTCProvider::wrapNewTCPConnection

@@ -895,7 +895,17 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.nehelper" "com.apple.nesessionmanager.content-filter" "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI" "com.apple.diagnosticd" "com.apple.lsd.open" "com.apple.mobileassetd" "com.apple.mobileassetd.v2" "com.apple.frontboard.systemappservices" "com.apple.iconservices" "com.apple.webinspector" "com.apple.PowerManagement.control" "com.apple.cfprefsd.daemon" "com.apple.lsd.mapdb"
+        (global-name
+            "com.apple.cfprefsd.daemon"
+            "com.apple.diagnosticd"
+            "com.apple.iphone.axserver-systemwide"
+            "com.apple.lsd.mapdb"
+            "com.apple.mobileassetd.v2"
+            "com.apple.nehelper"
+            "com.apple.nesessionmanager.content-filter"
+            "com.apple.tccd"
+            "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
+            "com.apple.webinspector"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
             "com.apple.airplay.apsynccontroller.xpc" "com.apple.audio.AURemoteIOServer" "com.apple.audio.AudioComponentRegistrar"
@@ -911,6 +921,19 @@
             "com.apple.coremedia.visualcontext.xpc" "com.apple.mediaremoted.xpc" "com.apple.accessibility.mediaaccessibilityd"
             ;;; FIXME(207716): End services to remove.
 )))
+
+(allow mach-lookup (with telemetry-backtrace)
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.PowerManagement.control"
+            "com.apple.frontboard.systemappservices"
+            "com.apple.iconservices"
+            "com.apple.lsd.open"
+            "com.apple.mobileassetd" 
+        )
+    )
+)
 
 (allow mach-lookup
     (require-all
