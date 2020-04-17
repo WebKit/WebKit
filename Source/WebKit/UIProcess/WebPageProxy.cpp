@@ -485,6 +485,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
 #if PLATFORM(COCOA)
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains() || WTF::processHasEntitlement("com.apple.private.applemediaservices"))
+    , m_limitsNavigationToAppBoundDomains(m_configuration->limitsNavigationToAppBoundDomains())
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");

@@ -1,3 +1,34 @@
+2020-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Add a new 'limitNavigationsToAppBoundDomains' property to WKWebViewConfiguration 
+        https://bugs.webkit.org/show_bug.cgi?id=210620
+        <rdar://problem/61903225>
+
+        Reviewed by Andy Estes.
+
+        Provide a way for Developers to opt-in to AppBound domains through a new WKWebViewConfiguration
+        property.
+
+        This patch only creates the property and exposes the flag to the APIPageConfiguration and
+        WebPageProxy. A separate patch will take action based on its value.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::limitsNavigationToAppBoundDomains const):
+        (API::PageConfiguration::setLimitsNavigationToAppBoundDomains):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration limitsNavigationToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationToAppBoundDomains:]):
+        (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]): Keep the new property in
+        sync with this internal flag.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationToAppBoundDomains):
+        * UIProcess/WebPageProxy.h:
+
 2020-04-16  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix for non unified builds.
