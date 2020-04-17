@@ -37,8 +37,9 @@
 
 namespace TestWebKitAPI {
 
-HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol)
+HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>&& verify)
     : m_protocol(protocol)
+    , m_certVerifier(WTFMove(verify))
     , m_requestResponseMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
         HashMap<String, HTTPServer::HTTPResponse> map;
         for (auto& pair : list)
@@ -53,9 +54,15 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
         sec_protocol_options_set_local_identity(options.get(), identity.get());
         if (protocol == Protocol::HttpsWithLegacyTLS)
             sec_protocol_options_set_max_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
+        if (m_certVerifier) {
+            sec_protocol_options_set_peer_authentication_required(options.get(), true);
+            sec_protocol_options_set_verify_block(options.get(), ^(sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
+                m_certVerifier(metadata, trust, completion);
+            }, dispatch_get_main_queue());
+        }
 #else
         UNUSED_PARAM(protocolOptions);
-        ASSERT(protocol != Protocol::HttpsWithLegacyTLS);
+        ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
 #endif
     };
     auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLS, NW_PARAMETERS_DEFAULT_CONFIGURATION));
@@ -83,6 +90,8 @@ static String statusText(unsigned statusCode)
         return "OK"_s;
     case 301:
         return "Moved Permanently"_s;
+    case 404:
+        return "Not Found"_s;
     }
     ASSERT_NOT_REACHED();
     return { };
@@ -121,6 +130,10 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
 
         CompletionHandler<void()> sendResponse = [this, connection = retainPtr(connection), context = retainPtr(context), path = WTFMove(path)] {
             auto response = m_requestResponseMap.get(path);
+            if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes) {
+                nw_connection_cancel(connection.get());
+                return;
+            }
             StringBuilder responseBuilder;
             responseBuilder.append("HTTP/1.1 ");
             responseBuilder.appendNumber(response.statusCode);

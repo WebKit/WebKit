@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKNavigationDelegate.h>
@@ -38,6 +39,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKErrorRecoveryAttempting.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Platform.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -398,6 +400,102 @@ TEST(WebKit, FastServerTrust)
     EXPECT_EQ([delegate authenticationChallengeCount], 0ull);
 #endif
 }
+
+// FIXME: Find out why these tests time out on Mojave.
+#if HAVE(NETWORK_FRAMEWORK) && (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
+
+static HTTPServer clientCertServer()
+{
+    Vector<LChar> chars(50000, 'a');
+    String longString(chars.data(), chars.size());
+    return HTTPServer({
+        { "/", { "<html><img src='1.png'/><img src='2.png'/><img src='3.png'/><img src='4.png'/><img src='5.png'/><img src='6.png'/></html>" } },
+        { "/1.png", { longString } },
+        { "/2.png", { longString } },
+        { "/3.png", { longString } },
+        { "/4.png", { longString } },
+        { "/5.png", { longString } },
+        { "/6.png", { longString } },
+        { "/redirectToError", { 301, {{ "Location", "/error" }} } },
+        { "/error", { HTTPServer::HTTPResponse::TerminateConnection::Yes } },
+    }, HTTPServer::Protocol::Https, [] (auto, auto, auto certificateAllowed) {
+        certificateAllowed(true);
+    });
+}
+
+static BlockPtr<void(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))> challengeHandler(Vector<RetainPtr<NSString>>& vector)
+{
+    return makeBlockPtr([&] (WKWebView *webView, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        NSString *method = challenge.protectionSpace.authenticationMethod;
+        vector.append(method);
+        if ([method isEqualToString:NSURLAuthenticationMethodClientCertificate])
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, credentialWithIdentity().get());
+        if ([method isEqualToString:NSURLAuthenticationMethodServerTrust])
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        ASSERT_NOT_REACHED();
+    }).get();
+}
+
+static size_t countClientCertChallenges(Vector<RetainPtr<NSString>>& vector)
+{
+    vector.removeAllMatching([](auto& method) {
+        return ![method isEqualToString:NSURLAuthenticationMethodClientCertificate];
+    });
+    return vector.size();
+};
+
+TEST(MultipleClientCertificateConnections, Basic)
+{
+    auto server = clientCertServer();
+
+    Vector<RetainPtr<NSString>> methods;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didReceiveAuthenticationChallenge = challengeHandler(methods).get();
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_EQ(countClientCertChallenges(methods), 1u);
+}
+
+TEST(MultipleClientCertificateConnections, Redirect)
+{
+    auto server = clientCertServer();
+
+    Vector<RetainPtr<NSString>> methods;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didReceiveAuthenticationChallenge = challengeHandler(methods).get();
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/redirectToError", server.port()]]]];
+    [delegate waitForDidFailProvisionalNavigation];
+    EXPECT_EQ(countClientCertChallenges(methods), 1u);
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_EQ(countClientCertChallenges(methods), 1u);
+}
+
+TEST(MultipleClientCertificateConnections, Failure)
+{
+    auto server = clientCertServer();
+
+    Vector<RetainPtr<NSString>> methods;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didReceiveAuthenticationChallenge = challengeHandler(methods).get();
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/error", server.port()]]]];
+    [delegate waitForDidFailProvisionalNavigation];
+    size_t certChallengesAfterInitialFailure = countClientCertChallenges(methods);
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_EQ(countClientCertChallenges(methods), certChallengesAfterInitialFailure + 1);
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK)
 
 } // namespace TestWebKitAPI
 

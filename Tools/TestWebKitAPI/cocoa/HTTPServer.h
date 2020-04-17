@@ -40,7 +40,7 @@ class HTTPServer {
 public:
     struct HTTPResponse;
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS };
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http);
+    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>&& = nullptr);
     uint16_t port() const;
     NSURLRequest *request() const;
     size_t totalRequests() const { return m_totalRequests; }
@@ -50,20 +50,25 @@ private:
     
     RetainPtr<nw_listener_t> m_listener;
     const Protocol m_protocol;
+    const Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)> m_certVerifier;
     const HashMap<String, HTTPResponse> m_requestResponseMap;
     size_t m_totalRequests { 0 };
 };
 
 struct HTTPServer::HTTPResponse {
-    HTTPResponse(String&& body)
-        : body(WTFMove(body)) { }
+    enum class TerminateConnection { No, Yes };
+    
+    HTTPResponse(const String& body)
+        : body(body) { }
     HTTPResponse(HashMap<String, String>&& headerFields, String&& body)
         : headerFields(WTFMove(headerFields))
         , body(WTFMove(body)) { }
-    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields, String&& body = { })
+    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, String&& body = { })
         : statusCode(statusCode)
         , headerFields(WTFMove(headerFields))
         , body(WTFMove(body)) { }
+    HTTPResponse(TerminateConnection terminateConnection)
+        : terminateConnection(terminateConnection) { }
 
     HTTPResponse(const HTTPResponse&) = default;
     HTTPResponse(HTTPResponse&&) = default;
@@ -74,6 +79,7 @@ struct HTTPServer::HTTPResponse {
     unsigned statusCode { 200 };
     HashMap<String, String> headerFields;
     String body;
+    TerminateConnection terminateConnection { TerminateConnection::No };
 };
 
 } // namespace TestWebKitAPI
