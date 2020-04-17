@@ -225,3 +225,45 @@ async function getTypedStats(connection, type)
     });
     return stats;
 }
+
+function getReceivedTrackStats(connection)
+{
+    return connection.getStats().then((report) => {
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "track") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+async function computeFrameRate(stream, video)
+{
+    if (window.internals) {
+        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        return internals.trackVideoSampleCount;
+    }
+
+    let connection;
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+        }, (secondConnection) => {
+            connection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    await video.play();
+
+    const stats1 = await getReceivedTrackStats(connection);
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    const stats2 = await getReceivedTrackStats(connection);
+    return (stats2.framesReceived - stats1.framesReceived) * 1000 / (stats2.timestamp - stats1.timestamp);
+}

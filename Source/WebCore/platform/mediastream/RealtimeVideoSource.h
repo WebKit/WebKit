@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-// FIXME: Make RealtimeVideoSource derive from RealtimeMediaSource directly.
-class RealtimeVideoSource final : public RealtimeVideoCaptureSource, public RealtimeMediaSource::Observer {
+class ImageTransferSessionVT;
+
+class RealtimeVideoSource final : public RealtimeMediaSource, public RealtimeMediaSource::Observer {
 public:
     static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source) { return adoptRef(*new RealtimeVideoSource(WTFMove(source))); }
 
@@ -51,7 +52,6 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final { return m_source->capabilities(); }
     const RealtimeMediaSourceSettings& settings() final { return m_currentSettings; }
-    void generatePresets() final { m_source->generatePresets(); }
     bool isCaptureSource() const final { return m_source->isCaptureSource(); }
     CaptureDevice::DeviceType deviceType() const final { return m_source->deviceType(); }
     void monitorOrientation(OrientationNotifier& notifier) final { m_source->monitorOrientation(notifier); }
@@ -64,12 +64,21 @@ private:
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
 
+#if PLATFORM(COCOA)
+    RefPtr<MediaSample> adaptVideoSample(MediaSample&);
+#endif
+
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*) final;
 #endif
 
     Ref<RealtimeVideoCaptureSource> m_source;
     RealtimeMediaSourceSettings m_currentSettings;
+#if PLATFORM(COCOA)
+    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+#endif
+    size_t m_frameDecimation { 1 };
+    size_t m_frameDecimationCounter { 0 };
 #if !RELEASE_LOG_DISABLED
     uint64_t m_cloneCounter { 0 };
 #endif

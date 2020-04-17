@@ -1,3 +1,21 @@
+2020-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Safari doesn't apply frameRate limit when request stream from Camera
+        https://bugs.webkit.org/show_bug.cgi?id=210186
+        <rdar://problem/61452794>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing-expected.txt: Added.
+        * fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html: Added.
+        * fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing-expected.txt: Added.
+        * fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html: Added.
+        * fast/mediastream/mediastreamtrack-video-framerate-decreasing-expected.txt: added.
+        * fast/mediastream/mediastreamtrack-video-framerate-decreasing.html: added.
+        * fast/mediastream/mediastreamtrack-video-framerate-increasing-expected.txt: added.
+        * fast/mediastream/mediastreamtrack-video-framerate-increasing.html: added.
+        * webrtc/routines.js:
+
 2020-04-17  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         MediaQueryList should extend EventTarget
