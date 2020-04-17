@@ -31,7 +31,6 @@ struct UCollator;
 
 namespace JSC {
 
-class IntlCollatorConstructor;
 class JSBoundFunction;
 
 class IntlCollator final : public JSNonFinalObject {

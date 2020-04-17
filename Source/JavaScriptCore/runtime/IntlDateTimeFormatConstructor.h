@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class IntlDateTimeFormat;
 class IntlDateTimeFormatPrototype;
 
 class IntlDateTimeFormatConstructor final : public InternalFunction {

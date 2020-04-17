@@ -54,14 +54,15 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Object", &Base::s_info,
 /* Source for IntlDateTimeFormatPrototype.lut.h
 @begin dateTimeFormatPrototypeTable
   format           IntlDateTimeFormatPrototypeGetterFormat         DontEnum|Accessor
+  formatToParts    IntlDateTimeFormatPrototypeFuncFormatToParts    DontEnum|Function 1
   resolvedOptions  IntlDateTimeFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
 
-IntlDateTimeFormatPrototype* IntlDateTimeFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+IntlDateTimeFormatPrototype* IntlDateTimeFormatPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
     IntlDateTimeFormatPrototype* object = new (NotNull, allocateCell<IntlDateTimeFormatPrototype>(vm.heap)) IntlDateTimeFormatPrototype(vm, structure);
-    object->finishCreation(vm, globalObject, structure);
+    object->finishCreation(vm);
     return object;
 }
 
@@ -75,11 +76,9 @@ IntlDateTimeFormatPrototype::IntlDateTimeFormatPrototype(VM& vm, Structure* stru
 {
 }
 
-void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, Structure*)
+void IntlDateTimeFormatPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    JSFunction* formatToPartsFunction = JSFunction::create(vm, globalObject, 1, vm.propertyNames->formatToParts.string(), IntlDateTimeFormatPrototypeFuncFormatToParts);
-    putDirectWithoutTransition(vm, vm.propertyNames->formatToParts, formatToPartsFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Object"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 

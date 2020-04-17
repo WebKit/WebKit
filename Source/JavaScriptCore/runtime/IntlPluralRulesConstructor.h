@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class IntlPluralRules;
 class IntlPluralRulesPrototype;
 
 class IntlPluralRulesConstructor final : public InternalFunction {

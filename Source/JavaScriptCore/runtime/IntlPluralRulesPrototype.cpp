@@ -55,7 +55,7 @@ const ClassInfo IntlPluralRulesPrototype::s_info = { "Object", &Base::s_info, &p
 IntlPluralRulesPrototype* IntlPluralRulesPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
     IntlPluralRulesPrototype* object = new (NotNull, allocateCell<IntlPluralRulesPrototype>(vm.heap)) IntlPluralRulesPrototype(vm, structure);
-    object->finishCreation(vm, structure);
+    object->finishCreation(vm);
     return object;
 }
 
@@ -69,7 +69,7 @@ IntlPluralRulesPrototype::IntlPluralRulesPrototype(VM& vm, Structure* structure)
 {
 }
 
-void IntlPluralRulesPrototype::finishCreation(VM& vm, Structure*)
+void IntlPluralRulesPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
 

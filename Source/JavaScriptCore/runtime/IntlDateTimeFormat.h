@@ -27,11 +27,9 @@
 
 #include "JSObject.h"
 #include <unicode/udat.h>
-#include <unicode/uvernum.h>
 
 namespace JSC {
 
-class IntlDateTimeFormatConstructor;
 class JSBoundFunction;
 
 class IntlDateTimeFormat final : public JSNonFinalObject {

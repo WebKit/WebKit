@@ -48,7 +48,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, JSGlobalObject*, Structure*);
+    void finishCreation(VM&);
 
 private:
     IntlDateTimeFormatPrototype(VM&, Structure*);

@@ -28,12 +28,8 @@
 #include "JSObject.h"
 #include <unicode/unum.h>
 #include <unicode/upluralrules.h>
-#include <unicode/uvernum.h>
 
 namespace JSC {
-
-class IntlPluralRulesConstructor;
-class JSBoundFunction;
 
 class IntlPluralRules final : public JSNonFinalObject {
 public:

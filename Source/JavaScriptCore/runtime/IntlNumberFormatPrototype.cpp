@@ -52,14 +52,15 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Object", &Base::s_info, &
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable
   format           IntlNumberFormatPrototypeGetterFormat         DontEnum|Accessor
+  formatToParts    IntlNumberFormatPrototypeFuncFormatToParts    DontEnum|Function 1
   resolvedOptions  IntlNumberFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
 
-IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+IntlNumberFormatPrototype* IntlNumberFormatPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
     IntlNumberFormatPrototype* object = new (NotNull, allocateCell<IntlNumberFormatPrototype>(vm.heap)) IntlNumberFormatPrototype(vm, structure);
-    object->finishCreation(vm, globalObject, structure);
+    object->finishCreation(vm);
     return object;
 }
 
@@ -73,10 +74,9 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 {
 }
 
-void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, Structure*)
+void IntlNumberFormatPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->formatToParts, IntlNumberFormatPrototypeFuncFormatToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Object"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 

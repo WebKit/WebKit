@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class IntlCollator;
 class IntlCollatorPrototype;
 
 class IntlCollatorConstructor final : public InternalFunction {

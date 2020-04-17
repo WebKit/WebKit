@@ -27,11 +27,9 @@
 
 #include "JSObject.h"
 #include <unicode/unum.h>
-#include <unicode/uvernum.h>
 
 namespace JSC {
 
-class IntlNumberFormatConstructor;
 class JSBoundFunction;
 
 class IntlNumberFormat final : public JSNonFinalObject {

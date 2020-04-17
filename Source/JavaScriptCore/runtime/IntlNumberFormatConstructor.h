@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class IntlNumberFormat;
 class IntlNumberFormatPrototype;
 
 class IntlNumberFormatConstructor final : public InternalFunction {
