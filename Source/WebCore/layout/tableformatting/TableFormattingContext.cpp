@@ -336,7 +336,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
             float value { 0 };
             bool isFixed { false };
         };
-        Vector<ColumnMinimumWidth> columnMinimumWidths(columnList.size());
+        Vector<Optional<ColumnMinimumWidth>> columnMinimumWidths(columnList.size());
         Vector<SlotPosition> spanningCellPositionList;
         for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
             for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
@@ -347,7 +347,9 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
                 }
                 if (slot.isColumnSpanned())
                     continue;
-                columnMinimumWidths[columnIndex].value = std::max<float>(columnMinimumWidths[columnIndex].value, slot.widthConstraints().minimum);
+                if (!columnMinimumWidths[columnIndex])
+                    columnMinimumWidths[columnIndex] = ColumnMinimumWidth { };
+                columnMinimumWidths[columnIndex]->value = std::max<float>(columnMinimumWidths[columnIndex]->value, slot.widthConstraints().minimum);
             }
         }
         // 2. Adjust the <td> minimum widths with fixed column widths (<col> vs. <td>) and also manage all-fixed-width-column content.
@@ -357,52 +359,91 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
             if (!column.isFixedWidth())
                 continue;
             // This is the column width based on <col width=""> and not <td style="width: ">.
-            auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt; 
-            columnMinimumWidths[columnIndex].value = std::max(columnMinimumWidths[columnIndex].value, columnFixedWidth.valueOr(0).toFloat());
+            auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt;
+            if (!columnFixedWidth)
+                continue;
+            if (!columnMinimumWidths[columnIndex])
+                columnMinimumWidths[columnIndex] = ColumnMinimumWidth { };
+            columnMinimumWidths[columnIndex]->value = std::max(columnMinimumWidths[columnIndex]->value, columnFixedWidth.valueOr(0).toFloat());
             // Fixed columns flex when there are no other flexing columns.
-            columnMinimumWidths[columnIndex].isFixed = !hasFixedColumnsOnly;
+            columnMinimumWidths[columnIndex]->isFixed = !hasFixedColumnsOnly;
         }
 
+        // We need these spanning cells in the order of the number of columns they span so that
+        // we can resolve overlapping spans starting with the shorter ones e.g.
+        // <td colspan=4>#a</td><td>#b</td>
+        // <td colspan=2>#c</td><td colspan=3>#d</td>
+        std::sort(spanningCellPositionList.begin(), spanningCellPositionList.end(), [&] (auto& a, auto& b) {
+            return grid.slot(a)->cell().columnSpan() < grid.slot(b)->cell().columnSpan();
+        });
         // 3. Distribute the spanning cells' mimimum widths across the columns using the non-spanning minimum widths.
         // e.g. [ 1 ][ 5 ][ 1 ]
         //      [    9   ][ 1 ]
         // The minimum widths are: [ 2 ][ 7 ][ 1 ]
         for (auto spanningCellPosition : spanningCellPositionList) {
             auto& slot = *grid.slot(spanningCellPosition);
-            auto& cell = slot.cell();
             ASSERT(slot.hasColumnSpan());
-            float currentSpanningMinimumWidth = 0;
-            // 1. Collect the non-spaning minimum widths.
-            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                currentSpanningMinimumWidth += columnMinimumWidths[columnIndex].value;
+            auto& cell = slot.cell();
             float spanningMinimumWidth = slot.widthConstraints().minimum;
-            if (currentSpanningMinimumWidth >= spanningMinimumWidth) {
-                // The spanning cell fits the spanned columns just fine. Nothing to distribute.
-                continue;
+            if (!columnMinimumWidths[cell.startColumn()] || !columnMinimumWidths[cell.endColumn() - 1]) {
+                // <td colspan=4>#a</td><td>#b</td>
+                // <td colspan=2>#c</td><td colspan=3>#d</td>
+                // Unresolved columns are: 1 2 3 4
+                // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
+                // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
+                // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
+                auto unresolvedColumnNumber = cell.columnSpan();
+                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex) {
+                    if (!columnMinimumWidths[columnIndex])
+                        continue;
+                    ASSERT(unresolvedColumnNumber);
+                    --unresolvedColumnNumber;
+                    spanningMinimumWidth = std::max(0.0f, spanningMinimumWidth - columnMinimumWidths[columnIndex]->value);
+                }
+                ASSERT(unresolvedColumnNumber);
+                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex) {
+                    if (columnMinimumWidths[columnIndex])
+                        continue;
+                    columnMinimumWidths[columnIndex] = ColumnMinimumWidth { spanningMinimumWidth / unresolvedColumnNumber, false };
+                }
+            } else {
+                // 1. Collect the non-spaning minimum widths.
+                float currentSpanningMinimumWidth = 0;
+                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                    currentSpanningMinimumWidth += columnMinimumWidths[columnIndex]->value;
+                if (currentSpanningMinimumWidth >= spanningMinimumWidth) {
+                    // The spanning cell fits the spanned columns just fine. Nothing to distribute.
+                    continue;
+                }
+                // 2. Distribute the extra minimum width among the spanned columns based on the minimum colmn width.
+                // e.g. spanning mimimum width: [   9   ]. Current minimum widths for the spanned columns: [ 1 ] [ 2 ]
+                // New minimum widths: [ 3 ] [ 6 ].
+                auto spaceToDistribute = spanningMinimumWidth - currentSpanningMinimumWidth;
+                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                    columnMinimumWidths[columnIndex]->value += spaceToDistribute / currentSpanningMinimumWidth * columnMinimumWidths[columnIndex]->value;
             }
-            // 2. Distribute the extra minimum width among the spanned columns based on the minimum colmn width.
-            // e.g. spanning mimimum width: [   9   ]. Current minimum widths for the spanned columns: [ 1 ] [ 2 ]
-            // New minimum widths: [ 3 ] [ 6 ].
-            auto spaceToDistribute = spanningMinimumWidth - currentSpanningMinimumWidth;
-            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                columnMinimumWidths[columnIndex].value += spaceToDistribute / currentSpanningMinimumWidth * columnMinimumWidths[columnIndex].value;
         }
         // 3. Distribute the extra space using the final minimum widths.
+#if ASSERT_ENABLED
+        // We have to have all the columns resolved at this point with valid minimum widths.
+        for (auto& columnMinimumWidth : columnMinimumWidths)
+            ASSERT(columnMinimumWidth);
+#endif
         // Fixed width columns don't participate in available space distribution.
         // Unless there are no flexing column at all, then they start flexing as if they were not fixed at all.
         float adjustabledHorizontalSpace = 0;
         for (auto& columnMinimumWidth : columnMinimumWidths) {
-            if (columnMinimumWidth.isFixed)
+            if (columnMinimumWidth->isFixed)
                 continue;
-            adjustabledHorizontalSpace += columnMinimumWidth.value;
+            adjustabledHorizontalSpace += columnMinimumWidth->value;
         }
         if (!adjustabledHorizontalSpace)
             return;
         // FIXME: Implement overconstrained columns when fixed width content is wider than the table.
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& column = columns.list()[columnIndex];
-            auto minimumWidth = columnMinimumWidths[columnIndex].value;
-            if (columnMinimumWidths[columnIndex].isFixed) {
+            auto minimumWidth = columnMinimumWidths[columnIndex]->value;
+            if (columnMinimumWidths[columnIndex]->isFixed) {
                 column.setLogicalWidth(LayoutUnit { minimumWidth });
                 continue;
             }

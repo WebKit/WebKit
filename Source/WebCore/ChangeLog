@@ -1,3 +1,20 @@
+2020-04-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Resolve the minimum width for overlapping spanner columns
+        https://bugs.webkit.org/show_bug.cgi?id=210654
+
+        Reviewed by Antti Koivisto.
+
+        The extra horizontal space distribution is based on the columns' minimum widths.
+        In case of column spanners, first we need to distribute the spanner's minimum
+        width across the columns using the non-spanning minimum widths as the distribution ratio.
+        When there's no non-spanning minimum width for a column (all rows have column spanners for tbis particular column)
+        the minimum width gets distributed equally across the spanned columns. This distribution starts with the shortest columns spans
+        so that we can use these resolved column widths to compute the wider ones. 
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+
 2020-04-17  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Update for GdkKeymap API changes
