@@ -1,3 +1,24 @@
+2020-04-17  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Fix an integer overflow in WebCrypto AES-CTR Mac implementation, which may detect a false loop
+        https://bugs.webkit.org/show_bug.cgi?id=210540
+
+        (1 << counterLength) causes an integer overflow, and the undefined behavior.
+        The longest valid counterLength on 64 bit machine is 63,
+        and the literal 1 is considered as 32-bit signed integer.
+        Left shifting 1 beyond or to sign-bit is undefined behavior in C++ spec.
+        - https://en.cppreference.com/w/cpp/language/integer_literal
+        - https://en.cppreference.com/w/cpp/language/operator_arithmetic#Bitwise_shift_operators
+
+        This issue is originally found in https://bugs.webkit.org/show_bug.cgi?id=208186#c2
+
+        Reviewed by Jiewen Tan.
+
+        Test: crypto/subtle/aes-ctr-import-key-encrypt.html
+
+        * crypto/mac/CryptoAlgorithmAES_CTRMac.cpp:
+        (WebCore::transformAES_CTR):
+
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling-tree hit-testing is off by top content inset

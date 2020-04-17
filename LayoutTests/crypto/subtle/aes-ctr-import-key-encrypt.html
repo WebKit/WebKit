@@ -80,6 +80,17 @@ var aesCtrParams13= {
     counter: hexStringToUint8Array("fffffffffffffffffffffffffffffffe"),
     length: 128,
 }
+var aesCtrParams14 = {
+    name: "aes-ctr",
+    counter: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+    length: 33,
+}
+var aesCtrParams15 = {
+    name: "aes-ctr",
+    counter: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+    length: 63,
+}
+
 var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
 var expectedCipherText = "a5f940e93406d4bd9b7318e653d4cb9d1af497f52fcbb659a038e711e8bd61fb4863931d25911e2e9ff30cf37ec27dd813a62830";
 var expectedCipherText4 = "6a461eb3f64ef4c466597ba877a9512b5ab41b4338edc2822d1f0dfac0cec07149766e189fa426d5ea30fe541018362088db2117";
@@ -186,6 +197,20 @@ crypto.subtle.importKey("raw", rawKey, "aes-ctr", extractable, ["encrypt"]).then
     cipherText = result;
 
     shouldBe("bytesToHexString(cipherText)", "expectedCipherText13");
+
+    debug("Length = 33");
+    return crypto.subtle.encrypt(aesCtrParams14, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText");
+
+    debug("Length = 63");
+    return crypto.subtle.encrypt(aesCtrParams15, key, plainText);
+}).then(function(result) {
+    cipherText = result;
+
+    shouldBe("bytesToHexString(cipherText)", "expectedCipherText");
 
     finishJSTest();
 });

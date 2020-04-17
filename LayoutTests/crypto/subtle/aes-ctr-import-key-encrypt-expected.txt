@@ -29,6 +29,10 @@ Length = 128, overflow
 PASS bytesToHexString(cipherText) is expectedCipherText12
 Length = 128, overflow
 PASS bytesToHexString(cipherText) is expectedCipherText13
+Length = 33
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 63
+PASS bytesToHexString(cipherText) is expectedCipherText
 PASS successfullyParsed is true
 
 TEST COMPLETE

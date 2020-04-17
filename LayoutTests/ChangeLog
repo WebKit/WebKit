@@ -1,3 +1,14 @@
+2020-04-17  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Fix an integer overflow in WebCrypto AES-CTR Mac implementation, which may detect a false loop
+        https://bugs.webkit.org/show_bug.cgi?id=210540
+
+        Reviewed by Jiewen Tan.
+
+        Added more AES-CTR tests for AesCtrParams.length larger than 32.
+        * crypto/subtle/aes-ctr-import-key-encrypt-expected.txt:
+        * crypto/subtle/aes-ctr-import-key-encrypt.html:
+
 2020-04-16  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling-tree hit-testing is off by top content inset

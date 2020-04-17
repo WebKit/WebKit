@@ -45,7 +45,7 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, cons
     size_t numberOfBlocks = data.size() % kCCBlockSizeAES128 ? data.size() / kCCBlockSizeAES128 + 1 : data.size() / kCCBlockSizeAES128;
 
     // Detect loop
-    if (counterLength < sizeof(size_t) * 8 && numberOfBlocks > (1 << counterLength))
+    if (counterLength < sizeof(size_t) * 8 && numberOfBlocks > (static_cast<size_t>(1) << counterLength))
         return Exception { OperationError };
 
     // Calculate capacity before overflow
