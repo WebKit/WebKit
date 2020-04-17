@@ -375,7 +375,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForSpecificWebViewFails)
     [webView _test_waitForDidFinishNavigation];
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() level:_WKUserStyleUserLevel forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleUserLevel userContentWorld:world.get()]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);

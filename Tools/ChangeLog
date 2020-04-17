@@ -1,3 +1,10 @@
+2020-04-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r260269.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST): Correct argument order.
+
 2020-04-17  Jer Noble  <jer.noble@apple.com>
 
         Bring Fullscreen API + alert() behavior from iOS to macOS
