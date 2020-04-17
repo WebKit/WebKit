@@ -1,3 +1,13 @@
+2020-04-17  Saam Barati  <sbarati@apple.com>
+
+        GetTypedArrayByteOffset is broken on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=210631
+
+        Reviewed by Mark Lam.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::rawBits const):
+
 2020-04-17  Peng Liu  <peng.liu6@apple.com>
 
         Cleanup the macros for video fullscreen and picture-in-picture

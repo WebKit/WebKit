@@ -6906,9 +6906,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
 
-    // FIXME: This should mask the PAC bits
-    // https://bugs.webkit.org/show_bug.cgi?id=197701
-    JITCompiler::Jump nullVector = m_jit.branchTestPtr(JITCompiler::Zero, vectorGPR);
+    JITCompiler::Jump nullVector = m_jit.branchPtr(JITCompiler::Equal, vectorGPR, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
     m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
@@ -6927,11 +6925,17 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     
     JITCompiler::Jump done = m_jit.jump();
     
+#if CPU(ARM64E)
+    nullVector.link(&m_jit);
+#endif
     emptyByteOffset.link(&m_jit);
     m_jit.move(TrustedImmPtr(nullptr), vectorGPR);
     
     done.link(&m_jit);
+#if !CPU(ARM64E)
+    ASSERT(!JSArrayBufferView::nullVectorPtr());
     nullVector.link(&m_jit);
+#endif
 
     strictInt32Result(vectorGPR, node);
 }

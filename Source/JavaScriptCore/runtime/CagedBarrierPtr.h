@@ -84,6 +84,11 @@ public:
     
     template<typename U>
     void setWithoutBarrier(U&& value, unsigned size) { m_barrier.setWithoutBarrier(CagedType(std::forward<U>(value), size)); }
+
+    T* rawBits() const
+    {
+        return m_barrier.get().rawBits();
+    }
     
 private:
     AuxiliaryBarrier<CagedType> m_barrier;

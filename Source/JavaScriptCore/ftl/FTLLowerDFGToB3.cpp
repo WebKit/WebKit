@@ -4121,27 +4121,22 @@ private:
     {
         LValue basePtr = lowCell(m_node->child1());    
 
-        LBasicBlock simpleCase = m_out.newBlock();
         LBasicBlock wastefulCase = m_out.newBlock();
         LBasicBlock notNull = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
+        ValueFromBlock nullVectorOut = m_out.anchor(m_out.constIntPtr(0));
+
         LValue mode = m_out.load32(basePtr, m_heaps.JSArrayBufferView_mode);
         m_out.branch(
             m_out.notEqual(mode, m_out.constInt32(WastefulTypedArray)),
-            unsure(simpleCase), unsure(wastefulCase));
+            unsure(continuation), unsure(wastefulCase));
 
-        LBasicBlock lastNext = m_out.appendTo(simpleCase, wastefulCase);
-
-        ValueFromBlock simpleOut = m_out.anchor(m_out.constIntPtr(0));
-
-        m_out.jump(continuation);
-
-        m_out.appendTo(wastefulCase, notNull);
+        LBasicBlock lastNext = m_out.appendTo(wastefulCase, notNull);
 
         LValue vector = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
-        ValueFromBlock nullVectorOut = m_out.anchor(vector);
-        m_out.branch(vector, unsure(notNull), unsure(continuation));
+        m_out.branch(m_out.equal(vector, m_out.constIntPtr(JSArrayBufferView::nullVectorPtr())), 
+            unsure(continuation), unsure(notNull));
 
         m_out.appendTo(notNull, continuation);
 
@@ -4160,7 +4155,7 @@ private:
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);
 
-        setInt32(m_out.castToInt32(m_out.phi(pointerType(), simpleOut, nullVectorOut, wastefulOut)));
+        setInt32(m_out.castToInt32(m_out.phi(pointerType(), nullVectorOut, wastefulOut)));
     }
 
     void compileGetPrototypeOf()

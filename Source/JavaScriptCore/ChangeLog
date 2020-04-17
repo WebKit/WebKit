@@ -1,3 +1,23 @@
+2020-04-17  Saam Barati  <sbarati@apple.com>
+
+        GetTypedArrayByteOffset is broken on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=210631
+
+        Reviewed by Mark Lam.
+
+        The vector of JSArrayBufferView is signed even when null on arm64e.  However, we were
+        comparing against zero, which is wrong. This patch changes it so we do the right thing
+        and instead compare against whatever constant (ptr=nullptr,size=0) signs as.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        * runtime/CagedBarrierPtr.h:
+        (JSC::CagedBarrierPtr::rawBits const):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::nullVectorPtr):
+
 2020-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] We do not need to have exit-check for Map/Set iterator functions

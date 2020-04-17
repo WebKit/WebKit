@@ -127,6 +127,11 @@ public:
     {
         return getUnsafe() != nullptr;
     }
+
+    T* rawBits() const
+    {
+        return bitwise_cast<T*>(m_ptr);
+    }
     
 protected:
     static inline T* mergePointers(T* sourcePtr, T* cagedPtr)
