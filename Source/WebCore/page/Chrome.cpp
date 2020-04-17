@@ -421,10 +421,13 @@ void Chrome::disableSuddenTermination()
 std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
 #if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(client);
+    UNUSED_PARAM(initialColor);
     return nullptr;
-#endif
+#else
     notifyPopupOpeningObservers();
     return m_client.createColorChooser(client, initialColor);
+#endif
 }
 
 #endif

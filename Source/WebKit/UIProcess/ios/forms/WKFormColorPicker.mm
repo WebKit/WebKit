@@ -75,6 +75,14 @@ using namespace WebKit;
     return colorButton;
 }
 
+- (void)dealloc
+{
+    [_color release];
+    _color = nil;
+
+    [super dealloc];
+}
+
 @end
 
 #pragma mark - WKColorMatrixView
