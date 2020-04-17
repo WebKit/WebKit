@@ -1,5 +1,23 @@
 2020-04-16  Brent Fulgham  <bfulgham@apple.com>
 
+        Add a new 'limitNavigationsToAppBoundDomains' property to WKWebViewConfiguration 
+        https://bugs.webkit.org/show_bug.cgi?id=210620
+        <rdar://problem/61903225>
+
+        Reviewed by Andy Estes.
+
+        Follow-up fix. The property exposed by WKWebViewConfiguration should not
+        use a local BOOL; it simply exposes the APIPageConfiguration value.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration limitsNavigationToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationToAppBoundDomains:]):
+        (-[WKWebViewConfiguration _setIgnoresAppBoundDomains:]):
+
+2020-04-16  Brent Fulgham  <bfulgham@apple.com>
+
         Switch NetworkProcess and NetworkProcessProxy messages to use CallbackID class
         https://bugs.webkit.org/show_bug.cgi?id=210566
         <rdar://problem/61791784>

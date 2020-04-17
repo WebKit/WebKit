@@ -133,7 +133,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _allowsMetaRefresh;
     BOOL _allowUniversalAccessFromFileURLs;
     BOOL _allowTopNavigationToDataURLs;
-    BOOL _limitsNavigationToAppBoundDomains;
 
 #if PLATFORM(IOS_FAMILY)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
@@ -239,7 +238,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsMetaRefresh = YES;
     _allowUniversalAccessFromFileURLs = NO;
     _allowTopNavigationToDataURLs = NO;
-    _limitsNavigationToAppBoundDomains = NO;
     _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS_FAMILY)
@@ -388,7 +386,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
     configuration->_allowUniversalAccessFromFileURLs = self->_allowUniversalAccessFromFileURLs;
     configuration->_allowTopNavigationToDataURLs = self->_allowTopNavigationToDataURLs;
-    configuration->_limitsNavigationToAppBoundDomains = self->_limitsNavigationToAppBoundDomains;
 
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
@@ -690,12 +687,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)limitsNavigationToAppBoundDomains
 {
-    return _limitsNavigationToAppBoundDomains;
+    return _pageConfiguration->limitsNavigationToAppBoundDomains();
 }
 
 - (void)setLimitsNavigationToAppBoundDomains:(BOOL)limitsToAppBoundDomains
 {
-    _limitsNavigationToAppBoundDomains = limitsToAppBoundDomains;
+    _pageConfiguration->setLimitsNavigationToAppBoundDomains(limitsToAppBoundDomains);
 }
 
 - (BOOL)_convertsPositionStyleOnCopy
@@ -1253,7 +1250,6 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
 
 - (void)_setIgnoresAppBoundDomains:(BOOL)ignoresAppBoundDomains
 {
-    _limitsNavigationToAppBoundDomains = !ignoresAppBoundDomains;
     _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
 }
 
