@@ -263,17 +263,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap.messages.in
 )
 
-if (${WebCore_LIBRARY_TYPE} STREQUAL SHARED)
-    # All users of WebKit need to link WebCore if WebCore is a shared library.
-    if (APPLE)
-        set(WebKit_PRIVATE_LIBRARIES WebCore)
-    else ()
-        set(WebKit_LIBRARIES WebCore)
-    endif ()
-else ()
-    set(WebKit_LIBRARIES WebCoreHeaderInterface)
-    set(WebKit_PRIVATE_LIBRARIES WebCore)
-endif ()
+# FIXME: https://bugs.webkit.org/show_bug.cgi?id=210366
+set(WebKit_LIBRARIES WebKit::WebCore)
 
 set(WebProcess_LIBRARIES
     WebKit
@@ -332,6 +323,13 @@ if (ENABLE_GRAPHICS_CONTEXT_GL)
             add_definitions(${EGL_DEFINITIONS})
         endif ()
     endif ()
+endif ()
+
+if (USE_LIBWEBRTC)
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
+    list(APPEND WebKit_LIBRARIES webrtc)
 endif ()
 
 if (ATOMIC_INT64_REQUIRES_LIBATOMIC)

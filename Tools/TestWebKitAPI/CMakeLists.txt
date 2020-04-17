@@ -153,11 +153,9 @@ if (ENABLE_WEBCORE)
     )
 
     set(TestWebCore_LIBRARIES
+        WebKit::WebCore
         gtest
     )
-    if (NOT APPLE)
-        list(APPEND TestWebCore_LIBRARIES WebCore WebCoreHeaderInterface)
-    endif ()
 
     set(TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
@@ -166,8 +164,6 @@ if (ENABLE_WEBCORE)
         ${PAL_FRAMEWORK_HEADERS_DIR}
         ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
     )
-
-    set(TestWebCore_DEPENDENCIES WebCorePrivateFrameworkHeaders)
 
     WEBKIT_EXECUTABLE_DECLARE(TestWebCore)
 endif ()

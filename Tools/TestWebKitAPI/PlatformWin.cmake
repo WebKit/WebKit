@@ -41,15 +41,16 @@ list(APPEND TestWebCore_SOURCES
 list(APPEND TestWebCore_DEFINITIONS ${webcore_DEFINITIONS})
 
 list(APPEND TestWebCore_LIBRARIES
+    $<TARGET_OBJECTS:WebCore>
     Crypt32
     D2d1
     Dwrite
-    dxguid
     Iphlpapi
     Psapi
     Shlwapi
     Usp10
     WindowsCodecs
+    dxguid
 )
 
 if (${WTF_PLATFORM_WIN_CAIRO})

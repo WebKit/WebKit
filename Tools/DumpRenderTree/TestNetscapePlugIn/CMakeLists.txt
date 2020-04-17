@@ -65,7 +65,7 @@ include_directories(SYSTEM ${WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES
 
 add_library(TestNetscapePlugIn SHARED ${WebKitTestNetscapePlugIn_SOURCES})
 target_link_libraries(TestNetscapePlugIn ${WebKitTestNetscapePlugIn_LIBRARIES})
-add_dependencies(TestNetscapePlugIn WebCorePrivateFrameworkHeaders)
+add_dependencies(TestNetscapePlugIn WebKit::WebCore)
 set_target_properties(TestNetscapePlugIn PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)
 
 WEBKIT_ADD_TARGET_CXX_FLAGS(TestNetscapePlugIn -Wno-unused-parameter)

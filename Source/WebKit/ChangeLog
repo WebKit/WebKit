@@ -1,3 +1,17 @@
+2020-04-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebCore target
+        https://bugs.webkit.org/show_bug.cgi?id=210445
+
+        Reviewed by Michael Catanzaro.
+
+        Use the WebKit::WebCore target within the WebKit target.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+
 2020-04-17  Simon Fraser  <simon.fraser@apple.com>
 
         Turn async frame and overflow scrolling on by default on macOS

@@ -8,14 +8,6 @@ add_custom_target(TestWebKitAPI-forwarding-headers
 list(APPEND TestWebKit_DEPENDENCIES TestWebKitAPI-forwarding-headers)
 add_dependencies(TestWebKitAPIInjectedBundle TestWebKitAPI-forwarding-headers)
 
-include_directories(SYSTEM
-    ${GLIB_INCLUDE_DIRS}
-    ${GSTREAMER_INCLUDE_DIRS}
-    ${GSTREAMER_AUDIO_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
-    ${WPEBACKEND_FDO_INCLUDE_DIRS}
-)
-
 set(test_main_SOURCES generic/main.cpp)
 
 # TestWTF
@@ -44,6 +36,8 @@ list(APPEND TestWebCore_SOURCES
 
 list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 # TestWebKit
@@ -64,6 +58,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND TestWebKit_SYSTEM_INCLUDE_DIRECTORIES
+    ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
 )
 
@@ -87,11 +82,16 @@ target_sources(TestWebKitAPIInjectedBundle PRIVATE
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
     ${CMAKE_SOURCE_DIR}/Source
     ${FORWARDING_HEADERS_DIR}
+    ${GLIB_INCLUDE_DIRS}
 )
 
 # TestJSC
 set(TestJSC_SOURCES
     Tests/JavaScriptCore/glib/TestJSC.cpp
+)
+
+set(TestJSC_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
 )
 
 set(TestJSC_PRIVATE_INCLUDE_DIRECTORIES

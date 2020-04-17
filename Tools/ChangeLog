@@ -1,3 +1,20 @@
+2020-04-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebCore target
+        https://bugs.webkit.org/show_bug.cgi?id=210445
+
+        Reviewed by Michael Catanzaro.
+
+        Use the WebKit::WebCore target within tests and developer tools.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/glib/CMakeLists.txt:
+
 2020-04-17  Antoine Quint  <graouts@apple.com>
 
         Stop including style rules related to media controls in the UA style sheet when Modern Media Controls are enabled

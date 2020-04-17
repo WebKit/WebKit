@@ -423,6 +423,7 @@ add_library(WebKitLegacyGUID STATIC
 set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+    $<TARGET_OBJECTS:WebCore>
     Comctl32
     Comsupp
     Crypt32
@@ -483,7 +484,7 @@ WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacyGUID
     FLATTENED
 )
 if (NOT INTERNAL_BUILD)
-    add_dependencies(WebKitLegacyFrameworkHeaders WebCorePrivateFrameworkHeaders)
+    add_dependencies(WebKitLegacyFrameworkHeaders WebCore_CopyPrivateHeaders)
 endif ()
 
 set(WebKitLegacy_OUTPUT_NAME

@@ -3,6 +3,7 @@ include(WebKitCommon)
 include(target/TargetWTF)
 include(target/TargetJavaScriptCore)
 include(target/PAL)
+include(target/WebCore)
 set_property(DIRECTORY . PROPERTY FOLDER "WebKitLegacy")
 
 set(WebKitLegacy_SOURCES
@@ -25,14 +26,13 @@ set(WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WEBKITLEGACY_DIR}/Storage"
     "${WEBKITLEGACY_DIR}/WebCoreSupport"
-    "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
     "${WebKitLegacy_DERIVED_SOURCES_DIR}"
 )
 
 set(WebKitLegacy_PRIVATE_LIBRARIES
-    WebCore${DEBUG_SUFFIX}
     WebKit::JavaScriptCore
     WebKit::PAL
+    WebKit::WebCore
 )
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
@@ -46,9 +46,6 @@ endif ()
 
 WEBKIT_FRAMEWORK(WebKitLegacy)
 
-if (NOT INTERNAL_BUILD)
-    add_dependencies(WebKitLegacy WebCore WebCorePrivateFrameworkHeaders)
-endif ()
 if (TARGET WebKitLegacyGUID)
     add_dependencies(WebKitLegacy WebKitLegacyGUID)
 endif ()
