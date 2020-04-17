@@ -281,9 +281,12 @@ struct WKAutoCorrectionData {
     RetainPtr<UIMenu> _contextMenuLegacyMenu;
     BOOL _contextMenuHasRequestedLegacyData;
     BOOL _contextMenuActionProviderDelegateNeedsOverride;
-    RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
+#endif
+
+#if USE(UICONTEXTMENU)
+    RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
 #endif
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
@@ -588,6 +591,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didChangeLinkPreviewAvailability;
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 
+#if USE(UICONTEXTMENU)
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
@@ -613,7 +620,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #else
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 #endif
-- (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_registerPreview;
 - (void)_unregisterPreview;
 @end

@@ -7559,6 +7559,109 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return mayContainSelectableText(_focusedElementInformation.elementType);
 }
 
+#if USE(UICONTEXTMENU)
+static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
+{
+    if (!image)
+        return nil;
+
+    auto cgImage = image->nativeImage();
+    if (!cgImage)
+        return nil;
+
+    return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+}
+
+// FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
+static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const WebCore::FloatRect& frameInRootViewCoordinates, const Vector<WebCore::FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor)
+{
+    if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
+        return nil;
+
+    WebCore::FloatRect frameInContainerCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:previewContainer];
+    if (frameInContainerCoordinates.isEmpty())
+        return nil;
+
+    WebCore::FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
+    NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];
+
+    for (auto rect : clippingRectsInFrameCoordinates) {
+        rect.scale(scalingRatio);
+        [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
+    }
+
+    RetainPtr<UIPreviewParameters> parameters;
+    if (clippingRectValuesInFrameCoordinates.count)
+        parameters = adoptNS([[UIPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates]);
+    else
+        parameters = adoptNS([[UIPreviewParameters alloc] init]);
+
+    [parameters setBackgroundColor:(backgroundColor ?: [UIColor clearColor])];
+
+    CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
+    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
+
+    auto imageView = adoptNS([[UIImageView alloc] initWithImage:image]);
+    [imageView setFrame:frameInContainerCoordinates];
+    return adoptNS([[UITargetedPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
+}
+
+static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates)
+{
+    if (!containerView.window)
+        return nil;
+
+    if (frameInRootViewCoordinates.isEmpty())
+        return nil;
+
+    auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
+    UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
+
+    CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
+
+    if (CGRectIsEmpty(frameInContainerViewCoordinates))
+        return nil;
+
+    snapshotView.frame = frameInContainerViewCoordinates;
+
+    CGPoint centerInContainerViewCoordinates = CGPointMake(CGRectGetMidX(frameInContainerViewCoordinates), CGRectGetMidY(frameInContainerViewCoordinates));
+    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:containerView center:centerInContainerViewCoordinates]);
+
+    return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
+}
+
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
+{
+    RetainPtr<UITargetedPreview> targetedPreview;
+
+    if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
+        auto indicator = _positionInformation.linkIndicator;
+        auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
+        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
+    } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
+        auto cgImage = _positionInformation.image->makeCGImageCopy();
+        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+        targetedPreview = createTargetedPreview(image.get(), self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, { }, nil);
+    }
+
+    if (!targetedPreview)
+        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
+
+    if (_positionInformation.containerScrollingNodeID) {
+        UIScrollView *positionTrackingView = self.webView.scrollView;
+        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+            positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(_positionInformation.containerScrollingNodeID);
+
+        if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
+            [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
+    }
+
+    _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
+    return _contextMenuInteractionTargetedPreview.get();
+}
+
+#endif // USE(UICONTEXTMENU)
+
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDocumentRequestOptions(UIWKDocumentRequestFlags flags)
@@ -9052,106 +9155,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     }
     // If we're here we're in the legacy path, which ignores the suggested actions anyway.
     return nil;
-}
-
-static RetainPtr<UIImage> uiImageForImage(WebCore::Image* image)
-{
-    if (!image)
-        return nil;
-
-    auto cgImage = image->nativeImage();
-    if (!cgImage)
-        return nil;
-
-    return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-}
-
-// FIXME: This should be merged with createTargetedDragPreview in DragDropInteractionState.
-static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const WebCore::FloatRect& frameInRootViewCoordinates, const Vector<WebCore::FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor)
-{
-    if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
-        return nil;
-
-    WebCore::FloatRect frameInContainerCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:previewContainer];
-    if (frameInContainerCoordinates.isEmpty())
-        return nil;
-
-    WebCore::FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
-    NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];
-
-    for (auto rect : clippingRectsInFrameCoordinates) {
-        rect.scale(scalingRatio);
-        [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
-    }
-
-    RetainPtr<UIPreviewParameters> parameters;
-    if (clippingRectValuesInFrameCoordinates.count)
-        parameters = adoptNS([[UIPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates]);
-    else
-        parameters = adoptNS([[UIPreviewParameters alloc] init]);
-
-    [parameters setBackgroundColor:(backgroundColor ?: [UIColor clearColor])];
-
-    CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
-    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
-
-    auto imageView = adoptNS([[UIImageView alloc] initWithImage:image]);
-    [imageView setFrame:frameInContainerCoordinates];
-    return adoptNS([[UITargetedPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
-}
-
-static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates)
-{
-    if (!containerView.window)
-        return nil;
-
-    if (frameInRootViewCoordinates.isEmpty())
-        return nil;
-
-    auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
-    UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
-
-    CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
-
-    if (CGRectIsEmpty(frameInContainerViewCoordinates))
-        return nil;
-
-    snapshotView.frame = frameInContainerViewCoordinates;
-
-    CGPoint centerInContainerViewCoordinates = CGPointMake(CGRectGetMidX(frameInContainerViewCoordinates), CGRectGetMidY(frameInContainerViewCoordinates));
-    auto target = adoptNS([[UIPreviewTarget alloc] initWithContainer:containerView center:centerInContainerViewCoordinates]);
-
-    return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
-}
-
-- (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
-{
-    RetainPtr<UITargetedPreview> targetedPreview;
-
-    if (_positionInformation.isLink && _positionInformation.linkIndicator.contentImage) {
-        auto indicator = _positionInformation.linkIndicator;
-        auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
-    } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
-        auto cgImage = _positionInformation.image->makeCGImageCopy();
-        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
-        targetedPreview = createTargetedPreview(image.get(), self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, { }, nil);
-    }
-
-    if (!targetedPreview)
-        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
-
-    if (_positionInformation.containerScrollingNodeID) {
-        UIScrollView *positionTrackingView = self.webView.scrollView;
-        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-            positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(_positionInformation.containerScrollingNodeID);
-
-        if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-            [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-    }
-
-    _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
-    return _contextMenuInteractionTargetedPreview.get();
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration

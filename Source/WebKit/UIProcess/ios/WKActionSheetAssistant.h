@@ -36,6 +36,7 @@ class WebPageProxy;
 struct InteractionInformationAtPosition;
 }
 
+@class UITargetedPreview;
 @class WKActionSheetAssistant;
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
