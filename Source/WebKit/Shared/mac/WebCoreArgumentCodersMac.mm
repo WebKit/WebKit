@@ -124,6 +124,13 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
     if (bufferSize.hasOverflowed())
         return false;
 
+    if (!extractDictionaryValue(representation, CFSTR("protocolProperties"), protocolProperties))
+        return false;
+    if (!extractDictionaryValue(representation, CFSTR("expectedContentLength"), expectedContentLength))
+        return false;
+    if (!extractDictionaryValue(representation, CFSTR("mimeType"), mimeType))
+        return false;
+
     *objectCount = archiveListArrayCount;
     *objects = static_cast<CFTypeRef*>(malloc(bufferSize.unsafeGet()));
 
@@ -132,13 +139,6 @@ static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNul
         if ((*objects)[i] == tokenNull)
             (*objects)[i] = nullptr;
     }
-
-    if (!extractDictionaryValue(representation, CFSTR("protocolProperties"), protocolProperties))
-        return false;
-    if (!extractDictionaryValue(representation, CFSTR("expectedContentLength"), expectedContentLength))
-        return false;
-    if (!extractDictionaryValue(representation, CFSTR("mimeType"), mimeType))
-        return false;
 
     return true;
 }

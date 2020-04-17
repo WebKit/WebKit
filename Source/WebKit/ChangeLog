@@ -1,3 +1,16 @@
+2020-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 210646: REGRESSION (r260112): createArchiveList() leaks malloc memory on early returns due to an error
+        <https://webkit.org/b/210646>
+        <rdar://problem/61928031>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createArchiveList):
+        - Move early returns for protocolProperties, protocolProperties
+          and mimeType above memory allocation to fix the memory leak.
+
 2020-04-17  Brady Eidson  <beidson@apple.com>
 
         Pass sandbox extensions for back/forward list navigations after the policy is decided at process-swap time.
