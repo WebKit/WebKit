@@ -1,3 +1,33 @@
+2020-04-17  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r259572. rdar://problem/61943713
+
+    [JSC] Put ensureStillAliveHere for Integer TypedArrays in GetByVal
+    https://bugs.webkit.org/show_bug.cgi?id=210047
+    
+    Reviewed by Mark Lam.
+    
+    While r258381 puts ensureStillAliveHere in FTL to keep base alive for float/double TypedArrays,
+    we need to do the same thing for integer TypedArrays too. This patch places it.
+    
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259572 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Put ensureStillAliveHere for Integer TypedArrays in GetByVal
+            https://bugs.webkit.org/show_bug.cgi?id=210047
+
+            Reviewed by Mark Lam.
+
+            While r258381 puts ensureStillAliveHere in FTL to keep base alive for float/double TypedArrays,
+            we need to do the same thing for integer TypedArrays too. This patch places it.
+
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+
 2020-04-06  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259424. rdar://problem/61352472
