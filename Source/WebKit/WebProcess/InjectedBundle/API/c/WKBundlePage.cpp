@@ -121,7 +121,7 @@ void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClientBase* 
 
 void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClientBase* wkClient)
 {
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+#if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->initializeInjectedBundleFullScreenClient(wkClient);
 #else
     UNUSED_PARAM(pageRef);
@@ -131,7 +131,7 @@ void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullSc
 
 void WKBundlePageWillEnterFullScreen(WKBundlePageRef pageRef)
 {
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+#if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->fullScreenManager()->willEnterFullScreen();
 #else
     UNUSED_PARAM(pageRef);
@@ -140,7 +140,7 @@ void WKBundlePageWillEnterFullScreen(WKBundlePageRef pageRef)
 
 void WKBundlePageDidEnterFullScreen(WKBundlePageRef pageRef)
 {
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+#if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->fullScreenManager()->didEnterFullScreen();
 #else
     UNUSED_PARAM(pageRef);
@@ -149,7 +149,7 @@ void WKBundlePageDidEnterFullScreen(WKBundlePageRef pageRef)
 
 void WKBundlePageWillExitFullScreen(WKBundlePageRef pageRef)
 {
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+#if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->fullScreenManager()->willExitFullScreen();
 #else
     UNUSED_PARAM(pageRef);
@@ -158,7 +158,7 @@ void WKBundlePageWillExitFullScreen(WKBundlePageRef pageRef)
 
 void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
 {
-#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+#if ENABLE(FULLSCREEN_API)
     WebKit::toImpl(pageRef)->fullScreenManager()->didExitFullScreen();
 #else
     UNUSED_PARAM(pageRef);

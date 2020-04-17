@@ -1,3 +1,22 @@
+2020-04-16  Peng Liu  <peng.liu6@apple.com>
+
+        Cleanup the usage of ENABLE_FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=210630
+
+        Reviewed by Daniel Bates.
+
+        Replace "#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API" with
+        "#if ENABLE(FULLSCREEN_API)".
+
+        No new tests, no functional change
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetFullScreenClient):
+        (WKBundlePageWillEnterFullScreen):
+        (WKBundlePageDidEnterFullScreen):
+        (WKBundlePageWillExitFullScreen):
+        (WKBundlePageDidExitFullScreen):
+
 2020-04-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Distinguish between an empty WKAppBoundDomains array and a missing entry
