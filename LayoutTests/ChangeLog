@@ -1,3 +1,12 @@
+2020-04-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r259463): [ Mojave Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html is flaky failing and timing out
+        https://bugs.webkit.org/show_bug.cgi?id=210219
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Test transitioned from timeout -> failure.
+
 2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION ( r254044 ): [ Win ] css1/box_properties/padding_left.html is failing
