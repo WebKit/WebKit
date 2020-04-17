@@ -1,4 +1,7 @@
+//@ requireOptions("-e", "let iterations=40000") if ["mips"].include?($architecture)
 //@ runDefault("--jitPolicyScale=0")
+
+iterations = typeof(iterations) === 'undefined' ? 10000000 : iterations;
 
 function xxx() {
   const a = {};
@@ -8,7 +11,7 @@ function xxx() {
     new Uint8Array(a);
   }
   new Promise(foo);
-  for (let i = 0; i < 10000000; i++)
+  for (let i = 0; i < iterations; i++)
     new ArrayBuffer(1000)
 }
 

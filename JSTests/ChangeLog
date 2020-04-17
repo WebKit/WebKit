@@ -1,3 +1,14 @@
+2020-04-17  Paulo Matos  <pmatos@igalia.com>
+
+        Reduce test iterations for stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js on mips
+        https://bugs.webkit.org/show_bug.cgi?id=210641
+
+        Reviewed by Yusuke Suzuki.
+
+        Reduce test iteration count on mips for which the current value is too high.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Map/Set iterator creation functions should fail with BadType etc. before executing insertChecks
