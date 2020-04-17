@@ -1,3 +1,17 @@
+2020-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Map/Set iterator creation functions should fail with BadType etc. before executing insertChecks
+        https://bugs.webkit.org/show_bug.cgi?id=210649
+        <rdar://problem/61925452>
+
+        Reviewed by Mark Lam.
+
+        * stress/map-iterator-check-before-fail.js: Added.
+        (test):
+        * stress/set-iterator-check-before-fail.js: Added.
+        (set new):
+        (set var):
+
 2020-04-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r259480): Two new failing i18n tests

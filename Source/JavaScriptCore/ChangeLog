@@ -1,3 +1,17 @@
+2020-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Map/Set iterator creation functions should fail with BadType etc. before executing insertChecks
+        https://bugs.webkit.org/show_bug.cgi?id=210649
+        <rdar://problem/61925452>
+
+        Reviewed by Mark Lam.
+
+        Since insertChecks adds some DFG nodes, we should determine whether this intrinsic handling is OK or not before executing insertChecks.
+        Otherwise, we will hit an assertion with `!didInsertChecks`.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+
 2020-04-17  Mark Lam  <mark.lam@apple.com>
 
         offlineasm is generating the wrong load/store for the "orh" instruction.
