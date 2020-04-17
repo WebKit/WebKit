@@ -26,14 +26,11 @@
 #import "config.h"
 #import "VideoFullscreenInterfaceAVKit.h"
 
-#if PLATFORM(IOS_FAMILY)
-
-#import "PictureInPictureSupport.h"
-
-#if HAVE(AVKIT)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "GeometryUtilities.h"
 #import "Logging.h"
+#import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
@@ -1551,8 +1548,6 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
 }
 
-#endif // HAVE(AVKIT)
-
 static Optional<bool> isPictureInPictureSupported;
 
 void WebCore::setSupportsPictureInPicture(bool isSupported)
@@ -1571,4 +1566,4 @@ bool WebCore::supportsPictureInPicture()
 #endif
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)

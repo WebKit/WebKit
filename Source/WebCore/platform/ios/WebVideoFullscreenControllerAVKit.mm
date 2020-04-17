@@ -24,10 +24,9 @@
  */
 
 #import "config.h"
+#import "WebVideoFullscreenControllerAVKit.h"
 
 #if PLATFORM(IOS_FAMILY)
-
-#import "WebVideoFullscreenControllerAVKit.h"
 
 #import "Logging.h"
 #import "MediaSelectionOption.h"
