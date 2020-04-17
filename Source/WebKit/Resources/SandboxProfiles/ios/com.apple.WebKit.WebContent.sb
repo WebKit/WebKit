@@ -375,8 +375,7 @@
         (global-name "com.apple.CARenderServer"))
 
     ; UIKit-required IOKit nodes.
-    (allow iokit-open  (with report) (with telemetry)
-        (iokit-user-client-class "AppleJPEGDriverUserClient")
+    (deny iokit-open (with telemetry-backtrace)
         (iokit-user-client-class "IOSurfaceSendRight")
     )
 

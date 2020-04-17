@@ -1,3 +1,14 @@
+2020-04-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny iokit open access of unused class in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=210669
+
+        Reviewed by Brent Fulgham.
+
+        Telemetry shows that iokit open access of an iokit class can be removed from the WebContent sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-17  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Refactor WebKit uploads process assertion logic to minimize chances of leaking them
