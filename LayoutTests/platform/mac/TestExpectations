@@ -1895,9 +1895,7 @@ webkit.org/b/207392 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlob
 
 webkit.org/b/207461 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Pass Failure ]
 
-webkit.org/b/207463 [ Debug ] inspector/runtime/getCollectionEntries.html [ Pass Failure ]
-
-webkit.org/b/207642 inspector/runtime/getCollectionEntries.html [ Pass Failure ]
+webkit.org/b/207463 inspector/runtime/getCollectionEntries.html [ Pass Failure ]
 
 webkit.org/b/194162 storage/websql/read-transactions-running-concurrently.html [ Pass Failure ]
 

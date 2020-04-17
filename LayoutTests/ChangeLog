@@ -1,5 +1,16 @@
 2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ macOS ] inspector/runtime/getCollectionEntries.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207642
+
+        Unreviewed test gardening.
+
+        Removed duplicate expectations.
+
+        * platform/mac/TestExpectations:
+
+2020-04-17  Jason Lawrence  <lawrence.j@apple.com>
+
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
         https://bugs.webkit.org/show_bug.cgi?id=203291
 
