@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -462,11 +462,16 @@ def riscLowerMisplacedAddresses(list)
             postInstructions = []
             annotation = node.annotation
             case node.opcode
-            when "addi", "addis", "andi", "lshifti", "muli", "negi", "noti", "ori", "orh", "oris",
+            when "addi", "addis", "andi", "lshifti", "muli", "negi", "noti", "ori", "oris",
                 "rshifti", "urshifti", "subi", "subis", "xori", /^bi/, /^bti/, /^ci/, /^ti/
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            riscAsRegisters(newList, postInstructions, node.operands, "i"),
+                                           annotation)
+            when "orh"
+                newList << Instruction.new(node.codeOrigin,
+                                           node.opcode,
+                                           riscAsRegisters(newList, postInstructions, node.operands, "h"),
                                            annotation)
             when "addp", "andp", "lshiftp", "mulp", "negp", "orp", "rshiftp", "urshiftp",
                 "subp", "xorp", /^bp/, /^btp/, /^cp/
