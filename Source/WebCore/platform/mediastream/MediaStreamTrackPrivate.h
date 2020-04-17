@@ -32,7 +32,7 @@
 #include "RealtimeMediaSource.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -44,14 +44,13 @@ class WebAudioSourceProvider;
 
 class MediaStreamTrackPrivate final
     : public RefCounted<MediaStreamTrackPrivate>
-    , public CanMakeWeakPtr<MediaStreamTrackPrivate, WeakPtrFactoryInitialization::Eager>
     , public RealtimeMediaSource::Observer
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
 {
 public:
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() = default;
 
@@ -104,9 +103,7 @@ public:
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
-#if ASSERT_ENABLED
-    bool hasObserver(Observer&) const;
-#endif
+    bool hasObserver(Observer& observer) const { return m_observers.contains(observer); }
 
     WEBCORE_EXPORT const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
@@ -142,15 +139,14 @@ private:
 
     void updateReadyState();
 
-    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
+    void forEachObserver(const Function<void(Observer&)>&);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrackPrivate"; }
     WTFLogChannel& logChannel() const final;
 #endif
 
-    mutable RecursiveLock m_observersLock;
-    HashSet<Observer*> m_observers;
+    WeakHashSet<Observer> m_observers;
     Ref<RealtimeMediaSource> m_source;
 
     String m_id;
@@ -168,14 +164,6 @@ private:
 };
 
 typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
-
-#if ASSERT_ENABLED
-inline bool MediaStreamTrackPrivate::hasObserver(Observer& observer) const
-{
-    auto locker = holdLock(m_observersLock);
-    return m_observers.contains(&observer);
-}
-#endif
 
 } // namespace WebCore
 

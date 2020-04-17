@@ -1,3 +1,38 @@
+2020-04-17  Youenn Fablet  <youenn@apple.com>
+
+        Make use of WeakHashSet for MediaStreamTrackPrivate and RealtimeMediaSource observers
+        https://bugs.webkit.org/show_bug.cgi?id=210492
+
+        Reviewed by Geoffrey Garen.
+
+        We are making use of WeakHashSet to improve the robustness of the code.
+        For that purpose we use the new WeakHashSet::forEach method.
+        No change of behavior.
+
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::forEachObserver const):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::forEachObserver):
+        (WebCore::MediaStreamTrackPrivate::addObserver):
+        (WebCore::MediaStreamTrackPrivate::removeObserver):
+        (WebCore::MediaStreamTrackPrivate::forEachObserver const): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::hasObserver const): Deleted.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::addAudioSampleObserver):
+        (WebCore::RealtimeMediaSource::removeAudioSampleObserver):
+        (WebCore::RealtimeMediaSource::addObserver):
+        (WebCore::RealtimeMediaSource::removeObserver):
+        (WebCore::RealtimeMediaSource::forEachObserver):
+        (WebCore::RealtimeMediaSource::notifyMutedObservers):
+        (WebCore::RealtimeMediaSource::requestToEnd):
+        (WebCore::RealtimeMediaSource::forEachObserver const): Deleted.
+        (WebCore::RealtimeMediaSource::notifyMutedObservers const): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+
 2020-04-17  Rob Buis  <rbuis@igalia.com>
 
         Move allowPlugins to FrameLoader

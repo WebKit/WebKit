@@ -60,31 +60,31 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& devi
     m_hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt);
 }
 
-void RealtimeMediaSource::addAudioSampleObserver(RealtimeMediaSource::AudioSampleObserver& observer)
+void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
     auto locker = holdLock(m_audioSampleObserversLock);
     m_audioSampleObservers.add(&observer);
 }
 
-void RealtimeMediaSource::removeAudioSampleObserver(RealtimeMediaSource::AudioSampleObserver& observer)
+void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
     auto locker = holdLock(m_audioSampleObserversLock);
     m_audioSampleObservers.remove(&observer);
 }
 
-void RealtimeMediaSource::addObserver(RealtimeMediaSource::Observer& observer)
+void RealtimeMediaSource::addObserver(Observer& observer)
 {
     ASSERT(isMainThread());
-    m_observers.add(&observer);
+    m_observers.add(observer);
 }
 
-void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer)
+void RealtimeMediaSource::removeObserver(Observer& observer)
 {
     ASSERT(isMainThread());
-    m_observers.remove(&observer);
-    if (m_observers.isEmpty())
+    m_observers.remove(observer);
+    if (m_observers.computesEmpty())
         stopBeingObserved();
 }
 
@@ -130,18 +130,14 @@ void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
     notifyMutedChange(interrupted);
 }
 
-void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply) const
+void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
     auto protectedThis = makeRef(*this);
-    for (auto* observer : copyToVector(m_observers)) {
-        if (!m_observers.contains(observer))
-            continue;
-        apply(*observer);
-    }
+    m_observers.forEach(apply);
 }
 
-void RealtimeMediaSource::notifyMutedObservers() const
+void RealtimeMediaSource::notifyMutedObservers()
 {
     forEachObserver([](auto& observer) {
         observer.sourceMutedChanged();
@@ -257,7 +253,7 @@ void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
     m_isEnded = true;
     hasEnded();
 
-    forEachObserver([callingObserver](auto& observer) {
+    forEachObserver([&callingObserver](auto& observer) {
         if (&observer != &callingObserver)
             observer.sourceStopped();
     });

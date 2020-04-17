@@ -51,7 +51,7 @@ class PixelBufferConformerCV;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
+class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, public MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
     , private LoggerHelper
 {
 public:
@@ -77,6 +77,9 @@ public:
     const char* logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
+
+    using MediaStreamTrackPrivate::Observer::weakPtrFactory;
+    using WeakValueType = MediaStreamTrackPrivate::Observer::WeakValueType;
 
 private:
     PlatformLayer* rootLayer() const;

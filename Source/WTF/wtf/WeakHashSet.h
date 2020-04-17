@@ -138,6 +138,14 @@ public:
         return m_set.size();
     }
 
+    void forEach(const Function<void(T&)>& callback)
+    {
+        for (auto& item : map(m_set, [](auto& item) { return makeWeakPtr(item->template get<T>()); })) {
+            if (item && m_set.contains(*item.m_impl))
+                callback(*item);
+        }
+    }
+
 #if ASSERT_ENABLED
     void checkConsistency() const { m_set.checkConsistency(); }
 #else

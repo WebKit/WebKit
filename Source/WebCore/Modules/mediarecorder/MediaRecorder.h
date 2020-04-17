@@ -42,7 +42,6 @@ class MediaRecorder final
     : public ActiveDOMObject
     , public RefCounted<MediaRecorder>
     , public EventTargetWithInlineData
-    , public CanMakeWeakPtr<MediaRecorder>
     , private MediaStream::Observer
     , private MediaStreamTrackPrivate::Observer {
     WTF_MAKE_ISO_ALLOCATED(MediaRecorder);

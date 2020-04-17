@@ -47,7 +47,7 @@
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -75,7 +75,7 @@ class WEBCORE_EXPORT RealtimeMediaSource
 #endif
 {
 public:
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer();
 
@@ -228,7 +228,7 @@ protected:
     virtual bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
     virtual void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
 
-    void notifyMutedObservers() const;
+    void notifyMutedObservers();
     void notifyMutedChange(bool muted);
     void notifySettingsDidChangeObservers(OptionSet<RealtimeMediaSourceSettings::Flag>);
 
@@ -239,7 +239,7 @@ protected:
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
-    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
+    void forEachObserver(const Function<void(Observer&)>&);
 
 private:
     virtual void startProducingData() { }
@@ -262,7 +262,7 @@ private:
     String m_persistentID;
     Type m_type;
     String m_name;
-    HashSet<Observer*> m_observers;
+    WeakHashSet<Observer> m_observers;
 
     mutable RecursiveLock m_audioSampleObserversLock;
     HashSet<AudioSampleObserver*> m_audioSampleObservers;
