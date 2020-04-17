@@ -100,9 +100,4 @@ char GetPathSeparator()
 {
     return '\\';
 }
-
-std::string GetHelperExecutableDir()
-{
-    return "";
-}
 }  // namespace angle

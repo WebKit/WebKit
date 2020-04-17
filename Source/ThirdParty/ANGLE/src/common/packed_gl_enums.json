@@ -267,9 +267,7 @@
     },
     "HandleType":
     {
-        "OpaqueFd": "GL_HANDLE_TYPE_OPAQUE_FD_EXT",
-        "ZirconVmo": "GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE",
-        "ZirconEvent": "GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"
+        "OpaqueFd": "GL_HANDLE_TYPE_OPAQUE_FD_EXT"
     },
     "ImageLayout":
     {

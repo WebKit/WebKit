@@ -376,6 +376,9 @@ TEST_P(EGLContextSharingTest, DeleteReaderOfSharedTexture)
 {
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
+    // Bug in the Vulkan backend. http://anglebug.com/4130
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
     // Initialize contexts
     EGLWindow *window = getEGLWindow();
     EGLDisplay dpy    = window->getDisplay();

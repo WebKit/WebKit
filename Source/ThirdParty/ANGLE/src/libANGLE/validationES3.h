@@ -14,7 +14,7 @@
 
 namespace gl
 {
-bool ValidateES3TexImageParametersBase(const Context *context,
+bool ValidateES3TexImageParametersBase(Context *context,
                                        TextureTarget target,
                                        GLint level,
                                        GLenum internalformat,

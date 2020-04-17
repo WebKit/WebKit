@@ -2,11 +2,11 @@
   "src/libANGLE/renderer/angle_format.py":
     "32ba71942c0fd00e6807104f1bb80a3c",
   "src/libANGLE/renderer/angle_format_map.json":
-    "fad58117657b6bde9488a10d35872d45",
+    "bca5e686001f6dd0af306af234a36677",
   "src/libANGLE/renderer/d3d/d3d11/dxgi_format_data.json":
-    "3428e4761ccd05f960adffd6ccbd86c5",
+    "24f525b05dc665fbbc8c6d68fb863719",
   "src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp":
-    "974308ca798476dfaa076fb864478310",
+    "32b9860e3fd8e87a89ff9a09e848e516",
   "src/libANGLE/renderer/d3d/d3d11/gen_dxgi_format_table.py":
     "411e6064b916d570fa76949820d34a45"
 }

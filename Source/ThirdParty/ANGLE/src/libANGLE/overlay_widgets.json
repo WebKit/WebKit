@@ -53,7 +53,7 @@
             "length": 25
         },
         {
-            "name": "VulkanRenderPassCount",
+            "name": "VulkanCommandGraphSize",
             "type": "RunningGraph(60)",
             "color": [75, 200, 0, 200],
             "coords": [10, 100],
@@ -61,7 +61,7 @@
             "height": 100,
             "description": {
                 "color": [75, 200, 0, 255],
-                "coords": ["VulkanRenderPassCount.left.align", "VulkanRenderPassCount.top.adjacent"],
+                "coords": ["VulkanCommandGraphSize.left.align", "VulkanCommandGraphSize.top.adjacent"],
                 "font": "small",
                 "length": 40
             }

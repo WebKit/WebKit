@@ -1,3 +1,7 @@
+2020-04-17  Alan Coon  <alancoon@apple.com>
+
+        Revert r259589. rdar://problem/61942180
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.

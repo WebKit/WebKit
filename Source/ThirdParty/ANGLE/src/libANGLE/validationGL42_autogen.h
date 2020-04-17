@@ -17,20 +17,20 @@ namespace gl
 {
 class Context;
 
-bool ValidateDrawArraysInstancedBaseInstance(const Context *context,
+bool ValidateDrawArraysInstancedBaseInstance(Context *context,
                                              PrimitiveMode modePacked,
                                              GLint first,
                                              GLsizei count,
                                              GLsizei instancecount,
                                              GLuint baseinstance);
-bool ValidateDrawElementsInstancedBaseInstance(const Context *context,
+bool ValidateDrawElementsInstancedBaseInstance(Context *context,
                                                GLenum mode,
                                                GLsizei count,
                                                GLenum type,
                                                const void *indices,
                                                GLsizei instancecount,
                                                GLuint baseinstance);
-bool ValidateDrawElementsInstancedBaseVertexBaseInstance(const Context *context,
+bool ValidateDrawElementsInstancedBaseVertexBaseInstance(Context *context,
                                                          PrimitiveMode modePacked,
                                                          GLsizei count,
                                                          DrawElementsType typePacked,
@@ -38,21 +38,21 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstance(const Context *context,
                                                          GLsizei instancecount,
                                                          GLint basevertex,
                                                          GLuint baseinstance);
-bool ValidateDrawTransformFeedbackInstanced(const Context *context,
+bool ValidateDrawTransformFeedbackInstanced(Context *context,
                                             GLenum mode,
                                             TransformFeedbackID idPacked,
                                             GLsizei instancecount);
-bool ValidateDrawTransformFeedbackStreamInstanced(const Context *context,
+bool ValidateDrawTransformFeedbackStreamInstanced(Context *context,
                                                   GLenum mode,
                                                   TransformFeedbackID idPacked,
                                                   GLuint stream,
                                                   GLsizei instancecount);
-bool ValidateGetActiveAtomicCounterBufferiv(const Context *context,
+bool ValidateGetActiveAtomicCounterBufferiv(Context *context,
                                             ShaderProgramID programPacked,
                                             GLuint bufferIndex,
                                             GLenum pname,
-                                            const GLint *params);
-bool ValidateTexStorage1D(const Context *context,
+                                            GLint *params);
+bool ValidateTexStorage1D(Context *context,
                           GLenum target,
                           GLsizei levels,
                           GLenum internalformat,

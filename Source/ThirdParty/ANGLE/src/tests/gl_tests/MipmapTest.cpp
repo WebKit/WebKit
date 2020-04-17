@@ -954,9 +954,9 @@ TEST_P(MipmapTestES3, MipmapForDeepTextureArray)
 // Then tests if the mipmaps are rendered correctly for all two layers.
 TEST_P(MipmapTestES3, MipmapsForTexture3D)
 {
-    // Currently block on swiftshader Blit3D support, tracked on
-    // https://issuetracker.google.com/issues/150155499
-    ANGLE_SKIP_TEST_IF(isVulkanSwiftshaderRenderer());
+    // TODO(cnorthrop): Enabled the group to cover texture base level, but this test
+    // needs some triage: http://anglebug.com/3950
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     int px = getWindowWidth() / 2;
     int py = getWindowHeight() / 2;
@@ -1002,37 +1002,17 @@ TEST_P(MipmapTestES3, MipmapsForTexture3D)
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::green);
 
-    // Regenerate mipmap of same color texture
-    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 1, 16, 16, 1, GL_RGBA, GL_UNSIGNED_BYTE,
-                    pixelsRed.data());
-
-    glGenerateMipmap(GL_TEXTURE_3D);
-
-    EXPECT_GL_NO_ERROR();
-
-    // Mipmap level 1 8*8*1
+    // Mipmap level 1
+    // The second mipmap should only have one slice.
     glUniform1f(mTexture3DLODUniformLocation, 1.);
     drawQuad(m3DProgram, "position", 0.5f);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::red);
+    EXPECT_PIXEL_NEAR(px, py, 127, 127, 0, 255, 1.0);
 
-    // Mipmap level 2 4*4*1
-    glUniform1f(mTexture3DLODUniformLocation, 2.);
+    glUniform1f(mTexture3DSliceUniformLocation, 0.75f);
     drawQuad(m3DProgram, "position", 0.5f);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::red);
-
-    // Mipmap level 3 2*2*1
-    glUniform1f(mTexture3DLODUniformLocation, 3.);
-    drawQuad(m3DProgram, "position", 0.5f);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::red);
-
-    // Mipmap level 4 1*1*1
-    glUniform1f(mTexture3DLODUniformLocation, 4.);
-    drawQuad(m3DProgram, "position", 0.5f);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::red);
+    EXPECT_PIXEL_NEAR(px, py, 127, 127, 0, 255, 1.0);
 }
 
 // Create a 2D texture with levels 0-2, call GenerateMipmap with base level 1 so that level 0 stays

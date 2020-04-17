@@ -122,16 +122,13 @@ class ContextMtl : public ContextImpl, public mtl::Context
     std::string getRendererDescription() const override;
 
     // EXT_debug_marker
-    angle::Result insertEventMarker(GLsizei length, const char *marker) override;
-    angle::Result pushGroupMarker(GLsizei length, const char *marker) override;
-    angle::Result popGroupMarker() override;
+    void insertEventMarker(GLsizei length, const char *marker) override;
+    void pushGroupMarker(GLsizei length, const char *marker) override;
+    void popGroupMarker() override;
 
     // KHR_debug
-    angle::Result pushDebugGroup(const gl::Context *context,
-                                 GLenum source,
-                                 GLuint id,
-                                 const std::string &message) override;
-    angle::Result popDebugGroup(const gl::Context *context) override;
+    void pushDebugGroup(GLenum source, GLuint id, const std::string &message) override;
+    void popDebugGroup() override;
 
     // State sync with dirty bits.
     angle::Result syncState(const gl::Context *context,
@@ -186,6 +183,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     // Program Pipeline object creation
     ProgramPipelineImpl *createProgramPipeline(const gl::ProgramPipelineState &data) override;
+
+    // Path object creation
+    std::vector<PathImpl *> createPaths(GLsizei) override;
 
     // Memory object creation.
     MemoryObjectImpl *createMemoryObject() override;
@@ -390,10 +390,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
         // We'll use x, y, z, w for near / far / diff / zscale respectively.
         float depthRange[4];
-
-        // Used to pre-rotate gl_Position for Vulkan swapchain images on Android (a mat2, which is
-        // padded to the size of two vec4's).
-        float preRotation[8];
     };
 
     struct DefaultAttribute

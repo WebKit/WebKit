@@ -43,15 +43,15 @@ class Event;
 struct TraceEvent final
 {
     TraceEvent() {}
-    TraceEvent(char phaseIn, const char *categoryNameIn, const char *nameIn, double timestampIn);
 
-    static constexpr uint32_t kMaxNameLen = 64;
+    TraceEvent(char phaseIn, const char *categoryNameIn, const char *nameIn, double timestampIn)
+        : phase(phaseIn), categoryName(categoryNameIn), name(nameIn), timestamp(timestampIn)
+    {}
 
     char phase               = 0;
     const char *categoryName = nullptr;
-    char name[kMaxNameLen]   = {};
+    const char *name         = nullptr;
     double timestamp         = 0;
-    uint32_t tid             = 0;
 };
 
 class ANGLEPerfTest : public testing::Test, angle::NonCopyable
@@ -61,7 +61,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
                   const std::string &backend,
                   const std::string &story,
                   unsigned int iterationsPerStep);
-    ~ANGLEPerfTest() override;
+    virtual ~ANGLEPerfTest();
 
     virtual void step() = 0;
 
@@ -119,7 +119,7 @@ class ANGLERenderTest : public ANGLEPerfTest
 {
   public:
     ANGLERenderTest(const std::string &name, const RenderTestParams &testParams);
-    ~ANGLERenderTest() override;
+    ~ANGLERenderTest();
 
     void addExtensionPrerequisite(const char *extensionName);
 
@@ -148,10 +148,6 @@ class ANGLERenderTest : public ANGLEPerfTest
 
     void beginInternalTraceEvent(const char *name);
     void endInternalTraceEvent(const char *name);
-    void beginGLTraceEvent(const char *name, double hostTimeSec);
-    void endGLTraceEvent(const char *name, double hostTimeSec);
-
-    bool mIsTimestampQueryAvailable;
 
   private:
     void SetUp() override;
@@ -169,6 +165,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     angle::PlatformMethods mPlatformMethods;
     ConfigParameters mConfigParams;
 
+    bool mIsTimestampQueryAvailable;
     GLuint mTimestampQuery;
 
     // Trace event record that can be output.
@@ -197,17 +194,6 @@ ParamsT NullDevice(const ParamsT &input)
     output.trackGpuTime             = false;
     return output;
 }
-
-template <typename ParamsT>
-ParamsT Passthrough(const ParamsT &input)
-{
-    return input;
-}
 }  // namespace params
 
-namespace angle
-{
-// Returns the time of the host since the application started in seconds.
-double GetHostTimeSeconds();
-}  // namespace angle
 #endif  // PERF_TESTS_ANGLE_PERF_TEST_H_

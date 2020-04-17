@@ -94,6 +94,7 @@ enum class ParamType
     TMemoryObjectID,
     TMemoryObjectIDConstPointer,
     TMemoryObjectIDPointer,
+    TPathID,
     TPointParameter,
     TPrimitiveMode,
     TProgramPipelineID,
@@ -128,7 +129,6 @@ enum class ParamType
     TTransformFeedbackID,
     TTransformFeedbackIDConstPointer,
     TTransformFeedbackIDPointer,
-    TUniformLocation,
     TVertexArrayID,
     TVertexArrayIDConstPointer,
     TVertexArrayIDPointer,
@@ -220,6 +220,7 @@ union ParamValue
     gl::MemoryObjectID MemoryObjectIDVal;
     const gl::MemoryObjectID *MemoryObjectIDConstPointerVal;
     gl::MemoryObjectID *MemoryObjectIDPointerVal;
+    gl::PathID PathIDVal;
     gl::PointParameter PointParameterVal;
     gl::PrimitiveMode PrimitiveModeVal;
     gl::ProgramPipelineID ProgramPipelineIDVal;
@@ -254,7 +255,6 @@ union ParamValue
     gl::TransformFeedbackID TransformFeedbackIDVal;
     const gl::TransformFeedbackID *TransformFeedbackIDConstPointerVal;
     gl::TransformFeedbackID *TransformFeedbackIDPointerVal;
-    gl::UniformLocation UniformLocationVal;
     gl::VertexArrayID VertexArrayIDVal;
     const gl::VertexArrayID *VertexArrayIDConstPointerVal;
     gl::VertexArrayID *VertexArrayIDPointerVal;
@@ -771,6 +771,12 @@ inline gl::MemoryObjectID *GetParamVal<ParamType::TMemoryObjectIDPointer, gl::Me
 }
 
 template <>
+inline gl::PathID GetParamVal<ParamType::TPathID, gl::PathID>(const ParamValue &value)
+{
+    return value.PathIDVal;
+}
+
+template <>
 inline gl::PointParameter GetParamVal<ParamType::TPointParameter, gl::PointParameter>(
     const ParamValue &value)
 {
@@ -1006,13 +1012,6 @@ inline gl::TransformFeedbackID *GetParamVal<ParamType::TTransformFeedbackIDPoint
 }
 
 template <>
-inline gl::UniformLocation GetParamVal<ParamType::TUniformLocation, gl::UniformLocation>(
-    const ParamValue &value)
-{
-    return value.UniformLocationVal;
-}
-
-template <>
 inline gl::VertexArrayID GetParamVal<ParamType::TVertexArrayID, gl::VertexArrayID>(
     const ParamValue &value)
 {
@@ -1231,6 +1230,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TMemoryObjectIDConstPointer, T>(value);
         case ParamType::TMemoryObjectIDPointer:
             return GetParamVal<ParamType::TMemoryObjectIDPointer, T>(value);
+        case ParamType::TPathID:
+            return GetParamVal<ParamType::TPathID, T>(value);
         case ParamType::TPointParameter:
             return GetParamVal<ParamType::TPointParameter, T>(value);
         case ParamType::TPrimitiveMode:
@@ -1299,8 +1300,6 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::TTransformFeedbackIDConstPointer, T>(value);
         case ParamType::TTransformFeedbackIDPointer:
             return GetParamVal<ParamType::TTransformFeedbackIDPointer, T>(value);
-        case ParamType::TUniformLocation:
-            return GetParamVal<ParamType::TUniformLocation, T>(value);
         case ParamType::TVertexArrayID:
             return GetParamVal<ParamType::TVertexArrayID, T>(value);
         case ParamType::TVertexArrayIDConstPointer:
@@ -1812,6 +1811,12 @@ inline void SetParamVal<ParamType::TMemoryObjectIDPointer>(gl::MemoryObjectID *v
 }
 
 template <>
+inline void SetParamVal<ParamType::TPathID>(gl::PathID valueIn, ParamValue *valueOut)
+{
+    valueOut->PathIDVal = valueIn;
+}
+
+template <>
 inline void SetParamVal<ParamType::TPointParameter>(gl::PointParameter valueIn,
                                                     ParamValue *valueOut)
 {
@@ -2037,13 +2042,6 @@ inline void SetParamVal<ParamType::TTransformFeedbackIDPointer>(gl::TransformFee
                                                                 ParamValue *valueOut)
 {
     valueOut->TransformFeedbackIDPointerVal = valueIn;
-}
-
-template <>
-inline void SetParamVal<ParamType::TUniformLocation>(gl::UniformLocation valueIn,
-                                                     ParamValue *valueOut)
-{
-    valueOut->UniformLocationVal = valueIn;
 }
 
 template <>
@@ -2340,6 +2338,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
         case ParamType::TMemoryObjectIDPointer:
             SetParamVal<ParamType::TMemoryObjectIDPointer>(valueIn, valueOut);
             break;
+        case ParamType::TPathID:
+            SetParamVal<ParamType::TPathID>(valueIn, valueOut);
+            break;
         case ParamType::TPointParameter:
             SetParamVal<ParamType::TPointParameter>(valueIn, valueOut);
             break;
@@ -2442,9 +2443,6 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
         case ParamType::TTransformFeedbackIDPointer:
             SetParamVal<ParamType::TTransformFeedbackIDPointer>(valueIn, valueOut);
             break;
-        case ParamType::TUniformLocation:
-            SetParamVal<ParamType::TUniformLocation>(valueIn, valueOut);
-            break;
         case ParamType::TVertexArrayID:
             SetParamVal<ParamType::TVertexArrayID>(valueIn, valueOut);
             break;
@@ -2472,10 +2470,7 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
     }
 }
 
-struct CallCapture;
-struct ParamCapture;
-
-void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const ParamCapture &param);
+void WriteParamTypeToStream(std::ostream &os, ParamType paramType, const ParamValue &paramValue);
 const char *ParamTypeToString(ParamType paramType);
 
 enum class ResourceIDType
@@ -2484,6 +2479,7 @@ enum class ResourceIDType
     FenceNV,
     Framebuffer,
     MemoryObject,
+    Path,
     ProgramPipeline,
     Query,
     Renderbuffer,

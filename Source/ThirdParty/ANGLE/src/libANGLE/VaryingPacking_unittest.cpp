@@ -30,11 +30,9 @@ class VaryingPackingTest : public ::testing::TestWithParam<GLuint>
                             VaryingPacking *varyingPacking)
     {
         std::vector<PackedVarying> packedVaryings;
-        for (const sh::ShaderVariable &shVarying : shVaryings)
+        for (const auto &shVarying : shVaryings)
         {
-            packedVaryings.push_back(PackedVarying(
-                VaryingInShaderRef(ShaderType::Vertex, &shVarying),
-                VaryingInShaderRef(ShaderType::Fragment, &shVarying), shVarying.interpolation));
+            packedVaryings.push_back(PackedVarying(shVarying, shVarying.interpolation));
         }
 
         InfoLog infoLog;

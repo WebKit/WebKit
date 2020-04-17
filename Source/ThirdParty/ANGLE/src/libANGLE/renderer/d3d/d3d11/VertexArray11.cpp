@@ -135,14 +135,13 @@ angle::Result VertexArray11::syncStateForDraw(const gl::Context *context,
     const gl::State &glState   = context->getState();
     const gl::Program *program = glState.getProgram();
     ASSERT(program);
-    const gl::ProgramExecutable &executable = program->getExecutable();
-
     mAppliedNumViewsToDivisor = (program->usesMultiview() ? program->getNumViews() : 1);
 
     if (mAttribsToTranslate.any())
     {
-        const gl::AttributesMask &activeLocations = executable.getActiveAttribLocationsMask();
-        gl::AttributesMask activeDirtyAttribs     = (mAttribsToTranslate & activeLocations);
+        const gl::AttributesMask &activeLocations =
+            glState.getProgram()->getActiveAttribLocationsMask();
+        gl::AttributesMask activeDirtyAttribs = (mAttribsToTranslate & activeLocations);
         if (activeDirtyAttribs.any())
         {
             ANGLE_TRY(updateDirtyAttribs(context, activeDirtyAttribs));
@@ -152,8 +151,9 @@ angle::Result VertexArray11::syncStateForDraw(const gl::Context *context,
 
     if (mDynamicAttribsMask.any())
     {
-        const gl::AttributesMask &activeLocations = executable.getActiveAttribLocationsMask();
-        gl::AttributesMask activeDynamicAttribs   = (mDynamicAttribsMask & activeLocations);
+        const gl::AttributesMask &activeLocations =
+            glState.getProgram()->getActiveAttribLocationsMask();
+        gl::AttributesMask activeDynamicAttribs = (mDynamicAttribsMask & activeLocations);
 
         if (activeDynamicAttribs.any())
         {
@@ -235,8 +235,7 @@ void VertexArray11::updateVertexAttribStorage(const gl::Context *context,
 
 bool VertexArray11::hasActiveDynamicAttrib(const gl::Context *context)
 {
-    const auto &activeLocations =
-        context->getState().getProgramExecutable()->getActiveAttribLocationsMask();
+    const auto &activeLocations = context->getState().getProgram()->getActiveAttribLocationsMask();
     gl::AttributesMask activeDynamicAttribs = (mDynamicAttribsMask & activeLocations);
     return activeDynamicAttribs.any();
 }

@@ -19,13 +19,13 @@ vars = {
   'checkout_angle_internal': False,
 
   # Version of Chromium our Chromium-based DEPS are mirrored from.
-  'chromium_revision': 'fa9d5805c421133e9d13cf698c4502d13398b2ce',
+  'chromium_revision': '8ffb18d0b983532c6c2639de67b2efc93b4df2d3',
 
   # Current revision of VK-GL-CTS (a.k.a dEQP).
-  'vk_gl_cts_revision': 'a6b249819f7177821d4b7eefff36af07fef71825',
+  'vk_gl_cts_revision': 'd99a765d38d35deeb3f27cf30d9d6fe4f183510e',
 
   # Current revision of glslang, the Khronos SPIRV compiler.
-  'glslang_revision': '99508c1ce389e678a79b00159fe0c0d13f08f213',
+  'glslang_revision': '5e86b28ffb8124a5ee2a58c640245ee5b285110d',
 
   # Current revision of googletest.
   # Note: this dep cannot be auto-rolled b/c of nesting.
@@ -43,22 +43,22 @@ vars = {
   'spirv_cross_revision': 'fd5aa3ad51ece55a1b51fe6bfb271db6844ae291',
 
   # Current revision fo the SPIRV-Headers Vulkan support library.
-  'spirv_headers_revision': 'f8bf11a0253a32375c32cad92c841237b96696c0',
+  'spirv_headers_revision': 'dc77030acc9c6fe7ca21fff54c5a9d7b532d7da6',
 
   # Current revision of SPIRV-Tools for Vulkan.
-  'spirv_tools_revision': 'fd773eb50d628c1981338addc093df879757c2cf',
+  'spirv_tools_revision': '7a2d408dea60aa1f8d53e123b01277c41b8f83b9',
 
   # Current revision of Khronos Vulkan-Headers.
-  'vulkan_headers_revision': '0e78ffd1dcfc3e9f14a966b9660dbc59bd967c5c',
+  'vulkan_headers_revision': '7264358702061d3ed819d62d3d6fd66ab1da33c3',
 
   # Current revision of Khronos Vulkan-Loader.
-  'vulkan_loader_revision': 'cc481ef276315d54db4381b2d5dffac2b5824cbf',
+  'vulkan_loader_revision': 'fb94ccddb725516243644206ab07f0b82e1f0a5e',
 
   # Current revision of Khronos Vulkan-Tools.
-  'vulkan_tools_revision': 'bec7b6e29260caa9348b1fd42b5d65443d512748',
+  'vulkan_tools_revision': '260679605f9843ae2cf06cfc0e44dc0d25be71b9',
 
   # Current revision of Khronos Vulkan-ValidationLayers.
-  'vulkan_validation_revision': '55f01953d6e9d6db625f57bebbbc7a36a132ad88',
+  'vulkan_validation_revision': 'e85fe4c3cc9f6c12d887d2ef912241241e0f5ffa',
 
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
@@ -69,17 +69,17 @@ vars = {
 deps = {
 
   'build': {
-    'url': '{chromium_git}/chromium/src/build.git@a1cbf6469a5400f2b455ffba2e95ea47a1b47c94',
+    'url': '{chromium_git}/chromium/src/build.git@e5293d8fa2889a240bf47428369caf0d9e2f3dc7',
     'condition': 'not build_with_chromium',
   },
 
   'buildtools': {
-    'url': '{chromium_git}/chromium/src/buildtools.git@4164a305626786b1912d467003acf4c4995bec7d',
+    'url': '{chromium_git}/chromium/src/buildtools.git@afc5b798c72905e85f9991152be878714c579958',
     'condition': 'not build_with_chromium',
   },
 
   'testing': {
-    'url': '{chromium_git}/chromium/src/testing@3e21eec53c1688302ebc26e975d0163256bd1a15',
+    'url': '{chromium_git}/chromium/src/testing@cf6ed46cffec37285fb5d8acc1cce59da967ceca',
     'condition': 'not build_with_chromium',
   },
 
@@ -115,7 +115,7 @@ deps = {
   },
 
   'third_party/googletest': {
-    'url': '{chromium_git}/chromium/src/third_party/googletest@c96dc321101e7c9f5ba16d957afd49ee4db30548',
+    'url': '{chromium_git}/chromium/src/third_party/googletest@c83f99e10cff7d90190a22a79f294ea9e340f4e6',
     'condition': 'not build_with_chromium',
   },
 
@@ -182,7 +182,7 @@ deps = {
   },
 
   'third_party/SwiftShader': {
-    'url': '{swiftshader_git}/SwiftShader@02e15b249b12fe4e1ca5e303a5a0de0668950536',
+    'url': '{swiftshader_git}/SwiftShader@41a7302e9c62c207e5ac5bcce40f16a1e418c42b',
     'condition': 'not build_with_chromium',
   },
 
@@ -203,17 +203,17 @@ deps = {
   },
 
   'third_party/yasm': {
-    'url': '{chromium_git}/chromium/src/third_party/yasm@8e4e548d0b199df58740336024c1b3baf7c0abd7',
+    'url': '{chromium_git}/chromium/src/third_party/yasm@0d0134789a7df47da9ec64fb937849571f58bdb4',
     'condition': 'not build_with_chromium',
   },
 
   'third_party/zlib': {
-    'url': '{chromium_git}/chromium/src/third_party/zlib@156be8c52f80cde343088b4a69a80579101b6e67',
+    'url': '{chromium_git}/chromium/src/third_party/zlib@b9b9a5af7cca2e683e5f2aead8418e5bf9d5a7d5',
     'condition': 'not build_with_chromium',
   },
 
   'tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang.git@d60a6a8084300eb8de99e56b559369dcde4cffa4',
+    'url': '{chromium_git}/chromium/src/tools/clang.git@953ea7aff8c12dbd015f193d52e5abf276d41e85',
     'condition': 'not build_with_chromium',
   },
 
@@ -422,7 +422,7 @@ hooks = [
                 '--recursive',
                 '--extract',
                 '--bucket', 'chrome-angle-capture-binaries',
-                'src/tests/perf_tests/restricted_traces',
+                './src/tests/perf_tests/restricted_traces',
     ]
   }
 ]

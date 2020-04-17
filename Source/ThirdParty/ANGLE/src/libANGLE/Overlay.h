@@ -127,19 +127,9 @@ class DummyOverlay
 };
 
 #if ANGLE_ENABLE_OVERLAY
-using OverlayType            = Overlay;
-using CountWidget            = overlay::Count;
-using PerSecondWidget        = overlay::PerSecond;
-using RunningGraphWidget     = overlay::RunningGraph;
-using RunningHistogramWidget = overlay::RunningHistogram;
-using TextWidget             = overlay::Text;
+using OverlayType = Overlay;
 #else   // !ANGLE_ENABLE_OVERLAY
-using OverlayType            = DummyOverlay;
-using CountWidget            = const overlay::Dummy;
-using PerSecondWidget        = const overlay::Dummy;
-using RunningGraphWidget     = const overlay::Dummy;
-using RunningHistogramWidget = const overlay::Dummy;
-using TextWidget             = const overlay::Dummy;
+using OverlayType = DummyOverlay;
 #endif  // ANGLE_ENABLE_OVERLAY
 
 }  // namespace gl

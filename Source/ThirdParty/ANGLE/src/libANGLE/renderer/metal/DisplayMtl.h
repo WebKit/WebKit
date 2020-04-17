@@ -156,9 +156,6 @@ class DisplayMtl : public DisplayImpl
     mutable gl::Limitations mNativeLimitations;
 
     angle::FeaturesMtl mFeatures;
-
-    // track whether we initialized (or released) glslang
-    bool mGlslangInitialized;
 };
 
 }  // namespace rx

@@ -486,6 +486,9 @@ TEST_P(InstancingTest, LineLoop)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
 
+    // TODO(hqle): D3D9 seems to draw very slow here, probably due to invariant
+    ANGLE_SKIP_TEST_IF(IsD3D9());
+
     constexpr char kVS[] = R"(
 attribute vec2 a_position;
 // x,y = offset, z = scale
@@ -574,18 +577,31 @@ void main()
 
     glDrawArraysInstancedANGLE(GL_LINE_LOOP, 0, ArraySize(vertices) / 2, instances);
 
-    std::vector<GLColor> actualPixels(getWindowWidth() * getWindowHeight());
-    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
-                 actualPixels.data());
-    EXPECT_EQ(expectedPixels, actualPixels);
+    for (int y = 0; y < getWindowHeight(); ++y)
+    {
+        for (int x = 0; x < getWindowWidth(); ++x)
+        {
+            int idx               = y * getWindowWidth() + x;
+            GLColor expectedColor = expectedPixels[idx];
+
+            EXPECT_PIXEL_COLOR_EQ(x, y, expectedColor) << std::endl;
+        }
+    }
 
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawElementsInstancedANGLE(GL_LINE_LOOP, ArraySize(lineloopAsStripIndices) - 1,
                                  GL_UNSIGNED_SHORT, 0, instances);
 
-    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
-                 actualPixels.data());
-    EXPECT_EQ(expectedPixels, actualPixels);
+    for (int y = 0; y < getWindowHeight(); ++y)
+    {
+        for (int x = 0; x < getWindowWidth(); ++x)
+        {
+            int idx               = y * getWindowWidth() + x;
+            GLColor expectedColor = expectedPixels[idx];
+
+            EXPECT_PIXEL_COLOR_EQ(x, y, expectedColor) << std::endl;
+        }
+    }
 }
 
 class InstancingTestES3 : public InstancingTest

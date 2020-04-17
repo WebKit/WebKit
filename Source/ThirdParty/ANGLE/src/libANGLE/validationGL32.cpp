@@ -11,7 +11,7 @@
 namespace gl
 {
 
-bool ValidateMultiDrawElementsBaseVertex(const Context *context,
+bool ValidateMultiDrawElementsBaseVertex(Context *context,
                                          PrimitiveMode mode,
                                          const GLsizei *count,
                                          DrawElementsType type,
@@ -22,12 +22,12 @@ bool ValidateMultiDrawElementsBaseVertex(const Context *context,
     return true;
 }
 
-bool ValidateProvokingVertex(const Context *context, ProvokingVertexConvention modePacked)
+bool ValidateProvokingVertex(Context *context, ProvokingVertexConvention modePacked)
 {
     return true;
 }
 
-bool ValidateTexImage2DMultisample(const Context *context,
+bool ValidateTexImage2DMultisample(Context *context,
                                    GLenum target,
                                    GLsizei samples,
                                    GLenum internalformat,
@@ -38,7 +38,7 @@ bool ValidateTexImage2DMultisample(const Context *context,
     return true;
 }
 
-bool ValidateTexImage3DMultisample(const Context *context,
+bool ValidateTexImage3DMultisample(Context *context,
                                    GLenum target,
                                    GLsizei samples,
                                    GLenum internalformat,

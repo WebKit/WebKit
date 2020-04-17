@@ -17,103 +17,6 @@ namespace vk
 {
 namespace priv
 {
-namespace
-{
-const char *GetCommandString(CommandID id)
-{
-    switch (id)
-    {
-        case CommandID::Invalid:
-            return "--Invalid--";
-        case CommandID::BeginQuery:
-            return "BeginQuery";
-        case CommandID::BindComputePipeline:
-            return "BindComputePipeline";
-        case CommandID::BindDescriptorSets:
-            return "BindDescriptorSets";
-        case CommandID::BindGraphicsPipeline:
-            return "BindGraphicsPipeline";
-        case CommandID::BindIndexBuffer:
-            return "BindIndexBuffer";
-        case CommandID::BindVertexBuffers:
-            return "BindVertexBuffers";
-        case CommandID::BindTransformFeedbackBuffers:
-            return "BindTransformFeedbackBuffers";
-        case CommandID::BlitImage:
-            return "BlitImage";
-        case CommandID::BufferBarrier:
-            return "BufferBarrier";
-        case CommandID::ClearAttachments:
-            return "ClearAttachments";
-        case CommandID::ClearColorImage:
-            return "ClearColorImage";
-        case CommandID::ClearDepthStencilImage:
-            return "ClearDepthStencilImage";
-        case CommandID::CopyBuffer:
-            return "CopyBuffer";
-        case CommandID::CopyBufferToImage:
-            return "CopyBufferToImage";
-        case CommandID::CopyImage:
-            return "CopyImage";
-        case CommandID::CopyImageToBuffer:
-            return "CopyImageToBuffer";
-        case CommandID::Dispatch:
-            return "Dispatch";
-        case CommandID::DispatchIndirect:
-            return "DispatchIndirect";
-        case CommandID::Draw:
-            return "Draw";
-        case CommandID::DrawIndexed:
-            return "DrawIndexed";
-        case CommandID::DrawIndexedBaseVertex:
-            return "DrawIndexedBaseVertex";
-        case CommandID::DrawIndexedInstanced:
-            return "DrawIndexedInstanced";
-        case CommandID::DrawIndexedInstancedBaseVertex:
-            return "DrawIndexedInstancedBaseVertex";
-        case CommandID::DrawIndexedInstancedBaseVertexBaseInstance:
-            return "DrawIndexedInstancedBaseVertexBaseInstance";
-        case CommandID::DrawInstanced:
-            return "DrawInstanced";
-        case CommandID::DrawInstancedBaseInstance:
-            return "DrawInstancedBaseInstance";
-        case CommandID::DrawIndexedIndirect:
-            return "DrawIndexedIndirect";
-        case CommandID::DrawIndirect:
-            return "DrawIndirect";
-        case CommandID::EndQuery:
-            return "EndQuery";
-        case CommandID::ExecutionBarrier:
-            return "ExecutionBarrier";
-        case CommandID::FillBuffer:
-            return "FillBuffer";
-        case CommandID::ImageBarrier:
-            return "ImageBarrier";
-        case CommandID::MemoryBarrier:
-            return "MemoryBarrier";
-        case CommandID::PipelineBarrier:
-            return "PipelineBarrier";
-        case CommandID::PushConstants:
-            return "PushConstants";
-        case CommandID::ResetEvent:
-            return "ResetEvent";
-        case CommandID::ResetQueryPool:
-            return "ResetQueryPool";
-        case CommandID::ResolveImage:
-            return "ResolveImage";
-        case CommandID::SetEvent:
-            return "SetEvent";
-        case CommandID::WaitEvents:
-            return "WaitEvents";
-        case CommandID::WriteTimestamp:
-            return "WriteTimestamp";
-        default:
-            // Need this to work around MSVC warning 4715.
-            UNREACHABLE();
-            return "--unreachable--";
-    }
-}
-}  // namespace
 
 ANGLE_INLINE const CommandHeader *NextCommand(const CommandHeader *command)
 {
@@ -516,16 +419,139 @@ void SecondaryCommandBuffer::getMemoryUsageStats(size_t *usedMemoryOut,
 
 std::string SecondaryCommandBuffer::dumpCommands(const char *separator) const
 {
-    std::stringstream result;
+    std::string result;
     for (const CommandHeader *command : mCommands)
     {
         for (const CommandHeader *currentCommand                      = command;
              currentCommand->id != CommandID::Invalid; currentCommand = NextCommand(currentCommand))
         {
-            result << GetCommandString(currentCommand->id) << separator;
+            result += separator;
+            switch (currentCommand->id)
+            {
+                case CommandID::BeginQuery:
+                    result += "BeginQuery";
+                    break;
+                case CommandID::BindComputePipeline:
+                    result += "BindComputePipeline";
+                    break;
+                case CommandID::BindDescriptorSets:
+                    result += "BindDescriptorSets";
+                    break;
+                case CommandID::BindGraphicsPipeline:
+                    result += "BindGraphicsPipeline";
+                    break;
+                case CommandID::BindIndexBuffer:
+                    result += "BindIndexBuffer";
+                    break;
+                case CommandID::BindVertexBuffers:
+                    result += "BindVertexBuffers";
+                    break;
+                case CommandID::BindTransformFeedbackBuffers:
+                    result += "BindTransformFeedbackBuffers";
+                    break;
+                case CommandID::BlitImage:
+                    result += "BlitImage";
+                    break;
+                case CommandID::BufferBarrier:
+                    result += "BufferBarrier";
+                    break;
+                case CommandID::ClearAttachments:
+                    result += "ClearAttachments";
+                    break;
+                case CommandID::ClearColorImage:
+                    result += "ClearColorImage";
+                    break;
+                case CommandID::ClearDepthStencilImage:
+                    result += "ClearDepthStencilImage";
+                    break;
+                case CommandID::CopyBuffer:
+                    result += "CopyBuffer";
+                    break;
+                case CommandID::CopyBufferToImage:
+                    result += "CopyBufferToImage";
+                    break;
+                case CommandID::CopyImage:
+                    result += "CopyImage";
+                    break;
+                case CommandID::CopyImageToBuffer:
+                    result += "CopyImageToBuffer";
+                    break;
+                case CommandID::Dispatch:
+                    result += "Dispatch";
+                    break;
+                case CommandID::DispatchIndirect:
+                    result += "DispatchIndirect";
+                    break;
+                case CommandID::Draw:
+                    result += "Draw";
+                    break;
+                case CommandID::DrawIndexed:
+                    result += "DrawIndexed";
+                    break;
+                case CommandID::DrawIndexedBaseVertex:
+                    result += "DrawIndexedBaseVertex";
+                    break;
+                case CommandID::DrawIndexedInstanced:
+                    result += "DrawIndexedInstanced";
+                    break;
+                case CommandID::DrawIndexedInstancedBaseVertex:
+                    result += "DrawIndexedInstancedBaseVertex";
+                    break;
+                case CommandID::DrawInstanced:
+                    result += "DrawInstanced";
+                    break;
+                case CommandID::DrawIndexedIndirect:
+                    result += "DrawIndexedIndirect";
+                    break;
+                case CommandID::EndQuery:
+                    result += "EndQuery";
+                    break;
+                case CommandID::ExecutionBarrier:
+                    result += "ExecutionBarrier";
+                    break;
+                case CommandID::FillBuffer:
+                    result += "FillBuffer";
+                    break;
+                case CommandID::ImageBarrier:
+                    result += "ImageBarrier";
+                    break;
+                case CommandID::MemoryBarrier:
+                    result += "MemoryBarrier";
+                    break;
+                case CommandID::PipelineBarrier:
+                    result += "PipelineBarrier";
+                    break;
+                case CommandID::PushConstants:
+                    result += "PushConstants";
+                    break;
+                case CommandID::ResetEvent:
+                    result += "ResetEvent";
+                    break;
+                case CommandID::ResetQueryPool:
+                    result += "ResetQueryPool";
+                    break;
+                case CommandID::ResolveImage:
+                    result += "ResolveImage";
+                    break;
+                case CommandID::SetEvent:
+                    result += "SetEvent";
+                    break;
+                case CommandID::WaitEvents:
+                    result += "WaitEvents";
+                    break;
+                case CommandID::WriteTimestamp:
+                    result += "WriteTimestamp";
+                    break;
+                default:
+                {
+                    UNREACHABLE();
+                    result += "--invalid--";
+                    break;
+                }
+            }
         }
     }
-    return result.str();
+    return result;
 }
 
 }  // namespace priv

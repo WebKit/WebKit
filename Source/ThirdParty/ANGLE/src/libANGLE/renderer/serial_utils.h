@@ -11,7 +11,6 @@
 #define LIBANGLE_RENDERER_SERIAL_UTILS_H_
 
 #include <atomic>
-#include <limits>
 
 #include "common/angleutils.h"
 #include "common/debug.h"
@@ -46,8 +45,6 @@ class Serial final
     constexpr Serial(const Serial &other) = default;
     Serial &operator=(const Serial &other) = default;
 
-    static constexpr Serial Infinite() { return Serial(std::numeric_limits<uint64_t>::max()); }
-
     constexpr bool operator==(const Serial &other) const
     {
         return mValue != kInvalid && mValue == other.mValue;
@@ -77,9 +74,6 @@ class Serial final
     uint64_t mValue;
     static constexpr uint64_t kInvalid = 0;
 };
-
-// Used as default/initial serial
-static constexpr Serial kZeroSerial = Serial();
 
 template <typename SerialBaseType>
 class SerialFactoryBase final : angle::NonCopyable

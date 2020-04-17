@@ -27,13 +27,4 @@
 #    include "angle_gl.h"
 #endif  // defined(ANGLE_USE_UTIL_LOADER)
 
-namespace angle
-{
-inline bool CheckExtensionExists(const char *allExtensions, const std::string &extName)
-{
-    const std::string paddedExtensions = std::string(" ") + allExtensions + std::string(" ");
-    return paddedExtensions.find(std::string(" ") + extName + std::string(" ")) !=
-           std::string::npos;
-}
-}  // namespace angle
 #endif  // UTIL_GL_H_
