@@ -1,5 +1,49 @@
 2020-04-17  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r242018): using `RegExp.prototype.test` with a global `RegExp` will ignore one potential match after each successful match
+        https://bugs.webkit.org/show_bug.cgi?id=210671
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/SearchUtilities.js:
+        (WI.SearchUtilities.searchRegExpForString):
+        (WI.SearchUtilities.filterRegExpForString):
+        (WI.SearchUtilities._regExpForString):
+        (WI.SearchUtilities.regExpForString): Deleted.
+        Many uses of `WI.SearchUtilities.regExpForString` use the returned `RegExp` multiple times,
+        expecting each use to be done in isolation from every other use (e.g. filtering). In these
+        cases, the global flag `g` should not be set on the `RegExp`, as otherwise it will keep a
+        state of the last matched index, thereby breaking this isolation. As such, it is necessary
+        to split `WI.SearchUtilities.regExpForString` into two versions, one for each use case.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._highlightSearchResults):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.performSearch):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch.forEachMatch):
+        Use `WI.SearchUtilities.searchRegExpForString` as these views expect the search to maintain
+        its current position throughout the contents of the view.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._updateFilter):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.dataGridMatchNodeAgainstCustomFilters):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch.searchResultCallback):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.performSearch):
+        Use `WI.SearchUtilities.filterRegExpForString` as these views expect each search to be done
+        in isolation from every other search (e.g. filtering).
+
+2020-04-17  Devin Rousso  <drousso@apple.com>
+
         Implement Promise.any and AggregateError
         https://bugs.webkit.org/show_bug.cgi?id=202566
 

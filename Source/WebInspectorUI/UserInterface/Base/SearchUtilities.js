@@ -48,24 +48,14 @@ WI.SearchUtilities = class SearchUtilities {
         return settings;
     }
 
-    static regExpForString(query, settings = {})
+    static searchRegExpForString(query, settings = {})
     {
-        function checkSetting(setting) {
-            return setting instanceof WI.Setting ? setting.value : !!setting;
-        }
+        return WI.SearchUtilities._regExpForString(query, settings, {global: true});
+    }
 
-        console.assert((typeof query === "string" && query) || query instanceof RegExp);
-
-        if (!checkSetting(settings.regularExpression))
-            query = simpleGlobStringToRegExp(String(query));
-
-        console.assert((typeof query === "string" && query) || query instanceof RegExp);
-
-        let flags = "g";
-        if (!checkSetting(settings.caseSensitive))
-            flags += "i";
-
-        return new RegExp(query, flags);
+    static filterRegExpForString(query, settings = {})
+    {
+        return WI.SearchUtilities._regExpForString(query, settings);
     }
 
     static createSettingsButton(settings)
@@ -99,5 +89,27 @@ WI.SearchUtilities = class SearchUtilities {
         toggleActive();
 
         return button;
+    }
+
+    static _regExpForString(query, settings = {}, options = {})
+    {
+        function checkSetting(setting) {
+            return setting instanceof WI.Setting ? setting.value : !!setting;
+        }
+
+        console.assert((typeof query === "string" && query) || query instanceof RegExp);
+
+        if (!checkSetting(settings.regularExpression))
+            query = simpleGlobStringToRegExp(String(query));
+
+        console.assert((typeof query === "string" && query) || query instanceof RegExp);
+
+        let flags = "";
+        if (options.global)
+            flags += "g"
+        if (!checkSetting(settings.caseSensitive))
+            flags += "i";
+
+        return new RegExp(query, flags);
     }
 };

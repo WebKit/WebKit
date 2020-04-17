@@ -140,7 +140,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
         if (!filterText)
             return true;
 
-        let regex = WI.SearchUtilities.regExpForString(filterText, WI.SearchUtilities.defaultSettings);
+        let regex = WI.SearchUtilities.filterRegExpForString(filterText, WI.SearchUtilities.defaultSettings);
 
         // Iterate over each cell.
         for (let child of node.element.children) {

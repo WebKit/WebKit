@@ -477,7 +477,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
     _perfomSearchOnKeyValuePairs()
     {
-        let searchRegex = WI.SearchUtilities.regExpForString(this._searchQuery, WI.SearchUtilities.defaultSettings);
+        let searchRegex = WI.SearchUtilities.searchRegExpForString(this._searchQuery, WI.SearchUtilities.defaultSettings);
 
         let elements = this.element.querySelectorAll(".key, .value");
         for (let element of elements) {

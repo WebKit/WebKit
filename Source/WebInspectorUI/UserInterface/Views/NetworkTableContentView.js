@@ -2310,7 +2310,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._urlFilterIsActive = true;
         this._urlFilterSearchText = searchQuery;
-        this._urlFilterSearchRegex = WI.SearchUtilities.regExpForString(searchQuery, WI.SearchUtilities.defaultSettings);
+        this._urlFilterSearchRegex = WI.SearchUtilities.filterRegExpForString(searchQuery, WI.SearchUtilities.defaultSettings);
 
         this._updateActiveFilterResources();
         this._updateFilteredEntries();

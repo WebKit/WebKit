@@ -176,7 +176,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         function forEachMatch(searchQuery, lineContent, callback)
         {
             var lineMatch;
-            let searchRegex = WI.SearchUtilities.regExpForString(searchQuery, {
+            let searchRegex = WI.SearchUtilities.searchRegExpForString(searchQuery, {
                 caseSensitive: isCaseSensitive,
                 regularExpression: isRegex,
             });
