@@ -296,6 +296,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     for (size_t i = 0, size = parameters.dynamicMachExtensionHandles.size(); i < size; ++i)
         SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles[i]);
+
+    for (size_t i = 0, size = parameters.dynamicIOKitExtensionHandles.size(); i < size; ++i)
+        SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles[i]);
 #endif
     
     if (parameters.neHelperExtensionHandle)

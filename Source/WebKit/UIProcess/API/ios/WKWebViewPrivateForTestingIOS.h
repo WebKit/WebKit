@@ -72,6 +72,8 @@
 
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
+- (void)_setDeviceHasAGXCompilerServiceForTesting;
+
 @end
 
 #endif // TARGET_OS_IPHONE

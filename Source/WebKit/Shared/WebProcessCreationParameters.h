@@ -206,6 +206,7 @@ struct WebProcessCreationParameters {
     Optional<SandboxExtension::Handle> diagnosticsExtensionHandle;
     Optional<SandboxExtension::Handle> runningboardExtensionHandle;
     SandboxExtension::HandleArray dynamicMachExtensionHandles;
+    SandboxExtension::HandleArray dynamicIOKitExtensionHandles;
 #endif
 
 #if PLATFORM(COCOA)

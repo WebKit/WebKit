@@ -36,6 +36,7 @@ enum sandbox_filter_type {
     SANDBOX_FILTER_NONE,
     SANDBOX_FILTER_GLOBAL_NAME = 2,
     SANDBOX_FILTER_XPC_SERVICE_NAME = 12,
+    SANDBOX_FILTER_IOKIT_CONNECTION,
 };
 
 #define SANDBOX_NAMED_EXTERNAL 0x0003
@@ -83,6 +84,9 @@ sandbox_profile_t sandbox_compile_file(const char *path, sandbox_params_t, char 
 sandbox_profile_t sandbox_compile_string(const char *data, sandbox_params_t, char **error);
 void sandbox_free_profile(sandbox_profile_t);
 int sandbox_apply(sandbox_profile_t);
+
+char *sandbox_extension_issue_iokit_registry_entry_class_to_process(const char *extension_class, const char *registry_entry_class, uint32_t flags, audit_token_t);
+char *sandbox_extension_issue_iokit_registry_entry_class(const char *extension_class, const char *registry_entry_class, uint32_t flags);
 
 WTF_EXTERN_C_END
 

@@ -49,6 +49,7 @@ public:
         ReadOnly,
         ReadWrite,
         Mach,
+        IOKit,
         Generic,
         ReadByProcess
     };
@@ -113,6 +114,7 @@ public:
 #if HAVE(AUDIT_TOKEN)
     static bool createHandleForMachLookup(const String& service, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
     static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
+    static bool createHandleForIOKitClassExtension(const String& iokitClass, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
 #endif
     ~SandboxExtension();
 

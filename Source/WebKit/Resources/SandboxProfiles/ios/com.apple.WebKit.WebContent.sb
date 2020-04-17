@@ -214,7 +214,7 @@
 ;;;
 (define-once (opengl)
     ;; Items not seen in testing
-    (allow iokit-open (with report) (with telemetry)
+    (deny iokit-open (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
@@ -920,6 +920,24 @@
             "com.apple.MediaPlayer.RemotePlayerService"
             "com.apple.audio.toolbox.reporting.service"
             ;;; FIXME(207716): End services to remove.
+        )
+    )
+)
+
+(allow iokit-open
+    (require-all
+        (extension "com.apple.webkit.extension.iokit")
+        (iokit-user-client-class
+            "AGXCommandQueue"
+            "AGXDevice"
+            "AGXSharedUserClient"
+            "IOAccelContext"
+            "IOAccelDevice"
+            "IOAccelSharedUserClient"
+            "IOAccelSubmitter2"
+            "IOAccelContext2"
+            "IOAccelDevice2"
+            "IOAccelSharedUserClient2"
         )
     )
 )

@@ -5611,6 +5611,11 @@ bool Internals::isRemoteUIAppForAccessibility()
 {
     return false;
 }
+
+bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
+{
+    return false;
+}
 #endif
 
 String Internals::mediaMIMETypeForExtension(const String& extension)

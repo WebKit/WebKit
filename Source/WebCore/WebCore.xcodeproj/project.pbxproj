@@ -3997,6 +3997,8 @@
 		C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DD123D23ABD006E88F7 /* SystemBattery.mm */; };
 		C1692DD523D23E08006E88F7 /* SystemBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = C1692DD423D23AE0006E88F7 /* SystemBattery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C1E1D236203DF15400584665 /* ScreenProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E1D235203DF15400584665 /* ScreenProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C1F7B7312448F2AC00124557 /* AGXCompilerService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C1F7B72F2448F2AC00124557 /* AGXCompilerService.cpp */; };
+		C1F7B7322448F2AC00124557 /* AGXCompilerService.h in Headers */ = {isa = PBXBuildFile; fileRef = C1F7B7302448F2AC00124557 /* AGXCompilerService.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2015C0A1BE6FEB200822389 /* FontVariantBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */; };
 		C21DF2EA1D9E4E9900F5B24C /* CSSFontVariationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */; };
 		C2458E631FE897B000594759 /* FontCacheCoreText.h in Headers */ = {isa = PBXBuildFile; fileRef = C2458E611FE8979E00594759 /* FontCacheCoreText.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13607,6 +13609,8 @@
 		C1692DD423D23AE0006E88F7 /* SystemBattery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemBattery.h; sourceTree = "<group>"; };
 		C18FB518242F9382007E9875 /* SleepDisablerClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisablerClient.cpp; sourceTree = "<group>"; };
 		C1E1D235203DF15400584665 /* ScreenProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenProperties.h; sourceTree = "<group>"; };
+		C1F7B72F2448F2AC00124557 /* AGXCompilerService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AGXCompilerService.cpp; sourceTree = "<group>"; };
+		C1F7B7302448F2AC00124557 /* AGXCompilerService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AGXCompilerService.h; sourceTree = "<group>"; };
 		C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontVariantBuilder.h; sourceTree = "<group>"; };
 		C20F4F6421DFBE5C0070C45A /* WHLSLTypeReference.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLTypeReference.cpp; sourceTree = "<group>"; };
 		C20F4F6621DFF2360070C45A /* WHLSLIntegerLiteral.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLIntegerLiteral.cpp; sourceTree = "<group>"; };
@@ -23285,6 +23289,8 @@
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				C1F7B72F2448F2AC00124557 /* AGXCompilerService.cpp */,
+				C1F7B7302448F2AC00124557 /* AGXCompilerService.h */,
 				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
 				CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */,
 				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
@@ -29358,6 +29364,7 @@
 				A1677E0E213E02A000A08C34 /* AddressErrors.h in Headers */,
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
+				C1F7B7322448F2AC00124557 /* AGXCompilerService.h in Headers */,
 				83BB5C881D5D6F45005A71F4 /* AllDescendantsCollection.h in Headers */,
 				7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
@@ -33999,6 +34006,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
+				C1F7B7312448F2AC00124557 /* AGXCompilerService.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,

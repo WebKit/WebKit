@@ -309,6 +309,12 @@
     _page->setDeviceOrientationUserPermissionHandlerForTesting(WTFMove(handlerWrapper));
 }
 
+- (void)_setDeviceHasAGXCompilerServiceForTesting
+{
+    if (_page)
+        _page->setDeviceHasAGXCompilerServiceForTesting();
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

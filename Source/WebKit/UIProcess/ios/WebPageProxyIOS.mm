@@ -62,6 +62,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import <WebCore/AGXCompilerService.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
@@ -1589,6 +1590,11 @@ void WebPageProxy::revokeAccessToAssetServices()
 void WebPageProxy::willPerformPasteCommand()
 {
     grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
+}
+
+void WebPageProxy::setDeviceHasAGXCompilerServiceForTesting() const
+{
+    WebCore::setDeviceHasAGXCompilerServiceForTesting();
 }
 
 } // namespace WebKit

@@ -105,6 +105,10 @@ private:
             ASSERT_NOT_REACHED();
             return nullptr;
 #endif
+        case SandboxExtension::Type::IOKit:
+            if (!auditToken)
+                return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit"_s, path, extensionFlags);
+            return sandbox_extension_issue_iokit_registry_entry_class_to_process("com.apple.webkit.extension.iokit"_s, path, extensionFlags, *auditToken);
         case SandboxExtension::Type::Generic:
             return sandbox_extension_issue_generic(path, extensionFlags);
         case SandboxExtension::Type::ReadByProcess:
@@ -363,6 +367,19 @@ bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit
         return false;
     }
     
+    return true;
+}
+
+bool SandboxExtension::createHandleForIOKitClassExtension(const String& ioKitClass, Optional<audit_token_t> auditToken, Handle& handle, OptionSet<Flags> flags)
+{
+    ASSERT(!handle.m_sandboxExtension);
+
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(ioKitClass.utf8().data(), Type::IOKit, auditToken);
+    if (!handle.m_sandboxExtension) {
+        LOG_ERROR("Could not create a sandbox extension for '%s'", ioKitClass.utf8().data());
+        return false;
+    }
+
     return true;
 }
 

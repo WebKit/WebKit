@@ -885,7 +885,8 @@ enum CompositingPolicy {
 
     boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
     boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
-    
+    boolean hasSandboxIOKitOpenAccessToClass(DOMString process, DOMString ioKitClass);
+
     DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
     DOMString focusRingColor();
 

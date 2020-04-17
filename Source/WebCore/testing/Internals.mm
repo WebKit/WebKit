@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Internals.h"
 
+#import "AGXCompilerService.h"
 #import "DOMURL.h"
 #import "DictionaryLookup.h"
 #import "Document.h"
@@ -38,6 +39,7 @@
 #import <AVFoundation/AVPlayer.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
@@ -114,6 +116,14 @@ bool Internals::isRemoteUIAppForAccessibility()
 #else
     return false;
 #endif
+}
+
+bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
+{
+    UNUSED_PARAM(process); // TODO: add support for getting PID of other WebKit processes.
+    pid_t pid = getpid();
+
+    return !sandbox_check(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), ioKitClass.utf8().data());
 }
 
 }

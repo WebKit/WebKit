@@ -974,6 +974,7 @@ public:
 
     bool hasSandboxMachLookupAccessToGlobalName(const String& process, const String& service);
     bool hasSandboxMachLookupAccessToXPCServiceName(const String& process, const String& service);
+    bool hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass);
 
     String highlightPseudoElementColor(const String& highlightName, Element&);
 

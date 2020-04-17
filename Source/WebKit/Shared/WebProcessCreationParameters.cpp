@@ -166,6 +166,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << diagnosticsExtensionHandle;
     encoder << runningboardExtensionHandle;
     encoder << dynamicMachExtensionHandles;
+    encoder << dynamicIOKitExtensionHandles;
 #endif
 
 #if PLATFORM(COCOA)
@@ -457,6 +458,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!dynamicMachExtensionHandles)
         return false;
     parameters.dynamicMachExtensionHandles = WTFMove(*dynamicMachExtensionHandles);
+
+    Optional<SandboxExtension::HandleArray> dynamicIOKitExtensionHandles;
+    decoder >> dynamicIOKitExtensionHandles;
+    if (!dynamicIOKitExtensionHandles)
+        return false;
+    parameters.dynamicIOKitExtensionHandles = WTFMove(*dynamicIOKitExtensionHandles);
 #endif
 
 #if PLATFORM(COCOA)
