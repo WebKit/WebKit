@@ -104,12 +104,17 @@ void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
+static ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
+{
+    return timeZone == "Etc/UTC" || timeZone == "Etc/GMT";
+}
+
+// https://tc39.es/ecma402/#sec-defaulttimezone
 static String defaultTimeZone()
 {
-    // 6.4.3 DefaultTimeZone () (ECMA-402 2.0)
-    // The DefaultTimeZone abstract operation returns a String value representing the valid (6.4.1) and canonicalized (6.4.2) time zone name for the host environment’s current time zone.
-
     UErrorCode status = U_ZERO_ERROR;
+    String canonical;
+
     Vector<UChar, 32> buffer(32);
     auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
@@ -127,10 +132,13 @@ static String defaultTimeZone()
             ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalLength, nullptr, &status);
         }
         if (U_SUCCESS(status))
-            return String(canonicalBuffer.data(), canonicalLength);
+            canonical = String(canonicalBuffer.data(), canonicalLength);
     }
 
-    return "UTC"_s;
+    if (canonical.isNull() || isUTCEquivalent(canonical))
+        return "UTC"_s;
+
+    return canonical;
 }
 
 static String canonicalizeTimeZoneName(const String& timeZoneName)
@@ -176,8 +184,8 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     uenum_close(timeZones);
 
     // 3. If ianaTimeZone is "Etc/UTC" or "Etc/GMT", then return "UTC".
-    if (canonical == "Etc/UTC" || canonical == "Etc/GMT")
-        canonical = "UTC"_s;
+    if (isUTCEquivalent(canonical))
+        return "UTC"_s;
 
     // 4. Return ianaTimeZone.
     return canonical;

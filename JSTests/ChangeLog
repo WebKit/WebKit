@@ -1,3 +1,13 @@
+2020-04-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r259480): Two new failing i18n tests
+        https://bugs.webkit.org/show_bug.cgi?id=210605
+
+        Reviewed by Darin Adler.
+
+        * stress/date-toLocaleString.js:
+        Tests shouldn't rely on system default time zone.
+
 2020-04-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reduce # of iteration since this test is timed out in slow devices

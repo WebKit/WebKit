@@ -536,7 +536,7 @@ static String canonicalLangTag(const Vector<String>& parts)
             ++numExtParts;
 
             auto lowercase = extPart.convertToASCIILowercase();
-            if (lowercase != "true"_s)
+            if (lowercase != "true")
                 extension.append('-', lowercase);
         }
 
@@ -885,7 +885,7 @@ HashMap<String, String> resolveLocale(JSGlobalObject* globalObject, const HashSe
                         value = requestedValue;
                         supportedExtensionAddition = makeString('-', key, '-', value);
                     }
-                } else if (keyLocaleData.contains(static_cast<String>("true"_s))) {
+                } else if (keyLocaleData.contains("true"_s)) {
                     value = "true"_s;
                     supportedExtensionAddition = makeString('-', key);
                 }
