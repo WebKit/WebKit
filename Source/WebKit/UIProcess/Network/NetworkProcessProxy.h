@@ -201,9 +201,6 @@ public:
     void addSession(Ref<WebsiteDataStore>&&);
     void removeSession(PAL::SessionID);
     
-    void takeUploadAssertion();
-    void clearUploadAssertion();
-    
 #if ENABLE(INDEXED_DATABASE)
     void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 #endif
@@ -255,6 +252,7 @@ private:
     void didFetchWebsiteData(CallbackID, const WebsiteData&);
     void didDeleteWebsiteData(CallbackID);
     void didDeleteWebsiteDataForOrigins(CallbackID);
+    void setWebProcessHasUploads(WebCore::ProcessIdentifier, bool);
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
@@ -311,8 +309,13 @@ private:
 #endif
 
     HashMap<PAL::SessionID, RefPtr<WebsiteDataStore>> m_websiteDataStores;
-    
-    std::unique_ptr<ProcessAssertion> m_uploadAssertion;
+
+    struct UploadActivity {
+        std::unique_ptr<ProcessAssertion> uiAssertion;
+        std::unique_ptr<ProcessAssertion> networkAssertion;
+        HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> webProcessAssertions;
+    };
+    Optional<UploadActivity> m_uploadActivity;
 };
 
 } // namespace WebKit

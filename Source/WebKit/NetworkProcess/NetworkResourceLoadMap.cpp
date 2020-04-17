@@ -29,10 +29,24 @@
 
 namespace WebKit {
 
+NetworkResourceLoadMap::NetworkResourceLoadMap(Function<void(bool hasUpload)>&& hasUploadChangeListener)
+    : m_hasUploadChangeListener(WTFMove(hasUploadChangeListener))
+{
+}
+
+NetworkResourceLoadMap::~NetworkResourceLoadMap()
+{
+    clear();
+}
+
 NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(ResourceLoadIdentifier identifier, Ref<NetworkResourceLoader>&& loader)
 {
     ASSERT(!m_loaders.contains(identifier));
-    return m_loaders.add(identifier, WTFMove(loader));
+    bool hasUpload = loader->originalRequest().hasUpload();
+    auto result = m_loaders.add(identifier, WTFMove(loader));
+    if (hasUpload)
+        setHasUpload(true);
+    return result;
 }
 
 bool NetworkResourceLoadMap::remove(ResourceLoadIdentifier identifier)
@@ -40,17 +54,37 @@ bool NetworkResourceLoadMap::remove(ResourceLoadIdentifier identifier)
     return !!take(identifier);
 }
 
+void NetworkResourceLoadMap::clear()
+{
+    m_loaders.clear();
+    setHasUpload(false);
+}
+
 RefPtr<NetworkResourceLoader> NetworkResourceLoadMap::take(ResourceLoadIdentifier identifier)
 {
     auto loader = m_loaders.take(identifier);
     if (!loader)
         return nullptr;
+
+    if ((*loader)->originalRequest().hasUpload())
+        setHasUpload(WTF::anyOf(m_loaders.values(), [](auto& loader) { return loader->originalRequest().hasUpload(); }));
+
     return WTFMove(*loader);
 }
 
 NetworkResourceLoader* NetworkResourceLoadMap::get(ResourceLoadIdentifier identifier) const
 {
     return m_loaders.get(identifier);
+}
+
+void NetworkResourceLoadMap::setHasUpload(bool hasUpload)
+{
+    if (m_hasUpload == hasUpload)
+        return;
+
+    m_hasUpload = hasUpload;
+    if (m_hasUploadChangeListener)
+        m_hasUploadChangeListener(m_hasUpload);
 }
 
 } // namespace WebKit

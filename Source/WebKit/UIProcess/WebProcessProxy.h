@@ -29,6 +29,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
 #include "MessageReceiverMap.h"
+#include "NetworkProcessProxy.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
@@ -78,7 +79,6 @@ enum class ThirdPartyCookieBlockingMode : uint8_t;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
-class NetworkProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;

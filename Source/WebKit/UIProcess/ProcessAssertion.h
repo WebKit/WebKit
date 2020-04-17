@@ -69,6 +69,7 @@ public:
     Client* client() { return m_client; }
 
     ProcessAssertionType type() const { return m_assertionType; }
+    ProcessID pid() const { return m_pid; }
 
 #if PLATFORM(IOS_FAMILY)
 protected:
@@ -80,8 +81,8 @@ protected:
 
 private:
     const ProcessAssertionType m_assertionType;
-#if PLATFORM(IOS_FAMILY)
     const ProcessID m_pid;
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
     RetainPtr<BKSProcessAssertion> m_bksAssertion; // Legacy.

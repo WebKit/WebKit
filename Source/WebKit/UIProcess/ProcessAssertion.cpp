@@ -32,8 +32,9 @@
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID, ASCIILiteral, ProcessAssertionType assertionType)
+ProcessAssertion::ProcessAssertion(ProcessID pid, ASCIILiteral, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
+    , m_pid(pid)
 {
 }
 

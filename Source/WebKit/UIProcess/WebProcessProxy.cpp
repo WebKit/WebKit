@@ -215,9 +215,6 @@ WebProcessProxy::~WebProcessProxy()
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     ASSERT(m_pageURLRetainCountMap.isEmpty());
 
-    if (m_processPool)
-        m_processPool->clearWebProcessHasUploads(coreProcessIdentifier());
-
     auto result = allProcesses().remove(coreProcessIdentifier());
     ASSERT_UNUSED(result, result);
 

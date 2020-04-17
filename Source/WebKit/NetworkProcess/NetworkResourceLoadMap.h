@@ -42,19 +42,28 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadMap {
 public:
     typedef HashMap<ResourceLoadIdentifier, Ref<NetworkResourceLoader>> MapType;
+    NetworkResourceLoadMap(Function<void(bool hasUpload)>&&);
+    ~NetworkResourceLoadMap();
 
     bool isEmpty() const { return m_loaders.isEmpty(); }
     bool contains(ResourceLoadIdentifier identifier) const { return m_loaders.contains(identifier); }
     MapType::iterator begin() { return m_loaders.begin(); }
     MapType::ValuesIteratorRange values() { return m_loaders.values(); }
+    void clear();
 
     MapType::AddResult add(ResourceLoadIdentifier, Ref<NetworkResourceLoader>&&);
     NetworkResourceLoader* get(ResourceLoadIdentifier) const;
     bool remove(ResourceLoadIdentifier);
     RefPtr<NetworkResourceLoader> take(ResourceLoadIdentifier);
 
+    bool hasUpload() const { return m_hasUpload; }
+
 private:
+    void setHasUpload(bool);
+
     MapType m_loaders;
+    bool m_hasUpload { false };
+    Function<void(bool hasUpload)> m_hasUploadChangeListener;
 };
 
 } // namespace WebKit

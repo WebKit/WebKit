@@ -1,3 +1,63 @@
+2020-04-17  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Refactor WebKit uploads process assertion logic to minimize chances of leaking them
+        https://bugs.webkit.org/show_bug.cgi?id=210664
+        <rdar://problem/61751982>
+
+        Reviewed by Geoff Garen.
+
+        To minimize chances of leaking "WebKit uploads" process assertion, the following refactoring
+        was done:
+        1. WebKit upload assertions are now held by NetworkProcessProxy instead of the WebProcessPool.
+           This makes more sense since uploads are tied to a particular network process. In base of
+           a network process crash, we would not want those assertions to persist for example.
+        2. Store all upload assertions (UIProcess + NetworkProcess + WebProcesses) into a single
+           UploadActivity data structure that can easily be cleared. Make sure we clear it on network
+           process crash.
+        3. No longer on the WebProcess to send IPC whenever its has pending uploads or not. Instead,
+           have the network process send such IPC. This makes more sense, especially now that all
+           webkit upload process assertions are now stored on NetworkProcessProxy. It also makes it
+           so that we deal properly with WebProcess crashes. In case of a WebProcess crash, its
+           connection to the network process will get closed. NetworkConnectionToWebProcess::didClose()
+           gets called and causes all NetworkResourceLoader objects for this connection to get
+           destroyed. As a result, the network process will properly notify the UIProcess that this
+           process no longer has any upload in progress.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::hasUploadStateChanged):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoadMap.cpp:
+        (WebKit::NetworkResourceLoadMap::NetworkResourceLoadMap):
+        (WebKit::NetworkResourceLoadMap::~NetworkResourceLoadMap):
+        (WebKit::NetworkResourceLoadMap::add):
+        (WebKit::NetworkResourceLoadMap::clear):
+        (WebKit::NetworkResourceLoadMap::take):
+        (WebKit::NetworkResourceLoadMap::setHasUpload):
+        * NetworkProcess/NetworkResourceLoadMap.h:
+        (WebKit::NetworkResourceLoadMap::hasUpload const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::setWebProcessHasUploads):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::pid const):
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2020-04-17  Jer Noble  <jer.noble@apple.com>
 
         Bring Fullscreen API + alert() behavior from iOS to macOS

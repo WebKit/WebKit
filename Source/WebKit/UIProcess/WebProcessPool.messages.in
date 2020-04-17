@@ -30,7 +30,4 @@ messages -> WebProcessPool {
 #endif
 
     ReportWebContentCPUTime(Seconds cpuTime, uint64_t activityState)
-
-    SetWebProcessHasUploads(WebCore::ProcessIdentifier processID)
-    ClearWebProcessHasUploads(WebCore::ProcessIdentifier processID)
 }

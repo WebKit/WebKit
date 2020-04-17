@@ -516,9 +516,6 @@ public:
     void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTFMove(handler); }
     const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const { return m_userMessageHandler; }
 #endif
-    
-    void setWebProcessHasUploads(WebCore::ProcessIdentifier);
-    void clearWebProcessHasUploads(WebCore::ProcessIdentifier);
 
     void setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
     void clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
@@ -789,9 +786,6 @@ private:
 
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
 #endif
-
-    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesWithUploads;
-    std::unique_ptr<ProcessAssertion> m_uiProcessUploadAssertion;
 
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesPlayingAudibleMedia;
     std::unique_ptr<ProcessAssertion> m_uiProcessMediaPlaybackAssertion;
