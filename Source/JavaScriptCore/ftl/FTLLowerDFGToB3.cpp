@@ -4645,6 +4645,8 @@ private:
                 
                 if (isInt(type)) {
                     LValue result = loadFromIntTypedArray(pointer, type);
+                    // We have to keep base alive since that keeps storage alive.
+                    ensureStillAliveHere(base);
                     bool canSpeculate = true;
                     setIntTypedArrayLoadResult(result, type, canSpeculate);
                     return;
