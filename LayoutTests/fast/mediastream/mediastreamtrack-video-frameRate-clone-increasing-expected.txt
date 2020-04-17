@@ -1,4 +1,0 @@
-
-
-PASS clone and applyConstraints to increase frame rate 
-

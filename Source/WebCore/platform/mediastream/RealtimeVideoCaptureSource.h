@@ -48,8 +48,6 @@ public:
     virtual void generatePresets() = 0;
     virtual MediaSample::VideoRotation sampleRotation() const { return MediaSample::VideoRotation::None; }
 
-    double observedFrameRate() const { return m_observedFrameRate; }
-
 protected:
     RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt);
 
@@ -71,8 +69,11 @@ protected:
 
     void setDefaultSize(const IntSize& size) { m_defaultSize = size; }
 
+    double observedFrameRate() const { return m_observedFrameRate; }
+
     void dispatchMediaSampleToObservers(MediaSample&);
     const Vector<IntSize>& standardVideoSizes();
+    RefPtr<MediaSample> adaptVideoSample(MediaSample&);
 
 private:
     struct CaptureSizeAndFrameRate {
@@ -92,6 +93,9 @@ private:
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
     IntSize m_defaultSize;
+#if PLATFORM(COCOA)
+    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+#endif
 };
 
 struct SizeAndFrameRate {

@@ -5002,14 +5002,6 @@ void Internals::setCameraMediaStreamTrackOrientation(MediaStreamTrack& track, in
 
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
-    if (m_trackSource) {
-        m_trackSource->removeObserver(*this);
-        m_trackSource->removeAudioSampleObserver(*this);
-
-        m_trackAudioSampleCount = 0;
-        m_trackVideoSampleCount = 0;
-    }
-
     m_trackSource = &track.source();
     m_trackSource->addObserver(*this);
     m_trackSource->addAudioSampleObserver(*this);

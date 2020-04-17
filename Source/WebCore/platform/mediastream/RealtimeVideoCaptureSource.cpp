@@ -34,6 +34,10 @@
 #include "RemoteVideoSample.h"
 #include <wtf/JSONValues.h>
 
+#if PLATFORM(COCOA)
+#include "ImageTransferSessionVT.h"
+#endif
+
 namespace WebCore {
 
 RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt)
@@ -372,7 +376,7 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(Optional<int> width, Option
     setFrameRate(match->requestedFrameRate);
 }
 
-void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample)
+RefPtr<MediaSample> RealtimeVideoCaptureSource::adaptVideoSample(MediaSample& sample)
 {
     MediaTime sampleTime = sample.presentationTime();
 
@@ -386,7 +390,33 @@ void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sam
     if (interval > 1)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
-    videoSampleAvailable(sample);
+    auto mediaSample = makeRefPtr(&sample);
+
+#if PLATFORM(COCOA)
+    auto size = this->size();
+    if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
+
+        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
+            m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
+
+        ASSERT(m_imageTransferSession);
+        if (m_imageTransferSession) {
+            mediaSample = m_imageTransferSession->convertMediaSample(sample, size);
+            if (!mediaSample) {
+                ASSERT_NOT_REACHED();
+                return nullptr;
+            }
+        }
+    }
+#endif
+
+    return mediaSample.releaseNonNull();
+}
+
+void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample)
+{
+    if (auto mediaSample = adaptVideoSample(sample))
+        videoSampleAvailable(*mediaSample);
 }
 
 void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
@@ -397,10 +427,9 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(Optional<int> wid
         width = { };
     if (height && *height < static_cast<int>(settings.height()))
         height = { };
-    if (frameRate && *frameRate < static_cast<double>(settings.frameRate()))
-        frameRate = { };
 
-    if (!width && !height && !frameRate)
+    // FIXME: handle frameRate potential increase.
+    if (!width && !height)
         return;
 
     auto match = bestSupportedSizeAndFrameRate(width, height, frameRate);
