@@ -4653,8 +4653,6 @@ void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
     if (!m_provisionalSandboxExtension)
         return;
 
-    ASSERT(!m_provisionalSandboxExtension || frame->coreFrame()->loader().provisionalDocumentLoader()->url().isLocalFile());
-
     m_provisionalSandboxExtension->consume();
 }
 

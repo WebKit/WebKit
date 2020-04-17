@@ -27,6 +27,7 @@
 
 #include "DownloadID.h"
 #include "NavigatingToAppBoundDomain.h"
+#include "SandboxExtension.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/Forward.h>
 
@@ -42,6 +43,7 @@ struct PolicyDecision {
     uint64_t navigationID { 0 };
     DownloadID downloadID { 0 };
     Optional<WebsitePoliciesData> websitePoliciesData { WTF::nullopt };
+    Optional<SandboxExtension::Handle> sandboxExtensionHandle { WTF::nullopt };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -53,6 +55,7 @@ struct PolicyDecision {
         encoder << navigationID;
         encoder << downloadID;
         encoder << websitePoliciesData;
+        encoder << sandboxExtensionHandle;
     }
 
     template<class Decoder>
@@ -93,7 +96,12 @@ struct PolicyDecision {
         if (!decodedWebsitePoliciesData)
             return WTF::nullopt;
 
-        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedIsNavigatingToAppBoundDomain), WTFMove(*decodedHasNavigatedAwayFromAppBoundDomain), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData) }};
+        Optional<Optional<SandboxExtension::Handle>> sandboxExtensionHandle;
+        decoder >> sandboxExtensionHandle;
+        if (!sandboxExtensionHandle)
+            return WTF::nullopt;
+
+        return {{ WTFMove(*decodedIdentifier), WTFMove(*decodedIsNavigatingToAppBoundDomain), WTFMove(*decodedHasNavigatedAwayFromAppBoundDomain), WTFMove(*decodedPolicyAction), WTFMove(*decodedNavigationID), WTFMove(*decodedDownloadID), WTFMove(*decodedWebsitePoliciesData), WTFMove(*sandboxExtensionHandle)}};
     }
 };
 

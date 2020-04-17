@@ -272,6 +272,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
             documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
+    if (policyDecision.policyAction == PolicyAction::Use && policyDecision.sandboxExtensionHandle) {
+        if (auto* page = this->page())
+            page->sandboxExtensionTracker().beginLoad(&page->mainWebFrame(), WTFMove(*(policyDecision.sandboxExtensionHandle)));
+    }
+
     function(policyDecision.policyAction, policyDecision.identifier);
 }
 

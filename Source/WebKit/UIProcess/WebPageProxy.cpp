@@ -1003,7 +1003,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
         return nullptr;
     }
 
-    auto navigation = m_navigationState->createReloadNavigation();
+    auto navigation = m_navigationState->createReloadNavigation(m_backForwardList->currentItem());
 
     String url = currentURL();
     if (!url.isEmpty()) {
@@ -1577,7 +1577,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     if (!hasRunningProcess())
         return launchProcessForReload();
     
-    auto navigation = m_navigationState->createReloadNavigation();
+    auto navigation = m_navigationState->createReloadNavigation(m_backForwardList->currentItem());
 
     if (!url.isEmpty()) {
         auto transaction = m_pageLoadState.transaction();
@@ -3223,6 +3223,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         } else
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %" PUBLIC_LOG_STRING, processIdentifier(), reason.utf8().data());
 
+        Optional<SandboxExtension::Handle> optionalHandle;
         if (shouldProcessSwap) {
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
             auto preventNavigationProcessShutdown = processForNavigation->makeScopePreventingShutdown();
@@ -3234,13 +3235,23 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
                 suspendedPage = nullptr;
 
             continueNavigationInNewProcess(navigation, WTFMove(suspendedPage), WTFMove(processForNavigation), processSwapRequestedByClient, std::exchange(policies, nullptr));
+        } else {
+            auto item = navigation->reloadItem() ? navigation->reloadItem() : navigation->targetItem();
+            if (policyAction == PolicyAction::Use && item) {
+                auto fullURL = URL { URL(), item->url() };
+                if (fullURL.protocolIs("file"_s)) {
+                    SandboxExtension::Handle sandboxExtensionHandle;
+                    maybeInitializeSandboxExtensionHandle(processForNavigation.get(), fullURL, item->resourceDirectoryURL(), sandboxExtensionHandle);
+                    optionalHandle = WTFMove(sandboxExtensionHandle);
+                }
+            }
         }
 
-        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? nullptr : WTFMove(policies), WTFMove(sender), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
+        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? nullptr : WTFMove(policies), WTFMove(sender), WTFMove(optionalHandle), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
     });
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Ref<PolicyDecisionSender>&& sender, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Ref<PolicyDecisionSender>&& sender, Optional<SandboxExtension::Handle> sandboxExtensionHandle, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
 {
     if (!hasRunningProcess()) {
         sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain(), PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt });
@@ -3270,7 +3281,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     if (websitePolicies)
         websitePoliciesData = websitePolicies->data();
 
-    sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain(), action, navigation ? navigation->navigationID() : 0, downloadID, WTFMove(websitePoliciesData) });
+    sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), hasNavigatedAwayFromAppBoundDomain(), action, navigation ? navigation->navigationID() : 0, downloadID, WTFMove(websitePoliciesData), WTFMove(sandboxExtensionHandle) });
 }
 
 void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
@@ -6205,29 +6216,27 @@ void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
     m_backForwardList->addItem(WTFMove(item));
 }
 
-void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&, const WebBackForwardListCounts&)>&& completionHandler)
+void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
 {
     // On process swap, we tell the previous process to ignore the load, which causes it so restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
     // Any real new load in the committed process would have cleared m_provisionalPage.
     if (m_provisionalPage)
-        return completionHandler({ }, m_backForwardList->counts());
+        return completionHandler(m_backForwardList->counts());
 
     backForwardGoToItemShared(m_process.copyRef(), itemID, WTFMove(completionHandler));
 }
 
-void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&, const WebBackForwardListCounts&)>&& completionHandler)
+void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(m_process, !WebKit::isInspectorPage(*this), completionHandler({ }, m_backForwardList->counts()));
+    MESSAGE_CHECK_COMPLETION(m_process, !WebKit::isInspectorPage(*this), completionHandler(m_backForwardList->counts()));
 
     auto* item = m_backForwardList->itemForID(itemID);
     if (!item)
-        return completionHandler({ }, m_backForwardList->counts());
+        return completionHandler(m_backForwardList->counts());
 
-    SandboxExtension::Handle sandboxExtensionHandle;
-    maybeInitializeSandboxExtensionHandle(process, URL(URL(), item->url()), item->resourceDirectoryURL(),  sandboxExtensionHandle);
     m_backForwardList->goToItem(*item);
-    completionHandler(WTFMove(sandboxExtensionHandle), m_backForwardList->counts());
+    completionHandler(m_backForwardList->counts());
 }
 
 void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(Optional<BackForwardItemIdentifier>&&)>&& completionHandler)

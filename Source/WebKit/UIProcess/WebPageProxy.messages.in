@@ -221,7 +221,7 @@ messages -> WebPageProxy {
 
     # BackForward messages
     BackForwardAddItem(struct WebKit::BackForwardListItemState itemState)
-    BackForwardGoToItem(struct WebCore::BackForwardItemIdentifier itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle, struct WebKit::WebBackForwardListCounts counts) Synchronous
+    BackForwardGoToItem(struct WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
     BackForwardItemAtIndex(int32_t itemIndex) -> (Optional<WebCore::BackForwardItemIdentifier> itemID) Synchronous
     BackForwardListCounts() -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
     BackForwardClear()
