@@ -1,3 +1,19 @@
+2020-04-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Distinguish between an empty WKAppBoundDomains array and a missing entry
+        https://bugs.webkit.org/show_bug.cgi?id=210628
+        <rdar://problem/61909669>
+
+        Reviewed by Brent Fulgham.
+
+        Currently we treat a missing WKAppBoundDomains key the same as an empty
+        key, which is incorrect. Having the key present, even with no entries,
+        should opt an app into app-bound domain behavior.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+
 2020-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         Add a new 'limitNavigationsToAppBoundDomains' property to WKWebViewConfiguration 

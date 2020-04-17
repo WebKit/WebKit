@@ -75,6 +75,7 @@ static WorkQueue& appBoundDomainQueue()
 }
 
 static std::atomic<bool> hasInitializedAppBoundDomains = false;
+static std::atomic<bool> keyExists = false;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
@@ -409,6 +410,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
             return;
         
         NSArray<NSString *> *domains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
+        keyExists = domains ? true : false;
         
         RunLoop::main().dispatch([isInAppBrowserPrivacyEnabled, forceReinitialization, domains = retainPtr(domains)] {
             if (forceReinitialization == ForceReinitialization::Yes)
@@ -465,7 +467,7 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
     }
 
     ensureAppBoundDomains([domain = WebCore::RegistrableDomain(requestURL), listener = makeRef(listener)] (auto& domains) mutable {
-        if (domains.isEmpty()) {
+        if (domains.isEmpty() && !keyExists) {
             listener->didReceiveAppBoundDomainResult(WTF::nullopt);
             return;
         }
