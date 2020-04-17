@@ -1,5 +1,57 @@
 2020-04-17  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r260180. rdar://problem/61943707
+
+    [JSC] Use ensureStillAliveHere in FTL when content of storage should be kept alive
+    https://bugs.webkit.org/show_bug.cgi?id=210583
+    <rdar://problem/61831515>
+    
+    Reviewed by Mark Lam.
+    
+    The content of Butterfly / ArrayStorage is kept alive only when the owner JSCell is alive.
+    This means that we should keep the owner JSCell alive if we are loading content of storage
+    which includes JSCells. This patch inserts ensureStillAliveHere in FTL to ensure this invariant.
+    
+    * ftl/FTLJITCode.cpp:
+    (JSC::FTL::JITCode::~JITCode): Found that we get crash with `dumpDisassembly` if FTL::JITCode is destroyed while it fails to generate code while testing this.
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+    (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+    (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+    (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+    (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+    (JSC::FTL::DFG::LowerDFGToB3::compileStringCodePointAt):
+    (JSC::FTL::DFG::LowerDFGToB3::compileGetByOffset):
+    (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260180 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Use ensureStillAliveHere in FTL when content of storage should be kept alive
+            https://bugs.webkit.org/show_bug.cgi?id=210583
+            <rdar://problem/61831515>
+
+            Reviewed by Mark Lam.
+
+            The content of Butterfly / ArrayStorage is kept alive only when the owner JSCell is alive.
+            This means that we should keep the owner JSCell alive if we are loading content of storage
+            which includes JSCells. This patch inserts ensureStillAliveHere in FTL to ensure this invariant.
+
+            * ftl/FTLJITCode.cpp:
+            (JSC::FTL::JITCode::~JITCode): Found that we get crash with `dumpDisassembly` if FTL::JITCode is destroyed while it fails to generate code while testing this.
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+            (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+            (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+            (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+            (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+            (JSC::FTL::DFG::LowerDFGToB3::compileStringCodePointAt):
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetByOffset):
+            (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+
+2020-04-17  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259572. rdar://problem/61943713
 
     [JSC] Put ensureStillAliveHere for Integer TypedArrays in GetByVal
