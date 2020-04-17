@@ -32,6 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class _WKUserContentWorld;
 @class WKWebView;
 
+typedef NS_ENUM(NSInteger, _WKUserStyleLevel) {
+    _WKUserStyleUserLevel,
+    _WKUserStyleAuthorLevel
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 @interface _WKUserStyleSheet : NSObject <NSCopying>
 
@@ -44,9 +49,10 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly userContentWorld:(_WKUserContentWorld *)userContentWorld;
+- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly level:(_WKUserStyleLevel)level userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld;
 - (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld;
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL level:(_WKUserStyleLevel)level userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 #pragma clang diagnostic pop
 
 @end

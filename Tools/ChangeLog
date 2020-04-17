@@ -1,3 +1,16 @@
+2020-04-17  Antoine Quint  <graouts@apple.com>
+
+        Allow the UserStyleLevel to be set through _WKUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=210653
+        <rdar://problem/60506645>
+
+        Reviewed by Tim Horton.
+
+        Add new tests for the "level" parameter when creating a _WKUserStyleSheet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+
 2020-04-17  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r162729): [iOS] WebKitTestRunner over-releases UITextField in WTR::PlatformWebView::removeChromeInputField()

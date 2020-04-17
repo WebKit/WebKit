@@ -328,6 +328,7 @@ TEST(WKUserContentController, ScriptMessageHandlerReplaceWithSameName)
 static NSString *styleSheetSource = @"body { background-color: green !important; }";
 static NSString *backgroundColorScript = @"window.getComputedStyle(document.body, null).getPropertyValue('background-color')";
 static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document.getElementsByTagName('iframe')[0].contentDocument.body, null).getPropertyValue('background-color')";
+static NSString *styleSheetSourceForSpecificityLevelTests = @"#body { background-color: green; }";
 static const char* greenInRGB = "rgb(0, 128, 0)";
 static const char* redInRGB = "rgb(255, 0, 0)";
 static const char* whiteInRGB = "rgba(0, 0, 0, 0)";
@@ -522,7 +523,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebView)
     expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
@@ -535,7 +536,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionImm
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     [targetWebView _test_waitForDidFinishNavigation];
@@ -549,7 +550,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionAnd
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
     [[targetWebView configuration].userContentController _removeUserStyleSheet:styleSheet.get()];
 
@@ -575,7 +576,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewSharedCo
     expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
@@ -592,7 +593,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemoval)
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -612,7 +613,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -636,7 +637,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -672,7 +673,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
     RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -681,6 +682,52 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
     [webView _test_waitForDidFinishNavigation];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blueInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetSpecificityLevelNotSpecified)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<style>body { background-color: red }</style><body id='body'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    // By default, the injected style sheet will not be able to override due to the "user" level being used.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetSpecificityLevelUser)
+{
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleUserLevel userContentWorld:world.get()]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<style>body { background-color: red }</style><body id='body'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    // The injected style sheet will not be able to override due to the "user" level being used.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetSpecificityLevelAuthor)
+{
+    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:@"<style>body { background-color: red }</style><body id='body'></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    // The injected style sheet *will* be able to override due to the "author" level being used.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
 }
 
 TEST(WKUserContentController, UserScriptRemove)

@@ -35,6 +35,23 @@ template<> struct WrapperTraits<API::UserStyleSheet> {
 
 }
 
+namespace API {
+
+inline WebCore::UserStyleLevel toWebCoreUserStyleLevel(_WKUserStyleLevel level)
+{
+    switch (level) {
+    case _WKUserStyleUserLevel:
+        return WebCore::UserStyleUserLevel;
+    case _WKUserStyleAuthorLevel:
+        return WebCore::UserStyleAuthorLevel;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::UserStyleUserLevel;
+}
+
+}
+
 @interface _WKUserStyleSheet () <WKObject> {
 @package
     API::ObjectStorage<API::UserStyleSheet> _userStyleSheet;

@@ -1,3 +1,21 @@
+2020-04-17  Antoine Quint  <graouts@apple.com>
+
+        Allow the UserStyleLevel to be set through _WKUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=210653
+        <rdar://problem/60506645>
+
+        Reviewed by Tim Horton.
+
+        Add a new _WKUserStyleLevel enum such that we may provide the specificity level of the backing UserStyleSheet, represented by the UserStyleLevel enum in WebCore.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:level:userContentWorld:]):
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:level:userContentWorld:]):
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:userContentWorld:]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserStyleSheetInternal.h:
+        (API::toWebCoreUserStyleLevel):
+
 2020-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][X11] REGRESSION(r259944): Wrong position of select popup menu in X11
