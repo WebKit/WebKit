@@ -3188,6 +3188,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         case JSMapValuesIntrinsic:
         case JSSetEntriesIntrinsic:
         case JSSetValuesIntrinsic: {
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
             insertChecks();
 
             IterationKind kind = IterationKind::Values;
