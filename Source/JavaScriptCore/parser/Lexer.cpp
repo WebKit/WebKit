@@ -2171,7 +2171,7 @@ start:
             shift();
             if (UNLIKELY(Options::useLogicalAssignmentOperators() && m_current == '=')) {
                 shift();
-                token = NULLISHEQUAL;
+                token = COALESCEEQUAL;
                 break;
             }
             token = COALESCE;

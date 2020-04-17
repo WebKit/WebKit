@@ -3871,7 +3871,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         case BITOREQUAL: op = Operator::BitOrEq; break;
         case MODEQUAL: op = Operator::ModEq; break;
         case POWEQUAL: op = Operator::PowEq; break;
-        case NULLISHEQUAL: op = Operator::NullishEq; break;
+        case COALESCEEQUAL: op = Operator::CoalesceEq; break;
         case OREQUAL: op = Operator::OrEq; break;
         case ANDEQUAL: op = Operator::AndEq; break;
         default:

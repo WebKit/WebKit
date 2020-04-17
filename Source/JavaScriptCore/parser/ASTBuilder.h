@@ -1560,7 +1560,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
             return node;
         }
 
-        if (op == Operator::NullishEq || op == Operator::OrEq || op == Operator::AndEq)
+        if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq)
             return new (m_parserArena) ShortCircuitReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
 
         return new (m_parserArena) ReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
@@ -1572,7 +1572,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
         if (op == Operator::Equal)
             return new (m_parserArena) AssignBracketNode(location, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), start, end);
 
-        if (op == Operator::NullishEq || op == Operator::OrEq || op == Operator::AndEq) {
+        if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
             auto* node = new (m_parserArena) ShortCircuitReadModifyBracketNode(location, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, start, end);
             node->setSubexpressionInfo(bracket->divot(), bracket->divotEnd().offset);
             return node;
@@ -1589,7 +1589,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     if (op == Operator::Equal)
         return new (m_parserArena) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
 
-    if (op == Operator::NullishEq || op == Operator::OrEq || op == Operator::AndEq) {
+    if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
         auto* node = new (m_parserArena) ShortCircuitReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, start, end);
         node->setSubexpressionInfo(dot->divot(), dot->divotEnd().offset);
         return node;

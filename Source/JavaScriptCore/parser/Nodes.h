@@ -68,7 +68,7 @@ namespace JSC {
         BitOrEq,
         ModEq,
         PowEq,
-        NullishEq,
+        CoalesceEq,
         OrEq,
         AndEq,
         LShift,
