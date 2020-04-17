@@ -1,3 +1,15 @@
+2020-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r162729): [iOS] WebKitTestRunner over-releases UITextField in WTR::PlatformWebView::removeChromeInputField()
+        <https://webkit.org/b/210643>
+        <rdar://problem/61927190>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::removeChromeInputField):
+        - Remove unnecessary -release.
+
 2020-04-17  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny iokit open access to graphics related classes

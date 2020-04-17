@@ -285,7 +285,6 @@ void PlatformWebView::removeChromeInputField()
     if (textField) {
         [textField removeFromSuperview];
         makeWebViewFirstResponder();
-        [textField release];
     }
 }
 
