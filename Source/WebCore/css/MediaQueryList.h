@@ -19,39 +19,45 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "ContextDestructionObserver.h"
+#include "EventTarget.h"
+#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "MediaQueryMatcher.h"
 
 namespace WebCore {
 
-class MediaQueryListListener;
-class MediaQueryEvaluator;
-class MediaQueryMatcher;
-class MediaQuerySet;
-
-// MediaQueryList interface is specified at http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface
+// MediaQueryList interface is specified at https://drafts.csswg.org/cssom-view/#the-mediaquerylist-interface
 // The objects of this class are returned by window.matchMedia. They may be used to
 // retrieve the current value of the given media query and to add/remove listeners that
 // will be called whenever the value of the query changes.
 
-class MediaQueryList final : public RefCounted<MediaQueryList> {
+class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaQueryList>, private ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(MediaQueryList);
 public:
-    static Ref<MediaQueryList> create(MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool);
+    static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
     ~MediaQueryList();
 
     String media() const;
     bool matches();
 
-    void addListener(RefPtr<MediaQueryListListener>&&);
-    void removeListener(RefPtr<MediaQueryListListener>&&);
+    void addListener(RefPtr<EventListener>&&);
+    void removeListener(RefPtr<EventListener>&&);
 
     void evaluate(MediaQueryEvaluator&, bool& notificationNeeded);
 
+    using RefCounted::ref;
+    using RefCounted::deref;
+
 private:
-    MediaQueryList(MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
+    MediaQueryList(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
 
     void setMatches(bool);
+
+    EventTargetInterface eventTargetInterface() const final { return MediaQueryListEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     Ref<MediaQueryMatcher> m_matcher;
     Ref<MediaQuerySet> m_media;

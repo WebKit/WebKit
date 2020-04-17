@@ -54,7 +54,6 @@
 #include "JSTestIterable.h"
 #include "JSTestJSBuiltinConstructor.h"
 #include "JSTestMapLike.h"
-#include "JSTestMediaQueryListListener.h"
 #include "JSTestNamedAndIndexedSetterNoIdentifier.h"
 #include "JSTestNamedAndIndexedSetterThrowingException.h"
 #include "JSTestNamedAndIndexedSetterWithIdentifier.h"
@@ -209,8 +208,6 @@ JSC::EncodedJSValue jsTestGlobalObjectTestJSBuiltinConstructorConstructor(JSC::J
 bool setJSTestGlobalObjectTestJSBuiltinConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestMapLikeConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestGlobalObjectTestMediaQueryListListenerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestGlobalObjectTestMediaQueryListListenerConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -302,11 +299,11 @@ using JSTestGlobalObjectConstructor = JSDOMConstructorNotConstructable<JSTestGlo
 
 static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
-    { 37, -1 },
+    { 36, -1 },
     { -1, -1 },
     { 0, -1 },
     { 4, 262 },
-    { 41, -1 },
+    { 40, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -314,7 +311,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 51, -1 },
+    { 50, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -322,7 +319,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 63, -1 },
+    { 62, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -336,13 +333,13 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 31, -1 },
+    { 30, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 66, -1 },
+    { 65, -1 },
     { 9, 258 },
     { -1, -1 },
     { -1, -1 },
@@ -351,7 +348,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 35, -1 },
+    { 34, -1 },
     { 16, 263 },
     { 6, -1 },
     { -1, -1 },
@@ -364,7 +361,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 33, -1 },
+    { 32, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -386,7 +383,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 57, -1 },
+    { 56, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -395,28 +392,28 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { 20, 256 },
     { -1, -1 },
-    { 58, -1 },
+    { 57, -1 },
     { 15, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 43, -1 },
+    { 42, -1 },
     { 14, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 32, -1 },
+    { 31, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 47, -1 },
+    { 46, -1 },
     { 21, -1 },
     { -1, -1 },
     { 2, -1 },
-    { 34, -1 },
+    { 33, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -426,22 +423,22 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 55, -1 },
+    { 54, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 28, -1 },
-    { 24, -1 },
-    { -1, -1 },
-    { 39, -1 },
+    { 27, -1 },
     { -1, -1 },
     { -1, -1 },
+    { 38, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 50, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 49, -1 },
     { -1, -1 },
     { 10, -1 },
     { -1, -1 },
@@ -459,12 +456,12 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 64, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 29, -1 },
-    { 26, 261 },
+    { 28, -1 },
+    { 25, 261 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -476,7 +473,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { 12, 257 },
     { -1, -1 },
-    { 59, -1 },
+    { 58, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -485,30 +482,30 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 30, 265 },
+    { 29, 265 },
     { -1, -1 },
     { 13, -1 },
     { -1, -1 },
-    { 62, -1 },
+    { 61, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 45, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
+    { 44, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 53, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 52, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -530,12 +527,12 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 46, -1 },
+    { 45, -1 },
     { 7, 260 },
     { -1, -1 },
-    { 60, -1 },
+    { 59, -1 },
     { -1, -1 },
-    { 44, -1 },
+    { 43, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -545,28 +542,28 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[266] = {
     { 22, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 25, -1 },
+    { 24, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 42, -1 },
+    { 41, -1 },
     { 3, -1 },
-    { 48, -1 },
+    { 47, -1 },
     { -1, -1 },
-    { 49, -1 },
+    { 48, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 23, 259 },
-    { 27, -1 },
-    { 36, -1 },
-    { 38, -1 },
-    { 40, -1 },
-    { 52, -1 },
-    { 54, -1 },
-    { 56, -1 },
-    { 61, -1 },
-    { 65, -1 },
+    { 26, -1 },
+    { 35, -1 },
+    { 37, -1 },
+    { 39, -1 },
+    { 51, -1 },
+    { 53, -1 },
+    { 55, -1 },
+    { 60, -1 },
+    { 64, -1 },
 };
 
 
@@ -608,7 +605,6 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestIterable", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestIterableConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestIterableConstructor) } },
     { "TestJSBuiltinConstructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestJSBuiltinConstructorConstructor) } },
     { "TestMapLike", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestMapLikeConstructor) } },
-    { "TestMediaQueryListListener", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestMediaQueryListListenerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestMediaQueryListListenerConstructor) } },
     { "TestNamedAndIndexedSetterNoIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructor) } },
     { "TestNamedAndIndexedSetterThrowingException", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterThrowingExceptionConstructor) } },
     { "TestNamedAndIndexedSetterWithIdentifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestGlobalObjectTestNamedAndIndexedSetterWithIdentifierConstructor) } },
@@ -657,7 +653,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestGlobalObjectInstanceFunctionRegularOperation), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 67, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 66, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
@@ -1501,31 +1497,6 @@ static inline bool setJSTestGlobalObjectTestMapLikeConstructorSetter(JSGlobalObj
 bool setJSTestGlobalObjectTestMapLikeConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestMapLikeConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestMapLike");
-}
-
-static inline JSValue jsTestGlobalObjectTestMediaQueryListListenerConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestMediaQueryListListener::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
-}
-
-EncodedJSValue jsTestGlobalObjectTestMediaQueryListListenerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObjectTestMediaQueryListListenerConstructorGetter>(*lexicalGlobalObject, thisValue, "TestMediaQueryListListener");
-}
-
-static inline bool setJSTestGlobalObjectTestMediaQueryListListenerConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(lexicalGlobalObject);
-    VM& vm = throwScope.vm();
-    // Shadowing a built-in constructor.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestMediaQueryListListener"), strlen("TestMediaQueryListListener")), value);
-}
-
-bool setJSTestGlobalObjectTestMediaQueryListListenerConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestGlobalObject>::set<setJSTestGlobalObjectTestMediaQueryListListenerConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestMediaQueryListListener");
 }
 
 static inline JSValue jsTestGlobalObjectTestNamedAndIndexedSetterNoIdentifierConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject, ThrowScope& throwScope)

@@ -55,42 +55,38 @@ PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique 
 PASS CharacterData includes NonDocumentTypeChildNode: member names are unique 
 PASS CharacterData includes ChildNode: member names are unique 
-FAIL MediaQueryList interface: existence and properties of interface object assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface object length assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface object name assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: attribute media assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: attribute matches assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: operation addListener(EventListener) assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: operation removeListener(EventListener) assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList interface: attribute onchange assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
-FAIL MediaQueryList must be primary interface of matchMedia("all") assert_own_property: self does not have own property "MediaQueryList" expected property "MediaQueryList" missing
+PASS MediaQueryList interface: existence and properties of interface object 
+PASS MediaQueryList interface object length 
+PASS MediaQueryList interface object name 
+PASS MediaQueryList interface: existence and properties of interface prototype object 
+PASS MediaQueryList interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaQueryList interface: existence and properties of interface prototype object's @@unscopables property 
+PASS MediaQueryList interface: attribute media 
+PASS MediaQueryList interface: attribute matches 
+PASS MediaQueryList interface: operation addListener(EventListener) 
+PASS MediaQueryList interface: operation removeListener(EventListener) 
+PASS MediaQueryList interface: attribute onchange 
+PASS MediaQueryList must be primary interface of matchMedia("all") 
 PASS Stringification of matchMedia("all") 
 PASS MediaQueryList interface: matchMedia("all") must inherit property "media" with the proper type 
 PASS MediaQueryList interface: matchMedia("all") must inherit property "matches" with the proper type 
 PASS MediaQueryList interface: matchMedia("all") must inherit property "addListener(EventListener)" with the proper type 
-FAIL MediaQueryList interface: calling addListener(EventListener) on matchMedia("all") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS MediaQueryList interface: calling addListener(EventListener) on matchMedia("all") with too few arguments must throw TypeError 
 PASS MediaQueryList interface: matchMedia("all") must inherit property "removeListener(EventListener)" with the proper type 
-FAIL MediaQueryList interface: calling removeListener(EventListener) on matchMedia("all") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
-FAIL MediaQueryList interface: matchMedia("all") must inherit property "onchange" with the proper type assert_inherits: property "onchange" not found in prototype chain
-FAIL MediaQueryListEvent interface: existence and properties of interface object assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface object length assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface object name assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface: attribute media assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent interface: attribute matches assert_own_property: self does not have own property "MediaQueryListEvent" expected property "MediaQueryListEvent" missing
-FAIL MediaQueryListEvent must be primary interface of new MediaQueryListEvent("change") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
-FAIL Stringification of new MediaQueryListEvent("change") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
-FAIL MediaQueryListEvent interface: new MediaQueryListEvent("change") must inherit property "media" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
-FAIL MediaQueryListEvent interface: new MediaQueryListEvent("change") must inherit property "matches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: MediaQueryListEvent"
+PASS MediaQueryList interface: calling removeListener(EventListener) on matchMedia("all") with too few arguments must throw TypeError 
+PASS MediaQueryList interface: matchMedia("all") must inherit property "onchange" with the proper type 
+PASS MediaQueryListEvent interface: existence and properties of interface object 
+PASS MediaQueryListEvent interface object length 
+PASS MediaQueryListEvent interface object name 
+PASS MediaQueryListEvent interface: existence and properties of interface prototype object 
+PASS MediaQueryListEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaQueryListEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS MediaQueryListEvent interface: attribute media 
+PASS MediaQueryListEvent interface: attribute matches 
+PASS MediaQueryListEvent must be primary interface of new MediaQueryListEvent("change") 
+PASS Stringification of new MediaQueryListEvent("change") 
+PASS MediaQueryListEvent interface: new MediaQueryListEvent("change") must inherit property "media" with the proper type 
+PASS MediaQueryListEvent interface: new MediaQueryListEvent("change") must inherit property "matches" with the proper type 
 PASS Screen interface: existence and properties of interface object 
 PASS Screen interface object length 
 PASS Screen interface object name 

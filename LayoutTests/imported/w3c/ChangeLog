@@ -1,3 +1,18 @@
+2020-04-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        MediaQueryList should extend EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=203288
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/cssom-view/MediaQueryList-addListener-handleEvent-expected.txt:
+        * web-platform-tests/css/cssom-view/MediaQueryList-addListener-removeListener-expected.txt:
+        * web-platform-tests/css/cssom-view/MediaQueryList-extends-EventTarget-expected.txt:
+        * web-platform-tests/css/cssom-view/MediaQueryList-extends-EventTarget-interop-expected.txt:
+        * web-platform-tests/css/cssom-view/MediaQueryListEvent-expected.txt:
+        * web-platform-tests/css/cssom-view/idlharness-expected.txt:
+        * web-platform-tests/css/cssom-view/matchMedia-expected.txt:
+
 2020-04-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add support for `pseudoElement` on `KeyframeEffect` and `KeyframeEffectOptions`

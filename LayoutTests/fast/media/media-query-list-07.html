@@ -29,6 +29,12 @@
 
         var query = window.matchMedia("screen");
 
+        query.addListener(null);
+        query.addListener(undefined);
+        query.removeListener(null);
+        query.removeListener(undefined);
+        log("EventListener is optional");
+
         query.addListener(callback1);
 
         try {
@@ -41,13 +47,8 @@
             query.addListener('cinco');
         } catch (e) {
             log("query.addListener('cinco') threw exception as expected");
-            
         }
-        try {
-            query.addListener([1,2]);
-        } catch (e) {
-            log("query.addListener([1,2]) threw exception as expected");
-        }
+
         query.addListener(callback2);
 
         window.internals.settings.setMediaTypeOverride("handheld");

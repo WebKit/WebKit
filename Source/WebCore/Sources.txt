@@ -790,6 +790,7 @@ css/MediaQuery.cpp
 css/MediaQueryEvaluator.cpp
 css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
+css/MediaQueryListEvent.cpp
 css/MediaQueryMatcher.cpp
 css/MediaQueryParserContext.cpp
 css/PropertySetCSSStyleDeclaration.cpp
@@ -3109,7 +3110,7 @@ JSMediaEncodingType.cpp
 JSMediaError.cpp
 JSMediaList.cpp
 JSMediaQueryList.cpp
-JSMediaQueryListListener.cpp
+JSMediaQueryListEvent.cpp
 JSMediaRecorder.cpp
 JSMediaRecorderErrorEvent.cpp
 JSMediaRemoteControls.cpp

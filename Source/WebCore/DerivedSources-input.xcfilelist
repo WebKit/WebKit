@@ -546,7 +546,7 @@ $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
 $(PROJECT_DIR)/css/MediaList.idl
 $(PROJECT_DIR)/css/MediaQueryList.idl
-$(PROJECT_DIR)/css/MediaQueryListListener.idl
+$(PROJECT_DIR)/css/MediaQueryListEvent.idl
 $(PROJECT_DIR)/css/SVGCSSValueKeywords.in
 $(PROJECT_DIR)/css/SelectorPseudoClassAndCompatibilityElementMap.in
 $(PROJECT_DIR)/css/SelectorPseudoElementTypeMap.in

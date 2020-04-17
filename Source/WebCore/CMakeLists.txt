@@ -638,7 +638,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/FontFaceSet.idl
     css/MediaList.idl
     css/MediaQueryList.idl
-    css/MediaQueryListListener.idl
+    css/MediaQueryListEvent.idl
     css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl

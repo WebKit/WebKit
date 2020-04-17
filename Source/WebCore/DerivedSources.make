@@ -579,7 +579,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/FontFaceSet.idl \
     $(WebCore)/css/MediaList.idl \
     $(WebCore)/css/MediaQueryList.idl \
-    $(WebCore)/css/MediaQueryListListener.idl \
+    $(WebCore)/css/MediaQueryListEvent.idl \
     $(WebCore)/css/StyleMedia.idl \
     $(WebCore)/css/StyleSheet.idl \
     $(WebCore)/css/StyleSheetList.idl \

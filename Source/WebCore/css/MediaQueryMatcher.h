@@ -29,15 +29,13 @@ namespace WebCore {
 
 class Document;
 class MediaQueryList;
-class MediaQueryListListener;
 class MediaQueryEvaluator;
 class MediaQuerySet;
 class RenderStyle;
 
-// MediaQueryMatcher class is responsible for keeping a vector of pairs
-// MediaQueryList x MediaQueryListListener. It is responsible for evaluating the queries
-// whenever it is needed and to call the listeners if the corresponding query has changed.
-// The listeners must be called in the order in which they were added.
+// MediaQueryMatcher class is responsible for evaluating the queries whenever it
+// is needed and dispatch "change" event on MediaQueryLists if the corresponding
+// query has changed. MediaQueryLists are invoked in the order in which they were added.
 
 class MediaQueryMatcher final : public RefCounted<MediaQueryMatcher> {
 public:
@@ -45,9 +43,8 @@ public:
     ~MediaQueryMatcher();
 
     void documentDestroyed();
-
-    void addListener(Ref<MediaQueryListListener>&&, MediaQueryList&);
-    void removeListener(MediaQueryListListener&, MediaQueryList&);
+    void addMediaQueryList(MediaQueryList&);
+    void removeMediaQueryList(MediaQueryList&);
 
     RefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -58,17 +55,12 @@ public:
     bool evaluate(const MediaQuerySet&);
 
 private:
-    struct Listener {
-        Ref<MediaQueryListListener> listener;
-        Ref<MediaQueryList> query;
-    };
-
     explicit MediaQueryMatcher(Document&);
     std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
     String mediaType() const;
 
     WeakPtr<Document> m_document;
-    Vector<Listener> m_listeners;
+    Vector<WeakPtr<MediaQueryList>> m_mediaQueryLists;
 
     // This value is incremented at style selector changes.
     // It is used to avoid evaluating queries more then once and to make sure

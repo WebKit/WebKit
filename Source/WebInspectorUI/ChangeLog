@@ -1,3 +1,12 @@
+2020-04-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        MediaQueryList should extend EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=203288
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2020-04-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: add a Step next that steps by expression

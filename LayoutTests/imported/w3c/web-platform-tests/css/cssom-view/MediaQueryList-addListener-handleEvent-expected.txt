@@ -1,8 +1,11 @@
+CONSOLE MESSAGE: line 102: [object Object]
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
-FAIL calls handleEvent method of event listener promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
-FAIL looks up handleEvent method on every event dispatch promise_test: Unhandled rejection with value: object "TypeError: Argument 1 ('listener') to MediaQueryList.addListener must be a function"
+PASS calls handleEvent method of event listener 
+PASS looks up handleEvent method on every event dispatch 
 PASS doesn't look up handleEvent method on callable event listeners 
-FAIL rethrows errors when getting handleEvent assert_equals: handleEvent property was not looked up expected 1 but got 0
-FAIL throws if handleEvent is falsy and not callable assert_equals: handleEvent property was not looked up expected 1 but got 0
-FAIL throws if handleEvent is thruthy and not callable assert_equals: handleEvent property was not looked up expected 1 but got 0
+FAIL rethrows errors when getting handleEvent assert_true: Timed out waiting for error expected true got false
+FAIL throws if handleEvent is falsy and not callable assert_true: Timed out waiting for error expected true got false
+FAIL throws if handleEvent is thruthy and not callable assert_true: Timed out waiting for error expected true got false
 

@@ -1032,8 +1032,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryList.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryListListener.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryListListener.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryListEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaQueryListEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaRecorderErrorEvent.cpp

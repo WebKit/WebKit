@@ -1095,11 +1095,6 @@ WI.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
-    MediaQueryListListener: {
-        queryChanged: "[list]",
-        __proto__: null,
-    },
-
     MediaSource: {
         addSourceBuffer: "type",
         endOfStream: "[error]",

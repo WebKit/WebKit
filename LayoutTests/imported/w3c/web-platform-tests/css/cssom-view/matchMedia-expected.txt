@@ -3,7 +3,7 @@ PASS window.matchMedia is a function
 PASS window.matchMedia("all") matches 
 PASS window.matchMedia("") matches 
 PASS window.matchMedia("(min-width: 1px)") matches 
-FAIL media query with syntax error is serialized as "not all" Can't find variable: MediaQueryList
+PASS media query with syntax error is serialized as "not all" 
 PASS iframe.matchMedia("(max-width: 199px), all and (min-width: 200px)") is serialized w/o "all" 
 PASS iframe.matchMedia("(min-aspect-ratio: 1/1)") matches 
 PASS iframe.matchMedia("(width: 200px)") matches 

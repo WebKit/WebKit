@@ -1,3 +1,68 @@
+2020-04-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        MediaQueryList should extend EventTarget
+        https://bugs.webkit.org/show_bug.cgi?id=203288
+
+        Reviewed by Darin Adler.
+
+        Initially, CSSOM View Module specification [1] had a custom callback mechanism with addListener() and removeListener(),
+        and the callback was invoked with the associated MediaQueryList as argument.
+
+        Now the normal event mechanism [2] is used instead. For backwards compatibility, addListener() and removeListener()
+        methods are basically aliases for addEventListener() and removeEventListener(), respectively, and the "change" event
+        masquerades as a MediaQueryList.
+
+        This patch implements new event mechanism, aligning WebKit with Blink and SpiderMonkey, and also fixes
+        a few minor spec incompatibilities: mandatory listener argument, "handleEvent" support, and listeners call order.
+
+        [1]: https://www.w3.org/TR/2011/WD-cssom-view-20110804/#mediaquerylist
+        [2]: https://www.w3.org/TR/cssom-view-1/#mediaquerylist
+
+        Tests: fast/media/media-query-list-07.html
+               web-platform-tests/css/cssom-view/MediaQueryList-addListener-handleEvent.html
+               web-platform-tests/css/cssom-view/MediaQueryList-addListener-removeListener.html
+               web-platform-tests/css/cssom-view/MediaQueryList-extends-EventTarget.html
+               web-platform-tests/css/cssom-view/MediaQueryList-extends-EventTarget-interop.html
+               web-platform-tests/css/cssom-view/MediaQueryListEvent.html
+               web-platform-tests/css/cssom-view/idlharness.html
+               web-platform-tests/css/cssom-view/matchMedia.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/scripts/test/JS/*: Updated.
+        * css/MediaQueryList.cpp:
+        (WebCore::MediaQueryList::MediaQueryList):
+        (WebCore::MediaQueryList::create):
+        (WebCore::MediaQueryList::~MediaQueryList):
+        (WebCore::MediaQueryList::addListener):
+        (WebCore::MediaQueryList::removeListener):
+        * css/MediaQueryList.h:
+        * css/MediaQueryList.idl:
+        * css/MediaQueryListEvent.cpp: Added.
+        (WebCore::MediaQueryListEvent::MediaQueryListEvent):
+        * css/MediaQueryListEvent.h: Added.
+        * css/MediaQueryListEvent.idl: Added.
+        * css/MediaQueryListListener.h: Removed.
+        * css/MediaQueryListListener.idl: Removed.
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::documentDestroyed):
+        (WebCore::MediaQueryMatcher::addMediaQueryList):
+        (WebCore::MediaQueryMatcher::removeMediaQueryList):
+        (WebCore::MediaQueryMatcher::matchMedia):
+        (WebCore::MediaQueryMatcher::evaluateAll):
+        (WebCore::MediaQueryMatcher::addListener): Deleted.
+        (WebCore::MediaQueryMatcher::removeListener): Deleted.
+        * css/MediaQueryMatcher.h:
+        * dom/EventNames.in:
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::removeEventListener):
+        * dom/EventTargetFactory.in:
+
 2020-04-17  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed build fix after r260123

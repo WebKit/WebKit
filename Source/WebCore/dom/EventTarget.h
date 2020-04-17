@@ -91,7 +91,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<bool> dispatchEventForBindings(Event&);
 
     WEBCORE_EXPORT virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });
-    virtual bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&);
+    virtual bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions& = { });
 
     virtual void removeAllEventListeners();
     virtual void dispatchEvent(Event&);

@@ -149,6 +149,7 @@ namespace WebCore {
     macro(MediaKeyStatusMap) \
     macro(MediaKeySystemAccess) \
     macro(MediaKeys) \
+    macro(MediaQueryListEvent) \
     macro(MediaRecorder) \
     macro(MediaRecorderErrorEvent) \
     macro(MediaSource) \

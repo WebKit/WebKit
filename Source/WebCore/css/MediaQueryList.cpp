@@ -20,48 +20,53 @@
 #include "config.h"
 #include "MediaQueryList.h"
 
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryListListener.h"
-#include "MediaQueryMatcher.h"
+#include "EventNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-inline MediaQueryList::MediaQueryList(MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
-    : m_matcher(matcher)
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaQueryList);
+
+MediaQueryList::MediaQueryList(Document& document, MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
+    : ContextDestructionObserver(&document)
+    , m_matcher(matcher)
     , m_media(WTFMove(media))
     , m_evaluationRound(m_matcher->evaluationRound())
     , m_changeRound(m_evaluationRound - 1) // Any value that is not the same as m_evaluationRound would do.
     , m_matches(matches)
 {
+    m_matcher->addMediaQueryList(*this);
 }
 
-Ref<MediaQueryList> MediaQueryList::create(MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
+Ref<MediaQueryList> MediaQueryList::create(Document& document, MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
 {
-    return adoptRef(*new MediaQueryList(matcher, WTFMove(media), matches));
+    return adoptRef(*new MediaQueryList(document, matcher, WTFMove(media), matches));
 }
 
-MediaQueryList::~MediaQueryList() = default;
+MediaQueryList::~MediaQueryList()
+{
+    m_matcher->removeMediaQueryList(*this);
+}
 
 String MediaQueryList::media() const
 {
     return m_media->mediaText();
 }
 
-void MediaQueryList::addListener(RefPtr<MediaQueryListListener>&& listener)
+void MediaQueryList::addListener(RefPtr<EventListener>&& listener)
 {
     if (!listener)
         return;
 
-    m_matcher->addListener(listener.releaseNonNull(), *this);
+    addEventListener(eventNames().changeEvent, listener.releaseNonNull());
 }
 
-void MediaQueryList::removeListener(RefPtr<MediaQueryListListener>&& listener)
+void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
 {
     if (!listener)
         return;
 
-    m_matcher->removeListener(*listener, *this);
+    removeEventListener(eventNames().changeEvent, *listener);
 }
 
 void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notificationNeeded)

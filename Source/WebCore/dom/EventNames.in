@@ -24,6 +24,7 @@ InputEvent
 InputEvents interfaceName=InputEvent
 KeyboardEvent
 KeyboardEvents interfaceName=KeyboardEvent
+MediaQueryListEvent
 MessageEvent
 MouseEvent
 MouseEvents interfaceName=MouseEvent

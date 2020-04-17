@@ -2260,7 +2260,6 @@
 		7C5222991E1DAE1C002CB8F7 /* ActiveDOMCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C52229E1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C52229C1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C5266981F1B0302000F068B /* StringAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5266961F1B02FC000F068B /* StringAdaptors.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */; };
 		7C57BFE71EDE2F6100534A48 /* JSDOMAbstractOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C57BFE61EDE2F5B00534A48 /* JSDOMAbstractOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C5F28FC1A827D8400C0F31F /* HTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5F28FA1A827D8400C0F31F /* HTMLAttachmentElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C6522EF1E00A4C700677F22 /* ApplePayPaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6522EC1E00A4C700677F22 /* ApplePayPaymentMethod.h */; };
@@ -2506,6 +2505,7 @@
 		84300BD8120C9AD40021954A /* SVGPathSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84300BD7120C9AD40021954A /* SVGPathSource.h */; };
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
+		84650E7E2387AD7D006266E2 /* MediaQueryListEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 84650E7C2387AD7C006266E2 /* MediaQueryListEvent.h */; };
 		84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */; };
 		84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5C1248F0B300D3A9C9 /* FEConvolveMatrix.h */; };
 		84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D5E1248F0B300D3A9C9 /* FEDiffuseLighting.h */; };
@@ -4305,7 +4305,6 @@
 		D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */; };
 		D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D8BD129CA55C0006E5D2 /* JSHTMLDetailsElement.h */; };
 		D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A32122DABAC00A37BBC /* MediaQueryList.h */; };
-		D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */; };
 		D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */; };
 		D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */; };
 		D3D4E973130C7CFE007BA540 /* HTMLSummaryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9969,8 +9968,6 @@
 		7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlay.cpp; sourceTree = "<group>"; };
 		7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorOverlay.h; sourceTree = "<group>"; };
 		7C5266961F1B02FC000F068B /* StringAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringAdaptors.h; sourceTree = "<group>"; };
-		7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaQueryListListener.cpp; sourceTree = "<group>"; };
-		7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSMediaQueryListListener.h; sourceTree = "<group>"; };
 		7C57BFE61EDE2F5B00534A48 /* JSDOMAbstractOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAbstractOperations.h; sourceTree = "<group>"; };
 		7C5BEA3A1E9EE77100CC517B /* NavigatorID.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorID.idl; sourceTree = "<group>"; };
 		7C5BEA3B1E9EE77100CC517B /* NavigatorLanguage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorLanguage.idl; sourceTree = "<group>"; };
@@ -10477,6 +10474,9 @@
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
+		84650E7C2387AD7C006266E2 /* MediaQueryListEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryListEvent.h; sourceTree = "<group>"; };
+		84650E7F2387AD8A006266E2 /* MediaQueryListEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryListEvent.cpp; sourceTree = "<group>"; };
+		84650E802387AD8B006266E2 /* MediaQueryListEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryListEvent.idl; sourceTree = "<group>"; };
 		84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistantLightSource.h; sourceTree = "<group>"; };
 		84730D5B1248F0B300D3A9C9 /* FEConvolveMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FEConvolveMatrix.cpp; sourceTree = "<group>"; };
 		84730D5C1248F0B300D3A9C9 /* FEConvolveMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEConvolveMatrix.h; sourceTree = "<group>"; };
@@ -14537,8 +14537,6 @@
 		D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryList.cpp; sourceTree = "<group>"; };
 		D3A94A32122DABAC00A37BBC /* MediaQueryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryList.h; sourceTree = "<group>"; };
 		D3A94A33122DABAC00A37BBC /* MediaQueryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryList.idl; sourceTree = "<group>"; };
-		D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryListListener.h; sourceTree = "<group>"; };
-		D3A94A35122DABAC00A37BBC /* MediaQueryListListener.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryListListener.idl; sourceTree = "<group>"; };
 		D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaQueryList.cpp; sourceTree = "<group>"; };
 		D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaQueryList.h; sourceTree = "<group>"; };
 		D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryMatcher.cpp; sourceTree = "<group>"; };
@@ -24148,8 +24146,6 @@
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
 				D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */,
 				D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */,
-				7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */,
-				7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */,
 				0FF50267102BA9430066F39A /* JSStyleMedia.cpp */,
 				0FF50268102BA9430066F39A /* JSStyleMedia.h */,
 				BCE013980C0BEF180043860A /* JSStyleSheet.cpp */,
@@ -27969,8 +27965,9 @@
 				D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */,
 				D3A94A32122DABAC00A37BBC /* MediaQueryList.h */,
 				D3A94A33122DABAC00A37BBC /* MediaQueryList.idl */,
-				D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */,
-				D3A94A35122DABAC00A37BBC /* MediaQueryListListener.idl */,
+				84650E7F2387AD8A006266E2 /* MediaQueryListEvent.cpp */,
+				84650E7C2387AD7C006266E2 /* MediaQueryListEvent.h */,
+				84650E802387AD8B006266E2 /* MediaQueryListEvent.idl */,
 				D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */,
 				D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */,
 				4471710B205AF945000A116E /* MediaQueryParserContext.cpp */,
@@ -31256,7 +31253,6 @@
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				93D437A31D57B7E200AB85EA /* JSMediaListCustom.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
-				7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */,
 				CD9DE17517AAC74C00EA386D /* JSMediaSource.h in Headers */,
 				07277E4D17D018CC0015534D /* JSMediaStream.h in Headers */,
 				07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */,
@@ -31874,7 +31870,7 @@
 				4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */,
 				7CB5CA401E525C7300FAEF13 /* MediaQueryExpression.h in Headers */,
 				D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */,
-				D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */,
+				84650E7E2387AD7D006266E2 /* MediaQueryListEvent.h in Headers */,
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 				9493B6C11D74B4120088E780 /* MediaQueryParser.h in Headers */,
 				4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */,
