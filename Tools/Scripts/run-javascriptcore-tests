@@ -685,6 +685,13 @@ sub runJSCStressTests
             "JSTests/complex.yaml",
             "JSTests/ChakraCore.yaml",
             "JSTests/wasm.yaml");
+
+        my $internalTestsDir = File::Spec->catdir(dirname(sourceDir()), "Internal", "Tests", "InternalJSTests");
+        if (-e $internalTestsDir and -d $internalTestsDir) {
+            push(@testList, File::Spec->catfile($internalTestsDir, "internal-js-tests.yaml"));
+            push(@testList, File::Spec->catfile($internalTestsDir, "regress.yaml"));
+        }
+
         $hasTestsToRun = 1;
     }
 
