@@ -27,6 +27,13 @@
     max-width: 100% !important;
     max-height: 100% !important;
     min-height: 50px !important;
+
+    margin: auto !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
 }
 
 /* Audio */

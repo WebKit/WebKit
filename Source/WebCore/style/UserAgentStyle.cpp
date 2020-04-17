@@ -237,7 +237,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             }
         }
 #if ENABLE(VIDEO)
-        else if (is<HTMLMediaElement>(element)) {
+        else if (is<HTMLMediaElement>(element) && !RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
             if (!mediaControlsStyleSheet) {
                 String mediaRules = RenderTheme::singleton().mediaControlsStyleSheet();
                 if (mediaRules.isEmpty())

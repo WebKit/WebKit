@@ -22,15 +22,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-audio {
-    width: 200px;
-    height: 25px;
-}
-
-body:-webkit-full-page-media {
-    background-color: rgb(38, 38, 38);
-}
-
 video:-webkit-full-page-media {
     margin: auto;
     position: absolute;

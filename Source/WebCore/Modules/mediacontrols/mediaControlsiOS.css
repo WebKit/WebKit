@@ -32,10 +32,6 @@ audio {
     height: 39px;
 }
 
-body:-webkit-full-page-media {
-    background-color: rgb(38, 38, 38);
-}
-
 video:-webkit-full-page-media {
     margin: auto;
     position: absolute;

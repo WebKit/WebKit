@@ -106,11 +106,22 @@ hr {
     border-width: 1px;
 }
 
+/* media elements */
+
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
 video {
     object-fit: contain;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-tap-highlight-color: transparent;
 #endif
+}
+
+audio {
+    width: 200px;
+    height: 25px;
 }
 
 /* heading elements */
