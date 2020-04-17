@@ -172,8 +172,10 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
 void NetworkRTCProvider::wrapNewTCPConnection(LibWebRTCSocketIdentifier identifier, LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 {
     callOnRTCNetworkThread([this, identifier, newConnectionSocketIdentifier]() {
-        std::unique_ptr<rtc::AsyncPacketSocket> socket = m_pendingIncomingSockets.take(newConnectionSocketIdentifier);
-        addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP));
+        auto socket = m_pendingIncomingSockets.take(newConnectionSocketIdentifier);
+        RELEASE_LOG_IF(!socket, WebRTC, "NetworkRTCProvider::wrapNewTCPConnection received an invalid socket identifier");
+        if (socket)
+            addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP));
     });
 }
 
