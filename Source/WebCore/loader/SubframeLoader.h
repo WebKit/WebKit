@@ -61,8 +61,6 @@ public:
 
     RefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-    WEBCORE_EXPORT bool allowPlugins();
-
     bool containsPlugins() const { return m_containsPlugins; }
     
     bool resourceWillUsePlugin(const String& url, const String& mimeType);

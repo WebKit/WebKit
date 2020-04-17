@@ -37,7 +37,6 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
-#include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(MAC)
@@ -108,7 +107,7 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, Optional<Vector
     if (m_cachedSupportedPluginIdentifiers)
         supportedPluginIdentifiers = *m_cachedSupportedPluginIdentifiers;
 
-    return page.mainFrame().loader().subframeLoader().allowPlugins() ? m_cachedPlugins : m_cachedApplicationPlugins;
+    return page.mainFrame().loader().arePluginsEnabled() ? m_cachedPlugins : m_cachedApplicationPlugins;
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(supportedPluginIdentifiers);
@@ -151,7 +150,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
         // Application plugins are not affected by enablePlugins setting, so we always need to scan plugins to get them.
         bool shouldScanPlugins = true;
 #else
-        bool shouldScanPlugins = page.mainFrame().loader().subframeLoader().allowPlugins();
+        bool shouldScanPlugins = page.mainFrame().loader().arePluginsEnabled();
 #endif
         if (shouldScanPlugins) {
             HangDetectionDisabler hangDetectionDisabler;

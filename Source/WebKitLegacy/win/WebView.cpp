@@ -162,7 +162,6 @@
 #include <WebCore/Settings.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SocketProvider.h>
-#include <WebCore/SubframeLoader.h>
 #include <WebCore/SystemInfo.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UserContentController.h>
@@ -2972,14 +2971,14 @@ HRESULT WebView::canShowMIMEType(_In_ BSTR mimeType, _Out_ BOOL* canShow)
 bool WebView::canShowMIMEType(const String& mimeType)
 {
     Frame* coreFrame = core(m_mainFrame);
-    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader().allowPlugins();
+    bool arePluginsEnabled = coreFrame && coreFrame->loader().arePluginsEnabled();
 
     bool canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
 
     if (!canShow && m_page) {
-        canShow = (m_page->pluginData().supportsWebVisibleMimeType(mimeType, PluginData::AllPlugins) && allowPlugins)
+        canShow = (m_page->pluginData().supportsWebVisibleMimeType(mimeType, PluginData::AllPlugins) && arePluginsEnabled)
             || m_page->pluginData().supportsWebVisibleMimeType(mimeType, PluginData::OnlyApplicationPlugins);
     }
 

@@ -332,6 +332,8 @@ public:
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
     void addExtraFieldsToRequest(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard);
 
+    WEBCORE_EXPORT bool arePluginsEnabled();
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,

@@ -1,3 +1,22 @@
+2020-04-17  Rob Buis  <rbuis@igalia.com>
+
+        Move allowPlugins to FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=205876
+
+        Reviewed by Darin Adler.
+
+        Adapt to API change.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::pluginInfo):
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+        (WebKit::WebPage::canShowMIMEType const):
+
 2020-04-16  Peng Liu  <peng.liu6@apple.com>
 
         Cleanup the usage of ENABLE_FULLSCREEN_API

@@ -154,7 +154,7 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerElement, const U
     // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
     // as opposed to third-party code such as Flash. The user agent decides whether or not they are
     // permitted, rather than WebKit.
-    if ((!allowPlugins() && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
+    if (!(m_frame.settings().arePluginsEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
         return false;
 
     if (!pluginIsLoadable(url, mimeType))
@@ -279,7 +279,7 @@ RefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLA
     URL baseURL = completeURL(baseURLString);
 
     RefPtr<Widget> widget;
-    if (allowPlugins())
+    if (m_frame.settings().arePluginsEnabled())
         widget = m_frame.loader().client().createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
 
     logPluginRequest(m_frame.page(), element.serviceType(), String(), widget);
@@ -380,11 +380,6 @@ RefPtr<Frame> SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, 
         return nullptr;
 
     return frame;
-}
-
-bool SubframeLoader::allowPlugins()
-{
-    return m_frame.settings().arePluginsEnabled();
 }
 
 bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool hasFallback, bool& useFallback)

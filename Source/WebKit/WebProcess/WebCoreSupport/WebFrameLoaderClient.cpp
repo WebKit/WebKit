@@ -87,7 +87,6 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
-#include <WebCore/SubframeLoader.h>
 #include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
@@ -1713,7 +1712,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
         return ObjectContentType::Image;
 
     if (WebPage* webPage = m_frame->page()) {
-        auto allowedPluginTypes = webFrame().coreFrame()->loader().subframeLoader().allowPlugins()
+        auto allowedPluginTypes = webFrame().coreFrame()->loader().arePluginsEnabled()
             ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
         if (webPage->corePage()->pluginData().supportsMimeType(mimeType, allowedPluginTypes))
             return ObjectContentType::PlugIn;

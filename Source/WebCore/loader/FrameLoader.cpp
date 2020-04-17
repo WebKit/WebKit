@@ -4163,6 +4163,11 @@ bool FrameLoader::shouldSuppressTextInputFromEditing() const
     return m_frame.settings().shouldSuppressTextInputFromEditingDuringProvisionalNavigation() && m_state == FrameStateProvisional;
 }
 
+bool FrameLoader::arePluginsEnabled()
+{
+    return m_frame.settings().arePluginsEnabled();
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

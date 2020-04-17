@@ -51,7 +51,6 @@
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
-#include "SubframeLoader.h"
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
@@ -173,7 +172,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
-        auto allowedPluginTypes = frame->loader().subframeLoader().allowPlugins()
+        auto allowedPluginTypes = frame->loader().arePluginsEnabled()
             ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
         if (frame->page()->pluginData().supportsWebVisibleMimeType(type, allowedPluginTypes))
             return PluginDocument::create(*frame, url);

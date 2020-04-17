@@ -977,7 +977,7 @@ static NSURL *createUniqueWebDataURL();
 
     if (WebCore::MIMETypeRegistry::isTextMIMEType(mimeType)
         || WebCore::Image::supportsType(mimeType)
-        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::AllPlugins) && frame->loader().subframeLoader().allowPlugins())
+        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::AllPlugins) && frame->loader().arePluginsEnabled())
         || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::OnlyApplicationPlugins)))
         return NO;
 

@@ -24,7 +24,6 @@
 #include "FrameLoader.h"
 #include "Page.h"
 #include "PluginData.h"
-#include "SubframeLoader.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -67,7 +66,7 @@ String DOMMimeType::description() const
 
 RefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
 {
-    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader().allowPlugins())
+    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().arePluginsEnabled())
         return nullptr;
 
     Vector<MimeClassInfo> mimes;

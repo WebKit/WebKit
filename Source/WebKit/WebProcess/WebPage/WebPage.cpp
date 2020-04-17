@@ -996,7 +996,7 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
     PluginProcessType processType = pluginElement->displayState() == HTMLPlugInElement::WaitingForSnapshot ? PluginProcessTypeSnapshot : PluginProcessTypeNormal;
 #endif
 
-    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader().subframeLoader().allowPlugins();
+    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader().arePluginsEnabled();
 
     uint64_t pluginProcessToken;
     uint32_t pluginLoadPolicy;
@@ -5249,7 +5249,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     uint32_t pluginLoadPolicy;
-    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader().subframeLoader().allowPlugins();
+    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader().arePluginsEnabled();
 
     uint64_t pluginProcessToken;
     String newMIMEType;
@@ -5797,7 +5797,7 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     if (!mimeType.isNull() && m_mimeTypesWithCustomContentProviders.contains(mimeType))
         return true;
 
-    if (corePage()->mainFrame().loader().subframeLoader().allowPlugins() && pluginsSupport(mimeType, PluginData::AllPlugins))
+    if (corePage()->mainFrame().loader().arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
         return true;
 
     // We can use application plugins even if plugins aren't enabled.

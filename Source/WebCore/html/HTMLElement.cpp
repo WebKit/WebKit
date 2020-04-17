@@ -63,7 +63,6 @@
 #include "ShadowRoot.h"
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
-#include "SubframeLoader.h"
 #include "Text.h"
 #include "XMLNames.h"
 #include "markup.h"
@@ -741,7 +740,7 @@ bool HTMLElement::rendererIsEverNeeded()
             return false;
     } else if (hasTagName(noembedTag)) {
         RefPtr<Frame> frame = document().frame();
-        if (frame && frame->loader().subframeLoader().allowPlugins())
+        if (frame && frame->loader().arePluginsEnabled())
             return false;
     }
     return StyledElement::rendererIsEverNeeded();
