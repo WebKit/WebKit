@@ -120,6 +120,9 @@ IGNORE_WARNINGS_END
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [self resetInteractionCallbacks];
+#if PLATFORM(IOS_FAMILY)
+    self.accessibilitySpeakSelectionContent = nil;
+#endif
 
     self.zoomToScaleCompletionHandler = nil;
     self.retrieveSpeakSelectionContentCompletionHandler = nil;

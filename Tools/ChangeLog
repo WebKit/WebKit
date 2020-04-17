@@ -1,3 +1,15 @@
+2020-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 210645: REGRESSION (r211095): [iOS] TestRunnerWKWebView leaks @property accessibilitySpeakSelectionContent
+        <https://webkit.org/b/210645>
+        <rdar://problem/61927607>
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        - Release accessibilitySpeakSelectionContent in -dealloc.
+
 2020-04-17  Brady Eidson  <beidson@apple.com>
 
         Pass sandbox extensions for back/forward list navigations after the policy is decided at process-swap time.
