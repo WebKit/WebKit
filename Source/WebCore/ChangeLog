@@ -1,3 +1,12 @@
+2020-04-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix after r260123
+
+        No new tests needed.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createCustomCursor): Pass missing pixel buffer data pointer to gdk_memory_texture_new().
+
 2020-04-17  Youenn Fablet  <youenn@apple.com>
 
         Make use of WeakHashSet for MediaStreamTrackPrivate and RealtimeMediaSource observers

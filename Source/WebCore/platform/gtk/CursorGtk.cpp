@@ -63,7 +63,8 @@ static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSp
 
 #if USE(GTK4)
     ASSERT(cairo_image_surface_get_format(surface.get()) == CAIRO_FORMAT_ARGB32);
-    auto texture = adoptGRef(gdk_memory_texture_new(cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get()), GDK_MEMORY_A8R8G8B8_PREMULTIPLIED, cairo_image_surface_get_stride(surface.get())));
+    auto texture = adoptGRef(gdk_memory_texture_new(cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get()),
+        GDK_MEMORY_A8R8G8B8_PREMULTIPLIED, cairo_image_surface_get_data(surface.get()), cairo_image_surface_get_stride(surface.get())));
     return adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
 #else
     return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
