@@ -1740,13 +1740,18 @@ private:
 
         case OverridesHasInstance:
         case CheckStructure:
-        case CheckCell:
         case CreateThis:
         case CreatePromise:
         case CreateGenerator:
         case CreateAsyncGenerator:
         case GetButterfly: {
             fixEdge<CellUse>(node->child1());
+            break;
+        }
+
+        case CheckIsConstant: {
+            if (node->constant()->value().isCell() && node->constant()->value())
+                fixEdge<CellUse>(node->child1());
             break;
         }
 
@@ -2411,7 +2416,7 @@ private:
         }
 
         case IdentityWithProfile: {
-            node->clearFlags(NodeMustGenerate);
+            node->convertToIdentity();
             break;
         }
 
@@ -3277,7 +3282,7 @@ private:
                 OpInfo(CacheableIdentifier::createFromImmortalIdentifier(propertyUID)), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
 
             m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, CheckCell, node->origin,
+                m_indexInBlock, SpecNone, CheckIsConstant, node->origin,
                 OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
         };
 

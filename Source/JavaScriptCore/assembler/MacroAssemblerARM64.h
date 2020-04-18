@@ -686,6 +686,20 @@ public:
         store32(dataTempRegister, address);
     }
 
+    void or8(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);
+        if (logicalImm.isValid()) {
+            load8(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
+            m_assembler.orr<32>(dataTempRegister, dataTempRegister, logicalImm);
+            store8(dataTempRegister, address.m_ptr);
+        } else {
+            load8(address.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
+            or32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
+            store8(dataTempRegister, address.m_ptr);
+        }
+    }
+
     void or64(RegisterID src, RegisterID dest)
     {
         or64(dest, src, dest);
@@ -1603,7 +1617,7 @@ public:
         m_assembler.strb(src, address.base, memoryTempRegister);
     }
 
-    void store8(RegisterID src, void* address)
+    void store8(RegisterID src, const void* address)
     {
         move(TrustedImmPtr(address), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.strb(src, memoryTempRegister, 0);
@@ -1618,7 +1632,7 @@ public:
         m_assembler.strb(src, address.base, memoryTempRegister);
     }
 
-    void store8(TrustedImm32 imm, void* address)
+    void store8(TrustedImm32 imm, const void* address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         if (!imm8.m_value) {

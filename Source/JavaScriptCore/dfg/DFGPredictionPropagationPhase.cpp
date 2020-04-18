@@ -1103,6 +1103,12 @@ private:
             m_currentNode->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsInt);
             break;
         }
+
+        case LazyJSConstant: {
+            setPrediction(m_currentNode->lazyJSValue().speculatedType());
+            break;
+        }
+
         case StringCharAt:
         case CallStringConstructor:
         case ToString:
@@ -1307,7 +1313,6 @@ private:
         case GetRegExpObjectLastIndex:
         case SetRegExpObjectLastIndex:
         case RecordRegExpCachedResult:
-        case LazyJSConstant:
         case CallDOM: {
             // This node should never be visible at this stage of compilation.
             DFG_CRASH(m_graph, m_currentNode, "Unexpected node during prediction propagation");
@@ -1364,7 +1369,7 @@ private:
         case SetArgumentMaybe:
         case SetFunctionName:
         case CheckStructure:
-        case CheckCell:
+        case CheckIsConstant:
         case CheckNotEmpty:
         case AssertNotEmpty:
         case CheckIdent:

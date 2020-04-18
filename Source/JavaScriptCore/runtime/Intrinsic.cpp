@@ -340,6 +340,24 @@ const char* intrinsicName(Intrinsic intrinsic)
     return nullptr;
 }
 
+Optional<IterationKind> interationKindForIntrinsic(Intrinsic intrinsic)
+{
+    switch (intrinsic) {
+    case ArrayValuesIntrinsic:
+    case TypedArrayValuesIntrinsic:
+        return IterationKind::Values;
+    case ArrayKeysIntrinsic:
+    case TypedArrayKeysIntrinsic:
+        return IterationKind::Keys;
+    case ArrayEntriesIntrinsic:
+    case TypedArrayEntriesIntrinsic:
+        return IterationKind::Entries;
+    default:
+        return WTF::nullopt;
+    }
+}
+
+
 } // namespace JSC
 
 namespace WTF {

@@ -155,6 +155,7 @@ void JIT_OPERATION operationLookupExceptionHandler(VM*) WTF_INTERNAL;
 void JIT_OPERATION operationLookupExceptionHandlerFromCallerFrame(VM*) WTF_INTERNAL;
 void JIT_OPERATION operationVMHandleException(VM*) WTF_INTERNAL;
 void JIT_OPERATION operationThrowStackOverflowErrorFromThunk(JSGlobalObject*) WTF_INTERNAL;
+void JIT_OPERATION operationThrowIteratorResultIsNotObject(JSGlobalObject*) WTF_INTERNAL;
 
 void JIT_OPERATION operationThrowStackOverflowError(CodeBlock*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationCallArityCheck(JSGlobalObject*) WTF_INTERNAL;

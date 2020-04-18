@@ -48,6 +48,13 @@ public:
             g_superSamplerCount--;
     }
 
+    void release()
+    {
+        ASSERT(m_doSample);
+        g_superSamplerCount--;
+        m_doSample = false;
+    }
+
 private:
     bool m_doSample;
 };

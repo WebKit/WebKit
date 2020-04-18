@@ -629,7 +629,7 @@ end
 
 class Node
     def validate
-        raise "Unresolved #{dump} at #{codeOriginString}"
+        raise "Unresolved '#{dump}' at #{codeOriginString}"
     end
     
     def validateChildren

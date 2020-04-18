@@ -1,3 +1,72 @@
+2020-04-18  Keith Miller  <keith_miller@apple.com>
+
+        Redesign how we do for-of iteration for JSArrays
+        https://bugs.webkit.org/show_bug.cgi?id=175454
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/for-of-iterate-array-entries.js:
+        (foo):
+        * stress/custom-iterators.js:
+        (catch):
+        (iter.return):
+        (iteratorInterfaceErrorTest):
+        (iteratorInterfaceErrorTestReturn):
+        (iteratorInterfaceBreakTestReturn):
+        * stress/for-of-array-different-globals.js: Added.
+        (foo):
+        (array.Symbol.iterator.__proto__.next):
+        * stress/for-of-array-mixed-values.js: Added.
+        (test):
+        * stress/for-of-no-direct-loop-back-edge-osr.js: Added.
+        (osrIfFinalTier):
+        (test):
+        * stress/generator-containing-for-of-on-map.js: Added.
+        (find):
+        (i.let.v.of.find):
+        * stress/generator-containing-for-of-on-set.js: Added.
+        (find):
+        (set add):
+        * stress/osr-from-for-of-done-getter.js: Added.
+        (i.let.iterable.next.return.get done):
+        (i.let.iterable.next):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        * stress/osr-from-for-of-value-getter.js: Added.
+        (i.let.iterable.next.return.get value):
+        (i.let.iterable.next):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        * stress/throw-for-of-next-returns-non-object.js: Added.
+        (i.let.iterable.next):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        (i.catch):
+        * stress/throw-from-done-getter-in-for-of-header.js: Added.
+        (i.let.iterable.next):
+        (i.let.iterable.get done):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        (i.catch):
+        * stress/throw-from-next-in-for-of-header.js: Added.
+        (i.let.iterable.next):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        (i.catch):
+        * stress/throw-from-value-getter-in-for-of-header.js: Added.
+        (i.let.iterable.next):
+        (i.let.iterable.get value):
+        (i.let.iterable.Symbol.iterator):
+        (i.let.iterable.return):
+        (i.catch):
+        * stress/webidl-tokenizer-for-of.js: Added.
+        (tokenise.attemptTokenMatch):
+        (tokenise):
+        (Tokeniser):
+        (Tokeniser.prototype.probe):
+        (Tokeniser.prototype.consume):
+        (Tokeniser.prototype.unconsume):
+
 2020-04-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype[@@search] should use SameValue

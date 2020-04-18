@@ -1,3 +1,312 @@
+2020-04-18  Keith Miller  <keith_miller@apple.com>
+
+        Redesign how we do for-of iteration for JSArrays
+        https://bugs.webkit.org/show_bug.cgi?id=175454
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        This patch intrinsics for-of iteration for JSArrays when they are
+        being iterated with the built-in Symbol.iterator. We do this by
+        adding two new bytecodes op_iterator_open and
+        op_iterator_next. These bytecodes are essentially a fused set of
+        existing bytecodes with a special case for our intrinsiced JSArray
+        case. This patch only adds support for these instructions on
+        64-bit.
+
+
+        The op_iterator_open bytecode is semantically the same as:
+        iterator = symbolIterator.@call(iterable);
+        next = iterator.next;
+
+        where iterable is the rhs of the for-of and symbolIterator is the
+        result of running iterable.symbolIterator;
+
+
+        The op_iterator_next bytecode is semantically the same as:
+        nextResult = next.@call(iterator);
+        done = nextResult.done;
+        value = done ? (undefined / bottom) : nextResult.value;
+
+        where nextResult is a temporary (the value VirtualRegister in the
+        LLInt/Baseline and a tmp in the DFG).
+
+        In order to make sure these bytecodes have the same perfomance as
+        the existing bytecode sequence, we need to make sure we have the
+        same profiling data and inline caching. Most of the existing
+        get_by_id code assumed a particular bytecode member name was the
+        same in each flavor get_by_id access. This patch adds template
+        specialized functions that vend the correct
+        Profile/VirtualRegister for the current bytecode/checkpoint. This
+        means we can have meaningful names for our Bytecode structs and
+        still use the generic functions.
+
+        In the LLInt most of the logic for calls/get_by_id had to be
+        factored into helper macros, so we could have bytecodes that are
+        some combination of those.
+
+        The trickiest part of this patch was getting the hand rolled DFG
+        IR to work correctly. This is because we don't have a great way to
+        express large chucks of DFG graph that doesn't involve manually
+        tracking all the DFG's invariants. Such as:
+
+        1) Flushing/Phantoming values at the end of each block.
+        2) Rolling forwards and backwards the BytecodeIndex when switching
+           blocks.
+        3) Remembering to GetLocal each variable at the top of every block.
+        4) Ensuring that the JSValue stored to the op_iterator_next.m_value
+           local does not cause us to OSR exit at the set local.
+
+        (4) is handled by a new function, bottomValueMatchingSpeculation,
+        on DFGGraph that produces a FrozenValue that is roughly the bottom
+        for a given speculated type. In a future patch we should make this
+        more complete, probably by adding a VM::bottomCellForSetLocal that
+        prediction propagation and AI know how treat as a true bottom
+        value. See: https://bugs.webkit.org/show_bug.cgi?id=210694
+
+        Lastly, this patch changes the DFG NodeType, CheckCell to be
+        CheckIsConstant.  CheckIsConstant is equivalent to the == operator
+        on JSValue where it just checks the register values are the
+        same. In order to keep the same perf that we had for CheckCell,
+        CheckIsConstant supports CellUse.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or8):
+        (JSC::MacroAssemblerARM64::store8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::or8):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::observeStructureID):
+        (JSC::ArrayProfile::observeStructure):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::tmpLivenessForCheckpoint):
+        * bytecode/BytecodeOperandsForCheckpoint.h: Added.
+        (JSC::arrayProfileForImpl):
+        (JSC::hasArrayProfileFor):
+        (JSC::arrayProfileFor):
+        (JSC::valueProfileForImpl):
+        (JSC::hasValueProfileFor):
+        (JSC::valueProfileFor):
+        (JSC::destinationFor):
+        (JSC::calleeFor):
+        (JSC::argumentCountIncludingThisFor):
+        (JSC::stackOffsetInRegistersForCall):
+        (JSC::callLinkInfoFor):
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::callTypeFor):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::instructionAt const):
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::forEachArrayProfile):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeFromLLInt):
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::width const):
+        (JSC::BaseInstruction::hasCheckpoints const):
+        (JSC::BaseInstruction::asKnownWidth const):
+        (JSC::BaseInstruction::wide16 const):
+        (JSC::BaseInstruction::wide32 const):
+        * bytecode/InstructionStream.h:
+        * bytecode/IterationModeMetadata.h: Copied from Source/JavaScriptCore/bytecode/SuperSampler.h.
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * bytecode/Opcode.h:
+        * bytecode/SpeculatedType.h:
+        (JSC::isSubtypeSpeculation):
+        (JSC::speculationContains):
+        * bytecode/SuperSampler.h:
+        (JSC::SuperSamplerScope::release):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGenericEnumeration):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIsEmpty):
+        (JSC::BytecodeGenerator::emitIteratorOpen):
+        (JSC::BytecodeGenerator::emitIteratorNext):
+        (JSC::BytecodeGenerator::emitGetGenericIterator):
+        (JSC::BytecodeGenerator::emitIteratorGenericNext):
+        (JSC::BytecodeGenerator::emitIteratorGenericNextWithValue):
+        (JSC::BytecodeGenerator::emitIteratorGenericClose):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitIteratorNextWithValue): Deleted.
+        (JSC::BytecodeGenerator::emitIteratorClose): Deleted.
+        (JSC::BytecodeGenerator::emitGetIterator): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::bindValue const):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::size const):
+        (JSC::DFG::AtTailAbstractState::numberOfTmps const):
+        (JSC::DFG::AtTailAbstractState::atIndex):
+        (JSC::DFG::AtTailAbstractState::tmp):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::progressToNextCheckpoint):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::jsConstant):
+        (JSC::DFG::ByteCodeParser::weakJSConstant):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::allocateUntargetableBlock):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleCallVariant):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleDOMJITCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::handleTypedArrayConstructor):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        (JSC::DFG::ByteCodeParser::handleCreateInternalFieldObject):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (JSC::DFG::CFGSimplificationPhase::jettisonBlock):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::addStringReplacePrimordialChecks):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::bottomValueMatchingSpeculation):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::merge):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::size const):
+        (JSC::DFG::InPlaceAbstractState::numberOfTmps const):
+        (JSC::DFG::InPlaceAbstractState::atIndex):
+        (JSC::DFG::InPlaceAbstractState::operand):
+        (JSC::DFG::InPlaceAbstractState::local):
+        (JSC::DFG::InPlaceAbstractState::argument):
+        (JSC::DFG::InPlaceAbstractState::variableAt): Deleted.
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::speculatedType const):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::hasCellOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckIsConstant):
+        (JSC::DFG::SpeculativeJIT::compileCheckCell): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckIsConstant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckCell): Deleted.
+        * generator/DSL.rb:
+        * generator/Metadata.rb:
+        * generator/Section.rb:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::advanceToNextCheckpoint):
+        (JSC::JIT::emitJumpSlowToHotForCheckpoint):
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        (JSC::LLInt::performLLIntGetByID):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::genericCall):
+        (JSC::LLInt::handleIteratorOpenCheckpoint):
+        (JSC::LLInt::handleIteratorNextCheckpoint):
+        (JSC::LLInt::slow_path_checkpoint_osr_exit):
+        (JSC::LLInt::llint_dump_value):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/transform.rb:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iterator_open_try_fast):
+        (JSC::iterator_open_try_fast_narrow):
+        (JSC::iterator_open_try_fast_wide16):
+        (JSC::iterator_open_try_fast_wide32):
+        (JSC::iterator_next_try_fast):
+        (JSC::iterator_next_try_fast_narrow):
+        (JSC::iterator_next_try_fast_wide16):
+        (JSC::iterator_next_try_fast_wide32):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::interationKindForIntrinsic):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayIterator.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isCallable const):
+        * runtime/JSCast.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayProtoValuesFunctionConcurrently const):
+        * runtime/OptionsList.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpBrief const):
+
 2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Replace DFG NewPromise with NewInternalFieldObject

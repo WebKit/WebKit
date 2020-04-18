@@ -274,6 +274,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_catch:
     case op_create_rest:
     case op_get_rest_length:
+    case op_iterator_open:
+    case op_iterator_next:
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
     case op_put_to_scope:
@@ -311,6 +313,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case checkpoint_osr_exit_from_inlined_call_trampoline:
     case checkpoint_osr_exit_trampoline:
     case handleUncaughtException:
+    case op_iterator_open_return_location:
+    case op_iterator_next_return_location:
     case op_call_return_location:
     case op_construct_return_location:
     case op_call_varargs_slow_return_location:

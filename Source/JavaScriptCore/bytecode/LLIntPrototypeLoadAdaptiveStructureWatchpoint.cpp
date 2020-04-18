@@ -60,14 +60,31 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
     }
 
     auto& instruction = m_owner->instructions().at(m_bytecodeOffset.get());
-    clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(m_owner.get()));
+    switch (instruction->opcodeID()) {
+    case op_get_by_id:
+        clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(m_owner.get()).m_modeMetadata);
+        break;
+
+    case op_iterator_open:
+        clearLLIntGetByIdCache(instruction->as<OpIteratorOpen>().metadata(m_owner.get()).m_modeMetadata);
+        break;
+
+    case op_iterator_next: {
+        auto& metadata = instruction->as<OpIteratorNext>().metadata(m_owner.get());
+        clearLLIntGetByIdCache(metadata.m_doneModeMetadata);
+        clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(OpGetById::Metadata& metadata)
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(GetByIdModeMetadata& metadata)
 {
-    // Keep hitCountForLLIntCaching value.
-    metadata.m_modeMetadata.clearToDefaultModeWithoutCache();
+    metadata.clearToDefaultModeWithoutCache();
 }
-
 
 } // namespace JSC

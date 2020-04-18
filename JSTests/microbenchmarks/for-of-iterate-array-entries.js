@@ -3,10 +3,12 @@ function foo() {
     var array = [];
     for (var i = 0; i < 25000; i++)
         array.push(i);
-    
+
     var result = 0;
-    for (var [key, value] of array.entries())
+    for (var [key, value] of array.entries()) {
+        print(key + " " + $vm.indexingMode(array));
         result += key + value + array[key];
+    }
     
     return result;
 }

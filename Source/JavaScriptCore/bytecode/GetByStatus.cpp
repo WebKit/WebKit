@@ -86,6 +86,36 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     case op_get_by_val:
         return GetByStatus(NoInformation, false);
 
+    case op_iterator_open: {
+        ASSERT(bytecodeIndex.checkpoint() == OpIteratorOpen::getNext);
+        auto& metadata = instruction->as<OpIteratorOpen>().metadata(profiledBlock);
+
+        // FIXME: We should not just bail if we see a get_by_id_proto_load.
+        // https://bugs.webkit.org/show_bug.cgi?id=158039
+        if (metadata.m_modeMetadata.mode != GetByIdMode::Default)
+            return GetByStatus(NoInformation, false);
+        structureID = metadata.m_modeMetadata.defaultMode.structureID;
+        identifier = &vm.propertyNames->next;
+        break;
+    }
+
+    case op_iterator_next: {
+        auto& metadata = instruction->as<OpIteratorNext>().metadata(profiledBlock);
+        if (bytecodeIndex.checkpoint() == OpIteratorNext::getDone) {
+            if (metadata.m_doneModeMetadata.mode != GetByIdMode::Default)
+                return GetByStatus(NoInformation, false);
+            structureID = metadata.m_doneModeMetadata.defaultMode.structureID;
+            identifier = &vm.propertyNames->done;
+        } else {
+            ASSERT(bytecodeIndex.checkpoint() == OpIteratorNext::getValue);
+            if (metadata.m_valueModeMetadata.mode != GetByIdMode::Default)
+                return GetByStatus(NoInformation, false);
+            structureID = metadata.m_valueModeMetadata.defaultMode.structureID;
+            identifier = &vm.propertyNames->value;
+        }
+        break;
+    }
+
     default: {
         ASSERT_NOT_REACHED();
         return GetByStatus(NoInformation, false);

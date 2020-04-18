@@ -120,6 +120,16 @@ inline bool isAnySpeculation(SpeculatedType)
     return true;
 }
 
+inline bool isSubtypeSpeculation(SpeculatedType value, SpeculatedType category)
+{
+    return !(value & ~category) && value;
+}
+
+inline bool speculationContains(SpeculatedType value, SpeculatedType category)
+{
+    return !!(value & category) && value;
+}
+
 inline bool isCellSpeculation(SpeculatedType value)
 {
     return !!(value & SpecCell) && !(value & ~SpecCell);

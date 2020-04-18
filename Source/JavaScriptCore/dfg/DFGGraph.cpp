@@ -1524,6 +1524,34 @@ void Graph::convertToStrongConstant(Node* node, JSValue value)
     convertToConstant(node, freezeStrong(value));
 }
 
+FrozenValue* Graph::bottomValueMatchingSpeculation(SpeculatedType prediction)
+{
+    // It probably doesn't matter what we return here.
+    if (prediction == SpecNone)
+        return freeze(JSValue());
+
+    if (speculationContains(prediction, SpecOther))
+        return freeze(jsNull());
+
+    if (speculationContains(prediction, SpecBoolean))
+        return freeze(jsBoolean(true));
+
+    if (speculationContains(prediction, SpecFullNumber))
+        return freeze(jsNumber(0));
+
+    if (speculationContains(prediction, SpecBigInt))
+        return freeze(m_vm.bigIntConstantOne.get());
+
+    if (speculationContains(prediction, SpecString | SpecSymbol))
+        return freeze(m_vm.smallStrings.emptyString());
+
+    if (speculationContains(prediction, SpecCellOther | SpecObject))
+        return freeze(jsNull());
+
+    ASSERT(speculationContains(prediction, SpecEmpty));
+    return freeze(JSValue());
+}
+
 RegisteredStructure Graph::registerStructure(Structure* structure, StructureRegistrationResult& result)
 {
     m_plan.weakReferences().addLazily(structure);

@@ -39,12 +39,24 @@ void CodeBlock::forEachValueProfile(const Functor& func)
 
     if (m_metadata) {
 #define VISIT(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
+        m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
 
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
 
 #undef VISIT
-    }
+
+        m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
+            func(metadata.m_iterableProfile, false);
+            func(metadata.m_iteratorProfile, false);
+            func(metadata.m_nextProfile, false);
+        });
+
+        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+            func(metadata.m_nextResultProfile, false);
+            func(metadata.m_doneProfile, false);
+            func(metadata.m_valueProfile, false);
+        });
+    }   
 
 }
 
@@ -68,6 +80,10 @@ void CodeBlock::forEachArrayProfile(const Functor& func)
 
 #undef VISIT1
 #undef VISIT2
+
+        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+            func(metadata.m_iterableProfile);
+        });
     }
 }
 

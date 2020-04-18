@@ -244,6 +244,17 @@ public:
     void convertToConstant(Node* node, FrozenValue* value);
     void convertToConstant(Node* node, JSValue value);
     void convertToStrongConstant(Node* node, JSValue value);
+
+    // Use this to produce a value you know won't be accessed but the compiler
+    // might think is live. For exmaple, in our op_iterator_next parsing
+    // value VirtualRegister is only read if we are not "done". Because the
+    // done control flow is not in the op_iterator_next bytecode this is not
+    // obvious to the compiler.
+    // FIXME: This isn't quite a true bottom value. For example, any object
+    // speculation will now be Object|Other as this returns null. We should
+    // fix this when we can allocate on the Compiler thread.
+    // https://bugs.webkit.org/show_bug.cgi?id=210627
+    FrozenValue* bottomValueMatchingSpeculation(SpeculatedType);
     
     RegisteredStructure registerStructure(Structure* structure)
     {

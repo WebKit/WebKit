@@ -1032,7 +1032,7 @@ macro defineOSRExitReturnLabel(opcodeName, size)
     size(defineNarrow, defineWide16, defineWide32, macro (f) f() end)
 end
 
-macro callTargetFunction(opcodeName, size, opcodeStruct, dispatch, callee, callPtrTag)
+macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
     if C_LOOP or C_LOOP_WIN
         cloopCallJSFunction callee
     else
@@ -1045,11 +1045,11 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, dispatch, callee, callP
         # that can clobber LLInt execution, resulting in unexpected
         # crashes.
         restoreStackPointerAfterCall()
-        dispatchAfterCall(size, opcodeStruct, dispatch)
+        dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     end
     defineOSRExitReturnLabel(opcodeName, size)
     restoreStackPointerAfterCall()
-    dispatchAfterCall(size, opcodeStruct, dispatch)
+    dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
 end
 
 macro prepareForRegularCall(callee, temp1, temp2, temp3, callPtrTag)
@@ -1117,7 +1117,11 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     jmp callee, callPtrTag
 end
 
-macro slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
+macro slowPathForCommonCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
+    slowPathForCall(opcodeName, size, opcodeStruct, m_profile, m_dst, dispatch, slowPath, prepareCall)
+end
+
+macro slowPathForCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, slowPath, prepareCall)
     callCallSlowPath(
         slowPath,
         # Those are r0 and r1
@@ -1126,7 +1130,7 @@ macro slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepar
             move calleeFramePtr, sp
             prepareCall(callee, t2, t3, t4, SlowPathPtrTag)
         .dontUpdateSP:
-            callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatch, callee, SlowPathPtrTag)
+            callTargetFunction(%opcodeName%_slow, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, SlowPathPtrTag)
         end)
 end
 
@@ -2016,7 +2020,7 @@ macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slo
             subp r1, CallerFrameAndPCSize, sp
         end
     end
-    slowPathForCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
+    slowPathForCommonCall(opcodeName, size, opcodeStruct, dispatch, slowPath, prepareCall)
 end
 
 
@@ -2079,7 +2083,7 @@ end)
 # returns the JS value that the eval returned.
 
 _llint_op_call_eval:
-    slowPathForCall(
+    slowPathForCommonCall(
         op_call_eval_narrow,
         narrow,
         OpCallEval,
@@ -2088,7 +2092,7 @@ _llint_op_call_eval:
         prepareForRegularCall)
 
 _llint_op_call_eval_wide16:
-    slowPathForCall(
+    slowPathForCommonCall(
         op_call_eval_wide16,
         wide16,
         OpCallEval,
@@ -2097,7 +2101,7 @@ _llint_op_call_eval_wide16:
         prepareForRegularCall)
 
 _llint_op_call_eval_wide32:
-    slowPathForCall(
+    slowPathForCommonCall(
         op_call_eval_wide32,
         wide32,
         OpCallEval,
@@ -2107,7 +2111,7 @@ _llint_op_call_eval_wide32:
 
 
 commonOp(llint_generic_return_point, macro () end, macro (size)
-    dispatchAfterCall(size, OpCallEval, macro ()
+    dispatchAfterCall(size, OpCallEval, m_profile, m_dst, macro ()
         dispatchOp(size, op_call_eval)
     end)
 end)

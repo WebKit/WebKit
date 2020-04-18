@@ -60,13 +60,13 @@ inline To jsCast(JSValue from)
 // Specific type overloads.
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
     macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
-    macro(JSArrayIterator, JSType::JSArrayIteratorType, JSType::JSArrayIteratorType) \
     macro(JSStringIterator, JSType::JSStringIteratorType, JSType::JSStringIteratorType) \
     macro(JSObject, FirstObjectType, LastObjectType) \
     macro(JSFinalObject, JSType::FinalObjectType, JSType::FinalObjectType) \
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \
     macro(InternalFunction, JSType::InternalFunctionType, JSType::InternalFunctionType) \
     macro(JSArray, JSType::ArrayType, JSType::DerivedArrayType) \
+    macro(JSArrayIterator, JSType::JSArrayIteratorType, JSType::JSArrayIteratorType) \
     macro(JSArrayBuffer, JSType::ArrayBufferType, JSType::ArrayBufferType) \
     macro(JSArrayBufferView, FirstTypedArrayType, LastTypedArrayType) \
     macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \

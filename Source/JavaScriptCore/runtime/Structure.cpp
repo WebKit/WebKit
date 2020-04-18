@@ -1268,6 +1268,8 @@ void Structure::dumpInContext(PrintStream& out, DumpContext* context) const
 void Structure::dumpBrief(PrintStream& out, const CString& string) const
 {
     out.print("%", string, ":", classInfo()->className);
+    if (indexingType() & IndexingShapeMask)
+        out.print(",", IndexingTypeDump(indexingType()));
 }
 
 void Structure::dumpContextHeader(PrintStream& out)

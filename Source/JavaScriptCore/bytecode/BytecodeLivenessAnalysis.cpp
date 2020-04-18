@@ -231,6 +231,13 @@ Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock
             result.set(OpCallVarargs::argCountIncludingThis);
         return result;
     }
+    case op_iterator_open: {
+        return result;
+    }
+    case op_iterator_next: {
+        result.set(OpIteratorNext::nextResult);
+        return result;
+    }
     default:
         break;
     }

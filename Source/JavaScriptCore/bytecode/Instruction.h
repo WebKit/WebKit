@@ -32,7 +32,9 @@ namespace JSC {
 
 struct JSOpcodeTraits {
     using OpcodeID = ::JSC::OpcodeID;
+    static constexpr OpcodeID numberOfBytecodesWithCheckpoints = static_cast<OpcodeID>(NUMBER_OF_BYTECODE_WITH_CHECKPOINTS);
     static constexpr OpcodeID numberOfBytecodesWithMetadata = static_cast<OpcodeID>(NUMBER_OF_BYTECODE_WITH_METADATA);
+    static_assert(numberOfBytecodesWithCheckpoints <= numberOfBytecodesWithMetadata);
     static constexpr OpcodeID wide16 = op_wide16;
     static constexpr OpcodeID wide32 = op_wide32;
     static constexpr const unsigned* opcodeLengths = ::JSC::opcodeLengths;
@@ -41,7 +43,9 @@ struct JSOpcodeTraits {
 
 struct WasmOpcodeTraits {
     using OpcodeID = WasmOpcodeID;
+    static constexpr OpcodeID numberOfBytecodesWithCheckpoints = static_cast<OpcodeID>(NUMBER_OF_WASM_WITH_CHECKPOINTS);
     static constexpr OpcodeID numberOfBytecodesWithMetadata = static_cast<OpcodeID>(NUMBER_OF_WASM_WITH_METADATA);
+    static_assert(numberOfBytecodesWithCheckpoints <= numberOfBytecodesWithMetadata);
     static constexpr OpcodeID wide16 = wasm_wide16;
     static constexpr OpcodeID wide32 = wasm_wide32;
     static constexpr const unsigned* opcodeLengths = wasmOpcodeLengths;
@@ -99,9 +103,23 @@ public:
     }
 
     template<typename Traits = JSOpcodeTraits>
+    OpcodeSize width() const
+    {
+        if (isWide32<Traits>())
+            return OpcodeSize::Wide32;
+        return isWide16<Traits>() ? OpcodeSize::Wide16 : OpcodeSize::Narrow;
+    }
+
+    template<typename Traits = JSOpcodeTraits>
     bool hasMetadata() const
     {
         return opcodeID<Traits>() < Traits::numberOfBytecodesWithMetadata;
+    }
+
+    template<typename Traits = JSOpcodeTraits>
+    bool hasCheckpoints() const
+    {
+        return opcodeID<Traits>() < Traits::numberOfBytecodesWithCheckpoints;
     }
 
     template<typename Traits = JSOpcodeTraits>
@@ -137,6 +155,13 @@ public:
         return T::decode(reinterpret_cast<const uint8_t*>(this));
     }
 
+    template<class T, OpcodeSize width, typename Traits = JSOpcodeTraits>
+    T asKnownWidth() const
+    {
+        ASSERT((is<T, Traits>()));
+        return T(reinterpret_cast<const typename TypeBySize<width>::unsignedType*>(this + (width == OpcodeSize::Narrow ? 1 : 2)));
+    }
+
     template<class T, typename Traits = JSOpcodeTraits>
     T* cast()
     {
@@ -161,7 +186,7 @@ public:
     {
 
         ASSERT(isWide16<Traits>());
-        return reinterpret_cast<const Impl<OpcodeSize::Wide16>*>(bitwise_cast<uintptr_t>(this) + 1);
+        return reinterpret_cast<const Impl<OpcodeSize::Wide16>*>(this + 1);
     }
 
     template<typename Traits = JSOpcodeTraits>
@@ -169,14 +194,16 @@ public:
     {
 
         ASSERT(isWide32<Traits>());
-        return reinterpret_cast<const Impl<OpcodeSize::Wide32>*>(bitwise_cast<uintptr_t>(this) + 1);
+        return reinterpret_cast<const Impl<OpcodeSize::Wide32>*>(this + 1);
     }
 };
 
 struct Instruction : public BaseInstruction<OpcodeID> {
 };
+static_assert(sizeof(Instruction) == 1, "So pointer math is the same as byte math");
 
 struct WasmInstance : public BaseInstruction<WasmOpcodeID> {
 };
+static_assert(sizeof(WasmInstance) == 1, "So pointer math is the same as byte math");
 
 } // namespace JSC

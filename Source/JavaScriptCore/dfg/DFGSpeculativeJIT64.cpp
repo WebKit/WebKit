@@ -3727,8 +3727,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case CheckCell: {
-        compileCheckCell(node);
+    case CheckIsConstant: {
+        compileCheckIsConstant(node);
         break;
     }
 

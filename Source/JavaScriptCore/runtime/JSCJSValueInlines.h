@@ -827,6 +827,13 @@ inline bool JSValue::isFunction(VM& vm) const
     return asCell()->isFunction(vm);
 }
 
+inline bool JSValue::isCallable(VM& vm) const
+{
+    CallType unusedType;
+    CallData unusedData;
+    return isCallable(vm, unusedType, unusedData);
+}
+
 inline bool JSValue::isCallable(VM& vm, CallType& callType, CallData& callData) const
 {
     if (!isCell())

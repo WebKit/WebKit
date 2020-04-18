@@ -192,6 +192,8 @@ enum Intrinsic : uint8_t {
     DataViewSetFloat64,
 };
 
+Optional<IterationKind> interationKindForIntrinsic(Intrinsic);
+
 const char* intrinsicName(Intrinsic);
 
 } // namespace JSC

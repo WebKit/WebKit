@@ -45,6 +45,7 @@
 #include "IteratorOperations.h"
 #include "JIT.h"
 #include "JSArrayInlines.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
@@ -153,8 +154,11 @@ namespace JSC {
 #define RETURN_PROFILED(value__) \
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))
 
-#define PROFILE_VALUE(value) do { \
-        bytecode.metadata(codeBlock).m_profile.m_buckets[0] = JSValue::encode(value); \
+#define PROFILE_VALUE(value__) \
+    PROFILE_VALUE_IN(value__, m_profile)
+
+#define PROFILE_VALUE_IN(value, profileName) do { \
+        bytecode.metadata(codeBlock).profileName.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
 static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
@@ -963,6 +967,128 @@ SLOW_PATH_DECL(slow_path_in_by_id)
         THROW(createInvalidInParameterError(globalObject, baseValue));
 
     RETURN(jsBoolean(asObject(baseValue)->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
+}
+
+template<OpcodeSize width>
+SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    // Don't set PC; we can't throw and it's relatively slow.
+    BEGIN_NO_SET_PC();
+
+    auto bytecode = pc->asKnownWidth<OpIteratorOpen, width>();
+    auto& metadata = *reinterpret_cast<OpIteratorOpen::Metadata*>(metadataPtr);
+    JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
+    PROFILE_VALUE_IN(iterable, m_iterableProfile);
+    JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
+    auto& iterator = GET(bytecode.m_iterator);
+
+    auto prepareForFastArrayIteration = [&] {
+        if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+            return IterationMode::Generic;
+
+        // This is correct because we just checked the watchpoint is still valid.
+        JSFunction* symbolIteratorFunction = jsDynamicCast<JSFunction*>(vm, symbolIterator);
+        if (!symbolIteratorFunction)
+            return IterationMode::Generic; 
+
+        // We don't want to allocate the values function just to check if it's the same as our function at so we use the concurrent accessor.
+        // FIXME: This only works for arrays from the same global object as ourselves but we should be able to support any pairing.
+        if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
+            return IterationMode::Generic;
+
+        // We should be good to go.
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+        GET(bytecode.m_next) = JSValue();
+        auto* iteratedObject = jsCast<JSObject*>(iterable);
+        iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), iteratedObject, IterationKind::Values);
+        PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorProfile);
+        return IterationMode::FastArray;
+    };
+
+    if (iterable.inherits<JSArray>(vm)) {
+        if (prepareForFastArrayIteration() == IterationMode::FastArray)
+            return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastArray));
+    }
+
+    // Return to the bytecode to try in generic mode.
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::Generic;
+    return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
+}
+
+SlowPathReturnType SLOW_PATH iterator_open_try_fast_narrow(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_open_try_fast<Narrow>(callFrame, pc, metadataPtr);
+}
+
+SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide16(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_open_try_fast<Wide16>(callFrame, pc, metadataPtr);
+}
+
+SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide32(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_open_try_fast<Wide32>(callFrame, pc, metadataPtr);
+}
+
+template<OpcodeSize width>
+SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    BEGIN();
+
+    auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
+    auto& metadata = *reinterpret_cast<OpIteratorNext::Metadata*>(metadataPtr);
+
+    ASSERT(!GET(bytecode.m_next).jsValue());
+    JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());;
+    JSCell* iterable = GET(bytecode.m_iterable).jsValue().asCell();
+    if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(vm, iterator)) {
+        if (auto array = jsDynamicCast<JSArray*>(vm, iterable)) {
+            metadata.m_iterableProfile.observeStructureID(array->structureID());
+
+            metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+            auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
+            int64_t index = indexSlot.get().asAnyInt();
+            ASSERT(0 <= index && index <= maxSafeInteger());
+
+            JSValue value;
+            bool done = index == -1 || index >= array->length();
+            GET(bytecode.m_done) = jsBoolean(done);
+            if (!done) {
+                // No need for a barrier here because we know this is a primitive.
+                indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
+                ASSERT(index == static_cast<unsigned>(index));
+                value = array->getIndex(globalObject, static_cast<unsigned>(index));
+                CHECK_EXCEPTION();
+                PROFILE_VALUE_IN(value, m_valueProfile);
+            } else {
+                // No need for a barrier here because we know this is a primitive.
+                indexSlot.setWithoutWriteBarrier(jsNumber(-1));
+            }
+
+            GET(bytecode.m_value) = value;
+            return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastArray));
+        }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+
+    // Return to the bytecode to try in generic mode.
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::Generic;
+    return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
+}
+
+SlowPathReturnType SLOW_PATH iterator_next_try_fast_narrow(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_next_try_fast<Narrow>(callFrame, pc, metadataPtr);
+}
+
+SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide16(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_next_try_fast<Wide16>(callFrame, pc, metadataPtr);
+}
+
+SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide32(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+{
+    return iterator_next_try_fast<Wide32>(callFrame, pc, metadataPtr);
 }
 
 SLOW_PATH_DECL(slow_path_del_by_val)

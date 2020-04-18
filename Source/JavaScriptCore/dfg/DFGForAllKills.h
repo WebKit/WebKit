@@ -77,7 +77,7 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
         CodeBlock* codeBlock = graph.baselineCodeBlockFor(beforeInlineCallFrame);
         if (after.bytecodeIndex().checkpoint()) {
             ASSERT(before.bytecodeIndex().checkpoint() != after.bytecodeIndex().checkpoint());
-            ASSERT_WITH_MESSAGE(before.bytecodeIndex().offset() == after.bytecodeIndex().offset(), "When the DFG does code motion it should change the forExit origin to match the surrounding bytecodes.");
+            ASSERT_WITH_MESSAGE(before.bytecodeIndex().offset() == after.bytecodeIndex().offset() || nodeAfter->op() == ExitOK || nodeAfter->op() == InvalidationPoint, "When the DFG does code motion it should change the forExit origin to match the surrounding bytecodes.");
 
             auto liveBefore = tmpLivenessForCheckpoint(*codeBlock, before.bytecodeIndex());
             auto liveAfter = tmpLivenessForCheckpoint(*codeBlock, after.bytecodeIndex());
@@ -101,8 +101,6 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
             });
         return;
     }
-
-    ASSERT_WITH_MESSAGE(!after.bytecodeIndex().checkpoint(), "Transitioning across a checkpoint but before and after don't share an inlineCallFrame.");
 
     // Detect kills the super conservative way: it is killed if it was live before and dead after.
     BitVector liveAfter = graph.localsAndTmpsLiveInBytecode(after);

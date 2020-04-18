@@ -176,7 +176,7 @@ public:
         return m_instructions.data();
     }
 
-    bool contains(Instruction *) const;
+    bool contains(Instruction*) const;
 
 protected:
     explicit InstructionStream(InstructionBuffer&&);

@@ -36,6 +36,7 @@
 #include "BytecodeDumper.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "BytecodeOperandsForCheckpoint.h"
 #include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
@@ -582,6 +583,20 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpCatch)
         LINK(OpProfileControlFlow)
+
+        case op_iterator_open: {
+            INITIALIZE_METADATA(OpIteratorOpen)
+
+            m_numberOfNonArgumentValueProfiles += 3;
+            break;
+        }
+
+        case op_iterator_next: {
+            INITIALIZE_METADATA(OpIteratorNext)
+
+            m_numberOfNonArgumentValueProfiles += 3;
+            break;
+        }
 
         case op_resolve_scope: {
             INITIALIZE_METADATA(OpResolveScope)
@@ -1224,14 +1239,27 @@ void CodeBlock::finalizeLLIntInlineCaches()
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=166418
         // We need to add optimizations for op_resolve_scope_for_hoisting_func_decl_in_eval to do link time scope resolution.
 
-        m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-            if (metadata.m_modeMetadata.mode != GetByIdMode::Default)
+        auto clearIfNeeded = [&] (GetByIdModeMetadata& modeMetadata, ASCIILiteral opName) {
+            if (modeMetadata.mode != GetByIdMode::Default)
                 return;
-            StructureID oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
+            StructureID oldStructureID = modeMetadata.defaultMode.structureID;
             if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 return;
-            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
-            LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata);
+            dataLogLnIf(Options::verboseOSR(), "Clearing ", opName, " LLInt property access.");
+            LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(modeMetadata);
+        };
+
+        m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_modeMetadata, "iterator open"_s);
+        });
+
+        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_doneModeMetadata, "iterator next"_s);
+            clearIfNeeded(metadata.m_valueModeMetadata, "iterator next"_s);
+        });
+
+        m_metadata->forEach<OpGetById>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
 
         m_metadata->forEach<OpGetByIdDirect>([&] (auto& metadata) {
@@ -1326,9 +1354,28 @@ void CodeBlock::finalizeLLIntInlineCaches()
         auto clear = [&] () {
             auto& instruction = instructions().at(std::get<1>(pair.key));
             OpcodeID opcode = instruction->opcodeID();
-            if (opcode == op_get_by_id) {
+            switch (opcode) {
+            case op_get_by_id: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
-                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(this));
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(this).m_modeMetadata);
+                break;
+            }
+            case op_iterator_open: {
+                dataLogLnIf(Options::verboseOSR(), "Clearing LLInt iterator open property access.");
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpIteratorOpen>().metadata(this).m_modeMetadata);
+                break;
+            }
+            case op_iterator_next: {
+                dataLogLnIf(Options::verboseOSR(), "Clearing LLInt iterator next property access.");
+                // FIXME: We don't really want to clear both caches here but it's kinda annoying to figure out which one this is referring to...
+                // See: https://bugs.webkit.org/show_bug.cgi?id=210693
+                auto& metadata = instruction->as<OpIteratorNext>().metadata(this);
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_doneModeMetadata);
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+                break;
+            }
+            default:
+                break;
             }
             return true;
         };
@@ -3040,6 +3087,11 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(CASE)
 
 #undef CASE
+
+    case op_iterator_open:
+        return &valueProfileFor(instruction->as<OpIteratorOpen>().metadata(this), bytecodeIndex.checkpoint());
+    case op_iterator_next:
+        return &valueProfileFor(instruction->as<OpIteratorNext>().metadata(this), bytecodeIndex.checkpoint());
 
     default:
         return nullptr;

@@ -159,9 +159,15 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
 #define LLINT_RETURN_LOCATION(name) (callInstruction.isWide16() ? LLInt::getWide16CodePtr<JSEntryPtrTag>(name##_return_location) : (callInstruction.isWide32() ? LLInt::getWide32CodePtr<JSEntryPtrTag>(name##_return_location) : LLInt::getCodePtr<JSEntryPtrTag>(name##_return_location)))
 
         switch (trueCallerCallKind) {
-        case InlineCallFrame::Call:
-            jumpTarget = LLINT_RETURN_LOCATION(op_call);
+        case InlineCallFrame::Call: {
+            if (callInstruction.opcodeID() == op_call)
+                jumpTarget = LLINT_RETURN_LOCATION(op_call);
+            else if (callInstruction.opcodeID() == op_iterator_open)
+                jumpTarget = LLINT_RETURN_LOCATION(op_iterator_open);
+            else if (callInstruction.opcodeID() == op_iterator_next)
+                jumpTarget = LLINT_RETURN_LOCATION(op_iterator_next);
             break;
+        }
         case InlineCallFrame::Construct:
             jumpTarget = LLINT_RETURN_LOCATION(op_construct);
             break;
@@ -239,6 +245,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlock
         }
     }
 
+    ASSERT(jumpTarget);
     return jumpTarget;
 }
 

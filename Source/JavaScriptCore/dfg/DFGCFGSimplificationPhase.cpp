@@ -280,7 +280,7 @@ private:
         }
     }
     
-    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin nodeOrigin, VirtualRegister operand)
+    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin nodeOrigin, Operand operand)
     {
         Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);
         if (!livenessNode)
@@ -302,11 +302,9 @@ private:
     
     void jettisonBlock(BasicBlock* block, BasicBlock* jettisonedBlock, NodeOrigin boundaryNodeOrigin)
     {
-        for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgumentIncludingThis(i));
-        for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
-        
+        for (size_t i = 0; i < jettisonedBlock->variablesAtHead.size(); ++i)
+            keepOperandAlive(block, jettisonedBlock, boundaryNodeOrigin, jettisonedBlock->variablesAtHead.operandForIndex(i));
+
         fixJettisonedPredecessors(block, jettisonedBlock);
     }
     
@@ -352,11 +350,8 @@ private:
             // Time to insert ghosties for things that need to be kept alive in case we OSR
             // exit prior to hitting the firstBlock's terminal, and end up going down a
             // different path than secondBlock.
-            
-            for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForArgumentIncludingThis(i));
-            for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, virtualRegisterForLocal(i));
+            for (size_t i = 0; i < jettisonedBlock->variablesAtHead.size(); ++i)
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryNodeOrigin, jettisonedBlock->variablesAtHead.operandForIndex(i));
         }
         
         for (size_t i = 0; i < secondBlock->phis.size(); ++i)

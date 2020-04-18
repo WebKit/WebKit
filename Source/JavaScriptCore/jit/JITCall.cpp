@@ -29,6 +29,8 @@
 #if USE(JSVALUE64)
 #include "JIT.h"
 
+#include "BytecodeOperandsForCheckpoint.h"
+#include "CacheableIdentifierInlines.h"
 #include "CallFrameShuffler.h"
 #include "CodeBlock.h"
 #include "JITInlines.h"
@@ -42,8 +44,8 @@
 #include "SetupVarargsFrame.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
-#include <wtf/StringPrintStream.h>
 
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
@@ -51,7 +53,7 @@ template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
     emitValueProfilingSite(bytecode.metadata(m_codeBlock));
-    emitPutVirtualRegister(bytecode.m_dst);
+    emitPutVirtualRegister(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), regT0);
 }
 
 template<typename Op>
@@ -61,20 +63,21 @@ std::enable_if_t<
 , void>
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
 {
+    unsigned checkpoint = m_bytecodeIndex.checkpoint();
     auto& metadata = bytecode.metadata(m_codeBlock);
-    int argCount = bytecode.m_argc;
-    int registerOffset = -static_cast<int>(bytecode.m_argv);
+    int argCountIncludingThis = argumentCountIncludingThisFor(bytecode, checkpoint);
+    int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
 
     if (Op::opcodeID == op_call && shouldEmitProfiling()) {
         emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), regT0);
         Jump done = branchIfNotCell(regT0);
         load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-        store32(regT0, metadata.m_callLinkInfo.m_arrayProfile.addressOfLastSeenStructureID());
+        store32(regT0, arrayProfileFor(metadata, checkpoint).addressOfLastSeenStructureID());
         done.link(this);
     }
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
-    store32(TrustedImm32(argCount), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+    store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
 }
 
 
@@ -207,7 +210,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
-    VirtualRegister callee = bytecode.m_callee;
+    VirtualRegister callee = calleeFor(bytecode, m_bytecodeIndex.checkpoint());
 
     /* Caller always:
         - Updates callFrameRegister to callee callFrame.
@@ -234,9 +237,8 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
     store64(regT0, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
-    if (compileCallEval(bytecode)) {
+    if (compileCallEval(bytecode))
         return;
-    }
 
     DataLabelPtr addressOfLinkedFunctionCheck;
     Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(nullptr));
@@ -378,6 +380,184 @@ void JIT::emitSlow_op_construct_varargs(const Instruction* currentInstruction, V
 void JIT::emitSlow_op_construct(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpConstruct>(currentInstruction, iter, m_callLinkInfoIndex++);
+}
+
+void JIT::emit_op_iterator_open(const Instruction* instruction)
+{
+    auto bytecode = instruction->as<OpIteratorOpen>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    auto* tryFastFunction = ([&] () {
+        switch (instruction->width()) {
+        case Narrow: return iterator_open_try_fast_narrow;
+        case Wide16: return iterator_open_try_fast_wide16;
+        case Wide32: return iterator_open_try_fast_wide32;
+        default: RELEASE_ASSERT_NOT_REACHED();
+        }
+    })();
+    setupArguments<decltype(tryFastFunction)>(instruction, &metadata);
+    appendCallWithExceptionCheck(tryFastFunction);
+    Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
+
+    compileOpCall<OpIteratorOpen>(instruction, m_callLinkInfoIndex++);
+    advanceToNextCheckpoint();
+    // call result (iterator) is in regT0
+
+    const Identifier* ident = &vm().propertyNames->next;
+    
+    emitJumpSlowCaseIfNotJSCell(regT0);
+
+    JITGetByIdGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetById);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_getByIds.append(gen);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitPutVirtualRegister(bytecode.m_next);
+
+    fastCase.link(this);
+}
+
+void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+    compileOpCallSlowCase<OpIteratorOpen>(instruction, iter, m_callLinkInfoIndex++);
+    emitJumpSlowToHotForCheckpoint(jump());
+
+
+    linkAllSlowCases(iter);
+    auto bytecode = instruction->as<OpIteratorOpen>();
+    VirtualRegister nextVReg = bytecode.m_next;
+    UniquedStringImpl* ident = vm().propertyNames->next.impl();
+
+    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    
+    Label coldPathBegin = label();
+
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
+void JIT::emit_op_iterator_next(const Instruction* instruction)
+{
+    auto bytecode = instruction->as<OpIteratorNext>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    auto* tryFastFunction = ([&] () {
+        switch (instruction->width()) {
+        case Narrow: return iterator_next_try_fast_narrow;
+        case Wide16: return iterator_next_try_fast_wide16;
+        case Wide32: return iterator_next_try_fast_wide32;
+        default: RELEASE_ASSERT_NOT_REACHED();
+        }
+    })();
+
+    emitGetVirtualRegister(bytecode.m_next, regT0);
+    Jump genericCase = branchIfNotEmpty(regT0);
+    setupArguments<decltype(tryFastFunction)>(instruction, &metadata);
+    appendCallWithExceptionCheck(tryFastFunction);
+    Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
+
+    genericCase.link(this);
+    or8(TrustedImm32(static_cast<uint8_t>(IterationMode::Generic)), AbsoluteAddress(&metadata.m_iterationMetadata.seenModes));
+    compileOpCall<OpIteratorNext>(instruction, m_callLinkInfoIndex++);
+    advanceToNextCheckpoint();
+    // call result ({ done, value } JSObject) in regT0
+
+    GPRReg valueGPR = regT0;
+    GPRReg iterResultGPR = regT2;
+    GPRReg doneGPR = regT1;
+    // iterResultGPR will get trashed by the first get by id below.
+    move(valueGPR, iterResultGPR);
+
+    {
+        emitJumpSlowCaseIfNotJSCell(iterResultGPR);
+
+        RegisterSet preservedRegs = RegisterSet::stubUnavailableRegisters();
+        preservedRegs.add(valueGPR);
+        JITGetByIdGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
+            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->next.impl()), JSValueRegs(iterResultGPR), JSValueRegs(doneGPR), AccessType::GetById);
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByIds.append(gen);
+
+        emitValueProfilingSite(metadata);
+        emitPutVirtualRegister(bytecode.m_done, doneGPR);
+        advanceToNextCheckpoint();
+    }
+
+
+    {
+        GPRReg scratch1 = regT2;
+        GPRReg scratch2 = regT3;
+        const bool shouldCheckMasqueradesAsUndefined = false;
+        JumpList iterationDone = branchIfTruthy(vm(), JSValueRegs(doneGPR), scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
+
+        JITGetByIdGenerator gen(
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), RegisterSet::stubUnavailableRegisters(),
+            CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), JSValueRegs(valueGPR), JSValueRegs(valueGPR), AccessType::GetById);
+        gen.generateFastPath(*this);
+        addSlowCase(gen.slowPathJump());
+        m_getByIds.append(gen);
+
+        emitValueProfilingSite(metadata);
+        emitPutVirtualRegister(bytecode.m_value, valueGPR);
+
+        iterationDone.link(this);
+    }
+
+    fastCase.link(this);
+}
+
+void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+    compileOpCallSlowCase<OpIteratorNext>(instruction, iter, m_callLinkInfoIndex++);
+    emitJumpSlowToHotForCheckpoint(jump());
+
+    auto bytecode = instruction->as<OpIteratorNext>();
+    {
+        VirtualRegister doneVReg = bytecode.m_done;
+        GPRReg iterResultGPR = regT2;
+
+        linkAllSlowCases(iter);
+        JumpList notObject;
+        notObject.append(branchIfNotCell(iterResultGPR));
+        notObject.append(branchIfNotObject(iterResultGPR));
+
+        UniquedStringImpl* ident = vm().propertyNames->done.impl();
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+        
+        Label coldPathBegin = label();
+
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, doneVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+
+        gen.reportSlowPathCall(coldPathBegin, call);
+        emitGetVirtualRegister(doneVReg, regT1);
+        emitGetVirtualRegister(bytecode.m_value, regT0);
+        emitJumpSlowToHotForCheckpoint(jump());
+
+        notObject.link(this);
+        callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_codeBlock->globalObject()));
+    }
+
+    {   
+        linkAllSlowCases(iter);
+        VirtualRegister valueVReg = bytecode.m_value;
+        GPRReg iterResultGPR = regT0;
+
+        UniquedStringImpl* ident = vm().propertyNames->value.impl();
+        JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+
+        Label coldPathBegin = label();
+
+        Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, valueVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iterResultGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
+
+        gen.reportSlowPathCall(coldPathBegin, call);
+    }
+
 }
 
 } // namespace JSC

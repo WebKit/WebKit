@@ -22,7 +22,7 @@ for (var value of iter) {
         throw "Error: bad value: " + value;
 }
 if (returnCalled)
-    throw "Error: return is called.";
+    throw new Error("return was called");
 
 
 
@@ -53,7 +53,7 @@ try {
     }
 } catch (e) {
     if (String(e) !== "Error: Terminate iteration.")
-        throw "Error: bad error thrown: " + e;
+        throw e;
 }
 if (!returnCalled)
     throw "Error: return is not called.";
@@ -108,10 +108,10 @@ try {
     }
 } catch (e) {
     if (String(e) !== "Error: looking up next.")
-        throw "Error: bad error thrown: " + e;
+        throw e;
 }
 if (returnCalled)
-    throw "Error: return is called.";
+    throw new Error("return was called");
 
 
 
@@ -136,7 +136,7 @@ try {
     }
 } catch (e) {
     if (String(e) !== "Error: looking up return.")
-        throw "Error: bad error thrown: " + e;
+        throw e;
 }
 
 
@@ -165,10 +165,10 @@ try {
     }
 } catch (e) {
     if (String(e) !== "Error: next is called.")
-        throw "Error: bad error thrown: " + e;
+        throw e;
 }
 if (returnCalled)
-    throw "Error: return is called.";
+    throw new Error("return was called");
 
 
 
@@ -183,7 +183,7 @@ var iter = {
     },
     return: function () {
         returnCalled = true;
-        throw "Error: return is called.";
+        throw new Error("return was called");
     }
 };
 
@@ -193,7 +193,7 @@ try {
     }
 } catch (e) {
     if (String(e) !== "Error: Terminate iteration.")
-        throw "Error: bad error thrown: " + e;
+        throw e;
 }
 if (!returnCalled)
     throw "Error: return is not called.";
@@ -210,7 +210,7 @@ var iter = {
     },
     return: function () {
         returnCalled = true;
-        throw "Error: return is called.";
+        throw new Error("return was called");
     }
 };
 try {
@@ -218,8 +218,8 @@ try {
         break;
     }
 } catch (e) {
-    if (String(e) !== "Error: return is called.")
-        throw "Error: bad error thrown: " + e;
+    if (String(e) !== "Error: return was called")
+        throw e;
 }
 if (!returnCalled)
     throw "Error: return is not called.";
@@ -255,10 +255,10 @@ function iteratorInterfaceErrorTest(notIteratorResult) {
         }
     } catch (e) {
         if (String(e) !== "TypeError: Iterator result interface is not an object.")
-            throw "Error: bad error thrown: " + e;
+            throw e;
     }
     if (returnCalled)
-        throw "Error: return is called.";
+        throw new Error("return was called");
 }
 
 function iteratorInterfaceErrorTestReturn(notIteratorResult) {
@@ -282,7 +282,7 @@ function iteratorInterfaceErrorTestReturn(notIteratorResult) {
         }
     } catch (e) {
         if (String(e) !== "Error: Terminate iteration.")
-            throw "Error: bad error thrown: " + e;
+            throw e;
     }
     if (!returnCalled)
         throw "Error: return is not called.";
@@ -313,7 +313,7 @@ function iteratorInterfaceBreakTestReturn(notIteratorResult) {
         }
     } catch (e) {
         if (String(e) !== "TypeError: Iterator result interface is not an object.")
-            throw "Error: bad error thrown: " + e;
+            throw e;
     }
     if (!returnCalled)
         throw "Error: return is not called.";

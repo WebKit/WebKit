@@ -158,10 +158,12 @@ public:
     
     Operands<AbstractValue>& variablesForDebugging();
 
+    unsigned size() const { return m_variables.size(); }
     unsigned numberOfArguments() const { return m_variables.numberOfArguments(); }
     unsigned numberOfLocals() const { return m_variables.numberOfLocals(); }
+    unsigned numberOfTmps() const { return m_variables.numberOfTmps(); }
     
-    AbstractValue& variableAt(size_t index)
+    AbstractValue& atIndex(size_t index)
     {
         activateVariableIfNecessary(index);
         return fastForward(m_variables[index]);
@@ -169,17 +171,17 @@ public:
 
     AbstractValue& operand(Operand operand)
     {
-        return variableAt(m_variables.operandIndex(operand));
+        return atIndex(m_variables.operandIndex(operand));
     }
     
     AbstractValue& local(size_t index)
     {
-        return variableAt(m_variables.localIndex(index));
+        return atIndex(m_variables.localIndex(index));
     }
     
     AbstractValue& argument(size_t index)
     {
-        return variableAt(m_variables.argumentIndex(index));
+        return atIndex(m_variables.argumentIndex(index));
     }
     
     // Call this before beginning CFA to initialize the abstract values of

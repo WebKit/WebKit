@@ -259,6 +259,9 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
 
     USES(OpYield, generator, argument)
 
+    USES(OpIteratorOpen, symbolIterator, iterable)
+    USES(OpIteratorNext, iterator, next, iterable)
+
     case op_new_array_with_spread:
         handleNewArrayLike(instruction->as<OpNewArrayWithSpread>());
         return;
@@ -485,6 +488,9 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instru
     DEFS(OpGetInternalField, dst)
 
     DEFS(OpCatch, exception, thrownValue)
+
+    DEFS(OpIteratorOpen, iterator, next)
+    DEFS(OpIteratorNext, done, value)
 
     case op_enter: {
         for (unsigned i = numVars; i--;)

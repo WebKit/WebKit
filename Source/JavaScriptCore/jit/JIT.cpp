@@ -261,7 +261,7 @@ void JIT::privateCompileMainPass()
         m_labels[m_bytecodeIndex.offset()] = label();
 
         if (JITInternal::verbose)
-            dataLogLn("Old JIT emitting code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
+            dataLogLn("Baseline JIT emitting code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
 
         OpcodeID opcodeID = currentInstruction->opcodeID();
 
@@ -438,6 +438,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_get_internal_field)
         DEFINE_OP(op_put_internal_field)
 
+        DEFINE_OP(op_iterator_open)
+        DEFINE_OP(op_iterator_next)
+
         DEFINE_OP(op_ret)
         DEFINE_OP(op_rshift)
         DEFINE_OP(op_unsigned)
@@ -525,7 +528,7 @@ void JIT::privateCompileSlowCases()
             rareCaseProfile = &rareCaseProfiles.at(bytecodeCountHavingSlowCase);
 
         if (JITInternal::verbose)
-            dataLogLn("Old JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
+            dataLogLn("Baseline JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
 
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeIndex.offset(), label());
@@ -589,6 +592,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_get_from_scope)
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
+        DEFINE_SLOWCASE_OP(op_iterator_open)
+        DEFINE_SLOWCASE_OP(op_iterator_next)
+
         DEFINE_SLOWCASE_SLOW_OP(unsigned)
         DEFINE_SLOWCASE_SLOW_OP(inc)
         DEFINE_SLOWCASE_SLOW_OP(dec)
@@ -626,8 +632,8 @@ void JIT::privateCompileSlowCases()
         if (JITInternal::verbose)
             dataLog("At ", firstTo, " slow: ", iter - m_slowCases.begin(), "\n");
 
-        RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to, "Not enough jumps linked in slow case codegen.");
-        RELEASE_ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
+        RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen.");
+        RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen.");
         
         if (shouldEmitProfiling())
             add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));

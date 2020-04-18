@@ -3759,14 +3759,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
     
-    case CheckCell: {
+    case CheckIsConstant: {
         JSValue value = forNode(node->child1()).value();
-        if (value == node->cellOperand()->value()) {
+        if (value == node->constant()->value()) {
             m_state.setShouldTryConstantFolding(true);
-            ASSERT(value);
+            ASSERT(value || forNode(node->child1()).m_type == SpecEmpty);
             break;
         }
-        filterByValue(node->child1(), *node->cellOperand());
+        filterByValue(node->child1(), *node->constant());
         break;
     }
 
@@ -4397,10 +4397,8 @@ void AbstractInterpreter<AbstractStateType>::forAllValues(
                 functor(forNode(node));
         }
     }
-    for (size_t i = m_state.numberOfArguments(); i--;)
-        functor(m_state.argument(i));
-    for (size_t i = m_state.numberOfLocals(); i--;)
-        functor(m_state.local(i));
+    for (size_t i = m_state.size(); i--;)
+        functor(m_state.atIndex(i));
 }
 
 template<typename AbstractStateType>

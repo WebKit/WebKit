@@ -1353,6 +1353,7 @@ WEBKIT_COPY_FILES(JavaScriptCore_CopyPrivateHeaders
     FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
     FLATTENED
 )
+add_dependencies(JavaScriptCore_CopyPrivateHeaders Bytecodes JSCBuiltins)
 # JavaScriptCore_CopyPrivateHeaders needs to have a direct or indirect
 # dependency of JavaScriptCore for CMake Visual Studio generator to
 # eliminate duplicated custom commands. Otherwise,

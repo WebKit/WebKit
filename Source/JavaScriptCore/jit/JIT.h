@@ -297,6 +297,9 @@ namespace JSC {
 
         void privateCompileExceptionHandlers();
 
+        void advanceToNextCheckpoint();
+        void emitJumpSlowToHotForCheckpoint(Jump);
+
         void addSlowCase(Jump);
         void addSlowCase(const JumpList&);
         void addSlowCase();
@@ -676,6 +679,11 @@ namespace JSC {
 
         void emitSlowCaseCall(const Instruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
 
+        void emit_op_iterator_open(const Instruction*);
+        void emitSlow_op_iterator_open(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_iterator_next(const Instruction*);
+        void emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+
         void emitRightShift(const Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
@@ -911,6 +919,7 @@ namespace JSC {
 
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;
+        HashMap<BytecodeIndex, Label> m_checkpointLabels;
         Vector<JITGetByIdGenerator> m_getByIds;
         Vector<JITGetByValGenerator> m_getByVals;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;

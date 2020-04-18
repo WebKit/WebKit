@@ -134,6 +134,16 @@ void JIT_OPERATION operationThrowStackOverflowErrorFromThunk(JSGlobalObject* glo
     ASSERT(vm.targetMachinePCForThrow);
 }
 
+void JIT_OPERATION operationThrowIteratorResultIsNotObject(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    throwTypeError(globalObject, scope, "Iterator result interface is not an object."_s);
+}
+
 int32_t JIT_OPERATION operationCallArityCheck(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();

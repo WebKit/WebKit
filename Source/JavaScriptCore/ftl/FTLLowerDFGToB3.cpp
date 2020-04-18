@@ -883,8 +883,8 @@ private:
         case CheckStructureOrEmpty:
             compileCheckStructureOrEmpty();
             break;
-        case CheckCell:
-            compileCheckCell();
+        case CheckIsConstant:
+            compileCheckIsConstant();
             break;
         case CheckNotEmpty:
             compileCheckNotEmpty();
@@ -3437,7 +3437,7 @@ private:
         }
     }
     
-    void compileCheckCell()
+    void compileCheckIsConstant()
     {
         LValue cell = lowCell(m_node->child1());
         

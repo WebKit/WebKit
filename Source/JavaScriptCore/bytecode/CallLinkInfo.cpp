@@ -40,18 +40,34 @@ namespace JSC {
 
 CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
 {
-    if (opcodeID == op_call || opcodeID == op_call_eval)
+    switch (opcodeID) {
+    case op_tail_call_varargs:
+    case op_tail_call_forward_arguments:
+        return TailCallVarargs;        
+
+    case op_call:
+    case op_call_eval:
+    case op_iterator_open:
+    case op_iterator_next:
         return Call;
-    if (opcodeID == op_call_varargs)
+
+    case op_call_varargs:
         return CallVarargs;
-    if (opcodeID == op_construct)
+
+    case op_construct:
         return Construct;
-    if (opcodeID == op_construct_varargs)
+
+    case op_construct_varargs:
         return ConstructVarargs;
-    if (opcodeID == op_tail_call)
+
+    case op_tail_call:
         return TailCall;
-    ASSERT(opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments);
-    return TailCallVarargs;
+
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return Call;
 }
 
 CallLinkInfo::CallLinkInfo()

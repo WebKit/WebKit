@@ -48,6 +48,7 @@ public:
     using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::or16;
+    using MacroAssemblerX86Common::or8;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load8;
     using MacroAssemblerX86Common::load32;
@@ -94,6 +95,12 @@ public:
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
         or16(imm, Address(scratchRegister()));
+    }
+
+    void or8(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister());
+        or8(imm, Address(scratchRegister()));
     }
 
     void sub32(TrustedImm32 imm, AbsoluteAddress address)

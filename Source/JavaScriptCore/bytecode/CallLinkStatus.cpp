@@ -81,6 +81,13 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
     case op_tail_call:
         callLinkInfo = &instruction->as<OpTailCall>().metadata(profiledBlock).m_callLinkInfo;
         break;
+    case op_iterator_open:
+        callLinkInfo = &instruction->as<OpIteratorOpen>().metadata(profiledBlock).m_callLinkInfo;
+        break;
+    case op_iterator_next:
+        callLinkInfo = &instruction->as<OpIteratorNext>().metadata(profiledBlock).m_callLinkInfo;
+        break;
+
     default:
         return CallLinkStatus();
     }

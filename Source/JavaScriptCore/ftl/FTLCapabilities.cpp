@@ -158,7 +158,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetArgument:
     case InvalidationPoint:
     case StringCharAt:
-    case CheckCell:
+    case CheckIsConstant:
     case CheckBadCell:
     case CheckNotEmpty:
     case AssertNotEmpty:

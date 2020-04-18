@@ -404,6 +404,7 @@ public:
     }
 
     const InstructionStream& instructions() const { return m_unlinkedCode->instructions(); }
+    const Instruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
 
     size_t predictedMachineCodeSize();
 

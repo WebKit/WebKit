@@ -68,6 +68,10 @@ public:
     JSObject* iteratedObject() const { return jsCast<JSObject*>(internalField(Field::IteratedObject).get()); }
 
     static JSArrayIterator* create(VM&, Structure*, JSObject* iteratedObject, JSValue kind);
+    static JSArrayIterator* create(VM& vm, Structure* structure, JSObject* iteratedObject, IterationKind kind)
+    {
+        return create(vm, structure, iteratedObject, jsNumber(static_cast<unsigned>(kind)));
+    }
     static JSArrayIterator* createWithInitialValues(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 

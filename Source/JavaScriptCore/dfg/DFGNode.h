@@ -520,6 +520,7 @@ public:
     bool hasConstant()
     {
         switch (op()) {
+        case CheckIsConstant:
         case JSConstant:
         case DoubleConstant:
         case Int52Constant:
@@ -1850,7 +1851,8 @@ public:
     bool hasCellOperand()
     {
         switch (op()) {
-        case CheckCell:
+        case CheckIsConstant:
+            return isCell(child1().useKind());
         case OverridesHasInstance:
         case NewFunction:
         case NewGeneratorFunction:

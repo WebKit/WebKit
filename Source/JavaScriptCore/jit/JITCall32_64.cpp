@@ -366,6 +366,26 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     emitPutCallResult(bytecode);
 }
 
+void JIT::emit_op_iterator_open(const Instruction*)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void JIT::emitSlow_op_iterator_open(const Instruction*, Vector<SlowCaseEntry>::iterator&)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void JIT::emit_op_iterator_next(const Instruction*)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void JIT::emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)
