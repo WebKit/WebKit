@@ -1,3 +1,13 @@
+2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix for ARM64E after r260310
+        https://bugs.webkit.org/show_bug.cgi?id=207330
+
+        r260310 uses undefined function Instruction.cloneWithNewOperands in arm64e.rb and throws an error.
+        This patch calls `node.cloneWithNewOperands`.
+
+        * offlineasm/arm64e.rb:
+
 2020-04-18  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype[@@search] should use SameValue

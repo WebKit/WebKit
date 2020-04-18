@@ -53,7 +53,7 @@ class Instruction
                         riscLowerOperandToRegister(node, newList, postInstructions, 0, "p", false),
                         tag
                     ]
-                    newList << Instruction.cloneWithNewOperands(operands)
+                    newList << node.cloneWithNewOperands(operands)
                     wasHandled = true
                 end
             when "untagArrayPtr"
@@ -67,7 +67,7 @@ class Instruction
                         operand
                     end
                 }
-                newList << Instruction.cloneWithNewOperands(newOperands)
+                newList << node.cloneWithNewOperands(newOperands)
                 wasHandled = true
             end
             newList += postInstructions if wasHandled
