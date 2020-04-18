@@ -30,7 +30,7 @@ messages -> WebPasteboardProxy NotRefCounted {
 #endif
 
     WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
-    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous WantsConnection
     AllPasteboardItemInfo(String pasteboardName, int64_t changeCount) -> (Optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous
     InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount) -> (Optional<WebCore::PasteboardItemInfo> info) Synchronous
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous

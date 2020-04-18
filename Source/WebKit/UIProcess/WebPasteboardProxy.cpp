@@ -79,7 +79,7 @@ WebProcessProxy* WebPasteboardProxy::webProcessProxyForConnection(IPC::Connectio
 
 #if !PLATFORM(COCOA)
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, const String&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String&, const String&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     completionHandler({ });
 }

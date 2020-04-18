@@ -111,7 +111,7 @@ private:
     void allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<Vector<WebCore::PasteboardItemInfo>>&&)>&&);
 
     void writeCustomData(IPC::Connection&, const Vector<WebCore::PasteboardCustomData>&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
-    void typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&&);
+    void typesSafeForDOMToReadAndWrite(IPC::Connection&, const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&&);
     void containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName, CompletionHandler<void(bool)>&&);
     void containsURLStringSuitableForLoading(const String& pasteboardName, CompletionHandler<void(bool)>&&);
     void urlStringSuitableForLoading(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&&);

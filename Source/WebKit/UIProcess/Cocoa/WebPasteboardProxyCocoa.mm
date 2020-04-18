@@ -127,9 +127,7 @@ void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Comple
 void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType,
     CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&& sandboxExtensions)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler({ }, { });
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, { }));
 
     // FIXME: This should consult canAccessPasteboardData() as well, and avoid responding with file paths if it returns false.
     Vector<String> pathnames;
@@ -153,11 +151,9 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 
 void WebPasteboardProxy::getPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    if (!canAccessPasteboardData(connection, pasteboardName))
-        return completionHandler({ });
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
 
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
+    if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
 
     completionHandler(PlatformPasteboard(pasteboardName).stringForType(pasteboardType));
@@ -165,9 +161,7 @@ void WebPasteboardProxy::getPasteboardStringForType(IPC::Connection& connection,
 
 void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler({ });
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
@@ -177,9 +171,7 @@ void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection
 
 void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler({ }, 0);
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, 0));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
@@ -260,9 +252,7 @@ void WebPasteboardProxy::setPasteboardColor(IPC::Connection& connection, const S
 
 void WebPasteboardProxy::setPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler(0);
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler(0));
 
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
@@ -287,9 +277,7 @@ void WebPasteboardProxy::urlStringSuitableForLoading(IPC::Connection& connection
 
 void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler(0);
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler(0));
 
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     if (handle.isNull()) {
@@ -315,11 +303,9 @@ void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, Completi
     completionHandler(PlatformPasteboard(pasteboardName).numberOfFiles());
 }
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection& connection, const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    ASSERT(!origin.isNull());
-    if (origin.isNull())
-        return completionHandler({ });
+    MESSAGE_CHECK_COMPLETION(!origin.isNull(), completionHandler({ }));
 
     completionHandler(PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin));
 }
@@ -349,9 +335,7 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, C
 
 void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler({ });
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
@@ -371,9 +355,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
 
 void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
 {
-    ASSERT(!pasteboardType.isNull());
-    if (pasteboardType.isNull())
-        return completionHandler({ }, 0);
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, 0));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
@@ -437,4 +419,6 @@ void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& id
 
 } // namespace WebKit
 
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef MESSAGE_CHECK

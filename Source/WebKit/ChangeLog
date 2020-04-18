@@ -1,3 +1,31 @@
+2020-04-18  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Use MESSAGE_CHECK in WebPasteboardProxy
+        <https://webkit.org/b/210684>
+        <rdar://problem/59906721>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        - Add missing #undef of MESSAGE_CHECK_COMPLETION and
+          MESSAGE_CHECK_WITH_RETURN_VALUE.
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        - Replace existing code with MESSAGE_CHECK_COMPLETION macros.
+
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        - Add IPC::Connection to TypesSafeForDOMToReadAndWrite.
+
 2020-04-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable service workers for app-bound domains
