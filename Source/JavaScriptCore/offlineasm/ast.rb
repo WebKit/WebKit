@@ -917,7 +917,11 @@ class Instruction < Node
         @operands = operands
         @annotation = annotation
     end
-    
+
+    def cloneWithNewOperands(newOperands)
+        Instruction.new(self.codeOrigin, self.opcode, newOperands, self.annotation)
+    end
+
     def children
         operands
     end

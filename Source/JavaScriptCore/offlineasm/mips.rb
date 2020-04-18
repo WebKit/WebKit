@@ -554,22 +554,27 @@ class LocalLabelReference
     end
 end
 
-def mipsAsRegister(preList, postList, operand, needRestore)
-    tmp = MIPS_CALL_REG
-    if operand.address?
-        preList << Instruction.new(operand.codeOrigin, "loadp", [operand, MIPS_CALL_REG])
-    elsif operand.is_a? LabelReference
-        preList << Instruction.new(operand.codeOrigin, "la", [operand, MIPS_CALL_REG])
-    elsif operand.register? and operand != MIPS_CALL_REG
-        preList << Instruction.new(operand.codeOrigin, "move", [operand, MIPS_CALL_REG])
-    else
-        needRestore = false
-        tmp = operand
+class Instruction
+    # Replace operands with a single register operand.
+    # Note: in contrast to the risc version, this method drops all other operands.
+    def mipsCloneWithOperandLowered(preList, postList, operandIndex, needRestore)
+        operand = self.operands[operandIndex]
+        tmp = MIPS_CALL_REG
+        if operand.address?
+            preList << Instruction.new(self.codeOrigin, "loadp", [operand, MIPS_CALL_REG])
+        elsif operand.is_a? LabelReference
+            preList << Instruction.new(self.codeOrigin, "la", [operand, MIPS_CALL_REG])
+        elsif operand.register? and operand != MIPS_CALL_REG
+            preList << Instruction.new(self.codeOrigin, "move", [operand, MIPS_CALL_REG])
+        else
+            needRestore = false
+            tmp = operand
+        end
+        if needRestore
+            postList << Instruction.new(self.codeOrigin, "move", [MIPS_GPSAVE_REG, MIPS_GP_REG])
+        end
+        cloneWithNewOperands([tmp])
     end
-    if needRestore
-        postList << Instruction.new(operand.codeOrigin, "move", [MIPS_GPSAVE_REG, MIPS_GP_REG])
-    end
-    tmp
 end
 
 def mipsLowerMisplacedAddresses(list)
@@ -581,30 +586,21 @@ def mipsLowerMisplacedAddresses(list)
             annotation = node.annotation
             case node.opcode
             when "jmp"
-                newList << Instruction.new(node.codeOrigin,
-                                           node.opcode,
-                                           [mipsAsRegister(newList, [], node.operands[0], false)])
+                newList << node.mipsCloneWithOperandLowered(newList, [], 0, false)
             when "call"
-                newList << Instruction.new(node.codeOrigin,
-                                           node.opcode,
-                                           [mipsAsRegister(newList, postInstructions, node.operands[0], true)])
+                newList << node.mipsCloneWithOperandLowered(newList, postInstructions, 0, true)
             when "slt", "sltu"
-                newList << Instruction.new(node.codeOrigin,
-                                           node.opcode,
-                                           riscAsRegisters(newList, [], node.operands, "i"))
+                newList << node.riscCloneWithOperandsLowered(newList, [], "i")
             when "sltub", "sltb"
-                newList << Instruction.new(node.codeOrigin,
-                                           node.opcode,
-                                           riscAsRegisters(newList, [], node.operands, "b"))
+                newList << node.riscCloneWithOperandsLowered(newList, [], "b")
             when "andb"
                 newList << Instruction.new(node.codeOrigin,
                                            "andi",
-                                           riscAsRegisters(newList, [], node.operands, "b"))
+                                           riscLowerOperandsToRegisters(node, newList, [], "b"),
+                                           node.annotation)
             when /^(bz|bnz|bs|bo)/
                 tl = $~.post_match == "" ? "i" : $~.post_match
-                newList << Instruction.new(node.codeOrigin,
-                                           node.opcode,
-                                           riscAsRegisters(newList, [], node.operands, tl))
+                newList << node.riscCloneWithOperandsLowered(newList, [], tl)
             else
                 newList << node
             end

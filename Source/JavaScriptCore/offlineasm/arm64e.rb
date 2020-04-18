@@ -44,13 +44,16 @@ class Instruction
             when "jmp", "call"
                 if node.operands.size > 1
                     if node.operands[1].is_a? RegisterID
-                        tag = riscAsRegister(newList, postInstructions, node.operands[1], "p", false)
+                        tag = riscLowerOperandToRegister(node, newList, postInstructions, 1, "p", false)
                     else
                         tag = Tmp.new(codeOrigin, :gpr)
                         newList << Instruction.new(codeOrigin, "move", [node.operands[1], tag], annotation)
                     end
-                    operands = [riscAsRegister(newList, postInstructions, node.operands[0], "p", false), tag]
-                    newList << Instruction.new(codeOrigin, node.opcode, operands, annotation)
+                    operands = [
+                        riscLowerOperandToRegister(node, newList, postInstructions, 0, "p", false),
+                        tag
+                    ]
+                    newList << Instruction.cloneWithNewOperands(operands)
                     wasHandled = true
                 end
             when "untagArrayPtr"
@@ -64,7 +67,7 @@ class Instruction
                         operand
                     end
                 }
-                newList << Instruction.new(codeOrigin, node.opcode, newOperands, annotation)
+                newList << Instruction.cloneWithNewOperands(newOperands)
                 wasHandled = true
             end
             newList += postInstructions if wasHandled
