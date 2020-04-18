@@ -1,3 +1,24 @@
+2020-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Branch build fix after r260286
+        https://bugs.webkit.org/show_bug.cgi?id=210583
+        <rdar://problem/61943707>
+
+        The branch used ensureStillAliveHere but did not have the rename of that function in r258825,
+        so this effectively merges that revision, too, to make the branch and trunk more similar.
+
+        No change in behavior, just rename to successfully compile.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCodePointAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+
 2020-04-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r260246. rdar://problem/61943700
