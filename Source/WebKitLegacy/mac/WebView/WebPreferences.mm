@@ -300,7 +300,7 @@ public:
             values = [decoder decodeObjectForKey:@"Values"];
         } else {
             int version;
-            [decoder decodeValueOfObjCType:@encode(int) at:&version];
+            [decoder decodeValueOfObjCType:@encode(int) at:&version size:sizeof(int)];
             if (version == 1) {
                 identifier = [decoder decodeObject];
                 values = [decoder decodeObject];
