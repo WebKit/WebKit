@@ -1,3 +1,45 @@
+2020-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS WK1] -[_WebSafeForwarder asyncForwarder] uses non-static dispatch_once_t predicate
+        <https://webkit.org/b/210625>
+
+        Reviewed by Daniel Bates.
+
+        Remove use of dispatch_once to initialize
+        _WebSafeForwarder._asyncForwarder, and modernize both
+        _WebSafeForwarder and _WebSafeAsyncForwarder classes.
+
+        * WebView/WebView.mm:
+        (@interface _WebSafeAsyncForwarder):
+        - Make `_forwarder` weak.  It can't be strong or a retain cycle
+          would be created between this object and _WebSafeForwarder.
+        - Change return type from `id` to `instancetype` for
+          -[_WebSafeAsyncForwarder initWithForwarder:].
+        (@interface _WebSafeForwarder):
+        - Make `_target` weak and rename from `target`.
+        - Make `_defaultTarget` weak and rename from `defaultTarget`.
+        - Rename `_asyncForwarder` from `asyncForwarder`.
+        - Delete unused `asyncForwarderPred`.
+        - Replace -asyncForwarder method declaration with a @property
+          definition.
+        (-[_WebSafeForwarder initWithTarget:defaultTarget:]):
+        - Update for instance variable renames.
+        - Iniitalize `_asyncForwarder` here.  There are (at most) eight
+          _WebSafeForwarder objects created per WebView, so creating
+          this object in the constructor seems reasonable.
+        (-[_WebSafeForwarder asyncForwarder:]):
+        - Delete this method (and use of dispatch_once, fixing the bug).
+          Replace with @synthesize statement.
+        (-[_WebSafeForwarder dealloc:]):
+        - Update for instance variable renames, and assign nil to all
+          instance variables.
+        (-[_WebSafeForwarder forwardInvocation:]):
+        (-[_WebSafeForwarder respondsToSelector:]):
+        (-[_WebSafeForwarder methodSignatureForSelector:]):
+        - Update for instance variable renames.
+        (-[_WebSafeForwarder initWithForwarder:]):
+        - Change return type from `id` to `instancetype`.
+
 2020-04-17  Rob Buis  <rbuis@igalia.com>
 
         Move allowPlugins to FrameLoader
