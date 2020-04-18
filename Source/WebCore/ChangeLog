@@ -1,3 +1,15 @@
+2020-04-18  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt #3 to fix tvOS build
+
+        Unreviewed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+        - Use !PLATFORM(APPLETV) to comment out functions declared within
+          ENABLE(VIDEO_PRESENTATION_MODE) from r260307 and r260308.
+
 2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Move DataRef.h from WebCore to WTF to utilize it in JSC
