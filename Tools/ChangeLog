@@ -1,3 +1,21 @@
+2020-04-18  Daniel Bates  <dabates@apple.com>
+
+        Add some more tests for -focusTextInputContext:placeCaretAt:completionHandler:
+        https://bugs.webkit.org/show_bug.cgi?id=210624
+
+        Reviewed by Simon Fraser.
+
+        Test behavior when the target element is already focused, when the target element
+        is programmatically replaced, and focusing the target element after the page was
+        navigated away.
+
+        Also while I am here, fix up the test FocusFieldAndPlaceCaretOutsideField to
+        use the size of the exampleText constant - 1 instead of hardcoding this value.
+        This will future proof this test should the example text string literal change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TEST):
+
 2020-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix client certificate authentication when using non-default WKWebsiteDataStores
