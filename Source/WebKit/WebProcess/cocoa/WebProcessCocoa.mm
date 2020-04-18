@@ -234,7 +234,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     setCurrentUserInterfaceIdiomIsPad(parameters.currentUserInterfaceIdiomIsPad);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
+#endif
 #endif
 
 #if USE(APPKIT)

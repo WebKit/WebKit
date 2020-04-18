@@ -1,3 +1,15 @@
+2020-04-18  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt #4 to fix tvOS build
+
+        Unreviewed.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        - Add #if ENABLE(VIDEO_PRESENTATION_MODE)/#endif to protect
+          function defined in WebCore/PictureInPictureSupport.h.
+        - See previous build fixes in r260307, r260308 and r260313.
+
 2020-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix client certificate authentication when using non-default WKWebsiteDataStores
