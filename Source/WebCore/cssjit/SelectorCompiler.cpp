@@ -800,6 +800,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassMatches:
+    case CSSSelector::PseudoClassWhere:
         {
             SelectorList matchesList;
             const CSSSelectorList* selectorList = selector.selectorList();

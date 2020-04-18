@@ -798,6 +798,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClassIs:
         case CSSSelector::PseudoClassMatches:
+        case CSSSelector::PseudoClassWhere:
             {
                 bool hasMatchedAnything = false;
 

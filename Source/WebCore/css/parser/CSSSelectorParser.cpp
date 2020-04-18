@@ -497,6 +497,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     case CSSSelector::PseudoClassNot:
     case CSSSelector::PseudoClassIs:
     case CSSSelector::PseudoClassMatches:
+    case CSSSelector::PseudoClassWhere:
     case CSSSelector::PseudoClassNthChild:
     case CSSSelector::PseudoClassNthLastChild:
     case CSSSelector::PseudoClassNthOfType:
@@ -634,7 +635,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassIs:
-        case CSSSelector::PseudoClassMatches: {
+        case CSSSelector::PseudoClassMatches:
+        case CSSSelector::PseudoClassWhere: {
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeComplexSelectorList(block);
             if (!selectorList->first() || !block.atEnd())

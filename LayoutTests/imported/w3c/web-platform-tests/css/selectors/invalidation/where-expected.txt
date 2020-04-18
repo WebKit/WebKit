@@ -5,9 +5,9 @@ Green
 Red
 Yellow
 
-FAIL Preconditions. assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
-FAIL Invalidate :where() for simple selector arguments. assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
-FAIL Invalidate :where() for compound selector arguments. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Invalidate :where() for complex selector arguments. assert_equals: expected "rgb(255, 255, 0)" but got "rgb(0, 0, 0)"
-FAIL Invalidate nested :where(). assert_equals: expected "rgb(0, 0, 255)" but got "rgb(0, 0, 0)"
+PASS Preconditions. 
+PASS Invalidate :where() for simple selector arguments. 
+PASS Invalidate :where() for compound selector arguments. 
+PASS Invalidate :where() for complex selector arguments. 
+PASS Invalidate nested :where(). 
 

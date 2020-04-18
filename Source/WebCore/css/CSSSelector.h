@@ -123,6 +123,7 @@ namespace WebCore {
             PseudoClassDisabled,
             PseudoClassIs,
             PseudoClassMatches, // obsolete synonym for PseudoClassIs
+            PseudoClassWhere,
             PseudoClassOptional,
             PseudoClassPlaceholderShown,
             PseudoClassRequired,

@@ -124,6 +124,8 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
         case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassNot:
             return maxSpecificity(*simpleSelector.selectorList());
+        case CSSSelector::PseudoClassWhere:
+            return 0;
         case CSSSelector::PseudoClassNthChild:
         case CSSSelector::PseudoClassNthLastChild:
             return CSSSelector::addSpecificities(static_cast<unsigned>(SelectorSpecificityIncrement::ClassB), simpleSelector.selectorList() ? maxSpecificity(*simpleSelector.selectorList()) : 0);
@@ -601,6 +603,12 @@ String CSSSelector::selectorText(const String& rightSide) const
             }
             case CSSSelector::PseudoClassMatches: {
                 builder.appendLiteral(":matches(");
+                cs->selectorList()->buildSelectorsText(builder);
+                builder.append(')');
+                break;
+            }
+            case CSSSelector::PseudoClassWhere: {
+                builder.appendLiteral(":where(");
                 cs->selectorList()->buildSelectorsText(builder);
                 builder.append(')');
                 break;
