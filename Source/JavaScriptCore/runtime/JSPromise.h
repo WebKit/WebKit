@@ -41,6 +41,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE static JSPromise* create(VM&, Structure*);
+    static JSPromise* createWithInitialValues(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -59,6 +60,17 @@ public:
         ReactionsOrResult = 1,
     };
     static_assert(numberOfInternalFields == 2);
+
+    static std::array<JSValue, numberOfInternalFields> initialValues()
+    {
+        return { {
+            jsNumber(static_cast<unsigned>(Status::Pending)),
+            jsUndefined(),
+        } };
+    }
+
+    const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
+    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
     JS_EXPORT_PRIVATE Status status(VM&) const;
     JS_EXPORT_PRIVATE JSValue result(VM&) const;

@@ -43,6 +43,7 @@
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
@@ -143,6 +144,14 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globa
             break;
         case JSSetIteratorType:
             materialize(jsCast<JSSetIterator*>(target));
+            break;
+        case JSPromiseType:
+            if (target->classInfo(vm) == JSInternalPromise::info())
+                materialize(jsCast<JSInternalPromise*>(target));
+            else {
+                ASSERT(target->classInfo(vm) == JSPromise::info());
+                materialize(jsCast<JSPromise*>(target));
+            }
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -342,6 +351,17 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
         case JSSetIteratorType: {
             JSSetIterator* result = JSSetIterator::createWithInitialValues(vm, structure);
             RELEASE_ASSERT(materialization->properties().size() - 1 == JSSetIterator::numberOfInternalFields);
+            return result;
+        }
+        case JSPromiseType: {
+            if (structure->classInfo() == JSInternalPromise::info()) {
+                JSInternalPromise* result = JSInternalPromise::createWithInitialValues(vm, structure);
+                RELEASE_ASSERT(materialization->properties().size() - 1 == JSInternalPromise::numberOfInternalFields);
+                return result;
+            }
+            ASSERT(structure->classInfo() == JSPromise::info());
+            JSPromise* result = JSPromise::createWithInitialValues(vm, structure);
+            RELEASE_ASSERT(materialization->properties().size() - 1 == JSPromise::numberOfInternalFields);
             return result;
         }
         default:

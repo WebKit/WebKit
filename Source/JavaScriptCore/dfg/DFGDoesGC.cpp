@@ -353,7 +353,6 @@ bool doesGC(Graph& graph, Node* node)
     case Arrayify:
     case ArrayifyToStructure:
     case NewObject:
-    case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
     case NewArray:

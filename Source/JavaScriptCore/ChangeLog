@@ -1,5 +1,77 @@
 2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Replace DFG NewPromise with NewInternalFieldObject
+        https://bugs.webkit.org/show_bug.cgi?id=210687
+
+        Reviewed by Saam Barati.
+
+        The feature of DFG::NewPromise can be implemented completely with DFG::NewInternalFieldObject. This reduces code duplication, and furthermore,
+        this offers Object Allocation Sinking support for free. This patch replaces DFG::NewPromise with DFG::NewInternalFieldObject and remove DFG::NewPromise
+        completely.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNewInternalFieldObject):
+        (JSC::DFG::Node::convertToNewInternalFieldObjectWithInlineFields):
+        (JSC::DFG::Node::hasIsInternalPromise):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::convertToNewPromise): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewInternalFieldObject):
+        (JSC::DFG::SpeculativeJIT::compileNewPromise): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewPromise): Deleted.
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::createWithInitialValues):
+        * runtime/JSInternalPromise.h:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createWithInitialValues):
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::status const):
+        (JSC::JSPromise::result const):
+        (JSC::JSPromise::flags const):
+        (JSC::JSPromise::resolve):
+        (JSC::JSPromise::reject):
+        (JSC::JSPromise::rejectAsHandled):
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::initialValues):
+        (JSC::JSPromise::internalField const):
+        (JSC::JSPromise::internalField):
+
+2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix for ARM64E after r260310
         https://bugs.webkit.org/show_bug.cgi?id=207330
 

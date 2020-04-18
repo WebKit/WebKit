@@ -332,7 +332,6 @@ private:
             
             switch (m_node->op()) {
             case NewObject:
-            case NewPromise:
             case NewGenerator:
             case NewAsyncGenerator:
             case NewArray:

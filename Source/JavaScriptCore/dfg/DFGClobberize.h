@@ -1602,7 +1602,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case NewObject:
-    case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
     case NewInternalFieldObject:

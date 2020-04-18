@@ -3246,11 +3246,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case NewPromise: {
-        compileNewPromise(node);
-        break;
-    }
-
     case NewGenerator: {
         compileNewGenerator(node);
         break;

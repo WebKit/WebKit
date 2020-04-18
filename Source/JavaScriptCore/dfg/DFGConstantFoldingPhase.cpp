@@ -831,7 +831,7 @@ private:
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
                     if (base == (node->isInternalPromise() ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
-                        node->convertToNewPromise(m_graph.registerStructure(node->isInternalPromise() ? globalObject->internalPromiseStructure() : globalObject->promiseStructure()));
+                        node->convertToNewInternalFieldObject(m_graph.registerStructure(node->isInternalPromise() ? globalObject->internalPromiseStructure() : globalObject->promiseStructure()));
                         changed = true;
                         break;
                     }
@@ -845,7 +845,7 @@ private:
                                     && rareData->allocationProfileWatchpointSet().isStillValid()) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                                    node->convertToNewPromise(m_graph.registerStructure(structure));
+                                    node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
                                     changed = true;
                                     break;
                                 }
@@ -871,7 +871,7 @@ private:
                                         && rareData->allocationProfileWatchpointSet().isStillValid()) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                                        node->convertToNewInternalFieldObject(newOp, m_graph.registerStructure(structure));
+                                        node->convertToNewInternalFieldObjectWithInlineFields(newOp, m_graph.registerStructure(structure));
                                         changed = true;
                                         return;
                                     }

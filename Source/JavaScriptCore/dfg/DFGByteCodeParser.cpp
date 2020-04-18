@@ -5240,7 +5240,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 }
                 if (promiseConstructor) {
                     addToGraph(Phantom, callee);
-                    set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())), OpInfo(bytecode.m_isInternalPromise)));
+                    Node* promise = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())));
+                    set(VirtualRegister(bytecode.m_dst), promise);
                     alreadyEmitted = true;
                 }
             }
@@ -5273,7 +5274,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
 
-                                set(VirtualRegister(bytecode.m_dst), addToGraph(NewPromise, OpInfo(m_graph.registerStructure(structure)), OpInfo(bytecode.m_isInternalPromise)));
+                                Node* promise = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(structure)));
+                                set(VirtualRegister(bytecode.m_dst), promise);
                                 // The callee is still live up to this point.
                                 addToGraph(Phantom, callee);
                                 alreadyEmitted = true;
@@ -5308,7 +5310,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_new_promise: {
             auto bytecode = currentInstruction->as<OpNewPromise>();
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-            set(bytecode.m_dst, addToGraph(NewPromise, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())), OpInfo(bytecode.m_isInternalPromise)));
+            Node* promise = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(bytecode.m_isInternalPromise ? globalObject->internalPromiseStructure() : globalObject->promiseStructure())));
+            set(bytecode.m_dst, promise);
             NEXT_OPCODE(op_new_promise);
         }
 

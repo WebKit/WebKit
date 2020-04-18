@@ -2533,7 +2533,6 @@ private:
         case VarargsLength:
         case ProfileControlFlow:
         case NewObject:
-        case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
         case NewInternalFieldObject:

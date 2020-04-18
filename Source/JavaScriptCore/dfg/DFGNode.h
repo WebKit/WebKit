@@ -784,17 +784,16 @@ public:
         m_opInfo2 = OpInfoWrapper();
     }
 
-    void convertToNewPromise(RegisteredStructure structure)
+    void convertToNewInternalFieldObject(RegisteredStructure structure)
     {
         ASSERT(m_op == CreatePromise);
-        bool internal = isInternalPromise();
-        setOpAndDefaultFlags(NewPromise);
+        setOpAndDefaultFlags(NewInternalFieldObject);
         children.reset();
         m_opInfo = structure;
-        m_opInfo2 = internal;
+        m_opInfo2 = OpInfoWrapper();
     }
 
-    void convertToNewInternalFieldObject(NodeType newOp, RegisteredStructure structure)
+    void convertToNewInternalFieldObjectWithInlineFields(NodeType newOp, RegisteredStructure structure)
     {
         ASSERT(m_op == CreateAsyncGenerator || m_op == CreateGenerator);
         setOpAndDefaultFlags(newOp);
@@ -1312,7 +1311,7 @@ public:
 
     bool hasIsInternalPromise()
     {
-        return op() == CreatePromise || op() == NewPromise;
+        return op() == CreatePromise;
     }
 
     bool isInternalPromise()
@@ -1981,7 +1980,6 @@ public:
         case ArrayifyToStructure:
         case MaterializeNewInternalFieldObject:
         case NewObject:
-        case NewPromise:
         case NewGenerator:
         case NewAsyncGenerator:
         case NewInternalFieldObject:

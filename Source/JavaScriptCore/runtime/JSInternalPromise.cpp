@@ -40,6 +40,11 @@ JSInternalPromise* JSInternalPromise::create(VM& vm, Structure* structure)
     return promise;
 }
 
+JSInternalPromise* JSInternalPromise::createWithInitialValues(VM& vm, Structure* structure)
+{
+    return create(vm, structure);
+}
+
 Structure* JSInternalPromise::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSPromiseType, StructureFlags), info());

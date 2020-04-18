@@ -1053,7 +1053,6 @@ private:
         }
 
         case CreatePromise:
-        case NewPromise:
             setPrediction(SpecPromiseObject);
             break;
 

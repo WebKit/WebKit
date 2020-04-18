@@ -352,7 +352,6 @@ namespace JSC { namespace DFG {
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
-    macro(NewPromise, NodeResultJS) \
     macro(NewGenerator, NodeResultJS) \
     macro(NewAsyncGenerator, NodeResultJS) \
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \

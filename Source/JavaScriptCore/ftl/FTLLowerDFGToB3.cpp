@@ -84,6 +84,7 @@
 #include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
+#include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -1064,9 +1065,6 @@ private:
             break;
         case NewObject:
             compileNewObject();
-            break;
-        case NewPromise:
-            compileNewPromise();
             break;
         case NewGenerator:
             compileNewGenerator();
@@ -6350,32 +6348,6 @@ private:
         mutatorFence();
     }
 
-    void compileNewPromise()
-    {
-        LBasicBlock slowCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
-
-        LValue promise;
-        if (m_node->isInternalPromise())
-            promise = allocateObject<JSInternalPromise>(m_node->structure(), m_out.intPtrZero, slowCase);
-        else
-            promise = allocateObject<JSPromise>(m_node->structure(), m_out.intPtrZero, slowCase);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)))), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::Flags)]);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsUndefined())), promise, m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSPromise::Field::ReactionsOrResult)]);
-        mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(promise);
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_node->isInternalPromise() ? operationNewInternalPromise : operationNewPromise, m_vmValue, frozenPointer(m_graph.freezeStrong(m_node->structure().get()))));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
-    }
-
     template<typename JSClass, typename Operation>
     void compileNewInternalFieldObjectImpl(Operation operation)
     {
@@ -6422,6 +6394,14 @@ private:
             break;
         case JSSetIteratorType:
             compileNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
+            break;
+        case JSPromiseType:
+            if (m_node->structure()->classInfo() == JSInternalPromise::info())
+                compileNewInternalFieldObjectImpl<JSInternalPromise>(operationNewInternalPromise);
+            else {
+                ASSERT(m_node->structure()->classInfo() == JSPromise::info());
+                compileNewInternalFieldObjectImpl<JSPromise>(operationNewPromise);
+            }
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad structure");
@@ -12468,6 +12448,14 @@ private:
             break;
         case JSSetIteratorType:
             compileMaterializeNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
+            break;
+        case JSPromiseType:
+            if (m_node->structure()->classInfo() == JSInternalPromise::info())
+                compileMaterializeNewInternalFieldObjectImpl<JSInternalPromise>(operationNewInternalPromise);
+            else {
+                ASSERT(m_node->structure()->classInfo() == JSPromise::info());
+                compileMaterializeNewInternalFieldObjectImpl<JSPromise>(operationNewPromise);
+            }
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad structure");

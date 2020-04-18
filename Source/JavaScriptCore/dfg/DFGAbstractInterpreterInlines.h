@@ -2858,7 +2858,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:    
     case NewInternalFieldObject:

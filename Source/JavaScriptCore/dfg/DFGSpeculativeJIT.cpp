@@ -12948,33 +12948,6 @@ void SpeculativeJIT::compileNewObject(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileNewPromise(Node* node)
-{
-    GPRTemporary result(this);
-    GPRTemporary scratch1(this);
-    GPRTemporary scratch2(this);
-
-    GPRReg resultGPR = result.gpr();
-    GPRReg scratch1GPR = scratch1.gpr();
-    GPRReg scratch2GPR = scratch2.gpr();
-
-    MacroAssembler::JumpList slowCases;
-
-    FrozenValue* structure = m_graph.freezeStrong(node->structure().get());
-    auto butterfly = TrustedImmPtr(nullptr);
-    if (node->isInternalPromise())
-        emitAllocateJSObjectWithKnownSize<JSInternalPromise>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSInternalPromise));
-    else
-        emitAllocateJSObjectWithKnownSize<JSPromise>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowCases, sizeof(JSPromise));
-    m_jit.storeTrustedValue(jsNumber(static_cast<unsigned>(JSPromise::Status::Pending)), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::Flags))));
-    m_jit.storeTrustedValue(jsUndefined(), CCallHelpers::Address(resultGPR, JSInternalFieldObjectImpl<>::offsetOfInternalField(static_cast<unsigned>(JSPromise::Field::ReactionsOrResult))));
-    m_jit.mutatorFence(m_jit.vm());
-
-    addSlowPathGenerator(slowPathCall(slowCases, this, node->isInternalPromise() ? operationNewInternalPromise : operationNewPromise, resultGPR, TrustedImmPtr(&vm()), TrustedImmPtr(structure)));
-
-    cellResult(resultGPR, node);
-}
-
 template<typename JSClass, typename Operation>
 void SpeculativeJIT::compileNewInternalFieldObjectImpl(Node* node, Operation operation)
 {
@@ -13024,6 +12997,15 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
     case JSSetIteratorType:
         compileNewInternalFieldObjectImpl<JSSetIterator>(node, operationNewSetIterator);
         break;
+    case JSPromiseType: {
+        if (node->structure()->classInfo() == JSInternalPromise::info())
+            compileNewInternalFieldObjectImpl<JSInternalPromise>(node, operationNewInternalPromise);
+        else {
+            ASSERT(node->structure()->classInfo() == JSPromise::info());
+            compileNewInternalFieldObjectImpl<JSPromise>(node, operationNewPromise);
+        }
+        break;
+    }
     default:
         DFG_CRASH(m_graph, node, "Bad structure");
     }

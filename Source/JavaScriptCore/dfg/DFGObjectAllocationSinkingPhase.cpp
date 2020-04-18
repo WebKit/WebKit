@@ -42,6 +42,7 @@
 #include "DFGValidate.h"
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"
+#include "JSInternalPromise.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include <wtf/StdList.h>
@@ -973,6 +974,14 @@ private:
                 break;
             case JSSetIteratorType:
                 target = handleInternalFieldClass<JSSetIterator>(node, writes);
+                break;
+            case JSPromiseType:
+                if (node->structure()->classInfo() == JSInternalPromise::info())
+                    target = handleInternalFieldClass<JSInternalPromise>(node, writes);
+                else {
+                    ASSERT(node->structure()->classInfo() == JSPromise::info());
+                    target = handleInternalFieldClass<JSPromise>(node, writes);
+                }
                 break;
             default:
                 DFG_CRASH(m_graph, node, "Bad structure");

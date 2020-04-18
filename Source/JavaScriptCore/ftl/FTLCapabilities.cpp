@@ -74,7 +74,6 @@ inline CapabilityLevel canCompile(Node* node)
     case PutStructure:
     case GetButterfly:
     case NewObject:
-    case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
     case NewStringObject:

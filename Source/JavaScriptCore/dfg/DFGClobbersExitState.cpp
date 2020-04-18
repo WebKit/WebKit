@@ -57,7 +57,6 @@ bool clobbersExitState(Graph& graph, Node* node)
     case ArrayifyToStructure:
     case Arrayify:
     case NewObject:
-    case NewPromise:
     case NewGenerator:
     case NewAsyncGenerator:
     case NewInternalFieldObject:

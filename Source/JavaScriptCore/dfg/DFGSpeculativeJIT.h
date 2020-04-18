@@ -1459,7 +1459,6 @@ public:
     void compileCreateGenerator(Node*);
     void compileCreateAsyncGenerator(Node*);
     void compileNewObject(Node*);
-    void compileNewPromise(Node*);
     void compileNewGenerator(Node*);
     void compileNewAsyncGenerator(Node*);
     void compileNewInternalFieldObject(Node*);
