@@ -125,4 +125,6 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
 JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 
+EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject*, CallFrame*);
+
 } // namespace JSC

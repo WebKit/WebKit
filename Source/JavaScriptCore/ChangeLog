@@ -1,3 +1,24 @@
+2020-04-18  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        RegExp.prototype[@@search] should use SameValue
+        https://bugs.webkit.org/show_bug.cgi?id=173226
+
+        Reviewed by Yusuke Suzuki.
+
+        This change exposes Object.is implementation as link-time-constant @sameValue and utilizes
+        it in RegExp.prototype[@@search] per spec [1], aligning JSC with V8 and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-regexp.prototype-@@search (steps 5, 8)
+
+        * builtins/BuiltinNames.h:
+        * builtins/RegExpPrototype.js:
+        (Symbol.search):
+        * bytecode/LinkTimeConstant.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectConstructor.h:
+
 2020-04-18  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Fix code origin when lowering offlineasm instructions on MIPS/ARM64E

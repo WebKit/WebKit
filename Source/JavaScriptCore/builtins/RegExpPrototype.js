@@ -403,10 +403,9 @@ function search(strArg)
     // 4. Let previousLastIndex be ? Get(rx, "lastIndex").
     var previousLastIndex = regexp.lastIndex;
 
-    // 5.If SameValue(previousLastIndex, 0) is false, then
+    // 5. If SameValue(previousLastIndex, 0) is false, then
     // 5.a. Perform ? Set(rx, "lastIndex", 0, true).
-    // FIXME: Add SameValue support. https://bugs.webkit.org/show_bug.cgi?id=173226
-    if (previousLastIndex !== 0)
+    if (!@sameValue(previousLastIndex, 0))
         regexp.lastIndex = 0;
 
     // 6. Let result be ? RegExpExec(rx, S).
@@ -415,8 +414,7 @@ function search(strArg)
     // 7. Let currentLastIndex be ? Get(rx, "lastIndex").
     // 8. If SameValue(currentLastIndex, previousLastIndex) is false, then
     // 8.a. Perform ? Set(rx, "lastIndex", previousLastIndex, true).
-    // FIXME: Add SameValue support. https://bugs.webkit.org/show_bug.cgi?id=173226
-    if (regexp.lastIndex !== previousLastIndex)
+    if (!@sameValue(regexp.lastIndex, previousLastIndex))
         regexp.lastIndex = previousLastIndex;
 
     // 9. If result is null, return -1.

@@ -122,6 +122,7 @@ namespace JSC {
     macro(instanceOf) \
     macro(isArraySlow) \
     macro(isConstructor) \
+    macro(sameValue) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \
     macro(regExpCreate) \

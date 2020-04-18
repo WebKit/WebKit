@@ -74,6 +74,7 @@ class JSGlobalObject;
     v(Set, nullptr) \
     v(thisTimeValue, nullptr) \
     v(isConstructor, nullptr) \
+    v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
     v(regExpProtoGlobalGetter, nullptr) \
     v(regExpProtoIgnoreCaseGetter, nullptr) \
