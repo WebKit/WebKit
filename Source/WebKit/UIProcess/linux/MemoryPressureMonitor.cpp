@@ -60,44 +60,31 @@ static const char* s_procZoneinfo = "/proc/zoneinfo";
 static const char* s_procSelfCgroup = "/proc/self/cgroup";
 static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) include/uapi/linux/limits.h
 
+#define CGROUP_NAME_BUFFER_SIZE 40
+#define MEMINFO_TOKEN_BUFFER_SIZE 50
+#define STRINGIFY_EXPANDED(val) #val
+#define STRINGIFY(val) STRINGIFY_EXPANDED(val)
+#define ZONEINFO_TOKEN_BUFFER_SIZE 128
+
 static size_t lowWatermarkPages(FILE* zoneInfoFile)
 {
-    if (!zoneInfoFile)
-        return notSet;
-
-    if (fseek(zoneInfoFile, 0, SEEK_SET))
-        return notSet;
-
     size_t low = 0;
-    bool inZone = false;
-    bool foundLow = false;
-    char buffer[128];
-    while (char* line = fgets(buffer, 128, zoneInfoFile)) {
-        if (!strncmp(line, "Node", 4)) {
-            inZone = true;
-            foundLow = false;
-            continue;
-        }
+    char buffer[ZONEINFO_TOKEN_BUFFER_SIZE + 1];
+    bool inNormalZone = false;
 
-        char* token = strtok(line, " ");
-        if (!token)
-            continue;
+    if (!zoneInfoFile || fseek(zoneInfoFile, 0, SEEK_SET))
+        return notSet;
 
-        if (!strcmp(token, "low")) {
-            if (!inZone || foundLow) {
-                low = notSet;
+    while (!feof(zoneInfoFile)) {
+        int r;
+        r = fscanf(zoneInfoFile, " Node %*u, zone %" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "[^\n]\n", buffer);
+        if (r == 2 && !strcmp(buffer, "Normal"))
+            inNormalZone = true;
+        r = fscanf(zoneInfoFile, "%" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "s", buffer);
+        if (r == 1 && inNormalZone && !strcmp(buffer, "low")) {
+            r = fscanf(zoneInfoFile, "%zu", &low);
+            if (r == 1)
                 break;
-            }
-            token = strtok(nullptr, " ");
-            if (!token) {
-                low = notSet;
-                break;
-            }
-            bool ok = true;
-            auto value = toIntegralType<size_t>(token, strlen(token), &ok);
-            if (ok)
-                low += value;
-            foundLow = true;
         }
     }
     return low;
@@ -175,29 +162,20 @@ FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, 
 static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* controllerName)
 {
     CString cgroupMemoryControllerPath;
-    if (!cgroupControllerFile)
+    if (!cgroupControllerFile || fseek(cgroupControllerFile, 0, SEEK_SET))
         return CString();
 
-    if (fseek(cgroupControllerFile, 0, SEEK_SET))
-        return CString();
-
-    char buffer[maxCgroupPath];
-    while (char* line = fgets(buffer, maxCgroupPath, cgroupControllerFile)) {
-        char* token = strtok(line, "\n");
-        if (!token)
-            break;
-
-        token = strtok(token, ":");
-        token = strtok(nullptr, ":");
-        if (!strcmp(token, controllerName)) {
-            token = strtok(nullptr, ":");
-            cgroupMemoryControllerPath = CString(token);
-            return cgroupMemoryControllerPath;
+    while (!feof(cgroupControllerFile)) {
+        char name[CGROUP_NAME_BUFFER_SIZE + 1];
+        char path[maxCgroupPath + 1];
+        int scanResult = fscanf(cgroupControllerFile, "%*u:%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name, path);
+        if (scanResult != 2)
+            return CString();
+        if (!strcmp(name, controllerName)) {
+            return CString(path);
         }
-        if (!strncmp(token, "name=systemd", 12)) {
-            token = strtok(nullptr, ":");
-            cgroupMemoryControllerPath = CString(token);
-        }
+        if (!strcmp(name, "name=systemd"))
+            cgroupMemoryControllerPath = CString(path);
     }
     return cgroupMemoryControllerPath;
 }
@@ -205,65 +183,29 @@ static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* c
 
 static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, CGroupMemoryController* memoryController)
 {
-    if (!memInfoFile)
-        return -1;
-
-    if (fseek(memInfoFile, 0, SEEK_SET))
+    if (!memInfoFile || fseek(memInfoFile, 0, SEEK_SET))
         return -1;
 
     size_t memoryAvailable, memoryTotal, memoryFree, activeFile, inactiveFile, slabReclaimable;
     memoryAvailable = memoryTotal = memoryFree = activeFile = inactiveFile = slabReclaimable = notSet;
-    char buffer[128];
-    while (char* line = fgets(buffer, 128, memInfoFile)) {
-        char* token = strtok(line, " ");
-        bool ok = true;
-        if (!token)
-            break;
 
-        if (!strcmp(token, "MemAvailable:")) {
-            if ((token = strtok(nullptr, " "))) {
-                memoryAvailable = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    memoryAvailable = notSet;
-                if (memoryTotal != notSet)
-                    break;
-            }
-        } else if (!strcmp(token, "MemTotal:")) {
-            if ((token = strtok(nullptr, " "))) {
-                memoryTotal = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    memoryTotal = notSet;
-            } else
-                break;
-        } else if (!strcmp(token, "MemFree:")) {
-            if ((token = strtok(nullptr, " "))) {
-                memoryFree = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    memoryFree = notSet;
-            } else
-                break;
-        } else if (!strcmp(token, "Active(file):")) {
-            if ((token = strtok(nullptr, " "))) {
-                activeFile = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    activeFile = notSet;
-            } else
-                break;
-        } else if (!strcmp(token, "Inactive(file):")) {
-            if ((token = strtok(nullptr, " "))) {
-                inactiveFile = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    inactiveFile = notSet;
-            } else
-                break;
-        } else if (!strcmp(token, "SReclaimable:")) {
-            if ((token = strtok(nullptr, " "))) {
-                slabReclaimable = toIntegralType<size_t>(token, strlen(token), &ok);
-                if (!ok)
-                    slabReclaimable = notSet;
-            } else
-                break;
-        }
+    while (!feof(memInfoFile)) {
+        char token[MEMINFO_TOKEN_BUFFER_SIZE + 1];
+        size_t amount;
+        if (fscanf(memInfoFile, "%" STRINGIFY(MEMINFO_TOKEN_BUFFER_SIZE) "s%zukB", token, &amount) != 2)
+            continue;
+        if (!strcmp(token, "MemTotal:"))
+            memoryTotal = amount;
+        else if (!strcmp(token, "MemFree:"))
+            memoryFree = amount;
+        else if (!strcmp(token, "MemAvailable:"))
+            memoryAvailable = amount;
+        else if (!strcmp(token, "Active(file):"))
+            activeFile = amount;
+        else if (!strcmp(token, "Inactive(file):"))
+            inactiveFile = amount;
+        else if (!strcmp(token, "SReclaimable:"))
+            slabReclaimable = amount;
 
         if (memoryTotal != notSet && memoryFree != notSet && activeFile != notSet && inactiveFile != notSet && slabReclaimable != notSet)
             break;
@@ -402,22 +344,11 @@ void CGroupMemoryController::disposeMemoryController()
 
 size_t CGroupMemoryController::getCgroupFileValue(FILE *file)
 {
-    char buffer[128];
-    char* token;
-    bool ok = true;
-
-    if (!file)
+    if (!file || fseek(file, 0, SEEK_SET))
         return notSet;
 
-    if (fseek(file, 0, SEEK_SET))
-        return notSet;
-
-    token = fgets(buffer, 128, file);
-
-    size_t value = toIntegralType<size_t>(token, strlen(token), &ok);
-    if (!ok)
-        value = notSet;
-    return value;
+    size_t value;
+    return (fscanf(file, "%zu", &value) == 1) ? value : notSet;
 }
 
 size_t CGroupMemoryController::getMemoryTotalWithCgroup()
