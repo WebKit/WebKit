@@ -11,7 +11,7 @@ Relative foreground
           (position 8.00 8.00)
           (bounds 304.00 304.00)
           (drawsContent 1)
-          (children 4
+          (children 2
             (GraphicsLayer
               (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
@@ -26,19 +26,25 @@ Relative foreground
               )
             )
             (GraphicsLayer
-              (position 2.00 287.00)
-              (bounds 285.00 15.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 287.00 2.00)
-              (bounds 15.00 285.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 287.00 287.00)
-              (bounds 15.00 15.00)
-              (drawsContent 1)
+              (position 2.00 2.00)
+              (bounds 300.00 300.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 285.00)
+                  (bounds 285.00 15.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 285.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 285.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

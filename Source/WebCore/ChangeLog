@@ -1,3 +1,21 @@
+2020-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Group overflow controls layers into a single container layer
+        https://bugs.webkit.org/show_bug.cgi?id=210675
+
+        Reviewed by Zalan Bujtas.
+
+        Overflow control layers are going to change z-order in a future change. To make this
+        easier, group the overflow controls layer into their own container layer.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        (WebCore::RenderLayerBacking::updateGeometry): Size the overflow controls layer using paddingBoxRectIncludingScrollbar().
+        (WebCore::RenderLayerBacking::updateInternalHierarchy): New parenting.
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers): Some refactoring with a nice lambda.
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers): Lovely lambda here. Nice.
+        * rendering/RenderLayerBacking.h:
+
 2020-04-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable service workers for app-bound domains

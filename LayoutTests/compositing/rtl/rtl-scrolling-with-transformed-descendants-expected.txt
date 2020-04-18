@@ -30,9 +30,15 @@
               )
             )
             (GraphicsLayer
-              (position 2.00 206.00)
-              (bounds 400.00 15.00)
-              (drawsContent 1)
+              (position 2.00 2.00)
+              (bounds 400.00 219.00)
+              (children 1
+                (GraphicsLayer
+                  (position 0.00 204.00)
+                  (bounds 400.00 15.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

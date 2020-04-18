@@ -12,7 +12,7 @@ s
           (position 28.00 46.00)
           (bounds 304.00 154.00)
           (drawsContent 1)
-          (children 4
+          (children 2
             (GraphicsLayer
               (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
@@ -28,19 +28,25 @@ s
               )
             )
             (GraphicsLayer
-              (position 2.00 137.00)
-              (bounds 285.00 15.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 287.00 2.00)
-              (bounds 15.00 135.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 287.00 137.00)
-              (bounds 15.00 15.00)
-              (drawsContent 1)
+              (position 2.00 2.00)
+              (bounds 300.00 150.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 135.00)
+                  (bounds 285.00 15.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 135.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 135.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

@@ -12,7 +12,7 @@
           (event region
             (rect (0,0) width=300 height=300)
           )
-          (children 4
+          (children 2
             (GraphicsLayer
               (bounds 285.00 285.00)
               (event region
@@ -30,19 +30,24 @@
               )
             )
             (GraphicsLayer
-              (position 0.00 285.00)
-              (bounds 285.00 15.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 285.00 0.00)
-              (bounds 15.00 285.00)
-              (drawsContent 1)
-            )
-            (GraphicsLayer
-              (position 285.00 285.00)
-              (bounds 15.00 15.00)
-              (drawsContent 1)
+              (bounds 300.00 300.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 285.00)
+                  (bounds 285.00 15.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 285.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 285.00 285.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

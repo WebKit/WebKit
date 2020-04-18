@@ -37,9 +37,15 @@ This is the scrolled contents
               )
             )
             (GraphicsLayer
-              (position 349.00 44.00)
-              (bounds 15.00 200.00)
-              (drawsContent 1)
+              (position 44.00 44.00)
+              (bounds 320.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (position 305.00 0.00)
+                  (bounds 15.00 200.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )
@@ -78,9 +84,15 @@ This is the scrolled contents
               )
             )
             (GraphicsLayer
-              (position 349.00 44.00)
-              (bounds 15.00 200.00)
-              (drawsContent 1)
+              (position 44.00 44.00)
+              (bounds 320.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (position 305.00 0.00)
+                  (bounds 15.00 200.00)
+                  (drawsContent 1)
+                )
+              )
             )
           )
         )

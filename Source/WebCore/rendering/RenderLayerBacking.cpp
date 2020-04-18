@@ -498,6 +498,9 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
         m_scrolledContentsLayer->setShowDebugBorder(showBorder);
         m_scrolledContentsLayer->setShowRepaintCounter(showRepaintCounter);
     }
+
+    if (m_overflowControlsContainer)
+        m_overflowControlsContainer->setShowDebugBorder(showBorder);
 }
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()
@@ -1325,7 +1328,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         // FIXME: need to do some pixel snapping here.
         m_scrollContainerLayer->setPosition(FloatPoint(paddingBox.location() - parentLayerBounds.location()));
-        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight())));
+        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(paddingBox.width(), paddingBox.height())));
 
         ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
         updateScrollOffset(scrollOffset);
@@ -1350,6 +1353,17 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBox.location()), GraphicsLayer::DontSetNeedsDisplay);
         
         adjustTiledBackingCoverage();
+    }
+    
+    if (m_overflowControlsContainer) {
+        auto& renderBox = downcast<RenderBox>(renderer());
+        LayoutRect paddingBox = renderBox.paddingBoxRectIncludingScrollbar();
+
+        LayoutSize paddingBoxOffsetFromGraphicsLayer = toLayoutSize(paddingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
+        SnappedRectInfo snappedPaddingBoxInfo = snappedGraphicsLayer(paddingBoxOffsetFromGraphicsLayer, paddingBox.size(), deviceScaleFactor());
+
+        m_overflowControlsContainer->setPosition(snappedPaddingBoxInfo.m_snappedRect.location());
+        m_overflowControlsContainer->setSize(snappedPaddingBoxInfo.m_snappedRect.size());
     }
 
     if (m_foregroundLayer) {
@@ -1545,14 +1559,18 @@ void RenderLayerBacking::updateInternalHierarchy()
     // The clip for child layers does not include space for overflow controls, so they exist as
     // siblings of the clipping layer if we have one. Normal children of this layer are set as
     // children of the clipping layer.
-    if (m_layerForHorizontalScrollbar)
-        m_graphicsLayer->addChild(*m_layerForHorizontalScrollbar);
+    if (m_overflowControlsContainer) {
+        if (m_layerForHorizontalScrollbar)
+            m_overflowControlsContainer->addChild(*m_layerForHorizontalScrollbar);
 
-    if (m_layerForVerticalScrollbar)
-        m_graphicsLayer->addChild(*m_layerForVerticalScrollbar);
+        if (m_layerForVerticalScrollbar)
+            m_overflowControlsContainer->addChild(*m_layerForVerticalScrollbar);
 
-    if (m_layerForScrollCorner)
-        m_graphicsLayer->addChild(*m_layerForScrollCorner);
+        if (m_layerForScrollCorner)
+            m_overflowControlsContainer->addChild(*m_layerForScrollCorner);
+
+        m_graphicsLayer->addChild(*m_overflowControlsContainer);
+    }
 }
 
 void RenderLayerBacking::resetContentsRect()
@@ -1810,44 +1828,34 @@ bool RenderLayerBacking::requiresScrollCornerLayer() const
 
 bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)
 {
-    bool horizontalScrollbarLayerChanged = false;
-    if (needsHorizontalScrollbarLayer) {
-        if (!m_layerForHorizontalScrollbar) {
-            m_layerForHorizontalScrollbar = createGraphicsLayer("horizontal scrollbar");
-            m_layerForHorizontalScrollbar->setAllowsBackingStoreDetaching(false);
-            horizontalScrollbarLayerChanged = true;
-        }
-    } else if (m_layerForHorizontalScrollbar) {
-        willDestroyLayer(m_layerForHorizontalScrollbar.get());
-        GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
-        horizontalScrollbarLayerChanged = true;
-    }
+    auto createOrDestroyLayer = [&](RefPtr<GraphicsLayer>& layer, bool needLayer, bool drawsContent, const char* layerName) {
+        if (needLayer == !!layer)
+            return false;
 
-    bool verticalScrollbarLayerChanged = false;
-    if (needsVerticalScrollbarLayer) {
-        if (!m_layerForVerticalScrollbar) {
-            m_layerForVerticalScrollbar = createGraphicsLayer("vertical scrollbar");
-            m_layerForVerticalScrollbar->setAllowsBackingStoreDetaching(false);
-            verticalScrollbarLayerChanged = true;
+        if (needLayer) {
+            layer = createGraphicsLayer(layerName);
+            if (drawsContent)
+                layer->setAllowsBackingStoreDetaching(false);
+            else {
+                layer->setPaintingPhase({ });
+                layer->setDrawsContent(false);
+            }
+        } else {
+            willDestroyLayer(layer.get());
+            GraphicsLayer::unparentAndClear(layer);
         }
-    } else if (m_layerForVerticalScrollbar) {
-        willDestroyLayer(m_layerForVerticalScrollbar.get());
-        GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
-        verticalScrollbarLayerChanged = true;
-    }
+        return true;
+    };
 
-    bool scrollCornerLayerChanged = false;
-    if (needsScrollCornerLayer) {
-        if (!m_layerForScrollCorner) {
-            m_layerForScrollCorner = createGraphicsLayer("scroll corner");
-            m_layerForScrollCorner->setAllowsBackingStoreDetaching(false);
-            scrollCornerLayerChanged = true;
-        }
-    } else if (m_layerForScrollCorner) {
-        willDestroyLayer(m_layerForScrollCorner.get());
-        GraphicsLayer::unparentAndClear(m_layerForScrollCorner);
-        scrollCornerLayerChanged = true;
-    }
+    bool layersChanged = createOrDestroyLayer(m_overflowControlsContainer, needsHorizontalScrollbarLayer || needsVerticalScrollbarLayer || needsScrollCornerLayer, false, "overflow controls container");
+
+    bool horizontalScrollbarLayerChanged = createOrDestroyLayer(m_layerForHorizontalScrollbar, needsHorizontalScrollbarLayer, true, "horizontal scrollbar");
+    layersChanged |= horizontalScrollbarLayerChanged;
+
+    bool verticalScrollbarLayerChanged = createOrDestroyLayer(m_layerForVerticalScrollbar, needsVerticalScrollbarLayer, true, "vertical scrollbar");
+    layersChanged |= verticalScrollbarLayerChanged;
+
+    layersChanged |= createOrDestroyLayer(m_layerForScrollCorner, needsScrollCornerLayer, true, "scroll corner");
 
     if (auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator()) {
         if (horizontalScrollbarLayerChanged)
@@ -1856,7 +1864,7 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
             scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_owningLayer, VerticalScrollbar);
     }
 
-    return horizontalScrollbarLayerChanged || verticalScrollbarLayerChanged || scrollCornerLayerChanged;
+    return layersChanged;
 }
 
 void RenderLayerBacking::positionOverflowControlsLayers()
@@ -1864,36 +1872,37 @@ void RenderLayerBacking::positionOverflowControlsLayers()
     if (!m_owningLayer.hasScrollbars())
         return;
 
-    const IntRect borderBox = snappedIntRect(renderBox()->borderBoxRect());
+    // FIXME: Should do device-pixel snapping.
+    auto box = renderBox();
+    auto borderBox = snappedIntRect(box->borderBoxRect());
 
-    FloatSize offsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
-    if (auto* layer = layerForHorizontalScrollbar()) {
-        IntRect hBarRect = m_owningLayer.rectForHorizontalScrollbar(borderBox);
-        layer->setPosition(hBarRect.location() - offsetFromRenderer);
-        layer->setSize(hBarRect.size());
-        if (layer->usesContentsLayer()) {
-            IntRect barRect = IntRect(IntPoint(), hBarRect.size());
-            layer->setContentsRect(barRect);
-            layer->setContentsClippingRect(FloatRoundedRect(barRect));
+    // m_overflowControlsContainer is positioned using the paddingBoxRectIncludingScrollbar.
+    auto paddingBox = snappedIntRect(box->paddingBoxRectIncludingScrollbar());
+    auto paddingBoxInset = paddingBox.location() - borderBox.location();
+
+    auto positionScrollbarLayer = [](GraphicsLayer& layer, const IntRect& scrollbarRect, IntSize paddingBoxInset) {
+        layer.setPosition(scrollbarRect.location() - paddingBoxInset);
+        layer.setSize(scrollbarRect.size());
+        if (layer.usesContentsLayer()) {
+            IntRect barRect = IntRect(IntPoint(), scrollbarRect.size());
+            layer.setContentsRect(barRect);
+            layer.setContentsClippingRect(FloatRoundedRect(barRect));
         }
+    };
+
+    if (auto* layer = layerForHorizontalScrollbar()) {
+        positionScrollbarLayer(*layer, m_owningLayer.rectForHorizontalScrollbar(borderBox), paddingBoxInset);
         layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->usesContentsLayer());
     }
-    
+
     if (auto* layer = layerForVerticalScrollbar()) {
-        IntRect vBarRect = m_owningLayer.rectForVerticalScrollbar(borderBox);
-        layer->setPosition(vBarRect.location() - offsetFromRenderer);
-        layer->setSize(vBarRect.size());
-        if (layer->usesContentsLayer()) {
-            IntRect barRect = IntRect(IntPoint(), vBarRect.size());
-            layer->setContentsRect(barRect);
-            layer->setContentsClippingRect(FloatRoundedRect(barRect));
-        }
+        positionScrollbarLayer(*layer, m_owningLayer.rectForVerticalScrollbar(borderBox), paddingBoxInset);
         layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (auto* layer = layerForScrollCorner()) {
         const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
-        layer->setPosition(scrollCornerAndResizer.location() - offsetFromRenderer);
+        layer->setPosition(scrollCornerAndResizer.location() - paddingBoxInset);
         layer->setSize(scrollCornerAndResizer.size());
         layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
     }
