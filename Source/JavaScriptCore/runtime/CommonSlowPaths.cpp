@@ -1070,10 +1070,6 @@ SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const 
         }
     }
     RELEASE_ASSERT_NOT_REACHED();
-
-    // Return to the bytecode to try in generic mode.
-    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::Generic;
-    return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
 }
 
 SlowPathReturnType SLOW_PATH iterator_next_try_fast_narrow(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)

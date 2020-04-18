@@ -1675,8 +1675,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_call)
     LLINT_BEGIN();
     UNUSED_PARAM(globalObject);
 
-//    dataLogLn("Calling slow open_call");
-
     RELEASE_AND_RETURN(throwScope, genericCall(codeBlock, callFrame, pc->as<OpIteratorOpen>(), CodeForCall, OpIteratorOpen::symbolCall));
 }
 
@@ -1685,8 +1683,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_call)
 {
     LLINT_BEGIN();
     UNUSED_PARAM(globalObject);
-
-//    dataLogLn("Calling slow next_call");
 
     RELEASE_AND_RETURN(throwScope, genericCall(codeBlock, callFrame, pc->as<OpIteratorNext>(), CodeForCall, OpIteratorNext::computeNext));
 }
