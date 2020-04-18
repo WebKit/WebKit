@@ -176,6 +176,7 @@ private:
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     PlatformLayer* platformLayer() const override;
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void updateVideoFullscreenInlineImage() final;
@@ -183,6 +184,7 @@ private:
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
     void videoFullscreenStandbyChanged() override;
+#endif
     void setPlayerRate(double);
 
 #if PLATFORM(IOS_FAMILY)
