@@ -38,12 +38,12 @@ class VM;
 struct CellAttributes;
 
 #if COMPILER(GCC_COMPATIBLE)
-ALWAYS_INLINE void keepAlive(const void* pointer)
+ALWAYS_INLINE void ensureStillAliveHere(const void* pointer)
 {
     asm volatile ("" : : "r"(pointer) : "memory");
 }
 #else
-JS_EXPORT_PRIVATE void keepAlive(const void*);
+JS_EXPORT_PRIVATE void ensureStillAliveHere(const void*);
 #endif
 
 class HeapCell {
@@ -95,7 +95,7 @@ public:
     // but not the object itself.
     ALWAYS_INLINE void use() const
     {
-        keepAlive(this);
+        ensureStillAliveHere(this);
     }
 };
 

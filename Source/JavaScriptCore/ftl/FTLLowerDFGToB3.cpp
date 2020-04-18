@@ -3820,7 +3820,7 @@ private:
         m_heaps.decorateFencedAccess(&m_heaps.typedArrayProperties, atomicValue);
 
         // We have to keep base alive since that keeps storage alive.
-        keepAlive(lowCell(baseEdge));
+        ensureStillAliveHere(lowCell(baseEdge));
         setIntTypedArrayLoadResult(result, type);
     }
     
@@ -4677,7 +4677,7 @@ private:
                 }
                 
                 // We have to keep base alive since that keeps storage alive.
-                keepAlive(base);
+                ensureStillAliveHere(base);
                 setDouble(result);
                 return;
             }
@@ -5045,7 +5045,7 @@ private:
                 }
                 
                 // We have to keep base alive since that keeps storage alive.
-                keepAlive(base);
+                ensureStillAliveHere(base);
                 return;
             }
         }
@@ -5411,7 +5411,7 @@ private:
         }
 
         // Keep the sourceArray alive at least until after anything that can GC.
-        keepAlive(sourceArray);
+        ensureStillAliveHere(sourceArray);
 
         LBasicBlock loop = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
@@ -18169,7 +18169,7 @@ private:
         return true;
     }
 
-    void keepAlive(LValue value)
+    void ensureStillAliveHere(LValue value)
     {
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->effects = Effects::none();
