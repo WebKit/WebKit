@@ -1,3 +1,21 @@
+2020-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Move DataRef.h from WebCore to WTF to utilize it in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=210689
+
+        Reviewed by Anders Carlsson.
+
+        No behavior change, just moving header from WebCore to WTF.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/NinePieceImage.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2020-04-18  David Kilzer  <ddkilzer@apple.com>
 
         Attempt #2 to fix tvOS build

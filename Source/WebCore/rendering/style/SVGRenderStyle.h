@@ -23,10 +23,10 @@
 
 #pragma once
 
-#include "DataRef.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "WindRule.h"
+#include <wtf/DataRef.h>
 
 namespace WebCore {
 

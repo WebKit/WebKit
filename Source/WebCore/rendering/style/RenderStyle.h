@@ -31,7 +31,6 @@
 #include "CSSPropertyNames.h"
 #include "Color.h"
 #include "CounterDirectives.h"
-#include "DataRef.h"
 #include "FilterOperations.h"
 #include "FontCascadeDescription.h"
 #include "GapLength.h"
@@ -68,6 +67,7 @@
 #include "TransformOperations.h"
 #include "UnicodeBidi.h"
 #include <memory>
+#include <wtf/DataRef.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>

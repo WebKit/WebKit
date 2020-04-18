@@ -1413,7 +1413,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/BorderData.h
     rendering/style/BorderValue.h
     rendering/style/CounterDirectives.h
-    rendering/style/DataRef.h
     rendering/style/FillLayer.h
     rendering/style/GapLength.h
     rendering/style/GridArea.h

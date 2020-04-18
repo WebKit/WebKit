@@ -47,6 +47,7 @@ set(WTF_PUBLIC_HEADERS
     CryptographicallyRandomNumber.h
     DataLog.h
     DataMutex.h
+    DataRef.h
     DateMath.h
     DebugHeap.h
     DebugUtilities.h

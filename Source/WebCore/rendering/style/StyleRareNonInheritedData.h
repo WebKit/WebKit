@@ -27,7 +27,6 @@
 #include "CSSPropertyNames.h"
 #include "ClipPathOperation.h"
 #include "CounterDirectives.h"
-#include "DataRef.h"
 #include "FillLayer.h"
 #include "GapLength.h"
 #include "LengthPoint.h"
@@ -38,6 +37,7 @@
 #include "StyleSelfAlignmentData.h"
 #include "WillChangeData.h"
 #include <memory>
+#include <wtf/DataRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

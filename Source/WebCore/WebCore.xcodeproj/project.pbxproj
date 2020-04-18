@@ -3769,7 +3769,6 @@
 		BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272BB0E82EAAE00E7F975 /* StyleRareNonInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2273020E82F1E600E7F975 /* StyleInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC22746F0E83664500E7F975 /* DataRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22746E0E83664500E7F975 /* DataRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2274790E8366E200E7F975 /* SVGRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2274750E8366E200E7F975 /* SVGRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13174,7 +13173,6 @@
 		BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRareInheritedData.h; sourceTree = "<group>"; };
 		BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleInheritedData.cpp; sourceTree = "<group>"; };
 		BC2273020E82F1E600E7F975 /* StyleInheritedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleInheritedData.h; sourceTree = "<group>"; };
-		BC22746E0E83664500E7F975 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRef.h; sourceTree = "<group>"; };
 		BC2274740E8366E200E7F975 /* SVGRenderStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyle.cpp; sourceTree = "<group>"; };
 		BC2274750E8366E200E7F975 /* SVGRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderStyle.h; sourceTree = "<group>"; };
 		BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderStyleDefs.cpp; sourceTree = "<group>"; };
@@ -25729,7 +25727,6 @@
 				BC5EB94F0E82056B00B25965 /* CounterDirectives.h */,
 				BC2272A10E82E87C00E7F975 /* CursorData.h */,
 				BC2272AC0E82E8F300E7F975 /* CursorList.h */,
-				BC22746E0E83664500E7F975 /* DataRef.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
 				8E33CD93201A29C100E39093 /* GapLength.cpp */,
@@ -30003,7 +30000,6 @@
 				E517670320B88C1400D41167 /* DataListSuggestionInformation.h in Headers */,
 				E52CF54F20A35A2800DADA27 /* DataListSuggestionPicker.h in Headers */,
 				E52CF54D20A268AC00DADA27 /* DataListSuggestionsClient.h in Headers */,
-				BC22746F0E83664500E7F975 /* DataRef.h in Headers */,
 				BC64641C11D7F416006455B0 /* DatasetDOMStringMap.h in Headers */,
 				85031B3E0A44EFC700F992E0 /* DataTransfer.h in Headers */,
 				81AC5999131636E60009A7E0 /* DataTransferItem.h in Headers */,

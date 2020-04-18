@@ -23,7 +23,6 @@
 #include "StyleRareInheritedData.h"
 
 #include "CursorList.h"
-#include "DataRef.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
@@ -32,6 +31,7 @@
 #include "StyleCustomPropertyData.h"
 #include "StyleFilterData.h"
 #include "StyleImage.h"
+#include <wtf/DataRef.h>
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {

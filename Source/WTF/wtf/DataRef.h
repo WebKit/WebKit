@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +22,10 @@
 
 #include <wtf/Ref.h>
 
-namespace WebCore {
+namespace WTF {
 
-template <typename T> class DataRef {
+template <typename T>
+class DataRef {
 public:
     DataRef(Ref<T>&& data)
         : m_data(WTFMove(data))
@@ -96,4 +97,6 @@ private:
     Ref<T> m_data;
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::DataRef;
