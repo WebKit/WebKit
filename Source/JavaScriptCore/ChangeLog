@@ -1,3 +1,19 @@
+2020-04-18  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        REGRESSION(r260246): It broke build on MIPS32 
+        https://bugs.webkit.org/show_bug.cgi?id=210665
+
+        Reviewed by Aakash Jain.
+
+        The mnemonic for 'store halfword' is 'sh', not 'shv'. This appears to
+        be a typo in a path that was never exercised.
+
+        Exposed by r260246; riscLowerMisplacedAddresses now calls into
+        riscAsRegisters with an 'h' suffix, which results in a 'storeh'
+        instruction. The storeh is then lowered to the non-existent 'shv'.
+
+        * offlineasm/mips.rb:
+
 2020-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260279.

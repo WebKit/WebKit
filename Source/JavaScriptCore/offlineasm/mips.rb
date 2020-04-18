@@ -904,7 +904,7 @@ class Instruction
         when "loadhsi"
             $asm.puts "lh #{mipsFlippedOperands(operands)}"
         when "storeh"
-            $asm.puts "shv #{mipsOperands(operands)}"
+            $asm.puts "sh #{mipsOperands(operands)}"
         when "loadd"
             $asm.puts "ldc1 #{mipsFlippedOperands(operands)}"
         when "stored"
