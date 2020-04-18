@@ -1523,8 +1523,12 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
+    void disableServiceWorkerEntitlement();
+    void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
 #else
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
+    void disableServiceWorkerEntitlement() { }
+    void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
     void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&);

@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -741,6 +742,137 @@ TEST(InAppBrowserPrivacy, GetCookieForURLFails)
         }];
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+@interface SWInAppBrowserPrivacyMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWInAppBrowserPrivacyMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(@"Message from worker: ServiceWorker received: Hello from an app-bound domain", [message body]);
+    isDone = true;
+}
+@end
+
+static const char* mainBytes = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log("Message from worker: " + event.data);
+});
+
+try {
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    worker = reg.installing ? reg.installing : reg.active;
+    worker.postMessage("Hello from an app-bound domain");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+
+</script>
+)SWRESOURCE";
+
+static const char* scriptBytes = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    event.source.postMessage("ServiceWorker received: " + event.data);
+});
+
+)SWRESOURCE";
+
+TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[SWInAppBrowserPrivacyMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [configuration preferences]._serviceWorkerEntitlementDisabledForTesting = YES;
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    ServiceWorkerTCPServer server1({
+        { "text/html", mainBytes },
+        { "application/javascript", scriptBytes},
+    });
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+    
+    // Expect the service worker load to complete successfully.
+    [webView loadRequest:server1.requestWithLocalhost()];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
+        EXPECT_EQ(1u, [websiteDataRecords count]);
+        EXPECT_WK_STREQ(websiteDataRecords[0].displayName, "localhost");
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    // Reset service worker entitlement.
+    [webView _clearServiceWorkerEntitlementOverride:^(void) {
+        cleanUpInAppBrowserPrivacyTestSettings();
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+}
+
+TEST(InAppBrowserPrivacy, NonAppBoundDomainDoesNotAllowServiceWorkers)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    // Disable entitlement which allows service workers.
+    [configuration preferences]._serviceWorkerEntitlementDisabledForTesting = YES;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Load a non-app bound domain.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+    
+    // Expect that service workers are disabled for this webView.
+    isDone = false;
+    [webView _serviceWorkersEnabled:^(BOOL enabled) {
+        EXPECT_FALSE(enabled);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    
+    // Reset service worker entitlement.
+    [webView _clearServiceWorkerEntitlementOverride:^(void) {
+        cleanUpInAppBrowserPrivacyTestSettings();
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)

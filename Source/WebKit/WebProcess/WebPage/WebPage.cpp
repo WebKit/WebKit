@@ -460,6 +460,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_overriddenMediaType(parameters.overriddenMediaType)
     , m_processDisplayName(parameters.processDisplayName)
+    , m_isNavigatingToAppBoundDomain(parameters.limitsNavigationsToAppBoundDomains ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No)
 {
     ASSERT(m_identifier);
 
@@ -3672,9 +3673,12 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkerEntitlementDisabledForTestingKey()))
+        disableServiceWorkerEntitlement();
+
     if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey())) {
-        ASSERT(parentProcessHasServiceWorkerEntitlement());
-        if (!parentProcessHasServiceWorkerEntitlement())
+        ASSERT(parentProcessHasServiceWorkerEntitlement() || m_isNavigatingToAppBoundDomain);
+        if (!parentProcessHasServiceWorkerEntitlement() && !m_isNavigatingToAppBoundDomain)
             RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(false);
     }
 #endif

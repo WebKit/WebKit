@@ -345,10 +345,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (parentProcessHasServiceWorkerEntitlement()) {
-        bool serviceWorkerProcessTerminationDelayEnabled = true;
-        addServiceWorkerSession(PAL::SessionID::defaultSessionID(), serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-    }
+    bool serviceWorkerProcessTerminationDelayEnabled = true;
+    addServiceWorkerSession(PAL::SessionID::defaultSessionID(), serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
     m_storageManagerSet->add(sessionID, parameters.defaultDataStoreParameters.localStorageDirectory, parameters.defaultDataStoreParameters.localStorageDirectoryExtensionHandle);
@@ -438,8 +436,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (parentProcessHasServiceWorkerEntitlement())
-        addServiceWorkerSession(sessionID, parameters.serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+    addServiceWorkerSession(sessionID, parameters.serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
     m_storageManagerSet->add(sessionID, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
@@ -2455,11 +2452,13 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(sessionID.isEphemeral() || !path.isEmpty());
 
-        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
+        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, parentProcessHasServiceWorkerEntitlement(), [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
             ServiceWorkerSoftUpdateLoader::start(networkSession(sessionID), WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
         }, [this, sessionID](auto& registrableDomain, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());
             parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess { registrableDomain, sessionID }, WTFMove(completionHandler), 0);
+        }, [this, sessionID](auto&& completionHandler) {
+            parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { sessionID }, WTFMove(completionHandler), 0);
         });
     });
     return *result.iterator->value;
@@ -2475,7 +2474,6 @@ WebSWOriginStore* NetworkProcess::existingSWOriginStoreForSession(PAL::SessionID
 
 void NetworkProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
-    ASSERT(parentProcessHasServiceWorkerEntitlement());
     auto* store = existingSWOriginStoreForSession(connection.sessionID());
     ASSERT(store);
     if (store)

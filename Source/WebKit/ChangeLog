@@ -1,3 +1,114 @@
+2020-04-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable service workers for app-bound domains
+        https://bugs.webkit.org/show_bug.cgi?id=210451
+        <rdar://problem/61479474>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createFetchTask):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::swConnection):
+        (WebKit::NetworkConnectionToWebProcess::isServiceWorkerAllowed const): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        Removed ASSERTS and service worker entitlement checks which are now done along with app-bound
+        domain checks in SWServer.cpp.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        Remove the check for parentProcessHasServiceWorkerEntitlement() before
+        adding a serviceWorkerSession. This doesn't do anything except add an
+        entry to a map, and simplifies the case where we need a session for
+        app-bound instances which should have service workers but have no entitlement.
+
+        Pass the entitlement and a new callback to request app-bound domains
+        from the UI Process to the SWServer. This will make sure the server
+        checks for the entitlement or list of app-bound domains before completing a load.
+
+        (WebKit::NetworkProcess::registerSWServerConnection):
+        Remove unnecessary ASSERT for entitlement.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::parentProcessHasServiceWorkerEntitlement const):
+        (WebKit::NetworkProcess::disableServiceWorkerEntitlement):
+        (WebKit::NetworkProcess::clearServiceWorkerEntitlementOverride):
+        In order to test this thoroughly, TestWebKitAPI needed a way to
+        temporarily disable the service worker entitlement. This function
+        overrides the check for the entitlement if the bool is set, disabling
+        the entitlement.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        WebPage needs to know if it is app-bound when created so it can update
+        the service worker preferences key accordingly.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _serviceWorkerEntitlementDisabledForTesting]):
+        (-[WKPreferences _setServiceWorkerEntitlementDisabledForTesting:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        Disable entitlement for testing.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::limitsNavigationsToAppBoundDomains const):
+        (API::PageConfiguration::setLimitsNavigationsToAppBoundDomains):
+        (API::PageConfiguration::limitsNavigationToAppBoundDomains const): Deleted.
+        (API::PageConfiguration::setLimitsNavigationToAppBoundDomains): Deleted.
+        (-[WKWebViewConfiguration limitsNavigationsToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationsToAppBoundDomains:]):
+        (-[WKWebViewConfiguration limitsNavigationToAppBoundDomains]): Deleted.
+        (-[WKWebViewConfiguration setLimitsNavigationToAppBoundDomains:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        Inconsistent naming (Navigation vs Navigations).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        Check for entitlement or app-bound webview.
+
+        (-[WKWebView _serviceWorkersEnabled:]):
+        (-[WKWebView _clearServiceWorkerEntitlementOverride:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Testing SPIs.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getAppBoundDomains):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        Sends the app-bound domains to the Network Process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::m_limitsNavigationToAppBoundDomains): Deleted.
+        Naming inconsistency.
+
+        (WebKit::WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess):
+        (WebKit::WebPageProxy::clearServiceWorkerEntitlementOverride):
+        * UIProcess/WebPageProxy.h:
+        Disable entitlement for testing.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_isNavigatingToAppBoundDomain):
+        Set this parameter in the constructor so it will be accurate when
+        updating preferences.
+
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::clearServiceWorkerEntitlementOverride):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::parentProcessHasServiceWorkerEntitlement const):
+        (WebKit::WebPage::disableServiceWorkerEntitlement):
+        (WebKit::WebPage::clearServiceWorkerEntitlementOverride):
+        Disable entitlement for testing.
+
 2020-04-17  Alex Christensen  <achristensen@webkit.org>
 
         NetworkSessionCocoa should request client certificate only once per host/port

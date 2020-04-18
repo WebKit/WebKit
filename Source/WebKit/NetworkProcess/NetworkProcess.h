@@ -306,6 +306,8 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;
+    void disableServiceWorkerEntitlement();
+    void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
 #else
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif

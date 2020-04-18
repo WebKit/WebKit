@@ -126,7 +126,8 @@ public:
 
     using SoftUpdateCallback = Function<void(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&&, CompletionHandler<void(const ServiceWorkerFetchResult&)>&&)>;
     using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&, CompletionHandler<void()>&&)>;
-    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, SoftUpdateCallback&&, CreateContextConnectionCallback&&);
+    using AppBoundDomainsCallback = Function<void(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&)>;
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool hasServiceWorkerEntitlement, SoftUpdateCallback&&, CreateContextConnectionCallback&&, AppBoundDomainsCallback&&);
 
     WEBCORE_EXPORT ~SWServer();
 
@@ -215,6 +216,8 @@ public:
     static constexpr Seconds defaultTerminationDelay = 10_s;
 
 private:
+    void validateRegistrationDomain(WebCore::RegistrableDomain, CompletionHandler<void(bool)>&&);
+
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
     void didResolveRegistrationPromise(Connection*, const ServiceWorkerRegistrationKey&);
@@ -269,6 +272,11 @@ private:
     HashSet<WebCore::RegistrableDomain> m_pendingConnectionDomains;
     Vector<CompletionHandler<void()>> m_importCompletedCallbacks;
     SoftUpdateCallback m_softUpdateCallback;
+    AppBoundDomainsCallback m_appBoundDomainsCallback;
+    
+    HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
+    bool m_hasServiceWorkerEntitlement { false };
+    bool m_hasReceivedAppBoundDomains { false };
 };
 
 } // namespace WebCore

@@ -146,6 +146,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureDisplayInUIProcess;
     encoder << shouldRenderCanvasInGPUProcess;
     encoder << needsInAppBrowserPrivacyQuirks;
+    encoder << limitsNavigationsToAppBoundDomains;
 
 #if PLATFORM(GTK)
     encoder << themeName;
@@ -468,6 +469,9 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
 
     if (!decoder.decode(parameters.needsInAppBrowserPrivacyQuirks))
+        return WTF::nullopt;
+    
+    if (!decoder.decode(parameters.limitsNavigationsToAppBoundDomains))
         return WTF::nullopt;
     
 #if PLATFORM(GTK)

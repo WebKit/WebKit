@@ -158,8 +158,8 @@ public:
     bool loadsFromNetwork() const { return m_loadsFromNetwork; }
     void setLoadsFromNetwork(bool loads) { m_loadsFromNetwork = loads; }
 
-    bool limitsNavigationToAppBoundDomains() const { return m_limitsNavigationToAppBoundDomains; }
-    void setLimitsNavigationToAppBoundDomains(bool limits) { m_limitsNavigationToAppBoundDomains = limits; }
+    bool limitsNavigationsToAppBoundDomains() const { return m_limitsNavigationsToAppBoundDomains; }
+    void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
 
 private:
 
@@ -204,7 +204,7 @@ private:
     bool m_ignoresAppBoundDomains { false };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
-    bool m_limitsNavigationToAppBoundDomains { false };
+    bool m_limitsNavigationsToAppBoundDomains { false };
 };
 
 } // namespace API

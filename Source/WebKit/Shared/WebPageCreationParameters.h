@@ -217,6 +217,7 @@ struct WebPageCreationParameters {
     bool shouldCaptureDisplayInUIProcess { false };
     bool shouldRenderCanvasInGPUProcess { false };
     bool needsInAppBrowserPrivacyQuirks { false };
+    bool limitsNavigationsToAppBoundDomains { false };
 
 #if PLATFORM(GTK)
     String themeName;

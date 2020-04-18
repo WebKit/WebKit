@@ -1729,6 +1729,9 @@ public:
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
 
+    void disableServiceWorkerEntitlementInNetworkProcess();
+    void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
+        
 #if PLATFORM(COCOA)
     void grantAccessToCurrentPasteboardData(const String& pasteboardName);
 #endif
@@ -2797,7 +2800,7 @@ private:
     NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
     bool m_ignoresAppBoundDomains { false };
     bool m_userScriptsNotified { false };
-    bool m_limitsNavigationToAppBoundDomains { false };
+    bool m_limitsNavigationsToAppBoundDomains { false };
 
 #if ENABLE(ROUTING_ARBITRATION)
     std::unique_ptr<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;

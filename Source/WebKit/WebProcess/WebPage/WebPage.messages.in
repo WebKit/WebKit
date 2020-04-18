@@ -122,6 +122,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     InsertTextPlaceholder(WebCore::IntSize size) -> (Optional<WebCore::ElementContext> placeholder) Async
     RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> () Async
     FocusTextInputContextAndPlaceCaret(struct WebCore::ElementContext context, WebCore::IntPoint point) -> (bool success) Async
+    ClearServiceWorkerEntitlementOverride() -> () Async
 #endif
 
     SetControlledByAutomation(bool controlled)

@@ -685,14 +685,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _allowTopNavigationToDataURLs = allowTopNavigationToDataURLs;
 }
 
-- (BOOL)limitsNavigationToAppBoundDomains
+- (BOOL)limitsNavigationsToAppBoundDomains
 {
-    return _pageConfiguration->limitsNavigationToAppBoundDomains();
+    return _pageConfiguration->limitsNavigationsToAppBoundDomains();
 }
 
-- (void)setLimitsNavigationToAppBoundDomains:(BOOL)limitsToAppBoundDomains
+- (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
 {
-    _pageConfiguration->setLimitsNavigationToAppBoundDomains(limitsToAppBoundDomains);
+    _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
 }
 
 - (BOOL)_convertsPositionStyleOnCopy

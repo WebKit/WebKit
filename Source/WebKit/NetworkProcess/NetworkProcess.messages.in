@@ -172,4 +172,9 @@ messages -> NetworkProcess LegacyReceiver {
     
     HasAppBoundSession(PAL::SessionID sessionID) -> (bool hasAppBoundSession) Async
     SetInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool value) -> () Async
+
+#if PLATFORM(IOS_FAMILY)
+    DisableServiceWorkerEntitlement()
+    ClearServiceWorkerEntitlementOverride() -> () Async
+#endif
 }

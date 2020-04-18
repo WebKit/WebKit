@@ -1481,6 +1481,21 @@ void NetworkProcessProxy::setInAppBrowserPrivacyEnabled(PAL::SessionID sessionID
     sendWithAsyncReply(Messages::NetworkProcess::SetInAppBrowserPrivacyEnabled(sessionID, value), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::getAppBoundDomains(PAL::SessionID sessionID, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (auto* store = websiteDataStoreFromSessionID(sessionID)) {
+        store->getAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& appBoundDomains) mutable {
+            auto appBoundDomainsCopy = appBoundDomains;
+            completionHandler(WTFMove(appBoundDomainsCopy));
+        });
+        return;
+    }
+    completionHandler({ });
+#else
+    completionHandler({ });
+#endif
+}
 
 } // namespace WebKit
 

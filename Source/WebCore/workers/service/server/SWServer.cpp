@@ -155,15 +155,21 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 {
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
+    
+    validateRegistrationDomain(WebCore::RegistrableDomain(data.scriptURL), [this, weakThis = makeWeakPtr(this), data = WTFMove(data)] (bool isValid) mutable {
+        if (!weakThis)
+            return;
+        if (m_hasServiceWorkerEntitlement || isValid) {
+            auto registration = makeUnique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
+            registration->setLastUpdateTime(data.registration.lastUpdateTime);
+            auto registrationPtr = registration.get();
+            addRegistration(WTFMove(registration));
 
-    auto registration = makeUnique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
-    registration->setLastUpdateTime(data.registration.lastUpdateTime);
-    auto registrationPtr = registration.get();
-    addRegistration(WTFMove(registration));
-
-    auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.contentSecurityPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
-    registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
-    worker->setState(ServiceWorkerState::Activated);
+            auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.contentSecurityPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
+            registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
+            worker->setState(ServiceWorkerState::Activated);
+        }
+    });
 }
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
@@ -305,12 +311,14 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorker
     m_server.removeClientServiceWorkerRegistration(*this, identifier);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool hasServiceWorkerEntitlement, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback, AppBoundDomainsCallback&& appBoundDomainsCallback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
     , m_createContextConnectionCallback(WTFMove(callback))
     , m_softUpdateCallback(WTFMove(softUpdateCallback))
+    , m_appBoundDomainsCallback(WTFMove(appBoundDomainsCallback))
+    , m_hasServiceWorkerEntitlement(hasServiceWorkerEntitlement)
 {
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty() && !m_sessionID.isEphemeral(), ServiceWorker, "No path to store the service worker registrations");
     if (!m_sessionID.isEphemeral())
@@ -322,31 +330,53 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminati
     allServers().add(this);
 }
 
+void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (m_hasServiceWorkerEntitlement || m_hasReceivedAppBoundDomains) {
+        completionHandler(m_appBoundDomains.contains(domain));
+        return;
+    }
+    
+    m_appBoundDomainsCallback([this, weakThis = makeWeakPtr(this), domain = WTFMove(domain), completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
+        if (!weakThis)
+            return;
+        m_hasReceivedAppBoundDomains = true;
+        m_appBoundDomains = WTFMove(appBoundDomains);
+        completionHandler(m_appBoundDomains.contains(domain));
+    });
+}
+
 // https://w3c.github.io/ServiceWorker/#schedule-job-algorithm
 void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
-    auto& jobQueue = *m_jobQueues.ensure(jobData.registrationKey(), [this, &jobData] {
-        return makeUnique<SWServerJobQueue>(*this, jobData.registrationKey());
-    }).iterator->value;
-
-    if (!jobQueue.size()) {
-        jobQueue.enqueueJob(WTFMove(jobData));
-        jobQueue.runNextJob();
-        return;
-    }
-    auto& lastJob = jobQueue.lastJob();
-    if (jobData.isEquivalent(lastJob)) {
-        // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
-        // If it is, stack it along with that job. For now, we just make sure to not call soft-update too often.
-        if (jobData.type == ServiceWorkerJobType::Update && jobData.connectionIdentifier() == Process::identifier())
+    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), [this, weakThis = makeWeakPtr(this), jobData = WTFMove(jobData)] (bool isValid) mutable {
+        if (!weakThis)
             return;
-    }
+        if (m_hasServiceWorkerEntitlement || isValid) {
+            auto& jobQueue = *m_jobQueues.ensure(jobData.registrationKey(), [this, &jobData] {
+                return makeUnique<SWServerJobQueue>(*this, jobData.registrationKey());
+            }).iterator->value;
 
-    jobQueue.enqueueJob(WTFMove(jobData));
-    if (jobQueue.size() == 1)
-        jobQueue.runNextJob();
+            if (!jobQueue.size()) {
+                jobQueue.enqueueJob(WTFMove(jobData));
+                jobQueue.runNextJob();
+                return;
+            }
+            auto& lastJob = jobQueue.lastJob();
+            if (jobData.isEquivalent(lastJob)) {
+                // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
+                // If it is, stack it along with that job. For now, we just make sure to not call soft-update too often.
+                if (jobData.type == ServiceWorkerJobType::Update && jobData.connectionIdentifier() == Process::identifier())
+                    return;
+            }
+            jobQueue.enqueueJob(WTFMove(jobData));
+            if (jobQueue.size() == 1)
+                jobQueue.runNextJob();
+        } else
+            rejectJob(jobData, { TypeError, "Job rejected for non app-bound domain" });
+    });
 }
 
 void SWServer::scheduleUnregisterJob(ServiceWorkerJobDataIdentifier jobDataIdentifier, SWServerRegistration& registration, DocumentOrWorkerIdentifier contextIdentifier, URL&& clientCreationURL)

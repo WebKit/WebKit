@@ -923,6 +923,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->isITPDatabaseEnabled();
 }
 
+- (BOOL)_serviceWorkerEntitlementDisabledForTesting
+{
+    return _preferences->serviceWorkerEntitlementDisabledForTesting();
+}
+
+- (void)_setServiceWorkerEntitlementDisabledForTesting:(BOOL)disable
+{
+    _preferences->setServiceWorkerEntitlementDisabledForTesting(disable);
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

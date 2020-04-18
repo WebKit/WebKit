@@ -223,7 +223,8 @@ public:
 
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void setInAppBrowserPrivacyEnabled(PAL::SessionID, bool, CompletionHandler<void()>&&);
-    
+    void getAppBoundDomains(PAL::SessionID, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
+
 private:
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "Networking"_s; }

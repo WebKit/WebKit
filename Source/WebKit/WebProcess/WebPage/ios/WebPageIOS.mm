@@ -488,10 +488,26 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     return sendResult && eventWasHandled;
 }
 
+static bool disableServiceWorkerEntitlementTestingOverride;
+
 bool WebPage::parentProcessHasServiceWorkerEntitlement() const
 {
+    if (disableServiceWorkerEntitlementTestingOverride)
+        return false;
+    
     static bool hasEntitlement = WTF::hasEntitlement(WebProcess::singleton().parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
     return hasEntitlement;
+}
+
+void WebPage::disableServiceWorkerEntitlement()
+{
+    disableServiceWorkerEntitlementTestingOverride = true;
+}
+
+void WebPage::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler)
+{
+    disableServiceWorkerEntitlementTestingOverride = false;
+    completionHandler();
 }
 
 void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)

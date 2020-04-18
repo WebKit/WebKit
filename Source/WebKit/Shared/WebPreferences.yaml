@@ -1273,6 +1273,11 @@ NeedsInAppBrowserPrivacyQuirks:
     webcoreBinding: RuntimeEnabledFeatures
     category: debug
 
+ServiceWorkerEntitlementDisabledForTesting:
+    type: bool
+    defaultValue: false
+    webcoreBinding: none
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They

@@ -74,10 +74,26 @@ void NetworkProcess::platformTerminate()
     notImplemented();
 }
 
+static bool disableServiceWorkerEntitlementTestingOverride;
+
 bool NetworkProcess::parentProcessHasServiceWorkerEntitlement() const
 {
+    if (disableServiceWorkerEntitlementTestingOverride)
+        return false;
+
     static bool hasEntitlement = WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers");
     return hasEntitlement;
+}
+
+void NetworkProcess::disableServiceWorkerEntitlement()
+{
+    disableServiceWorkerEntitlementTestingOverride = true;
+}
+
+void NetworkProcess::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler)
+{
+    disableServiceWorkerEntitlementTestingOverride = false;
+    completionHandler();
 }
 
 } // namespace WebKit

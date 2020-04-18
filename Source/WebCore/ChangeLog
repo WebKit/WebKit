@@ -1,3 +1,22 @@
+2020-04-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Enable service workers for app-bound domains
+        https://bugs.webkit.org/show_bug.cgi?id=210451
+        <rdar://problem/61479474>
+
+        Reviewed by Brent Fulgham.
+
+        SWServer now retrieves the app-bound domains from the UI Process and
+        only continues with the load if the proper entitlement is present
+        or the load is coming from an app-bound domain.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::validateRegistrationDomain):
+        (WebCore::SWServer::scheduleJob):
+        * workers/service/server/SWServer.h:
+
 2020-04-17  Dean Jackson  <dino@apple.com>
 
         [WebGL] Confirm there are no errors when setting up framebuffers

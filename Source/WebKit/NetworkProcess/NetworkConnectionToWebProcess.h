@@ -236,7 +236,6 @@ private:
     void establishSWContextConnection(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
-    bool isServiceWorkerAllowed() const;
 #endif
 
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);

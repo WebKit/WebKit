@@ -179,6 +179,7 @@
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingDirection.h>
 #include <stdio.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
@@ -485,7 +486,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
 #if PLATFORM(COCOA)
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains() || WTF::processHasEntitlement("com.apple.private.applemediaservices"))
-    , m_limitsNavigationToAppBoundDomains(m_configuration->limitsNavigationToAppBoundDomains())
+    , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor:");
@@ -521,6 +522,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
 #if PLATFORM(IOS_FAMILY)
     DeprecatedGlobalSettings::setDisableScreenSizeOverride(m_preferences->disableScreenSizeOverride());
+    
+    if (m_configuration->preferences()->serviceWorkerEntitlementDisabledForTesting())
+        disableServiceWorkerEntitlementInNetworkProcess();
 #endif
 
 #if PLATFORM(COCOA)
@@ -3154,6 +3158,34 @@ void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& 
 void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(m_isNavigatingToAppBoundDomain && (*m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes));
+}
+
+void WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess()
+{
+#if PLATFORM(IOS_FAMILY)
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage())
+            return;
+        networkProcess->send(Messages::NetworkProcess::DisableServiceWorkerEntitlement(), 0);
+    }
+#endif
+}
+
+void WebPageProxy::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::ClearServiceWorkerEntitlementOverride(), [callbackAggregator = callbackAggregator.copyRef()] { });
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler();
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::ClearServiceWorkerEntitlementOverride(), [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+#else
+    completionHandler();
+#endif
 }
 
 void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, API::Navigation* navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, RefPtr<API::WebsitePolicies>&& policies, Ref<PolicyDecisionSender>&& sender)
@@ -7804,6 +7836,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
     parameters.shouldRenderCanvasInGPUProcess = preferences().renderCanvasInGPUProcessEnabled();
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
+    parameters.limitsNavigationsToAppBoundDomains = m_limitsNavigationsToAppBoundDomains;
 
 #if PLATFORM(GTK)
     parameters.themeName = pageClient().themeName();

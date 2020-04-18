@@ -97,7 +97,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_ignoresAppBoundDomains = this->m_ignoresAppBoundDomains;
     copy->m_loadsSubresources = this->m_loadsSubresources;
     copy->m_loadsFromNetwork = this->m_loadsFromNetwork;
-    copy->m_limitsNavigationToAppBoundDomains = this->m_limitsNavigationToAppBoundDomains;
+    copy->m_limitsNavigationsToAppBoundDomains = this->m_limitsNavigationsToAppBoundDomains;
 
     return copy;
 }
