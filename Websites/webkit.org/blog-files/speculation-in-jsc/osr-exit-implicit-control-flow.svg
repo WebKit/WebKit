@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="57 -74.90411 740.5 630.9041" width="740.5" height="630.9041">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="57.5 -16.698102 743 526.1981" width="743" height="526.1981">
   <defs>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -3 7 6" markerWidth="7" markerHeight="6" color="black">
       <g>
@@ -44,11 +44,11 @@
     </font-face>
   </defs>
   <metadata> Produced by OmniGraffle 7.15 
-    <dc:date>2020-04-18 19:55:30 +0000</dc:date>
+    <dc:date>2020-04-18 21:52:29 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
-    <rect fill="white" x="57" y="-74.90411" width="740.5" height="630.9041"/>
+    <rect fill="white" x="57.5" y="-16.698102" width="743" height="526.1981"/>
     <g id="Canvas_1: Layer 1">
       <title>Layer 1</title>
       <g id="Graphic_47">
@@ -56,32 +56,32 @@
         <rect x="228" y="134.5" width="185" height="255.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_41">
-        <path d="M 242.5 42.5 L 57.5 42.5 L 57.5 -51.9 C 113 -40.1 187 -87.3 242.5 -63.7 Z" fill="white"/>
-        <path d="M 242.5 42.5 L 57.5 42.5 L 57.5 -51.9 C 113 -40.1 187 -87.3 242.5 -63.7 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 243 66.5 L 58 66.5 L 58 .34151833 C 113.5 8.611329 187.5 -24.467912 243 -7.928292 Z" fill="white"/>
+        <path d="M 243 66.5 L 58 66.5 L 58 .34151833 C 113.5 8.611329 187.5 -24.467912 243 -7.928292 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_38">
-        <path d="M 487 38.502037 L 302 38.502037 L 302 -55.89796 C 357.5 -44.097963 431.5 -91.29796 487 -67.69796 Z" fill="white"/>
-        <path d="M 487 38.502037 L 302 38.502037 L 302 -55.89796 C 357.5 -44.097963 431.5 -91.29796 487 -67.69796 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 487.5 63.6981 L 302.5 63.6981 L 302.5 -2.4603796 C 358 5.8094306 432 -27.26981 487.5 -10.73019 Z" fill="white"/>
+        <path d="M 487.5 63.6981 L 302.5 63.6981 L 302.5 -2.4603796 C 358 5.8094306 432 -27.26981 487.5 -10.73019 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_37">
-        <line x1="186.0879" y1="42.5" x2="235.62944" y2="123.49535" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="180.14727" y1="66.5" x2="221.38646" y2="124.01631" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Line_36">
-        <line x1="379.0587" y1="38.502037" x2="357.2005" y2="122.02032" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="382.15927" y1="63.6981" x2="363.9979" y2="122.18037" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Graphic_23">
-        <path d="M 98.5 437.5 L 283.5 437.5 L 283.5 531.9 C 228 520.1 154 567.3 98.5 543.7 Z" fill="white"/>
-        <path d="M 98.5 437.5 L 283.5 437.5 L 283.5 531.9 C 228 520.1 154 567.3 98.5 543.7 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 98.5 437.5 L 283.5 437.5 L 283.5 494.7 C 228 487.55 154 516.15 98.5 501.85 Z" fill="white"/>
+        <path d="M 98.5 437.5 L 283.5 437.5 L 283.5 494.7 C 228 487.55 154 516.15 98.5 501.85 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_22">
-        <path d="M 358.5 437.5 L 543.5 437.5 L 543.5 531.9 C 488 520.1 414 567.3 358.5 543.7 Z" fill="white"/>
-        <path d="M 358.5 437.5 L 543.5 437.5 L 543.5 531.9 C 488 520.1 414 567.3 358.5 543.7 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <path d="M 358.5 437.5 L 543.5 437.5 L 543.5 494.7 C 488 487.55 414 516.15 358.5 501.85 Z" fill="white"/>
+        <path d="M 358.5 437.5 L 543.5 437.5 L 543.5 494.7 C 488 487.55 414 516.15 358.5 501.85 Z" stroke="#666" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_21">
-        <line x1="249.8762" y1="390" x2="229.8581" y2="426.2103" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="242.0942" y1="390" x2="219.68912" y2="426.50556" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Line_20">
-        <line x1="391.66916" y1="390" x2="411.8532" y2="426.23075" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="399.51126" y1="390" x2="422.1037" y2="426.5288" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Graphic_48">
         <rect x="238.25" y="154.25" width="164.5" height="28.5" fill="#acc2ff"/>
@@ -141,28 +141,28 @@
         <line x1="320.5" y1="332.75" x2="320.5" y2="335.85" marker-end="url(#StickArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_61">
-        <line x1="402.75" y1="236.375" x2="624.1023" y2="231.57273" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="236.375" x2="622.1485" y2="258.16454" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_62">
-        <line x1="402.75" y1="243.5" x2="624.1136" y2="231.8771" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="243.5" x2="622.123" y2="258.46898" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_63">
-        <line x1="402.75" y1="250.625" x2="624.1342" y2="232.18" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="250.625" x2="622.1068" y2="258.77536" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_64">
-        <line x1="402.75" y1="273.875" x2="624.124" y2="289.31135" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="273.875" x2="622.27675" y2="315.92258" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_65">
-        <line x1="402.75" y1="281" x2="624.1075" y2="289.615" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="281" x2="622.225" y2="316.21647" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_66">
-        <line x1="402.75" y1="288.125" x2="624.1003" y2="289.91973" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="288.125" x2="622.1818" y2="316.5147" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_67">
-        <line x1="402.75" y1="311.375" x2="624.19625" y2="342.4809" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="311.375" x2="622.4253" y2="369.12584" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_68">
-        <line x1="402.75" y1="348.875" x2="624.3137" y2="395.6702" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="402.75" y1="348.875" x2="622.6106" y2="422.3626" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_69">
         <text transform="translate(363.5 236.358)" fill="black">
@@ -195,76 +195,80 @@
         </text>
       </g>
       <g id="Graphic_75">
-        <rect x="634" y="231.358" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(639 236.358)" fill="black">
+        <rect x="632" y="259.14294" width="143.376" height="29.46411" fill="#ffc0ff"/>
+        <rect x="632" y="259.14294" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(637 264.14294)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="500" fill="black" x="0" y="16">OSR exit to bc#7</tspan>
         </text>
       </g>
       <g id="Graphic_76">
-        <rect x="634" y="290" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(639 295)" fill="black">
+        <rect x="632" y="317.78494" width="143.376" height="29.46411" fill="#ffc0ff"/>
+        <rect x="632" y="317.78494" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(637 322.78494)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="500" fill="black" x="0" y="16">OSR exit to bc#11</tspan>
         </text>
       </g>
       <g id="Graphic_77">
-        <rect x="634" y="343.858" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(639 348.858)" fill="black">
+        <rect x="632" y="371.64294" width="143.376" height="29.46411" fill="#ffc0ff"/>
+        <rect x="632" y="371.64294" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(637 376.64294)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="500" fill="black" x="0" y="16">OSR exit to bc#15</tspan>
         </text>
       </g>
       <g id="Graphic_78">
-        <rect x="634" y="397.716" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(639 402.716)" fill="black">
+        <rect x="632" y="425.50095" width="143.376" height="29.46411" fill="#ffc0ff"/>
+        <rect x="632" y="425.50095" width="143.376" height="29.46411" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(637 430.50095)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="500" fill="black" x="0" y="16">OSR exit to bc#20</tspan>
         </text>
       </g>
       <g id="Graphic_88">
-        <rect x="567" y="-69" width="230" height="204.49796" fill="white"/>
-        <path d="M 567 -69 L 797 -69 L 797 135.49796 L 567 135.49796 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
-        <text transform="translate(572 -64)" fill="black">
+        <rect x="570" y="-16.198102" width="230" height="204.49796" fill="white"/>
+        <path d="M 570 -16.198102 L 800 -16.198102 L 800 188.29986 L 570 188.29986 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+        <text transform="translate(575 -11.198102)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="84.944" y="15">Legend</tspan>
         </text>
       </g>
       <g id="Graphic_87">
-        <text transform="translate(667.745 29.027375)" fill="black">
+        <text transform="translate(670.745 81.82927)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">Implicit fall-through </tspan>
           <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">control flow inside basic </tspan>
           <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="34.615997">blocks</tspan>
         </text>
       </g>
       <g id="Graphic_86">
-        <text transform="translate(667.9275 85.96855)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">Implicit OSR control flow </tspan>
-          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">that exits blocks </tspan>
-          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="34.615997">sideways</tspan>
+        <text transform="translate(670.9275 138.77045)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">OSR control flow that </tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">exits blocks sideways to </tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="34.615997">where the exit origin says</tspan>
         </text>
       </g>
       <g id="Graphic_81">
-        <rect x="588.0675" y="-32.502037" width="30" height="30" fill="white"/>
-        <rect x="588.0675" y="-32.502037" width="30" height="30" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <rect x="591.0675" y="20.29986" width="30" height="30" fill="white"/>
+        <rect x="591.0675" y="20.29986" width="30" height="30" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_80">
-        <line x1="611.27106" y1="-2.502037" x2="615.8102" y2="5.797654" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <line x1="614.27106" y1="50.29986" x2="618.8102" y2="58.59955" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Graphic_79">
-        <text transform="translate(667.5 -22.307999)" fill="black">
+        <text transform="translate(670.5 30.4939)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="10">Explicit control flow </tspan>
           <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="300" fill="black" x="0" y="22.307999">between basic blocks</tspan>
         </text>
       </g>
       <g id="Graphic_92">
-        <rect x="600" y="38.074715" width="38.5" height="16.858002" fill="#acc2ff"/>
-        <rect x="600" y="38.074715" width="38.5" height="16.858002" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <rect x="603" y="90.87661" width="38.5" height="16.858002" fill="#acc2ff"/>
+        <rect x="603" y="90.87661" width="38.5" height="16.858002" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_91">
-        <line x1="619.25" y1="54.932716" x2="619.25" y2="58.032716" marker-end="url(#StickArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="622.25" y1="107.73461" x2="622.25" y2="110.83461" marker-end="url(#StickArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_94">
-        <rect x="584" y="95.34504" width="38.5" height="16.858002" fill="#acc2ff"/>
-        <rect x="584" y="95.34504" width="38.5" height="16.858002" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <rect x="587" y="148.14694" width="38.5" height="16.858002" fill="#acc2ff"/>
+        <rect x="587" y="148.14694" width="38.5" height="16.858002" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Line_93">
-        <line x1="622.5" y1="99.55954" x2="645.0647" y2="102.78655" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <line x1="625.5" y1="152.36144" x2="648.0647" y2="155.58845" marker-end="url(#StickArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
     </g>
   </g>

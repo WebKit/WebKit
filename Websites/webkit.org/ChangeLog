@@ -2,6 +2,13 @@
 
         Unreviewed, check in some more files for a blog post.
 
+        * blog-files/speculation-in-jsc/osr-exit-implicit-control-flow.graffle:
+        * blog-files/speculation-in-jsc/osr-exit-implicit-control-flow.svg:
+
+2020-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, check in some more files for a blog post.
+
         * blog-files/speculation-in-jsc/osr-exit-implicit-control-flow.graffle: Added.
         * blog-files/speculation-in-jsc/osr-exit-implicit-control-flow.svg: Added.
 
