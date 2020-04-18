@@ -1,5 +1,16 @@
 2020-04-18  David Kilzer  <ddkilzer@apple.com>
 
+        Attempt #2 to fix tvOS build
+
+        Unreviewed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        - Add #if ENABLE(VIDEO_PRESENTATION_MODE)/#endif to protect
+          methods defined in MediaPlayerPrivate.h.
+        - The previous commit was (r260307) also to fix tvOS, not watchOS.
+
+2020-04-18  David Kilzer  <ddkilzer@apple.com>
+
         Attempt to fix watchOS build
 
         Unreviewed.

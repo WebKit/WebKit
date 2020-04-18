@@ -1090,6 +1090,8 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
     return m_videoLayerManager->videoInlineLayer();
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
     updateLastImage(UpdateType::UpdateSynchronously);
@@ -1156,6 +1158,8 @@ void MediaPlayerPrivateAVFoundationObjC::videoFullscreenStandbyChanged()
     updateDisableExternalPlayback();
 #endif
 }
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #if PLATFORM(IOS_FAMILY)
 NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
