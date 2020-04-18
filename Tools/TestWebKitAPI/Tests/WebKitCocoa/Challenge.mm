@@ -495,6 +495,23 @@ TEST(MultipleClientCertificateConnections, Failure)
     EXPECT_EQ(countClientCertChallenges(methods), certChallengesAfterInitialFailure + 1);
 }
 
+TEST(MultipleClientCertificateConnections, NonPersistentDataStore)
+{
+    auto server = clientCertServer();
+
+    Vector<RetainPtr<NSString>> methods;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didReceiveAuthenticationChallenge = challengeHandler(methods).get();
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_EQ(countClientCertChallenges(methods), 1u);
+}
+
 #endif // HAVE(NETWORK_FRAMEWORK)
 
 } // namespace TestWebKitAPI

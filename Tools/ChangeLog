@@ -1,3 +1,13 @@
+2020-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix client certificate authentication when using non-default WKWebsiteDataStores
+        https://bugs.webkit.org/show_bug.cgi?id=210681
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Enable service workers for app-bound domains

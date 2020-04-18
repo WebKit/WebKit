@@ -1,3 +1,18 @@
+2020-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix client certificate authentication when using non-default WKWebsiteDataStores
+        https://bugs.webkit.org/show_bug.cgi?id=210681
+
+        Reviewed by Brady Eidson.
+
+        NetworkProcessProxy was trying to keep a map of WebsiteDataStores, but it wasn't as accurate as the one WebsiteDataStore was maintaining.
+        Use the latter map instead and client certificate authentication works.  Otherwise, the credential isn't serialized correctly.
+        I found this while working on <rdar://problem/60340449> but this was unrelated so I put it in a different change.
+        This may fix <rdar://problem/60910392>.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::websiteDataStoreFromSessionID):
+
 2020-04-18  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Replace evil strtok() calls with fscanf() in MemoryPressureMonitor.cpp

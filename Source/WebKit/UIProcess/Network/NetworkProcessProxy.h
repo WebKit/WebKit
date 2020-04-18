@@ -309,8 +309,6 @@ private:
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 #endif
 
-    HashMap<PAL::SessionID, RefPtr<WebsiteDataStore>> m_websiteDataStores;
-
     struct UploadActivity {
         std::unique_ptr<ProcessAssertion> uiAssertion;
         std::unique_ptr<ProcessAssertion> networkAssertion;
