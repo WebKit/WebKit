@@ -37,35 +37,22 @@
 
 namespace WebCore {
 
-FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, ResourceRequest&& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, const ReferrerPolicy& referrerPolicy, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, InitiatedByMainFrame initiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo)
+FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, ResourceRequest&& resourceRequest, const String& frameName, InitiatedByMainFrame initiatedByMainFrame, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo)
     : m_requester { makeRef(requester) }
     , m_requesterSecurityOrigin { makeRef(requesterSecurityOrigin) }
     , m_resourceRequest { WTFMove(resourceRequest) }
     , m_frameName { frameName }
-    , m_lockHistory { lockHistory }
-    , m_lockBackForwardList { lockBackForwardList }
-    , m_referrerPolicy { referrerPolicy }
-    , m_allowNavigationToInvalidURL { allowNavigationToInvalidURL }
-    , m_newFrameOpenerPolicy { newFrameOpenerPolicy }
-    , m_shouldReplaceDocumentIfJavaScriptURL { shouldReplaceDocumentIfJavaScriptURL }
-    , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_downloadAttribute { downloadAttribute }
     , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_systemPreviewInfo { systemPreviewInfo }
 {
 }
 
-FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const SubstituteData& substituteData)
+FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, const SubstituteData& substituteData)
     : m_requester { makeRef(*frame.document()) }
     , m_requesterSecurityOrigin { makeRef(frame.document()->securityOrigin()) }
     , m_resourceRequest { resourceRequest }
     , m_substituteData { substituteData }
-    , m_lockHistory { LockHistory::No }
-    , m_lockBackForwardList { LockBackForwardList::No }
-    , m_allowNavigationToInvalidURL { AllowNavigationToInvalidURL::Yes }
-    , m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow }
-    , m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL }
-    , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
 {
 }
 

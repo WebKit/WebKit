@@ -2233,7 +2233,7 @@ void DocumentLoader::cancelMainResourceLoadForContentFilter(const ResourceError&
 
 void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData& substituteData)
 {
-    frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
+    frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
 }
 
 ResourceError DocumentLoader::contentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, WTF::String&& unblockRequestDeniedScript)

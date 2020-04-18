@@ -1204,7 +1204,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     Frame* targetFrame = frame->loader().findFrameForNavigation(request->target());
     if (!targetFrame) {
         // We did not find a target frame. Ask our frame to load the page. This may or may not create a popup window.
-        FrameLoadRequest frameLoadRequest { *frame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+        FrameLoadRequest frameLoadRequest { *frame, request->request() };
         frameLoadRequest.setFrameName(request->target());
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
         frame->loader().load(WTFMove(frameLoadRequest));
@@ -1216,7 +1216,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     }
 
     // Now ask the frame to load the request.
-    targetFrame->loader().load(FrameLoadRequest(*targetFrame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    targetFrame->loader().load(FrameLoadRequest(*targetFrame, request->request() ));
 
     auto* targetWebFrame = WebFrame::fromCoreFrame(*targetFrame);
     ASSERT(targetWebFrame);
@@ -1390,7 +1390,7 @@ String PluginView::userAgent()
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups)
 {
-    FrameLoadRequest frameLoadRequest { m_pluginElement->document(), m_pluginElement->document().securityOrigin(), { }, target, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, InitiatedByMainFrame::Unknown };
+    FrameLoadRequest frameLoadRequest { m_pluginElement->document(), m_pluginElement->document().securityOrigin(), { }, target, InitiatedByMainFrame::Unknown };
     frameLoadRequest.resourceRequest().setHTTPMethod(method);
     frameLoadRequest.resourceRequest().setURL(m_pluginElement->document().completeURL(urlString));
     frameLoadRequest.resourceRequest().setHTTPHeaderFields(headerFields);

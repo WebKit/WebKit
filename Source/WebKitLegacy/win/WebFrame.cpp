@@ -559,7 +559,7 @@ HRESULT WebFrame::loadRequest(_In_opt_ IWebURLRequest* request)
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    coreFrame->loader().load(FrameLoadRequest(*coreFrame, requestImpl->resourceRequest(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    coreFrame->loader().load(FrameLoadRequest(*coreFrame, requestImpl->resourceRequest()));
     return S_OK;
 }
 
@@ -584,7 +584,7 @@ void WebFrame::loadData(Ref<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR t
 
     // This method is only called from IWebFrame methods, so don't ASSERT that the Frame pointer isn't null.
     if (Frame* coreFrame = core(this))
-        coreFrame->loader().load(FrameLoadRequest(*coreFrame, request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
+        coreFrame->loader().load(FrameLoadRequest(*coreFrame, request, substituteData));
 }
 
 HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR url)

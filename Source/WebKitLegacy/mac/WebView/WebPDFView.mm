@@ -987,7 +987,8 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
     // Call to the frame loader because this is where our security checks are made.
     auto* frame = core([dataSource webFrame]);
-    WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::LockHistory::No, WebCore::LockBackForwardList::No, WebCore::ReferrerPolicy::NoReferrer, WebCore::AllowNavigationToInvalidURL::Yes, WebCore::NewFrameOpenerPolicy::Allow, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, WebCore::InitiatedByMainFrame::Unknown };
+    WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::InitiatedByMainFrame::Unknown };
+    frameLoadRequest.setReferrerPolicy(WebCore::ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.get(), nullptr);
 }
 

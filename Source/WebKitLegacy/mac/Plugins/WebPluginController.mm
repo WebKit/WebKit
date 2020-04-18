@@ -496,7 +496,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
-        WebCore::FrameLoadRequest frameLoadRequest { *core(frame), request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+        WebCore::FrameLoadRequest frameLoadRequest { *core(frame), request };
         frameLoadRequest.setFrameName(target);
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
         core(frame)->loader().load(WTFMove(frameLoadRequest));
