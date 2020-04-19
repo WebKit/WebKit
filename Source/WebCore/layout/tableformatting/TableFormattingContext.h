@@ -67,7 +67,7 @@ private:
 
     void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
-    void computeAndDistributeExtraHorizontalSpace(LayoutUnit containingBlockWidth);
+    void computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace);
 
     void initializeDisplayBoxToBlank(Display::Box&) const;
 
