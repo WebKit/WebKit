@@ -1,3 +1,47 @@
+2020-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception checks and handling in JSC APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=210715
+        <rdar://problem/61599658>
+
+        Reviewed by Saam Barati.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        - We should return early if an exception was thrown.  We should not be using the
+          result in any way since we cannot rely on it having any sane value.
+        (JSC::APICallbackFunction::construct):
+        - For consistency, also return an undefined here when an exception was thrown.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::construct):
+        (JSC::JSCallbackObject<Parent>::call):
+        - Return an undefined if an exception was thrown.  Don't return the potentially
+          garbage result value.  Who knows what the client code will do with it.  Returning
+          an undefined here makes the code more robust.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetProperty):
+        (JSObjectHasPropertyForKey):
+        (JSObjectGetPropertyForKey):
+        (JSObjectDeletePropertyForKey):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        - Explicitly return a nullptr if an exception was thrown.  The toRef() on the
+          result that follows the exception check may or may not return a nullptr
+          (also see toRef(JSC::VM& vm, JSC::JSValue v) for !CPU(ADDRESS64)).
+
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        - For consistency, make these return false if an exception is thrown.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::objCCallbackFunctionCallAsFunction):
+        (JSC::objCCallbackFunctionCallAsConstructor):
+        (JSC::ObjCCallbackFunctionImpl::call):
+        - Add some assertions and return early if an exception was thrown.
+
 2020-04-18  Keith Miller  <keith_miller@apple.com>
 
         Fix CLoop build for iterator opcodes

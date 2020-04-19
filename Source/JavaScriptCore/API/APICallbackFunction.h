@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,8 +62,10 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObj
         JSLock::DropAllLocks dropAllLocks(globalObject);
         result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
-    if (exception)
+    if (exception) {
         throwException(globalObject, scope, toJS(globalObject, exception));
+        return JSValue::encode(jsUndefined());
+    }
 
     // result must be a valid JSValue.
     if (!result)
@@ -97,7 +99,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
         }
         if (exception) {
             throwException(globalObject, scope, toJS(globalObject, exception));
-            return JSValue::encode(toJS(globalObject, exception));
+            return JSValue::encode(jsUndefined());
         }
         // result must be a valid JSValue.
         if (!result)

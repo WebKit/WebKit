@@ -348,7 +348,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 {
     if (!ctx || !object) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -358,7 +358,8 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
     JSObject* jsObject = toJS(object);
 
     JSValue jsValue = jsObject->get(globalObject, propertyName->identifier(&vm));
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
     return toRef(globalObject, jsValue);
 }
 
@@ -407,7 +408,8 @@ bool JSObjectHasPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef 
         return false;
 
     bool result = jsObject->hasProperty(globalObject, ident);
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return false;
     return result;
 }
 
@@ -428,7 +430,8 @@ JSValueRef JSObjectGetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSVal
         return nullptr;
 
     JSValue jsValue = jsObject->get(globalObject, ident);
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
     return toRef(globalObject, jsValue);
 }
 
@@ -480,7 +483,8 @@ bool JSObjectDeletePropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueR
         return false;
 
     bool result = JSCell::deleteProperty(jsObject, globalObject, ident);
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return false;
     return result;
 }
 
@@ -488,7 +492,7 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -498,7 +502,8 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
     JSObject* jsObject = toJS(object);
 
     JSValue jsValue = jsObject->get(globalObject, propertyIndex);
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
     return toRef(globalObject, jsValue);
 }
 
@@ -535,7 +540,8 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
     JSObject* jsObject = toJS(object);
 
     bool result = JSCell::deleteProperty(jsObject, globalObject, propertyName->identifier(&vm));
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return false;
     return result;
 }
 

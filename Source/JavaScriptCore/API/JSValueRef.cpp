@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,7 +235,8 @@ bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* ex
     JSValue jsB = toJS(globalObject, b);
 
     bool result = JSValue::equal(globalObject, jsA, jsB); // false if an exception is thrown
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return false;
     
     return result;
 }
@@ -272,7 +273,8 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
     if (!jsConstructor->structure(vm)->typeInfo().implementsHasInstance())
         return false;
     bool result = jsConstructor->hasInstance(globalObject, jsValue); // false if an exception is thrown
-    handleExceptionIfNeeded(scope, ctx, exception);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return false;
     return result;
 }
 

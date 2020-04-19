@@ -465,8 +465,10 @@ EncodedJSValue JSCallbackObject<Parent>::construct(JSGlobalObject* globalObject,
                 JSLock::DropAllLocks dropAllLocks(globalObject);
                 result = toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), &exception));
             }
-            if (exception)
+            if (exception) {
                 throwException(globalObject, scope, toJS(globalObject, exception));
+                return JSValue::encode(jsUndefined());
+            }
             return JSValue::encode(result);
         }
     }
@@ -538,8 +540,10 @@ EncodedJSValue JSCallbackObject<Parent>::call(JSGlobalObject* globalObject, Call
                 JSLock::DropAllLocks dropAllLocks(globalObject);
                 result = toJS(globalObject, callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception));
             }
-            if (exception)
+            if (exception) {
                 throwException(globalObject, scope, toJS(globalObject, exception));
+                return JSValue::encode(jsUndefined());
+            }
             return JSValue::encode(result);
         }
     }
