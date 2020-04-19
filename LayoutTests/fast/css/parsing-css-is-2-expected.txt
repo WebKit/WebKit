@@ -46,30 +46,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(*, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, :visited)"
-PASS document.querySelector(":is(*, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::first-letter)"
-PASS document.querySelector(":is(*, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::first-letter)"
-PASS document.querySelector(":is(*, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::first-line)"
-PASS document.querySelector(":is(*, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::first-line)"
-PASS document.querySelector(":is(*, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::before)"
-PASS document.querySelector(":is(*, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::before)"
-PASS document.querySelector(":is(*, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::after)"
-PASS document.querySelector(":is(*, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, ::after)"
 PASS document.querySelector(":is(*, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(*, foobar#id.class)"
@@ -178,30 +154,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(foobar, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, :visited)"
-PASS document.querySelector(":is(foobar, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::first-letter)"
-PASS document.querySelector(":is(foobar, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::first-letter)"
-PASS document.querySelector(":is(foobar, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::first-line)"
-PASS document.querySelector(":is(foobar, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::first-line)"
-PASS document.querySelector(":is(foobar, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::before)"
-PASS document.querySelector(":is(foobar, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::before)"
-PASS document.querySelector(":is(foobar, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::after)"
-PASS document.querySelector(":is(foobar, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, ::after)"
 PASS document.querySelector(":is(foobar, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar, foobar#id.class)"
@@ -310,30 +262,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(#id, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, :visited)"
-PASS document.querySelector(":is(#id, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::first-letter)"
-PASS document.querySelector(":is(#id, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::first-letter)"
-PASS document.querySelector(":is(#id, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::first-line)"
-PASS document.querySelector(":is(#id, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::first-line)"
-PASS document.querySelector(":is(#id, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::before)"
-PASS document.querySelector(":is(#id, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::before)"
-PASS document.querySelector(":is(#id, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::after)"
-PASS document.querySelector(":is(#id, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, ::after)"
 PASS document.querySelector(":is(#id, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id, foobar#id.class)"
@@ -442,30 +370,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(.class, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, :visited)"
-PASS document.querySelector(":is(.class, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::first-letter)"
-PASS document.querySelector(":is(.class, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::first-letter)"
-PASS document.querySelector(":is(.class, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::first-line)"
-PASS document.querySelector(":is(.class, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::first-line)"
-PASS document.querySelector(":is(.class, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::before)"
-PASS document.querySelector(":is(.class, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::before)"
-PASS document.querySelector(":is(.class, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::after)"
-PASS document.querySelector(":is(.class, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, ::after)"
 PASS document.querySelector(":is(.class, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class, foobar#id.class)"
@@ -574,30 +478,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:first-child, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, :visited)"
-PASS document.querySelector(":is(:first-child, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::first-letter)"
-PASS document.querySelector(":is(:first-child, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::first-letter)"
-PASS document.querySelector(":is(:first-child, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::first-line)"
-PASS document.querySelector(":is(:first-child, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::first-line)"
-PASS document.querySelector(":is(:first-child, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::before)"
-PASS document.querySelector(":is(:first-child, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::before)"
-PASS document.querySelector(":is(:first-child, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::after)"
-PASS document.querySelector(":is(:first-child, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, ::after)"
 PASS document.querySelector(":is(:first-child, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:first-child, foobar#id.class)"
@@ -706,30 +586,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:last-child, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, :visited)"
-PASS document.querySelector(":is(:last-child, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::first-letter)"
-PASS document.querySelector(":is(:last-child, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::first-letter)"
-PASS document.querySelector(":is(:last-child, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::first-line)"
-PASS document.querySelector(":is(:last-child, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::first-line)"
-PASS document.querySelector(":is(:last-child, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::before)"
-PASS document.querySelector(":is(:last-child, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::before)"
-PASS document.querySelector(":is(:last-child, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::after)"
-PASS document.querySelector(":is(:last-child, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, ::after)"
 PASS document.querySelector(":is(:last-child, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:last-child, foobar#id.class)"
@@ -838,30 +694,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:visited, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, :visited)"
-PASS document.querySelector(":is(:visited, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::first-letter)"
-PASS document.querySelector(":is(:visited, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::first-letter)"
-PASS document.querySelector(":is(:visited, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::first-line)"
-PASS document.querySelector(":is(:visited, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::first-line)"
-PASS document.querySelector(":is(:visited, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::before)"
-PASS document.querySelector(":is(:visited, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::before)"
-PASS document.querySelector(":is(:visited, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::after)"
-PASS document.querySelector(":is(:visited, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, ::after)"
 PASS document.querySelector(":is(:visited, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, foobar#id.class)"
@@ -928,534 +760,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:visited, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::first-letter, *)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, *)"
-PASS document.querySelector(":is(::first-letter, *    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, *)"
-PASS document.querySelector(":is(::first-letter, foobar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, foobar)"
-PASS document.querySelector(":is(::first-letter, foobar    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, foobar)"
-PASS document.querySelector(":is(::first-letter, #id)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, #id)"
-PASS document.querySelector(":is(::first-letter, #id    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, #id)"
-PASS document.querySelector(":is(::first-letter, .class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, .class)"
-PASS document.querySelector(":is(::first-letter, .class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, .class)"
-PASS document.querySelector(":is(::first-letter, :first-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :first-child)"
-PASS document.querySelector(":is(::first-letter, :first-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :first-child)"
-PASS document.querySelector(":is(::first-letter, :last-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :last-child)"
-PASS document.querySelector(":is(::first-letter, :last-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :last-child)"
-PASS document.querySelector(":is(::first-letter, :visited)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :visited)"
-PASS document.querySelector(":is(::first-letter, :visited    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :visited)"
-PASS document.querySelector(":is(::first-letter, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::first-letter)"
-PASS document.querySelector(":is(::first-letter, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::first-letter)"
-PASS document.querySelector(":is(::first-letter, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::first-line)"
-PASS document.querySelector(":is(::first-letter, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::first-line)"
-PASS document.querySelector(":is(::first-letter, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::before)"
-PASS document.querySelector(":is(::first-letter, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::before)"
-PASS document.querySelector(":is(::first-letter, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::after)"
-PASS document.querySelector(":is(::first-letter, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, ::after)"
-PASS document.querySelector(":is(::first-letter, foobar#id.class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, foobar#id.class)"
-PASS document.querySelector(":is(::first-letter, foobar#id.class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, foobar#id.class)"
-PASS document.querySelector(":is(::first-letter, .class:not(.notclass))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, .class:not(.notclass))"
-PASS document.querySelector(":is(::first-letter, .class:not(.notclass)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, .class:not(.notclass))"
-PASS document.querySelector(":is(::first-letter, #id:empty)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, #id:empty)"
-PASS document.querySelector(":is(::first-letter, #id:empty    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, #id:empty)"
-PASS document.querySelector(":is(::first-letter, a > b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a > b)"
-PASS document.querySelector(":is(::first-letter, a > b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a > b)"
-PASS document.querySelector(":is(::first-letter, a b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a b)"
-PASS document.querySelector(":is(::first-letter, a b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a b)"
-PASS document.querySelector(":is(::first-letter, a + b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a + b)"
-PASS document.querySelector(":is(::first-letter, a + b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a + b)"
-PASS document.querySelector(":is(::first-letter, a ~ b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a ~ b)"
-PASS document.querySelector(":is(::first-letter, a ~ b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a ~ b)"
-PASS document.querySelector(":is(::first-letter, a + b > c ~ d e + g)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::first-letter, a + b > c ~ d e + g    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::first-letter, :not(:link))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :not(:link))"
-PASS document.querySelector(":is(::first-letter, :not(:link)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :not(:link))"
-PASS document.querySelector(":is(::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::first-line, *)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, *)"
-PASS document.querySelector(":is(::first-line, *    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, *)"
-PASS document.querySelector(":is(::first-line, foobar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, foobar)"
-PASS document.querySelector(":is(::first-line, foobar    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, foobar)"
-PASS document.querySelector(":is(::first-line, #id)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, #id)"
-PASS document.querySelector(":is(::first-line, #id    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, #id)"
-PASS document.querySelector(":is(::first-line, .class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, .class)"
-PASS document.querySelector(":is(::first-line, .class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, .class)"
-PASS document.querySelector(":is(::first-line, :first-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :first-child)"
-PASS document.querySelector(":is(::first-line, :first-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :first-child)"
-PASS document.querySelector(":is(::first-line, :last-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :last-child)"
-PASS document.querySelector(":is(::first-line, :last-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :last-child)"
-PASS document.querySelector(":is(::first-line, :visited)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :visited)"
-PASS document.querySelector(":is(::first-line, :visited    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :visited)"
-PASS document.querySelector(":is(::first-line, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::first-letter)"
-PASS document.querySelector(":is(::first-line, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::first-letter)"
-PASS document.querySelector(":is(::first-line, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::first-line)"
-PASS document.querySelector(":is(::first-line, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::first-line)"
-PASS document.querySelector(":is(::first-line, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::before)"
-PASS document.querySelector(":is(::first-line, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::before)"
-PASS document.querySelector(":is(::first-line, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::after)"
-PASS document.querySelector(":is(::first-line, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, ::after)"
-PASS document.querySelector(":is(::first-line, foobar#id.class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, foobar#id.class)"
-PASS document.querySelector(":is(::first-line, foobar#id.class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, foobar#id.class)"
-PASS document.querySelector(":is(::first-line, .class:not(.notclass))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, .class:not(.notclass))"
-PASS document.querySelector(":is(::first-line, .class:not(.notclass)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, .class:not(.notclass))"
-PASS document.querySelector(":is(::first-line, #id:empty)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, #id:empty)"
-PASS document.querySelector(":is(::first-line, #id:empty    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, #id:empty)"
-PASS document.querySelector(":is(::first-line, a > b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a > b)"
-PASS document.querySelector(":is(::first-line, a > b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a > b)"
-PASS document.querySelector(":is(::first-line, a b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a b)"
-PASS document.querySelector(":is(::first-line, a b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a b)"
-PASS document.querySelector(":is(::first-line, a + b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a + b)"
-PASS document.querySelector(":is(::first-line, a + b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a + b)"
-PASS document.querySelector(":is(::first-line, a ~ b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a ~ b)"
-PASS document.querySelector(":is(::first-line, a ~ b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a ~ b)"
-PASS document.querySelector(":is(::first-line, a + b > c ~ d e + g)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::first-line, a + b > c ~ d e + g    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::first-line, :not(:link))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :not(:link))"
-PASS document.querySelector(":is(::first-line, :not(:link)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :not(:link))"
-PASS document.querySelector(":is(::first-line, :nth-child(2n of a, b, c))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::first-line, :nth-child(2n of a, b, c)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::before, *)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, *)"
-PASS document.querySelector(":is(::before, *    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, *)"
-PASS document.querySelector(":is(::before, foobar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, foobar)"
-PASS document.querySelector(":is(::before, foobar    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, foobar)"
-PASS document.querySelector(":is(::before, #id)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, #id)"
-PASS document.querySelector(":is(::before, #id    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, #id)"
-PASS document.querySelector(":is(::before, .class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, .class)"
-PASS document.querySelector(":is(::before, .class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, .class)"
-PASS document.querySelector(":is(::before, :first-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :first-child)"
-PASS document.querySelector(":is(::before, :first-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :first-child)"
-PASS document.querySelector(":is(::before, :last-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :last-child)"
-PASS document.querySelector(":is(::before, :last-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :last-child)"
-PASS document.querySelector(":is(::before, :visited)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :visited)"
-PASS document.querySelector(":is(::before, :visited    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :visited)"
-PASS document.querySelector(":is(::before, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::first-letter)"
-PASS document.querySelector(":is(::before, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::first-letter)"
-PASS document.querySelector(":is(::before, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::first-line)"
-PASS document.querySelector(":is(::before, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::first-line)"
-PASS document.querySelector(":is(::before, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::before)"
-PASS document.querySelector(":is(::before, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::before)"
-PASS document.querySelector(":is(::before, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::after)"
-PASS document.querySelector(":is(::before, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, ::after)"
-PASS document.querySelector(":is(::before, foobar#id.class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, foobar#id.class)"
-PASS document.querySelector(":is(::before, foobar#id.class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, foobar#id.class)"
-PASS document.querySelector(":is(::before, .class:not(.notclass))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, .class:not(.notclass))"
-PASS document.querySelector(":is(::before, .class:not(.notclass)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, .class:not(.notclass))"
-PASS document.querySelector(":is(::before, #id:empty)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, #id:empty)"
-PASS document.querySelector(":is(::before, #id:empty    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, #id:empty)"
-PASS document.querySelector(":is(::before, a > b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a > b)"
-PASS document.querySelector(":is(::before, a > b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a > b)"
-PASS document.querySelector(":is(::before, a b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a b)"
-PASS document.querySelector(":is(::before, a b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a b)"
-PASS document.querySelector(":is(::before, a + b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a + b)"
-PASS document.querySelector(":is(::before, a + b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a + b)"
-PASS document.querySelector(":is(::before, a ~ b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a ~ b)"
-PASS document.querySelector(":is(::before, a ~ b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a ~ b)"
-PASS document.querySelector(":is(::before, a + b > c ~ d e + g)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::before, a + b > c ~ d e + g    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::before, :not(:link))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :not(:link))"
-PASS document.querySelector(":is(::before, :not(:link)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :not(:link))"
-PASS document.querySelector(":is(::before, :nth-child(2n of a, b, c))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::before, :nth-child(2n of a, b, c)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::after, *)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, *)"
-PASS document.querySelector(":is(::after, *    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, *)"
-PASS document.querySelector(":is(::after, foobar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, foobar)"
-PASS document.querySelector(":is(::after, foobar    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, foobar)"
-PASS document.querySelector(":is(::after, #id)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, #id)"
-PASS document.querySelector(":is(::after, #id    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, #id)"
-PASS document.querySelector(":is(::after, .class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, .class)"
-PASS document.querySelector(":is(::after, .class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, .class)"
-PASS document.querySelector(":is(::after, :first-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :first-child)"
-PASS document.querySelector(":is(::after, :first-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :first-child)"
-PASS document.querySelector(":is(::after, :last-child)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :last-child)"
-PASS document.querySelector(":is(::after, :last-child    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :last-child)"
-PASS document.querySelector(":is(::after, :visited)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :visited)"
-PASS document.querySelector(":is(::after, :visited    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :visited)"
-PASS document.querySelector(":is(::after, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::first-letter)"
-PASS document.querySelector(":is(::after, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::first-letter)"
-PASS document.querySelector(":is(::after, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::first-line)"
-PASS document.querySelector(":is(::after, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::first-line)"
-PASS document.querySelector(":is(::after, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::before)"
-PASS document.querySelector(":is(::after, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::before)"
-PASS document.querySelector(":is(::after, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::after)"
-PASS document.querySelector(":is(::after, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, ::after)"
-PASS document.querySelector(":is(::after, foobar#id.class)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, foobar#id.class)"
-PASS document.querySelector(":is(::after, foobar#id.class    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, foobar#id.class)"
-PASS document.querySelector(":is(::after, .class:not(.notclass))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, .class:not(.notclass))"
-PASS document.querySelector(":is(::after, .class:not(.notclass)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, .class:not(.notclass))"
-PASS document.querySelector(":is(::after, #id:empty)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, #id:empty)"
-PASS document.querySelector(":is(::after, #id:empty    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, #id:empty)"
-PASS document.querySelector(":is(::after, a > b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a > b)"
-PASS document.querySelector(":is(::after, a > b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a > b)"
-PASS document.querySelector(":is(::after, a b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a b)"
-PASS document.querySelector(":is(::after, a b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a b)"
-PASS document.querySelector(":is(::after, a + b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a + b)"
-PASS document.querySelector(":is(::after, a + b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a + b)"
-PASS document.querySelector(":is(::after, a ~ b)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a ~ b)"
-PASS document.querySelector(":is(::after, a ~ b    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a ~ b)"
-PASS document.querySelector(":is(::after, a + b > c ~ d e + g)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::after, a + b > c ~ d e + g    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, a + b > c ~ d e + g)"
-PASS document.querySelector(":is(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":is(::after, :not(:link))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :not(:link))"
-PASS document.querySelector(":is(::after, :not(:link)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :not(:link))"
-PASS document.querySelector(":is(::after, :nth-child(2n of a, b, c))") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :nth-child(2n of a, b, c))"
-PASS document.querySelector(":is(::after, :nth-child(2n of a, b, c)    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":is(foobar#id.class, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, *)"
@@ -1498,30 +802,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(foobar#id.class, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, :visited)"
-PASS document.querySelector(":is(foobar#id.class, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::first-letter)"
-PASS document.querySelector(":is(foobar#id.class, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::first-letter)"
-PASS document.querySelector(":is(foobar#id.class, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::first-line)"
-PASS document.querySelector(":is(foobar#id.class, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::first-line)"
-PASS document.querySelector(":is(foobar#id.class, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::before)"
-PASS document.querySelector(":is(foobar#id.class, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::before)"
-PASS document.querySelector(":is(foobar#id.class, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::after)"
-PASS document.querySelector(":is(foobar#id.class, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, ::after)"
 PASS document.querySelector(":is(foobar#id.class, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class, foobar#id.class)"
@@ -1630,30 +910,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(.class:not(.notclass), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), :visited)"
-PASS document.querySelector(":is(.class:not(.notclass), ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::first-letter)"
-PASS document.querySelector(":is(.class:not(.notclass), ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::first-letter)"
-PASS document.querySelector(":is(.class:not(.notclass), ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::first-line)"
-PASS document.querySelector(":is(.class:not(.notclass), ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::first-line)"
-PASS document.querySelector(":is(.class:not(.notclass), ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::before)"
-PASS document.querySelector(":is(.class:not(.notclass), ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::before)"
-PASS document.querySelector(":is(.class:not(.notclass), ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::after)"
-PASS document.querySelector(":is(.class:not(.notclass), ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), ::after)"
 PASS document.querySelector(":is(.class:not(.notclass), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(.class:not(.notclass), foobar#id.class)"
@@ -1762,30 +1018,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(#id:empty, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, :visited)"
-PASS document.querySelector(":is(#id:empty, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::first-letter)"
-PASS document.querySelector(":is(#id:empty, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::first-letter)"
-PASS document.querySelector(":is(#id:empty, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::first-line)"
-PASS document.querySelector(":is(#id:empty, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::first-line)"
-PASS document.querySelector(":is(#id:empty, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::before)"
-PASS document.querySelector(":is(#id:empty, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::before)"
-PASS document.querySelector(":is(#id:empty, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::after)"
-PASS document.querySelector(":is(#id:empty, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, ::after)"
 PASS document.querySelector(":is(#id:empty, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(#id:empty, foobar#id.class)"
@@ -1894,30 +1126,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(a > b, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, :visited)"
-PASS document.querySelector(":is(a > b, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::first-letter)"
-PASS document.querySelector(":is(a > b, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::first-letter)"
-PASS document.querySelector(":is(a > b, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::first-line)"
-PASS document.querySelector(":is(a > b, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::first-line)"
-PASS document.querySelector(":is(a > b, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::before)"
-PASS document.querySelector(":is(a > b, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::before)"
-PASS document.querySelector(":is(a > b, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::after)"
-PASS document.querySelector(":is(a > b, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, ::after)"
 PASS document.querySelector(":is(a > b, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a > b, foobar#id.class)"
@@ -2026,30 +1234,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(a b, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, :visited)"
-PASS document.querySelector(":is(a b, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::first-letter)"
-PASS document.querySelector(":is(a b, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::first-letter)"
-PASS document.querySelector(":is(a b, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::first-line)"
-PASS document.querySelector(":is(a b, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::first-line)"
-PASS document.querySelector(":is(a b, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::before)"
-PASS document.querySelector(":is(a b, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::before)"
-PASS document.querySelector(":is(a b, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::after)"
-PASS document.querySelector(":is(a b, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, ::after)"
 PASS document.querySelector(":is(a b, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a b, foobar#id.class)"
@@ -2158,30 +1342,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(a + b, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, :visited)"
-PASS document.querySelector(":is(a + b, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::first-letter)"
-PASS document.querySelector(":is(a + b, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::first-letter)"
-PASS document.querySelector(":is(a + b, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::first-line)"
-PASS document.querySelector(":is(a + b, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::first-line)"
-PASS document.querySelector(":is(a + b, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::before)"
-PASS document.querySelector(":is(a + b, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::before)"
-PASS document.querySelector(":is(a + b, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::after)"
-PASS document.querySelector(":is(a + b, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, ::after)"
 PASS document.querySelector(":is(a + b, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b, foobar#id.class)"
@@ -2290,30 +1450,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(a ~ b, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, :visited)"
-PASS document.querySelector(":is(a ~ b, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::first-letter)"
-PASS document.querySelector(":is(a ~ b, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::first-letter)"
-PASS document.querySelector(":is(a ~ b, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::first-line)"
-PASS document.querySelector(":is(a ~ b, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::first-line)"
-PASS document.querySelector(":is(a ~ b, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::before)"
-PASS document.querySelector(":is(a ~ b, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::before)"
-PASS document.querySelector(":is(a ~ b, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::after)"
-PASS document.querySelector(":is(a ~ b, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, ::after)"
 PASS document.querySelector(":is(a ~ b, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a ~ b, foobar#id.class)"
@@ -2422,30 +1558,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(a + b > c ~ d e + g, :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, :visited)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::first-letter)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::first-letter)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::first-line)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::first-line)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::before)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::before)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::after)"
-PASS document.querySelector(":is(a + b > c ~ d e + g, ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, ::after)"
 PASS document.querySelector(":is(a + b > c ~ d e + g, foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(a + b > c ~ d e + g, foobar#id.class)"
@@ -2554,30 +1666,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :visited)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-letter)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::first-line)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::before)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)"
-PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), ::after)"
 PASS document.querySelector(":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:-webkit-any(.selector, #tama, #hanayo, #midoriko), foobar#id.class)"
@@ -2686,30 +1774,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:not(:link), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), :visited)"
-PASS document.querySelector(":is(:not(:link), ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::first-letter)"
-PASS document.querySelector(":is(:not(:link), ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::first-letter)"
-PASS document.querySelector(":is(:not(:link), ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::first-line)"
-PASS document.querySelector(":is(:not(:link), ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::first-line)"
-PASS document.querySelector(":is(:not(:link), ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::before)"
-PASS document.querySelector(":is(:not(:link), ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::before)"
-PASS document.querySelector(":is(:not(:link), ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::after)"
-PASS document.querySelector(":is(:not(:link), ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), ::after)"
 PASS document.querySelector(":is(:not(:link), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:not(:link), foobar#id.class)"
@@ -2818,30 +1882,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:nth-child(2n of a, b, c), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), :visited)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::first-letter)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::first-letter)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::first-line)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::first-line)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::before)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::before)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::after)"
-PASS document.querySelector(":is(:nth-child(2n of a, b, c), ::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), ::after)"
 PASS document.querySelector(":is(:nth-child(2n of a, b, c), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:nth-child(2n of a, b, c), foobar#id.class)"

@@ -46,30 +46,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":is(:visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(:visited)"
-PASS document.querySelector(":is(::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter)"
-PASS document.querySelector(":is(::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-letter)"
-PASS document.querySelector(":is(::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line)"
-PASS document.querySelector(":is(::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::first-line)"
-PASS document.querySelector(":is(::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before)"
-PASS document.querySelector(":is(::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::before)"
-PASS document.querySelector(":is(::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after)"
-PASS document.querySelector(":is(::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(::after)"
 PASS document.querySelector(":is(foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foobar#id.class)"

@@ -64,10 +64,6 @@ shouldBe("document.body.querySelectorAll('#area3 :is(.cocoa > .cappuccino, .tea)
 shouldBe("document.body.querySelectorAll('#area4 :is(.cocoa + .cappuccino)').length", "1");
 shouldBe("document.body.querySelectorAll('#area4 :is(.cocoa ~ .cappuccino)').length", "2");
 shouldBe("document.body.querySelectorAll('#area4 :is(.cocoa ~ :is(.cocoa, .cappuccino))').length", "3");
-
-// When using querySelector, the selectors containing the pseudo elements cannot match.
-shouldBe("document.body.querySelectorAll('#area5 :is(.cocoa::first-letter)').length", "0");
-shouldBe("document.body.querySelectorAll('#area5 :is(.cocoa::first-letter, .cocoa)').length", "1");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </html>

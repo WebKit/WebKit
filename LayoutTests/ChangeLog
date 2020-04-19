@@ -1,3 +1,49 @@
+2020-04-19  Antti Koivisto  <antti@apple.com>
+
+        [CSS selectors] :is() / :where() should not allow pseudo-elements at parse-time
+        https://bugs.webkit.org/show_bug.cgi?id=210701
+
+        Reviewed by Anders Carlsson.
+
+        Remove or update tests for pseudo elements inside :is()/:where().
+        Also add some :where() rountrip coverage.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/css/is-specificity-6-expected.html: Removed.
+        * fast/css/is-specificity-6.html: Removed.
+        * fast/css/matches-specificity-6-expected.html: Removed.
+        * fast/css/matches-specificity-6.html: Removed.
+        * fast/css/parsing-css-allowed-string-characters-expected.txt:
+        * fast/css/parsing-css-is-1-expected.txt:
+        * fast/css/parsing-css-is-1.html:
+        * fast/css/parsing-css-is-2-expected.txt:
+        * fast/css/parsing-css-is-2.html:
+        * fast/css/parsing-css-is-3-expected.txt:
+        * fast/css/parsing-css-is-3.html:
+        * fast/css/parsing-css-is-4-expected.txt:
+        * fast/css/parsing-css-is-4.html:
+        * fast/css/parsing-css-matches-1-expected.txt:
+        * fast/css/parsing-css-matches-1.html:
+        * fast/css/parsing-css-matches-2-expected.txt:
+        * fast/css/parsing-css-matches-2.html:
+        * fast/css/parsing-css-matches-3-expected.txt:
+        * fast/css/parsing-css-matches-3.html:
+        * fast/css/parsing-css-matches-4-expected.txt:
+        * fast/css/parsing-css-matches-4.html:
+        * fast/selectors/pseudo-element-in-is-where-expected.html: Added.
+        * fast/selectors/pseudo-element-in-is-where.html: Added.
+        * fast/selectors/pseudo-element-inside-is-expected.html: Removed.
+        * fast/selectors/pseudo-element-inside-is.html: Removed.
+        * fast/selectors/pseudo-element-inside-matches-expected.html: Removed.
+        * fast/selectors/pseudo-element-inside-matches.html: Removed.
+        * fast/selectors/querySelector-is-expected.txt:
+        * fast/selectors/querySelector-is.html:
+        * fast/selectors/querySelector-matches-expected.txt:
+        * fast/selectors/querySelector-matches.html:
+
 2020-04-18  Daniel Bates  <dabates@apple.com>
 
         Add a test to ensure WebKit::mayContainEditableElementsInRect() returns true if the document element is editable

@@ -17,8 +17,6 @@ PASS document.body.querySelectorAll('#area3 :matches(.cocoa > .cappuccino, .tea)
 PASS document.body.querySelectorAll('#area4 :matches(.cocoa + .cappuccino)').length is 1
 PASS document.body.querySelectorAll('#area4 :matches(.cocoa ~ .cappuccino)').length is 2
 PASS document.body.querySelectorAll('#area4 :matches(.cocoa ~ :matches(.cocoa, .cappuccino))').length is 3
-PASS document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter)').length is 0
-PASS document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter, .cocoa)').length is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

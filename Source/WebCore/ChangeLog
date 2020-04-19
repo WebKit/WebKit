@@ -1,3 +1,19 @@
+2020-04-19  Antti Koivisto  <antti@apple.com>
+
+        [CSS selectors] :is() / :where() should not allow pseudo-elements at parse-time
+        https://bugs.webkit.org/show_bug.cgi?id=210701
+
+        Reviewed by Anders Carlsson.
+
+        https://drafts.csswg.org/selectors/#matches:
+
+        "Pseudo-elements cannot be represented by the matches-any pseudo-class; they are not valid within :is()."
+
+        Test: fast/selectors/pseudo-element-in-is-where.html
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2020-04-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Take border spacing into account when distributing column spanners width.

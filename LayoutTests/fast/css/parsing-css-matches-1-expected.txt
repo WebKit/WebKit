@@ -46,30 +46,6 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited)"
-PASS document.querySelector(":matches(::first-letter)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter)"
-PASS document.querySelector(":matches(::first-letter    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter)"
-PASS document.querySelector(":matches(::first-line)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line)"
-PASS document.querySelector(":matches(::first-line    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line)"
-PASS document.querySelector(":matches(::before)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before)"
-PASS document.querySelector(":matches(::before    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before)"
-PASS document.querySelector(":matches(::after)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after)"
-PASS document.querySelector(":matches(::after    )") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after)"
 PASS document.querySelector(":matches(foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class)"

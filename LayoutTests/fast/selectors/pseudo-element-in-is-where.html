@@ -1,0 +1,15 @@
+<!doctyle html>
+<style>
+:is(.test1) { color:green; }
+:is(.test1, .test1::before) { background-color:red; }
+:is(.test2)::before { color:green; content:'Test that :is() is invalid if it contains a pseudo element'; }
+:is(.test2::before) { background-color:red; }
+:where(.test3) { color:green; }
+:where(.test3, .test3::before) { background-color:red; }
+:where(.test4)::before { color:green; content:'Test that :where() is invalid if it contains a pseudo element'; }
+:where(.test4::before) { background-color:red; }
+</style>
+<div class=test1>Test that :is() is invalid if it contains a pseudo element</div>
+<div class=test2></div>
+<div class=test3>Test that :where() is invalid if it contains a pseudo element</div>
+<div class=test4></div>
