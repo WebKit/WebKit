@@ -836,7 +836,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     LLINT_RETURN_PROFILED(result);
 }
 
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_open_get_next);
 LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
 {
     LLINT_BEGIN();
@@ -853,7 +852,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_next_get_done);
 LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_done)
 {
     LLINT_BEGIN();
@@ -874,7 +872,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_done)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_next_get_value);
 LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_value)
 {
     LLINT_BEGIN();
@@ -891,7 +888,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_value)
     bytecode.metadata(codeBlock).m_valueProfile.m_buckets[0] = JSValue::encode(result);
     LLINT_END();
 }
-
 
 LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
 {
@@ -1669,7 +1665,6 @@ LLINT_SLOW_PATH_DECL(slow_path_construct)
     RELEASE_AND_RETURN(throwScope, genericCall(codeBlock, callFrame, pc->as<OpConstruct>(), CodeForConstruct));
 }
 
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_open_call);
 LLINT_SLOW_PATH_DECL(slow_path_iterator_open_call)
 {
     LLINT_BEGIN();
@@ -1678,7 +1673,6 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_call)
     RELEASE_AND_RETURN(throwScope, genericCall(codeBlock, callFrame, pc->as<OpIteratorOpen>(), CodeForCall, OpIteratorOpen::symbolCall));
 }
 
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_next_call);
 LLINT_SLOW_PATH_DECL(slow_path_iterator_next_call)
 {
     LLINT_BEGIN();

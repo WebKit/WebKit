@@ -2604,11 +2604,22 @@ end)
 llintOp(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch)
     defineOSRExitReturnLabel(op_iterator_open, size)
     break
+    if C_LOOP or C_LOOP_WIN
+        # Insert superflous call return labels for Cloop.
+        cloopCallJSFunction a0 # symbolIterator
+        cloopCallJSFunction a0 # get next
+    end
 end)
 
 llintOp(op_iterator_next, OpIteratorNext, macro (size, get, dispatch)
     defineOSRExitReturnLabel(op_iterator_next, size)
     break
+    if C_LOOP or C_LOOP_WIN
+        # Insert superflous call return labels for Cloop.
+        # FIXME: Not sure why two are only needed...
+        cloopCallJSFunction a0 # next
+        cloopCallJSFunction a0 # get done
+    end
 end)
 
 llintOpWithProfile(op_get_internal_field, OpGetInternalField, macro (size, get, dispatch, return)

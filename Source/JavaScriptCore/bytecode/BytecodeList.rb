@@ -1313,6 +1313,18 @@ op :llint_cloop_did_return_from_js_31
 op :llint_cloop_did_return_from_js_32
 op :llint_cloop_did_return_from_js_33
 op :llint_cloop_did_return_from_js_34
+op :llint_cloop_did_return_from_js_35
+op :llint_cloop_did_return_from_js_36
+op :llint_cloop_did_return_from_js_37
+op :llint_cloop_did_return_from_js_38
+op :llint_cloop_did_return_from_js_39
+op :llint_cloop_did_return_from_js_40
+op :llint_cloop_did_return_from_js_41
+op :llint_cloop_did_return_from_js_42
+op :llint_cloop_did_return_from_js_43
+op :llint_cloop_did_return_from_js_44
+op :llint_cloop_did_return_from_js_45
+op :llint_cloop_did_return_from_js_46
 
 end_section :CLoopHelpers
 
