@@ -2659,7 +2659,6 @@ end)
 
 
 llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch, metadata, return)
-    metadata(a2, t5)
     macro fastNarrow()
         callSlowPath(_iterator_open_try_fast_narrow)
     end
@@ -2717,7 +2716,6 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     loadVariable(get, m_next, t0)
     btqnz t0, t0, .iteratorNextGeneric
-    metadata(a2, t5)
     macro fastNarrow()
         callSlowPath(_iterator_next_try_fast_narrow)
     end

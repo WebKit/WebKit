@@ -1,3 +1,29 @@
+2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] LLInt slow path call should not have third argument
+        https://bugs.webkit.org/show_bug.cgi?id=210721
+
+        Reviewed by Mark Lam.
+
+        LLInt callSlowPath does not work with third argument in Windows, CLoop etc. LLInt slow-path should not take third argument,
+        instead, use `bytecode.metadata(...)` to get metadata.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iterator_open_try_fast):
+        (JSC::SLOW_PATH_DECL):
+        (JSC::iterator_next_try_fast):
+        (JSC::iterator_open_try_fast_narrow): Deleted.
+        (JSC::iterator_open_try_fast_wide16): Deleted.
+        (JSC::iterator_open_try_fast_wide32): Deleted.
+        (JSC::iterator_next_try_fast_narrow): Deleted.
+        (JSC::iterator_next_try_fast_wide16): Deleted.
+        (JSC::iterator_next_try_fast_wide32): Deleted.
+        * runtime/CommonSlowPaths.h:
+
 2020-04-19  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception checks and handling in JSC APIs.

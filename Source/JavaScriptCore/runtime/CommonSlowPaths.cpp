@@ -855,13 +855,13 @@ SLOW_PATH_DECL(slow_path_in_by_id)
 }
 
 template<OpcodeSize width>
-SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const Instruction* pc)
 {
     // Don't set PC; we can't throw and it's relatively slow.
     BEGIN_NO_SET_PC();
 
     auto bytecode = pc->asKnownWidth<OpIteratorOpen, width>();
-    auto& metadata = *reinterpret_cast<OpIteratorOpen::Metadata*>(metadataPtr);
+    auto& metadata = bytecode.metadata(codeBlock);
     JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
     PROFILE_VALUE_IN(iterable, m_iterableProfile);
     JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
@@ -900,28 +900,28 @@ SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame* callFrame, const 
     return encodeResult(pc, reinterpret_cast<void*>(IterationMode::Generic));
 }
 
-SlowPathReturnType SLOW_PATH iterator_open_try_fast_narrow(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_open_try_fast_narrow)
 {
-    return iterator_open_try_fast<Narrow>(callFrame, pc, metadataPtr);
+    return iterator_open_try_fast<Narrow>(callFrame, pc);
 }
 
-SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide16(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_open_try_fast_wide16)
 {
-    return iterator_open_try_fast<Wide16>(callFrame, pc, metadataPtr);
+    return iterator_open_try_fast<Wide16>(callFrame, pc);
 }
 
-SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide32(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_open_try_fast_wide32)
 {
-    return iterator_open_try_fast<Wide32>(callFrame, pc, metadataPtr);
+    return iterator_open_try_fast<Wide32>(callFrame, pc);
 }
 
 template<OpcodeSize width>
-SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const Instruction* pc)
 {
     BEGIN();
 
     auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
-    auto& metadata = *reinterpret_cast<OpIteratorNext::Metadata*>(metadataPtr);
+    auto& metadata = bytecode.metadata(codeBlock);
 
     ASSERT(!GET(bytecode.m_next).jsValue());
     JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());;
@@ -957,19 +957,19 @@ SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-SlowPathReturnType SLOW_PATH iterator_next_try_fast_narrow(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_next_try_fast_narrow)
 {
-    return iterator_next_try_fast<Narrow>(callFrame, pc, metadataPtr);
+    return iterator_next_try_fast<Narrow>(callFrame, pc);
 }
 
-SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide16(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_next_try_fast_wide16)
 {
-    return iterator_next_try_fast<Wide16>(callFrame, pc, metadataPtr);
+    return iterator_next_try_fast<Wide16>(callFrame, pc);
 }
 
-SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide32(CallFrame* callFrame, const Instruction* pc, void* metadataPtr)
+SLOW_PATH_DECL(iterator_next_try_fast_wide32)
 {
-    return iterator_next_try_fast<Wide32>(callFrame, pc, metadataPtr);
+    return iterator_next_try_fast<Wide32>(callFrame, pc);
 }
 
 SLOW_PATH_DECL(slow_path_del_by_val)

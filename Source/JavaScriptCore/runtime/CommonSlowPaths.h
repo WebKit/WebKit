@@ -282,18 +282,12 @@ SLOW_PATH_HIDDEN_DECL(slow_path_new_generator);
 SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_spread);
 SLOW_PATH_HIDDEN_DECL(slow_path_new_array_buffer);
 SLOW_PATH_HIDDEN_DECL(slow_path_spread);
-
-template<OpcodeSize size>
-extern SlowPathReturnType SLOW_PATH iterator_open_try_fast(CallFrame*, const Instruction* pc, void* metadata);
-extern "C" SlowPathReturnType SLOW_PATH iterator_open_try_fast_narrow(CallFrame*, const Instruction* pc, void* metadata = nullptr);
-extern "C" SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide16(CallFrame*, const Instruction* pc, void* metadata = nullptr);
-extern "C" SlowPathReturnType SLOW_PATH iterator_open_try_fast_wide32(CallFrame*, const Instruction* pc, void* metadata = nullptr);
-
-template<OpcodeSize size>
-extern SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame*, const Instruction* pc, void* metadata);
-extern "C" SlowPathReturnType SLOW_PATH iterator_next_try_fast_narrow(CallFrame*, const Instruction* pc, void* metadata = nullptr);
-extern "C" SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide16(CallFrame*, const Instruction* pc, void* metadata = nullptr);
-extern "C" SlowPathReturnType SLOW_PATH iterator_next_try_fast_wide32(CallFrame*, const Instruction* pc, void* metadata = nullptr);
+SLOW_PATH_HIDDEN_DECL(iterator_open_try_fast_narrow);
+SLOW_PATH_HIDDEN_DECL(iterator_open_try_fast_wide16);
+SLOW_PATH_HIDDEN_DECL(iterator_open_try_fast_wide32);
+SLOW_PATH_HIDDEN_DECL(iterator_next_try_fast_narrow);
+SLOW_PATH_HIDDEN_DECL(iterator_next_try_fast_wide16);
+SLOW_PATH_HIDDEN_DECL(iterator_next_try_fast_wide32);
 
 using SlowPathFunction = SlowPathReturnType(SLOW_PATH *)(CallFrame*, const Instruction*);
 
