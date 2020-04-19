@@ -23,13 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <WebKit/WKPreferencesRefPrivate.h>
-
-#ifdef __OBJC__
-
 #import <WebKit/WKPreferences.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 
 typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
     _WKStorageBlockingPolicyAllowAll,
@@ -215,5 +210,3 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 #endif
 
 @end
-
-#endif

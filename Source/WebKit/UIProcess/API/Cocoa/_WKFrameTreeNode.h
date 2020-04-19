@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfo.h>
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))

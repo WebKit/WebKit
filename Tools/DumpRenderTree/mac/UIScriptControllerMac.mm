@@ -32,7 +32,7 @@
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSValue.h>
 #import <JavaScriptCore/OpaqueJSString.h>
-#import <WebKit/WebKit.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/BlockPtr.h>
 

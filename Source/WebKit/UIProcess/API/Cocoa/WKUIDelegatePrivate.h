@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUIDelegate.h>
-
 #import <WebKit/WKDragDestinationAction.h>
 #import <WebKit/WKSecurityOrigin.h>
+#import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKWebAuthenticationPanel.h>
@@ -41,14 +40,18 @@
 @class _WKFrameHandle;
 
 #if TARGET_OS_IOS
+
 @class UIContextMenuConfiguration;
 @class UIDragItem;
 @class UITargetedDragPreview;
 @class WKContextMenuElementInfo;
+
 @protocol UIContextMenuInteractionCommitAnimating;
 @protocol UIDragSession;
 @protocol UIDropSession;
+
 #else
+
 typedef NS_ENUM(NSInteger, _WKResourceLimit) {
     _WKResourceLimitMemory,
     _WKResourceLimitCPU,
@@ -59,6 +62,7 @@ typedef NS_ENUM(NSInteger, _WKPlugInUnavailabilityReason) {
     _WKPlugInUnavailabilityReasonPluginCrashed,
     _WKPlugInUnavailabilityReasonInsecurePluginVersion
 } WK_API_AVAILABLE(macos(10.13.4));
+
 #endif
 
 typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
@@ -143,6 +147,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
+
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions;
 - (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;

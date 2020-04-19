@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKDataDetectorTypes.h>
+#import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKUserContentController;
 @class WKWebpagePreferences;
 @class WKWebsiteDataStore;
+
 @protocol WKURLSchemeHandler;
 
 #if TARGET_OS_IPHONE
@@ -204,14 +204,16 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @end
 
+#if TARGET_OS_IPHONE
+
 @interface WKWebViewConfiguration (WKDeprecated)
 
-#if TARGET_OS_IPHONE
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", ios(8.0, 9.0));
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay WK_API_DEPRECATED_WITH_REPLACEMENT("allowsAirPlayForMediaPlayback", ios(8.0, 9.0));
 @property (nonatomic) BOOL requiresUserActionForMediaPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", ios(9.0, 10.0));
-#endif
 
 @end
+
+#endif
 
 NS_ASSUME_NONNULL_END

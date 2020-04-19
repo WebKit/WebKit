@@ -46,7 +46,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebSecurityOriginPrivate.h>

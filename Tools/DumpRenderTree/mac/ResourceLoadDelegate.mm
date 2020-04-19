@@ -32,7 +32,6 @@
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/Assertions.h>
 

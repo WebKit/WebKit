@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKNavigationDelegate.h>
-
 #import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 

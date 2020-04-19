@@ -25,9 +25,9 @@
 
 #import <WebKit/WKFoundation.h>
 
-@class _WKFrameHandle;
-
 NS_ASSUME_NONNULL_BEGIN
+
+@class _WKFrameHandle;
 
 typedef NS_ENUM(NSInteger, _WKResourceLoadInfoResourceType) {
     _WKResourceLoadInfoResourceTypeApplicationManifest,

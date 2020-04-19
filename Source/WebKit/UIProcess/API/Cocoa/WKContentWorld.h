@@ -27,7 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! @abstract A WKContentWorld object allows you to seperate your application's interaction with content displayed in a WKWebView into different roles that cannot interfere with one another.
+/*! @abstract A WKContentWorld object allows you to separate your application's interaction with content displayed in a WKWebView into different roles that cannot interfere with one another.
 @discussion WKContentWorld objects should be treated as namespaces. This is useful for keeping your application's web content environment separate from the environment of the web page content itself,
 as well as managing multiple different environments within your own application.
 For example:

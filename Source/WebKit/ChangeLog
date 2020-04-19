@@ -1,3 +1,73 @@
+2020-04-18  Darin Adler  <darin@apple.com>
+
+        Update header postprocessing version cutoff to keep Apple internal builds working
+        https://bugs.webkit.org/show_bug.cgi?id=210708
+
+        Reviewed by Brady Eidson.
+
+        * Configurations/WebKit.xcconfig: Update versions to make building with older
+        Apple internal SDKs continue to work.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+        * Shared/API/Cocoa/_WKFrameHandle.h:
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.h:
+        * UIProcess/API/Cocoa/WKContentWorld.h:
+        * UIProcess/API/Cocoa/WKFindConfiguration.h:
+        * UIProcess/API/Cocoa/WKFindResult.h:
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStorePrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPDFConfiguration.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadDelegate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        Because the way we do post-processing of headers in the legacy Xcode
+        build system won't work once the files have been processed once, touch
+        each file that has WK_MAC_TBA, WK_IOS_TBA, or
+        WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED in it. Found something to
+        change in each file. This is likely unnecessary in the new Xcode build
+        system, but I wasn't able to test that locally.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (postprocess-header-rule): Added dependencies so that post-processing will be
+        redone if Configurations/WebKit.xcconfig is touched, since that is where
+        WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED is set, or if
+        Scripts/postprocess-header-rule is touched, since that is where the
+        post-processing code is. If either of those files changes it could affect the
+        output of post-processing. This should make a change like this work in the
+        new Xcode build system without touching files as is done above.
+
 2020-04-18  Brady Eidson  <beidson@apple.com>
 
         Fix WebUserContentControllerProxy vs ContentWorld lifetime

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-
 #import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -36,7 +36,6 @@
 #import "DumpRenderTreeFileDraggingSource.h"
 #import "DumpRenderTreePasteboard.h"
 #import "EventSendingController.h"
-#import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
 @interface DumpRenderTreeFilePromiseReceiver : NSFilePromiseReceiver {

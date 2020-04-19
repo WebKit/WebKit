@@ -44,7 +44,6 @@
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
 @interface WebView ()

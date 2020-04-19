@@ -1,3 +1,24 @@
+2020-04-18  Darin Adler  <darin@apple.com>
+
+        Update header postprocessing version cutoff to keep Apple internal builds working
+        https://bugs.webkit.org/show_bug.cgi?id=210708
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/ios/TextInputControllerIOS.m:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/ObjCPlugin.m:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        Removed includes of <WebKit/WebKit.h>, the header for modern WebKit, from the files
+        here that are intending to use WebKitLegacy. This is harmless, except for if someone
+        builds DumpRenderTree *before* building WebKit as I just did.
+
 2020-04-18  Brady Eidson  <beidson@apple.com>
 
         Fix WebUserContentControllerProxy vs ContentWorld lifetime

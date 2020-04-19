@@ -39,7 +39,6 @@
 #import "DumpRenderTreePasteboard.h"
 #import "WebCoreTestSupport.h"
 #import <WebKit/DOMPrivate.h>
-#import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>
 #import <wtf/RetainPtr.h>

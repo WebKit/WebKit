@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 @class _WKAutomationSession;
 @class _WKDownload;
 @class _WKProcessPoolConfiguration;
+
 @protocol _WKAutomationDelegate;
 @protocol _WKDownloadDelegate;
 @protocol _WKGeolocationCoreLocationProvider;

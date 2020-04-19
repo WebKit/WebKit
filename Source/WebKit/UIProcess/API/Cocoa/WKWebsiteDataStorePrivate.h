@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebViewConfigurationPrivate.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class _WKWebsiteDataStoreConfiguration;
 @class WKWebView;
 @class _WKResourceLoadStatisticsThirdParty;
+@class _WKWebsiteDataStoreConfiguration;
 
 @protocol _WKWebsiteDataStoreDelegate;
 
