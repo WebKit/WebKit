@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,14 @@ enum DataFormat : uint8_t {
     DataFormatBoolean = 5,
     DataFormatCell = 6,
     DataFormatStorage = 7,
-    DataFormatJS = 8,
+    DataFormatBigInt32 = 8, // FIXME: currently unused
+    DataFormatJS = 16,
     DataFormatJSInt32 = DataFormatJS | DataFormatInt32,
     DataFormatJSDouble = DataFormatJS | DataFormatDouble,
     DataFormatJSCell = DataFormatJS | DataFormatCell,
     DataFormatJSBoolean = DataFormatJS | DataFormatBoolean,
-    
+    DataFormatJSBigInt32 = DataFormatJS | DataFormatBigInt32,
+
     // Marker deliminating ordinary data formats and OSR-only data formats.
     DataFormatOSRMarker = 32, 
     

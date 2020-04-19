@@ -532,7 +532,19 @@ private:
                     changed |= mergePrediction(SpecSymbol);
                     break;
                 }
-                
+
+#if USE(BIGINT32)
+                if (node->child1()->shouldSpeculateBigInt32()) {
+                    changed |= mergePrediction(SpecBigInt32);
+                    break;
+                }
+#endif
+
+                if (node->child1()->shouldSpeculateHeapBigInt()) {
+                    changed |= mergePrediction(SpecHeapBigInt);
+                    break;
+                }
+
                 if (node->child1()->shouldSpeculateBigInt()) {
                     changed |= mergePrediction(SpecBigInt);
                     break;
@@ -1004,6 +1016,7 @@ private:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
+        case IsBigInt:
         case NumberIsInteger:
         case IsObject:
         case IsObjectOrNull:

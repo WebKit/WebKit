@@ -59,14 +59,14 @@ for (let operator of operators) {
             noInline(testMonomorphicRightConstant${testCaseIndex});
 
             for (let i = 0; i < 500; ++i) {
-                if (testMonomorphic${testCaseIndex}(${left}, ${right}) != ${llintResult})
+                if (testMonomorphic${testCaseIndex}(${left}, ${right}) !== ${llintResult})
                     throw "Failed testMonomorphic${testCaseIndex}(${left}, ${right})";
-                if (testMonomorphicLeftConstant${testCaseIndex}(${right}) != ${llintResult})
+                if (testMonomorphicLeftConstant${testCaseIndex}(${right}) !== ${llintResult})
                     throw "Failed testMonomorphicLeftConstant${testCaseIndex}(${right})";
-                if (testMonomorphicRightConstant${testCaseIndex}(${left}) != ${llintResult})
+                if (testMonomorphicRightConstant${testCaseIndex}(${left}) !== ${llintResult})
                     throw "Failed testMonomorphicLeftConstant${testCaseIndex}(${left})";
                 if (testPolymorphic(${left}, ${right}) !== ${llintResult})
-                    throw "Failed polymorphicVersion(${left})";
+                    throw "Failed polymorphicVersion(${left}, ${operator}, ${right}, expected result: ${llintResult})";
             }
             `);
             ++testCaseIndex;

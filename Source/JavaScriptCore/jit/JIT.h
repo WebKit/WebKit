@@ -531,6 +531,11 @@ namespace JSC {
         void emit_op_is_undefined_or_null(const Instruction*);
         void emit_op_is_boolean(const Instruction*);
         void emit_op_is_number(const Instruction*);
+#if USE(BIGINT32)
+        void emit_op_is_big_int(const Instruction*);
+#else
+        NO_RETURN void emit_op_is_big_int(const Instruction*);
+#endif
         void emit_op_is_object(const Instruction*);
         void emit_op_is_cell_with_type(const Instruction*);
         void emit_op_jeq_null(const Instruction*);

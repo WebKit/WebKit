@@ -1096,7 +1096,7 @@ namespace JSC {
 
         using NumberMap = HashMap<double, JSValue>;
         using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
-        using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSBigInt*>;
+        using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSValue>;
         using TemplateObjectDescriptorSet = HashSet<Ref<TemplateObjectDescriptor>>;
         using TemplateDescriptorMap = HashMap<uint64_t, JSTemplateObjectDescriptor*, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 

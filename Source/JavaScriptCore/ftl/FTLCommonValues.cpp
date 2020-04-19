@@ -58,6 +58,9 @@ void CommonValues::initializeConstants(B3::Procedure& proc, B3::BasicBlock* bloc
     intPtrThree = block->appendNew<ConstPtrValue>(proc, Origin(), 3);
     intPtrEight = block->appendNew<ConstPtrValue>(proc, Origin(), 8);
     doubleZero = block->appendNew<ConstDoubleValue>(proc, Origin(), 0.);
+#if USE(BIGINT32)
+    bigInt32Zero = block->appendNew<Const64Value>(proc, Origin(), JSValue::BigInt32Tag);
+#endif
 }
 
 } } // namespace JSC::FTL

@@ -29,7 +29,7 @@
 #include "JSCast.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
-#include "Operations.h"
+#include "Scribble.h"
 #include "SuperSampler.h"
 #include "VM.h"
 

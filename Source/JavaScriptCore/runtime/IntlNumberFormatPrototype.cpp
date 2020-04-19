@@ -87,12 +87,25 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormat(JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* numberFormat = jsCast<IntlNumberFormat*>(callFrame->thisValue());
 
-    auto variant = callFrame->argument(0).toNumeric(globalObject);
+    JSValue bigIntOrNumber = callFrame->argument(0).toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(switchOn(variant, [&](auto&& value) {
-        return numberFormat->format(globalObject, value);
-    })));
+    scope.release();
+    if (bigIntOrNumber.isNumber()) {
+        double value = bigIntOrNumber.asNumber();
+        return JSValue::encode(numberFormat->format(globalObject, value));
+    }
+
+#if USE(BIGINT32)
+    if (bigIntOrNumber.isBigInt32()) {
+        JSBigInt* value = JSBigInt::createFrom(vm, bigIntOrNumber.bigInt32AsInt32());
+        return JSValue::encode(numberFormat->format(globalObject, value));
+    }
+#endif
+
+    ASSERT(bigIntOrNumber.isHeapBigInt());
+    JSBigInt* value = bigIntOrNumber.asHeapBigInt();
+    return JSValue::encode(numberFormat->format(globalObject, value));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObject* globalObject, CallFrame* callFrame)

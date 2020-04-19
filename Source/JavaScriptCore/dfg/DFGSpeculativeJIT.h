@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -346,6 +346,9 @@ public:
     FPRReg fillSpeculateDouble(Edge);
     GPRReg fillSpeculateCell(Edge);
     GPRReg fillSpeculateBoolean(Edge);
+#if USE(BIGINT32)
+    GPRReg fillSpeculateBigInt32(Edge);
+#endif
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
@@ -1148,6 +1151,9 @@ public:
     bool compilePeepHoleBranch(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_JITOperation_GJJ);
     void compilePeepHoleInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleInt52Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+#if USE(BIGINT32)
+    void compilePeepHoleBigInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+#endif
     void compilePeepHoleBooleanBranch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node*, Node* branchNode, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node*, Node* branchNode);
@@ -1172,7 +1178,7 @@ public:
     void compileMiscStrictEq(Node*);
 
     void compileSymbolEquality(Node*);
-    void compileBigIntEquality(Node*);
+    void compileHeapBigIntEquality(Node*);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
 
@@ -1222,6 +1228,9 @@ public:
     
     void compileInt32Compare(Node*, MacroAssembler::RelationalCondition);
     void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
+#if USE(BIGINT32)
+    void compileBigInt32Compare(Node*, MacroAssembler::RelationalCondition);
+#endif
     void compileBooleanCompare(Node*, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
     void compileStringCompare(Node*, MacroAssembler::RelationalCondition);
@@ -1297,11 +1306,11 @@ public:
     void compileBitwiseNot(Node*);
 
     template<typename SnippetGenerator, J_JITOperation_GJJ slowPathFunction>
-    void emitUntypedBitOp(Node*);
+    void emitUntypedOrAnyBigIntBitOp(Node*);
     void compileBitwiseOp(Node*);
     void compileValueBitwiseOp(Node*);
 
-    void emitUntypedRightShiftBitOp(Node*);
+    void emitUntypedOrBigIntRightShiftBitOp(Node*);
     void compileValueLShiftOp(Node*);
     void compileValueBitRShift(Node*);
     void compileShiftOp(Node*);
@@ -1560,6 +1569,7 @@ public:
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
     void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, ExitKind = BadType);
+    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::JumpList jumpListToFail, ExitKind = BadType);
     
     void speculateCellTypeWithoutTypeFiltering(Edge, GPRReg cellGPR, JSType);
     void speculateCellType(Edge, GPRReg cellGPR, SpeculatedType, JSType);
@@ -1571,6 +1581,10 @@ public:
     void speculateInt32(Edge, JSValueRegs);
     void speculateDoubleRepAnyInt(Edge);
 #endif // USE(JSVALUE64)
+#if USE(BIGINT32)
+    void speculateBigInt32(Edge);
+    void speculateAnyBigInt(Edge);
+#endif // USE(BIGINT32)
     void speculateNumber(Edge);
     void speculateRealNumber(Edge);
     void speculateDoubleRepReal(Edge);
@@ -1620,8 +1634,8 @@ public:
     void speculateStringOrStringObject(Edge);
     void speculateSymbol(Edge, GPRReg cell);
     void speculateSymbol(Edge);
-    void speculateBigInt(Edge, GPRReg cell);
-    void speculateBigInt(Edge);
+    void speculateHeapBigInt(Edge, GPRReg cell);
+    void speculateHeapBigInt(Edge);
     void speculateNotCell(Edge, JSValueRegs);
     void speculateNotCell(Edge);
     void speculateOther(Edge, JSValueRegs, GPRReg temp);
@@ -2598,6 +2612,56 @@ private:
     Edge m_edge;
     GPRReg m_gprOrInvalid;
 };
+
+#if USE(BIGINT32)
+class SpeculateBigInt32Operand {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit SpeculateBigInt32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT(m_jit);
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BigInt32Use);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+
+    ~SpeculateBigInt32Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+
+    Edge edge() const
+    {
+        return m_edge;
+    }
+
+    Node* node() const
+    {
+        return edge().node();
+    }
+
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateBigInt32(edge());
+        return m_gprOrInvalid;
+    }
+
+    void use()
+    {
+        m_jit->use(node());
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+};
+#endif // USE(BIGINT32)
 
 #define DFG_TYPE_CHECK_WITH_EXIT_KIND(exitKind, source, edge, typesPassedThrough, jumpToFail) do { \
         JSValueSource _dtc_source = (source);                           \

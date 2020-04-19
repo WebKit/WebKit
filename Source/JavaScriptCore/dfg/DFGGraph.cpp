@@ -1540,7 +1540,7 @@ FrozenValue* Graph::bottomValueMatchingSpeculation(SpeculatedType prediction)
         return freeze(jsNumber(0));
 
     if (speculationContains(prediction, SpecBigInt))
-        return freeze(m_vm.bigIntConstantOne.get());
+        return freeze(m_vm.heapBigIntConstantOne.get());
 
     if (speculationContains(prediction, SpecString | SpecSymbol))
         return freeze(m_vm.smallStrings.emptyString());

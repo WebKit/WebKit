@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ void JSBigInt::initialize(InitializationType initType)
 
 Structure* JSBigInt::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(BigIntType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(HeapBigIntType, StructureFlags), info());
 }
 
 JSBigInt* JSBigInt::createZero(VM& vm)
@@ -142,8 +142,10 @@ JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
 {
     if (!value)
         return createZero(vm);
-    
-    if (sizeof(Digit) == 8) {
+
+    // This path is not just an optimization: because we do not call rightTrim at the end of this function,
+    // it would be a bug to create a BigInt with length=2 in this case.
+    if (sizeof(Digit) == 8 || (value <= INT_MAX && value >= INT_MIN)) {
         JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
         if (value < 0) {
             bigInt->setDigit(0, static_cast<Digit>(static_cast<uint64_t>(-(value + 1)) + 1));
@@ -188,34 +190,21 @@ JSValue JSBigInt::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
     return const_cast<JSBigInt*>(this);
 }
 
-Optional<uint8_t> JSBigInt::singleDigitValueForString()
-{
-    if (isZero())
-        return 0;
-    
-    if (length() == 1 && !sign()) {
-        Digit rDigit = digit(0);
-        if (rDigit <= 9)
-            return static_cast<uint8_t>(rDigit);
-    }
-    return { };
-}
-
-JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, StringView s, ErrorParseMode parserMode)
+JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, StringView s, ErrorParseMode parserMode)
 {
     if (s.is8Bit())
         return parseInt(globalObject, s.characters8(), s.length(), parserMode);
     return parseInt(globalObject, s.characters16(), s.length(), parserMode);
 }
 
-JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
+JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
 {
     if (s.is8Bit())
         return parseInt(globalObject, vm, s.characters8(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
     return parseInt(globalObject, vm, s.characters16(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
 }
 
-JSBigInt* JSBigInt::stringToBigInt(JSGlobalObject* globalObject, StringView s)
+JSValue JSBigInt::stringToBigInt(JSGlobalObject* globalObject, StringView s)
 {
     return parseInt(globalObject, s, ErrorParseMode::IgnoreExceptions);
 }
@@ -454,16 +443,23 @@ JSBigInt* JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigIn
 
 JSBigInt* JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    // FIXME: we can probably do something a fair bit more efficient here
-    VM& vm = globalObject->vm();
-    return add(globalObject, x, vm.bigIntConstantOne.get());
+    if (!x->sign())
+        return absoluteAddOne(globalObject, x, SignOption::Unsigned);
+    JSBigInt* result = absoluteSubOne(globalObject, x, x->length());
+    result->setSign(true);
+    return result;
 }
 
 JSBigInt* JSBigInt::dec(JSGlobalObject* globalObject, JSBigInt* x)
 {
-    // FIXME: we can probably do something a fair bit more efficient here
-    VM& vm = globalObject->vm();
-    return sub(globalObject, x, vm.bigIntConstantOne.get());
+    if (x->isZero()) {
+        JSBigInt* result = createFrom(globalObject->vm(), 1);
+        result->setSign(true);
+        return result;
+    }
+    if (!x->sign())
+        return absoluteSubOne(globalObject, x, x->length());
+    return absoluteAddOne(globalObject, x, SignOption::Signed);
 }
 
 JSBigInt* JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
@@ -532,7 +528,7 @@ JSBigInt* JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigI
     if (x->sign())
         std::swap(x, y);
     
-    // x & (-y) == x & ~(y-1) == x & ~(y-1)
+    // x & (-y) == x & ~(y-1)
     JSBigInt* y1 = absoluteSubOne(globalObject, y, y->length());
     RETURN_IF_EXCEPTION(scope, nullptr);
     return absoluteAndNot(vm, x, y1);
@@ -1644,7 +1640,7 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* globalObject, JS
 String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* globalObject, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
-    // https://bugs.webkit.org/show_bug.cgi?id=18067
+    // https://bugs.webkit.org/show_bug.cgi?id=180671
     Vector<LChar> resultString;
 
     ASSERT(radix >= 2 && radix <= 36);
@@ -1802,7 +1798,7 @@ bool JSBigInt::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, 
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
+JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {
     VM& vm = globalObject->vm();
 
@@ -1810,7 +1806,7 @@ JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsi
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
 
-    // Check Radix from frist characters
+    // Check Radix from first characters
     if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
             return parseInt(globalObject, vm, data, length, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
@@ -1824,24 +1820,18 @@ JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsi
 
     ParseIntSign sign = ParseIntSign::Unsigned;
     if (p < length) {
-        if (data[p] == '+')
-            ++p;
-        else if (data[p] == '-') {
+        if (data[p] == '-') {
             sign = ParseIntSign::Signed;
             ++p;
-        }
+        } else if (data[p] == '+')
+            ++p;
     }
 
-    JSBigInt* result = parseInt(globalObject, vm, data, length, p, 10, errorParseMode, sign);
-
-    if (result && !result->isZero())
-        result->setSign(sign == ParseIntSign::Signed);
-
-    return result;
+    return parseInt(globalObject, vm, data, length, p, 10, errorParseMode, sign);
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
+JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
 {
     ASSERT(length >= 0);
     unsigned p = startIndex;
@@ -1852,7 +1842,7 @@ JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* dat
         ASSERT(globalObject);
         if (errorParseMode == ErrorParseMode::ThrowExceptions)
             throwVMError(globalObject, scope, createSyntaxError(globalObject, "Failed to parse String to BigInt"));
-        return nullptr;
+        return JSValue();
     }
 
     // Skipping leading zeros
@@ -1866,44 +1856,84 @@ JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* dat
 
     length = endIndex + 1;
 
-    if (p == length)
+    if (p == length) {
+#if USE(BIGINT32)
+        return JSValue(JSValue::JSBigInt32, 0);
+#else
         return createZero(vm);
-
-    unsigned limit0 = '0' + (radix < 10 ? radix : 10);
-    unsigned limita = 'a' + (radix - 10);
-    unsigned limitA = 'A' + (radix - 10);
-
-    JSBigInt* result = allocateFor(globalObject, vm, radix, length - p);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    // result can still be null if we don't have access to global object, as allocateFor cannot throw an exception in that case.
-    if (!result)
-        return nullptr;
-
-    result->initialize(InitializationType::WithZero);
-
-    for (unsigned i = p; i < length; i++, p++) {
-        uint32_t digit;
-        if (data[i] >= '0' && data[i] < limit0)
-            digit = data[i] - '0';
-        else if (data[i] >= 'a' && data[i] < limita)
-            digit = data[i] - 'a' + 10;
-        else if (data[i] >= 'A' && data[i] < limitA)
-            digit = data[i] - 'A' + 10;
-        else
-            break;
-
-        result->inplaceMultiplyAdd(static_cast<Digit>(radix), static_cast<Digit>(digit));
+#endif
     }
 
-    result->setSign(sign == ParseIntSign::Signed ? true : false);
-    if (p == length)
-        return result->rightTrim(vm);
+    // The idea is to pick the largest number such that radix ** lengthLimitForBigInt32 <= INT32_MAX
+    unsigned lengthLimitForBigInt32;
+    switch (radix) {
+    case 2:
+        lengthLimitForBigInt32 = 30;
+        break;
+    case 8:
+        lengthLimitForBigInt32 = 10;
+        break;
+    case 10:
+        lengthLimitForBigInt32 = 9;
+        break;
+    case 16:
+        lengthLimitForBigInt32 = 7;
+        break;
+    default:
+        lengthLimitForBigInt32 = 1;
+        break;
+    }
 
-    ASSERT(globalObject);
-    if (errorParseMode == ErrorParseMode::ThrowExceptions)
-        throwVMError(globalObject, scope, createSyntaxError(globalObject, "Failed to parse String to BigInt"));
+    JSBigInt* heapResult = nullptr;
 
-    return nullptr;
+    unsigned limit0 = '0' + (radix < 10 ? radix : 10);
+    unsigned limita = 'a' + (static_cast<int32_t>(radix) - 10);
+    unsigned limitA = 'A' + (static_cast<int32_t>(radix) - 10);
+    unsigned initialLength = length - p;
+    while (p < length) {
+        int32_t digit = 0;
+        Checked<int32_t, CrashOnOverflow> multiplier = 1;
+        for (unsigned i = 0; i < lengthLimitForBigInt32 && p < length ; ++i, ++p) {
+            digit *= radix;
+            multiplier *= radix;
+            if (data[p] >= '0' && data[p] < limit0)
+                digit += data[p] - '0';
+            else if (data[p] >= 'a' && data[p] < limita)
+                digit += data[p] - 'a' + 10;
+            else if (data[p] >= 'A' && data[p] < limitA)
+                digit += data[p] - 'A' + 10;
+            else {
+                if (errorParseMode == ErrorParseMode::ThrowExceptions) {
+                    ASSERT(globalObject);
+                    throwVMError(globalObject, scope, createSyntaxError(globalObject, "Failed to parse String to BigInt"));
+                }
+                return JSValue();
+            }
+        }
+        ASSERT(digit < multiplier.unsafeGet());
+
+        if (!heapResult) {
+            if (p == length) {
+                if (sign == ParseIntSign::Signed)
+                    digit *= -1;
+#if USE(BIGINT32)
+                return JSValue(JSValue::JSBigInt32, digit);
+#else
+                return createFrom(vm, static_cast<int64_t>(digit));
+#endif
+            }
+            heapResult = allocateFor(globalObject, vm, radix, initialLength);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            // result can still be null if we don't have access to global object, as allocateFor cannot throw an exception in that case.
+            if (!heapResult)
+                return JSValue();
+            heapResult->initialize(InitializationType::WithZero);
+        }
+        heapResult->inplaceMultiplyAdd(static_cast<Digit>(multiplier.unsafeGet()), static_cast<Digit>(digit));
+    }
+
+    heapResult->setSign(sign == ParseIntSign::Signed);
+    return heapResult->rightTrim(vm);
 }
 
 inline JSBigInt::Digit JSBigInt::digit(unsigned n)
@@ -1927,16 +1957,18 @@ bool JSBigInt::equalsToNumber(JSValue numValue)
 {
     ASSERT(numValue.isNumber());
     
-    if (numValue.isInt32()) {
-        int value = numValue.asInt32();
-        if (!value)
-            return this->isZero();
-
-        return (this->length() == 1) && (this->sign() == (value < 0)) && (this->digit(0) == static_cast<Digit>(std::abs(static_cast<int64_t>(value))));
-    }
+    if (numValue.isInt32())
+        return equalsToInt32(numValue.asInt32());
     
     double value = numValue.asDouble();
     return compareToDouble(this, value) == ComparisonResult::Equal;
+}
+
+bool JSBigInt::equalsToInt32(int32_t value)
+{
+    if (!value)
+        return this->isZero();
+    return (this->length() == 1) && (this->sign() == (value < 0)) && (this->digit(0) == static_cast<Digit>(std::abs(static_cast<int64_t>(value))));
 }
 
 JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)

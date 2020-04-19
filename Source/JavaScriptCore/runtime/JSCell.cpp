@@ -113,7 +113,7 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
 
 bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
-    if (cell->isString() || cell->isSymbol() || cell->isBigInt())
+    if (cell->isString() || cell->isSymbol() || cell->isHeapBigInt())
         return JSValue(cell).putToPrimitive(globalObject, identifier, value, slot);
 
     JSObject* thisObject = cell->toObject(globalObject);
@@ -123,7 +123,7 @@ bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identi
 bool JSCell::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier, JSValue value, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
-    if (cell->isString() || cell->isSymbol() || cell->isBigInt()) {
+    if (cell->isString() || cell->isSymbol() || cell->isHeapBigInt()) {
         PutPropertySlot slot(cell, shouldThrow);
         return JSValue(cell).putToPrimitive(globalObject, Identifier::from(vm, identifier), value, slot);
     }
@@ -163,7 +163,7 @@ JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType
         return static_cast<const JSString*>(this)->toPrimitive(globalObject, preferredType);
     if (isSymbol())
         return static_cast<const Symbol*>(this)->toPrimitive(globalObject, preferredType);
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toPrimitive(globalObject, preferredType);
     return static_cast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
@@ -174,7 +174,7 @@ bool JSCell::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JS
         return static_cast<const JSString*>(this)->getPrimitiveNumber(globalObject, number, value);
     if (isSymbol())
         return static_cast<const Symbol*>(this)->getPrimitiveNumber(globalObject, number, value);
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->getPrimitiveNumber(globalObject, number, value);
     return static_cast<const JSObject*>(this)->getPrimitiveNumber(globalObject, number, value);
 }
@@ -185,7 +185,7 @@ double JSCell::toNumber(JSGlobalObject* globalObject) const
         return static_cast<const JSString*>(this)->toNumber(globalObject);
     if (isSymbol())
         return static_cast<const Symbol*>(this)->toNumber(globalObject);
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toNumber(globalObject);
     return static_cast<const JSObject*>(this)->toNumber(globalObject);
 }
@@ -196,7 +196,7 @@ JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
     ASSERT(!isObject());
     if (isString())
         return static_cast<const JSString*>(this)->toObject(globalObject);
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toObject(globalObject);
     ASSERT(isSymbol());
     return static_cast<const Symbol*>(this)->toObject(globalObject);

@@ -1325,6 +1325,19 @@ size_t JIT_OPERATION operationCompareStrictEq(JSGlobalObject* globalObject, Enco
     return JSValue::strictEqual(globalObject, src1, src2);
 }
 
+#if USE(BIGINT32)
+size_t JIT_OPERATION operationCompareEqHeapBigIntToInt32(JSGlobalObject* globalObject, JSCell* heapBigInt, int32_t smallInt)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    ASSERT(heapBigInt->isHeapBigInt());
+
+    return static_cast<JSBigInt*>(heapBigInt)->equalsToInt32(smallInt);
+}
+#endif
+
 EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const JSValue* values, int size)
 {
     VM& vm = globalObject->vm();
@@ -2848,6 +2861,7 @@ EncodedJSValue JIT_OPERATION operationValueMulProfiledNoOptimize(JSGlobalObject*
     return profiledMul(globalObject, encodedOp1, encodedOp2, *arithProfile);
 }
 
+// FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
 EncodedJSValue JIT_OPERATION operationArithNegate(JSGlobalObject* globalObject, EncodedJSValue encodedOperand)
 {
     VM& vm = globalObject->vm();
@@ -2860,8 +2874,16 @@ EncodedJSValue JIT_OPERATION operationArithNegate(JSGlobalObject* globalObject, 
     JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (primValue.isBigInt())
-        return JSValue::encode(JSBigInt::unaryMinus(vm, asBigInt(primValue)));
+#if USE(BIGINT32)
+    if (primValue.isBigInt32()) {
+        int32_t value = primValue.bigInt32AsInt32();
+        if (value != INT_MIN)
+            return JSValue::encode(JSValue(JSValue::JSBigInt32, -value));
+        primValue = JSBigInt::createFrom(vm, value);
+    }
+#endif
+    if (primValue.isHeapBigInt())
+        return JSValue::encode(JSBigInt::unaryMinus(vm, primValue.asHeapBigInt()));
 
     double number = primValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -2869,6 +2891,7 @@ EncodedJSValue JIT_OPERATION operationArithNegate(JSGlobalObject* globalObject, 
 
 }
 
+// FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
 EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject* globalObject, EncodedJSValue encodedOperand, UnaryArithProfile* arithProfile)
 {
     ASSERT(arithProfile);
@@ -2883,10 +2906,20 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject* global
     JSValue primValue = operand.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (primValue.isBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+#if USE(BIGINT32)
+    if (primValue.isBigInt32()) {
+        int32_t value = primValue.bigInt32AsInt32();
+        if (value != INT_MIN) {
+            auto result = JSValue(JSValue::JSBigInt32, -value);
+            arithProfile->observeResult(result);
+            return JSValue::encode(result);
+        }
+        primValue = JSBigInt::createFrom(vm, value);
+    }
+#endif
+    if (primValue.isHeapBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         arithProfile->observeResult(result);
-
         return JSValue::encode(result);
     }
 
@@ -2897,6 +2930,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject* global
     return JSValue::encode(result);
 }
 
+// FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
 EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedOperand, JITNegIC* negIC)
 {
     VM& vm = globalObject->vm();
@@ -2917,9 +2951,20 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject
     
     JSValue primValue = operand.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    if (primValue.isBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+
+#if USE(BIGINT32)
+    if (primValue.isBigInt32()) {
+        int32_t value = primValue.bigInt32AsInt32();
+        if (value != INT_MIN) {
+            auto result = JSValue(JSValue::JSBigInt32, -value);
+            arithProfile->observeResult(result);
+            return JSValue::encode(result);
+        }
+        primValue = JSBigInt::createFrom(vm, value);
+    }
+#endif
+    if (primValue.isHeapBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         arithProfile->observeResult(result);
         return JSValue::encode(result);
     }
@@ -2931,6 +2976,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject
     return JSValue::encode(result);
 }
 
+// FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
 EncodedJSValue JIT_OPERATION operationArithNegateOptimize(JSGlobalObject* globalObject, EncodedJSValue encodedOperand, JITNegIC* negIC)
 {
     VM& vm = globalObject->vm();
@@ -2950,9 +2996,18 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(JSGlobalObject* global
 
     JSValue primValue = operand.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    if (primValue.isBigInt())
-        return JSValue::encode(JSBigInt::unaryMinus(vm, asBigInt(primValue)));
+
+#if USE(BIGINT32)
+    // FIXME: why does this function profile the argument but not the result?
+    if (primValue.isBigInt32()) {
+        int32_t value = primValue.bigInt32AsInt32();
+        if (value != INT_MIN)
+            return JSValue::encode(JSValue(JSValue::JSBigInt32, -value));
+        primValue = JSBigInt::createFrom(vm, value);
+    }
+#endif
+    if (primValue.isHeapBigInt())
+        return JSValue::encode(JSBigInt::unaryMinus(vm, primValue.asHeapBigInt()));
 
     double number = primValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

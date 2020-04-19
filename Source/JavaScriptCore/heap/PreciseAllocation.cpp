@@ -30,7 +30,7 @@
 #include "Heap.h"
 #include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
-#include "Operations.h"
+#include "Scribble.h"
 #include "SubspaceInlines.h"
 
 namespace JSC {

@@ -1,3 +1,387 @@
+2020-04-18  Robin Morisset  <rmorisset@apple.com>
+
+        Support an inlined representation in JSValue of small BigInts ("BigInt32")
+        https://bugs.webkit.org/show_bug.cgi?id=206182
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch attempts to optimize the performance of BigInts, when they are small (32 bit or less).
+        It works by inlining them into JSValue on 64-bit platforms, avoiding the allocation of a JSBigInt.
+        The bit pattern we use is 0000:XXXX:XXXX:0012
+        This representation works because of the following things:
+        - It cannot be confused with a Double or Integer thanks to the top bits
+        - It cannot be confused with a pointer to a Cell, thanks to bit 1 which is set to true
+        - It cannot be confused with a pointer to wasm thanks to bit 0 which is set to false
+        - It cannot be confused with true/false because bit 2 is set to false
+        - It cannot be confused for null/undefined because bit 4 is set to true
+
+        This entire change is gated by USE(BIGINT32), to make it easier to disable if it turns out to have bugs.
+        It should also make it much easier to verify if a given bug comes from it or from something else.
+
+        Note that in this patch we create BigInt32s when parsing small BigInt constants, and most operations (e.g. Add or BitOr) produce a BigInt32 if both of their operands are BigInt32,
+        but we don't produce a BigInt32 from for example the substraction/division of two large heap-allocated JSBigInts, even if the result fits in 32-bits.
+        As a result, small BigInts can now either be heap-allocated or inlined in the JSValue.
+
+        This patch includes a significant refactor of various slow paths, which are now grouped together in Operations.h
+        Because this increased the size of Operations.h significantly, I split the parts of Operations.h which are only used by the GC into Scribble.h, to avoid bloating compile times.
+
+        In the DFG and FTL we now have 3 UseKinds for BigInts: HeapBigIntUse, BigInt32Use and AnyBigIntUse.
+        The latter is useful when we know that we are receiving BigInts, but speculation indicates a mix of heap-allocated and small (inlined) big-ints.
+
+        Unfortunately, a naive implementation of this patch significantly regresses the performance of StrictEq (and its variants), as it is no longer true that a cell and a non-cell cannot be equal.
+        Before this patch, the code was jumping to a slow path if either:
+        - at least one operand is a double
+        - or both operands are cells
+        Now, it also needs to jump to the slow path if at least one is a cell.
+        To recover this performance cost, I significantly rewrote this code, from
+          if (left is Cell && right is Cell) {
+            if (left == right)
+              return true;
+            goto slowPath;
+          }
+          if (! left is Int32) {
+            if (left is Number)
+              goto slowPath
+          }
+          if (! right is Int32) {
+            if (right is Number)
+              goto slowPath
+          }
+          return left == right
+        To the following:
+          if (left is Double || right is Double)
+            goto slowPath
+          if (left == right)
+            return true;
+          if (left is Cell || right is Cell)
+            goto slowPath
+          return false;
+        I believe this to be faster than just replacing (left is Cell && right is Cell) by an ||, because I found a bit-trick to check (left is Double || right is Double) which should help reduce the pressure on the branch predictor.
+        Early JetStream2 tests appear to confirm that this patch is roughly neutral while it was a 0.5% regression before I used this trick, but the numbers are still too noisy, I plan to do more measurements before landing this patch.
+
+        I don't yet have performance numbers for this patch on a BigInt benchmark, I will get such numbers before trying to land it, but I'd like some review in the meantime.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * bytecode/ArithProfile.cpp:
+        (JSC::ArithProfile<BitfieldType>::emitObserveResult):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetBigInt32 const):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetHeapBigInt const):
+        (JSC::ArithProfile<BitfieldType>::emitSetHeapBigInt const):
+        (JSC::ArithProfile<BitfieldType>::emitSetBigInt32 const):
+        (WTF::printInternal):
+        * bytecode/ArithProfile.h:
+        (JSC::ObservedResults::didObserveNonInt32):
+        (JSC::ObservedResults::didObserveBigInt):
+        (JSC::ObservedResults::didObserveHeapBigInt):
+        (JSC::ObservedResults::didObserveBigInt32):
+        (JSC::ArithProfile::didObserveHeapBigInt const):
+        (JSC::ArithProfile::didObserveBigInt32 const):
+        (JSC::ArithProfile::setObservedHeapBigInt):
+        (JSC::ArithProfile::setObservedBigInt32):
+        (JSC::ArithProfile::observeResult):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        * bytecode/DataFormat.h:
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue const):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromStructure):
+        (JSC::speculationFromValue):
+        (JSC::speculationFromJSType):
+        (JSC::leastUpperBoundOfStrictlyEquivalentSpeculations):
+        * bytecode/SpeculatedType.h:
+        (JSC::isBigInt32Speculation):
+        (JSC::isHeapBigIntSpeculation):
+        (JSC::isBigIntSpeculation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToThis):
+        (JSC::DFG::FixupPhase::fixupToNumeric):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateBigInt32):
+        (JSC::DFG::Node::shouldSpeculateHeapBigInt):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compileValueBitNot):
+        (JSC::DFG::SpeculativeJIT::emitUntypedOrAnyBigIntBitOp):
+        (JSC::DFG::SpeculativeJIT::compileValueBitwiseOp):
+        (JSC::DFG::SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileValueLShiftOp):
+        (JSC::DFG::SpeculativeJIT::compileValueBitRShift):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileIncOrDec):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::compileValueDiv):
+        (JSC::DFG::SpeculativeJIT::compileValueMod):
+        (JSC::DFG::SpeculativeJIT::compileValuePow):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculateHeapBigInt):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::compileToNumeric):
+        (JSC::DFG::SpeculativeJIT::compileHeapBigIntEquality):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateBigInt32Operand::SpeculateBigInt32Operand):
+        (JSC::DFG::SpeculateBigInt32Operand::~SpeculateBigInt32Operand):
+        (JSC::DFG::SpeculateBigInt32Operand::edge const):
+        (JSC::DFG::SpeculateBigInt32Operand::node const):
+        (JSC::DFG::SpeculateBigInt32Operand::gpr):
+        (JSC::DFG::SpeculateBigInt32Operand::use):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::speculateBigInt32):
+        (JSC::DFG::SpeculativeJIT::speculateAnyBigInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBigInt32):
+        (JSC::DFG::SpeculativeJIT::compileBigInt32Compare):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBigInt32Branch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::initializeConstants):
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueDiv):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMod):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValuePow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitNot):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitAnd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitOr):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitXor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBitURShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumeric):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::lowHeapBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::unboxBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::boxBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotAnyBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotHeapBigIntUnknownWhetherCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotHeapBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::isHeapBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateHeapBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateHeapBigIntUnknownWhetherCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateAnyBigInt):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * heap/MarkedBlockInlines.h:
+        * heap/PreciseAllocation.cpp:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getPreview):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfBigInt32):
+        (JSC::AssemblyHelpers::branchIfBigInt32KnownNotNumber):
+        (JSC::AssemblyHelpers::branchIfNotBigInt32KnownNotNumber):
+        (JSC::AssemblyHelpers::branchIfHeapBigInt):
+        (JSC::AssemblyHelpers::branchIfNotHeapBigInt):
+        (JSC::AssemblyHelpers::unboxBigInt32):
+        (JSC::AssemblyHelpers::boxBigInt32):
+        (JSC::AssemblyHelpers::emitTypeOf):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_big_int):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_to_numeric):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_big_int):
+        (JSC::JIT::emit_op_to_numeric):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makeBigIntDecimalIdentifier):
+        * runtime/ArrayPrototype.cpp:
+        * runtime/BigIntConstructor.cpp:
+        (JSC::toBigInt):
+        (JSC::callBigIntConstructor):
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::create):
+        (JSC::BigIntObject::finishCreation):
+        * runtime/BigIntObject.h:
+        * runtime/BigIntPrototype.cpp:
+        (JSC::toThisBigIntValue):
+        (JSC::bigIntProtoFuncToStringImpl):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::updateArithProfileForBinaryArithOp):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createStructure):
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::stringToBigInt):
+        (JSC::JSBigInt::inc):
+        (JSC::JSBigInt::dec):
+        (JSC::JSBigInt::bitwiseAnd):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::equalsToNumber):
+        (JSC::JSBigInt::equalsToInt32):
+        * runtime/JSBigInt.h:
+        (JSC::asHeapBigInt):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toNumberSlowCase const):
+        (JSC::JSValue::toObjectSlowCase const):
+        (JSC::JSValue::toThisSlowCase const):
+        (JSC::JSValue::synthesizePrototype const):
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+        (JSC::JSValue::dumpForBacktrace const):
+        (JSC::JSValue::toStringSlowCase const):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::asHeapBigInt const):
+        (JSC::JSValue::isBigInt const):
+        (JSC::JSValue::isHeapBigInt const):
+        (JSC::JSValue::isBigInt32 const):
+        (JSC::JSValue::bigInt32AsInt32 const):
+        (JSC::JSValue::isPrimitive const):
+        (JSC::JSValue::getPrimitiveNumber):
+        (JSC::JSValue::toNumeric const):
+        (JSC::JSValue::toBigIntOrInt32 const):
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualForCells):
+        (JSC::JSValue::strictEqual):
+        (JSC::JSValue::pureStrictEqual):
+        (JSC::JSValue::pureToBoolean const):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        (JSC::JSCell::toPrimitive const):
+        (JSC::JSCell::getPrimitiveNumber const):
+        (JSC::JSCell::toNumber const):
+        (JSC::JSCell::toObjectSlow const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isHeapBigInt const):
+        (JSC::JSCell::toBoolean const):
+        (JSC::JSCell::pureToBoolean const):
+        * runtime/JSString.h:
+        (JSC::JSValue::toBoolean const):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/JSTypeInfo.h:
+        * runtime/ObjectInitializationScope.cpp:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        (JSC::jsIsObjectTypeOrNull):
+        * runtime/Operations.h:
+        (JSC::compareBigIntToOtherPrimitive):
+        (JSC::bigIntCompare):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::arithmeticBinaryOp):
+        (JSC::jsSub):
+        (JSC::jsMul):
+        (JSC::jsDiv):
+        (JSC::jsRemainder):
+        (JSC::jsPow):
+        (JSC::jsInc):
+        (JSC::jsDec):
+        (JSC::jsBitwiseNot):
+        (JSC::shift):
+        (JSC::jsLShift):
+        (JSC::jsRShift):
+        (JSC::bitwiseBinaryOp):
+        (JSC::jsBitwiseAnd):
+        (JSC::jsBitwiseOr):
+        (JSC::jsBitwiseXor):
+        * runtime/Scribble.h: Copied from Source/JavaScriptCore/runtime/BigIntObject.h.
+        (JSC::scribbleFreeCells):
+        (JSC::isScribbledValue):
+        (JSC::scribble):
+        * runtime/StructureInlines.h:
+        (JSC::prototypeForLookupPrimitiveImpl):
+
 2020-04-18  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, remove commented out/dead code that didn't failed to

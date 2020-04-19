@@ -207,6 +207,7 @@ size_t JIT_OPERATION operationCompareEq(JSGlobalObject*, EncodedJSValue, Encoded
 size_t JIT_OPERATION operationCompareStrictEq(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 #if USE(JSVALUE64)
 EncodedJSValue JIT_OPERATION operationCompareStringEq(JSGlobalObject*, JSCell* left, JSCell* right) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareEqHeapBigIntToInt32(JSGlobalObject*, JSCell* heapBigInt, int32_t smallInt) WTF_INTERNAL;
 #else
 size_t JIT_OPERATION operationCompareStringEq(JSGlobalObject*, JSCell* left, JSCell* right) WTF_INTERNAL;
 #endif

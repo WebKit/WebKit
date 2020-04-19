@@ -32,7 +32,6 @@
 #include "DFGGraph.h"
 #include "DFGNode.h"
 #include "DFGNullAbstractState.h"
-#include "Operations.h"
 
 namespace JSC { namespace DFG {
 

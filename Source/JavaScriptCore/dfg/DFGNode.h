@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2622,6 +2622,18 @@ public:
     {
         return isSymbolSpeculation(prediction());
     }
+
+#if USE(BIGINT32)
+    bool shouldSpeculateBigInt32()
+    {
+        return isBigInt32Speculation(prediction());
+    }
+#endif
+
+    bool shouldSpeculateHeapBigInt()
+    {
+        return isHeapBigIntSpeculation(prediction());
+    }
     
     bool shouldSpeculateBigInt()
     {
@@ -2822,7 +2834,19 @@ public:
     {
         return op1->shouldSpeculateBigInt() && op2->shouldSpeculateBigInt();
     }
-    
+
+#if USE(BIGINT32)
+    static bool shouldSpeculateBigInt32(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateBigInt32() && op2->shouldSpeculateBigInt32();
+    }
+#endif
+
+    static bool shouldSpeculateHeapBigInt(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateHeapBigInt() && op2->shouldSpeculateHeapBigInt();
+    }
+
     static bool shouldSpeculateFinalObject(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateFinalObject() && op2->shouldSpeculateFinalObject();

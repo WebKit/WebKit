@@ -282,7 +282,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         }
 
         if (exit.m_descriptor->m_valueProfile)
-            exit.m_descriptor->m_valueProfile.emitReportValue(jit, JSValueRegs(GPRInfo::regT0));
+            exit.m_descriptor->m_valueProfile.emitReportValue(jit, JSValueRegs(GPRInfo::regT0), GPRInfo::regT1);
     }
 
     // Materialize all objects. Don't materialize an object until all

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -183,18 +183,18 @@ size_t JIT_OPERATION operationRegExpTestString(JSGlobalObject*, RegExpObject*, J
 size_t JIT_OPERATION operationRegExpTest(JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationRegExpTestGeneric(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEqCell(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationSubBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationMulBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationModBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationDivBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationPowBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitAndBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitNotBigInt(JSGlobalObject*, JSCell* op1) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitOrBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitLShiftBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationAddBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitRShiftBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitXorBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationSubHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationMulHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationModHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationDivHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationPowHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitAndHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitNotHeapBigInt(JSGlobalObject*, JSCell* op1) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitOrHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitLShiftHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationAddHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitRShiftHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitXorHeapBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 size_t JIT_OPERATION operationSameValue(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateActivationDirect(VM*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);
 JSCell* JIT_OPERATION operationCreateDirectArguments(VM*, Structure*, uint32_t length, uint32_t minCapacity);

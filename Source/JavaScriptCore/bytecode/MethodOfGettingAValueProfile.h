@@ -34,6 +34,7 @@
 #include "BytecodeIndex.h"
 #include "GPRInfo.h"
 #include "Operands.h"
+#include "TagRegistersMode.h"
 
 namespace JSC {
 
@@ -83,7 +84,8 @@ public:
     
     explicit operator bool() const { return m_kind != None; }
 
-    void emitReportValue(CCallHelpers&, JSValueRegs) const;
+    // The temporary register is only needed on 64-bits builds (for testing BigInt32).
+    void emitReportValue(CCallHelpers&, JSValueRegs, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
     void reportValue(JSValue);
 
 private:

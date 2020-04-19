@@ -383,10 +383,13 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 // We can't be sure that we have a spare register. So use the numberTagRegister,
                 // since we know how to restore it.
                 jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::numberTagRegister);
-                profile.emitReportValue(jit, JSValueRegs(GPRInfo::numberTagRegister));
+                // We also use the notCellMaskRegister as the scratch register, for the same reason.
+                // FIXME: find a less gross way of doing this, maybe through delaying these operations until we actually have some spare registers around?
+                profile.emitReportValue(jit, JSValueRegs(GPRInfo::numberTagRegister), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
                 jit.move(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
             } else
-                profile.emitReportValue(jit, JSValueRegs(exit.m_jsValueSource.gpr()));
+                profile.emitReportValue(jit, JSValueRegs(exit.m_jsValueSource.gpr()), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
+            jit.move(AssemblyHelpers::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
 #else // not USE(JSVALUE64)
             if (exit.m_jsValueSource.isAddress()) {
                 // Save a register so we can use it.
@@ -398,7 +401,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 JSValueRegs scratch(scratchTag, scratchPayload);
                 
                 jit.loadValue(exit.m_jsValueSource.asAddress(), scratch);
-                profile.emitReportValue(jit, scratch);
+                profile.emitReportValue(jit, scratch, InvalidGPRReg);
                 
                 jit.popToRestore(scratchTag);
                 jit.popToRestore(scratchPayload);
@@ -407,10 +410,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 jit.pushToSave(scratchTag);
                 jit.move(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), scratchTag);
                 JSValueRegs value(scratchTag, exit.m_jsValueSource.payloadGPR());
-                profile.emitReportValue(jit, value);
+                profile.emitReportValue(jit, value, InvalidGPRReg);
                 jit.popToRestore(scratchTag);
             } else
-                profile.emitReportValue(jit, exit.m_jsValueSource.regs());
+                profile.emitReportValue(jit, exit.m_jsValueSource.regs(), InvalidGPRReg);
 #endif // USE(JSVALUE64)
         }
     }

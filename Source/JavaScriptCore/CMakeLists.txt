@@ -986,6 +986,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SamplingProfiler.h
     runtime/ScopeOffset.h
     runtime/ScopedArgumentsTable.h
+    runtime/Scribble.h
     runtime/ScriptExecutable.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h

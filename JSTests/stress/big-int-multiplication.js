@@ -1,18 +1,18 @@
 //@ runBigIntEnabled
+//@ runBigIntEnabledNoJIT
 
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-assert = {
-    sameValue: function (input, expected, message) {
-    if (input !== expected)
-        throw new Error(message);
-    }
-};
+function testOneMul(x, y, z) {
+    let result = x * y;
+    if (result !== z)
+        throw new Error("Computing " + x + " * " + y + " resulted in " + result + " instead of the expected " + z);
+}
 
 function testMul(x, y, z) {
-    assert.sameValue(x * y, z, x + " * " + y + " = " + z);
-    assert.sameValue(y * x, z, y + " * " + x + " = " + z);
+    testOneMul(x, y, z);
+    testOneMul(y, x, z);
 }
 
 testMul(0xFEDCBA9876543210n, 0xFEDCBA9876543210n, 0xFDBAC097C8DC5ACCDEEC6CD7A44A4100n);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
     return result;
 }
 
-void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueRegs regs) const
+void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode) const
 {
     switch (m_kind) {
     case None:
@@ -67,12 +67,12 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
     }
         
     case UnaryArithProfileReady: {
-        u.unaryArithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
+        u.unaryArithProfile->emitObserveResult(jit, regs, tempGPR, mode);
         return;
     }
 
     case BinaryArithProfileReady: {
-        u.binaryArithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
+        u.binaryArithProfile->emitObserveResult(jit, regs, tempGPR, mode);
         return;
     }
     }

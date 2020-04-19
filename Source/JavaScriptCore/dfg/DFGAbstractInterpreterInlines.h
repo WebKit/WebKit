@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,6 @@
 #include "JSPromiseConstructor.h"
 #include "MathCommon.h"
 #include "NumberConstructor.h"
-#include "Operations.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"
 #include "StructureCache.h"
@@ -215,7 +214,7 @@ inline ToThisResult isToThisAnIdentity(VM& vm, ECMAMode ecmaMode, AbstractValue&
         bool overridesToThis = false;
         valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
             TypeInfo type = structure->typeInfo();
-            ASSERT(type.isObject() || type.type() == StringType || type.type() == SymbolType || type.type() == BigIntType);
+            ASSERT(type.isObject() || type.type() == StringType || type.type() == SymbolType || type.type() == HeapBigIntType);
             if (!ecmaMode.isStrict())
                 ASSERT(type.isObject());
             // We don't need to worry about strings/symbols here since either:
@@ -503,7 +502,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        if (node->child1().useKind() == BigIntUse)
+        if (node->child1().useKind() == BigInt32Use) {
+#if USE(BIGINT32)
+            setTypeForNode(node, SpecBigInt32);
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        } else if (node->child1().useKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->child1().useKind() == AnyBigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -533,7 +540,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (handleConstantBinaryBitwiseOp(node))
             break;
 
-        if (node->binaryUseKind() == BigIntUse)
+        // FIXME: this use of binaryUseKind means that we cannot specialize to (for example) a HeapBigInt left-operand and a BigInt32 right-operand.
+        if (node->binaryUseKind() == BigInt32Use) {
+#if USE(BIGINT32)
+            setTypeForNode(node, SpecBigInt32);
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        } else if (node->binaryUseKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->binaryUseKind() == AnyBigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -723,11 +739,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ValueSub:
     case ValueAdd: {
-        DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse || node->binaryUseKind() == BigIntUse);
-        if (node->binaryUseKind() == BigIntUse)
+        if (node->binaryUseKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
+            DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
             clobberWorld();
+            // FIXME: do we really need SpecString here for ValueSub? It seems like we only need it for ValueAdd.
             setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
         }
         break;
@@ -887,6 +906,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ValueNegate: {
+        // FIXME: we could do much smarter things for BigInts, see ValueAdd/ValueSub.
         clobberWorld();
         setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         break;
@@ -959,7 +979,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case DoubleRepUse:
             setNonCellTypeForNode(node, typeOfDoubleIncOrDec(forNode(node->child1()).m_type));
             break;
-        case BigIntUse:
+        case HeapBigIntUse:
+            setTypeForNode(node, SpecHeapBigInt);
+            break;
+        case AnyBigIntUse:
+        case BigInt32Use:
             setTypeForNode(node, SpecBigInt);
             break;
         default:
@@ -975,7 +999,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue childY = forNode(node->child2()).value();
         if (childX && childY && childX.isNumber() && childY.isNumber()) {
             // We need to call `didFoldClobberWorld` here because this path is only possible
-            // when node->useKind is UntypedUse. In the case of BigIntUse, children will be
+            // when node->useKind is UntypedUse. In the case of AnyBigIntUse or friends, children will be
             // cleared by `AbstractInterpreter::executeEffects`.
             didFoldClobberWorld();
             // Our boxing scheme here matches what we do in operationValuePow.
@@ -983,7 +1007,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        if (node->binaryUseKind() == BigIntUse)
+        if (node->binaryUseKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -993,7 +1019,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ValueMul: {
-        if (node->binaryUseKind() == BigIntUse)
+        // FIXME: why is this code not shared with ValueSub?
+        if (node->binaryUseKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -1057,7 +1086,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (handleConstantDivOp(node))
             break;
 
-        if (node->binaryUseKind() == BigIntUse)
+        if (node->binaryUseKind() == HeapBigIntUse)
+            setTypeForNode(node, SpecHeapBigInt);
+        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -1381,6 +1412,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
+    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case IsObjectOrNull:
@@ -1408,6 +1440,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             case IsNumber:
                 setConstant(node, jsBoolean(child.value().isNumber()));
+                break;
+            case IsBigInt:
+                setConstant(node, jsBoolean(child.value().isBigInt()));
                 break;
             case NumberIsInteger:
                 setConstant(node, jsBoolean(NumberConstructor::isIntegerImpl(child.value())));
@@ -1563,7 +1598,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             
             break;
+        case IsBigInt:
+            if (!(child.m_type & ~SpecBigInt)) {
+                setConstant(node, jsBoolean(true));
+                constantWasSet = true;
+                break;
+            }
 
+            if (!(child.m_type & SpecBigInt)) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
+
+            // FIXME: if the SpeculatedType informs us that we won't have a BigInt32 (or that we won't have a HeapBigInt), then we can transform this node into a IsCellWithType(HeapBigIntType) (or a hypothetical IsBigInt32 node).
+
+            break;
         case NumberIsInteger:
             if (!(child.m_type & ~SpecInt32Only)) {
                 setConstant(node, jsBoolean(true));
@@ -1937,13 +1987,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
 
+        // FIXME: why is this check here, and not later (after the type-based replacement by false).
+        // Saam seems to agree that the two checks could be switched, I'll try that in a separate patch
         if (node->isBinaryUseKind(UntypedUse)) {
-            // FIXME: Revisit this condition when introducing BigInt to JSC.
-            auto isNonStringCellConstant = [] (JSValue value) {
-                return value && value.isCell() && !value.isString();
+            auto isNonStringAndNonBigIntCellConstant = [] (JSValue value) {
+                return value && value.isCell() && !value.isString() && !value.isHeapBigInt();
             };
 
-            if (isNonStringCellConstant(left) || isNonStringCellConstant(right)) {
+            if (isNonStringAndNonBigIntCellConstant(left) || isNonStringAndNonBigIntCellConstant(right)) {
                 m_state.setShouldTryConstantFolding(true);
                 setNonCellTypeForNode(node, SpecBoolean);
                 break;
@@ -1958,19 +2009,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         
         if (node->child1() == node->child2()) {
-            if (node->isBinaryUseKind(BooleanUse) ||
-                node->isBinaryUseKind(Int32Use) ||
-                node->isBinaryUseKind(Int52RepUse) ||
-                node->isBinaryUseKind(StringUse) ||
-                node->isBinaryUseKind(StringIdentUse) ||
-                node->isBinaryUseKind(SymbolUse) ||
-                node->isBinaryUseKind(ObjectUse) ||
-                node->isBinaryUseKind(MiscUse, UntypedUse) ||
-                node->isBinaryUseKind(UntypedUse, MiscUse) ||
-                node->isBinaryUseKind(StringIdentUse, NotStringVarUse) ||
-                node->isBinaryUseKind(NotStringVarUse, StringIdentUse) ||
-                node->isBinaryUseKind(StringUse, UntypedUse) ||
-                node->isBinaryUseKind(UntypedUse, StringUse)) {
+            // FIXME: Is there any case not involving NaN where x === x is not guaranteed to return true?
+            // If not I might slightly simplify that check.
+            if (node->isBinaryUseKind(BooleanUse)
+                || node->isBinaryUseKind(Int32Use)
+                || node->isBinaryUseKind(Int52RepUse)
+                || node->isBinaryUseKind(StringUse)
+                || node->isBinaryUseKind(StringIdentUse)
+                || node->isBinaryUseKind(SymbolUse)
+                || node->isBinaryUseKind(ObjectUse)
+                || node->isBinaryUseKind(MiscUse, UntypedUse)
+                || node->isBinaryUseKind(UntypedUse, MiscUse)
+                || node->isBinaryUseKind(StringIdentUse, NotStringVarUse)
+                || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
+                || node->isBinaryUseKind(StringUse, UntypedUse)
+                || node->isBinaryUseKind(UntypedUse, StringUse)
+                || node->isBinaryUseKind(BigInt32Use)
+                || node->isBinaryUseKind(HeapBigIntUse)
+                || node->isBinaryUseKind(AnyBigIntUse)) {
                 setConstant(node, jsBoolean(true));
                 break;
             }

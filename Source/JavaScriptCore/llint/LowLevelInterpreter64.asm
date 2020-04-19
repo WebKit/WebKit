@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -844,24 +844,48 @@ llintOpWithReturn(op_is_undefined_or_null, OpIsUndefinedOrNull, macro (size, get
 end)
 
 
-macro strictEqOp(opcodeName, opcodeStruct, equalityOperation)
+macro strictEqOp(opcodeName, opcodeStruct, createBoolean)
     llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
         get(m_rhs, t0)
         get(m_lhs, t2)
         loadConstantOrVariable(size, t0, t1)
         loadConstantOrVariable(size, t2, t0)
+
+        # At a high level we do
+        # If (left is Double || right is Double)
+        #     goto slowPath;
+        # result = (left == right);
+        # if (result)
+        #     goto done;
+        # if (left is Cell || right is Cell)
+        #     goto slowPath;
+        # done:
+        # return result;
+
+        # This fragment implements (left is Double || right is Double), with a single branch instead of the 4 that would be naively required if we used branchIfInt32/branchIfNumber
+        # The trick is that if a JSValue is an Int32, then adding 1<<49 to it will make it overflow, leaving all high bits at 0
+        # If it is not a number at all, then 1<<49 will be its only high bit set
+        # Leaving only doubles above or equal 1<<50.
         move t0, t2
-        orq t1, t2
+        move t1, t3
+        move LowestOfHighBits, t5
+        addq t5, t2
+        addq t5, t3
+        orq t2, t3
+        lshiftq 1, t5
+        bqaeq t3, t5, .slow
+
+        cqeq t0, t1, t5
+        btqnz t5, t5, .done #is there a better way of checking t5 != 0 ?
+
+        move t0, t2
+        # This andq could be an 'or' if not for BigInt32 (since it makes it possible for a Cell to be strictEqual to a non-Cell)
+        andq t1, t2
         btqz t2, notCellMask, .slow
-        bqaeq t0, numberTag, .leftOK
-        btqnz t0, numberTag, .slow
-    .leftOK:
-        bqaeq t1, numberTag, .rightOK
-        btqnz t1, numberTag, .slow
-    .rightOK:
-        equalityOperation(t0, t1, t0)
-        orq ValueFalse, t0
-        return(t0)
+
+    .done:
+        createBoolean(t5)
+        return(t5)
 
     .slow:
         callSlowPath(_slow_path_%opcodeName%)
@@ -871,33 +895,53 @@ end
 
 
 strictEqOp(stricteq, OpStricteq,
-    macro (left, right, result) cqeq left, right, result end)
+    macro (operand) xorq ValueFalse, operand end)
 
 
 strictEqOp(nstricteq, OpNstricteq,
-    macro (left, right, result) cqneq left, right, result end)
+    macro (operand) xorq ValueTrue, operand end)
 
 
-macro strictEqualityJumpOp(opcodeName, opcodeStruct, equalityOperation)
+macro strictEqualityJumpOp(opcodeName, opcodeStruct, jumpIfEqual, jumpIfNotEqual)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
         get(m_lhs, t2)
         get(m_rhs, t3)
         loadConstantOrVariable(size, t2, t0)
         loadConstantOrVariable(size, t3, t1)
-        move t0, t2
-        orq t1, t2
-        btqz t2, notCellMask, .slow
-        bqaeq t0, numberTag, .leftOK
-        btqnz t0, numberTag, .slow
-    .leftOK:
-        bqaeq t1, numberTag, .rightOK
-        btqnz t1, numberTag, .slow
-    .rightOK:
-        equalityOperation(t0, t1, .jumpTarget)
-        dispatch()
 
-    .jumpTarget:
-        jump(m_targetLabel)
+        # At a high level we do
+        # If (left is Double || right is Double)
+        #     goto slowPath;
+        # if (left == right)
+        #     goto jumpTarget;
+        # if (left is Cell || right is Cell)
+        #     goto slowPath;
+        # goto otherJumpTarget
+
+        # This fragment implements (left is Double || right is Double), with a single branch instead of the 4 that would be naively required if we used branchIfInt32/branchIfNumber
+        # The trick is that if a JSValue is an Int32, then adding 1<<49 to it will make it overflow, leaving all high bits at 0
+        # If it is not a number at all, then 1<<49 will be its only high bit set
+        # Leaving only doubles above or equal 1<<50.
+        move t0, t2
+        move t1, t3
+        move LowestOfHighBits, t5
+        addq t5, t2
+        addq t5, t3
+        orq t2, t3
+        lshiftq 1, t5
+        bqaeq t3, t5, .slow
+
+        bqeq t0, t1, .equal
+
+        move t0, t2
+        # This andq could be an 'or' if not for BigInt32 (since it makes it possible for a Cell to be strictEqual to a non-Cell)
+        andq t1, t2
+        btqz t2, notCellMask, .slow
+
+        jumpIfNotEqual(jump, m_targetLabel, dispatch)
+
+    .equal:
+        jumpIfEqual(jump, m_targetLabel, dispatch)
 
     .slow:
         callSlowPath(_llint_slow_path_%opcodeName%)
@@ -907,26 +951,28 @@ end
 
 
 strictEqualityJumpOp(jstricteq, OpJstricteq,
-    macro (left, right, target) bqeq left, right, target end)
-
+    macro (jump, targetLabel, dispatch) jump(targetLabel) end,
+    macro (jump, targetLabel, dispatch) dispatch() end)
 
 strictEqualityJumpOp(jnstricteq, OpJnstricteq,
-    macro (left, right, target) bqneq left, right, target end)
+    macro (jump, targetLabel, dispatch) dispatch() end,
+    macro (jump, targetLabel, dispatch) jump(targetLabel) end)
 
 macro preOp(opcodeName, opcodeStruct, integerOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         macro updateArithProfile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t2]
         end
 
         get(m_srcDst, t0)
-        loadq [cfr, t0, 8], t3
-        metadata(t1, t2)
-        # Metadata in t1, srcDst in t3
-        bqb t3, numberTag, .slow
-        integerOperation(t3, .slow)
-        orq numberTag, t3
-        storeq t3, [cfr, t0, 8]
+        loadq [cfr, t0, 8], t1
+        metadata(t2, t3)
+        # srcDst in t1, metadata in t2
+        # FIXME: the next line jumps to the slow path for BigInt32. We could instead have a dedicated path in here for them.
+        bqb t1, numberTag, .slow
+        integerOperation(t1, .slow)
+        orq numberTag, t1
+        storeq t1, [cfr, t0, 8]
         updateArithProfile(ArithProfileInt)
         dispatch()
 
@@ -934,6 +980,7 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
         callSlowPath(_slow_path_%opcodeName%)
         dispatch()
     end)
+
 end
 
 llintOpWithProfile(op_to_number, OpToNumber, macro (size, get, dispatch, return)
@@ -1279,6 +1326,26 @@ llintOpWithReturn(op_is_number, OpIsNumber, macro (size, get, dispatch, return)
     return(t1)
 end)
 
+if BIGINT32
+    llintOpWithReturn(op_is_big_int, OpIsBigInt, macro(size, get, dispatch, return)
+        get(m_operand, t1)
+        loadConstantOrVariable(size, t1, t0)
+        btqnz t0, notCellMask, .notCellCase
+        cbeq JSCell::m_type[t0], HeapBigIntType, t1
+        orq ValueFalse, t1
+        return(t1)
+    .notCellCase:
+        andq MaskBigInt32, t0
+        cqeq t0, TagBigInt32, t0
+        orq ValueFalse, t0
+        return(t0)
+    end)
+else
+# if BIGINT32 is not supported we generate op_is_cell_with_type instead of op_is_big_int
+    llintOp(op_is_big_int, OpIsBigInt, macro(unused, unused, unused)
+        notSupported()
+    end)
+end
 
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
     getu(size, OpIsCellWithType, m_type, t0)

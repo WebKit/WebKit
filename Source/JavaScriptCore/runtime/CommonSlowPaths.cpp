@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,6 @@
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include <wtf/StringPrintStream.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -473,13 +472,8 @@ SLOW_PATH_DECL(slow_path_inc)
     BEGIN();
     auto bytecode = pc->as<OpInc>();
     JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
-    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    JSValue result = jsInc(globalObject, argument);
     CHECK_EXCEPTION();
-    JSValue result;
-    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
-        result = JSBigInt::inc(globalObject, WTF::get<JSBigInt*>(resultVariant));
-    else
-        result = jsNumber(WTF::get<double>(resultVariant) + 1);
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
@@ -488,13 +482,8 @@ SLOW_PATH_DECL(slow_path_dec)
     BEGIN();
     auto bytecode = pc->as<OpDec>();
     JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
-    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    JSValue result = jsDec(globalObject, argument);
     CHECK_EXCEPTION();
-    JSValue result;
-    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
-        result = JSBigInt::dec(globalObject, WTF::get<JSBigInt*>(resultVariant));
-    else
-        result = jsNumber(WTF::get<double>(resultVariant) - 1);
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
 }
 
@@ -511,7 +500,15 @@ static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSVa
     UnaryArithProfile& profile = metadata.m_arithProfile;
     profile.observeArg(operand);
     ASSERT(result.isNumber() || result.isBigInt());
-    if (result.isNumber()) {
+
+    if (result.isHeapBigInt())
+        profile.setObservedHeapBigInt();
+#if USE(BIGINT32)
+    else if (result.isBigInt32())
+        profile.setObservedBigInt32();
+#endif
+    else {
+        ASSERT(result.isNumber());
         if (!result.isInt32()) {
             if (operand.isInt32())
                 profile.setObservedInt32Overflow();
@@ -531,10 +528,7 @@ static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSVa
                     profile.setObservedInt52Overflow();
             }
         }
-    } else if (result.isBigInt())
-        profile.setObservedBigInt();
-    else
-        profile.setObservedNonNumeric();
+    }
 }
 #else
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata&, JSValue, JSValue) { }
@@ -549,8 +543,21 @@ SLOW_PATH_DECL(slow_path_negate)
     JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     CHECK_EXCEPTION();
 
-    if (primValue.isBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, asBigInt(primValue));
+#if USE(BIGINT32)
+    if (primValue.isBigInt32()) {
+        int32_t value = primValue.bigInt32AsInt32();
+        if (value != INT_MIN) {
+            auto result = JSValue(JSValue::JSBigInt32, -value);
+            RETURN_WITH_PROFILING(result, {
+                updateArithProfileForUnaryArithOp(metadata, result, operand);
+            });
+        } else
+            primValue = JSBigInt::createFrom(vm, value);
+    }
+#endif
+
+    if (primValue.isHeapBigInt()) {
+        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         RETURN_WITH_PROFILING(result, {
             updateArithProfileForUnaryArithOp(metadata, result, operand);
         });
@@ -588,8 +595,12 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
                     profile.setObservedInt52Overflow();
             }
         }
-    } else if (result.isBigInt())
-        profile.setObservedBigInt();
+    } else if (result.isHeapBigInt())
+        profile.setObservedHeapBigInt();
+#if USE(BIGINT32)
+    else if (result.isBigInt32())
+        profile.setObservedBigInt32();
+#endif
     else 
         profile.setObservedNonNumeric();
 }
@@ -611,13 +622,8 @@ SLOW_PATH_DECL(slow_path_to_numeric)
     BEGIN();
     auto bytecode = pc->as<OpToNumeric>();
     JSValue argument = GET_C(bytecode.m_operand).jsValue();
-    Variant<JSBigInt*, double> resultVariant = argument.toNumeric(globalObject);
+    JSValue result = argument.toNumeric(globalObject);
     CHECK_EXCEPTION();
-    JSValue result;
-    if (WTF::holds_alternative<JSBigInt*>(resultVariant))
-        result = WTF::get<JSBigInt*>(resultVariant);
-    else
-        result = jsNumber(WTF::get<double>(resultVariant));
     RETURN_PROFILED(result);
 }
 
@@ -653,7 +659,7 @@ SLOW_PATH_DECL(slow_path_add)
 }
 
 // The following arithmetic and bitwise operations need to be sure to run
-// toNumber() on their operands in order.  (A call to toNumber() is idempotent
+// toNumeric/toBigIntOrInt32() on their operands in order.  (A call to these is idempotent
 // if an exception is already set on the CallFrame.)
 
 SLOW_PATH_DECL(slow_path_mul)
@@ -675,24 +681,8 @@ SLOW_PATH_DECL(slow_path_sub)
     auto bytecode = pc->as<OpSub>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toNumeric(globalObject);
+    JSValue result = jsSub(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toNumeric(globalObject);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::sub(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_WITH_PROFILING(result, {
-                updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
-            });
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in subtraction."));
-    }
-
-    JSValue result = jsNumber(WTF::get<double>(leftNumeric) - WTF::get<double>(rightNumeric));
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
     });
@@ -704,26 +694,8 @@ SLOW_PATH_DECL(slow_path_div)
     auto bytecode = pc->as<OpDiv>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toNumeric(globalObject);
+    JSValue result = jsDiv(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toNumeric(globalObject);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::divide(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_WITH_PROFILING(result, {
-                updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
-            });
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in division."));
-    }
-
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
-    JSValue result = jsNumber(a / b);
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
     });
@@ -735,24 +707,9 @@ SLOW_PATH_DECL(slow_path_mod)
     auto bytecode = pc->as<OpMod>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toNumeric(globalObject);
+    JSValue result = jsRemainder(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toNumeric(globalObject);
-    CHECK_EXCEPTION();
-    
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::remainder(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN(result);
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in remainder operation."));
-    }
-    
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
-    RETURN(jsNumber(jsMod(a, b)));
+    RETURN(result);
 }
 
 SLOW_PATH_DECL(slow_path_pow)
@@ -761,25 +718,9 @@ SLOW_PATH_DECL(slow_path_pow)
     auto bytecode = pc->as<OpPow>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toNumeric(globalObject);
+    JSValue result = jsPow(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toNumeric(globalObject);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::exponentiate(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN(result);
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in exponentiation operation."));
-    }
-    
-    double a = WTF::get<double>(leftNumeric);
-    double b = WTF::get<double>(rightNumeric);
-
-    RETURN(jsNumber(operationMathPow(a, b)));
+    RETURN(result);
 }
 
 SLOW_PATH_DECL(slow_path_lshift)
@@ -788,22 +729,10 @@ SLOW_PATH_DECL(slow_path_lshift)
     auto bytecode = pc->as<OpLshift>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toBigIntOrInt32(globalObject);
+
+    JSValue result = jsLShift(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::leftShift(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_PROFILED(result);
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in left shift operation."));
-    }
-
-    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) << (WTF::get<int32_t>(rightNumeric) & 31)));
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_rshift)
@@ -812,22 +741,10 @@ SLOW_PATH_DECL(slow_path_rshift)
     auto bytecode = pc->as<OpRshift>();
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
-    auto leftNumeric = left.toBigIntOrInt32(globalObject);
+
+    JSValue result = jsRShift(globalObject, left, right);
     CHECK_EXCEPTION();
-    auto rightNumeric = right.toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::signedRightShift(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_PROFILED(result);
-        }
-
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in signed right shift operation."_s));
-    }
-
-    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) >> (WTF::get<int32_t>(rightNumeric) & 31)));
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_urshift)
@@ -853,79 +770,47 @@ SLOW_PATH_DECL(slow_path_bitnot)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitnot>();
-    auto operandNumeric = GET_C(bytecode.m_operand).jsValue().toBigIntOrInt32(globalObject);
+    auto operand = GET_C(bytecode.m_operand).jsValue();
+
+    auto result = jsBitwiseNot(globalObject, operand);
     CHECK_EXCEPTION();
-
-    if (WTF::holds_alternative<JSBigInt*>(operandNumeric)) {
-        JSBigInt* result = JSBigInt::bitwiseNot(globalObject, WTF::get<JSBigInt*>(operandNumeric));
-        CHECK_EXCEPTION();
-        RETURN_PROFILED(result);
-    }
-
-    RETURN_PROFILED(jsNumber(~WTF::get<int32_t>(operandNumeric)));
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_bitand)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitand>();
-    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseAnd(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_PROFILED(result);
-        }
+    auto left = GET_C(bytecode.m_lhs).jsValue();
+    auto right = GET_C(bytecode.m_rhs).jsValue();
 
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in bitwise 'and' operation."));
-    }
-
-    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) & WTF::get<int32_t>(rightNumeric)));
+    JSValue result = jsBitwiseAnd(globalObject, left, right);
+    CHECK_EXCEPTION();
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_bitor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitor>();
-    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseOr(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_PROFILED(result);
-        }
+    auto left = GET_C(bytecode.m_lhs).jsValue();
+    auto right = GET_C(bytecode.m_rhs).jsValue();
 
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in bitwise 'or' operation."));
-    }
-
-    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) | WTF::get<int32_t>(rightNumeric)));
+    JSValue result = jsBitwiseOr(globalObject, left, right);
+    CHECK_EXCEPTION();
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_bitxor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitxor>();
-    auto leftNumeric = GET_C(bytecode.m_lhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    auto rightNumeric = GET_C(bytecode.m_rhs).jsValue().toBigIntOrInt32(globalObject);
-    CHECK_EXCEPTION();
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-            JSBigInt* result = JSBigInt::bitwiseXor(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
-            CHECK_EXCEPTION();
-            RETURN_PROFILED(result);
-        }
+    auto left = GET_C(bytecode.m_lhs).jsValue();
+    auto right = GET_C(bytecode.m_rhs).jsValue();
 
-        THROW(createTypeError(globalObject, "Invalid mix of BigInt and other type in bitwise 'xor' operation."));
-    }
-
-    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) ^ WTF::get<int32_t>(rightNumeric)));
+    JSValue result = jsBitwiseXor(globalObject, left, right);
+    CHECK_EXCEPTION();
+    RETURN_PROFILED(result);
 }
 
 SLOW_PATH_DECL(slow_path_typeof)

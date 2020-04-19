@@ -1307,6 +1307,12 @@ llintOpWithReturn(op_is_number, OpIsNumber, macro (size, get, dispatch, return)
 end)
 
 
+# On 32-bit platforms BIGINT32 is not supported, so we generate op_is_cell_with_type instead of op_is_big_int
+llintOp(op_is_big_int, OpIsBigInt, macro(unused, unused, unused)
+    notSupported()
+end)
+
+
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0, t3)

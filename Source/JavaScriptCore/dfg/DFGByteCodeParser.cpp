@@ -5722,6 +5722,17 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_is_number);
         }
 
+        case op_is_big_int: {
+#if USE(BIGINT32)
+            auto bytecode = currentInstruction->as<OpIsBigInt>();
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsBigInt, value));
+            NEXT_OPCODE(op_is_big_int);
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        }
+
         case op_is_cell_with_type: {
             auto bytecode = currentInstruction->as<OpIsCellWithType>();
             Node* value = get(bytecode.m_operand);

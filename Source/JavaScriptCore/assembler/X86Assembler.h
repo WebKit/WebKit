@@ -4698,7 +4698,7 @@ private:
 
         // Immediates:
         //
-        // An immedaite should be appended where appropriate after an op has been emitted.
+        // An immediate should be appended where appropriate after an op has been emitted.
         // The writes are unchecked since the opcode formatters above will have ensured space.
 
         void immediate8(int imm)

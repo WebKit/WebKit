@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -175,6 +175,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
+    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case IsTypedArrayView:
@@ -260,7 +261,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ValueBitNot:
-        if (node->child1().useKind() == BigIntUse) {
+        if (node->child1().useKind() == AnyBigIntUse || node->child1().useKind() == BigInt32Use || node->child1().useKind() == HeapBigIntUse) {
             def(PureValue(node));
             return;
         }
@@ -680,7 +681,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Int32Use:
         case Int52RepUse:
         case DoubleRepUse:
-        case BigIntUse:
+        case BigInt32Use:
+        case HeapBigIntUse:
+        case AnyBigIntUse:
             def(PureValue(node));
             return;
         case UntypedUse:
@@ -702,7 +705,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ValuePow:
     case ValueBitLShift:
     case ValueBitRShift:
-        if (node->isBinaryUseKind(BigIntUse)) {
+        // FIXME: this use of single-argument isBinaryUseKind would prevent us from specializing (for example) for a HeapBigInt left-operand and a BigInt32 right-operand.
+        if (node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(HeapBigIntUse)) {
             def(PureValue(node));
             return;
         }

@@ -204,9 +204,9 @@ inline bool JSCell::isString() const
     return m_type == StringType;
 }
 
-inline bool JSCell::isBigInt() const
+inline bool JSCell::isHeapBigInt() const
 {
-    return m_type == BigIntType;
+    return m_type == HeapBigIntType;
 }
 
 inline bool JSCell::isSymbol() const
@@ -340,7 +340,7 @@ inline bool JSCell::toBoolean(JSGlobalObject* globalObject) const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean();
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toBoolean();
     return !structure(getVM(globalObject))->masqueradesAsUndefined(globalObject);
 }
@@ -349,7 +349,7 @@ inline TriState JSCell::pureToBoolean() const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
-    if (isBigInt())
+    if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toBoolean() ? TrueTriState : FalseTriState;
     if (isSymbol())
         return TrueTriState;

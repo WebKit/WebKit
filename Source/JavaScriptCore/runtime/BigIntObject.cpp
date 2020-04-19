@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BigIntObject);
 const ClassInfo BigIntObject::s_info = { "BigInt", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BigIntObject) };
 
 
-BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSBigInt* bigInt)
+BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSValue bigInt)
 {
     BigIntObject* object = new (NotNull, allocateCell<BigIntObject>(vm.heap)) BigIntObject(vm, globalObject->bigIntObjectStructure());
     object->finishCreation(vm, bigInt);
@@ -49,7 +49,7 @@ BigIntObject::BigIntObject(VM& vm, Structure* structure)
 {
 }
 
-void BigIntObject::finishCreation(VM& vm, JSBigInt* bigInt)
+void BigIntObject::finishCreation(VM& vm, JSValue bigInt)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));

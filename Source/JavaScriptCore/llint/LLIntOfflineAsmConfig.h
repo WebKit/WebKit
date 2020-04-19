@@ -136,6 +136,12 @@
 #define OFFLINE_ASM_JSVALUE64 0
 #endif
 
+#if USE(BIGINT32)
+#define OFFLINE_ASM_BIGINT32 1
+#else
+#define OFFLINE_ASM_BIGINT32 0
+#endif
+
 #if CPU(ADDRESS64)
 #define OFFLINE_ASM_ADDRESS64 1
 #else

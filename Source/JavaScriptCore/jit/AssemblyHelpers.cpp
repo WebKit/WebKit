@@ -688,7 +688,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 {
     // Implements the following control flow structure:
     // if (value is cell) {
-    //     if (value is string or value is BigInt)
+    //     if (value is string or value is HeapBigInt)
     //         result = !!value->length
     //     else {
     //         do evil things for masquerades-as-undefined
@@ -698,6 +698,8 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     //     result = !!unboxInt32(value)
     // } else if (value is number) {
     //     result = !!unboxDouble(value)
+    // } else if (value is BigInt32) {
+    //     result = !!unboxBigInt32(value)
     // } else {
     //     result = value == jsTrue
     // }
@@ -706,7 +708,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 
     auto notCell = branchIfNotCell(value);
     auto isString = branchIfString(value.payloadGPR());
-    auto isBigInt = branchIfBigInt(value.payloadGPR());
+    auto isHeapBigInt = branchIfHeapBigInt(value.payloadGPR());
 
     if (shouldCheckMasqueradesAsUndefined) {
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
@@ -729,7 +731,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     comparePtr(invert ? Equal : NotEqual, value.payloadGPR(), result, result);
     done.append(jump());
 
-    isBigInt.link(this);
+    isHeapBigInt.link(this);
     load32(Address(value.payloadGPR(), JSBigInt::offsetOfLength()), result);
     compare32(invert ? Equal : NotEqual, result, TrustedImm32(0), result);
     done.append(jump());
@@ -752,6 +754,15 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     done.append(jump());
 
     notDouble.link(this);
+#if USE(BIGINT32)
+    auto isNotBigInt32 = branchIfNotBigInt32KnownNotNumber(value.gpr(), result);
+    move(value.gpr(), result);
+    urshift64(TrustedImm32(16), result);
+    compare32(invert ? Equal : NotEqual, result, TrustedImm32(0), result);
+    done.append(jump());
+
+    isNotBigInt32.link(this);
+#endif // USE(BIGINT32)
 #if USE(JSVALUE64)
     compare64(invert ? NotEqual : Equal, value.gpr(), TrustedImm32(JSValue::ValueTrue), result);
 #else
@@ -767,7 +778,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 {
     // Implements the following control flow structure:
     // if (value is cell) {
-    //     if (value is string or value is BigInt)
+    //     if (value is string or value is HeapBigInt)
     //         result = !!value->length
     //     else {
     //         do evil things for masquerades-as-undefined
@@ -777,6 +788,8 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
     //     result = !!unboxInt32(value)
     // } else if (value is number) {
     //     result = !!unboxDouble(value)
+    // } else if (value is BigInt32) {
+    //     result = !!unboxBigInt32(value)
     // } else {
     //     result = value == jsTrue
     // }
@@ -786,7 +799,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 
     auto notCell = branchIfNotCell(value);
     auto isString = branchIfString(value.payloadGPR());
-    auto isBigInt = branchIfBigInt(value.payloadGPR());
+    auto isHeapBigInt = branchIfHeapBigInt(value.payloadGPR());
 
     if (shouldCheckMasqueradesAsUndefined) {
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
@@ -817,7 +830,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
     truthy.append(branchPtr(invert ? Equal : NotEqual, value.payloadGPR(), TrustedImmPtr(jsEmptyString(vm))));
     done.append(jump());
 
-    isBigInt.link(this);
+    isHeapBigInt.link(this);
     truthy.append(branchTest32(invert ? Zero : NonZero, Address(value.payloadGPR(), JSBigInt::offsetOfLength())));
     done.append(jump());
 
@@ -842,6 +855,15 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
     }
 
     notDouble.link(this);
+#if USE(BIGINT32)
+    auto isNotBigInt32 = branchIfNotBigInt32KnownNotNumber(value.gpr(), scratch);
+    move(value.gpr(), scratch);
+    urshift64(TrustedImm32(16), scratch);
+    truthy.append(branchTest32(invert ? Zero : NonZero, scratch));
+    done.append(jump());
+
+    isNotBigInt32.link(this);
+#endif // USE(BIGINT32)
 #if USE(JSVALUE64)
     truthy.append(branch64(invert ? NotEqual : Equal, value.gpr(), TrustedImm64(JSValue::encode(jsBoolean(true)))));
 #else

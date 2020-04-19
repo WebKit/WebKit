@@ -139,6 +139,10 @@
 #endif
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 
+#if USE(JSVALUE64)
+#define USE_BIGINT32 0
+#endif
+
 /* FIXME: This name should be more specific if it is only for use with CallFrame* */
 /* Use __builtin_frame_address(1) to get CallFrame* */
 #if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64))

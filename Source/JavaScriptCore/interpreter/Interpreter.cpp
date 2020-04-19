@@ -205,7 +205,7 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
         break;
     case StringType:
     case SymbolType:
-    case BigIntType:
+    case HeapBigIntType:
         throwException(globalObject, scope, createInvalidFunctionApplyParameterError(globalObject,  arguments));
         return 0;
         

@@ -1703,7 +1703,11 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             }
             if (Options::useBigInt() && value == "bigint") {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.m_value, BigIntType);
+#if USE(BIGINT32)
+                OpIsBigInt::emit(this, dst, op.m_value);
+#else
+                OpIsCellWithType::emit(this, dst, op.m_value, HeapBigIntType);
+#endif
                 return true;
             }
             if (value == "object") {
@@ -2911,7 +2915,7 @@ JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8
     return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix, sign), [&] {
         auto scope = DECLARE_CATCH_SCOPE(vm());
         auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
-        JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, vm(), identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
+        JSValue bigIntInMap = JSBigInt::parseInt(nullptr, vm(), identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
         scope.assertNoException();
         addConstantValue(bigIntInMap);
 

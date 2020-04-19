@@ -81,12 +81,24 @@ void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 static ALWAYS_INLINE JSBigInt* toThisBigIntValue(VM& vm, JSValue thisValue)
 {
+#if USE(BIGINT32)
+    // FIXME: heap-allocating all big ints is inneficient, but re-implementing toString for small BigInts is enough work that I'm deferring it to a later patch.
+    if (thisValue.isBigInt32())
+        return JSBigInt::createFrom(vm, thisValue.bigInt32AsInt32());
+#endif
+
     if (thisValue.isCell()) {
         if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(vm, thisValue.asCell()))
             return bigInt;
-        
-        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(vm, thisValue.asCell()))
-            return bigIntObject->internalValue();
+
+        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(vm, thisValue.asCell())) {
+            JSValue bigInt = bigIntObject->internalValue();
+#if USE(BIGINT32)
+            if (bigInt.isBigInt32())
+                return JSBigInt::createFrom(vm, bigInt.bigInt32AsInt32());
+#endif
+            return bigInt.asHeapBigInt();
+        }
     }
 
     return nullptr;
@@ -116,6 +128,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObjec
     return JSValue::encode(jsNontrivialString(vm, resultString));
 }
 
+// FIXME: this function should introduce the right separators for thousands and similar things.
 EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();

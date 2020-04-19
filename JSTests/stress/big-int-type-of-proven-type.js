@@ -1,8 +1,8 @@
 //@ runDefault("--useBigInt=true", "--useConcurrentJIT=false")
 
-function assert(a) {
-    if (!a)
-        throw new Error("Bad assertion");
+function assert(input, expected) {
+    if (input !== expected)
+        throw new Error("Bad result: " + input);
 }
 
 function foo(o) {
@@ -13,6 +13,5 @@ function foo(o) {
 noInline(foo);
 
 for (let i = 0; i < 10000; i++) {
-    assert(foo(3n) === "3");
+    assert(foo(3n), "3");
 }
-

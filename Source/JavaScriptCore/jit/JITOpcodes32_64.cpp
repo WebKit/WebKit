@@ -288,6 +288,12 @@ void JIT::emit_op_is_number(const Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
+NO_RETURN void JIT::emit_op_is_big_int(const Instruction*)
+{
+    // We emit is_cell_with_type instead, since BigInt32 is not supported on 32-bit platforms.
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void JIT::emit_op_is_cell_with_type(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsCellWithType>();
@@ -866,7 +872,7 @@ void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
     emitLoad(src, regT1, regT0);
 
     Jump isNotCell = branchIfNotCell(regT1);
-    addSlowCase(branchIfNotBigInt(regT0));
+    addSlowCase(branchIfNotHeapBigInt(regT0));
     Jump isBigInt = jump();
 
     isNotCell.link(this);

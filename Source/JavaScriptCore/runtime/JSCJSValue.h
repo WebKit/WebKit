@@ -177,6 +177,9 @@ public:
     enum JSTrueTag { JSTrue };
     enum JSFalseTag { JSFalse };
     enum JSCellTag { JSCellType };
+#if USE(BIGINT32)
+    enum JSBigInt32Tag { JSBigInt32 };
+#endif
     enum EncodeAsDoubleTag { EncodeAsDouble };
 
     JSValue();
@@ -186,6 +189,9 @@ public:
     JSValue(JSFalseTag);
     JSValue(JSCell* ptr);
     JSValue(const JSCell* ptr);
+#if USE(BIGINT32)
+    JSValue(JSBigInt32Tag, int32_t);
+#endif
 
     // Numbers
     JSValue(EncodeAsDoubleTag, double);
@@ -219,6 +225,9 @@ public:
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
+#if USE(BIGINT32)
+    int32_t bigInt32AsInt32() const; // must only be called on a BigInt32
+#endif
     
     int32_t asInt32ForArithmetic() const; // Boolean becomes an int, but otherwise like asInt32().
 
@@ -239,6 +248,8 @@ public:
     bool isNumber() const;
     bool isString() const;
     bool isBigInt() const;
+    bool isHeapBigInt() const;
+    bool isBigInt32() const;
     bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;
@@ -247,7 +258,7 @@ public:
     bool inherits(VM&, const ClassInfo*) const;
     template<typename Target> bool inherits(VM&) const;
     const ClassInfo* classInfoOrNull(VM&) const;
-        
+
     // Extracting the value.
     bool getString(JSGlobalObject*, WTF::String&) const;
     WTF::String getString(JSGlobalObject*) const; // null string if not a string
@@ -266,9 +277,10 @@ public:
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the CallFrame already.
     double toNumber(JSGlobalObject*) const;
-    
-    Variant<JSBigInt*, double> toNumeric(JSGlobalObject*) const;
-    Variant<JSBigInt*, int32_t> toBigIntOrInt32(JSGlobalObject*) const;
+
+    JSValue toNumeric(JSGlobalObject*) const;
+    JSValue toBigIntOrInt32(JSGlobalObject*) const;
+    JSBigInt* asHeapBigInt() const;
 
     // toNumber conversion if it can be done without side effects.
     Optional<double> toNumberFromPrimitive() const;
@@ -317,8 +329,7 @@ public:
     static bool equalSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
     static bool equalSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2);
     static bool strictEqual(JSGlobalObject*, JSValue v1, JSValue v2);
-    static bool strictEqualSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
-    static bool strictEqualSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool strictEqualForCells(JSGlobalObject*, JSCell* v1, JSCell* v2);
     static TriState pureStrictEqual(JSValue v1, JSValue v2);
 
     bool isCell() const;
@@ -416,11 +427,20 @@ public:
      * These values have the following properties:
      * - Bit 1 (OtherTag) is set for all four values, allowing real pointers to be
      *   quickly distinguished from all immediate values, including these invalid pointers.
-     * - With bit 3 is masked out (UndefinedTag) Undefined and Null share the
+     * - With bit 3 masked out (UndefinedTag), Undefined and Null share the
      *   same value, allowing null & undefined to be quickly detected.
      *
      * No valid JSValue will have the bit pattern 0x0, this is used to represent array
      * holes, and as a C++ 'no value' result (e.g. JSValue() has an internal value of 0).
+     *
+     * When USE(BIGINT32), we have a special representation for BigInts that are small (32-bit at most):
+     *      0000:XXXX:XXXX:0012
+     * This representation works because of the following things:
+     * - It cannot be confused with a Double or Integer thanks to the top bits
+     * - It cannot be confused with a pointer to a Cell, thanks to bit 1 which is set to true
+     * - It cannot be confused with a pointer to wasm thanks to bit 0 which is set to false
+     * - It cannot be confused with true/false because bit 2 is set to false
+     * - It cannot be confused for null/undefined because bit 4 is set to true
      */
 
     // This value is 2^49, used to encode doubles such that the encoded value will begin
@@ -430,11 +450,19 @@ public:
     // If all bits in the mask are set, this indicates an integer number,
     // if any but not all are set this value is a double precision number.
     static constexpr int64_t NumberTag = 0xfffe000000000000ll;
+    // The following constant is used for a trick in the implementation of strictEq, to detect if either of the arguments is a double
+    static constexpr int64_t LowestOfHighBits = 1ULL << 49;
+    static_assert(LowestOfHighBits & NumberTag);
+    static_assert(!((LowestOfHighBits>>1) & NumberTag));
 
     // All non-numeric (bool, null, undefined) immediates have bit 2 set.
     static constexpr int32_t OtherTag       = 0x2;
     static constexpr int32_t BoolTag        = 0x4;
     static constexpr int32_t UndefinedTag   = 0x8;
+#if USE(BIGINT32)
+    static constexpr int32_t BigInt32Tag    = 0x12;
+    static constexpr int64_t BigInt32Mask   = NumberTag | BigInt32Tag;
+#endif
     // Combined integer value for non-numeric immediates.
     static constexpr int32_t ValueFalse     = OtherTag | BoolTag | false;
     static constexpr int32_t ValueTrue      = OtherTag | BoolTag | true;

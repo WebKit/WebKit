@@ -476,6 +476,7 @@ void JIT::emit_op_negate(const Instruction* currentInstruction)
     UnaryArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).m_arithProfile;
     JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, negateIC);
+    // FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
     emitMathICFast<OpNegate>(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
 }
 
@@ -484,6 +485,7 @@ void JIT::emitSlow_op_negate(const Instruction* currentInstruction, Vector<SlowC
     linkAllSlowCases(iter);
 
     JITNegIC* negIC = bitwise_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
+    // FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
     emitMathICSlow<OpNegate>(negIC, currentInstruction, operationArithNegateProfiledOptimize, operationArithNegateProfiled, operationArithNegateOptimize);
 }
 

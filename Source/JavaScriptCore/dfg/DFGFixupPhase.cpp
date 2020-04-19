@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,14 +202,34 @@ private:
                 fixEdge<Int32Use>(node->child1());
                 fixEdge<Int32Use>(node->child2());
                 node->setResult(NodeResultInt32);
+            } else if (node->child1()->shouldSpeculateHeapBigInt()) {
+                // FIXME: the freezing does not appear useful (since the JSCell is kept alive by vm), but it refuses to compile otherwise.
+                // FIXME: we might optimize inc/dec to a specialized function call instead in that case.
+                node->setOp(op == Inc ? ValueAdd : ValueSub);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecHeapBigInt, JSConstant, node->origin, OpInfo(m_graph.freeze(vm().heapBigIntConstantOne.get())));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<HeapBigIntUse>(node->child1());
+                fixEdge<HeapBigIntUse>(node->child2());
+                // HeapBigInts are cells, so the default of NodeResultJS is good here
+#if USE(BIGINT32)
+            } else if (node->child1()->shouldSpeculateBigInt32()) {
+                node->setOp(op == Inc ? ValueAdd : ValueSub);
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(JSValue(JSValue::JSBigInt32, 1))));
+                node->children.setChild2(Edge(nodeConstantOne));
+                fixEdge<BigInt32Use>(node->child1());
+                fixEdge<BigInt32Use>(node->child2());
+                // The default of NodeResultJS is good enough for now.
+                // FIXME: consider having a special representation for small BigInts instead.
             } else if (node->child1()->shouldSpeculateBigInt()) {
                 // FIXME: the freezing does not appear useful (since the JSCell is kept alive by vm), but it refuses to compile otherwise.
+                // FIXME: we might optimize inc/dec to a specialized function call instead in that case.
                 node->setOp(op == Inc ? ValueAdd : ValueSub);
-                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt, JSConstant, node->origin, OpInfo(m_graph.freeze(vm().bigIntConstantOne.get())));
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(JSValue(JSValue::JSBigInt32, 1))));
                 node->children.setChild2(Edge(nodeConstantOne));
-                fixEdge<BigIntUse>(node->child1());
-                fixEdge<BigIntUse>(node->child2());
-                // BigInts are currently cells, so the default of NodeResultJS is good here
+                fixEdge<AnyBigIntUse>(node->child1());
+                fixEdge<AnyBigIntUse>(node->child2());
+                // The default of NodeResultJS is good here
+#endif // USE(BIGINT32)
             } else if (node->child1()->shouldSpeculateInt52()) {
                 node->setOp(op == Inc ? ArithAdd : ArithSub);
                 node->setArithMode(Arith::CheckOverflow);
@@ -235,12 +255,20 @@ private:
             Edge& child1 = node->child1();
             Edge& child2 = node->child2();
 
+            if (Node::shouldSpeculateHeapBigInt(child1.node(), child2.node())) {
+                fixEdge<HeapBigIntUse>(child1);
+                fixEdge<HeapBigIntUse>(child2);
+                break;
+            }
+
+#if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(child1.node(), child2.node())) {
-                fixEdge<BigIntUse>(child1);
-                fixEdge<BigIntUse>(child2);
+                fixEdge<AnyBigIntUse>(child1);
+                fixEdge<AnyBigIntUse>(child2);
                 break; 
             }
-            
+#endif
+
             if (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())) {
                 fixEdge<UntypedUse>(child1);
                 fixEdge<UntypedUse>(child2);
@@ -268,8 +296,21 @@ private:
         case ValueBitOr:
         case ValueBitAnd: {
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
-                fixEdge<BigIntUse>(node->child1());
-                fixEdge<BigIntUse>(node->child2());
+#if USE(BIGINT32)
+                if (Node::shouldSpeculateBigInt32(node->child1().node(), node->child2().node())) {
+                    fixEdge<BigInt32Use>(node->child1());
+                    fixEdge<BigInt32Use>(node->child2());
+                } else if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
+                    fixEdge<HeapBigIntUse>(node->child1());
+                    fixEdge<HeapBigIntUse>(node->child2());
+                } else {
+                    fixEdge<AnyBigIntUse>(node->child1());
+                    fixEdge<AnyBigIntUse>(node->child2());
+                }
+#else
+                fixEdge<HeapBigIntUse>(node->child1());
+                fixEdge<HeapBigIntUse>(node->child2());
+#endif
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
@@ -313,7 +354,17 @@ private:
 
             if (operandEdge.node()->shouldSpeculateBigInt()) {
                 node->clearFlags(NodeMustGenerate);
-                fixEdge<BigIntUse>(operandEdge);
+
+#if USE(BIGINT32)
+                if (operandEdge.node()->shouldSpeculateBigInt32())
+                    fixEdge<BigInt32Use>(operandEdge);
+                else if (operandEdge.node()->shouldSpeculateHeapBigInt())
+                    fixEdge<HeapBigIntUse>(operandEdge);
+                else
+                    fixEdge<AnyBigIntUse>(operandEdge);
+#else
+                fixEdge<HeapBigIntUse>(operandEdge);
+#endif
             } else if (operandEdge.node()->shouldSpeculateUntypedForBitOps())
                 fixEdge<UntypedUse>(operandEdge);
             else {
@@ -458,9 +509,17 @@ private:
                 }
             }
 
-            if (Node::shouldSpeculateBigInt(child1.node(), child2.node())) {
-                fixEdge<BigIntUse>(child1);
-                fixEdge<BigIntUse>(child2);
+            if (Node::shouldSpeculateHeapBigInt(child1.node(), child2.node())) {
+                fixEdge<HeapBigIntUse>(child1);
+                fixEdge<HeapBigIntUse>(child2);
+#if USE(BIGINT32)
+            } else if (Node::shouldSpeculateBigInt32(child1.node(), child2.node())) {
+                fixEdge<BigInt32Use>(child1);
+                fixEdge<BigInt32Use>(child2);
+            } else if (Node::shouldSpeculateBigInt(child1.node(), child2.node())) {
+                fixEdge<AnyBigIntUse>(child1);
+                fixEdge<AnyBigIntUse>(child2);
+#endif
             } else {
                 fixEdge<UntypedUse>(child1);
                 fixEdge<UntypedUse>(child2);
@@ -546,8 +605,21 @@ private:
             Edge& rightChild = node->child2();
 
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
-                fixEdge<BigIntUse>(node->child1());
-                fixEdge<BigIntUse>(node->child2());
+#if USE(BIGINT32)
+                if (Node::shouldSpeculateBigInt32(leftChild.node(), rightChild.node())) {
+                    fixEdge<BigInt32Use>(node->child1());
+                    fixEdge<BigInt32Use>(node->child2());
+                } else if (Node::shouldSpeculateHeapBigInt(leftChild.node(), rightChild.node())) {
+                    fixEdge<HeapBigIntUse>(node->child1());
+                    fixEdge<HeapBigIntUse>(node->child2());
+                } else {
+                    fixEdge<AnyBigIntUse>(node->child1());
+                    fixEdge<AnyBigIntUse>(node->child2());
+                }
+#else
+                fixEdge<HeapBigIntUse>(node->child1());
+                fixEdge<HeapBigIntUse>(node->child2());
+#endif
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
@@ -588,12 +660,20 @@ private:
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
 
+            if (Node::shouldSpeculateHeapBigInt(leftChild.node(), rightChild.node())) {
+                fixEdge<HeapBigIntUse>(leftChild);
+                fixEdge<HeapBigIntUse>(rightChild);
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+#if USE(BIGINT32)
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
-                fixEdge<BigIntUse>(leftChild);
-                fixEdge<BigIntUse>(rightChild);
+                fixEdge<AnyBigIntUse>(leftChild);
+                fixEdge<AnyBigIntUse>(rightChild);
                 node->clearFlags(NodeMustGenerate);
                 break; 
             }
+#endif
 
             if (Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())) {
                 fixEdge<UntypedUse>(leftChild);
@@ -657,12 +737,20 @@ private:
         }
 
         case ValuePow: {
-            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
-                fixEdge<BigIntUse>(node->child1());
-                fixEdge<BigIntUse>(node->child2());
+            if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child1().node())) {
+                fixEdge<HeapBigIntUse>(node->child1());
+                fixEdge<HeapBigIntUse>(node->child2());
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+#if USE(BIGINT32)
+            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+                fixEdge<AnyBigIntUse>(node->child1());
+                fixEdge<AnyBigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+#endif
 
             if (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())) {
                 fixEdge<UntypedUse>(node->child1());
@@ -2548,6 +2636,7 @@ private:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
+        case IsBigInt:
         case IsObjectOrNull:
         case IsFunction:
         case CreateDirectArguments:
@@ -2889,7 +2978,16 @@ private:
             }
             
             if (node->child1()->shouldSpeculateBigInt()) {
-                fixEdge<BigIntUse>(node->child1());
+#if USE(BIGINT32)
+                if (node->child1()->shouldSpeculateBigInt32())
+                    fixEdge<BigInt32Use>(node->child1());
+                else if (node->child1()->shouldSpeculateHeapBigInt())
+                    fixEdge<HeapBigIntUse>(node->child1());
+                else
+                    fixEdge<AnyBigIntUse>(node->child1());
+#else
+                fixEdge<HeapBigIntUse>(node->child1());
+#endif
                 node->convertToIdentity();
                 return;
             }
@@ -2962,7 +3060,16 @@ private:
     {
         // If the prediction of the child is BigInt, we attempt to convert ToNumeric to Identity, since it can only return a BigInt when fed a BigInt.
         if (node->child1()->shouldSpeculateBigInt()) {
-            fixEdge<BigIntUse>(node->child1());
+#if USE(BIGINT32)
+            if (node->child1()->shouldSpeculateBigInt32())
+                fixEdge<BigInt32Use>(node->child1());
+            else if (node->child1()->shouldSpeculateHeapBigInt())
+                fixEdge<HeapBigIntUse>(node->child1());
+            else
+                fixEdge<AnyBigIntUse>(node->child1());
+#else
+            fixEdge<HeapBigIntUse>(node->child1());
+#endif
             node->convertToIdentity();
             return;
         }
@@ -3456,13 +3563,15 @@ private:
         case StringUse:
         case KnownStringUse:
         case SymbolUse:
-        case BigIntUse:
+        case HeapBigIntUse:
         case StringObjectUse:
         case StringOrStringObjectUse:
             if (alwaysUnboxSimplePrimitives()
                 || isCellSpeculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
+        // FIXME: what should we do about BigInt32Use and AnyBigIntUse ?
+        // Also more broadly, what about all of the UseKinds which are not listed in that switch?
         default:
             break;
         }
@@ -3976,12 +4085,26 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
-        if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
-            fixEdge<BigIntUse>(node->child1());
-            fixEdge<BigIntUse>(node->child2());
+        if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
+            fixEdge<HeapBigIntUse>(node->child1());
+            fixEdge<HeapBigIntUse>(node->child2());
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+#if USE(BIGINT32)
+        if (Node::shouldSpeculateBigInt32(node->child1().node(), node->child2().node())) {
+            fixEdge<BigInt32Use>(node->child1());
+            fixEdge<BigInt32Use>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+            fixEdge<AnyBigIntUse>(node->child1());
+            fixEdge<AnyBigIntUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+#endif
         if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
             fixEdge<StringIdentUse>(node->child1());
             fixEdge<StringIdentUse>(node->child2());

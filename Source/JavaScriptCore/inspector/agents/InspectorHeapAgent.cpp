@@ -187,8 +187,8 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     }
 
     // BigInt preview.
-    if (cell->isBigInt()) {
-        resultString = JSBigInt::tryGetString(vm, asBigInt(cell), 10);
+    if (cell->isHeapBigInt()) {
+        resultString = JSBigInt::tryGetString(vm, asHeapBigInt(cell), 10);
         return;
     }
 

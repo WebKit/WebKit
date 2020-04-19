@@ -25,9 +25,9 @@ noInline(bigIntModFolding);
 
 for (let i = 0; i < 10000; i++) {
     let r = bigIntModFolding(10, 30);
-    assert.sameValue(r, -10, "-(" + 10 + " % " + 30 + ") = " + r);
+    assert.sameValue(r, -10, "[Number] -(" + 10 + " % " + 30 + ") = " + r);
 }
 
 let r = bigIntModFolding(10n, 30n);
-assert.sameValue(r, -10n, "-(" + 10n + " % " + 30n + ") = " + r);
+assert.sameValue(r, -10n, "[BigInt] -(" + 10n + " % " + 30n + ") = " + r);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +89,6 @@
 #include "TypedArrayInlines.h"
 #include "VMInlines.h"
 #include <wtf/InlineASM.h>
-#include <wtf/Variant.h>
 
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
@@ -222,56 +221,6 @@ static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, EncodedJSVal
     JSValue putValue = JSValue::decode(encodedValue);
     PutPropertySlot slot(thisVal, strict);
     baseValue.putInline(globalObject, ident, putValue, slot);
-}
-
-template<typename BigIntOperation, typename NumberOperation>
-static ALWAYS_INLINE EncodedJSValue binaryOp(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, NumberOperation&& numberOp, const char* errorMessage)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
-
-    auto leftNumeric = op1.toNumeric(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toNumeric(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
-            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
-
-        return throwVMTypeError(globalObject, scope, errorMessage);
-    }
-
-    scope.release();
-
-    return JSValue::encode(jsNumber(numberOp(WTF::get<double>(leftNumeric), WTF::get<double>(rightNumeric))));
-}
-
-template<typename BigIntOperation, typename Int32Operation>
-static ALWAYS_INLINE EncodedJSValue bitwiseBinaryOp(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, Int32Operation&& int32Op, const char* errorMessage)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
-
-    auto leftNumeric = op1.toBigIntOrInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toBigIntOrInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
-        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
-            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
-
-        return throwVMTypeError(globalObject, scope, errorMessage);
-    }
-
-    scope.release();
-
-    return JSValue::encode(jsNumber(int32Op(WTF::get<int32_t>(leftNumeric), WTF::get<int32_t>(rightNumeric))));
 }
 
 static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
@@ -473,71 +422,34 @@ EncodedJSValue JIT_OPERATION operationValueMod(JSGlobalObject* globalObject, Enc
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::remainder(globalObject, left, right);
-    };
-
-    auto numberOp = [] (double left, double right) -> double {
-        return jsMod(left, right);
-    };
-
-    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in remainder operation.");
+    return JSValue::encode(jsRemainder(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
-EncodedJSValue JIT_OPERATION operationInc(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+EncodedJSValue JIT_OPERATION operationInc(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-
-    auto operandNumeric = op1.toNumeric(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::inc(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
-
-    double value = WTF::get<double>(operandNumeric);
-    return JSValue::encode(jsNumber(value + 1));
+    return JSValue::encode(jsInc(globalObject, JSValue::decode(encodedOp)));
 }
 
-EncodedJSValue JIT_OPERATION operationDec(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+EncodedJSValue JIT_OPERATION operationDec(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-
-    auto operandNumeric = op1.toNumeric(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::dec(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
-
-    double value = WTF::get<double>(operandNumeric);
-    return JSValue::encode(jsNumber(value - 1));
+    return JSValue::encode(jsDec(globalObject, JSValue::decode(encodedOp)));
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitNot(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
+EncodedJSValue JIT_OPERATION operationValueBitNot(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-
-    auto operandNumeric = op1.toBigIntOrInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::bitwiseNot(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
-
-    return JSValue::encode(jsNumber(~WTF::get<int32_t>(operandNumeric)));
+    return JSValue::encode(jsBitwiseNot(globalObject, JSValue::decode(encodedOp)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitAnd(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -546,15 +458,7 @@ EncodedJSValue JIT_OPERATION operationValueBitAnd(JSGlobalObject* globalObject, 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseAnd(globalObject, left, right);
-    };
-
-    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
-        return left & right;
-    };
-
-    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'and' operation."_s);
+    return JSValue::encode(jsBitwiseAnd(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitOr(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -563,15 +467,7 @@ EncodedJSValue JIT_OPERATION operationValueBitOr(JSGlobalObject* globalObject, E
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseOr(globalObject, left, right);
-    };
-
-    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
-        return left | right;
-    };
-
-    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'or' operation."_s);
+    return JSValue::encode(jsBitwiseOr(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitXor(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -580,15 +476,7 @@ EncodedJSValue JIT_OPERATION operationValueBitXor(JSGlobalObject* globalObject, 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseXor(globalObject, left, right);
-    };
-
-    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
-        return left ^ right;
-    };
-
-    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
+    return JSValue::encode(jsBitwiseXor(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitLShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -597,15 +485,7 @@ EncodedJSValue JIT_OPERATION operationValueBitLShift(JSGlobalObject* globalObjec
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::leftShift(globalObject, left, right);
-    };
-
-    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
-        return left << (right & 0x1f);
-    };
-
-    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in left shift operation."_s);
+    return JSValue::encode(jsLShift(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitRShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -614,15 +494,7 @@ EncodedJSValue JIT_OPERATION operationValueBitRShift(JSGlobalObject* globalObjec
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::signedRightShift(globalObject, left, right);
-    };
-
-    auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
-        return left >> (right & 0x1f);
-    };
-
-    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in signed right shift operation."_s);
+    return JSValue::encode(jsRShift(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueBitURShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -660,15 +532,7 @@ EncodedJSValue JIT_OPERATION operationValueDiv(JSGlobalObject* globalObject, Enc
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::divide(globalObject, left, right);
-    };
-
-    auto numberOp = [] (double left, double right) -> double {
-        return left / right;
-    };
-
-    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in division operation.");
+    return JSValue::encode(jsDiv(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValuePow(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -677,15 +541,7 @@ EncodedJSValue JIT_OPERATION operationValuePow(JSGlobalObject* globalObject, Enc
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::exponentiate(globalObject, left, right);
-    };
-
-    auto numberOp = [] (double left, double right) -> double {
-        return operationMathPow(left, right);
-    };
-
-    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in exponentiation operation."_s);
+    return JSValue::encode(jsPow(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 double JIT_OPERATION operationArithAbs(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
@@ -1482,7 +1338,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(JSGlobalObject* globalObject, En
     RELEASE_AND_RETURN(scope, regexp->test(globalObject, input));
 }
 
-JSCell* JIT_OPERATION operationSubBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationSubHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1494,7 +1350,7 @@ JSCell* JIT_OPERATION operationSubBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::sub(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitNotBigInt(JSGlobalObject* globalObject, JSCell* op1)
+JSCell* JIT_OPERATION operationBitNotHeapBigInt(JSGlobalObject* globalObject, JSCell* op1)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1505,7 +1361,7 @@ JSCell* JIT_OPERATION operationBitNotBigInt(JSGlobalObject* globalObject, JSCell
     return JSBigInt::bitwiseNot(globalObject, operand);
 }
 
-JSCell* JIT_OPERATION operationMulBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationMulHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1517,7 +1373,7 @@ JSCell* JIT_OPERATION operationMulBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::multiply(globalObject, leftOperand, rightOperand);
 }
     
-JSCell* JIT_OPERATION operationModBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationModHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1529,7 +1385,7 @@ JSCell* JIT_OPERATION operationModBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::remainder(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationDivBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationDivHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1541,7 +1397,7 @@ JSCell* JIT_OPERATION operationDivBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::divide(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationPowBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationPowHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1553,7 +1409,7 @@ JSCell* JIT_OPERATION operationPowBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::exponentiate(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitAndBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitAndHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1565,7 +1421,7 @@ JSCell* JIT_OPERATION operationBitAndBigInt(JSGlobalObject* globalObject, JSCell
     return JSBigInt::bitwiseAnd(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitLShiftBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitLShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1577,7 +1433,7 @@ JSCell* JIT_OPERATION operationBitLShiftBigInt(JSGlobalObject* globalObject, JSC
     return JSBigInt::leftShift(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationAddBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationAddHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1589,7 +1445,7 @@ JSCell* JIT_OPERATION operationAddBigInt(JSGlobalObject* globalObject, JSCell* o
     return JSBigInt::add(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitRShiftBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitRShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1601,7 +1457,7 @@ JSCell* JIT_OPERATION operationBitRShiftBigInt(JSGlobalObject* globalObject, JSC
     return JSBigInt::signedRightShift(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitOrBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitOrHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1613,7 +1469,7 @@ JSCell* JIT_OPERATION operationBitOrBigInt(JSGlobalObject* globalObject, JSCell*
     return JSBigInt::bitwiseOr(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitXorBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitXorHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1631,7 +1487,7 @@ size_t JIT_OPERATION operationCompareStrictEqCell(JSGlobalObject* globalObject, 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue::strictEqualSlowCaseInline(globalObject, op1, op2);
+    return JSValue::strictEqualForCells(globalObject, op1, op2);
 }
 
 size_t JIT_OPERATION operationSameValue(JSGlobalObject* globalObject, EncodedJSValue arg1, EncodedJSValue arg2)
@@ -1676,10 +1532,7 @@ EncodedJSValue JIT_OPERATION operationToNumeric(JSGlobalObject* globalObject, En
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    auto variant = JSValue::decode(value).toNumeric(globalObject);
-    if (WTF::holds_alternative<JSBigInt*>(variant))
-        return JSValue::encode(WTF::get<JSBigInt*>(variant));
-    return JSValue::encode(jsNumber(WTF::get<double>(variant)));
+    return JSValue::encode(JSValue::decode(value).toNumeric(globalObject));
 }
 
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)

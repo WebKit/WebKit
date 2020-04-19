@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,39 +25,30 @@
 
 #pragma once
 
-#include "JSWrapperObject.h"
+#include "JSCJSValue.h"
+#include "JSCell.h"
+#include "Options.h"
 
 namespace JSC {
 
-class BigIntObject final : public JSWrapperObject {
-public:
-    using Base = JSWrapperObject;
+inline bool scribbleFreeCells()
+{
+    return ASSERT_ENABLED || Options::scribbleFreeCells();
+}
 
-    template<typename, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.bigIntObjectSpace<mode>();
+#define SCRIBBLE_WORD static_cast<intptr_t>(0xbadbeef0)
+
+inline bool isScribbledValue(JSValue value)
+{
+    return JSValue::encode(value) == JSValue::encode(bitwise_cast<JSCell*>(SCRIBBLE_WORD));
+}
+
+inline void scribble(void* base, size_t size)
+{
+    for (size_t i = size / sizeof(EncodedJSValue); i--;) {
+        // Use a 16-byte aligned value to ensure that it passes the cell check.
+        static_cast<EncodedJSValue*>(base)[i] = JSValue::encode(bitwise_cast<JSCell*>(SCRIBBLE_WORD));
     }
+}
 
-    static BigIntObject* create(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_EXPORT_INFO;
-
-    JSValue internalValue() const { return JSWrapperObject::internalValue(); }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
-
-    static String toStringName(const JSObject*, JSGlobalObject*);
-
-protected:
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSValue);
-    JS_EXPORT_PRIVATE BigIntObject(VM&, Structure*);
-};
-static_assert(sizeof(BigIntObject) == sizeof(JSWrapperObject));
-
-} // namespace JSC
+}

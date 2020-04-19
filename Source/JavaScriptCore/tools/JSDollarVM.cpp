@@ -2205,7 +2205,7 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
     uint8_t* vmStackEnd = vmStackStart - originalMaxPerThreadStackUsage;
     ptrdiff_t sizeDiff = vmStackEnd - end;
     RELEASE_ASSERT(sizeDiff >= 0);
-    RELEASE_ASSERT(sizeDiff < UINT_MAX);
+    RELEASE_ASSERT(static_cast<uint64_t>(sizeDiff) < UINT_MAX);
 
     Options::maxPerThreadStackUsage() = originalMaxPerThreadStackUsage + sizeDiff;
     helper.updateVMStackLimits();

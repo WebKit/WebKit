@@ -54,6 +54,7 @@ namespace JSC { namespace DFG {
 #define NodeMayNegZeroInBaseline         0x00200
 #define NodeMayNegZeroInDFG              0x00400
 #define NodeMayHaveNonNumericResult      0x00800
+// FIXME: we should have separate flags for HeapBigInt and BigInt32, currently prediction propagation will pessimize things.
 #define NodeMayHaveBigIntResult          0x01000
 #define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveBigIntResult)
                                 

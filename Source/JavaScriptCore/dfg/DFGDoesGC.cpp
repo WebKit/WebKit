@@ -31,7 +31,6 @@
 #include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGNode.h"
-#include "Operations.h"
 
 namespace JSC { namespace DFG {
 
@@ -147,6 +146,7 @@ bool doesGC(Graph& graph, Node* node)
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
+    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case IsObjectOrNull:

@@ -1,3 +1,30 @@
+2020-04-18  Robin Morisset  <rmorisset@apple.com>
+
+        Support an inlined representation in JSValue of small BigInts ("BigInt32")
+        https://bugs.webkit.org/show_bug.cgi?id=206182
+
+        Reviewed by Yusuke Suzuki.
+
+        I improved several of the tests to give more informative error messages in the process of fixing them.
+
+        More interestingly I had to modify "missing-exception-check-in-string-compare" because it relied on "s1 == s1" resolving ropes, and we now just return true.
+
+        * stress/big-int-division.js:
+        (testDiv):
+        * stress/big-int-left-shift-wrapped-value.js:
+        (assert.sameValue):
+        * stress/big-int-logical-not.js:
+        (assert):
+        * stress/big-int-mod-jit.js:
+        * stress/big-int-right-shift-general.js:
+        (testRightShift):
+        * stress/big-int-type-of-proven-type.js:
+        (assert):
+        * stress/compare-strict-eq-on-various-types.js:
+        (testAllTypesCall):
+        * stress/ftl-string-strict-equality.js:
+        * stress/missing-exception-check-in-string-compare.js:
+
 2020-04-18  Keith Miller  <keith_miller@apple.com>
 
         Redesign how we do for-of iteration for JSArrays

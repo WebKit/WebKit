@@ -30,6 +30,6 @@ for (var i = 0; i < 100000; ++i) {
     var result = foo(array, array2[index]);
     var expected = index >= array.length ? null : index
     if (result !== expected)
-        throw "Error: bad result: " + result;
+        throw "Error: bad result: " + result + " but expected " + expected;
 }
 

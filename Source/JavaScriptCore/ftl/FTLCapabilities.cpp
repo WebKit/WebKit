@@ -260,6 +260,7 @@ inline CapabilityLevel canCompile(Node* node)
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
+    case IsBigInt:
     case NumberIsInteger:
     case IsObject:
     case IsObjectOrNull:
@@ -483,7 +484,9 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringObjectUse:
                 case StringOrStringObjectUse:
                 case SymbolUse:
-                case BigIntUse:
+                case AnyBigIntUse:
+                case BigInt32Use:
+                case HeapBigIntUse:
                 case DateObjectUse:
                 case MapObjectUse:
                 case SetObjectUse:

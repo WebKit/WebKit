@@ -196,6 +196,11 @@ if JSVALUE64
     const ValueNull       = constexpr JSValue::ValueNull
     const TagNumber       = constexpr JSValue::NumberTag
     const NotCellMask     = constexpr JSValue::NotCellMask
+    if BIGINT32
+        const TagBigInt32 = constexpr JSValue::BigInt32Tag
+        const MaskBigInt32 = constexpr JSValue::BigInt32Mask
+    end
+    const LowestOfHighBits = constexpr JSValue::LowestOfHighBits
 else
     const Int32Tag = constexpr JSValue::Int32Tag
     const BooleanTag = constexpr JSValue::BooleanTag
@@ -521,6 +526,7 @@ const JSFunctionType = constexpr JSFunctionType
 const ArrayType = constexpr ArrayType
 const DerivedArrayType = constexpr DerivedArrayType
 const ProxyObjectType = constexpr ProxyObjectType
+const HeapBigIntType = constexpr HeapBigIntType
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.

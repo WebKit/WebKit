@@ -83,7 +83,8 @@ function testAllTypesCall() {
                         ", Right = " +
                         rightCases[rightCaseIndex] +
                         ", Result = " +
-                        strictEqualOutput;
+                        strictEqualOutput +
+                        " (case: " + leftCaseIndex + ", " + rightCaseIndex + ")";
                 }
 
                 let strictNotEqualOutput = opaqueStrictNotEqualAllTypes(leftCases[leftCaseIndex], rightCases[rightCaseIndex]);
@@ -93,7 +94,8 @@ function testAllTypesCall() {
                         ", Right = " +
                         rightCases[rightCaseIndex] +
                         ", Result = " +
-                        strictEqualOutput;
+                        strictEqualOutput +
+                        " (case: " + leftCaseIndex + ", " + rightCaseIndex + ")";
                 }
             }
         }

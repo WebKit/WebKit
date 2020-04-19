@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,18 +75,6 @@ void BigIntConstructor::finishCreation(VM& vm, BigIntPrototype* bigIntPrototype)
 
 // ------------------------------ Functions ---------------------------
 
-static bool isSafeInteger(JSValue argument)
-{
-    if (argument.isInt32())
-        return true;
-
-    if (!argument.isDouble())
-        return false;
-
-    double number = argument.asDouble();
-    return trunc(number) == number && std::abs(number) <= maxSafeInteger();
-}
-
 static EncodedJSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
 {
     ASSERT(argument.isPrimitive());
@@ -94,20 +82,24 @@ static EncodedJSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
     
     if (argument.isBigInt())
         return JSValue::encode(argument);
-    
+
+    if (argument.isBoolean()) {
+#if USE(BIGINT32)
+        return JSValue::encode(JSValue(JSValue::JSBigInt32, argument.asBoolean()));
+#else
+        return JSValue::encode(JSBigInt::createFrom(vm, argument.asBoolean()));
+#endif
+    }
+
+    if (argument.isString()) {
+        return toStringView(globalObject, argument, [&] (StringView view) {
+            return JSValue::encode(JSBigInt::parseInt(globalObject, view));
+        });
+    }
+
+    ASSERT(argument.isUndefinedOrNull() || argument.isNumber() || argument.isSymbol());
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
-    if (argument.isBoolean())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(vm, argument.asBoolean())));
-    
-    if (argument.isUndefinedOrNull() || argument.isNumber() || argument.isSymbol())
-        return throwVMTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
-    
-    ASSERT(argument.isString());
-    
-    RELEASE_AND_RETURN(scope, toStringView(globalObject, argument, [&] (StringView view) {
-        return JSValue::encode(JSBigInt::parseInt(globalObject, view));
-    }));
+    return throwVMTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
 }
 
 static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -119,20 +111,22 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
     JSValue primitive = value.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    if (primitive.isNumber()) {
-        if (!isSafeInteger(primitive))
-            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not safe integer"_s));
-        
-        scope.release();
-        if (primitive.isInt32())
-            return JSValue::encode(JSBigInt::createFrom(vm, primitive.asInt32()));
-
-        if (primitive.isUInt32())
-            return JSValue::encode(JSBigInt::createFrom(vm, primitive.asUInt32()));
-
-        return JSValue::encode(JSBigInt::createFrom(vm, static_cast<int64_t>(primitive.asDouble())));
+    if (primitive.isInt32()) {
+#if USE(BIGINT32)
+        return JSValue::encode(JSValue(JSValue::JSBigInt32, primitive.asInt32()));
+#else
+        return JSValue::encode(JSBigInt::createFrom(vm, primitive.asInt32()));
+#endif
     }
-    
+
+    if (primitive.isDouble()) {
+        double number = primitive.asDouble();
+        if (trunc(number) != number || std::abs(number) > maxSafeInteger())
+            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not a safe integer"_s));
+
+        return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(vm, static_cast<int64_t>(primitive.asDouble())));
+    }
+
     EncodedJSValue result = toBigInt(globalObject, primitive);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return result;

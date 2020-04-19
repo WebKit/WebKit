@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -929,7 +929,46 @@ public:
         return branchIfNotBoolean(regs.tagGPR(), tempGPR);
 #endif
     }
-    
+
+#if USE(BIGINT32)
+    Jump branchIfBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    {
+        Jump number = branchIfNumber(gpr, mode);
+        Jump bigInt32 = branchIfBigInt32KnownNotNumber(gpr, tempGPR);
+        number.link(this);
+        return bigInt32;
+    }
+    JumpList branchIfNotBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    {
+        JumpList result;
+        result.append(branchIfNumber(gpr, mode));
+        Jump bigInt32 = branchIfBigInt32KnownNotNumber(gpr, tempGPR);
+        result.append(jump());
+        bigInt32.link(this);
+        return result;
+    }
+
+    Jump branchIfBigInt32KnownNotNumber(GPRReg gpr, GPRReg tempGPR)
+    {
+        ASSERT(tempGPR != InvalidGPRReg);
+        move(gpr, tempGPR);
+        and64(TrustedImm32(JSValue::BigInt32Tag), tempGPR);
+        return branch64(Equal, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
+    }
+    Jump branchIfNotBigInt32KnownNotNumber(JSValueRegs regs, GPRReg tempGPR)
+    {
+        return branchIfNotBigInt32KnownNotNumber(regs.gpr(), tempGPR);
+    }
+    Jump branchIfNotBigInt32KnownNotNumber(GPRReg gpr, GPRReg tempGPR)
+    {
+        ASSERT(tempGPR != InvalidGPRReg);
+        move(gpr, tempGPR);
+        and64(TrustedImm32(JSValue::BigInt32Tag), tempGPR);
+        return branch64(NotEqual, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
+    }
+#endif // USE(BIGINT32)
+
+    // FIXME: rename these to make it clear that they require their input to be a cell.
     Jump branchIfObject(GPRReg cellGPR)
     {
         return branch8(
@@ -951,13 +990,14 @@ public:
     {
         return branch8(NotEqual, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(type));
     }
-    
+
+    // FIXME: rename these to make it clear that they require their input to be a cell.
     Jump branchIfString(GPRReg cellGPR) { return branchIfType(cellGPR, StringType); }
     Jump branchIfNotString(GPRReg cellGPR) { return branchIfNotType(cellGPR, StringType); }
     Jump branchIfSymbol(GPRReg cellGPR) { return branchIfType(cellGPR, SymbolType); }
     Jump branchIfNotSymbol(GPRReg cellGPR) { return branchIfNotType(cellGPR, SymbolType); }
-    Jump branchIfBigInt(GPRReg cellGPR) { return branchIfType(cellGPR, BigIntType); }
-    Jump branchIfNotBigInt(GPRReg cellGPR) { return branchIfNotType(cellGPR, BigIntType); }
+    Jump branchIfHeapBigInt(GPRReg cellGPR) { return branchIfType(cellGPR, HeapBigIntType); }
+    Jump branchIfNotHeapBigInt(GPRReg cellGPR) { return branchIfNotType(cellGPR, HeapBigIntType); }
     Jump branchIfFunction(GPRReg cellGPR) { return branchIfType(cellGPR, JSFunctionType); }
     Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
     
@@ -1356,6 +1396,19 @@ public:
         
         done.link(this);
     }
+#endif // USE(JSVALUE64)
+
+#if USE(BIGINT32)
+    void unboxBigInt32(GPRReg gpr)
+    {
+        urshift64(trustedImm32ForShift(Imm32(16)), gpr);
+    }
+
+    void boxBigInt32(GPRReg gpr)
+    {
+        lshift64(trustedImm32ForShift(Imm32(16)), gpr);
+        or64(TrustedImm32(JSValue::BigInt32Tag), gpr);
+    }
 #endif
 
 #if USE(JSVALUE32_64)
@@ -1715,7 +1768,7 @@ public:
         //         }
         //     } else if (is string) {
         //         return string
-        //     } else if (is bigint) {
+        //     } else if (is heapbigint) {
         //         return bigint
         //     } else {
         //         return symbol
@@ -1726,6 +1779,8 @@ public:
         //     return object
         // } else if (is boolean) {
         //     return boolean
+        // } else if (is bigint32) {
+        //     return bigint
         // } else {
         //     return undefined
         // }
@@ -1757,10 +1812,10 @@ public:
 
         notString.link(this);
 
-        Jump notBigInt = branchIfNotBigInt(cellGPR);
+        Jump notHeapBigInt = branchIfNotHeapBigInt(cellGPR);
         functor(TypeofType::BigInt, false);
 
-        notBigInt.link(this);
+        notHeapBigInt.link(this);
         functor(TypeofType::Symbol, false);
         
         notCell.link(this);
@@ -1776,6 +1831,12 @@ public:
         Jump notBoolean = branchIfNotBoolean(regs, tempGPR);
         functor(TypeofType::Boolean, false);
         notBoolean.link(this);
+
+#if USE(BIGINT32)
+        Jump notBigInt32 = branchIfNotBigInt32KnownNotNumber(regs, tempGPR);
+        functor(TypeofType::BigInt, false);
+        notBigInt32.link(this);
+#endif
         
         functor(TypeofType::Undefined, true);
     }

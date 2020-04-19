@@ -726,7 +726,7 @@ public:
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
 
-    Strong<JSBigInt> bigIntConstantOne;
+    Strong<JSBigInt> heapBigIntConstantOne;
 
     JSCell* sentinelSetBucket()
     {

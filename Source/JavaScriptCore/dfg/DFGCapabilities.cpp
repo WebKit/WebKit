@@ -149,6 +149,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_is_undefined_or_null:
     case op_is_boolean:
     case op_is_number:
+    case op_is_big_int:
     case op_is_object:
     case op_is_object_or_null:
     case op_is_cell_with_type:

@@ -134,7 +134,7 @@ private:
     bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
     bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
 
-    uint8_t m_type;
+    JSType m_type;
     uint8_t m_flags;
     uint16_t m_flags2;
 };

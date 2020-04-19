@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,9 @@ enum UseKind {
     KnownStringUse,
     KnownPrimitiveUse, // This bizarre type arises for op_strcat, which has a bytecode guarantee that it will only see primitives (i.e. not objects).
     SymbolUse,
-    BigIntUse,
+    AnyBigIntUse,
+    HeapBigIntUse,
+    BigInt32Use,
     DateObjectUse,
     MapObjectUse,
     SetObjectUse,
@@ -152,8 +154,12 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecHeapTop & ~SpecObject;
     case SymbolUse:
         return SpecSymbol;
-    case BigIntUse:
+    case AnyBigIntUse:
         return SpecBigInt;
+    case HeapBigIntUse:
+        return SpecHeapBigInt;
+    case BigInt32Use:
+        return SpecBigInt32;
     case PromiseObjectUse:
         return SpecPromiseObject;
     case DateObjectUse:
@@ -212,24 +218,6 @@ inline bool mayHaveTypeCheck(UseKind kind)
     return !shouldNotHaveTypeCheck(kind);
 }
 
-inline bool isNumerical(UseKind kind)
-{
-    switch (kind) {
-    case Int32Use:
-    case KnownInt32Use:
-    case NumberUse:
-    case RealNumberUse:
-    case Int52RepUse:
-    case DoubleRepUse:
-    case DoubleRepRealUse:
-    case AnyIntUse:
-    case DoubleRepAnyIntUse:
-        return true;
-    default:
-        return false;
-    }
-}
-
 inline bool isDouble(UseKind kind)
 {
     switch (kind) {
@@ -261,7 +249,7 @@ inline bool isCell(UseKind kind)
     case StringUse:
     case KnownStringUse:
     case SymbolUse:
-    case BigIntUse:
+    case HeapBigIntUse:
     case StringObjectUse:
     case StringOrStringObjectUse:
     case DateObjectUse:
