@@ -31,8 +31,10 @@ use File::Spec;
 use Getopt::Long;
 use JSON::PP;
 
-sub addProperty($$);
+sub isLogical;
+sub skippedFromComputedStyle;
 sub isPropertyEnabled($$);
+sub addProperty($$);
 sub removeInactiveCodegenProperties($$);
 
 my $inputFile = "CSSProperties.json";
@@ -149,6 +151,51 @@ sub removeInactiveCodegenProperties($$)
     }
     
     $propertyValue->{"codegen-properties"} = $matching_codegen_options;
+}
+
+sub skippedFromComputedStyle
+{
+  my $name = shift;
+
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) and not isLogical($name)) {
+    return 1;
+  }
+
+  if (grep { $_ eq $name } @internalProprerties) {
+    return 1;
+  }
+
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
+    my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
+    if (scalar @longhands != 1) {
+      # Skip properties if they have a non-internal longhand property.
+      foreach my $longhand (@longhands) {
+        if (!skippedFromComputedStyle($longhand)) {
+          return 1;
+        }
+      }
+    }
+  }
+
+  return 0;
+}
+
+
+sub isLogical
+{
+    my $name = shift;
+    my $value = $propertiesHashRef->{$name};
+
+    if (!exists($value->{"specification"})) {
+        return 0;
+    }
+
+    my $spec_properties = $value->{"specification"};
+    if (!exists($spec_properties->{"category"})) {
+        return 0;
+    }
+
+    return $spec_properties->{"category"} eq "css-logical-props"
 }
 
 sub isPropertyEnabled($$)
@@ -516,27 +563,9 @@ sub sortWithPrefixedPropertiesLast
     }
     return $a cmp $b;
 }
+
 foreach my $name (sort sortWithPrefixedPropertiesLast @names) {
-  next if (exists($propertiesWithStyleBuilderOptions{$name}{"skip-builder"}));
-  next if (grep { $_ eq $name } @internalProprerties);
-
-  # Skip properties if they have a non-internal longhand property.
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
-    my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
-    if (scalar @longhands != 1) {
-      my $hasNonInternalLonghand = 0;
-      foreach my $longhand (@longhands) {
-        if (!exists($propertiesWithStyleBuilderOptions{$longhand}{"skip-builder"}) && !grep { $_ eq $longhand } @internalProprerties) {
-          $hasNonInternalLonghand = 1;
-          last;
-        }
-      }
-      if ($hasNonInternalLonghand) {
-        next;
-      }
-    }
-  }
-
+  next if skippedFromComputedStyle($name);
   print HEADER "    CSSProperty" . $nameToId{$name} . ",\n";
   $numComputedPropertyIDs += 1;
 }

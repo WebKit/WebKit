@@ -1,3 +1,17 @@
+2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Fix the logic to decide whether a property is enumerated in a computed style declaration.
+        https://bugs.webkit.org/show_bug.cgi?id=210695
+
+        Reviewed by Antti Koivisto.
+
+        Import the test from
+        https://github.com/web-platform-tests/wpt/pull/23088. One subtest is
+        failing, separate bug.
+
+        * web-platform-tests/css/cssom/getComputedStyle-logical-enumeration-expected.txt: Added.
+        * web-platform-tests/css/cssom/getComputedStyle-logical-enumeration.html: Added.
+
 2020-04-18  Antti Koivisto  <antti@apple.com>
 
         [CSS selectors] Support :where() pseudo class
