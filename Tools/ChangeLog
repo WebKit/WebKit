@@ -1,3 +1,25 @@
+2020-04-19  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Consolidate TestNetscapePlugin build
+        https://bugs.webkit.org/show_bug.cgi?id=210691
+
+        Reviewed by Fujii Hironori.
+
+        The DumpRenderTree CMakeLists.txt contained a definition of TestNetscapePlugIn
+        which was used for WebKitLegacy ports. The TestNetscapePlugIn directory also had
+        a CMakeLists.txt used by GTK for its port. The definitions in DumpRenderTree's
+        CMake are moved into the TestNetscapePlugIn CMake to provide a common definition
+        for all ports that ENABLE_NETSCAPE_PLUGIN_API.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/PlatformGTK.cmake: Added.
+        * DumpRenderTree/TestNetscapePlugIn/PlatformWin.cmake: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugIn.def: Renamed from Tools/DumpRenderTree/win/TestNetscapePlugin.def.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugIn.rc: Renamed from Tools/DumpRenderTree/win/TestNetscapePlugin.rc.
+        * DumpRenderTree/TestNetscapePlugIn/win/resource.h: Renamed from Tools/DumpRenderTree/win/resource.h.
+
 2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Allow to override sccache server port.

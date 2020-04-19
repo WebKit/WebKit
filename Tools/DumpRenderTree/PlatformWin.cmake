@@ -23,38 +23,10 @@ list(APPEND DumpRenderTree_SOURCES
     win/WorkQueueItemWin.cpp
 )
 
-list(APPEND TestNetscapePlugIn_SOURCES
-    win/TestNetscapePlugin.def
-    win/TestNetscapePlugin.rc
-
-    TestNetscapePlugIn/Tests/win/CallJSThatDestroysPlugin.cpp
-    TestNetscapePlugIn/Tests/win/DrawsGradient.cpp
-    TestNetscapePlugIn/Tests/win/DumpWindowRect.cpp
-    TestNetscapePlugIn/Tests/win/GetValueNetscapeWindow.cpp
-    TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp
-    TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp
-    TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp
-    TestNetscapePlugIn/Tests/win/WindowlessPaintRectCoordinates.cpp
-
-    TestNetscapePlugIn/win/WindowGeometryTest.cpp
-    TestNetscapePlugIn/win/WindowedPluginTest.cpp
-)
-
 set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
-
-list(APPEND TestNetscapePlugIn_LIBRARIES
-    Msimg32
-    Shlwapi
-    WebKitLegacy
-)
 
 list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${DumpRenderTree_DIR}/win
-)
-
-list(APPEND TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
-    ${DumpRenderTree_DIR}/TestNetscapePlugIn/win
-    ${DumpRenderTree_DIR}/TestNetscapePlugIn/Tests/win
 )
 
 list(APPEND DumpRenderTree_LIBRARIES

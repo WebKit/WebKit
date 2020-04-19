@@ -47,53 +47,6 @@ list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
 )
 
-set(TestNetscapePlugIn_SOURCES
-    TestNetscapePlugIn/PluginObject.cpp
-    TestNetscapePlugIn/PluginTest.cpp
-    TestNetscapePlugIn/TestObject.cpp
-    TestNetscapePlugIn/main.cpp
-
-    TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp
-    TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp
-    TestNetscapePlugIn/Tests/FormValue.cpp
-    TestNetscapePlugIn/Tests/GetURLNotifyWithURLThatFailsToLoad.cpp
-    TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp
-    TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp
-    TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp
-    TestNetscapePlugIn/Tests/LogNPPSetWindow.cpp
-    TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp
-    TestNetscapePlugIn/Tests/NPPNewFails.cpp
-    TestNetscapePlugIn/Tests/NPPSetWindowCalledDuringDestruction.cpp
-    TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp
-    TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp
-    TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp
-    TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp
-    TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp
-    TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp
-    TestNetscapePlugIn/Tests/PluginScriptableObjectOverridesAllProperties.cpp
-    TestNetscapePlugIn/Tests/PrivateBrowsing.cpp
-    TestNetscapePlugIn/Tests/ToStringAndValueOfObject.cpp
-    TestNetscapePlugIn/Tests/URLRedirect.cpp
-)
-
-set(TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}
-    ${DumpRenderTree_DIR}/TestNetscapePlugIn
-    ${DumpRenderTree_DIR}/TestNetscapePlugIn/ForwardingHeaders
-    ${DumpRenderTree_DIR}/TestNetscapePlugIn/Tests
-)
-
-list(APPEND TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES
-    ${PAL_FRAMEWORK_HEADERS_DIR}
-    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
-    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
-)
-
-set(TestNetscapePlugIn_LIBRARIES
-    WebCoreTestSupport
-    WebKit::JavaScriptCore
-)
-
 set(DumpRenderTree_IDL_FILES
     "${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
 )
@@ -114,7 +67,5 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_EXECUTABLE(DumpRenderTree)
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
-    add_library(TestNetscapePlugIn SHARED ${TestNetscapePlugIn_SOURCES})
-    target_include_directories(TestNetscapePlugIn PRIVATE ${TestNetscapePlugIn_PRIVATE_INCLUDE_DIRECTORIES})
-    target_link_libraries(TestNetscapePlugIn PRIVATE ${TestNetscapePlugIn_LIBRARIES})
+    add_subdirectory(TestNetscapePlugIn)
 endif ()
