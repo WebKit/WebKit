@@ -1,3 +1,16 @@
+2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Allow to override sccache server port.
+        https://bugs.webkit.org/show_bug.cgi?id=210722
+
+        Reviewed by Philippe Normand.
+
+        This is useful so that sccache can work both inside and outside the sandbox,
+        without getting confused about flatpak's chroot.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-04-19  Darin Adler  <darin@apple.com>
 
         REGRESSION (r260334): SpacebarScrolling.cpp (test in TestWebKitAPI) fails to compile because it includes an Objective-C header

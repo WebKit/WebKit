@@ -704,6 +704,11 @@ class WebkitFlatpak:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
+        override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
+        if override_sccache_server_port:
+            _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
+            forwarded["SCCACHE_SERVER_PORT"] = override_sccache_server_port
+
         if self.use_icecream and not self.regenerate_toolchains:
             _log.debug('Enabling the icecream compiler')
             if share_network_option not in flatpak_command:
