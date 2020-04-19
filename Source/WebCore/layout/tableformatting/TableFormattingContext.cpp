@@ -186,7 +186,6 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
     ensureTableGrid();
     // 2. Compute the minimum/maximum width of each column.
     auto computedWidthConstraints = computedPreferredWidthForColumns();
-    computedWidthConstraints.expand(grid.totalHorizontalSpacing());
     grid.setWidthConstraints(computedWidthConstraints);
     return computedWidthConstraints;
 }
@@ -280,20 +279,25 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
     Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
     // 3. Collect he min/max width for each column but ignore column spans for now.
     Vector<SlotPosition> spanningCellPositionList;
+    size_t numberOfActualColumns = 0;
     for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+        auto columnHasNonSpannedCell = false;
         for (size_t rowIndex = 0; rowIndex < grid.rows().size(); ++rowIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
+            if (slot.isColumnSpanned())
+                continue;
+            columnHasNonSpannedCell = true;
             if (slot.hasColumnSpan()) {
                 spanningCellPositionList.append({ columnIndex, rowIndex });
                 continue;
             }
-            if (slot.isColumnSpanned())
-                continue;
             auto columnFixedWidth = fixedWidthColumns[columnIndex];
             auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : FormattingContext::IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
         }
+        if (columnHasNonSpannedCell)
+            ++numberOfActualColumns;
     }
 
     // 4. Distribute the spanning min/max widths.
@@ -304,6 +308,12 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
         auto widthConstraintsToDistribute = slot.widthConstraints();
         for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex)
             widthConstraintsToDistribute -= columnIntrinsicWidths[columnSpanIndex];
+        // <table style="border-spacing: 50px"><tr><td colspan=2>long long text</td></tr><tr><td>lo</td><td>xt</td><tr></table>
+        // [long long text]
+        // [lo]        [xt]
+        // While it looks like the spanning cell has to distribute all its spanning width, the border-spacing takes most of the space and
+        // no distribution is needed at all.
+        widthConstraintsToDistribute -= (cell.columnSpan() - 1) * grid.horizontalSpacing();
         // FIXME: Check if fixed width columns should be skipped here.
         widthConstraintsToDistribute.minimum = std::max(LayoutUnit { }, widthConstraintsToDistribute.minimum / cell.columnSpan());
         widthConstraintsToDistribute.maximum = std::max(LayoutUnit { }, widthConstraintsToDistribute.maximum / cell.columnSpan());
@@ -317,6 +327,8 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
     auto tableWidthConstraints = IntrinsicWidthConstraints { };
     for (auto& columnIntrinsicWidth : columnIntrinsicWidths)
         tableWidthConstraints += columnIntrinsicWidth;
+    // Exapand the preferred width with leading and trailing cell spacing (note that column spanners count as one cell).
+    tableWidthConstraints += (numberOfActualColumns + 1) * grid.horizontalSpacing();
     return tableWidthConstraints;
 }
 
@@ -418,9 +430,11 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
                 // 2. Distribute the extra minimum width among the spanned columns based on the minimum colmn width.
                 // e.g. spanning mimimum width: [   9   ]. Current minimum widths for the spanned columns: [ 1 ] [ 2 ]
                 // New minimum widths: [ 3 ] [ 6 ].
-                auto spaceToDistribute = spanningMinimumWidth - currentSpanningMinimumWidth;
-                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                    columnMinimumWidths[columnIndex]->value += spaceToDistribute / currentSpanningMinimumWidth * columnMinimumWidths[columnIndex]->value;
+                auto spaceToDistribute = std::max(0.0f, spanningMinimumWidth - (cell.columnSpan() - 1) * grid.horizontalSpacing() - currentSpanningMinimumWidth);
+                if (spaceToDistribute) {
+                    for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                        columnMinimumWidths[columnIndex]->value += spaceToDistribute / currentSpanningMinimumWidth * columnMinimumWidths[columnIndex]->value;
+                }
             }
         }
         // 3. Distribute the extra space using the final minimum widths.

@@ -1,3 +1,30 @@
+2020-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take border spacing into account when distributing column spanners width.
+        https://bugs.webkit.org/show_bug.cgi?id=210712
+
+        Reviewed by Antti Koivisto.
+
+        While distributing the column spanner extra space among individual columns,
+        the spacing between these columns (set by border-spacing) should be taken into
+        account and subtract it from the width to distribute.
+
+        <table style="border-spacing: 50px"><tr><td colspan=2>long long text</td></tr><tr><td>lo</td><td>xt</td><tr></table>
+        [long long text]
+        [lo]        [xt]
+        The individual columns don't require any extra space from the spanner.
+ 
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator+=):
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator-=):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::horizontalSpacing const):
+        (WebCore::Layout::TableGrid::totalHorizontalSpacing const): Deleted.
+
 2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Fix the logic to decide whether a property is enumerated in a computed style declaration.
