@@ -378,13 +378,4 @@ PASS -webkit-transform-style
 PASS -webkit-user-drag 
 PASS -webkit-user-modify 
 PASS -webkit-user-select 
-PASS fullscreen-inset-bottom 
-PASS safe-area-inset-bottom 
-PASS safe-area-inset-left 
-PASS fullscreen-inset-left 
-PASS fullscreen-auto-hide-duration 
-PASS fullscreen-inset-right 
-PASS safe-area-inset-right 
-PASS fullscreen-inset-top 
-PASS safe-area-inset-top 
 

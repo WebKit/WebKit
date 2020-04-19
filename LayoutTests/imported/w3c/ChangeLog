@@ -1,5 +1,18 @@
 2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
 
+        Don't use the inherited custom properties to store environment variables.
+        https://bugs.webkit.org/show_bug.cgi?id=210707
+
+        Reviewed by Antti Koivisto.
+
+        Annotate the progressions.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-logical-enumeration-expected.txt:
+
+
+2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
+
         Fix the logic to decide whether a property is enumerated in a computed style declaration.
         https://bugs.webkit.org/show_bug.cgi?id=210695
 

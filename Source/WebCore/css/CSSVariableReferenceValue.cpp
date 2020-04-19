@@ -31,6 +31,7 @@
 #include "CSSVariableReferenceValue.h"
 
 #include "CSSVariableData.h"
+#include "ConstantPropertyMap.h"
 #include "RenderStyle.h"
 #include "StyleBuilder.h"
 #include "StyleResolver.h"
@@ -71,8 +72,10 @@ static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserT
     return resolveTokenRange(range, result, builderState);
 }
 
-static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::BuilderState& builderState)
+static bool resolveVariableReference(CSSParserTokenRange range, CSSValueID functionId, Vector<CSSParserToken>& result, Style::BuilderState& builderState)
 {
+    ASSERT(functionId == CSSValueVar || functionId == CSSValueEnv);
+
     auto& registeredProperties = builderState.document().getCSSRegisteredCustomPropertySet();
     auto& style = builderState.style();
 
@@ -88,8 +91,10 @@ static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParser
     Vector<CSSParserToken> fallbackResult;
     bool fallbackReturn = resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, builderState);
 
-    auto* property = style.getCustomProperty(variableName);
 
+    auto* property = functionId == CSSValueVar
+        ? style.getCustomProperty(variableName)
+        : builderState.document().constantProperties().values().get(variableName);
     if (!property || property->isUnset()) {
         auto* registered = registeredProperties.get(variableName);
         if (registered && registered->initialValue())
@@ -112,8 +117,9 @@ static bool resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>&
 {
     bool success = true;
     while (!range.atEnd()) {
-        if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv)
-            success &= resolveVariableReference(range.consumeBlock(), result, builderState);
+        auto functionId = range.peek().functionId();
+        if (functionId == CSSValueVar || functionId == CSSValueEnv)
+            success &= resolveVariableReference(range.consumeBlock(), functionId, result, builderState);
         else
             result.append(range.consume());
     }
