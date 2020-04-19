@@ -73,6 +73,12 @@ WebUserContentControllerProxy::WebUserContentControllerProxy()
 
 WebUserContentControllerProxy::~WebUserContentControllerProxy()
 {
+    for (const auto& identifier : m_associatedContentWorlds) {
+        auto* world = API::ContentWorld::worldForIdentifier(identifier);
+        RELEASE_ASSERT(world);
+        world->userContentControllerProxyDestroyed(*this);
+    }
+    
     webUserContentControllerProxies().remove(m_identifier);
     for (auto& process : m_processes) {
         process.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
@@ -110,8 +116,12 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
 
     parameters.identifier = identifier();
     
-    for (const auto& world : m_contentWorlds)
-        parameters.userContentWorlds.append(world.key->worldData());
+    ASSERT(parameters.userContentWorlds.isEmpty());
+    for (const auto& identifier : m_associatedContentWorlds) {
+        auto* world = API::ContentWorld::worldForIdentifier(identifier);
+        RELEASE_ASSERT(world);
+        parameters.userContentWorlds.append(world->worldData());
+    }
 
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         parameters.userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
@@ -149,59 +159,34 @@ void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessPro
     webProcessProxy.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
 }
 
-void WebUserContentControllerProxy::addContentWorldUse(API::ContentWorld& world)
+void WebUserContentControllerProxy::addContentWorld(API::ContentWorld& world)
 {
-    if (&world == &API::ContentWorld::pageContentWorld())
+    if (world.identifier() == pageContentWorldIdentifier())
         return;
 
-    auto addResult = m_contentWorlds.add(&world);
-    if (addResult.isNewEntry) {
-        for (auto& process : m_processes)
-            process.send(Messages::WebUserContentController::AddContentWorlds({ world.worldData() }), identifier());
-    }
+    auto addResult = m_associatedContentWorlds.add(world.identifier());
+    if (!addResult.isNewEntry)
+        return;
+
+    world.addAssociatedUserContentControllerProxy(*this);
+    for (auto& process : m_processes)
+        process.send(Messages::WebUserContentController::AddContentWorlds({ world.worldData() }), identifier());
 }
 
-bool WebUserContentControllerProxy::shouldSendRemoveContentWorldsMessage(API::ContentWorld& world, unsigned numberOfUsesToRemove)
+void WebUserContentControllerProxy::contentWorldDestroyed(API::ContentWorld& world)
 {
-    if (&world == &API::ContentWorld::pageContentWorld())
-        return false;
-
-    auto it = m_contentWorlds.find(&world);
-    for (unsigned i = 0; i < numberOfUsesToRemove; ++i) {
-        if (m_contentWorlds.remove(it)) {
-            ASSERT(i == (numberOfUsesToRemove - 1));
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-void WebUserContentControllerProxy::removeContentWorldUses(API::ContentWorld& world, unsigned numberOfUsesToRemove)
-{
-    if (shouldSendRemoveContentWorldsMessage(world, numberOfUsesToRemove)) {
-        for (auto& process : m_processes)
-            process.send(Messages::WebUserContentController::RemoveContentWorlds({ world.identifier() }), identifier());
-    }
-}
-
-void WebUserContentControllerProxy::removeContentWorldUses(HashCountedSet<RefPtr<API::ContentWorld>>& worlds)
-{
-    Vector<ContentWorldIdentifier> worldsToRemove;
-    for (auto& worldUsePair : worlds) {
-        if (shouldSendRemoveContentWorldsMessage(*worldUsePair.key.get(), worldUsePair.value))
-            worldsToRemove.append(worldUsePair.key->identifier());
-    }
+    bool result = m_associatedContentWorlds.remove(world.identifier());
+    ASSERT_UNUSED(result, result);
 
     for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::RemoveContentWorlds(worldsToRemove), identifier());
+        process.send(Messages::WebUserContentController::RemoveContentWorlds({ world.identifier() }), identifier());
 }
 
 void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript, InjectUserScriptImmediately immediately)
 {
     Ref<API::ContentWorld> world = userScript.contentWorld();
 
-    addContentWorldUse(world.get());
+    addContentWorld(world.get());
 
     m_userScripts->elements().append(&userScript);
 
@@ -217,8 +202,6 @@ void WebUserContentControllerProxy::removeUserScript(API::UserScript& userScript
         process.send(Messages::WebUserContentController::RemoveUserScript(world->identifier(), userScript.identifier()), identifier());
 
     m_userScripts->elements().removeAll(&userScript);
-
-    removeContentWorldUses(world.get(), 1);
 }
 
 void WebUserContentControllerProxy::removeAllUserScripts(API::ContentWorld& world)
@@ -226,11 +209,9 @@ void WebUserContentControllerProxy::removeAllUserScripts(API::ContentWorld& worl
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserScripts({ world.identifier() }), identifier());
 
-    unsigned userScriptsRemoved = m_userScripts->removeAllOfTypeMatching<API::UserScript>([&](const auto& userScript) {
+    m_userScripts->removeAllOfTypeMatching<API::UserScript>([&](const auto& userScript) {
         return &userScript->contentWorld() == &world;
     });
-
-    removeContentWorldUses(world, userScriptsRemoved);
 }
 
 void WebUserContentControllerProxy::removeAllUserScripts()
@@ -248,15 +229,13 @@ void WebUserContentControllerProxy::removeAllUserScripts()
         process.send(Messages::WebUserContentController::RemoveAllUserScripts(worldIdentifiers), identifier());
 
     m_userScripts->elements().clear();
-
-    removeContentWorldUses(worlds);
 }
 
 void WebUserContentControllerProxy::addUserStyleSheet(API::UserStyleSheet& userStyleSheet)
 {
     Ref<API::ContentWorld> world = userStyleSheet.contentWorld();
 
-    addContentWorldUse(world.get());
+    addContentWorld(world.get());
 
     m_userStyleSheets->elements().append(&userStyleSheet);
 
@@ -272,8 +251,6 @@ void WebUserContentControllerProxy::removeUserStyleSheet(API::UserStyleSheet& us
         process.send(Messages::WebUserContentController::RemoveUserStyleSheet(world->identifier(), userStyleSheet.identifier()), identifier());
 
     m_userStyleSheets->elements().removeAll(&userStyleSheet);
-
-    removeContentWorldUses(world.get(), 1);
 }
 
 void WebUserContentControllerProxy::removeAllUserStyleSheets(API::ContentWorld& world)
@@ -281,11 +258,9 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets(API::ContentWorld& 
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets({ world.identifier() }), identifier());
 
-    unsigned userStyleSheetsRemoved = m_userStyleSheets->removeAllOfTypeMatching<API::UserStyleSheet>([&](const auto& userStyleSheet) {
+    m_userStyleSheets->removeAllOfTypeMatching<API::UserStyleSheet>([&](const auto& userStyleSheet) {
         return &userStyleSheet->contentWorld() == &world;
     });
-
-    removeContentWorldUses(world, userStyleSheetsRemoved);
 }
 
 void WebUserContentControllerProxy::removeAllUserStyleSheets()
@@ -303,8 +278,6 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
         process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets(worldIdentifiers), identifier());
 
     m_userStyleSheets->elements().clear();
-
-    removeContentWorldUses(worlds);
 }
 
 bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler& handler)
@@ -316,7 +289,7 @@ bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessage
             return false;
     }
 
-    addContentWorldUse(world);
+    addContentWorld(world);
 
     m_scriptMessageHandlers.add(handler.identifier(), &handler);
 
@@ -335,7 +308,6 @@ void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String
 
             m_scriptMessageHandlers.remove(it);
 
-            removeContentWorldUses(world, 1);
             return;
         }
     }
@@ -354,8 +326,6 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::ContentWor
         }
         return false;
     });
-
-    removeContentWorldUses(world, numberRemoved);
 }
 
 void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference)

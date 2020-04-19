@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "ContentWorldShared.h"
 #include "MessageReceiver.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
@@ -93,8 +94,6 @@ public:
     void removeAllUserStyleSheets(API::ContentWorld&);
     void removeAllUserStyleSheets();
 
-    void removeAllUserContent(API::ContentWorld&);
-
     // Returns false if there was a name conflict.
     bool addUserScriptMessageHandler(WebScriptMessageHandler&);
     void removeUserMessageHandlerForName(const String&, API::ContentWorld&);
@@ -113,23 +112,22 @@ public:
 
     UserContentControllerIdentifier identifier() const { return m_identifier; }
 
+    void contentWorldDestroyed(API::ContentWorld&);
+
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didPostMessage(IPC::Connection&, WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&);
 
-    void addContentWorldUse(API::ContentWorld&);
-    void removeContentWorldUses(API::ContentWorld&, unsigned numberOfUsesToRemove);
-    void removeContentWorldUses(HashCountedSet<RefPtr<API::ContentWorld>>&);
-    bool shouldSendRemoveContentWorldsMessage(API::ContentWorld&, unsigned numberOfUsesToRemove);
+    void addContentWorld(API::ContentWorld&);
 
     UserContentControllerIdentifier m_identifier;
     WeakHashSet<WebProcessProxy> m_processes;
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
-    HashCountedSet<RefPtr<API::ContentWorld>> m_contentWorlds;
+    HashSet<ContentWorldIdentifier> m_associatedContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<NetworkProcessProxy> m_networkProcesses;

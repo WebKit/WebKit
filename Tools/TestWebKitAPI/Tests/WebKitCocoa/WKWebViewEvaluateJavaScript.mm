@@ -34,11 +34,12 @@
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKContentWorld.h>
+#import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/RetainPtr.h>
@@ -133,6 +134,15 @@ TEST(WKWebView, WKContentWorld)
     EXPECT_EQ(namedWorld, [WKContentWorld worldWithName:@"Name"]);
 }
 
+@interface DummyMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation DummyMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+}
+@end
+
 TEST(WKWebView, EvaluateJavaScriptInWorlds)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -185,8 +195,12 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    // Set a varibale value in a named world.
+    // Add a scriptMessageHandler in a named world.
     RetainPtr<WKContentWorld> namedWorld = [WKContentWorld worldWithName:@"NamedWorld"];
+    id handler = [[[DummyMessageHandler alloc] init] autorelease];
+    [webView.get().configuration.userContentController _addScriptMessageHandler:handler name:@"testHandlerName" userContentWorld:namedWorld.get()._userContentWorld];
+
+    // Set a variable value in that named world.
     [webView evaluateJavaScript:@"var bar = 'baz'" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         isDone = true;
@@ -195,7 +209,7 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    // Set a global variable value in a named world via a function call.
+    // Set a global variable value in that named world via a function call.
     [webView callAsyncJavaScript:@"window.baz = 'bat'" arguments:nil inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_NULL(error);
@@ -205,7 +219,10 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    // Verify they are there in that named world.
+    // Remove the dummy message handler
+    [webView.get().configuration.userContentController _removeScriptMessageHandlerForName:@"testHandlerName" userContentWorld:namedWorld.get()._userContentWorld];
+
+    // Verify the variables we set are there in that named world.
     [webView evaluateJavaScript:@"bar" inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_TRUE([result isEqualToString:@"baz"]);

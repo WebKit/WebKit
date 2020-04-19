@@ -27,12 +27,18 @@
 
 #include "APIObject.h"
 #include "ContentWorldShared.h"
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebKit {
+class WebUserContentControllerProxy;
+}
 
 namespace API {
 
 class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld> {
 public:
+    static ContentWorld* worldForIdentifier(WebKit::ContentWorldIdentifier);
     static Ref<ContentWorld> sharedWorldWithName(const WTF::String&);
     static ContentWorld& pageContentWorld();
     static ContentWorld& defaultClientWorld();
@@ -43,13 +49,16 @@ public:
     const WTF::String& name() const { return m_name; }
     std::pair<WebKit::ContentWorldIdentifier, WTF::String> worldData() const { return { m_identifier, m_name }; }
 
+    void addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy&);
+    void userContentControllerProxyDestroyed(WebKit::WebUserContentControllerProxy&);
+
 private:
     explicit ContentWorld(const WTF::String&);
-    explicit ContentWorld(WebKit::ContentWorldIdentifier identifier)
-        : m_identifier(identifier) { }
+    explicit ContentWorld(WebKit::ContentWorldIdentifier);
 
     WebKit::ContentWorldIdentifier m_identifier;
     WTF::String m_name;
+    HashSet<WebKit::WebUserContentControllerProxy*> m_associatedContentControllerProxies;
 };
 
 } // namespace API

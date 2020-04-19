@@ -1,3 +1,62 @@
+2020-04-18  Brady Eidson  <beidson@apple.com>
+
+        Fix WebUserContentControllerProxy vs ContentWorld lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=210700
+
+        Reviewed by Alex Christensen.
+
+        Covered by API test.
+        
+        WebUserContentControllerProxy currently keeps all of its associated API::ContentWorlds alive via RefPtrs.
+        
+        This is despite the fact that all of the associated WebScriptMessageHandlers, UserScripts, and 
+        UserStyleSheets already keep their associated API::ContentWorlds alive.
+
+        It then decideds to tell WebProcesses to forget a content world after all of its clients are removed.
+        
+        Unfortunately, content worlds are used for more than just content controller stuff. They're used for direct
+        JavaScript evaluation as well.
+        
+        So a client could:
+          - Add a script message handler in a content world.
+          - Evaluate JavaScript in that content world, setting up some persistent state.
+          - Remove the script message handler.
+          - Find that their persistent state from the JavaScript evaluation is gone from that world, even though they
+            still retain a usable handle to that world.
+        
+        The only party who has any business managing the lifetime of an API::ContentWorld is the API::ContentWorld itself.
+        
+        Making this change is:
+          1 - Nice cleanup
+          2 - Fixes the above mentioned bug
+        
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::worldForIdentifier):
+        (API::ContentWorld::ContentWorld):
+        (API::ContentWorld::sharedWorldWithName):
+        (API::ContentWorld::~ContentWorld):
+        (API::ContentWorld::addAssociatedUserContentControllerProxy):
+        (API::ContentWorld::userContentControllerProxyDestroyed):
+        * UIProcess/API/APIContentWorld.h:
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::parameters const):
+        (WebKit::WebUserContentControllerProxy::addContentWorld):
+        (WebKit::WebUserContentControllerProxy::contentWorldDestroyed):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addContentWorldUse): Deleted.
+        (WebKit::WebUserContentControllerProxy::shouldSendRemoveContentWorldsMessage): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeContentWorldUses): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+
 2020-04-18  David Kilzer  <ddkilzer@apple.com>
 
         Attempt #4 to fix tvOS build

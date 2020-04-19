@@ -27,10 +27,28 @@
 #include "APIContentWorld.h"
 
 #include "ContentWorldShared.h"
+#include "WebUserContentControllerProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {
+
+static HashMap<WTF::String, ContentWorld*>& sharedWorldNameMap()
+{
+    static NeverDestroyed<HashMap<WTF::String, ContentWorld*>> sharedMap;
+    return sharedMap;
+}
+
+static HashMap<WebKit::ContentWorldIdentifier, ContentWorld*>& sharedWorldIdentifierMap()
+{
+    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, ContentWorld*>> sharedMap;
+    return sharedMap;
+}
+
+ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier identifer)
+{
+    return sharedWorldIdentifierMap().get(identifer);
+}
 
 ContentWorld::ContentWorld(const WTF::String& name)
     : m_name(name)
@@ -44,17 +62,19 @@ ContentWorld::ContentWorld(const WTF::String& name)
     });
 
     m_identifier = WebKit::ContentWorldIdentifier::generate();
+    auto addResult = sharedWorldIdentifierMap().add(m_identifier, this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-static HashMap<WTF::String, ContentWorld*>& sharedWorldMap()
+ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
+    : m_identifier(identifier)
 {
-    static HashMap<WTF::String, ContentWorld*>* sharedMap = new HashMap<WTF::String, ContentWorld*>;
-    return *sharedMap;
+    ASSERT(m_identifier == WebKit::pageContentWorldIdentifier());
 }
 
 Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
 {
-    auto result = sharedWorldMap().add(name, nullptr);
+    auto result = sharedWorldNameMap().add(name, nullptr);
     if (result.isNewEntry) {
         result.iterator->value = new ContentWorld(name);
         return adoptRef(*result.iterator->value);
@@ -77,11 +97,30 @@ ContentWorld& ContentWorld::defaultClientWorld()
 
 ContentWorld::~ContentWorld()
 {
-    if (name().isNull())
-        return;
+    ASSERT(m_identifier != WebKit::pageContentWorldIdentifier());
 
-    auto taken = sharedWorldMap().take(name());
-    ASSERT_UNUSED(taken, taken == this);
+    auto result = sharedWorldIdentifierMap().take(m_identifier);
+    ASSERT_UNUSED(result, result == this || m_identifier == WebKit::pageContentWorldIdentifier());
+
+    if (!name().isNull()) {
+        auto taken = sharedWorldNameMap().take(name());
+        ASSERT_UNUSED(taken, taken == this);
+    }
+
+    for (auto proxy : m_associatedContentControllerProxies)
+        proxy->contentWorldDestroyed(*this);
+}
+
+void ContentWorld::addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy& proxy)
+{
+    auto addResult = m_associatedContentControllerProxies.add(&proxy);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void ContentWorld::userContentControllerProxyDestroyed(WebKit::WebUserContentControllerProxy& proxy)
+{
+    bool removed = m_associatedContentControllerProxies.remove(&proxy);
+    ASSERT_UNUSED(removed, removed);
 }
 
 } // namespace API
