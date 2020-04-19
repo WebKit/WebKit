@@ -1,3 +1,9 @@
+2020-04-18  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, mark test passing.
+
+        * test262/expectations.yaml:
+
 2020-04-18  Robin Morisset  <rmorisset@apple.com>
 
         Support an inlined representation in JSValue of small BigInts ("BigInt32")

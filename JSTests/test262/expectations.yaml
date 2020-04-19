@@ -1168,9 +1168,6 @@ test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
 test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
   default: 'Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/allSettled/reject-element-function-nonconstructor.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Promise/any/invoke-resolve-get-error-close.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
@@ -2695,11 +2692,11 @@ test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
 test/language/expressions/logical-assignment/lgcl-and-assignment-operator-non-simple-lhs.js:
-  default: "Test262: This statement should not be evaluated."
+  default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/logical-assignment/lgcl-nullish-assignment-operator-non-simple-lhs.js:
-  default: "Test262: This statement should not be evaluated."
+  default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-simple-lhs.js:
-  default: "Test262: This statement should not be evaluated."
+  default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/new/ctorExpr-fn-ref-before-args-eval-fn-wrapup.js:
   default: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
   strict mode: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
