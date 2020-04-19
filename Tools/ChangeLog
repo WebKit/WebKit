@@ -1,3 +1,14 @@
+2020-04-19  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r260334): SpacebarScrolling.cpp (test in TestWebKitAPI) fails to compile because it includes an Objective-C header
+        https://bugs.webkit.org/show_bug.cgi?id=210723
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit/SpacebarScrolling.cpp: Instead of including
+        WKPreferencesPrivate.h, an Objective-C header, include WKPreferencesRefPrivate.h,
+        the header with the functions this test is trying to use.
+
 2020-04-18  Darin Adler  <darin@apple.com>
 
         Update header postprocessing version cutoff to keep Apple internal builds working
