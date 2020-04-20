@@ -1093,6 +1093,58 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceContentFollowedAfter
         "<div><span style=\"display: block\">hello, world</span></div></div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMultipleTokens)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html>"
+        "<title>This is a test</title>"
+        "<select>"
+        "    <option selected>Hello world</option>"
+        "    <option>Should not be replaced</option>"
+        "</select>"
+        "</html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("This is a test", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("Hello world", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("Should not be replaced", items[2].tokens[0].content);
+
+    auto replacementItems = retainPtr(@[
+        createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"Replacement" }, { items[0].tokens[0].identifier, @"title" } }).autorelease(),
+        createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"Replacement" }, { items[1].tokens[0].identifier, @"option" } }).autorelease(),
+        createItem(items[2].identifier, { { items[2].tokens[0].identifier, @"Failed replacement" }, { @"12345", @"option" } }).autorelease(),
+    ]);
+
+    done = false;
+    [webView _completeTextManipulationForItems:replacementItems.get() completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors.count, 1UL);
+        EXPECT_EQ(errors.firstObject.domain, _WKTextManipulationItemErrorDomain);
+        EXPECT_EQ(errors.firstObject.code, _WKTextManipulationItemErrorInvalidToken);
+        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], [replacementItems lastObject]);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    NSArray<NSString *> *options = [webView objectByEvaluatingJavaScript:@"Array.from(document.querySelector('select').options).map(option => option.textContent)"];
+    EXPECT_WK_STREQ("Replacement option", options.firstObject);
+    EXPECT_WK_STREQ("Should not be replaced", options.lastObject);
+    EXPECT_WK_STREQ("Replacement title", [webView stringByEvaluatingJavaScript:@"document.title"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationShouldReplaceContentsAroundParagraphWithJustImage)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

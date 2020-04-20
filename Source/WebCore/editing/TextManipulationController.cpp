@@ -237,6 +237,11 @@ static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
     return false;
 }
 
+static bool canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
+{
+    return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
+}
+
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
 {
     if (start.isNull() || end.isNull())
@@ -263,7 +268,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
             if (is<Element>(*content.node)) {
                 auto& currentElement = downcast<Element>(*content.node);
-                if (!content.isTextContent && (content.node->hasTagName(HTMLNames::titleTag) || content.node->hasTagName(HTMLNames::optionTag))) {
+                if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(currentElement)) {
                     addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), nullQName(),
                         { ManipulationToken { m_tokenIdentifier.generate(), currentElement.textContent() } } });
                 }
@@ -473,18 +478,21 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto element = makeRefPtr(item.element.get());
         if (!element)
             return ManipulationFailureType::ContentChanged;
-        if (replacementTokens.size() > 1)
+        if (replacementTokens.size() > 1 && !canPerformTextManipulationByReplacingEntireTextContent(*element))
             return ManipulationFailureType::InvalidToken;
-        String newValue;
-        if (!replacementTokens.isEmpty()) {
-            if (replacementTokens[0].identifier != item.tokens[0].identifier)
+        auto expectedTokenIdentifier = item.tokens[0].identifier;
+        StringBuilder newValue;
+        for (size_t i = 0; i < replacementTokens.size(); ++i) {
+            if (replacementTokens[i].identifier != expectedTokenIdentifier)
                 return ManipulationFailureType::InvalidToken;
-            newValue = replacementTokens[0].content;
+            if (i)
+                newValue.append(' ');
+            newValue.append(replacementTokens[i].content);
         }
         if (item.attributeName == nullQName())
-            element->setTextContent(newValue);
+            element->setTextContent(newValue.toString());
         else
-            element->setAttribute(item.attributeName, newValue);
+            element->setAttribute(item.attributeName, newValue.toString());
         return WTF::nullopt;
     }
 

@@ -1,3 +1,28 @@
+2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation sometimes fails to replace text in title elements
+        https://bugs.webkit.org/show_bug.cgi?id=210750
+        <rdar://problem/61066103>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        Internal clients using WebKit text manipulation APIs currently fail to replace text in title and option elements
+        in the case where text manipulation has been completed with more than one token. These are elements for which we
+        want to replace the entire text as a single token, even if the text manipulation client ends up breaking the
+        token into multiple chunks.
+
+        To handle this case, pull the `title || option` check out into a helper function, and consult it when completing
+        text manipulation in the case where the manipulation data lacks either start or end positions. If
+        `canPerformTextManipulationByReplacingEntireTextContent` is true and there are multiple replacement tokens,
+        allow ourselves to process the replacement by combining the replacement tokens into a space-separated string.
+
+        Test: TextManipulation.CompleteTextManipulationShouldReplaceTextContentWithMultipleTokens
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::canPerformTextManipulationByReplacingEntireTextContent):
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::replace):
+
 2020-04-20  Andres Gonzalez  <andresg_22@apple.com>
 
         The rect for the primary screen should be retrieved on the main thread.

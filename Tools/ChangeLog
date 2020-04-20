@@ -1,3 +1,16 @@
+2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation sometimes fails to replace text in title elements
+        https://bugs.webkit.org/show_bug.cgi?id=210750
+        <rdar://problem/61066103>
+
+        Reviewed by Tim Horton and Darin Adler.
+
+        Add a new API test to verify that a single title or option element may be replaced with multiple tokens, as long
+        as all the token identifiers match.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
 2020-04-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix build after r260277
