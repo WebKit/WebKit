@@ -9,6 +9,22 @@ PASS: eventData is undefined of type undefined
 PASS: eventData is 1 of type number
 PASS: eventData is true of type boolean
 PASS: eventData is 1 of type string
+PASS: eventData is 0 of type bigint
+PASS: eventData is -20 of type bigint
+PASS: eventData is 4294967295 of type bigint
+PASS: eventData is -4294967295 of type bigint
+PASS: eventData is 2147483647 of type bigint
+PASS: eventData is 2147483648 of type bigint
+PASS: eventData is -2147483648 of type bigint
+PASS: eventData is -2147483649 of type bigint
+PASS: eventData is 68719476735 of type bigint
+PASS: eventData is -68719476735 of type bigint
+PASS: eventData is 1000000000000000000000000000000000 of type bigint
+PASS: eventData is -1000000000000000000000000000000000 of type bigint
+PASS: eventData is 1461501637330902918203684832716283019655932542975 of type bigint
+PASS: eventData is -1461501637330902918203684832716283019655932542975 of type bigint
+PASS: eventData is 4722366482869645213695 of type bigint
+PASS: eventData is -4722366482869645213695 of type bigint
 PASS: eventData is [object Object] of type object
 PASS: eventData is [object Object] of type object
 PASS: eventData is [object Object] of type object
@@ -29,6 +45,22 @@ PASS: eventData is true of type object
 PASS: eventData is false of type object
 PASS: eventData is gnirts of type object
 PASS: eventData is 42 of type object
+PASS: eventData is 0 of type object
+PASS: eventData is -20 of type object
+PASS: eventData is 4294967295 of type object
+PASS: eventData is -4294967295 of type object
+PASS: eventData is 2147483647 of type object
+PASS: eventData is 2147483648 of type object
+PASS: eventData is -2147483648 of type object
+PASS: eventData is -2147483649 of type object
+PASS: eventData is 68719476735 of type object
+PASS: eventData is -68719476735 of type object
+PASS: eventData is 1000000000000000000000000000000000 of type object
+PASS: eventData is -1000000000000000000000000000000000 of type object
+PASS: eventData is 1461501637330902918203684832716283019655932542975 of type object
+PASS: eventData is -1461501637330902918203684832716283019655932542975 of type object
+PASS: eventData is 4722366482869645213695 of type object
+PASS: eventData is -4722366482869645213695 of type object
 PASS: eventData is === to eventData.self
 PASS: eventData is === to eventData[0]
 PASS: eventData.graph1 is === to eventData.graph2
@@ -115,6 +147,8 @@ PASS: References to strings correct (0,2)
 PASS: String object properties not serialized
 PASS: Number object properties not serialized
 PASS: Boolean object properties not serialized
+PASS: BigInt object properties not serialized
+PASS: BigInt (BigInt32) object properties not serialized
 PASS: Date values correct (0)
 PASS: Date values correct (1)
 FAIL: References to dates correct (0)

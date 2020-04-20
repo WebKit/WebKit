@@ -753,7 +753,7 @@ private:
         return JSValue();
     }
 
-    void dumpImmediate(JSValue value)
+    void dumpImmediate(JSValue value, SerializationReturnCode& code)
     {
         if (value.isNull()) {
             write(NullTag);
@@ -793,6 +793,9 @@ private:
             return;
         }
 #endif
+
+        // Make any new primitive extension safe by throwing an error.
+        code = SerializationReturnCode::DataCloneError;
     }
 
     void dumpString(const String& string)
@@ -1061,7 +1064,7 @@ private:
     bool dumpIfTerminal(JSValue value, SerializationReturnCode& code)
     {
         if (!value.isCell()) {
-            dumpImmediate(value);
+            dumpImmediate(value, code);
             return true;
         }
         ASSERT(value.isCell());

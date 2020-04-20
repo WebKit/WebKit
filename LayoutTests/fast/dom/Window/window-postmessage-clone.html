@@ -13,6 +13,22 @@ tryPostMessage('undefined');
 tryPostMessage('1');
 tryPostMessage('true');
 tryPostMessage('"1"');
+tryPostMessage('0n');
+tryPostMessage('-20n');
+tryPostMessage('4294967295n');
+tryPostMessage('-4294967295n');
+tryPostMessage('2147483647n');
+tryPostMessage('2147483648n');
+tryPostMessage('-2147483648n');
+tryPostMessage('-2147483649n');
+tryPostMessage('68719476735n');
+tryPostMessage('-68719476735n');
+tryPostMessage('1000000000000000000000000000000000n');
+tryPostMessage('-1000000000000000000000000000000000n');
+tryPostMessage('1461501637330902918203684832716283019655932542975n');
+tryPostMessage('-1461501637330902918203684832716283019655932542975n');
+tryPostMessage('4722366482869645213695n');
+tryPostMessage('-4722366482869645213695n');
 tryPostMessage('({})');
 tryPostMessage('({a:1})');
 tryPostMessage('({a:"a"})');
@@ -35,6 +51,22 @@ tryPostMessage('new Boolean(true)');
 tryPostMessage('new Boolean(false)');
 tryPostMessage('new String("gnirts")');
 tryPostMessage('new Number(42.0)');
+tryPostMessage('Object(0n)');
+tryPostMessage('Object(-20n)');
+tryPostMessage('Object(4294967295n)');
+tryPostMessage('Object(-4294967295n)');
+tryPostMessage('Object(2147483647n)');
+tryPostMessage('Object(2147483648n)');
+tryPostMessage('Object(-2147483648n)');
+tryPostMessage('Object(-2147483649n)');
+tryPostMessage('Object(68719476735n)');
+tryPostMessage('Object(-68719476735n)');
+tryPostMessage('Object(1000000000000000000000000000000000n)');
+tryPostMessage('Object(-1000000000000000000000000000000000n)');
+tryPostMessage('Object(1461501637330902918203684832716283019655932542975n)');
+tryPostMessage('Object(-1461501637330902918203684832716283019655932542975n)');
+tryPostMessage('Object(4722366482869645213695n)');
+tryPostMessage('Object(-4722366482869645213695n)');
 cyclicObject={};
 cyclicObject.self = cyclicObject;
 tryPostMessage('cyclicObject', false, "cyclicObject");
@@ -287,17 +319,21 @@ tryPostMessage(thunk(
         doPassFail(v[0] !== v[2], "References to strings correct (0,2)");
     });
 
-// Properties added to String, Boolean and Number objects should not be serialized.
+// Properties added to String, Boolean, Number, and BigInt objects should not be serialized.
 tryPostMessage(thunk(
         'var s = new String("gnirts"); ' +
         'var n = new Number(42.0); ' +
         'var b = new Boolean(true); ' +
-        's.foo = 1; n.foo = 2; b.foo = 3; ' +
-        'return [s, n, b];'
+        'var i = Object(100000000000000000000n); ' +
+        'var i32 = Object(10n); ' +
+        's.foo = 1; n.foo = 2; b.foo = 3; i.foo = 4; i32.foo = 5; ' +
+        'return [s, n, b, i, i32];'
     ), false, "evalThunk", function(v) {
         doPassFail(v[0].foo == undefined, "String object properties not serialized");
         doPassFail(v[1].foo == undefined, "Number object properties not serialized");
         doPassFail(v[2].foo == undefined, "Boolean object properties not serialized");
+        doPassFail(v[3].foo == undefined, "BigInt object properties not serialized");
+        doPassFail(v[4].foo == undefined, "BigInt (BigInt32) object properties not serialized");
     });
 
 // Reference equality between dates must be maintained.

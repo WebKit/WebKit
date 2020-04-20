@@ -1,3 +1,18 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add more structure-cloning tests for BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=210765
+
+        Reviewed by Mark Lam.
+
+        This patch adds safe-guard for future JSC primitive extension for structure-cloning.
+        We throw DataCloneError if we see unknown primitive value, which can happen if JSC
+        extends primitive value.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImmediate):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+
 2020-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling with background-attachment: fixed needs to trigger repaints
