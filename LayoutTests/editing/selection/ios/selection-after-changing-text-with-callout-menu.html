@@ -53,10 +53,10 @@ async function runTest() {
     dismissingMenu = await UIHelper.isDismissingMenu();
     showingMenu = await UIHelper.isShowingMenu();
 
-    shouldBe("selectionRects[0].top", "101");
+    shouldBe("selectionRects[0].top", "102");
     shouldBe("selectionRects[0].width", "320");
     shouldBe("selectionRects[0].left", "1");
-    shouldBe("selectionRects[0].height", "29");
+    shouldBe("selectionRects[0].height", "28");
     shouldBe("selectionRects[1].top", "130");
     shouldBe("selectionRects[1].width", "172");
     shouldBe("selectionRects[1].left", "1");

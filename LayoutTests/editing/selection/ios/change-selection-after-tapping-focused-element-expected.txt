@@ -5,9 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS selectionRects.length is 1
 PASS selectionRects[0].left is 2
-PASS selectionRects[0].top is 2
+PASS selectionRects[0].top is 4
 PASS selectionRects[0].width is 309
-PASS selectionRects[0].height is 114
+PASS selectionRects[0].height is 112
 PASS successfullyParsed is true
 
 TEST COMPLETE

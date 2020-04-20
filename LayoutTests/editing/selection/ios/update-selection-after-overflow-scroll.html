@@ -66,19 +66,19 @@ addEventListener("load", async function() {
     await UIHelper.immediateScrollElementAtContentPointToOffset(150, 100, 0, 50);
     selectionRectsAfter = await waitForSelectionRectsToChange(selectionRectsBefore);
 
-    shouldBe("selectionRectsBefore[0].top", "108");
+    shouldBe("selectionRectsBefore[0].top", "109");
     shouldBe("selectionRectsBefore[0].width", "320");
     shouldBe("selectionRectsBefore[0].left", "0");
-    shouldBe("selectionRectsBefore[0].height", "29");
+    shouldBe("selectionRectsBefore[0].height", "28");
     shouldBe("selectionRectsBefore[1].top", "137");
     shouldBe("selectionRectsBefore[1].width", "172");
     shouldBe("selectionRectsBefore[1].left", "0");
     shouldBe("selectionRectsBefore[1].height", "30");
 
-    shouldBe("selectionRectsAfter[0].top", "58");
+    shouldBe("selectionRectsAfter[0].top", "59");
     shouldBe("selectionRectsAfter[0].width", "320");
     shouldBe("selectionRectsAfter[0].left", "0");
-    shouldBe("selectionRectsAfter[0].height", "29");
+    shouldBe("selectionRectsAfter[0].height", "28");
     shouldBe("selectionRectsAfter[1].top", "87");
     shouldBe("selectionRectsAfter[1].width", "172");
     shouldBe("selectionRectsAfter[1].left", "0");

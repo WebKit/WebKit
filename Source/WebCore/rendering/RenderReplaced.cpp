@@ -620,7 +620,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const
     InlineBox* box = inlineBoxWrapper();
     const RootInlineBox* rootBox = box ? &box->root() : 0;
     
-    LayoutUnit top = rootBox ? rootBox->selectionTop() : logicalTop();
+    LayoutUnit top = rootBox ? rootBox->selectionTop(RootInlineBox::ForHitTesting::Yes) : logicalTop();
     LayoutUnit bottom = rootBox ? rootBox->selectionBottom() : logicalBottom();
     
     LayoutUnit blockDirectionPosition = isHorizontalWritingMode() ? point.y() + y() : point.x() + x();

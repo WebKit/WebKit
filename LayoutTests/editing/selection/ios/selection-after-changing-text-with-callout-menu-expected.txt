@@ -3,10 +3,10 @@ This test verifies that interacting with a menu action item on iOS that is marke
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS selectionRects[0].top is 101
+PASS selectionRects[0].top is 102
 PASS selectionRects[0].width is 320
 PASS selectionRects[0].left is 1
-PASS selectionRects[0].height is 29
+PASS selectionRects[0].height is 28
 PASS selectionRects[1].top is 130
 PASS selectionRects[1].width is 172
 PASS selectionRects[1].left is 1

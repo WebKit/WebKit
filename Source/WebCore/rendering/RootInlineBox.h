@@ -72,7 +72,8 @@ public:
     void setContainingFragment(RenderFragmentContainer&);
     void clearContainingFragment();
 
-    LayoutUnit selectionTop() const;
+    enum class ForHitTesting : bool { No, Yes };
+    LayoutUnit selectionTop(ForHitTesting = ForHitTesting::No) const;
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTop()); }
 

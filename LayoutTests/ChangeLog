@@ -1,3 +1,32 @@
+2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Oversized caret and selection rects in text fields on ganji.com and netflix.com/login
+        https://bugs.webkit.org/show_bug.cgi?id=210622
+        <rdar://problem/45945636>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing tests, and add a new test to verify that caret and selection rects do not extend to match
+        the line height in empty and non-empty editable elements, in both horizontal and vertical writing modes.
+
+        * editing/selection/ios/absolute-selection-after-scroll-expected.txt:
+        * editing/selection/ios/absolute-selection-after-scroll.html:
+        * editing/selection/ios/change-selection-after-tapping-focused-element-expected.txt:
+        * editing/selection/ios/change-selection-after-tapping-focused-element.html:
+        * editing/selection/ios/fixed-selection-after-scroll-expected.txt:
+        * editing/selection/ios/fixed-selection-after-scroll.html:
+        * editing/selection/ios/selection-after-changing-text-with-callout-menu-expected.txt:
+        * editing/selection/ios/selection-after-changing-text-with-callout-menu.html:
+        * editing/selection/ios/selection-handles-after-touch-end-expected.txt:
+        * editing/selection/ios/update-selection-after-overflow-scroll-expected.txt:
+        * editing/selection/ios/update-selection-after-overflow-scroll.html:
+        * editing/selection/selection-and-caret-do-not-extend-to-line-height-expected.txt: Added.
+        * editing/selection/selection-and-caret-do-not-extend-to-line-height.html: Added.
+        * fast/repaint/focus-ring-repaint-expected.txt:
+        * platform/ios/editing/selection/ios/selection-handles-after-touch-end-expected.txt: Removed.
+
+        Delete this redundant test expectation.
+
 2020-04-20  Youenn Fablet  <youenn@apple.com>
 
         Safari doesn't apply frameRate limit when request stream from Camera

@@ -568,7 +568,7 @@ InlineBox* RootInlineBox::lastSelectedBox()
     return nullptr;
 }
 
-LayoutUnit RootInlineBox::selectionTop() const
+LayoutUnit RootInlineBox::selectionTop(ForHitTesting forHitTesting) const
 {
     LayoutUnit selectionTop = m_lineTop;
     
@@ -609,7 +609,14 @@ LayoutUnit RootInlineBox::selectionTop() const
     }
 #endif
 
-    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : blockFlow().borderAndPaddingBefore();
+    LayoutUnit prevBottom;
+    if (auto* previousBox = prevRootBox())
+        prevBottom = previousBox->selectionBottom();
+    else {
+        auto borderAndPaddingBefore = blockFlow().borderAndPaddingBefore();
+        prevBottom = forHitTesting == ForHitTesting::Yes ? borderAndPaddingBefore : std::max(borderAndPaddingBefore, selectionTop);
+    }
+
     if (prevBottom < selectionTop && blockFlow().containsFloats()) {
         // This line has actually been moved further down, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous

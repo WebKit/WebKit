@@ -77,8 +77,8 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     [webView _executeEditCommand:@"MoveToEndOfLine" argument:nil completion:nil];
 
     auto autocorrectionRects = retainPtr([webView autocorrectionRectsForString:@"Wulk"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 8, 36, 21), [autocorrectionRects firstRect]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 8, 36, 21), [autocorrectionRects lastRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 9, 36, 20), [autocorrectionRects firstRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(8, 9, 36, 20), [autocorrectionRects lastRect]);
 
     auto contentView = [webView textInputContentView];
     UIFont *fontBeforeScaling = [contentView fontForCaretSelection];

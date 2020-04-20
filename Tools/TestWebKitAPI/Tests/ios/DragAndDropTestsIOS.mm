@@ -361,7 +361,7 @@ TEST(DragAndDropTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(960, 201, 2, 227), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(960, 205, 2, 223), [simulator finalSelectionStartRect]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 
@@ -989,7 +989,7 @@ TEST(DragAndDropTests, ExternalSourceUTF8PlainTextOnly)
     [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
     EXPECT_WK_STREQ(textPayload.UTF8String, [webView stringByEvaluatingJavaScript:@"editor.textContent"].UTF8String);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1935, 201, 2, 227), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(1935, 205, 2, 223), [simulator finalSelectionStartRect]);
 }
 
 TEST(DragAndDropTests, ExternalSourceJPEGOnly)

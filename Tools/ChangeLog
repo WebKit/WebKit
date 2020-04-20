@@ -1,3 +1,20 @@
+2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Oversized caret and selection rects in text fields on ganji.com and netflix.com/login
+        https://bugs.webkit.org/show_bug.cgi?id=210622
+        <rdar://problem/45945636>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline some expected selection and caret rects in some iOS API tests.
+
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         Use #import instead of #include in Objective-C and don't use #pragma once

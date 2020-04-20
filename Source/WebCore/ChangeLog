@@ -1,3 +1,60 @@
+2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Oversized caret and selection rects in text fields on ganji.com and netflix.com/login
+        https://bugs.webkit.org/show_bug.cgi?id=210622
+        <rdar://problem/45945636>
+
+        Reviewed by Darin Adler.
+
+        Currently, selection and caret rects in text fields on some web pages can be excessively tall. This patch makes
+        a small adjustment to allow the top of the caret or selection rect to snap to the top of the inline box instead
+        of being at the end of the previous line, in the case where there is no previous inline box.
+
+        In the case where we compute the caret rect for an empty renderer (i.e. no children), we make an additional
+        tweak so that the caret rect's height is based on the computed font height instead of line height, and then we
+        ensure that the caret is (logically) vertically centered.
+
+        See below for more details.
+
+        Test: editing/selection/selection-and-caret-do-not-extend-to-line-height.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+
+        Specify ForHitTesting::Yes when asking for selectionTop().
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+
+        Use FontMetric's height when computing the height of the caret rect, and then center it vertically in the
+        renderer.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+
+        Specify ForHitTesting::Yes when asking for selectionTop(). See below for more information.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::positionForPoint const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTop const):
+
+        When computing selectionTop(), we currently fall back to using the top of the containing RenderBlockFlow
+        (`blockFlow().borderAndPaddingBefore()`) in the case where there is no previous root box. However, this can lead
+        to selection and caret rects being taller than expected; instead, we can use the max of the `selectionTop`
+        (that is, the top of the line box, adjusted for annotations) and the top of the RenderBlockFlow. This has the
+        effect of allowing the caret and selection to visually snap to the top of a run of text, provided there is not
+        already a line of text that precedes it. Taking the maximum of the two values ensures that we don't
+        unintentionally make the selection or caret rects even larger, if the line top is above the top of the block.
+
+        Note that we also avoid shrinking the selection and caret rects when hit-testing renderers for positions and
+        ranges. This allows users to still click and drag to select text in the extra line-height area above a piece of
+        text, even if the selection is only painted over the text (and not in the region containing the line-height).
+        This behavior was established in the fix for webkit.org/b/14911, and is covered by the layout test
+        `editing/selection/inline-closest-leaf-child.html`.
+
+        * rendering/RootInlineBox.h:
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         Use #import instead of #include in Objective-C and don't use #pragma once

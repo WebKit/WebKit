@@ -51,9 +51,9 @@
             initialSelectionRects = rects;
             shouldBe("initialSelectionRects.length", "1");
             shouldBe("initialSelectionRects[0].left", "0");
-            shouldBe("initialSelectionRects[0].top", "0");
+            shouldBe("initialSelectionRects[0].top", "2");
             shouldBe("initialSelectionRects[0].width", "309");
-            shouldBe("initialSelectionRects[0].height", "114");
+            shouldBe("initialSelectionRects[0].height", "112");
             document.scrollingElement.scrollTop += 5000;
             return UIHelper.getUISelectionRects();
         })
@@ -61,9 +61,9 @@
             finalSelectionRects = rects;
             shouldBe("finalSelectionRects.length", "1");
             shouldBe("finalSelectionRects[0].left", "0");
-            shouldBe("finalSelectionRects[0].top", "5000");
+            shouldBe("finalSelectionRects[0].top", "5002");
             shouldBe("finalSelectionRects[0].width", "309");
-            shouldBe("finalSelectionRects[0].height", "114");
+            shouldBe("finalSelectionRects[0].height", "112");
             finishJSTest();
         });
     }

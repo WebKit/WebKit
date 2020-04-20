@@ -312,7 +312,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
             box = box->nextTextBox();
 
         auto& rootBox = box->root();
-        LayoutUnit top = std::min(rootBox.selectionTop(), rootBox.lineTop());
+        LayoutUnit top = std::min(rootBox.selectionTop(RootInlineBox::ForHitTesting::Yes), rootBox.lineTop());
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
             LayoutUnit bottom = rootBox.selectionBottom();
             if (rootBox.nextRootBox())
