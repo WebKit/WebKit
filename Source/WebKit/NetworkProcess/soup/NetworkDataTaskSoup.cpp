@@ -50,8 +50,10 @@ using namespace WebCore;
 
 static const size_t gDefaultReadBufferSize = 8192;
 
-NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
+NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, FrameIdentifier frameID, PageIdentifier pageID, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
+    , m_frameID(frameID)
+    , m_pageID(pageID)
     , m_shouldContentSniff(shouldContentSniff)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
@@ -75,7 +77,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
         }
         applyAuthenticationToRequest(request);
     }
-    createRequest(WTFMove(request));
+    createRequest(WTFMove(request), WasBlockingCookies::No);
 }
 
 NetworkDataTaskSoup::~NetworkDataTaskSoup()
@@ -103,7 +105,7 @@ void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, San
     m_allowOverwriteDownload = allowOverwrite;
 }
 
-void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
+void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCookies wasBlockingCookies)
 {
     m_currentRequest = WTFMove(request);
 
@@ -133,6 +135,8 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
         return;
     }
 
+    restrictRequestReferrerToOriginIfNeeded(m_currentRequest);
+
     unsigned messageFlags = SOUP_MESSAGE_NO_REDIRECT;
 
     m_currentRequest.updateSoupMessage(soupMessage.get(), m_session->blobRegistry());
@@ -147,6 +151,17 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_AUTH_MANAGER);
 #endif
     }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    bool shouldBlockCookies = wasBlockingCookies == WasBlockingCookies::Yes ? true : m_storedCredentialsPolicy == StoredCredentialsPolicy::EphemeralStateless;
+    if (!shouldBlockCookies) {
+        if (auto* networkStorageSession = m_session->networkStorageSession())
+            shouldBlockCookies = networkStorageSession->shouldBlockCookies(m_currentRequest, m_frameID, m_pageID);
+    }
+    if (shouldBlockCookies)
+        soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
+    m_isBlockingCookies = shouldBlockCookies;
+#endif
 
 #if SOUP_CHECK_VERSION(2, 67, 1)
     if ((m_currentRequest.url().protocolIs("https") && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http") && !shouldAllowHSTSProtocolUpgrade()))
@@ -194,6 +209,7 @@ void NetworkDataTaskSoup::clearRequest()
     m_downloadOutputStream = nullptr;
     g_cancellable_cancel(m_cancellable.get());
     m_cancellable = nullptr;
+    m_isBlockingCookies = false;
     if (m_soupMessage) {
         g_signal_handlers_disconnect_matched(m_soupMessage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         if (m_session)
@@ -703,10 +719,12 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         }
     }
 
+    auto wasBlockingCookies = m_isBlockingCookies ? WasBlockingCookies::Yes : WasBlockingCookies::No;
+
     clearRequest();
 
     auto response = ResourceResponse(m_response);
-    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), isCrossOrigin](const ResourceRequest& newRequest) {
+    m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), isCrossOrigin, wasBlockingCookies](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
             return;
 
@@ -719,7 +737,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
             applyAuthenticationToRequest(request);
         }
-        createRequest(WTFMove(request));
+        createRequest(WTFMove(request), wasBlockingCookies);
         if (m_soupRequest && m_state != State::Suspended) {
             m_state = State::Suspended;
             resume();

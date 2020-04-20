@@ -3152,12 +3152,43 @@ void TestController::getAllStorageAccessEntries()
 {
 }
 
+struct LoadedThirdPartyDomainsCallbackContext {
+    explicit LoadedThirdPartyDomainsCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+    bool done { false };
+    Vector<String> result;
+};
+
+static void loadedThirdPartyDomainsCallback(WKArrayRef domains, void* userData)
+{
+    auto* context = static_cast<LoadedThirdPartyDomainsCallbackContext*>(userData);
+    context->done = true;
+
+    if (domains) {
+        auto size = WKArrayGetSize(domains);
+        context->result.reserveInitialCapacity(size);
+        for (size_t index = 0; index < size; ++index)
+            context->result.uncheckedAppend(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(domains, index))));
+    }
+
+    context->testController.notifyDone();
+}
+
 void TestController::loadedThirdPartyDomains()
 {
+    LoadedThirdPartyDomainsCallbackContext context(*this);
+    WKPageLoadedThirdPartyDomains(m_mainWebView->page(), loadedThirdPartyDomainsCallback, &context);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didReceiveLoadedThirdPartyDomains(WTFMove(context.result));
 }
 
 void TestController::clearLoadedThirdPartyDomains()
 {
+    WKPageClearLoadedThirdPartyDomains(m_mainWebView->page());
 }
 
 void TestController::getWebViewCategory()

@@ -1,3 +1,17 @@
+2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=210184
+
+        Reviewed by Žan Doberšek.
+
+        Unskip tests that are now passing and add expectations for the two reminaing failures.
+
+        * http/tests/resourceLoadStatistics/loaded-registrable-domains-get-reported.html: Use setTimeout in onload
+        handler to avoid a deadlock due to sync injected bundle messages.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, skip imported/w3c/web-platform-tests/IndexedDB/structured-clone

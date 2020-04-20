@@ -1180,10 +1180,6 @@ webkit.org/b/191005 inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip
 webkit.org/b/191005 inspector/canvas/updateShader-webgpu.html [ Skip ]
 webkit.org/b/191005 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
-# No support for resource load statistics yet
-http/tests/resourceLoadStatistics/ [ Skip ]
-http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
-
 # No support for screen capture
 fast/mediastream/screencapture-user-gesture.html [ Skip ]
 
@@ -1444,6 +1440,9 @@ webkit.org/b/210601 imported/w3c/web-platform-tests/web-animations/interfaces/An
 webkit.org/b/210601 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html [ Failure ]
 webkit.org/b/210601 imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/style-change-events.html [ Failure ]
 webkit.org/b/210601 imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/target.html [ Failure ]
+
+webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php [ Failure ]
+webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

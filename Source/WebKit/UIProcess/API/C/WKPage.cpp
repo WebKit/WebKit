@@ -2970,3 +2970,27 @@ WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
     return false;
 #endif
 }
+
+void WKPageLoadedThirdPartyDomains(WKPageRef page, WKPageLoadedThirdPartyDomainsFunction callback, void* callbackContext)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    toImpl(page)->loadedThirdPartyDomains([callbackContext, callback](Vector<RegistrableDomain>&& domains) {
+        Vector<RefPtr<API::Object>> apiDomains = WTF::map(domains, [](auto& domain) {
+            return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
+        });
+        callback(toAPI(API::Array::create(WTFMove(apiDomains)).ptr()), callbackContext);
+    });
+#else
+    UNUSED_PARAM(page);
+    callback(nullptr, callbackContext);
+#endif
+}
+
+void WKPageClearLoadedThirdPartyDomains(WKPageRef page)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    toImpl(page)->clearLoadedThirdPartyDomains();
+#else
+    UNUSED_PARAM(page);
+#endif
+}

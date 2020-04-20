@@ -1,3 +1,19 @@
+2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=210184
+
+        Reviewed by Žan Doberšek.
+
+        Implement TestController::loadedThirdPartyDomains() and TestController::clearLoadedThirdPartyDomains() for
+        non-cocoa ports.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::LoadedThirdPartyDomainsCallbackContext::LoadedThirdPartyDomainsCallbackContext):
+        (WTR::loadedThirdPartyDomainsCallback):
+        (WTR::TestController::loadedThirdPartyDomains):
+        (WTR::TestController::clearLoadedThirdPartyDomains):
+
 2020-04-20  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style should not complain about missing config.h header in WebKitLegacy source files

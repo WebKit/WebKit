@@ -1,3 +1,21 @@
+2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=210184
+
+        Reviewed by Žan Doberšek.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const): Return early if cookies are blocked and update the
+        persistent cookies expiration if needed.
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames): Implement this when receiving
+        IncludeHttpOnlyCookies parameter.
+        (WebCore::NetworkStorageSession::hasCookies const): Implement this.
+        (WebCore::NetworkStorageSession::getRawCookies const): Honor shouldAskITP parameter.
+        (WebCore::cookiesForSession): Ditto.
+        (WebCore::NetworkStorageSession::cookiesForDOM const): Ditto.
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const): Ditto.
+
 2020-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Use Optional<FloatQuad> in TransformState

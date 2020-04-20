@@ -194,6 +194,10 @@ WK_EXPORT void WKPageMarkAdClickAttributionsAsExpiredForTesting(WKPageRef page, 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
 
+typedef void (*WKPageLoadedThirdPartyDomainsFunction)(WKArrayRef domains, void* functionContext);
+WK_EXPORT void WKPageLoadedThirdPartyDomains(WKPageRef page, WKPageLoadedThirdPartyDomainsFunction callback, void* callbackContext);
+WK_EXPORT void WKPageClearLoadedThirdPartyDomains(WKPageRef page);
+
 #ifdef __cplusplus
 }
 #endif
