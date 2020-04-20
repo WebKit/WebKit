@@ -1,3 +1,14 @@
+2020-04-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Drive-by fixes
+        https://bugs.webkit.org/show_bug.cgi?id=210557
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Properly format error message.
+        (WebkitFlatpak.main): Show flatpak update output.
+
 2020-04-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR][WPE] Let XR_RUNTIME_JSON environment variable go through for testing

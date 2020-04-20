@@ -531,7 +531,7 @@ class WebkitFlatpak:
         gst_dir = os.environ.get('GST_BUILD_PATH')
         if not gst_dir:
             if building:
-                Console.warning_message("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
+                _log.debug("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
             return []
 
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
@@ -562,7 +562,8 @@ class WebkitFlatpak:
         for option_name in ("branch.%s.webKitBranchBuild" % git_branch_name,
                             "webKitBranchBuild"):
             try:
-                output = subprocess.check_output(("git", "config", "--bool", option_name)).strip()
+                with open(os.devnull, 'w') as devnull:
+                    output = subprocess.check_output(("git", "config", "--bool", option_name), stderr=devnull).strip()
             except subprocess.CalledProcessError:
                 continue
 
@@ -720,7 +721,7 @@ class WebkitFlatpak:
             toolchain_name = os.environ.get("CC", "gcc")
             toolchain_path = self.icc_version[toolchain_name]
             if not os.path.isfile(toolchain_path):
-                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r")
+                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", toolchain_path)
                 return 1
             forwarded.update({
                 "CCACHE_PREFIX": "icecc",
@@ -752,9 +753,8 @@ class WebkitFlatpak:
             return 1
 
         if self.update:
-            Console.message("Updating Flatpak %s environment" % self.build_type)
             repo = self.sdk_repo
-            repo.flatpak("update")
+            repo.flatpak("update", show_output=True, comment="Updating Flatpak %s environment" % self.build_type)
             for package in self._get_packages():
                 if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
                    and not repo.is_app_installed(package.name, branch=self.sdk_branch):
@@ -822,10 +822,8 @@ class WebkitFlatpak:
             return self.run_gdb()
         elif self.user_command:
             program = self.user_command[0]
-            if program.endswith("build-webkit"):
-                Console.message("Building webkit")
-                if self.cmakeargs:
-                    self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
+            if program.endswith("build-webkit") and self.cmakeargs:
+                self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
 
             return self.run_in_sandbox(*self.user_command)
         elif not self.update and not self.build_gst:
