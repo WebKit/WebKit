@@ -1,3 +1,16 @@
+2020-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Sending beacons when Fetch KeepAlive feature is disabled crashes the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=210753
+        <rdar://problem/61896221>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        Make sure NetworkResourceLoadParameters's webPageProxyID / webPageID / webFrameID are properly
+        initialized before sending the IPC or IPC decoding will fail.
+
 2020-04-20  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Use ObjectIdentifier<> for geolocationID

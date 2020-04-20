@@ -639,8 +639,16 @@ bool WebLoaderStrategy::usePingLoad() const
 
 void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)
 {
+    auto* webFrame = WebFrame::fromCoreFrame(frame);
     auto* document = frame.document();
-    if (!document) {
+    if (!document || !webFrame) {
+        if (completionHandler)
+            completionHandler(internalError(request.url()), { });
+        return;
+    }
+
+    auto* webPage = webFrame->page();
+    if (!webPage) {
         if (completionHandler)
             completionHandler(internalError(request.url()), { });
         return;
@@ -648,6 +656,9 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = generateLoadIdentifier();
+    loadParameters.webPageProxyID = webPage->webPageProxyIdentifier();
+    loadParameters.webPageID = webPage->identifier();
+    loadParameters.webFrameID = webFrame->frameID();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.topOrigin = &document->topOrigin();
@@ -666,17 +677,12 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     }
     addParametersShared(&frame, loadParameters);
     
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
-    auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
-    auto* webPage = webFrame ? webFrame->page() : nullptr;
-    if (webPage)
-        loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
+    loadParameters.isNavigatingToAppBoundDomain = webPage->isNavigatingToAppBoundDomain();
     
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();
     // FIXME: Instead of passing userContentControllerIdentifier, we should just pass webPageId to NetworkProcess.
-    if (webPage)
-        loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
+    loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
 #endif
 
     if (completionHandler)

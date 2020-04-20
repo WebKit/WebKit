@@ -119,6 +119,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(MEDIA_STREAM)
     , m_setScreenCaptureEnabled(RuntimeEnabledFeatures::sharedFeatures().screenCaptureEnabled())
 #endif
+    , m_fetchAPIKeepAliveAPIEnabled(RuntimeEnabledFeatures::sharedFeatures().fetchAPIKeepAliveEnabled())
     , m_shouldMockBoldSystemFontForAccessibility(RenderTheme::singleton().shouldMockBoldSystemFontForAccessibility())
 #if USE(AUDIO_SESSION)
     , m_shouldManageAudioSessionCategory(DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
@@ -222,6 +223,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(MEDIA_STREAM)
     RuntimeEnabledFeatures::sharedFeatures().setScreenCaptureEnabled(m_setScreenCaptureEnabled);
 #endif
+    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled(m_fetchAPIKeepAliveAPIEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 
 #if USE(AUDIO_SESSION)
@@ -807,6 +809,11 @@ void InternalSettings::setScreenCaptureEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+}
+
+void InternalSettings::setFetchAPIKeepAliveEnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled(enabled);
 }
 
 ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()
