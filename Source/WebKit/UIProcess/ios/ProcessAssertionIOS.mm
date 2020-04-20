@@ -272,6 +272,12 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 @end
 
 @implementation WKRBSAssertionDelegate
+- (void)dealloc
+{
+    [_invalidationCallback release];
+    [super dealloc];
+}
+
 - (void)assertionWillInvalidate:(RBSAssertion *)assertion
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertionWillInvalidate", self);
