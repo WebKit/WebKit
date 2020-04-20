@@ -144,6 +144,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             contentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._treeElementAddedOrChanged, this);
             contentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementDidChange, this._treeElementAddedOrChanged, this);
             contentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
+            contentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleTreeElementRemoved, this);
         }
 
         contentTreeOutline[WI.NavigationSidebarPanel.IgnoreCookieRestoration] = ignoreCookieRestoration;
@@ -315,16 +316,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     updateFilter()
     {
-        let selectedTreeElement;
-        for (let treeOutline of this.contentTreeOutlines) {
-            if (treeOutline.hidden || treeOutline[WI.NavigationSidebarPanel.SuppressFilteringSymbol])
-                continue;
-
-            selectedTreeElement = treeOutline.selectedTreeElement;
-            if (selectedTreeElement)
-                break;
-        }
-
         let filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
         this._filtersSetting.value = filters;
@@ -350,9 +341,10 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
                 currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, dontPopulate);
             }
+
+            this._checkForEmptyFilterResults(treeOutline);
         }
 
-        this._checkForEmptyFilterResults();
         this._updateContentOverflowShadowVisibilityDebouncer.force();
     }
 
@@ -536,57 +528,50 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._bottomOverflowShadowElement.style.opacity = (1 - (bottomCoverage / edgeThreshold)).toFixed(1);
     }
 
-    _checkForEmptyFilterResults()
+    _checkForEmptyFilterResults(treeOutline)
     {
-        function checkTreeOutlineForEmptyFilterResults(treeOutline)
-        {
-            // No tree elements, so don't touch the empty content placeholder.
-            if (!treeOutline.children.length)
-                return;
+        if (treeOutline[WI.NavigationSidebarPanel.SuppressFilteringSymbol])
+            return;
 
-            // Iterate over all the top level tree elements. If any filterable elements are visible, return early.
-            let filterableTreeElementFound = false;
-            let unfilteredTreeElementFound = false;
-            let currentTreeElement = treeOutline.children[0];
-            while (currentTreeElement) {
-                let suppressFilteringForTreeElement = currentTreeElement[WI.NavigationSidebarPanel.SuppressFilteringSymbol];
-                if (!suppressFilteringForTreeElement) {
-                    filterableTreeElementFound = true;
+        // No tree elements, so don't touch the empty content placeholder.
+        if (!treeOutline.children.length)
+            return;
 
-                    if (!currentTreeElement.hidden) {
-                        unfilteredTreeElementFound = true;
-                        break;
-                    }
+        // Iterate over all the top level tree elements. If any filterable elements are visible, return early.
+        let filterableTreeElementFound = false;
+        let unfilteredTreeElementFound = false;
+        let currentTreeElement = treeOutline.children[0];
+        while (currentTreeElement) {
+            let suppressFilteringForTreeElement = currentTreeElement[WI.NavigationSidebarPanel.SuppressFilteringSymbol];
+            if (!suppressFilteringForTreeElement) {
+                filterableTreeElementFound = true;
+
+                if (!currentTreeElement.hidden) {
+                    unfilteredTreeElementFound = true;
+                    break;
                 }
-
-                currentTreeElement = currentTreeElement.nextSibling;
             }
 
-            if (unfilteredTreeElementFound || !filterableTreeElementFound) {
-                this.hideEmptyContentPlaceholder(treeOutline);
-                this._emptyFilterResults.delete(treeOutline);
-                return;
-            }
-
-            let message = WI.createMessageTextView(WI.UIString("No Filter Results"));
-
-            let buttonElement = message.appendChild(document.createElement("button"));
-            buttonElement.textContent = WI.UIString("Clear Filters");
-            buttonElement.addEventListener("click", () => {
-                this.resetFilter();
-            });
-
-            // All top level tree elements are hidden, so filtering hid everything. Show a message.
-            this.showEmptyContentPlaceholder(message, treeOutline);
-            this._emptyFilterResults.add(treeOutline);
+            currentTreeElement = currentTreeElement.nextSibling;
         }
 
-        for (let treeOutline of this.contentTreeOutlines) {
-            if (treeOutline[WI.NavigationSidebarPanel.SuppressFilteringSymbol])
-                continue;
-
-            checkTreeOutlineForEmptyFilterResults.call(this, treeOutline);
+        if (unfilteredTreeElementFound || !filterableTreeElementFound) {
+            this.hideEmptyContentPlaceholder(treeOutline);
+            this._emptyFilterResults.delete(treeOutline);
+            return;
         }
+
+        let message = WI.createMessageTextView(WI.UIString("No Filter Results"));
+
+        let buttonElement = message.appendChild(document.createElement("button"));
+        buttonElement.textContent = WI.UIString("Clear Filters");
+        buttonElement.addEventListener("click", () => {
+            this.resetFilter();
+        });
+
+        // All top level tree elements are hidden, so filtering hid everything. Show a message.
+        this.showEmptyContentPlaceholder(message, treeOutline);
+        this._emptyFilterResults.add(treeOutline);
     }
 
     _filterDidChange()
@@ -614,7 +599,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             currentTreeElement = currentTreeElement.traverseNextTreeElement(false, treeElement, dontPopulate);
         }
 
-        this._checkForEmptyFilterResults();
+        this._checkForEmptyFilterResults(event.target);
 
         if (this.visible)
             this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
@@ -626,6 +611,14 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     _treeElementDisclosureDidChange(event)
     {
         this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
+    }
+
+    _handleTreeElementRemoved(event)
+    {
+        this._checkForEmptyFilterResults(event.target);
+
+        if (this.visible)
+            this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
     }
 
     _checkForStaleResourcesIfNeeded()

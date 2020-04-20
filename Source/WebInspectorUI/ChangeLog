@@ -1,3 +1,17 @@
+2020-04-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: removing a `WI.TreeElement` in a `WI.NavigationSidebar` doesn't check if the `WI.TreeOutline` still matches the current filter
+        https://bugs.webkit.org/show_bug.cgi?id=210672
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.NavigationSidebarPanel.prototype.updateFilter):
+        (WI.NavigationSidebarPanel.prototype._checkForEmptyFilterResults):
+        (WI.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        (WI.NavigationSidebarPanel.prototype._handleTreeElementRemoved): Added.
+
 2020-04-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r242018): using `RegExp.prototype.test` with a global `RegExp` will ignore one potential match after each successful match
