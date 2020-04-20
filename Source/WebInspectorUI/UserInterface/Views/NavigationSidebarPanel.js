@@ -317,7 +317,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     updateFilter()
     {
         let filters = this._filterBar.filters;
-        this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
+        this._textFilterRegex = filters.text ? WI.SearchUtilities.filterRegExpForString(filters.text, WI.SearchUtilities.defaultSettings) : null;
         this._filtersSetting.value = filters;
         this._filterFunctions = filters.functions;
 
