@@ -1,3 +1,18 @@
+2020-04-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Clean and merge test expectations for WPT tests for Intersection Observer v2.
+
+        Unreviewed gardening.
+
+        Merge the expectations for the tests cross-origin-effects.sub.html
+        and cross-origin-occlusion.sub.html on the common TestExpectations file.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Update WebXRSession and WebXRSystem interfaces

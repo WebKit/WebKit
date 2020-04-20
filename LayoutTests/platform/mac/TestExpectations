@@ -1918,9 +1918,6 @@ webkit.org/b/208219 compositing/video/video-clip-change-src.html [ Pass ImageOnl
 
 webkit.org/b/208220 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Pass Failure ]
 
-webkit.org/b/208053 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
-webkit.org/b/208053 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
-
 webkit.org/b/208078 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Pass Timeout ]
 
 webkit.org/b/208450 webanimations/accelerated-animation-renderer-change.html [ Pass ImageOnlyFailure ]

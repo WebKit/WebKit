@@ -2359,9 +2359,6 @@ webkit.org/b/208188 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 
-imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Missing ]
-imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Missing ]
-
 webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure ]
 
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Failure ]
