@@ -60,7 +60,7 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static JSBigInt* createZero(VM&);
-    static JSBigInt* tryCreateWithLength(JSGlobalObject*, unsigned length);
+    JS_EXPORT_PRIVATE static JSBigInt* tryCreateWithLength(JSGlobalObject*, unsigned length);
     static JSBigInt* createWithLengthUnchecked(VM&, unsigned length);
 
     static JSBigInt* createFrom(VM&, int32_t value);
@@ -153,6 +153,9 @@ public:
 
     static JSBigInt* leftShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+
+    Digit digit(unsigned);
+    void setDigit(unsigned, Digit); // Use only when initializing.
 
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
@@ -261,9 +264,6 @@ private:
 
     inline Digit* dataStorage() { return m_data.get(m_length); }
 
-    Digit digit(unsigned);
-    void setDigit(unsigned, Digit);
-
     const unsigned m_length;
     bool m_sign { false };
     CagedUniquePtr<Gigacage::Primitive, Digit> m_data;
@@ -273,6 +273,18 @@ inline JSBigInt* asHeapBigInt(JSValue value)
 {
     ASSERT(value.asCell()->isHeapBigInt());
     return jsCast<JSBigInt*>(value.asCell());
+}
+
+inline JSBigInt::Digit JSBigInt::digit(unsigned n)
+{
+    ASSERT(n < length());
+    return dataStorage()[n];
+}
+
+inline void JSBigInt::setDigit(unsigned n, Digit value)
+{
+    ASSERT(n < length());
+    dataStorage()[n] = value;
 }
 
 } // namespace JSC

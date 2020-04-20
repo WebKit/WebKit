@@ -40,7 +40,7 @@ public:
         return vm.bigIntObjectSpace<mode>();
     }
 
-    static BigIntObject* create(VM&, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static BigIntObject* create(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 

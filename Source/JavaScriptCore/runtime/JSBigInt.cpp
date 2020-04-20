@@ -1936,18 +1936,6 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
     return heapResult->rightTrim(vm);
 }
 
-inline JSBigInt::Digit JSBigInt::digit(unsigned n)
-{
-    ASSERT(n < length());
-    return dataStorage()[n];
-}
-
-inline void JSBigInt::setDigit(unsigned n, Digit value)
-{
-    ASSERT(n < length());
-    dataStorage()[n] = value;
-}
-
 JSObject* JSBigInt::toObject(JSGlobalObject* globalObject) const
 {
     return BigIntObject::create(globalObject->vm(), globalObject, const_cast<JSBigInt*>(this));

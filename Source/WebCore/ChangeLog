@@ -1,3 +1,23 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        StructuredClone algorithm should be aware of BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=210728
+
+        Reviewed by Mark Lam.
+
+        This patch adds structured-cloning for BigInt and BigIntObject.
+        The logic is adding BigIntTag & BigIntObjectTag. And then we put content of BigInt with length.
+        And deserialization reads them to reconstruct BigInt or BigIntObject.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImmediate):
+        (WebCore::CloneSerializer::dumpBigIntData):
+        (WebCore::CloneSerializer::dumpBigInt32Data):
+        (WebCore::CloneSerializer::dumpHeapBigIntData):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::readBigInt):
+        (WebCore::CloneDeserializer::readTerminal):
+
 2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable resource load statistics

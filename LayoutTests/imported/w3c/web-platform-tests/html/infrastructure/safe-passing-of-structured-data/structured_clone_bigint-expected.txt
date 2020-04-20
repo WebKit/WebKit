@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: SyntaxError: No identifiers allowed directly after numeric literal
 
-Harness Error (FAIL), message = SyntaxError: No identifiers allowed directly after numeric literal
-
+PASS Primitive BigInt is cloned 
+PASS Instance of BigInt is cloned 
 

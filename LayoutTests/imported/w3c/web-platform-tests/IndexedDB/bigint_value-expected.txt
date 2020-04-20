@@ -1,5 +1,8 @@
-CONSOLE MESSAGE: SyntaxError: No identifiers allowed directly after numeric literal
 
-Harness Error (FAIL), message = SyntaxError: No identifiers allowed directly after numeric literal
-
+PASS BigInts as values in IndexedDB - primitive BigInt 
+PASS BigInts as values in IndexedDB - BigInt object 
+PASS BigInts as values in IndexedDB - primitive BigInt inside object 
+PASS BigInts as values in IndexedDB - BigInt object inside object 
+PASS BigInts as keys in IndexedDB - primitive BigInt 
+PASS BigInts as keys in IndexedDB - BigInt object 
 

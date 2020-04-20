@@ -1,3 +1,13 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        StructuredClone algorithm should be aware of BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=210728
+
+        Reviewed by Mark Lam.
+
+        * web-platform-tests/IndexedDB/bigint_value-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured_clone_bigint-expected.txt:
+
 2020-04-19  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Don't use the inherited custom properties to store environment variables.

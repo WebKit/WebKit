@@ -789,6 +789,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/AuxiliaryBarrierInlines.h
     runtime/BasicBlockLocation.h
     runtime/BatchedTransitionOptimizer.h
+    runtime/BigIntObject.h
     runtime/BigIntPrototype.h
     runtime/BooleanObject.h
     runtime/BooleanPrototype.h

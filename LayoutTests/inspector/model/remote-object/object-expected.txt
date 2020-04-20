@@ -41,9 +41,37 @@ EXPRESSION: ({a: 1})
 EXPRESSION: ({a: 1, b: 0, c: -0, d: 456n})
 {
   "_type": "object",
-  "_subtype": "error",
   "_objectId": "<filtered>",
-  "_description": "SyntaxError: No identifiers allowed directly after numeric literal"
+  "_description": "Object",
+  "_preview": {
+    "_type": "object",
+    "_description": "Object",
+    "_lossless": true,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "a",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "b",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "c",
+        "_type": "number",
+        "_value": "-0"
+      },
+      {
+        "_name": "d",
+        "_type": "bigint",
+        "_value": "456n"
+      }
+    ],
+    "_entries": null
+  }
 }
 
 -----------------------------------------------------
