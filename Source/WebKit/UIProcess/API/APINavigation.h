@@ -70,9 +70,9 @@ public:
 class Navigation : public ObjectImpl<Object::Type::Navigation> {
     WTF_MAKE_NONCOPYABLE(Navigation);
 public:
-    static Ref<Navigation> create(WebKit::WebNavigationState& state)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem* currentAndTargetItem)
     {
-        return adoptRef(*new Navigation(state));
+        return adoptRef(*new Navigation(state, currentAndTargetItem));
     }
 
     static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType backForwardFrameLoadType)
@@ -104,6 +104,7 @@ public:
     WebKit::WebBackForwardListItem* targetItem() const { return m_targetItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     Optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
+    WebKit::WebBackForwardListItem* reloadItem() const { return m_reloadItem.get(); }
 
     void appendRedirectionURL(const WTF::URL&);
     Vector<WTF::URL> takeRedirectChain() { return WTFMove(m_redirectChain); }
@@ -158,6 +159,7 @@ public:
 
 private:
     explicit Navigation(WebKit::WebNavigationState&);
+    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem*);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
     Navigation(WebKit::WebNavigationState&, std::unique_ptr<SubstituteData>&&);
@@ -170,6 +172,7 @@ private:
 
     RefPtr<WebKit::WebBackForwardListItem> m_targetItem;
     RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
+    RefPtr<WebKit::WebBackForwardListItem> m_reloadItem;
     Optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
     std::unique_ptr<SubstituteData> m_substituteData;
     WebKit::NavigationActionData m_lastNavigationAction;

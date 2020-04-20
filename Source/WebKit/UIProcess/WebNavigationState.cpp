@@ -59,9 +59,9 @@ Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebBackForw
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createReloadNavigation()
+Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebBackForwardListItem* currentAndTargetItem)
 {
-    auto navigation = API::Navigation::create(*this);
+    auto navigation = API::Navigation::create(*this, currentAndTargetItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 

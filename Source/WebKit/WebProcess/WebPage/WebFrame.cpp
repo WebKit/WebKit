@@ -252,7 +252,7 @@ void WebFrame::invalidatePolicyListener()
         completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier identifier, PolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier identifier, PolicyAction action, uint64_t navigationID, DownloadID downloadID, Optional<WebsitePoliciesData>&& websitePolicies, Optional<SandboxExtension::Handle>&& sandboxExtensionHandle)
 {
     if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction)
         return;
@@ -272,6 +272,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyChec
     if (navigationID) {
         if (WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_coreFrame->loader().policyDocumentLoader()))
             documentLoader->setNavigationID(navigationID);
+    }
+
+    if (action == PolicyAction::Use && sandboxExtensionHandle) {
+        if (auto* page = this->page())
+            page->sandboxExtensionTracker().beginLoad(page->mainWebFrame(), WTFMove(*sandboxExtensionHandle));
     }
 
     function(action, identifier);

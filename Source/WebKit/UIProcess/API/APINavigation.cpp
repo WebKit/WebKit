@@ -40,6 +40,12 @@ Navigation::Navigation(WebNavigationState& state)
 {
 }
 
+Navigation::Navigation(WebNavigationState& state, WebBackForwardListItem* currentAndTargetItem)
+    : m_navigationID(state.generateNavigationID())
+    , m_reloadItem(currentAndTargetItem)
+{
+}
+
 Navigation::Navigation(WebNavigationState& state, WebCore::ResourceRequest&& request, WebBackForwardListItem* fromItem)
     : m_navigationID(state.generateNavigationID())
     , m_originalRequest(WTFMove(request))

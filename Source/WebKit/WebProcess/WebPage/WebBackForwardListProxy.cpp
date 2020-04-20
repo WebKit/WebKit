@@ -105,9 +105,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     if (!m_page)
         return;
 
-    SandboxExtension::Handle sandboxExtensionHandle;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
-    m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item.identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply());
 }
 
 RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
