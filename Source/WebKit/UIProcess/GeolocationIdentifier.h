@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationPermissionRequestManagerProxy_h
-#define GeolocationPermissionRequestManagerProxy_h
+#pragma once
 
-#include "GeolocationIdentifier.h"
-#include "GeolocationPermissionRequestProxy.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-class WebPageProxy;
+enum GeolocationIdentifierType { };
+using GeolocationIdentifier = ObjectIdentifier<GeolocationIdentifierType>;
 
-class GeolocationPermissionRequestManagerProxy {
-public:
-    explicit GeolocationPermissionRequestManagerProxy(WebPageProxy&);
-
-    void invalidateRequests();
-
-    // Create a request to be presented to the user.
-    Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier);
-    
-    // Called by GeolocationPermissionRequestProxy when a decision is made by the user.
-    void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, bool allow);
-
-    bool isValidAuthorizationToken(const String&) const;
-    void revokeAuthorizationToken(const String&);
-
-private:
-    HashMap<GeolocationIdentifier, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
-    HashSet<String> m_validAuthorizationTokens;
-    WebPageProxy& m_page;
-};
-
-} // namespace WebKit
-
-#endif // GeolocationPermissionRequestManagerProxy_h
+}

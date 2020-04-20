@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "GeolocationIdentifier.h"
 #include <wtf/Function.h>
 
 namespace WebKit {
@@ -34,7 +35,7 @@ class GeolocationPermissionRequestManagerProxy;
 
 class GeolocationPermissionRequestProxy : public RefCounted<GeolocationPermissionRequestProxy> {
 public:
-    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
+    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID)
     {
         return adoptRef(*new GeolocationPermissionRequestProxy(manager, geolocationID));
     }
@@ -45,10 +46,10 @@ public:
     void invalidate();
 
 private:
-    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, uint64_t geolocationID);
+    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, GeolocationIdentifier);
 
     GeolocationPermissionRequestManagerProxy* m_manager;
-    uint64_t m_geolocationID;
+    GeolocationIdentifier m_geolocationID;
 };
 
 class GeolocationPermissionRequest : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {

@@ -37,6 +37,7 @@
 #include "DrawingAreaInfo.h"
 #include "EditingRange.h"
 #include "FocusedElementInformation.h"
+#include "GeolocationIdentifier.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "InjectedBundlePagePolicyClient.h"
@@ -1593,7 +1594,7 @@ private:
     void extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&&);
 #endif
 
-    void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, const String& authorizationToken);
+    void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 

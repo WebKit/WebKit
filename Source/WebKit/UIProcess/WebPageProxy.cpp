@@ -7982,7 +7982,7 @@ void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdenti
     m_uiClient->reachedApplicationCacheOriginQuota(this, securityOrigin.get(), currentQuota, totalBytesNeeded, WTFMove(reply));
 }
 
-void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, FrameInfoData&& frameInfo)
+void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier geolocationID, FrameInfoData&& frameInfo)
 {
     MESSAGE_CHECK(m_process, frameInfo.frameID);
     auto* frame = m_process->webFrame(*frameInfo.frameID);

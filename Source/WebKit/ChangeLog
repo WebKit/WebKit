@@ -1,3 +1,39 @@
+2020-04-20  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Use ObjectIdentifier<> for geolocationID
+        <https://webkit.org/b/210680>
+        <rdar://problem/58892340>
+
+        Reviewed by Chris Dumez.
+
+        Replace uses of uint64_t with GeolocationIdentifier.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/GeolocationIdentifier.h: Add.
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::createRequest):
+        (WebKit::GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.h:
+        * UIProcess/GeolocationPermissionRequestProxy.cpp:
+        (WebKit::GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy):
+        * UIProcess/GeolocationPermissionRequestProxy.h:
+        (WebKit::GeolocationPermissionRequestProxy::create):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+        (WebKit::GeolocationPermissionRequestManager::cancelRequestForGeolocation):
+        (WebKit::GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision):
+        (WebKit::generateGeolocationID): Delete.
+        - Replace with GeolocationIdentifier::generate().
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveGeolocationPermissionDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-20  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Refactor WebKit media playback process assertion logic to minimize chances of leaking them

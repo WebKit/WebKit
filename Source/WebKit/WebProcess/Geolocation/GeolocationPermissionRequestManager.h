@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GeolocationIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
@@ -45,11 +46,11 @@ public:
     void cancelRequestForGeolocation(WebCore::Geolocation&);
     void revokeAuthorizationToken(const String&);
 
-    void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, const String& authorizationToken);
+    void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
 private:
-    typedef HashMap<uint64_t, WebCore::Geolocation*> IDToGeolocationMap;
-    typedef HashMap<WebCore::Geolocation*, uint64_t> GeolocationToIDMap;
+    typedef HashMap<GeolocationIdentifier, WebCore::Geolocation*> IDToGeolocationMap;
+    typedef HashMap<WebCore::Geolocation*, GeolocationIdentifier> GeolocationToIDMap;
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 
