@@ -8929,7 +8929,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
     if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
         videoControlsManagerDidChange();
 
-    m_process->webPageMediaStateDidChange(*this);
+    m_process->updateAudibleMediaAssertions();
 }
 
 void WebPageProxy::videoControlsManagerDidChange()

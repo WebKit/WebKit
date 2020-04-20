@@ -1,3 +1,41 @@
+2020-04-20  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Refactor WebKit media playback process assertion logic to minimize chances of leaking them
+        https://bugs.webkit.org/show_bug.cgi?id=210670
+
+        Reviewed by Geoffrey Garen.
+
+        Refactor WebKit media playback process assertion logic to minimize chances of leaking them. In particular,
+        the following changes were made:
+        1. Instead of the WebProcessPool having a HashMap of media playback process assertions for
+           the WebProcess, we now store the assertion on the WebProcessProxy object itself. This is
+           less likely to get out of sync and leak.
+        2. Add a RefCounter to the WebProcessPool to count WebProcesses that have audible media.
+           Whenever a WebProcess starts or stops playing audible media, it merely grabs a RefCounter
+           token or releases it. The WebProcessPool relies on this counter to decide whether or not
+           to take a media playback assertion on behalf of the UIProcess. Since this is token-based
+           and the token is stored on the WebProcessProxy object, it makes it less likely to leak
+           the assertion.
+        3. The WebProcessProxy object now has a AudibleMediaActivity data structure wrapping both
+           its media playback assertion and its WebProcessWithAudibleMediaToken that it got from
+           the WebProcessPool. When the WebProcess shuts down (normally or due to crash/termination),
+           we make sure to clear this data structure.
+        4. Make sure that the WebProcessProxy updates its AudibleMediaActivity whenever a page is
+           removed from the WebProcess.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_webProcessWithAudibleMediaCounter):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::webProcessWithAudibleMediaToken const):
+        (WebKit::WebProcessPool::updateAudibleMediaAssertions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::updateAudibleMediaAssertions):
+        * UIProcess/WebProcessProxy.h:
+
 2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         <rdar://problem/62059046>

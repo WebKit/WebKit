@@ -414,6 +414,7 @@ void WebProcessProxy::shutDown()
     m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
     m_activityForHoldingLockedFiles = nullptr;
+    m_audibleMediaActivity = WTF::nullopt;
 
     for (auto& frame : copyToVector(m_frameMap.values()))
         frame->webProcessWillShutDown();
@@ -513,7 +514,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
 
     removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.identifier());
     updateRegistrationWithDataStore();
-
+    updateAudibleMediaAssertions();
     updateBackgroundResponsivenessTimer();
 
     maybeShutDown();
@@ -1382,17 +1383,24 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
     ASSERT(!m_backgroundToken || !m_foregroundToken);
 }
 
-void WebProcessProxy::webPageMediaStateDidChange(WebPageProxy&)
+void WebProcessProxy::updateAudibleMediaAssertions()
 {
     bool newHasAudibleWebPage = WTF::anyOf(m_pageMap.values(), [] (auto& page) { return page->isPlayingAudio(); });
-    if (m_hasAudibleWebPage == newHasAudibleWebPage)
-        return;
-    m_hasAudibleWebPage = newHasAudibleWebPage;
 
-    if (m_hasAudibleWebPage)
-        processPool().setWebProcessIsPlayingAudibleMedia(coreProcessIdentifier());
-    else
-        processPool().clearWebProcessIsPlayingAudibleMedia(coreProcessIdentifier());
+    bool hasAudibleMediaActivity = !!m_audibleMediaActivity;
+    if (hasAudibleMediaActivity == newHasAudibleWebPage)
+        return;
+
+    if (newHasAudibleWebPage) {
+        RELEASE_LOG(ProcessSuspension, "%p - Taking MediaPlayback assertion for WebProcess with PID %d", this, processIdentifier());
+        m_audibleMediaActivity = AudibleMediaActivity {
+            makeUniqueRef<ProcessAssertion>(processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
+            processPool().webProcessWithAudibleMediaToken()
+        };
+    } else {
+        RELEASE_LOG(ProcessSuspension, "%p - Releasing MediaPlayback assertion for WebProcess with PID %d", this, processIdentifier());
+        m_audibleMediaActivity = WTF::nullopt;
+    }
 }
 
 void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)

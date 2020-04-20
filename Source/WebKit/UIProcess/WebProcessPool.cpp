@@ -260,6 +260,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
+    , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -1182,7 +1183,6 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
 void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
-    ASSERT(!m_processesPlayingAudibleMedia.contains(process->coreProcessIdentifier()));
 
     if (m_prewarmedProcess == process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
@@ -2350,46 +2350,29 @@ void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomai
 }
 #endif
 
-void WebProcessPool::setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier processID)
+WebProcessWithAudibleMediaToken WebProcessPool::webProcessWithAudibleMediaToken() const
 {
-    auto* process = WebProcessProxy::processForIdentifier(processID);
-    ASSERT(process);
-
-    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessIsPlayingAudibleMedia: Web process is now playing audible media (process=%p, PID=%i)", process, process->processIdentifier());
-
-    if (m_processesPlayingAudibleMedia.isEmpty()) {
-        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setWebProcessIsPlayingAudibleMedia: The number of processes playing audible media is now one. Taking UI process assertion.");
-
-        ASSERT(!m_uiProcessMediaPlaybackAssertion);
-        m_uiProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
-#if ENABLE(GPU_PROCESS)
-        if (GPUProcessProxy::singletonIfCreated())
-            m_gpuProcessMediaPlaybackAssertion = makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
-#endif
-    }
-
-    auto result = m_processesPlayingAudibleMedia.add(processID, nullptr);
-    ASSERT(result.isNewEntry);
-    result.iterator->value = makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback);
+    return m_webProcessWithAudibleMediaCounter.count();
 }
 
-void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier processID)
+void WebProcessPool::updateAudibleMediaAssertions()
 {
-    auto result = m_processesPlayingAudibleMedia.take(processID);
-    ASSERT_UNUSED(result, result);
-
-    auto* process = WebProcessProxy::processForIdentifier(processID);
-    ASSERT_UNUSED(process, process);
-
-    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessIsPlayingAudibleMedia: Web process is no longer playing audible media (process=%p, PID=%i)", process, process->processIdentifier());
-
-    if (m_processesPlayingAudibleMedia.isEmpty()) {
-        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "clearWebProcessIsPlayingAudibleMedia: The number of processes playing audible media now zero. Releasing UI process assertion.");
-
-        ASSERT(m_uiProcessMediaPlaybackAssertion);
-        m_uiProcessMediaPlaybackAssertion = nullptr;
-        m_gpuProcessMediaPlaybackAssertion = nullptr;
+    if (!m_webProcessWithAudibleMediaCounter.value()) {
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media now zero. Releasing UI process assertion.");
+        m_audibleMediaActivity = WTF::nullopt;
+        return;
     }
+
+    if (m_audibleMediaActivity)
+        return;
+
+    WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media is now greater than zero. Taking UI process assertion.");
+    m_audibleMediaActivity = AudibleMediaActivity {
+        makeUniqueRef<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
+#if ENABLE(GPU_PROCESS)
+        , GPUProcessProxy::singletonIfCreated() ? makeUnique<ProcessAssertion>(GPUProcessProxy::singleton().processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) : nullptr
+#endif
+    };
 }
 
 void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceWorkerProcess)

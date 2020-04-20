@@ -517,8 +517,7 @@ public:
     const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const { return m_userMessageHandler; }
 #endif
 
-    void setWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
-    void clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdentifier);
+    WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
 
     void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
 
@@ -562,6 +561,7 @@ private:
 #endif
 
     void updateProcessAssertions();
+    void updateAudibleMediaAssertions();
 
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
@@ -787,9 +787,15 @@ private:
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
 #endif
 
-    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesPlayingAudibleMedia;
-    std::unique_ptr<ProcessAssertion> m_uiProcessMediaPlaybackAssertion;
-    std::unique_ptr<ProcessAssertion> m_gpuProcessMediaPlaybackAssertion;
+    WebProcessWithAudibleMediaCounter m_webProcessWithAudibleMediaCounter;
+
+    struct AudibleMediaActivity {
+        UniqueRef<ProcessAssertion> uiProcessMediaPlaybackAssertion;
+#if ENABLE(GPU_PROCESS)
+        std::unique_ptr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
+#endif
+    };
+    Optional<AudibleMediaActivity> m_audibleMediaActivity;
 
 #if PLATFORM(IOS)
     // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).

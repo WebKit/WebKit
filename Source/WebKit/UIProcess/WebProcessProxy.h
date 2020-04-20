@@ -106,6 +106,9 @@ typedef ForegroundWebProcessCounter::Token ForegroundWebProcessToken;
 enum BackgroundWebProcessCounterType { };
 typedef RefCounter<BackgroundWebProcessCounterType> BackgroundWebProcessCounter;
 typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
+enum WebProcessWithAudibleMediaCounterType { };
+using WebProcessWithAudibleMediaCounter = RefCounter<WebProcessWithAudibleMediaCounterType>;
+using WebProcessWithAudibleMediaToken = WebProcessWithAudibleMediaCounter::Token;
 
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
@@ -345,7 +348,7 @@ public:
 #endif
 #endif
 
-    void webPageMediaStateDidChange(WebPageProxy&);
+    void updateAudibleMediaAssertions();
 
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
@@ -568,7 +571,6 @@ private:
     unsigned m_shutdownPreventingScopeCount { 0 };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
-    bool m_hasAudibleWebPage { false };
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(IOS_FAMILY)
     bool m_hasIssuedAttachmentElementRelatedSandboxExtensions { false };
 #endif
@@ -593,6 +595,12 @@ private:
     Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
 
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
+
+    struct AudibleMediaActivity {
+        UniqueRef<ProcessAssertion> assertion;
+        WebProcessWithAudibleMediaToken token;
+    };
+    Optional<AudibleMediaActivity> m_audibleMediaActivity;
 };
 
 } // namespace WebKit
