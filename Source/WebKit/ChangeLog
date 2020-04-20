@@ -1,3 +1,13 @@
+2020-04-20  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] lowWatermarkPages() in MemoryPressureMonitor.cpp only searches the "low" value inside the first "Node" section
+        https://bugs.webkit.org/show_bug.cgi?id=210345
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::lowWatermarkPages):
+
 2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable resource load statistics

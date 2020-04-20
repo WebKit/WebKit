@@ -66,9 +66,48 @@ static const unsigned maxCgroupPath = 4096; // PATH_MAX = 4096 from (Linux) incl
 #define STRINGIFY(val) STRINGIFY_EXPANDED(val)
 #define ZONEINFO_TOKEN_BUFFER_SIZE 128
 
+// The lowWatermark is the sum of the low watermarks across all zones as the
+// MemAvailable info was implemented in /proc/meminfo since version 3.14 of the
+// kernel (added by commit 34e431b0a, source git.kernel.org):
+//
+// MemAvailable: An estimate of how much memory is available for starting new
+//               applications, without swapping. Calculated from MemFree,
+//               SReclaimable, the size of the file LRU lists, and the low
+//               watermarks in each zone.
+//               The estimate takes into account that the system needs some
+//               page cache to function well, and that not all reclaimable
+//               slab will be reclaimable, due to items being in use. The
+//               impact of those factors will vary from system to system.
+//
+// The fscanf() reads the input stream file until the argument list passed as
+// parameters is successfully filled.
+//
+// In our immplemetation the `while (!feof(zoneInfoFile))` loop follows the next
+// logic:
+//
+// - the first `fscanf(zoneInfoFile, " Node %*u, zone %...[^\n]\n", buffer);`
+//   iterates the `Node` sections.
+// - Then, when we found a Normal node, we start to read each single
+//   `fscanf(zoneInfoFile, "%...s", buffer);` until find a `low` token.
+// - We read the next token which is the actual `low` value and we add it to the
+//   `sumLow` summation.
+//
+// The second fscanf() reads tokens one by one because the format of each row is
+// not homogeneous (2, 3 or 6 values):
+//
+//   Node 0, zone   Normal
+//     pages free     27303
+//           min      20500
+//           low      24089
+//           high     27678
+//           spanned  3414016
+//           present  3414016
+//           managed  3337293
+//           protection: (0, 0, 0, 0, 0)
 static size_t lowWatermarkPages(FILE* zoneInfoFile)
 {
     size_t low = 0;
+    size_t sumLow = 0;
     char buffer[ZONEINFO_TOKEN_BUFFER_SIZE + 1];
     bool inNormalZone = false;
 
@@ -83,11 +122,13 @@ static size_t lowWatermarkPages(FILE* zoneInfoFile)
         r = fscanf(zoneInfoFile, "%" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "s", buffer);
         if (r == 1 && inNormalZone && !strcmp(buffer, "low")) {
             r = fscanf(zoneInfoFile, "%zu", &low);
-            if (r == 1)
-                break;
+            if (r == 1) {
+                sumLow += low;
+                continue;
+            }
         }
     }
-    return low;
+    return sumLow;
 }
 
 static inline size_t systemPageSize()
