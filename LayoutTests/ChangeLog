@@ -1,3 +1,16 @@
+2020-04-20  Antoine Quint  <graouts@apple.com>
+
+        WebAnimations API doesn't properly apply keyframe easings to transforms
+        https://bugs.webkit.org/show_bug.cgi?id=210526
+        <rdar://problem/61800424>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that an animation targeting an accelerted property does not yield an accelerated animation if one of its keyframes contains a steps timing function.
+
+        * webanimations/transform-animation-with-steps-timing-function-not-accelerated-expected.txt: Added.
+        * webanimations/transform-animation-with-steps-timing-function-not-accelerated.html: Added.
+
 2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         StructuredClone algorithm should be aware of BigInt

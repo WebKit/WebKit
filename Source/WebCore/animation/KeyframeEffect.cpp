@@ -770,6 +770,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle)
 
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
+        keyframeValue.setTimingFunction(keyframe.timingFunction->clone());
 
         auto styleProperties = keyframe.style->immutableCopyIfNeeded();
         for (unsigned i = 0; i < styleProperties->propertyCount(); ++i)
