@@ -42,7 +42,7 @@ class MediaRecorder final
     : public ActiveDOMObject
     , public RefCounted<MediaRecorder>
     , public EventTargetWithInlineData
-    , private MediaStream::Observer
+    , private MediaStreamPrivate::Observer
     , private MediaStreamTrackPrivate::Observer {
     WTF_MAKE_ISO_ALLOCATED(MediaRecorder);
 public:
@@ -98,8 +98,11 @@ private:
     void dispatchError(Exception&&);
 
     // MediaStream::Observer
-    void didAddOrRemoveTrack() final;
-    
+    void didAddTrack(MediaStreamTrackPrivate&) final { handleTrackChange(); }
+    void didRemoveTrack(MediaStreamTrackPrivate&) final { handleTrackChange(); }
+
+    void handleTrackChange();
+
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&) final { };

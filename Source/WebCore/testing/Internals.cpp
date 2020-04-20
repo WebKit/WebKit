@@ -5054,7 +5054,7 @@ void Internals::setMediaStreamTrackMuted(MediaStreamTrack& track, bool muted)
 
 void Internals::removeMediaStreamTrack(MediaStream& stream, MediaStreamTrack& track)
 {
-    stream.internalRemoveTrack(track.id(), MediaStream::StreamModifier::Platform);
+    stream.privateStream().removeTrack(track.privateTrack());
 }
 
 void Internals::simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack& track)

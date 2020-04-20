@@ -44,6 +44,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ class MediaStreamPrivate final
 #endif
 {
 public:
-    class Observer {
+    class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() = default;
 
@@ -74,8 +75,6 @@ public:
 
     virtual ~MediaStreamPrivate();
 
-    enum class NotifyClientOption { Notify, DontNotify };
-
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
@@ -88,10 +87,10 @@ public:
     MediaStreamTrackPrivate* activeVideoTrack() { return m_activeVideoTrack; }
 
     bool active() const { return m_isActive; }
-    void updateActiveState(NotifyClientOption);
+    void updateActiveState();
 
-    void addTrack(RefPtr<MediaStreamTrackPrivate>&&, NotifyClientOption = NotifyClientOption::Notify);
-    void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption = NotifyClientOption::Notify);
+    void addTrack(Ref<MediaStreamTrackPrivate>&&);
+    WEBCORE_EXPORT void removeTrack(MediaStreamTrackPrivate&);
 
     void startProducingData();
     void stopProducingData();
@@ -123,14 +122,15 @@ private:
     void characteristicsChanged();
     void updateActiveVideoTrack();
 
-    void forEachObserver(const WTF::Function<void(Observer&)>&) const;
+    bool computeActiveState();
+    void forEachObserver(const Function<void(Observer&)>&);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamPrivate"; }
     WTFLogChannel& logChannel() const final;
 #endif
 
-    HashSet<Observer*> m_observers;
+    WeakHashSet<Observer> m_observers;
     String m_id;
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;

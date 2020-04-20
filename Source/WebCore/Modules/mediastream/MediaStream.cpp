@@ -33,15 +33,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "Logging.h"
 #include "MediaStreamTrackEvent.h"
-#include "NetworkingContext.h"
 #include "Page.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -69,11 +65,9 @@ Ref<MediaStream> MediaStream::create(Document& document, Ref<MediaStreamPrivate>
 
 static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const MediaStreamTrackVector& tracks)
 {
-    MediaStreamTrackPrivateVector trackPrivates;
-    trackPrivates.reserveCapacity(tracks.size());
-    for (auto& track : tracks)
-        trackPrivates.append(&track->privateTrack());
-    return trackPrivates;
+    return map(tracks, [](auto& track) {
+        return makeRefPtr(&track->privateTrack());
+    });
 }
 
 MediaStream::MediaStream(Document& document, const MediaStreamTrackVector& tracks)
@@ -83,10 +77,8 @@ MediaStream::MediaStream(Document& document, const MediaStreamTrackVector& track
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
 
-    for (auto& track : tracks) {
-        track->addObserver(*this);
+    for (auto& track : tracks)
         m_trackSet.add(track->id(), track);
-    }
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
@@ -99,11 +91,8 @@ MediaStream::MediaStream(Document& document, Ref<MediaStreamPrivate>&& streamPri
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    for (auto& trackPrivate : m_private->tracks()) {
-        auto track = MediaStreamTrack::create(document, *trackPrivate);
-        track->addObserver(*this);
-        m_trackSet.add(track->id(), WTFMove(track));
-    }
+    for (auto& trackPrivate : m_private->tracks())
+        m_trackSet.add(trackPrivate->id(), MediaStreamTrack::create(document, *trackPrivate));
 
     setIsActive(m_private->active());
     m_private->addObserver(*this);
@@ -116,9 +105,7 @@ MediaStream::~MediaStream()
     // mediaState(), are short circuited.
     m_isActive = false;
     m_private->removeObserver(*this);
-    for (auto& track : m_trackSet.values())
-        track->removeObserver(*this);
-    if (Document* document = this->document()) {
+    if (auto* document = this->document()) {
         if (m_isWaitingUntilMediaCanStart)
             document->removeMediaCanStartListener(*this);
     }
@@ -140,30 +127,27 @@ RefPtr<MediaStream> MediaStream::clone()
 void MediaStream::addTrack(MediaStreamTrack& track)
 {
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
-
-    if (!internalAddTrack(track, StreamModifier::DomAPI))
+    if (getTrackById(track.privateTrack().id()))
         return;
 
-    for (auto& observer : m_observers)
-        observer->didAddOrRemoveTrack();
+    internalAddTrack(track);
+    m_private->addTrack(track.privateTrack());
 }
 
 void MediaStream::removeTrack(MediaStreamTrack& track)
 {
     ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
-
-    if (!internalRemoveTrack(track.id(), StreamModifier::DomAPI))
-        return;
-
-    for (auto& observer : m_observers)
-        observer->didAddOrRemoveTrack();
+    if (auto taken = internalTakeTrack(track.id())) {
+        ASSERT(taken.get() == &track);
+        m_private->removeTrack(track.privateTrack());
+    }
 }
 
 MediaStreamTrack* MediaStream::getTrackById(String id)
 {
-    auto it = m_trackSet.find(id);
-    if (it != m_trackSet.end())
-        return it->value.get();
+    auto iterator = m_trackSet.find(id);
+    if (iterator != m_trackSet.end())
+        return iterator->value.get();
 
     return nullptr;
 }
@@ -183,11 +167,6 @@ MediaStreamTrackVector MediaStream::getTracks() const
     return copyToVector(m_trackSet.values());
 }
 
-void MediaStream::trackDidEnd()
-{
-    m_private->updateActiveState(MediaStreamPrivate::NotifyClientOption::Notify);
-}
-
 void MediaStream::activeStatusChanged()
 {
     updateActiveState();
@@ -199,60 +178,44 @@ void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
     if (!context)
         return;
 
-    if (!getTrackById(trackPrivate.id()))
-        internalAddTrack(MediaStreamTrack::create(*context, trackPrivate), StreamModifier::Platform);
+    if (getTrackById(trackPrivate.id()))
+        return;
+
+    auto track = MediaStreamTrack::create(*context, trackPrivate);
+    internalAddTrack(track.copyRef());
+    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
 void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
-    internalRemoveTrack(trackPrivate.id(), StreamModifier::Platform);
+    if (auto track = internalTakeTrack(trackPrivate.id()))
+        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
 void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
 {
     ALWAYS_LOG(LOGIDENTIFIER, track->logIdentifier());
 
-    auto* privateTrack = &track->privateTrack();
-    internalAddTrack(WTFMove(track), StreamModifier::Platform);
-    m_private->addTrack(privateTrack, MediaStreamPrivate::NotifyClientOption::Notify);
+    auto& privateTrack = track->privateTrack();
+    internalAddTrack(track.copyRef());
+    m_private->addTrack(privateTrack);
+    dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
-bool MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& trackToAdd, StreamModifier streamModifier)
+void MediaStream::internalAddTrack(Ref<MediaStreamTrack>&& trackToAdd)
 {
-    auto result = m_trackSet.add(trackToAdd->id(), WTFMove(trackToAdd));
-    if (!result.isNewEntry)
-        return false;
-
-    ASSERT(result.iterator->value);
-    auto& track = *result.iterator->value;
-    track.addObserver(*this);
-
+    ASSERT(!m_trackSet.contains(trackToAdd->id()));
+    m_trackSet.add(trackToAdd->id(), WTFMove(trackToAdd));
     updateActiveState();
-
-    if (streamModifier == StreamModifier::DomAPI)
-        m_private->addTrack(&track.privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
-    else
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, Event::CanBubble::No, Event::IsCancelable::No, &track));
-
-    return true;
 }
 
-bool MediaStream::internalRemoveTrack(const String& trackId, StreamModifier streamModifier)
+RefPtr<MediaStreamTrack> MediaStream::internalTakeTrack(const String& trackId)
 {
     auto track = m_trackSet.take(trackId);
-    if (!track)
-        return false;
+    if (track)
+        updateActiveState();
 
-    track->removeObserver(*this);
-
-    updateActiveState();
-
-    if (streamModifier == StreamModifier::DomAPI)
-        m_private->removeTrack(track->privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
-    else
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
-
-    return true;
+    return track;
 }
 
 void MediaStream::setIsActive(bool active)
@@ -370,19 +333,6 @@ MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type
     }
 
     return tracks;
-}
-
-void MediaStream::addObserver(MediaStream::Observer* observer)
-{
-    if (m_observers.find(observer) == notFound)
-        m_observers.append(observer);
-}
-
-void MediaStream::removeObserver(MediaStream::Observer* observer)
-{
-    size_t pos = m_observers.find(observer);
-    if (pos != notFound)
-        m_observers.remove(pos);
 }
 
 Document* MediaStream::document() const

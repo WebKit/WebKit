@@ -91,12 +91,12 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, std:
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
     });
-    m_stream->addObserver(this);
+    m_stream->privateStream().addObserver(*this);
 }
 
 MediaRecorder::~MediaRecorder()
 {
-    m_stream->removeObserver(this);
+    m_stream->privateStream().removeObserver(*this);
     stopRecordingInternal();
 }
 
@@ -194,7 +194,7 @@ void MediaRecorder::stopRecordingInternal()
     m_private->stopRecording();
 }
 
-void MediaRecorder::didAddOrRemoveTrack()
+void MediaRecorder::handleTrackChange()
 {
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
         if (!m_isActive || state() == RecordingState::Inactive)

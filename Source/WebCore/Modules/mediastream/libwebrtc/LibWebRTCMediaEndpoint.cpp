@@ -417,7 +417,7 @@ void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpRec
 
     for (auto& id : m_remoteStreamsFromRemoteTrack.get(&track)) {
         if (auto stream = m_remoteStreamsById.get(id))
-            stream->privateStream().removeTrack(track.privateTrack(), MediaStreamPrivate::NotifyClientOption::Notify);
+            stream->privateStream().removeTrack(track.privateTrack());
     }
 
     track.source().setMuted(true);
