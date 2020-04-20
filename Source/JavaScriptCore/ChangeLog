@@ -1,3 +1,16 @@
+2020-04-20  Keith Miller  <keith_miller@apple.com>
+
+        Fix CheckIsConstant for non-constant values and checking for empty
+        https://bugs.webkit.org/show_bug.cgi?id=210752
+
+        Reviewed by Saam Barati.
+
+        We need to make sure that we only have one speculated type if our value
+        is empty.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         Use #import instead of #include in Objective-C and don't use #pragma once

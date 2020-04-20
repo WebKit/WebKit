@@ -3816,10 +3816,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     
     case CheckIsConstant: {
-        JSValue value = forNode(node->child1()).value();
-        if (value == node->constant()->value()) {
+        AbstractValue& value = forNode(node->child1());
+        if (value.value() == node->constant()->value() && (value.value() || value.m_type == SpecEmpty)) {
             m_state.setShouldTryConstantFolding(true);
-            ASSERT(value || forNode(node->child1()).m_type == SpecEmpty);
             break;
         }
         filterByValue(node->child1(), *node->constant());
