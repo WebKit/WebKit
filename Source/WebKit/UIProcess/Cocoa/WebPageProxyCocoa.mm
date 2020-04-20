@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "APIAttachment.h"
 #import "APIUIClient.h"
+#import "Connection.h"
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
@@ -54,6 +55,9 @@
 #include "MediaUsageManagerCocoa.h"
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -66,20 +70,14 @@ void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetecti
 
 void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
+    MESSAGE_CHECK(!name.isNull());
 
     WebCore::saveRecentSearches(name, searchItems);
 }
 
 void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    if (!name) {
-        // FIXME: This should be a message check.
-        return completionHandler({ });
-    }
+    MESSAGE_CHECK_COMPLETION(!name.isNull(), completionHandler({ }));
 
     completionHandler(WebCore::loadRecentSearches(name));
 }
@@ -390,3 +388,6 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK

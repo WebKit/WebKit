@@ -1,3 +1,18 @@
+2020-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Use MESSAGE_CHECK in WebPageProxy::loadRecentSearches() and WebPageProxy::saveRecentSearches()
+        <https://webkit.org/b/210683>
+        <rdar://problem/59240446>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (MESSAGE_CHECK): Add.
+        (MESSAGE_CHECK_COMPLETION): Add.
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        - Replace boolean check of const String& with MESSAGE_CHECK.
+
 2020-04-18  Darin Adler  <darin@apple.com>
 
         Update header postprocessing version cutoff to keep Apple internal builds working
