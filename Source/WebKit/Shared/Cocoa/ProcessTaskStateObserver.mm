@@ -43,6 +43,12 @@ typedef void(^TaskStateChangedCallbackType)(BKSProcessTaskState);
 @end
 
 @implementation WKProcessTaskStateObserverDelegate
+- (void)dealloc
+{
+    [_taskStateChangedCallback release];
+    [super dealloc];
+}
+
 - (void)process:(BKSProcess *)process taskStateDidChange:(BKSProcessTaskState)newState
 {
     RELEASE_LOG(ProcessSuspension, "%p -[WKProcessTaskStateObserverDelegate process:taskStateDidChange:], process(%p), newState(%d)", self, process, (int)newState);

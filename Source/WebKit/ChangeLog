@@ -1,5 +1,17 @@
 2020-04-19  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r244091): Leak of TaskStateChangedCallbackType due to missing -dealloc
+        <https://webkit.org/b/210710>
+        <rdar://problem/61992856>
+
+        Reviewed by Darin Adler.
+
+        * Shared/Cocoa/ProcessTaskStateObserver.mm:
+        (-[WKProcessTaskStateObserverDelegate dealloc]): Add.
+        - Release _taskStateChangedCallback to fix the leak.
+
+2020-04-19  David Kilzer  <ddkilzer@apple.com>
+
         [IPC hardening] Use MESSAGE_CHECK in WebPageProxy::loadRecentSearches() and WebPageProxy::saveRecentSearches()
         <https://webkit.org/b/210683>
         <rdar://problem/59240446>
