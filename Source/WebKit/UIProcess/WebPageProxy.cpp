@@ -3162,7 +3162,7 @@ void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bo
 
 void WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess()
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     if (auto* networkProcess = m_process->processPool().networkProcess()) {
         if (!networkProcess->canSendMessage())
             return;
@@ -3173,7 +3173,7 @@ void WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess()
 
 void WebPageProxy::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler)
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     sendWithAsyncReply(Messages::WebPage::ClearServiceWorkerEntitlementOverride(), [callbackAggregator = callbackAggregator.copyRef()] { });
     if (auto* networkProcess = m_process->processPool().networkProcess()) {

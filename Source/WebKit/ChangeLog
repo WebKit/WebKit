@@ -1,3 +1,11 @@
+2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed macCatalyst build fix.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess):
+        (WebKit::WebPageProxy::clearServiceWorkerEntitlementOverride):
+
 2020-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling with background-attachment: fixed needs to trigger repaints
