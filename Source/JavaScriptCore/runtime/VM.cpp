@@ -77,6 +77,7 @@
 #include "IntlDateTimeFormat.h"
 #include "IntlNumberFormat.h"
 #include "IntlPluralRules.h"
+#include "IntlRelativeTimeFormat.h"
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
@@ -340,6 +341,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , intlDateTimeFormatHeapCellType(IsoHeapCellType::create<IntlDateTimeFormat>())
     , intlNumberFormatHeapCellType(IsoHeapCellType::create<IntlNumberFormat>())
     , intlPluralRulesHeapCellType(IsoHeapCellType::create<IntlPluralRules>())
+    , intlRelativeTimeFormatHeapCellType(IsoHeapCellType::create<IntlRelativeTimeFormat>())
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(IsoHeapCellType::create<JSWebAssemblyCodeBlock>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::create<WebAssemblyFunction>())
@@ -1511,6 +1513,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlCollatorSpace, intlCollatorHeapCellT
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlDateTimeFormatSpace, intlDateTimeFormatHeapCellType.get(), IntlDateTimeFormat)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlNumberFormatSpace, intlNumberFormatHeapCellType.get(), IntlNumberFormat)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlPluralRulesSpace, intlPluralRulesHeapCellType.get(), IntlPluralRules)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlRelativeTimeFormatSpace, intlRelativeTimeFormatHeapCellType.get(), IntlRelativeTimeFormat)
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsToWasmICCalleeSpace, cellHeapCellType.get(), JSToWasmICCallee)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd

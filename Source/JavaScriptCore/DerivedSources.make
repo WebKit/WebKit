@@ -153,6 +153,8 @@ OBJECT_LUT_HEADERS = \
     IntlObject.lut.h \
     IntlPluralRulesConstructor.lut.h \
     IntlPluralRulesPrototype.lut.h \
+    IntlRelativeTimeFormatConstructor.lut.h \
+    IntlRelativeTimeFormatPrototype.lut.h \
     JSDataViewPrototype.lut.h \
     JSGlobalObject.lut.h \
     JSInternalPromiseConstructor.lut.h \

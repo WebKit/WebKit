@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,20 +44,23 @@ public:
         return &vm.plainObjectSpace;
     }
 
-    static IntlObject* create(VM&, Structure*);
+    static IntlObject* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 private:
     IntlObject(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 String defaultLocale(JSGlobalObject*);
+const HashSet<String>& intlAvailableLocales();
 const HashSet<String>& intlCollatorAvailableLocales();
-const HashSet<String>& intlDateTimeFormatAvailableLocales();
-const HashSet<String>& intlNumberFormatAvailableLocales();
-inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlNumberFormatAvailableLocales(); }
+inline const HashSet<String>& intlDateTimeFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
+inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 
 bool intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName, bool& usesFallback);
 String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);

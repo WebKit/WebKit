@@ -1,3 +1,94 @@
+2020-04-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Intl.RelativeTimeFormat missing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=209770
+
+        Reviewed by Darin Adler.
+
+        This patch implements the recent ECMA-402 feature Intl.RelativeTimeFormat.
+
+        RelativeTimeFormat has format / formatToParts functions like NumberFormat / DateTimeFormat
+        and is used to turn a number and unit into a formatted relative time string, e.g.:
+
+          new Intl.RelativeTimeFormat('en').format(10, 'day')
+          > 'in 10 days'
+
+          new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(0, 'day')
+          > 'today'
+
+        Implementation of RelativeTimeFormat#formatToParts makes direct use of NumberFormat#formatToParts,
+        as the relative time string consists of at most one formatted number with optional literal text on either side.
+
+        This feature is runtime-guarded by the `useIntlRelativeTimeFormat` option.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlRelativeTimeFormat.cpp: Added.
+        * runtime/IntlRelativeTimeFormat.h: Added.
+        * runtime/IntlRelativeTimeFormatConstructor.cpp: Added.
+        * runtime/IntlRelativeTimeFormatConstructor.h: Added.
+        * runtime/IntlRelativeTimeFormatPrototype.cpp: Added.
+        * runtime/IntlRelativeTimeFormatPrototype.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::relativeTimeFormatStructure):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        Add feature and runtime option.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::formatToParts):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions):
+        Make "type" a property name.
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        (JSC::IntlNumberFormat::formatToPartsInternal):
+        (JSC::IntlNumberFormat::formatToParts):
+        * runtime/IntlNumberFormat.h:
+        Factor out formatToPartsInternal so that RelativeTimeFormat can use it with its own UNumberFormat.
+        (This logic is too complicated to duplicate; it's because ICU won't split, e.g., "10,000" into parts for us.)
+
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::IntlObject):
+        (JSC::IntlObject::create):
+        (JSC::IntlObject::finishCreation):
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::isUnicodeLocaleIdentifierType):
+        (JSC::supportedLocales):
+        (JSC::intlDateTimeFormatAvailableLocales): Deleted.
+        (JSC::intlNumberFormatAvailableLocales): Deleted.
+        * runtime/IntlObject.h:
+        (JSC::intlDateTimeFormatAvailableLocales):
+        (JSC::intlNumberFormatAvailableLocales):
+        (JSC::intlPluralRulesAvailableLocales):
+        (JSC::intlRelativeTimeFormatAvailableLocales):
+        Perform three corrections for Intl classes:
+          1. Collator should be the only class with unique "available locales".
+             [unum|udat]_getAvailable exist but they've deferred to uloc_getAvailable for 20 years.
+          2. isUnicodeLocaleIdentifierType isn't just `alphanum{3,8}` but rather `alphanum{3,8} (sep alphanum{3,8})*`.
+             This is my own mistake from r239941.
+          3. supportedLocalesOf entries should not be frozen.
+             Changed in https://github.com/tc39/ecma402/pull/278.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionICUVersion):
+        (JSC::JSDollarVM::finishCreation):
+        Add $vm.icuVersion so that we can add per-line skips to stress tests.
+
 2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] SlowPathCall is not supported by callOperation in Windows

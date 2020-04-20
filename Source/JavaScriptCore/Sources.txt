@@ -819,6 +819,9 @@ runtime/IntlObject.cpp
 runtime/IntlPluralRules.cpp
 runtime/IntlPluralRulesConstructor.cpp
 runtime/IntlPluralRulesPrototype.cpp
+runtime/IntlRelativeTimeFormat.cpp
+runtime/IntlRelativeTimeFormatConstructor.cpp
+runtime/IntlRelativeTimeFormatPrototype.cpp
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
 runtime/JSArray.cpp

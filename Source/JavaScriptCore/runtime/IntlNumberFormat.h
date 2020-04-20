@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,11 +58,13 @@ public:
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
     JSValue format(JSGlobalObject*, double);
     JSValue format(JSGlobalObject*, JSBigInt*);
-    JSValue formatToParts(JSGlobalObject*, double value);
+    JSValue formatToParts(JSGlobalObject*, double);
     JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
+
+    static void formatToPartsInternal(JSGlobalObject*, double, const String& formatted, UFieldPositionIterator*, JSArray*, JSString* unit = nullptr);
 
 protected:
     IntlNumberFormat(VM&, Structure*);

@@ -127,7 +127,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
         return;
     }
 
-    String typeString = intlStringOption(globalObject, options, Identifier::fromString(vm, "type"), { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
+    String typeString = intlStringOption(globalObject, options, vm.propertyNames->type, { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
     RETURN_IF_EXCEPTION(scope, void());
     m_type = typeString == "ordinal" ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL;
 
@@ -201,7 +201,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
-    options->putDirect(vm, Identifier::fromString(vm, "type"), jsNontrivialString(vm, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
+    options->putDirect(vm, vm.propertyNames->type, jsNontrivialString(vm, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
     options->putDirect(vm, Identifier::fromString(vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
     options->putDirect(vm, Identifier::fromString(vm, "minimumFractionDigits"), jsNumber(m_minimumFractionDigits));
     options->putDirect(vm, Identifier::fromString(vm, "maximumFractionDigits"), jsNumber(m_maximumFractionDigits));

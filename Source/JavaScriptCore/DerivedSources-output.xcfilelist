@@ -33,6 +33,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlNumberFormatPrototype.lu
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlRelativeTimeFormatConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlRelativeTimeFormatPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSGlobalObject.lut.h

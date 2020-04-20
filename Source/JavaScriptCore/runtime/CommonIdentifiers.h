@@ -49,6 +49,7 @@
     macro(Promise) \
     macro(Reflect) \
     macro(RegExp) \
+    macro(RelativeTimeFormat) \
     macro(RemotePlayback) \
     macro(Set) \
     macro(SharedArrayBuffer) \
@@ -178,6 +179,7 @@
     macro(stack) \
     macro(stackTraceLimit) \
     macro(sticky) \
+    macro(style) \
     macro(subarray) \
     macro(summary) \
     macro(target) \
@@ -193,6 +195,7 @@
     macro(toLocaleString) \
     macro(toPrecision) \
     macro(toString) \
+    macro(type) \
     macro(uid) \
     macro(unicode) \
     macro(usage) \

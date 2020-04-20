@@ -75,6 +75,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/IntlObject.cpp
     runtime/IntlPluralRulesConstructor.cpp
     runtime/IntlPluralRulesPrototype.cpp
+    runtime/IntlRelativeTimeFormatConstructor.cpp
+    runtime/IntlRelativeTimeFormatPrototype.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSInternalPromiseConstructor.cpp

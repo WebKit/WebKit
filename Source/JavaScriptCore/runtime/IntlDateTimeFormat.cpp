@@ -1029,7 +1029,6 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
         return throwOutOfMemoryError(globalObject, scope);
 
     auto resultString = String(result.data(), resultLength);
-    auto typePropertyName = Identifier::fromString(vm, "type");
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
     int32_t previousEndIndex = 0;
@@ -1043,7 +1042,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
         if (previousEndIndex < beginIndex) {
             auto value = jsString(vm, resultString.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = constructEmptyObject(globalObject);
-            part->putDirect(vm, typePropertyName, literalString);
+            part->putDirect(vm, vm.propertyNames->type, literalString);
             part->putDirect(vm, vm.propertyNames->value, value);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
@@ -1054,7 +1053,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
             auto type = jsString(vm, partTypeString(UDateFormatField(fieldType)));
             auto value = jsString(vm, resultString.substring(beginIndex, endIndex - beginIndex));
             JSObject* part = constructEmptyObject(globalObject);
-            part->putDirect(vm, typePropertyName, type);
+            part->putDirect(vm, vm.propertyNames->type, type);
             part->putDirect(vm, vm.propertyNames->value, value);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });

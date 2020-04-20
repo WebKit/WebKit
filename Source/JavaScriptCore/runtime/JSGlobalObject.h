@@ -294,6 +294,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_dateTimeFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_pluralRulesStructure;
+    LazyProperty<JSGlobalObject, Structure> m_relativeTimeFormatStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -788,6 +789,7 @@ public:
     Structure* numberFormatStructure() { return m_numberFormatStructure.get(this); }
     Structure* dateTimeFormatStructure() { return m_dateTimeFormatStructure.get(this); }
     Structure* pluralRulesStructure() { return m_pluralRulesStructure.get(this); }
+    Structure* relativeTimeFormatStructure() { return m_relativeTimeFormatStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

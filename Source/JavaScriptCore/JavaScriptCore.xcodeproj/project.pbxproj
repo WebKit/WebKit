@@ -4334,6 +4334,12 @@
 		A1E0451B1C25B4B100BB663C /* StringPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringPrototype.js; sourceTree = "<group>"; };
 		A1FE1EB01C2C537E00A289FF /* DatePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DatePrototype.js; sourceTree = "<group>"; };
 		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
+		A3BF884B24480BDE001B9F35 /* IntlRelativeTimeFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlRelativeTimeFormatPrototype.cpp; sourceTree = "<group>"; };
+		A3BF884C24480BDF001B9F35 /* IntlRelativeTimeFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlRelativeTimeFormatPrototype.h; sourceTree = "<group>"; };
+		A3BF884D24480BDF001B9F35 /* IntlRelativeTimeFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlRelativeTimeFormatConstructor.cpp; sourceTree = "<group>"; };
+		A3BF884E24480BE0001B9F35 /* IntlRelativeTimeFormatConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlRelativeTimeFormatConstructor.h; sourceTree = "<group>"; };
+		A3BF884F24480BE0001B9F35 /* IntlRelativeTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlRelativeTimeFormat.cpp; sourceTree = "<group>"; };
+		A3BF885024480BE1001B9F35 /* IntlRelativeTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlRelativeTimeFormat.h; sourceTree = "<group>"; };
 		A3FF9BC52234746600B1A9AB /* YarrFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrFlags.h; path = yarr/YarrFlags.h; sourceTree = "<group>"; };
 		A3FF9BC62234746600B1A9AB /* YarrFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrFlags.cpp; path = yarr/YarrFlags.cpp; sourceTree = "<group>"; };
 		A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -7265,6 +7271,12 @@
 				7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */,
 				7D5FB19120744BF1005DDF64 /* IntlPluralRulesPrototype.cpp */,
 				7D5FB18D20744AE8005DDF64 /* IntlPluralRulesPrototype.h */,
+				A3BF884F24480BE0001B9F35 /* IntlRelativeTimeFormat.cpp */,
+				A3BF885024480BE1001B9F35 /* IntlRelativeTimeFormat.h */,
+				A3BF884D24480BDF001B9F35 /* IntlRelativeTimeFormatConstructor.cpp */,
+				A3BF884E24480BE0001B9F35 /* IntlRelativeTimeFormatConstructor.h */,
+				A3BF884B24480BDE001B9F35 /* IntlRelativeTimeFormatPrototype.cpp */,
+				A3BF884C24480BDF001B9F35 /* IntlRelativeTimeFormatPrototype.h */,
 				0F275F2C1ECE079600620D47 /* Intrinsic.cpp */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,

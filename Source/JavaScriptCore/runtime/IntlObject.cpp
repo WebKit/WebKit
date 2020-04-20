@@ -2,6 +2,7 @@
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
  * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +40,15 @@
 #include "IntlNumberFormatPrototype.h"
 #include "IntlPluralRulesConstructor.h"
 #include "IntlPluralRulesPrototype.h"
+#include "IntlRelativeTimeFormatConstructor.h"
+#include "IntlRelativeTimeFormatPrototype.h"
 #include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Options.h"
 #include <unicode/ucol.h>
-#include <unicode/udat.h>
 #include <unicode/uloc.h>
-#include <unicode/unum.h>
 #include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
 #include <wtf/Language.h>
@@ -114,15 +115,24 @@ struct MatcherResult {
 const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
 
 IntlObject::IntlObject(VM& vm, Structure* structure)
-    : JSNonFinalObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
-IntlObject* IntlObject::create(VM& vm, Structure* structure)
+IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     IntlObject* object = new (NotNull, allocateCell<IntlObject>(vm.heap)) IntlObject(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
+}
+
+void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+    if (Options::useIntlRelativeTimeFormat()) {
+        auto* relativeTimeFormatConstructor = IntlRelativeTimeFormatConstructor::create(vm, IntlRelativeTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlRelativeTimeFormatPrototype*>(globalObject->relativeTimeFormatStructure()->storedPrototypeObject()));
+        putDirectWithoutTransition(vm, vm.propertyNames->RelativeTimeFormat, relativeTimeFormatConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -164,6 +174,25 @@ static void addMissingScriptLocales(HashSet<String>& availableLocales)
         availableLocales.add(zh_TW_String.get());
 }
 
+const HashSet<String>& intlAvailableLocales()
+{
+    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
+    HashSet<String>& availableLocales = cachedAvailableLocales.get();
+
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableLocales.isEmpty());
+        int32_t count = uloc_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale = convertICULocaleToBCP47LanguageTag(uloc_getAvailable(i));
+            if (!locale.isEmpty())
+                availableLocales.add(locale);
+        }
+        addMissingScriptLocales(availableLocales);
+    });
+    return availableLocales;
+}
+
 const HashSet<String>& intlCollatorAvailableLocales()
 {
     static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
@@ -175,44 +204,6 @@ const HashSet<String>& intlCollatorAvailableLocales()
         int32_t count = ucol_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = convertICULocaleToBCP47LanguageTag(ucol_getAvailable(i));
-            if (!locale.isEmpty())
-                availableLocales.add(locale);
-        }
-        addMissingScriptLocales(availableLocales);
-    });
-    return availableLocales;
-}
-
-const HashSet<String>& intlDateTimeFormatAvailableLocales()
-{
-    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
-    HashSet<String>& availableLocales = cachedAvailableLocales.get();
-
-    static std::once_flag initializeOnce;
-    std::call_once(initializeOnce, [&] {
-        ASSERT(availableLocales.isEmpty());
-        int32_t count = udat_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(udat_getAvailable(i));
-            if (!locale.isEmpty())
-                availableLocales.add(locale);
-        }
-        addMissingScriptLocales(availableLocales);
-    });
-    return availableLocales;
-}
-
-const HashSet<String>& intlNumberFormatAvailableLocales()
-{
-    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
-    HashSet<String>& availableLocales = cachedAvailableLocales.get();
-
-    static std::once_flag initializeOnce;
-    std::call_once(initializeOnce, [&] {
-        ASSERT(availableLocales.isEmpty());
-        int32_t count = unum_countAvailable();
-        for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(unum_getAvailable(i));
             if (!locale.isEmpty())
                 availableLocales.add(locale);
         }
@@ -328,13 +319,15 @@ bool isUnicodeLocaleIdentifierType(StringView string)
 {
     ASSERT(!string.isNull());
 
-    auto length = string.length();
-    if (length < 3 || length > 8)
-        return false;
-
-    for (auto character : string.codeUnits()) {
-        if (!isASCIIAlphanumeric(character))
+    for (auto part : string.splitAllowingEmptyEntries('-')) {
+        auto length = part.length();
+        if (length < 3 || length > 8)
             return false;
+
+        for (auto character : part.codeUnits()) {
+            if (!isASCIIAlphanumeric(character))
+                return false;
+        }
     }
 
     return true;
@@ -979,8 +972,6 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& av
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     PropertyDescriptor desc;
-    desc.setConfigurable(false);
-    desc.setWritable(false);
 
     size_t len = keys.size();
     for (size_t i = 0; i < len; ++i) {

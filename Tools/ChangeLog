@@ -1,3 +1,13 @@
+2020-04-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Intl.RelativeTimeFormat missing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=209770
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-jsc-stress-tests:
+        Add runIntlRelativeTimeFormatEnabled.
+
 2020-04-19  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Consolidate TestNetscapePlugin build

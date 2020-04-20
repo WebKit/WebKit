@@ -2,6 +2,7 @@
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2016 Sukolsak Sakshuwong (sukolsak@gmail.com)
  * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,7 +196,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     m_numberingSystem = result.get("nu"_s);
 
-    String styleString = intlStringOption(globalObject, options, Identifier::fromString(vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
+    String styleString = intlStringOption(globalObject, options, vm.propertyNames->style, { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
     RETURN_IF_EXCEPTION(scope, void());
     if (styleString == "decimal")
         m_style = Style::Decimal;
@@ -441,7 +442,7 @@ JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject)
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
-    options->putDirect(vm, Identifier::fromString(vm, "style"), jsNontrivialString(vm, styleString(m_style)));
+    options->putDirect(vm, vm.propertyNames->style, jsNontrivialString(vm, styleString(m_style)));
     if (m_style == Style::Currency) {
         options->putDirect(vm, Identifier::fromString(vm, "currency"), jsNontrivialString(vm, m_currency));
         options->putDirect(vm, Identifier::fromString(vm, "currencyDisplay"), jsNontrivialString(vm, currencyDisplayString(m_currencyDisplay)));
@@ -503,6 +504,52 @@ ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double 
     return "unknown"_s;
 }
 
+void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, double value, const String& formatted, UFieldPositionIterator* iterator, JSArray* parts, JSString* unit)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto stringLength = formatted.length();
+
+    int32_t literalFieldType = -1;
+    auto literalField = IntlNumberFormatField(literalFieldType, stringLength);
+    Vector<IntlNumberFormatField, 32> fields(stringLength, literalField);
+    int32_t beginIndex = 0;
+    int32_t endIndex = 0;
+    auto fieldType = ufieldpositer_next(iterator, &beginIndex, &endIndex);
+    while (fieldType >= 0) {
+        auto size = endIndex - beginIndex;
+        for (auto i = beginIndex; i < endIndex; ++i) {
+            // Only override previous value if new value is more specific.
+            if (fields[i].size >= size)
+                fields[i] = IntlNumberFormatField(fieldType, size);
+        }
+        fieldType = ufieldpositer_next(iterator, &beginIndex, &endIndex);
+    }
+
+    auto literalString = jsNontrivialString(vm, "literal"_s);
+    Identifier unitName;
+    if (unit)
+        unitName = Identifier::fromString(vm, "unit");
+
+    size_t currentIndex = 0;
+    while (currentIndex < stringLength) {
+        auto startIndex = currentIndex;
+        auto fieldType = fields[currentIndex].type;
+        while (currentIndex < stringLength && fields[currentIndex].type == fieldType)
+            ++currentIndex;
+        auto partType = fieldType == literalFieldType ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), value));
+        auto partValue = jsSubstring(vm, formatted, startIndex, currentIndex - startIndex);
+        JSObject* part = constructEmptyObject(globalObject);
+        part->putDirect(vm, vm.propertyNames->type, partType);
+        part->putDirect(vm, vm.propertyNames->value, partValue);
+        if (unit)
+            part->putDirect(vm, unitName, unit);
+        parts->push(globalObject, part);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
 JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value)
 {
     VM& vm = globalObject->vm();
@@ -520,7 +567,6 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
     auto resultLength = unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), result.size(), fieldItr.get(), &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
@@ -531,45 +577,14 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a number."_s);
 
-    int32_t literalFieldType = -1;
-    auto literalField = IntlNumberFormatField(literalFieldType, resultLength);
-    Vector<IntlNumberFormatField> fields(resultLength, literalField);
-    int32_t beginIndex = 0;
-    int32_t endIndex = 0;
-    auto fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
-    while (fieldType >= 0) {
-        auto size = endIndex - beginIndex;
-        for (auto i = beginIndex; i < endIndex; ++i) {
-            // Only override previous value if new value is more specific.
-            if (fields[i].size >= size)
-                fields[i] = IntlNumberFormatField(fieldType, size);
-        }
-        fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
-    }
+    auto resultString = String(result.data(), resultLength);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
-    unsigned index = 0;
 
-    auto resultString = String(result.data(), resultLength);
-    auto typePropertyName = Identifier::fromString(vm, "type");
-    auto literalString = jsNontrivialString(vm, "literal"_s);
-
-    int32_t currentIndex = 0;
-    while (currentIndex < resultLength) {
-        auto startIndex = currentIndex;
-        auto fieldType = fields[currentIndex].type;
-        while (currentIndex < resultLength && fields[currentIndex].type == fieldType)
-            ++currentIndex;
-        auto partType = fieldType == literalFieldType ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), value));
-        auto partValue = jsSubstring(vm, resultString, startIndex, currentIndex - startIndex);
-        JSObject* part = constructEmptyObject(globalObject);
-        part->putDirect(vm, typePropertyName, partType);
-        part->putDirect(vm, vm.propertyNames->value, partValue);
-        parts->putDirectIndex(globalObject, index++, part);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
+    formatToPartsInternal(globalObject, value, resultString, fieldItr.get(), parts);
+    RETURN_IF_EXCEPTION(scope, { });
 
     return parts;
 }

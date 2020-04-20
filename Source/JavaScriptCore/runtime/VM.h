@@ -128,6 +128,7 @@ class IntlCollator;
 class IntlDateTimeFormat;
 class IntlNumberFormat;
 class IntlPluralRules;
+class IntlRelativeTimeFormat;
 class JSAPIGlobalObject;
 class JSAPIWrapperGlobalObject;
 class JSAPIWrapperObject;
@@ -401,6 +402,7 @@ public:
     std::unique_ptr<IsoHeapCellType> intlDateTimeFormatHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlNumberFormatHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlPluralRulesHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlRelativeTimeFormatHeapCellType;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType> webAssemblyCodeBlockHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyFunctionHeapCellType;
@@ -557,6 +559,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlDateTimeFormatSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlNumberFormatSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlRelativeTimeFormatSpace)
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)
