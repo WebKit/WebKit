@@ -1,3 +1,39 @@
+2020-04-20  Youenn Fablet  <youenn@apple.com>
+
+        Safari doesn't apply frameRate limit when request stream from Camera
+        https://bugs.webkit.org/show_bug.cgi?id=210186
+        <rdar://problem/61452794>
+
+        Reviewed by Eric Carlson.
+
+        Add support to RealtimeVideoSource to decimate the video samples based on the observed frame rate of its capture source.
+        This allows supporting two tracks using the same capture device, one track being low frame rate and the other one high frame rate.
+
+        Clean-up refactoring to make RealtimeVideoSource directly inherit from RealtimeVideoCaptureSource.
+        Migrate size and format of frame adaptation from RealtimeVideoCaptureSource to RealtimeVideoSource.
+        Fix mock capture source to update its frame rate when asked by applyConstraints.
+
+        Tests: fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html
+               fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html
+               fast/mediastream/mediastreamtrack-video-frameRate-decreasing.html
+               fast/mediastream/mediastreamtrack-video-frameRate-increasing.html
+
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::dispatchMediaSampleToObservers):
+        (WebCore::RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate):
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        (WebCore::RealtimeVideoCaptureSource::observedFrameRate const):
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::RealtimeVideoSource):
+        (WebCore::m_source):
+        (WebCore::RealtimeVideoSource::adaptVideoSample):
+        (WebCore::RealtimeVideoSource::videoSampleAvailable):
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::setFrameRateWithPreset):
+        * testing/Internals.cpp:
+        (WebCore::Internals::observeMediaStreamTrack):
+
 2020-04-20  Antoine Quint  <graouts@apple.com>
 
         WebAnimations API doesn't properly apply keyframe easings to transforms
