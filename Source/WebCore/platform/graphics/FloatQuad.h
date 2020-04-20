@@ -32,6 +32,10 @@
 #include "IntRect.h"
 #include <wtf/Forward.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 // FIXME: Seems like this would be better as a struct.
@@ -173,6 +177,8 @@ inline bool operator!=(const FloatQuad& a, const FloatQuad& b)
 {
     return !(a == b);
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);
 WEBCORE_EXPORT FloatRect unitedBoundingBoxes(const Vector<FloatQuad>&);

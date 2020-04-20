@@ -247,4 +247,10 @@ FloatRect unitedBoundingBoxes(const Vector<FloatQuad>& quads)
     return result;
 }
 
+TextStream& operator<<(TextStream& ts, const FloatQuad& quad)
+{
+    ts << "p1 " << quad.p1() << " p2 " << quad.p2() << " p3 " << quad.p3() << " p4 " << quad.p4();
+    return ts;
+}
+
 } // namespace WebCore

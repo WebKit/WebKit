@@ -1290,8 +1290,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
-    FloatQuad coverageQuad(visibleRect);
-    state.setSecondaryQuad(&coverageQuad);
+    state.setSecondaryQuad(FloatQuad { visibleRect });
 
     CommitState commitState;
     commitState.ancestorHadChanges = visibleRect != m_previousCommittedVisibleRect;
@@ -1457,14 +1456,12 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
         state.flatten();
         state.setQuad(clipRectForSelf);
-        if (state.isMappingSecondaryQuad()) {
-            FloatQuad secondaryQuad(clipRectForSelf);
-            state.setSecondaryQuad(&secondaryQuad);
-        }
+        if (state.isMappingSecondaryQuad())
+            state.setSecondaryQuad(FloatQuad { clipRectForSelf });
     }
 
     FloatRect coverageRect = clipRectForSelf;
-    Optional<FloatQuad> quad = state.mappedSecondaryQuad(&mapWasClamped);
+    auto quad = state.mappedSecondaryQuad(&mapWasClamped);
     if (quad && !mapWasClamped && !applyWasClamped)
         coverageRect = (*quad).boundingBox();
 
@@ -1566,10 +1563,8 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     bool accumulateTransform = accumulatesTransform(*this);
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);
     if (adjustCoverageRect(rects, m_visibleRect)) {
-        if (state.isMappingSecondaryQuad()) {
-            FloatQuad secondaryQuad(rects.coverageRect);
-            localState.setLastPlanarSecondaryQuad(&secondaryQuad);
-        }
+        if (state.isMappingSecondaryQuad())
+            localState.setLastPlanarSecondaryQuad(FloatQuad { rects.coverageRect });
     }
     setVisibleAndCoverageRects(rects);
 

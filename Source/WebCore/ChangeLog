@@ -1,3 +1,31 @@
+2020-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use Optional<FloatQuad> in TransformState
+        https://bugs.webkit.org/show_bug.cgi?id=144226
+
+        Reviewed by Sam Weinig.
+
+        Use Optional<> instead of pointers in TransformState, make it loggable, make FloatQuad loggable.
+
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/FloatQuad.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+        (WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect const):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::operator=):
+        (WebCore::TransformState::mappedSecondaryQuad const):
+        (WebCore::TransformState::setLastPlanarSecondaryQuad):
+        (WebCore::TransformState::flattenWithTransform):
+        (WebCore::operator<<):
+        * platform/graphics/transforms/TransformState.h:
+        (WebCore::TransformState::setSecondaryQuad):
+        (WebCore::TransformState::lastPlanarSecondaryQuad const):
+        (WebCore::TransformState::isMappingSecondaryQuad const):
+        (WebCore::TransformState::accumulatedTransform const):
+
 2020-04-19  Rob Buis  <rbuis@igalia.com>
 
         Remove unneeded code from FrameLoader::loadURL
