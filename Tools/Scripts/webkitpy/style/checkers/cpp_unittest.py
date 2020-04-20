@@ -3335,6 +3335,13 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          'Should be: config.h, primary header, blank line, and then '
                                          'alphabetically sorted.  [build/include_order] [4]')
 
+        # Directories in _NO_CONFIG_H_PATH_PATTERNS start with a primary header (no config.h).
+        self.assert_language_rules_check('Source/WebKitLegacy/mac/WebCoreSupport/WebAlternativeTextClient.mm',
+                                         '#import "WebAlternativeTextClient.h"\n'
+                                         '\n'
+                                         '#import "WebViewInternal.h">\n',
+                                         '')
+
         # *SoftLink.cpp files should not include their headers -> no error.
         self.assert_language_rules_check('FooSoftLink.cpp',
                                          '#include "config.h"\n'

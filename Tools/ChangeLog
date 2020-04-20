@@ -1,3 +1,17 @@
+2020-04-20  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should not complain about missing config.h header in WebKitLegacy source files
+        <https://webkit.org/b/210734>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_NO_CONFIG_H_PATH_PATTERNS):
+        - Add '^Source/WebKitLegacy/' to the list.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_primary_header):
+        - Add test for Source/WebKitLegacy source file.
+
 2020-04-19  Brady Eidson  <beidson@apple.com>
 
         Add WKScriptMessageHandler API that asynchronously responds with a promise.

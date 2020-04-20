@@ -140,6 +140,7 @@ _unit_test_config = {}
 
 _NO_CONFIG_H_PATH_PATTERNS = [
     '^Source/bmalloc/',
+    '^Source/WebKitLegacy/',
 ]
 
 _EXPORT_MACRO_SPEC = {
