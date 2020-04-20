@@ -56,6 +56,9 @@ using namespace WebKit;
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
 - (WKDateTimePopoverViewController *)viewController;
 @property (nonatomic, readonly) NSString *calendarType;
+@property (nonatomic, readonly) double hour;
+@property (nonatomic, readonly) double minute;
+- (void)setHour:(NSInteger)hour minute:(NSInteger)minute;
 @end
 
 @interface WKDateTimePicker : NSObject<WKFormControl> {
@@ -144,6 +147,22 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     return _datePicker.get().calendar.calendarIdentifier;
 }
 
+- (double)hour
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitHour fromDate:[_datePicker date]];
+
+    return [components hour];
+}
+
+- (double)minute
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitMinute fromDate:[_datePicker date]];
+
+    return [components minute];
+}
+
 - (void)dealloc
 {
     [_datePicker removeTarget:self action:NULL forControlEvents:UIControlEventValueChanged];
@@ -183,7 +202,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 - (void)_dateChangedSetAsNumber
 {
     NSDate *date = [_datePicker date];
-    [_view page]->setFocusedElementValueAsNumber(([date timeIntervalSince1970] + [self _timeZoneOffsetFromGMT:date]) * kMillisecondsPerSecond);
+    [_view updateFocusedElementValueAsNumber:([date timeIntervalSince1970] + [self _timeZoneOffsetFromGMT:date]) * kMillisecondsPerSecond];
 }
 
 - (RetainPtr<NSDateFormatter>)dateFormatterForPicker
@@ -200,8 +219,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     // Force English locale because that is what HTML5 value parsing expects.
     RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
-
-    [_view page]->setFocusedElementValue([dateFormatter stringFromDate:[_datePicker date]]);
+    [_view updateFocusedElementValue:[dateFormatter stringFromDate:[_datePicker date]]];
 }
 
 - (void)_dateChanged
@@ -255,6 +273,13 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
 }
 
+- (void)setHour:(NSInteger)hour minute:(NSInteger)minute
+{
+    NSString *timeString = [NSString stringWithFormat:@"%.2ld:%.2ld", (long)hour, (long)minute];
+    [_datePicker setDate:[[self dateFormatterForPicker] dateFromString:timeString]];
+    [self _dateChanged];
+}
+
 @end
 
 // WKFormInputControl
@@ -294,6 +319,14 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 @implementation WKFormInputControl (WKTesting)
 
+- (void)setTimePickerHour:(NSInteger)hour minute:(NSInteger)minute
+{
+    if ([self.control isKindOfClass:WKDateTimePicker.class])
+        [(WKDateTimePicker *)self.control setHour:hour minute:minute];
+    if ([self.control isKindOfClass:WKDateTimePopover.class])
+        [(WKDateTimePopover *)self.control setHour:hour minute:minute];
+}
+
 - (NSString *)dateTimePickerCalendarType
 {
     if ([self.control isKindOfClass:WKDateTimePicker.class])
@@ -301,6 +334,24 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     if ([self.control isKindOfClass:WKDateTimePopover.class])
         return [(WKDateTimePopover *)self.control calendarType];
     return nil;
+}
+
+- (double)timePickerValueHour
+{
+    if ([self.control isKindOfClass:WKDateTimePicker.class])
+        return [(WKDateTimePicker *)self.control hour];
+    if ([self.control isKindOfClass:WKDateTimePopover.class])
+        return [(WKDateTimePopover *)self.control hour];
+    return -1;
+}
+
+- (double)timePickerValueMinute
+{
+    if ([self.control isKindOfClass:WKDateTimePicker.class])
+        return [(WKDateTimePicker *)self.control minute];
+    if ([self.control isKindOfClass:WKDateTimePopover.class])
+        return [(WKDateTimePopover *)self.control minute];
+    return -1;
 }
 
 @end
@@ -416,10 +467,34 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     return nil;
 }
 
+- (void)setHour:(NSInteger)hour minute:(NSInteger)minute
+{
+    WKDateTimePicker *dateTimePicker = (WKDateTimePicker *)self.viewController.innerControl;
+    [dateTimePicker setHour:hour minute:minute];
+}
+
 - (NSString *)calendarType
 {
     WKDateTimePicker *dateTimePicker = (WKDateTimePicker *)self.viewController.innerControl;
     return dateTimePicker.datePicker.calendar.calendarIdentifier;
+}
+
+- (double)hour
+{
+    WKDateTimePicker *dateTimePicker = (WKDateTimePicker *)self.viewController.innerControl;
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSCalendarUnitHour) fromDate:dateTimePicker.datePicker.date];
+
+    return [components hour];
+}
+
+- (double)minute
+{
+    WKDateTimePicker *dateTimePicker = (WKDateTimePicker *)self.viewController.innerControl;
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSCalendarUnitMinute) fromDate:dateTimePicker.datePicker.date];
+
+    return [components minute];
 }
 
 @end

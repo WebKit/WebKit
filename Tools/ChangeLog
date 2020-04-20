@@ -1,3 +1,19 @@
+2020-04-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Date and Time form controls not showing correct initial values on immediate second invocation.
+        https://bugs.webkit.org/show_bug.cgi?id=210613
+
+        Reviewed by Wenson Hsieh.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::timePickerValueHour const):
+        (WTR::UIScriptController::timePickerValueMinute const):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::timePickerValueHour const):
+        (WTR::UIScriptControllerIOS::timePickerValueMinute const):
+
 2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation sometimes fails to replace text in title elements

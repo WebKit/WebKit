@@ -1,3 +1,15 @@
+2020-04-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Date and Time form controls not showing correct initial values on immediate second invocation.
+        https://bugs.webkit.org/show_bug.cgi?id=210613
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/ios/time-picker-value-change-expected.txt: Added.
+        * fast/forms/ios/time-picker-value-change.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.timerPickerValues):
+
 2020-04-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Skip tests related with missing reftest-wait support for imported WPT tests.

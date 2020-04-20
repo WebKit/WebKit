@@ -204,6 +204,8 @@ public:
     virtual JSRetainPtr<JSStringRef> selectFormPopoverTitle() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> formInputLabel() const { notImplemented(); return nullptr; }
     virtual void setTimePickerValue(long hour, long minute) { notImplemented(); }
+    virtual double timePickerValueHour() const { notImplemented(); return -1; }
+    virtual double timePickerValueMinute() const { notImplemented(); return -1; }
     virtual bool isShowingDataListSuggestions() const { notImplemented(); return false; }
     virtual JSObjectRef calendarType() const { notImplemented(); return nullptr; }
     virtual void setDefaultCalendarType(JSStringRef calendarIdentifier, JSStringRef localeIdentifier) { notImplemented(); }

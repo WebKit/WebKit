@@ -55,6 +55,8 @@
 - (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
 
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
+- (double)timePickerValueHour;
+- (double)timePickerValueMinute;
 
 - (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler;
 

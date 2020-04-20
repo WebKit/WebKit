@@ -89,6 +89,8 @@ public:
     JSRetainPtr<JSStringRef> formInputLabel() const override;
     void selectFormAccessoryPickerRow(long rowIndex) override;
     void setTimePickerValue(long hour, long minute) override;
+    double timePickerValueHour() const override;
+    double timePickerValueMinute() const override;
     bool isPresentingModally() const override;
     double contentOffsetX() const override;
     double contentOffsetY() const override;

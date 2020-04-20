@@ -611,6 +611,16 @@ void UIScriptControllerIOS::setTimePickerValue(long hour, long minute)
     [webView() setTimePickerValueToHour:hour minute:minute];
 }
 
+double UIScriptControllerIOS::timePickerValueHour() const
+{
+    return [webView() timePickerValueHour];
+}
+
+double UIScriptControllerIOS::timePickerValueMinute() const
+{
+    return [webView() timePickerValueMinute];
+}
+
 bool UIScriptControllerIOS::isPresentingModally() const
 {
     return !!webView().window.rootViewController.presentedViewController;

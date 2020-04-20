@@ -714,6 +714,18 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(setValueScript, resolve));
     }
 
+    static timerPickerValues()
+    {
+        if (!this.isIOSFamily())
+            return Promise.resolve();
+
+        const uiScript = "JSON.stringify([uiController.timePickerValueHour, uiController.timePickerValueMinute])";
+        return new Promise(resolve => testRunner.runUIScript(uiScript, result => {
+            const [hour, minute] = JSON.parse(result)
+            resolve({ hour: hour, minute: minute });
+        }));
+    }
+
     static setShareSheetCompletesImmediatelyWithResolution(resolved)
     {
         const resolveShareSheet = `(() => uiController.setShareSheetCompletesImmediatelyWithResolution(${resolved}))()`;

@@ -119,6 +119,16 @@
     [_contentView setTimePickerValueToHour:hour minute:minute];
 }
 
+- (double)timePickerValueHour
+{
+    return [_contentView timePickerValueHour];
+}
+
+- (double)timePickerValueMinute
+{
+    return [_contentView timePickerValueMinute];
+}
+
 - (void)selectFormAccessoryPickerRow:(int)rowIndex
 {
     [_contentView selectFormAccessoryPickerRow:rowIndex];

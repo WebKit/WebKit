@@ -4322,6 +4322,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _page->setIsShowingInputViewForFocusedElement(false);
 }
 
+- (void)updateFocusedElementValueAsNumber:(double)value
+{
+    _page->setFocusedElementValueAsNumber(value);
+    _focusedElementInformation.valueAsNumber = value;
+}
+
+- (void)updateFocusedElementValue:(NSString *)value
+{
+    _page->setFocusedElementValue(value);
+    _focusedElementInformation.value = value;
+}
+
 - (void)accessoryTab:(BOOL)isNext
 {
     // The input peripheral may need to update the focused DOM node before we switch focus. The UI process does
@@ -8633,7 +8645,28 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #if PLATFORM(WATCHOS)
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
+#elif PLATFORM(IOS_FAMILY)
+    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
+        [(WKFormInputControl *)_inputPeripheral.get() setTimePickerHour:hour minute:minute];
 #endif
+}
+
+- (double)timePickerValueHour
+{
+#if PLATFORM(IOS_FAMILY)
+    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
+        return [(WKFormInputControl *)_inputPeripheral.get() timePickerValueHour];
+#endif
+    return -1;
+}
+
+- (double)timePickerValueMinute
+{
+#if PLATFORM(IOS_FAMILY)
+    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
+        return [(WKFormInputControl *)_inputPeripheral.get() timePickerValueMinute];
+#endif
+    return -1;
 }
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem

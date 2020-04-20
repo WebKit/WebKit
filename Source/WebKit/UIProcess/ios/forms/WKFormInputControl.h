@@ -35,6 +35,9 @@
 
 @interface WKFormInputControl (WKTesting)
 @property (nonatomic, readonly) NSString *dateTimePickerCalendarType;
+@property (nonatomic, readonly) double timePickerValueHour;
+@property (nonatomic, readonly) double timePickerValueMinute;
+- (void)setTimePickerHour:(NSInteger)hour minute:(NSInteger)minute;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -214,6 +214,8 @@ interface UIScriptController {
     readonly attribute DOMString formInputLabel;
 
     void setTimePickerValue(long hour, long minute);
+    readonly attribute double timePickerValueHour;
+    readonly attribute double timePickerValueMinute;
 
     // Share sheet
     void setShareSheetCompletesImmediatelyWithResolution(boolean resolved);
