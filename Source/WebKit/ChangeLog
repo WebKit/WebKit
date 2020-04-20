@@ -1,3 +1,17 @@
+2020-04-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Fix build when !ENABLE(RESOURCE_LOAD_STATISTICS)
+        https://bugs.webkit.org/show_bug.cgi?id=210757
+
+        Reviewed by Ross Kirsling.
+
+        Build fix, no new tests
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        Add ENABLE(RESOURCE_LOAD_STATISTICS) around block
+        using NetworkSession functions only declared when
+        that is enabled.
+
 2020-04-20  Alex Christensen  <achristensen@webkit.org>
 
         When SpeculativeLoadManager is destroyed, properly clean up its PendingFrameLoads
