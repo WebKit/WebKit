@@ -1942,7 +1942,14 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 
 - (NSNumber *)primaryScreenHeight
 {
-    FloatRect screenRect = screenRectForPrimaryScreen();
+    // The rect for primary screen should not change in normal use. So cache it
+    // here to avoid hitting the main thread repeatedly.
+    static FloatRect screenRect;
+    if (screenRect.isEmpty()) {
+        screenRect = Accessibility::retrieveValueFromMainThread<FloatRect>([] () -> FloatRect {
+            return screenRectForPrimaryScreen();
+        });
+    }
     return [NSNumber numberWithFloat:screenRect.height()];
 }
 

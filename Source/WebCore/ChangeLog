@@ -1,3 +1,17 @@
+2020-04-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        The rect for the primary screen should be retrieved on the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=210760
+
+        Reviewed by Chris Fleizach.
+
+        - Call to screenRectForPrimaryScreen is dispatched to main thread.
+        - This value is cached since it is very unlikely to change in normal
+        usage and this would avoid hitting the main thread repeatedly.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper primaryScreenHeight]):
+
 2020-04-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Update WebXRSession and WebXRSystem interfaces
