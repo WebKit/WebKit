@@ -1,3 +1,19 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Skip test262 for non-safe-integer range BigIntConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=210749
+
+        Reviewed by Keith Miller.
+
+        We skip test262 test/built-ins/BigInt/constructor-integer.js for now. As it is shown in old test262 JSTests/test262/expectations.yaml,
+        this test was failing before BigInt flag is enabled. And new BigInt patch changes error message while we are failing in the same way.
+        While we implemented BigInt, this test is based on spec change introduced[1], and we are not implementing this. So we mark it skipped,
+        as it is skipped before BigInt is enabled.
+
+        [1]: https://github.com/tc39/proposal-bigint/pull/138
+
+        * test262/config.yaml:
+
 2020-04-20  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, revert accidental test changes.

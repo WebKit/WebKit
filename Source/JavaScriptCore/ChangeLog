@@ -1,3 +1,13 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Skip test262 for non-safe-integer range BigIntConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=210749
+
+        Reviewed by Keith Miller.
+
+        * runtime/BigIntConstructor.cpp:
+        (JSC::callBigIntConstructor):
+
 2020-04-20  Keith Miller  <keith_miller@apple.com>
 
         Fix CheckIsConstant for non-constant values and checking for empty
