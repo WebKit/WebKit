@@ -558,7 +558,11 @@ class WebkitFlatpak:
         return [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir]
 
     def is_branch_build(self):
-        git_branch_name = subprocess.check_output(("git", "rev-parse", "--abbrev-ref", "HEAD")).decode("utf-8").strip()
+        try:
+            rev_parse = subprocess.check_output(("git", "rev-parse", "--abbrev-ref", "HEAD"))
+        except subprocess.CalledProcessError:
+            return False
+        git_branch_name = rev_parse.decode("utf-8").strip()
         for option_name in ("branch.%s.webKitBranchBuild" % git_branch_name,
                             "webKitBranchBuild"):
             try:
