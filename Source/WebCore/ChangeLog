@@ -1,3 +1,26 @@
+2020-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Content disappears on CSS parallax example
+        https://bugs.webkit.org/show_bug.cgi?id=210732
+        <rdar://problem/61997636>
+
+        Reviewed by Darin Adler.
+
+        If scrolling affects the computation of coverage rect of a TiledBacking, we plumb
+        that expanded coverage back into TransformState which is maintained during GraphicsLayer flushing,
+        and it's used to compute coverage rect for descendants.
+
+        It's passed into TransformState::setLastPlanarSecondaryQuad(), which has to map it back into
+        the coordinate system of the last flattening ancestor. However, TransformState::mapQuad()
+        had a missing return and the quad mapping was wrong. The new code is now the same as
+        TransformState::mappedPoint() (you can see where the copy/paste error came from).
+
+        Test: compositing/tiling/coverage-adjustment-secondary-quad-mapping.html
+
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::mapQuad const):
+        (WebCore::TransformState::flattenWithTransform):
+
 2020-04-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for border-collapse: collapse.

@@ -1,3 +1,15 @@
+2020-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Content disappears on CSS parallax example
+        https://bugs.webkit.org/show_bug.cgi?id=210732
+
+        Reviewed by Darin Adler.
+
+        * compositing/tiling/coverage-adjustment-secondary-quad-mapping-expected.txt: Added.
+        * compositing/tiling/coverage-adjustment-secondary-quad-mapping.html: Added.
+        * platform/ios-wk2/compositing/tiling/coverage-adjustment-secondary-quad-mapping-expected.txt: Added.
+        * platform/mac-wk1/compositing/tiling/coverage-adjustment-secondary-quad-mapping-expected.txt: Added.
+
 2020-04-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for border-collapse: collapse.

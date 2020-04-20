@@ -215,8 +215,10 @@ void TransformState::mapQuad(FloatQuad& quad, TransformDirection direction, bool
     if (!m_accumulatedTransform)
         return;
 
-    if (direction == ApplyTransformDirection)
+    if (direction == ApplyTransformDirection) {
         quad = m_accumulatedTransform->mapQuad(quad);
+        return;
+    }
 
     quad = m_accumulatedTransform->inverse().valueOr(TransformationMatrix()).projectQuad(quad, wasClamped);
 }
@@ -231,7 +233,6 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* w
             if (m_lastPlanarSecondaryQuad)
                 m_lastPlanarSecondaryQuad = t.mapQuad(*m_lastPlanarSecondaryQuad);
         }
-
     } else {
         TransformationMatrix inverseTransform = t.inverse().valueOr(TransformationMatrix());
         if (m_mapPoint)
