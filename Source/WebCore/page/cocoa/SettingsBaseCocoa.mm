@@ -23,28 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SettingsBase.h"
+#import "config.h"
+#import "SettingsBase.h"
 
-#include <wtf/NeverDestroyed.h>
+#import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "Device.h"
-#include <pal/ios/UIKitSoftLink.h>
-#include <pal/spi/ios/UIKitSPI.h>
+#import "Device.h"
+#import <pal/spi/ios/UIKitSPI.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
 namespace WebCore {
-
-static inline const char* sansSerifTraditionalHanFontFamily()
-{
-    return "PingFang TC";
-}
-
-static inline const char* sansSerifSimplifiedHanFontFamily()
-{
-    return "PingFang SC";
-}
 
 #if PLATFORM(MAC)
 
@@ -70,8 +63,8 @@ bool SettingsBase::platformDefaultMediaSourceEnabled()
 
 void SettingsBase::initializeDefaultFontFamilies()
 {
-    setStandardFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
-    setStandardFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setStandardFontFamily("PingFang TC", USCRIPT_TRADITIONAL_HAN);
+    setStandardFontFamily("PingFang SC", USCRIPT_SIMPLIFIED_HAN);
     setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
     setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
 
@@ -87,10 +80,12 @@ bool SettingsBase::defaultTextAutosizingEnabled()
 }
 
 #if ENABLE(MEDIA_SOURCE)
+
 bool SettingsBase::platformDefaultMediaSourceEnabled()
 {
     return false;
 }
+
 #endif
 
 #endif

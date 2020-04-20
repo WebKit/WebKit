@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if PLATFORM(MAC)
 
-#include "DumpRenderTreeMac.h"
+#import "DumpRenderTreeMac.h"
 
 int main(int argc, const char *argv[])
 {
@@ -36,7 +36,7 @@ int main(int argc, const char *argv[])
 
 #else
 
-#include <wtf/Assertions.h>
+#import <wtf/Assertions.h>
 
 int main(int, const char*[])
 {

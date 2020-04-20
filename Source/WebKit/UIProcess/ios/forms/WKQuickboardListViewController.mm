@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKQuickboardListViewController.h"
+#import "config.h"
+#import "WKQuickboardListViewController.h"
 
 #if PLATFORM(WATCHOS)
 

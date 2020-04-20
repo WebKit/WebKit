@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKBundlePageBannerMac.h"
+#import "config.h"
+#import "WKBundlePageBannerMac.h"
 
 #if !PLATFORM(IOS_FAMILY)
 
-#include "APIClient.h"
-#include "PageBanner.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#import "APIClient.h"
+#import "PageBanner.h"
+#import "WKAPICast.h"
+#import "WKBundleAPICast.h"
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageBannerClientBase> {

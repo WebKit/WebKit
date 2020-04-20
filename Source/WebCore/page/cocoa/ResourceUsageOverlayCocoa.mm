@@ -23,25 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ResourceUsageOverlay.h"
+#import "config.h"
+#import "ResourceUsageOverlay.h"
 
 #if ENABLE(RESOURCE_USAGE)
 
-#include <CoreText/CoreText.h>
-
-#include "CommonVM.h"
-#include "JSDOMWindow.h"
-#include "PlatformCALayer.h"
-#include "ResourceUsageThread.h"
-#include <CoreGraphics/CGContext.h>
-#include <QuartzCore/CALayer.h>
-#include <QuartzCore/CATransaction.h>
-#include <wtf/MainThread.h>
-#include <wtf/MathExtras.h>
-#include <wtf/MemoryFootprint.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#import "CommonVM.h"
+#import "JSDOMWindow.h"
+#import "PlatformCALayer.h"
+#import "ResourceUsageThread.h"
+#import <CoreGraphics/CGContext.h>
+#import <CoreText/CoreText.h>
+#import <QuartzCore/CALayer.h>
+#import <QuartzCore/CATransaction.h>
+#import <wtf/MainThread.h>
+#import <wtf/MathExtras.h>
+#import <wtf/MemoryFootprint.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 using WebCore::ResourceUsageOverlay;
 

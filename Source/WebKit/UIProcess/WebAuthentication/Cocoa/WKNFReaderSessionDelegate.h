@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
 #import "NearFieldSPI.h"

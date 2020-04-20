@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Logging.h"
+#import "config.h"
+#import "Logging.h"
 
-#include <wtf/text/WTFString.h>
+#import <wtf/text/WTFString.h>
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

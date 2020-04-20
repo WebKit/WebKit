@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaSessionInterruptionProviderMac.h"
+#import "config.h"
+#import "MediaSessionInterruptionProviderMac.h"
 
 #if ENABLE(MEDIA_SESSION) && PLATFORM(MAC)
 
-#include <CoreFoundation/CoreFoundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
 

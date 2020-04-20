@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebDataListSuggestionsDropdownIOS.h"
+#import "config.h"
+#import "WebDataListSuggestionsDropdownIOS.h"
 
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 

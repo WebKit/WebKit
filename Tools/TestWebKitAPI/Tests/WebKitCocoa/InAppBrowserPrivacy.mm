@@ -44,7 +44,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/InAppBrowserPrivacyTestAdditions.h>
+#import <WebKitAdditions/InAppBrowserPrivacyTestAdditions.h>
 
 static bool isDone;
 

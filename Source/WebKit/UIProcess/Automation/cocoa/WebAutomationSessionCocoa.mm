@@ -31,9 +31,9 @@
 #import <wtf/FileSystem.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <ImageIO/CGImageDestination.h>
-#include <MobileCoreServices/UTCoreTypes.h>
-#include <WebCore/KeyEventCodesIOS.h>
+#import <ImageIO/CGImageDestination.h>
+#import <MobileCoreServices/UTCoreTypes.h>
+#import <WebCore/KeyEventCodesIOS.h>
 #endif
 
 namespace WebKit {

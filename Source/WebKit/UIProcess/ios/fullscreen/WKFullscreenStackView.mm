@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-#include "WKFullscreenStackView.h"
+#import "WKFullscreenStackView.h"
 
 #import "UIKitSPI.h"
 #import <UIKit/UIVisualEffectView.h>

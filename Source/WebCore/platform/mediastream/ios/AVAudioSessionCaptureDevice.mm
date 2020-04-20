@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AVAudioSessionCaptureDevice.h"
+#import "config.h"
+#import "AVAudioSessionCaptureDevice.h"
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
-#include <AVFoundation/AVAudioSession.h>
+#import <AVFoundation/AVAudioSession.h>
 
 namespace WebCore {
 

@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSAPIWrapperObject.h"
+#import "config.h"
+#import "JSAPIWrapperObject.h"
 
-#include "JSCInlines.h"
-#include "JSCallbackObject.h"
-#include "JSVirtualMachineInternal.h"
-#include "Structure.h"
-#include <wtf/NeverDestroyed.h>
+#import "JSCInlines.h"
+#import "JSCallbackObject.h"
+#import "JSVirtualMachineInternal.h"
+#import "Structure.h"
+#import <wtf/NeverDestroyed.h>
 
 #if JSC_OBJC_API_ENABLED
 

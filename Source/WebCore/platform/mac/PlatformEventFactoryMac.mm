@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformEventFactoryMac.h"
+#import "config.h"
+#import "PlatformEventFactoryMac.h"
 
 #if PLATFORM(MAC)
 

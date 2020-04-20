@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <QuartzCore/QuartzCore.h>
 
 @interface WebSystemBackdropLayer : CALayer
@@ -35,4 +33,3 @@
 
 @interface WebDarkSystemBackdropLayer : WebSystemBackdropLayer
 @end
-

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if HAVE(SAFE_BROWSING)
 
 #import <Foundation/Foundation.h>

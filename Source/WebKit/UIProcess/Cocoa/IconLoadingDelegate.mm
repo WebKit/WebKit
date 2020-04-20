@@ -26,10 +26,10 @@
 #import "config.h"
 #import "IconLoadingDelegate.h"
 
-#include "WKNSData.h"
-#include "_WKIconLoadingDelegate.h"
-#include "_WKLinkIconParametersInternal.h"
-#include <wtf/BlockPtr.h>
+#import "WKNSData.h"
+#import "_WKIconLoadingDelegate.h"
+#import "_WKLinkIconParametersInternal.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 

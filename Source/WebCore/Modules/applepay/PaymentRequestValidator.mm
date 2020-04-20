@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PaymentRequestValidator.h"
+#import "config.h"
+#import "PaymentRequestValidator.h"
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
-#include <unicode/ucurr.h>
-#include <unicode/uloc.h>
+#import "ApplePaySessionPaymentRequest.h"
+#import <unicode/ucurr.h>
+#import <unicode/uloc.h>
 
 namespace WebCore {
 

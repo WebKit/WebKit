@@ -23,24 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AudioSampleDataSource.h"
+#import "config.h"
+#import "AudioSampleDataSource.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "CAAudioStreamDescription.h"
-#include "CARingBuffer.h"
-#include "Logging.h"
-#include "MediaStreamTrackPrivate.h"
-#include <AudioToolbox/AudioConverter.h>
-#include <mach/mach.h>
-#include <mach/mach_time.h>
-#include <mutex>
-#include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <syslog.h>
-#include <wtf/StringPrintStream.h>
+#import "CAAudioStreamDescription.h"
+#import "CARingBuffer.h"
+#import "Logging.h"
+#import "MediaStreamTrackPrivate.h"
+#import <AudioToolbox/AudioConverter.h>
+#import <mach/mach.h>
+#import <mach/mach_time.h>
+#import <mutex>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <syslog.h>
+#import <wtf/StringPrintStream.h>
 
-#include <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 using namespace PAL;

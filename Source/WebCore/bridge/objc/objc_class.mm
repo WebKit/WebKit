@@ -29,7 +29,7 @@
 #import "WebScriptObject.h"
 #import "WebScriptObjectProtocol.h"
 #import "objc_instance.h"
-#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 
 namespace JSC {
 namespace Bindings {

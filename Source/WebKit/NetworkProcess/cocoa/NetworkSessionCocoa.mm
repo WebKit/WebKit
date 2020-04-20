@@ -59,7 +59,7 @@
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/NetworkSessionCocoaAdditions.h>
+#import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
 #endif

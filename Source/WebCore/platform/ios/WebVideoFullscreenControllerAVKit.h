@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#pragma once
-
 #if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/HTMLMediaElementEnums.h>
 #import <wtf/NakedPtr.h>
 
-OBJC_CLASS UIView;
+@class UIView;
 
 namespace WebCore {
 class HTMLVideoElement;
@@ -46,4 +43,3 @@ WEBCORE_EXPORT @interface WebVideoFullscreenController : NSObject
 @end
 
 #endif
-

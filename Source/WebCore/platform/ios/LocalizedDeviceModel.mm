@@ -23,8 +23,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include "LocalizedDeviceModel.h"
+#import "config.h"
+#import "LocalizedDeviceModel.h"
 
 #if PLATFORM(IOS_FAMILY)
 

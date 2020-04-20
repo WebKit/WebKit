@@ -28,14 +28,14 @@
 #import "WebHostedNetscapePluginView.h"
 
 #import "HostedNetscapePluginStream.h"
-#import "NetscapePluginInstanceProxy.h"
 #import "NetscapePluginHostManager.h"
 #import "NetscapePluginHostProxy.h"
-#import "WebTextInputWindowController.h"
+#import "NetscapePluginInstanceProxy.h"
 #import "WebFrameInternal.h"
+#import "WebTextInputWindowController.h"
+#import "WebUIDelegate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
-#import "WebUIDelegate.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/InitializeThreading.h>
@@ -90,8 +90,8 @@ private:
 }
 
 extern "C" {
-#include "WebKitPluginClientServer.h"
-#include "WebKitPluginHost.h"
+#import "WebKitPluginClientServer.h"
+#import "WebKitPluginHost.h"
 }
 
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)

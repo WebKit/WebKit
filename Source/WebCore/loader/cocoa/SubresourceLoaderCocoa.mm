@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SubresourceLoader.h"
+#import "config.h"
+#import "SubresourceLoader.h"
 
-#include "CachedResource.h"
-#include "DiskCacheMonitorCocoa.h"
-#include "ResourceHandle.h"
-#include "ResourceLoader.h"
-#include "SharedBuffer.h"
-#include <pal/spi/cf/CFNetworkSPI.h>
+#import "CachedResource.h"
+#import "DiskCacheMonitorCocoa.h"
+#import "ResourceHandle.h"
+#import "ResourceLoader.h"
+#import "SharedBuffer.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKSharingServicePickerDelegate_h
-#define WKSharingServicePickerDelegate_h
-
 #if ENABLE(SERVICE_CONTROLS)
 
-#include <wtf/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 class WebContextMenuProxyMac;
@@ -52,4 +49,3 @@ class WebContextMenuProxyMac;
 @end
 
 #endif // ENABLE(SERVICE_CONTROLS)
-#endif // WKSharingServicePickerDelegate_h

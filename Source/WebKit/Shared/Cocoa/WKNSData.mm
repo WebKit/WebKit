@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKNSData.h"
+#import "config.h"
+#import "WKNSData.h"
 
 @implementation WKNSData {
     API::ObjectStorage<API::Data> _data;

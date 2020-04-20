@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(WEBGL)
 #import "WebGLLayer.h"
@@ -46,15 +46,15 @@
 
 #if USE(ANGLE)
 #define EGL_EGL_PROTOTYPES 0
-#include <ANGLE/egl.h>
-#include <ANGLE/eglext.h>
-#include <ANGLE/eglext_angle.h>
-#include <ANGLE/entry_points_egl.h>
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
+#import <ANGLE/egl.h>
+#import <ANGLE/eglext.h>
+#import <ANGLE/eglext_angle.h>
+#import <ANGLE/entry_points_egl.h>
+#import <ANGLE/entry_points_gles_2_0_autogen.h>
 // Skip the inclusion of ANGLE's explicit context entry points for now.
 #define GL_ANGLE_explicit_context
-#include <ANGLE/gl2ext.h>
-#include <ANGLE/gl2ext_angle.h>
+#import <ANGLE/gl2ext.h>
+#import <ANGLE/gl2ext_angle.h>
 #endif
 
 @implementation WebGLLayer

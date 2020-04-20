@@ -23,17 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(COCOA)
-
 #if USE(APPKIT)
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 #else
-#include <UIKit/UIKit.h>
+#import <UIKit/UIKit.h>
 #endif
 
-#include <WebCore/PlatformView.h>
+#import <WebCore/PlatformView.h>
 
 WEBCORE_EXPORT
 @interface WebViewVisualIdentificationOverlay : NSObject
@@ -41,5 +37,3 @@ WEBCORE_EXPORT
 + (void)installForWebViewIfNeeded:(PlatformView *)view kind:(NSString *)kind deprecated:(BOOL)isDeprecated;
 
 @end
-
-#endif // PLATFORM(COCOA)

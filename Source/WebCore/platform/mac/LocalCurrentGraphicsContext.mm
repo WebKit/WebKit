@@ -17,12 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "LocalCurrentGraphicsContext.h"
+#import "config.h"
+#import "LocalCurrentGraphicsContext.h"
 
 #if USE(APPKIT)
 
-#include <AppKit/NSGraphicsContext.h>
+#import <AppKit/NSGraphicsContext.h>
 
 namespace WebCore {
 

@@ -20,8 +20,8 @@
 
 #import "SearchPopupMenuMac.h"
 
-#include "PopupMenuMac.h"
-#include <wtf/text/AtomString.h>
+#import "PopupMenuMac.h"
+#import <wtf/text/AtomString.h>
 
 SearchPopupMenuMac::SearchPopupMenuMac(WebCore::PopupMenuClient* client)
     : m_popup(adoptRef(new PopupMenuMac(client)))

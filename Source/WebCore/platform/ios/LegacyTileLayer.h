@@ -23,15 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if PLATFORM(IOS_FAMILY)
 
-#include <QuartzCore/CALayer.h>
+#import <QuartzCore/CALayer.h>
 
 namespace WebCore {
 class LegacyTileGrid;
-};
+}
 
 @interface LegacyTileLayer : CALayer {
     WebCore::LegacyTileGrid* _tileGrid;
@@ -50,4 +48,3 @@ class LegacyTileGrid;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
-

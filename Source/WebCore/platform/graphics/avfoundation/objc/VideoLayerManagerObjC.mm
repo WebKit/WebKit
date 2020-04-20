@@ -37,7 +37,7 @@
 #import <wtf/Logger.h>
 #import <wtf/MachSendRight.h>
 
-#include <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 OBJC_CLASS AVPlayerLayer;
 

@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
-#include <wtf/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 

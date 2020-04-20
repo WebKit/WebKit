@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if WK_HAVE_C_SPI
 
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import "Test.h"
 
-#include <WebKit/WKString.h>
+#import <WebKit/WKString.h>
 
 namespace TestWebKitAPI {
 

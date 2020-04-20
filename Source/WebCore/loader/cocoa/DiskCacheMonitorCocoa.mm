@@ -34,7 +34,7 @@
 #import <wtf/RefPtr.h>
 
 #if USE(WEB_THREAD)
-#include "WebCoreThreadRun.h"
+#import "WebCoreThreadRun.h"
 #endif
 
 namespace WebCore {

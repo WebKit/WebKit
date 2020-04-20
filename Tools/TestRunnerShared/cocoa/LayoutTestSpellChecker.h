@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <wtf/RetainPtr.h>
 

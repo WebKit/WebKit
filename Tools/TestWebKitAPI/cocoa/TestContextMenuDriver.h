@@ -23,11 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(IOS) && USE(UICONTEXTMENU)
 
 #import <wtf/WeakObjCPtr.h>
-
-#if PLATFORM(IOS) && USE(UICONTEXTMENU)
 
 @protocol _UIClickInteractionDriverDelegate;
 @protocol _UIClickInteractionDriving <NSObject>

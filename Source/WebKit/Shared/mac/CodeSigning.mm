@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CodeSigning.h"
+#import "config.h"
+#import "CodeSigning.h"
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
-#include <wtf/RetainPtr.h>
-#include <wtf/spi/cocoa/SecuritySPI.h>
-#include <wtf/text/WTFString.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 

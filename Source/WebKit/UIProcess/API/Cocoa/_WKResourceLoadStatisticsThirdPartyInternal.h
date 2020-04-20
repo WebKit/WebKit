@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "APIResourceLoadStatisticsThirdParty.h"
 #import "WKObject.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"

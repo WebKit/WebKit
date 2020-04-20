@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

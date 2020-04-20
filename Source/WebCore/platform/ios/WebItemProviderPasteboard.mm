@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebItemProviderPasteboard.h"
 
 #if ENABLE(DATA_INTERACTION)

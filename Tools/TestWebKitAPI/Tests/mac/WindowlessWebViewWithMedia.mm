@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JavaScriptTest.h"
-#include "PlatformUtilities.h"
-#include <wtf/RetainPtr.h>
+#import "config.h"
+#import "JavaScriptTest.h"
+#import "PlatformUtilities.h"
+#import <wtf/RetainPtr.h>
 
 
 static bool didFinishLoad;

@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/SchedulePair.h>
+#import "config.h"
+#import <wtf/SchedulePair.h>
 
 namespace WTF {
 

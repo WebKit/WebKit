@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(DATA_DETECTION)
 
 typedef struct __DDResult *DDResultRef;

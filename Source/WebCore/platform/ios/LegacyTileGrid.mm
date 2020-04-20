@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyTileGrid.h"
+#import "config.h"
+#import "LegacyTileGrid.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "LegacyTileGridTile.h"
-#include "LegacyTileLayer.h"
-#include "LegacyTileLayerPool.h"
-#include "SystemMemory.h"
-#include "WAKWindow.h"
-#include <algorithm>
-#include <functional>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <pal/spi/cocoa/QuartzCoreSPI.h>
-#include <wtf/MemoryPressureHandler.h>
+#import "LegacyTileGridTile.h"
+#import "LegacyTileLayer.h"
+#import "LegacyTileLayerPool.h"
+#import "SystemMemory.h"
+#import "WAKWindow.h"
+#import <algorithm>
+#import <functional>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 

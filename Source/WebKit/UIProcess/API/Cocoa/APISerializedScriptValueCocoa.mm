@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APISerializedScriptValue.h"
+#import "config.h"
+#import "APISerializedScriptValue.h"
 
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSContext.h>

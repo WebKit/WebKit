@@ -36,14 +36,6 @@ _WebViewportUserScalableKey
 _WebViewportShrinkToFitKey
 _WebViewportWidthKey
 
-# So that we can use the MemoryMeasure class in MobileSafari
-__ZN6WebKit13MemoryMeasure10taskMemoryEv
-__ZN6WebKit13MemoryMeasure13enableLoggingEb
-__ZN6WebKit13MemoryMeasure16isLoggingEnabledEv
-__ZN6WebKit13MemoryMeasure18m_isLoggingEnabledE
-__ZN6WebKit13MemoryMeasureD1Ev
-__ZN6WebKit13MemoryMeasureD2Ev
-
 # For estimated progress notifications
 _WebViewProgressBackgroundColorKey
 _WebViewProgressEstimatedProgressKey

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKFocusedFormControlView.h"
+#import "config.h"
+#import "WKFocusedFormControlView.h"
 
 #if PLATFORM(WATCHOS)
 

@@ -18,10 +18,10 @@
  *
  */
 
-#include "config.h"
-#include <wtf/text/WTFString.h>
+#import "config.h"
+#import <wtf/text/WTFString.h>
 
-#include <CoreFoundation/CFString.h>
+#import <CoreFoundation/CFString.h>
 
 namespace WTF {
 

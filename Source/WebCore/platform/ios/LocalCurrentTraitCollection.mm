@@ -22,12 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocalCurrentTraitCollection.h"
+#import "config.h"
+#import "LocalCurrentTraitCollection.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <pal/ios/UIKitSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
 

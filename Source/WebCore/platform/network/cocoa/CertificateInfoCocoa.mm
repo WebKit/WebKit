@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CertificateInfo.h"
+#import "config.h"
+#import "CertificateInfo.h"
 
 namespace WebCore {
 

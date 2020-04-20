@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <CoreGraphics/CGGeometry.h>
 #import <Foundation/NSObject.h>
 

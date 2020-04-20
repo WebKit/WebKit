@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DataDetectorsCoreSoftLink.h"
+#import "config.h"
+#import "DataDetectorsCoreSoftLink.h"
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
 

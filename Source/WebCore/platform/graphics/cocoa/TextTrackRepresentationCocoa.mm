@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
-#include "TextTrackRepresentationCocoa.h"
+#import "TextTrackRepresentationCocoa.h"
 
-#include "FloatRect.h"
-#include "GraphicsContextCG.h"
-#include "IntRect.h"
+#import "FloatRect.h"
+#import "GraphicsContextCG.h"
+#import "IntRect.h"
 
 #if PLATFORM(IOS_FAMILY)
-#include "WebCoreThread.h"
-#include "WebCoreThreadRun.h"
+#import "WebCoreThread.h"
+#import "WebCoreThreadRun.h"
 #endif
 
 #import <pal/spi/cocoa/QuartzCoreSPI.h>

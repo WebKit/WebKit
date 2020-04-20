@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if PLATFORM(COCOA)
 
@@ -35,7 +35,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
-#include <MobileCoreServices/MobileCoreServices.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 @interface WKWebView ()

@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingMomentumCalculatorMac.h"
+#import "config.h"
+#import "ScrollingMomentumCalculatorMac.h"
 
 #if PLATFORM(MAC)
 
-#include <pal/spi/mac/NSScrollingMomentumCalculatorSPI.h>
+#import <pal/spi/mac/NSScrollingMomentumCalculatorSPI.h>
 
 namespace WebCore {
 

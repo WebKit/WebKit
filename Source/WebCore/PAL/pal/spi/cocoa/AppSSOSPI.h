@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if HAVE(APP_SSO)
 
 #if USE(APPLE_INTERNAL_SDK)

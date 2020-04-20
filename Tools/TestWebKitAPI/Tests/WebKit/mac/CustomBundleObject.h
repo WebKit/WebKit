@@ -23,13 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 @interface CustomBundleObject : NSObject <NSCopying, NSSecureCoding> {
     long _somePayload;
 }
-
 @property (nonatomic) long somePayload;
-
 - (id)initWithValue:(long)value;
 @end

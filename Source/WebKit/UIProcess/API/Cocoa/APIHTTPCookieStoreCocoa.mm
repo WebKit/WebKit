@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIHTTPCookieStore.h"
+#import "config.h"
+#import "APIHTTPCookieStore.h"
 
-#include <WebCore/Cookie.h>
-#include <WebCore/CookieStorageObserver.h>
-#include <WebCore/HTTPCookieAcceptPolicy.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#import <WebCore/Cookie.h>
+#import <WebCore/CookieStorageObserver.h>
+#import <WebCore/HTTPCookieAcceptPolicy.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace API {
 

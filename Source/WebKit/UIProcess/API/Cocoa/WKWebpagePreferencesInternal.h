@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "APIWebsitePolicies.h"
 #import "WKObject.h"
 #import "WKWebpagePreferencesPrivate.h"

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKitAgnosticTest.h"
+#import "config.h"
 
-#include "JavaScriptTest.h"
-#include "PlatformUtilities.h"
-#include "SyntheticBackingScaleFactorWindow.h"
-#include <wtf/RetainPtr.h>
+#import "JavaScriptTest.h"
+#import "PlatformUtilities.h"
+#import "SyntheticBackingScaleFactorWindow.h"
+#import "WebKitAgnosticTest.h"
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 

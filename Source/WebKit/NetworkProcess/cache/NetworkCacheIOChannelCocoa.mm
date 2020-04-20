@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkCacheIOChannel.h"
+#import "config.h"
+#import "NetworkCacheIOChannel.h"
 
-#include "NetworkCacheFileSystem.h"
-#include <dispatch/dispatch.h>
-#include <mach/vm_param.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <wtf/BlockPtr.h>
-#include <wtf/text/CString.h>
+#import "NetworkCacheFileSystem.h"
+#import <dispatch/dispatch.h>
+#import <mach/vm_param.h>
+#import <sys/mman.h>
+#import <sys/stat.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/text/CString.h>
 
 namespace WebKit {
 namespace NetworkCache {

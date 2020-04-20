@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if WK_HAVE_C_SPI
 
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/DOMPrivate.h>
-#include <WebKit/WKImage.h>
+#import <WebKit/WKImage.h>
 #import <wtf/RetainPtr.h>
 
 @interface FindMatchesWK1FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {

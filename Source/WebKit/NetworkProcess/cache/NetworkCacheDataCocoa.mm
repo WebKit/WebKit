@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkCacheData.h"
+#import "config.h"
+#import "NetworkCacheData.h"
 
-#include "SharedMemory.h"
-#include <dispatch/dispatch.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
+#import "SharedMemory.h"
+#import <dispatch/dispatch.h>
+#import <sys/mman.h>
+#import <sys/stat.h>
 
 namespace WebKit {
 namespace NetworkCache {

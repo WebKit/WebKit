@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-@interface WebArchiveResourceWebResourceHandler : NSObject {
-}
+@interface WebArchiveResourceWebResourceHandler : NSObject
 - (id)resourceForData:(NSData *)data URL:(NSURL *)url MIMEType:(NSString *)mimeType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName;
 @end

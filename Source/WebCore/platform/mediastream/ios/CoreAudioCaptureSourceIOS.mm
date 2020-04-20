@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CoreAudioCaptureSourceIOS.h"
+#import "config.h"
+#import "CoreAudioCaptureSourceIOS.h"
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 

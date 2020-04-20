@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PoseAsClass.h"
+#import "config.h"
+#import "PoseAsClass.h"
 
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>

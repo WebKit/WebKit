@@ -29,16 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(INPUT_TYPE_COLOR)
-
-#if USE(APPKIT)
+#if ENABLE(INPUT_TYPE_COLOR) && USE(APPKIT)
 
 #import "WebColorPicker.h"
 #import <WebCore/IntRect.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 class Color;
@@ -57,14 +53,14 @@ class WebColorPickerMac;
 
 namespace WebKit {
     
-class WebColorPickerMac : public WebColorPicker {
+class WebColorPickerMac final : public WebColorPicker {
 public:        
     static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, Vector<WebCore::Color>&&, NSView *);
-    ~WebColorPickerMac();
+    virtual ~WebColorPickerMac();
 
-    void endPicker() override;
-    void setSelectedColor(const WebCore::Color&) override;
-    void showColorPicker(const WebCore::Color&) override;
+    void endPicker() final;
+    void setSelectedColor(const WebCore::Color&) final;
+    void showColorPicker(const WebCore::Color&) final;
     
     void didChooseColor(const WebCore::Color&);
 
@@ -76,6 +72,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(INPUT_TYPE_COLOR)
-
-#endif // USE(APPKIT)
+#endif // ENABLE(INPUT_TYPE_COLOR) && USE(APPKIT)

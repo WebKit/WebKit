@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKMain.h"
+#import "config.h"
+#import "WKMain.h"
 
-#include "XPCServiceEntryPoint.h"
+#import "XPCServiceEntryPoint.h"
 
 int WKXPCServiceMain(int argc, const char** argv)
 {

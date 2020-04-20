@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
 

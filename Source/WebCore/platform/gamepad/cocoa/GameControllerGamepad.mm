@@ -22,12 +22,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "GameControllerGamepad.h"
+#import "config.h"
+#import "GameControllerGamepad.h"
 
 #if ENABLE(GAMEPAD)
-#include "GameControllerGamepadProvider.h"
-#include <GameController/GameController.h>
+#import "GameControllerGamepadProvider.h"
+#import <GameController/GameController.h>
 
 namespace WebCore {
 

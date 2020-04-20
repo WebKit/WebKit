@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyTileLayerPool.h"
+#import "config.h"
+#import "LegacyTileLayerPool.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "LegacyTileLayer.h"
-#include "LegacyTileGrid.h"
-#include "Logging.h"
-#include <wtf/MemoryPressureHandler.h>
-#include <wtf/NeverDestroyed.h>
+#import "LegacyTileGrid.h"
+#import "LegacyTileLayer.h"
+#import "Logging.h"
+#import <wtf/MemoryPressureHandler.h>
+#import <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

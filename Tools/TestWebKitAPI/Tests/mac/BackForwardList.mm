@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include <wtf/RetainPtr.h>
+#import "config.h"
 
-#include <WebKit/WebBackForwardList.h>
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import <WebKit/WebBackForwardList.h>
+#import <wtf/RetainPtr.h>
 
 @interface BackForwardListTest : NSObject <WebFrameLoadDelegate> {
 }

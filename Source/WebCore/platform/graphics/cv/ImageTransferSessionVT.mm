@@ -35,13 +35,13 @@
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 
-#import "CoreVideoSoftLink.h"
-#import <pal/cf/CoreMediaSoftLink.h>
-#import "VideoToolboxSoftLink.h"
-
 #if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
-#include <pal/spi/cocoa/IOSurfaceSPI.h>
+#import <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
+
+#import "CoreVideoSoftLink.h"
+#import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 using namespace PAL;

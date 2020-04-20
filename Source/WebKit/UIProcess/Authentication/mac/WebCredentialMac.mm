@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebCredential.h"
+#import "config.h"
+#import "WebCredential.h"
 
 #if PLATFORM(MAC)
 
-#include "WebCertificateInfo.h"
-#include <Security/SecIdentity.h>
-#include <WebCore/CertificateInfo.h>
-#include <wtf/cf/TypeCastsCF.h>
+#import "WebCertificateInfo.h"
+#import <Security/SecIdentity.h>
+#import <WebCore/CertificateInfo.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {
 using namespace WebCore;

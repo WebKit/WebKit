@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <WebCore/GraphicsLayer.h>
+#import <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 class RemoteLayerTreeHost;
@@ -35,7 +33,6 @@ class RemoteLayerTreeHost;
     WebCore::GraphicsLayer::PlatformLayerID _layerID;
     WebKit::RemoteLayerTreeHost* _layerTreeHost;
 }
-
 - (instancetype)initWithLayerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;
 - (void)invalidate;
 @end

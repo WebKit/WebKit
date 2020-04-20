@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaUtilities.h"
+#import "config.h"
+#import "MediaUtilities.h"
 
 namespace WebKit {
 

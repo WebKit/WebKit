@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(DATA_DETECTION)
 
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>

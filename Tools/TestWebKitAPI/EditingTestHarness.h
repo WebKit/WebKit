@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 

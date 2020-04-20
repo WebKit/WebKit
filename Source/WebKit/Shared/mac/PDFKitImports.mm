@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PDFKitImports.h"
+#import "config.h"
+#import "PDFKitImports.h"
 
 #if PLATFORM(MAC)
 

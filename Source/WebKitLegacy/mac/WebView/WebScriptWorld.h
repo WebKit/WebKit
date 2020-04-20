@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <JavaScriptCore/JSBase.h>
+#import <JavaScriptCore/JSBase.h>
 
 @class JSContext;
 @class WebScriptWorldPrivate;

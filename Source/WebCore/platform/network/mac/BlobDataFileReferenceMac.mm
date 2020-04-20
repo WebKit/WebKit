@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "BlobDataFileReference.h"
+#import "config.h"
+#import "BlobDataFileReference.h"
 
 #if ENABLE(FILE_REPLACEMENT)
 
-#include <wtf/FileMetadata.h>
-#include <wtf/FileSystem.h>
-#include <wtf/text/CString.h>
+#import <wtf/FileMetadata.h>
+#import <wtf/FileSystem.h>
+#import <wtf/text/CString.h>
 
 namespace WebCore {
 

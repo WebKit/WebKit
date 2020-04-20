@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT) && WK_HAVE_C_SPI
 
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
-#include <WebKit/WKContextPrivate.h>
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import "Test.h"
+#import <WebKit/WKContextPrivate.h>
 
 namespace TestWebKitAPI {
 

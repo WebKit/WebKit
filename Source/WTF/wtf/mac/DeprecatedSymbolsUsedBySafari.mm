@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
-#include <stdint.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/StdLibExtras.h>
+#import <stdint.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
+#import <wtf/Lock.h>
+#import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/StdLibExtras.h>
 
 // This file contains deprecated symbols that the last released version of Safari uses.
 // Once Safari stops using them, we should remove them.

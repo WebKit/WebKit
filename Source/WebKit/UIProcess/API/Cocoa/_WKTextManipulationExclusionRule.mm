@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKTextManipulationExclusionRule.h"
 
-#include <wtf/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 @implementation _WKTextManipulationExclusionRule {
     BOOL _isExclusion;

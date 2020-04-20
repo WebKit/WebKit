@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(MAC)
 
 #import <WebKit/WKFoundation.h>
 #import <wtf/NakedPtr.h>
-
-#if PLATFORM(MAC)
 
 OBJC_CLASS WKWebView;
 

@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JavaScriptTest.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include <WebKit/WKRetainPtr.h>
-#include <WebKit/WKPage.h>
-#include <WebKit/WKPreferencesPrivate.h>
+#import "config.h"
+
+#import "JavaScriptTest.h"
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import <WebKit/WKPage.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
 

@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaRecorderPrivateWriterCocoa.h"
+#import "config.h"
+#import "MediaRecorderPrivateWriterCocoa.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "AudioStreamDescription.h"
-#include "Logging.h"
-#include "MediaStreamTrackPrivate.h"
-#include "WebAudioBufferList.h"
-#include <AVFoundation/AVAssetWriter.h>
-#include <AVFoundation/AVAssetWriterInput.h>
-#include <pal/cf/CoreMediaSoftLink.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/FileSystem.h>
+#import "AudioStreamDescription.h"
+#import "Logging.h"
+#import "MediaStreamTrackPrivate.h"
+#import "WebAudioBufferList.h"
+#import <AVFoundation/AVAssetWriter.h>
+#import <AVFoundation/AVAssetWriterInput.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/FileSystem.h>
 
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 #undef AVEncoderBitRateKey

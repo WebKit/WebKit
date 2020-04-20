@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <WebKit/WebKit.h>
 
 @interface TestURLSchemeHandler : NSObject <WKURLSchemeHandler>

@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SerializedCryptoKeyWrap.h"
+#import "config.h"
+#import "SerializedCryptoKeyWrap.h"
 
 #if ENABLE(WEB_CRYPTO)
 
-#include "CommonCryptoUtilities.h"
-#include "LocalizedStrings.h"
-#include <CommonCrypto/CommonSymmetricKeywrap.h>
-#include <crt_externs.h>
-#include <wtf/spi/cocoa/SecuritySPI.h>
-#include <wtf/text/Base64.h>
-#include <wtf/text/CString.h>
-#include <wtf/CryptographicUtilities.h>
-#include <wtf/ProcessPrivilege.h>
-#include <wtf/RetainPtr.h>
+#import "CommonCryptoUtilities.h"
+#import "LocalizedStrings.h"
+#import <CommonCrypto/CommonSymmetricKeywrap.h>
+#import <crt_externs.h>
+#import <wtf/CryptographicUtilities.h>
+#import <wtf/ProcessPrivilege.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/Base64.h>
+#import <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #define USE_KEYCHAIN_ACCESS_CONTROL_LISTS 0
@@ -46,7 +46,7 @@
 #endif
 
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
-#include <wtf/cf/TypeCastsCF.h>
+#import <wtf/cf/TypeCastsCF.h>
 WTF_DECLARE_CF_TYPE_TRAIT(SecACL);
 #endif
 

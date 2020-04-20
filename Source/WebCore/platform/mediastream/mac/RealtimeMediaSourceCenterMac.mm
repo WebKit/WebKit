@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RealtimeMediaSourceCenter.h"
+#import "config.h"
+#import "RealtimeMediaSourceCenter.h"
 
 #if ENABLE(MEDIA_STREAM)
 

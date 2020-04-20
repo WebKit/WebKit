@@ -23,13 +23,10 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
-
-#import <pal/spi/cocoa/NSUserDefaultsSPI.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
-#import <wtf/text/WTFString.h>
 
-OBJC_CLASS WKPreferenceObserver;
+@class WKPreferenceObserver;
 
 __attribute__((visibility("default")))
 @interface WKUserDefaults : NSUserDefaults {

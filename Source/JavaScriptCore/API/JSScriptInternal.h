@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if JSC_OBJC_API_ENABLED
 
 #import "JSScript.h"
 #import "SourceCode.h"
 #import <wtf/RefPtr.h>
-
-#if JSC_OBJC_API_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FloatPoint.h"
+#import "config.h"
+#import "FloatPoint.h"
 
 #if !PLATFORM(IOS_FAMILY)
 

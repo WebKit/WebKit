@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TestURLSchemeHandler.h"
+#import "config.h"
+#import "TestURLSchemeHandler.h"
 
 #import <wtf/BlockPtr.h>
 

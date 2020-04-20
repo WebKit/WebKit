@@ -23,14 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WebDataListSuggestionsDropdown.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKDataListSuggestionsControl;

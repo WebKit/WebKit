@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollerMac.h"
+#import "config.h"
+#import "ScrollerMac.h"
 
 #if PLATFORM(MAC)
 
-#include "ScrollerPairMac.h"
-#include <QuartzCore/CALayer.h>
-#include <WebCore/FloatPoint.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/NSScrollerImpDetails.h>
-#include <WebCore/PlatformWheelEvent.h>
-#include <pal/spi/mac/NSScrollerImpSPI.h>
-#include <wtf/BlockObjCExceptions.h>
+#import "ScrollerPairMac.h"
+#import <QuartzCore/CALayer.h>
+#import <WebCore/FloatPoint.h>
+#import <WebCore/IntRect.h>
+#import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/PlatformWheelEvent.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 enum class FeatureToAnimate {
     KnobAlpha,

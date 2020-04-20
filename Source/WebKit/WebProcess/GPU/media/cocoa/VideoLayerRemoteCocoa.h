@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #import <QuartzCore/CALayer.h>

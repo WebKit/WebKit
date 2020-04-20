@@ -23,19 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 
-#include "BridgeJSC.h"
-#include <Foundation/Foundation.h>
-#include "JSObject.h"
-#include "JSCJSValue.h"
+#import "BridgeJSC.h"
+#import "JSCJSValue.h"
+#import "JSObject.h"
+#import "interpreter.h"
+#import "runtime_object.h"
+#import "types.h"
+#import <Foundation/Foundation.h>
 #import <WebKit/WebScriptObject.h>
-#include "interpreter.h"
-#include "runtime_object.h"
-#include <stdio.h>
-#include <string.h>
-#include "types.h"
-
+#import <stdio.h>
+#import <string.h>
 
 #define LOG(formatAndArgs...) { \
     fprintf (stderr, "%s:  ", __PRETTY_FUNCTION__); \

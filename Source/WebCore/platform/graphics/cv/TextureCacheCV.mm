@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TextureCacheCV.h"
+#import "config.h"
+#import "TextureCacheCV.h"
 
 #if HAVE(CORE_VIDEO)
 
-#include "GraphicsContextGLOpenGL.h"
+#import "GraphicsContextGLOpenGL.h"
 
-#include "CoreVideoSoftLink.h"
+#import "CoreVideoSoftLink.h"
 
 namespace WebCore {
 

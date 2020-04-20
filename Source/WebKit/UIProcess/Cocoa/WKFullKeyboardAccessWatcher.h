@@ -23,17 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 
 @interface WKFullKeyboardAccessWatcher : NSObject {
 @private
     BOOL fullKeyboardAccessEnabled;
 }
-
 + (BOOL)fullKeyboardAccessEnabled;
-
 @end;
 
 #endif // ENABLE(FULL_KEYBOARD_ACCESS)

@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
+#import "config.h"
+#import "PlatformUtilities.h"
 
-#include <WebKit/WKRetainPtr.h>
-#include <WebKit/WKStringCF.h>
-#include <WebKit/WKURLCF.h>
-#include <WebKit/WKURLResponseNS.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/StdLibExtras.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKStringCF.h>
+#import <WebKit/WKURLCF.h>
+#import <WebKit/WKURLResponseNS.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 namespace Util {

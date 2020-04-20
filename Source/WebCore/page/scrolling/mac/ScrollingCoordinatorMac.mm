@@ -23,26 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
 #import "ScrollingCoordinatorMac.h"
 
-#include "Frame.h"
-#include "FrameView.h"
-#include "Logging.h"
-#include "Page.h"
-#include "PlatformWheelEvent.h"
-#include "Region.h"
-#include "ScrollingStateTree.h"
-#include "ScrollingThread.h"
-#include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeFrameScrollingNodeMac.h"
-#include "ScrollingTreeMac.h"
-#include "ScrollingTreeStickyNode.h"
-#include "TiledBacking.h"
-#include <wtf/MainThread.h>
+#import "Frame.h"
+#import "FrameView.h"
+#import "Logging.h"
+#import "Page.h"
+#import "PlatformWheelEvent.h"
+#import "Region.h"
+#import "ScrollingStateTree.h"
+#import "ScrollingThread.h"
+#import "ScrollingTreeFixedNode.h"
+#import "ScrollingTreeFrameScrollingNodeMac.h"
+#import "ScrollingTreeMac.h"
+#import "ScrollingTreeStickyNode.h"
+#import "TiledBacking.h"
+#import <wtf/MainThread.h>
 
 namespace WebCore {
 

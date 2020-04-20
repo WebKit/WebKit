@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingThread.h"
+#import "config.h"
+#import "ScrollingThread.h"
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include <mutex>
+#import <mutex>
 
 namespace WebCore {
 

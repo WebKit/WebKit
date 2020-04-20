@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocalAuthenticator.h"
+#import "config.h"
+#import "LocalAuthenticator.h"
 
 #if ENABLE(WEB_AUTHN)
 

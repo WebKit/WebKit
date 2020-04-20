@@ -26,11 +26,11 @@
 #import "config.h"
 #import "_WKUserContentFilterInternal.h"
 
-#include "WKContentRuleListInternal.h"
-#include "WebCompiledContentRuleList.h"
-#include <WebCore/ContentExtensionCompiler.h>
-#include <WebCore/ContentExtensionError.h>
-#include <string>
+#import "WKContentRuleListInternal.h"
+#import "WebCompiledContentRuleList.h"
+#import <WebCore/ContentExtensionCompiler.h>
+#import <WebCore/ContentExtensionError.h>
+#import <string>
 
 @implementation _WKUserContentFilter
 

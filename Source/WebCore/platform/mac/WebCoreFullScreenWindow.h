@@ -23,11 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 
 WEBCORE_EXPORT @interface WebCoreFullScreenWindow : NSWindow
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif

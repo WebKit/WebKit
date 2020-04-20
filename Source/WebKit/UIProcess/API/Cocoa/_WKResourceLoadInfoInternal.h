@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "APIResourceLoadInfo.h"
 #import "WKObject.h"
 #import "_WKResourceLoadInfo.h"

@@ -35,7 +35,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Variant.h>
-#include <wtf/WeakObjCPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "DynamicViewportSizeUpdate.h"

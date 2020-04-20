@@ -24,8 +24,8 @@
 #import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "WAKResponder.h"
-#include "WAKView.h"
+#import "WAKResponder.h"
+#import "WAKView.h"
 #endif
 
 namespace WebCore {

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FileSizeFormatter.h"
+#import "config.h"
+#import "FileSizeFormatter.h"
 
 #import "NSFileSizeFormatterSPI.h"
 

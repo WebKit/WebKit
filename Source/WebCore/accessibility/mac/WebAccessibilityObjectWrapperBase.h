@@ -26,14 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAccessibilityObjectWrapperBase_h
-#define WebAccessibilityObjectWrapperBase_h
-
-#include "AccessibilityObjectInterface.h"
-#include <CoreGraphics/CoreGraphics.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
-#include <wtf/WeakPtr.h>
+#import "AccessibilityObjectInterface.h"
+#import <CoreGraphics/CoreGraphics.h>
+#import <wtf/RefPtr.h>
+#import <wtf/Variant.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct AccessibilitySearchCriteria;
@@ -99,5 +96,3 @@ extern NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChild
 #endif
 
 @end
-
-#endif // WebAccessibilityObjectWrapperBase_h

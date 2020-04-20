@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AVTrackPrivateAVFObjCImpl.h"
+#import "config.h"
+#import "AVTrackPrivateAVFObjCImpl.h"
 
 #if ENABLE(VIDEO_TRACK)
 

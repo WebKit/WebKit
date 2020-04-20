@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "_WKWebAuthenticationAssertionResponse.h"
 
 #if ENABLE(WEB_AUTHN)

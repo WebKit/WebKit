@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if USE(APPKIT)
 
 #if USE(APPLE_INTERNAL_SDK)

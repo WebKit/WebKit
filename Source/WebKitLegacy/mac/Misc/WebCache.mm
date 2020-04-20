@@ -44,7 +44,6 @@
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "MemoryMeasure.h"
 #import "WebFrameInternal.h"
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/CachedImage.h>
@@ -131,6 +130,7 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 + (void)emptyInMemoryResources
 {
     // This method gets called from MobileSafari after it calls [WebView
@@ -138,8 +138,6 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
     // schedule this method on the WebThread as well so as to pick up all the
     // dead resources left behind after closing the WebViews
     WebThreadRun(^{
-        WebKit::MemoryMeasure measurer("[WebCache emptyInMemoryResources]");
-
         // Toggling the cache model like this forces the cache to evict all its in-memory resources.
         WebCacheModel cacheModel = [WebView _cacheModel];
         [WebView _setCacheModel:WebCacheModelDocumentViewer];

@@ -91,7 +91,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
-#include <JavaScriptCore/RemoteInspector.h>
+#import <JavaScriptCore/RemoteInspector.h>
 #endif
 
 #if PLATFORM(IOS)

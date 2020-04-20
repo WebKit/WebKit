@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NavigationSOAuthorizationSession.h"
+#import "config.h"
+#import "NavigationSOAuthorizationSession.h"
 
 #if HAVE(APP_SSO)
 

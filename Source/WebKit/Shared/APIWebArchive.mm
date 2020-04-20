@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIWebArchive.h"
+#import "config.h"
+#import "APIWebArchive.h"
 
 #if PLATFORM(COCOA)
 
-#include "APIArray.h"
-#include "APIData.h"
-#include "APIWebArchiveResource.h"
-#include <WebCore/LegacyWebArchive.h>
-#include <wtf/RetainPtr.h>
+#import "APIArray.h"
+#import "APIData.h"
+#import "APIWebArchiveResource.h"
+#import <WebCore/LegacyWebArchive.h>
+#import <wtf/RetainPtr.h>
 
 namespace API {
 using namespace WebCore;

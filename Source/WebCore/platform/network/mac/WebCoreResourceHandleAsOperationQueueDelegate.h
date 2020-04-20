@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <dispatch/dispatch.h>
-#include <wtf/Function.h>
-#include <wtf/Lock.h>
-#include <wtf/MessageQueue.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/SchedulePair.h>
-#include <wtf/threads/BinarySemaphore.h>
+#import <dispatch/dispatch.h>
+#import <wtf/Function.h>
+#import <wtf/Lock.h>
+#import <wtf/MessageQueue.h>
+#import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/SchedulePair.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 class ResourceHandle;

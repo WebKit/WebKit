@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyTileLayer.h"
+#import "config.h"
+#import "LegacyTileLayer.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "LegacyTileCache.h"
-#include "LegacyTileGrid.h"
-#include "WebCoreThread.h"
-#include <wtf/SetForScope.h>
+#import "LegacyTileCache.h"
+#import "LegacyTileGrid.h"
+#import "WebCoreThread.h"
+#import <wtf/SetForScope.h>
 
 using WebCore::LegacyTileCache;
 @implementation LegacyTileHostLayer

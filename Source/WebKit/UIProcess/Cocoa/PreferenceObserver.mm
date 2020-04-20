@@ -27,6 +27,7 @@
 #import "PreferenceObserver.h"
 
 #import "WebProcessPool.h"
+#import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 
 @implementation WKUserDefaults
 

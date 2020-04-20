@@ -26,9 +26,9 @@
 #import "config.h"
 #import <wtf/SystemTracing.h>
 
-#include <cstdlib>
-#include <dispatch/dispatch.h>
-#include <wtf/spi/darwin/OSVariantSPI.h>
+#import <cstdlib>
+#import <dispatch/dispatch.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 
 bool WTFSignpostsEnabled()
 {

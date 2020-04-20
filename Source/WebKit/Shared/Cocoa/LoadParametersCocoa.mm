@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LoadParameters.h"
+#import "config.h"
+#import "LoadParameters.h"
 
 #if PLATFORM(COCOA)
 
-#include "ArgumentCodersCocoa.h"
-#include "WebCoreArgumentCoders.h"
+#import "ArgumentCodersCocoa.h"
+#import "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

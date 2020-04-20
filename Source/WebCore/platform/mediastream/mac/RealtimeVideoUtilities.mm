@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RealtimeVideoUtilities.h"
+#import "config.h"
+#import "RealtimeVideoUtilities.h"
 
-#include "CoreVideoSoftLink.h"
+#import "CoreVideoSoftLink.h"
 
 namespace WebCore {
 

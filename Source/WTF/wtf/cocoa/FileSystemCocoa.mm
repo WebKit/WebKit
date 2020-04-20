@@ -29,7 +29,7 @@
 #import "config.h"
 #import <wtf/FileSystem.h>
 
-#include <wtf/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 
 typedef struct _BOMCopier* BOMCopier;
 

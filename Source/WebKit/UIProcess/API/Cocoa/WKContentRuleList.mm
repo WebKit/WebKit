@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKContentRuleListInternal.h"
 
-#include "WebCompiledContentRuleList.h"
+#import "WebCompiledContentRuleList.h"
 
 @implementation WKContentRuleList
 

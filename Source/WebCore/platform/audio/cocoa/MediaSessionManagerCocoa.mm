@@ -23,24 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaSessionManagerCocoa.h"
+#import "config.h"
+#import "MediaSessionManagerCocoa.h"
 
 #if USE(AUDIO_SESSION) && PLATFORM(COCOA)
 
-#include "AudioSession.h"
-#include "DeprecatedGlobalSettings.h"
-#include "HTMLMediaElement.h"
-#include "Logging.h"
-#include "MediaPlayer.h"
-#include "MediaStrategy.h"
-#include "NowPlayingInfo.h"
-#include "PlatformMediaSession.h"
-#include "PlatformStrategies.h"
-#include <wtf/BlockObjCExceptions.h>
-#include <wtf/Function.h>
+#import "AudioSession.h"
+#import "DeprecatedGlobalSettings.h"
+#import "HTMLMediaElement.h"
+#import "Logging.h"
+#import "MediaPlayer.h"
+#import "MediaStrategy.h"
+#import "NowPlayingInfo.h"
+#import "PlatformMediaSession.h"
+#import "PlatformStrategies.h"
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/Function.h>
 
-#include "MediaRemoteSoftLink.h"
+#import "MediaRemoteSoftLink.h"
 
 static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;

@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebAlternativeTextClient.h"
+#import "WebAlternativeTextClient.h"
 
-#include "WebViewInternal.h"
+#import "WebViewInternal.h"
 
 using namespace WebCore;
 
 WebAlternativeTextClient::WebAlternativeTextClient(WebView* webView)
-: m_webView(webView)
+    : m_webView(webView)
 {
 }
 

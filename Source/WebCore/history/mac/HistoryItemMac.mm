@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "HistoryItem.h"
+#import "config.h"
+#import "HistoryItem.h"
 
-#include <wtf/text/StringHash.h>
+#import <wtf/text/StringHash.h>
 
 namespace WebCore {
 

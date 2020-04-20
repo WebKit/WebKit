@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>

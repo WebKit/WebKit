@@ -23,22 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAccessibilityWebPageObjectMac_h
-#define WKAccessibilityWebPageObjectMac_h
-
-
 #if PLATFORM(MAC)
 
-#include "WKAccessibilityWebPageObjectBase.h"
-#include <wtf/RetainPtr.h>
+#import "WKAccessibilityWebPageObjectBase.h"
+#import <wtf/RetainPtr.h>
 
 @interface WKAccessibilityWebPageObject : WKAccessibilityWebPageObjectBase {
     RetainPtr<NSArray> m_attributeNames;
 }
-
 - (NSPoint)convertScreenPointToRootView:(NSPoint)point;
-
 @end
 
 #endif // PLATFORM(MAC)
-#endif // WKAccessibilityWebPageObjectMac_h

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <LocalAuthentication/LocalAuthentication.h>
 
 #if USE(APPLE_INTERNAL_SDK)

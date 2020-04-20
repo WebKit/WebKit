@@ -87,7 +87,7 @@
 #import <wtf/text/CString.h>
 
 #if ENABLE(AVF_CAPTIONS)
-#include "TextTrack.h"
+#import "TextTrack.h"
 #endif
 
 #import <AVFoundation/AVAssetImageGenerator.h>

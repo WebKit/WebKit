@@ -23,11 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(MAC)
 
 #import <WebKit/WKWebView.h>
-
-#if PLATFORM(MAC)
 
 @protocol WKInspectorWKWebViewDelegate;
 

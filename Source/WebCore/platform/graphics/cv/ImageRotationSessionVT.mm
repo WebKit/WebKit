@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageRotationSessionVT.h"
+#import "config.h"
+#import "ImageRotationSessionVT.h"
 
-#include "AffineTransform.h"
-#include "MediaSample.h"
+#import "AffineTransform.h"
+#import "MediaSample.h"
 
-#include "CoreVideoSoftLink.h"
-#include "VideoToolboxSoftLink.h"
+#import "CoreVideoSoftLink.h"
+#import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
 #if USE(VIDEOTOOLBOX)

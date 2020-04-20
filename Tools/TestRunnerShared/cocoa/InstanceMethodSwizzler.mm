@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InstanceMethodSwizzler.h"
+#import "config.h"
+#import "InstanceMethodSwizzler.h"
 
 InstanceMethodSwizzler::InstanceMethodSwizzler(Class cls, SEL selector, IMP implementation)
     : m_method(class_getInstanceMethod(cls, selector))

@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PageBanner.h"
+#import "config.h"
+#import "PageBanner.h"
 
 #if PLATFORM(MAC)
 
-#include "WebPage.h"
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsLayer.h>
+#import "WebPage.h"
+#import <WebCore/FrameView.h>
+#import <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
-#include <WebKit/WKString.h>
-#include <wtf/RetainPtr.h>
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import "Test.h"
+#import <WebKit/WKString.h>
+#import <wtf/RetainPtr.h>
 
 static bool finished = false;
 

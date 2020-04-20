@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/RetainPtr.h>
+#import "config.h"
+#import <wtf/RetainPtr.h>
 
 #import <WebKit/WebView.h>
 #import <WebKit/WebPreferences.h>

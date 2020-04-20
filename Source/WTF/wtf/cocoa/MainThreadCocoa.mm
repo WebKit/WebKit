@@ -40,7 +40,7 @@
 #import <wtf/Threading.h>
 
 #if USE(WEB_THREAD)
-#include <wtf/ios/WebCoreThread.h>
+#import <wtf/ios/WebCoreThread.h>
 #endif
 
 @interface JSWTFMainThreadCaller : NSObject

@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SystemVersion.h"
+#import "config.h"
+#import "SystemVersion.h"
 
 namespace WebCore {
 

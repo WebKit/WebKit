@@ -70,7 +70,7 @@
 #import <wtf/URLParser.h>
 
 #if PLATFORM(MAC)
-#include "LocalDefaultSystemAppearance.h"
+#import "LocalDefaultSystemAppearance.h"
 #endif
 
 #if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)

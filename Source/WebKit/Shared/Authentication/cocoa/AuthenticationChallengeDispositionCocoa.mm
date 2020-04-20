@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AuthenticationChallengeDispositionCocoa.h"
+#import "config.h"
+#import "AuthenticationChallengeDispositionCocoa.h"
 
 namespace WebKit {
 

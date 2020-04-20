@@ -31,7 +31,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <MobileCoreServices/MobileCoreServices.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 #if PLATFORM(MAC)

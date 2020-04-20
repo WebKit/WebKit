@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUComputePassEncoder.h"
+#import "config.h"
+#import "GPUComputePassEncoder.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUComputePipeline.h"
-#include "Logging.h"
-#include <Metal/Metal.h>
-#include <wtf/BlockObjCExceptions.h>
+#import "GPUComputePipeline.h"
+#import "Logging.h"
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 

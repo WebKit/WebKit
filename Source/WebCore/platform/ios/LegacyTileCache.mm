@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyTileCache.h"
+#import "config.h"
+#import "LegacyTileCache.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "FontAntialiasingStateSaver.h"
-#include "LegacyTileGrid.h"
-#include "LegacyTileGridTile.h"
-#include "LegacyTileLayer.h"
-#include "LegacyTileLayerPool.h"
-#include "Logging.h"
-#include "SystemMemory.h"
-#include "WAKWindow.h"
-#include "WKGraphics.h"
-#include "WebCoreThreadRun.h"
-#include <CoreText/CoreText.h>
-#include <pal/spi/cocoa/QuartzCoreSPI.h>
-#include <wtf/MemoryPressureHandler.h>
-#include <wtf/RAMSize.h>
+#import "FontAntialiasingStateSaver.h"
+#import "LegacyTileGrid.h"
+#import "LegacyTileGridTile.h"
+#import "LegacyTileLayer.h"
+#import "LegacyTileLayerPool.h"
+#import "Logging.h"
+#import "SystemMemory.h"
+#import "WAKWindow.h"
+#import "WKGraphics.h"
+#import "WebCoreThreadRun.h"
+#import <CoreText/CoreText.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MemoryPressureHandler.h>
+#import <wtf/RAMSize.h>
 
 @interface WAKView (WebViewExtras)
 - (void)_dispatchTileDidDraw:(CALayer*)tile;

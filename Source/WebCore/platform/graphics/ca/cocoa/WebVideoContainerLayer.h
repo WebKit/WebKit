@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <QuartzCore/CALayer.h>
 #import <wtf/RetainPtr.h>
 

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SandboxInitializationParameters.h"
+#import "config.h"
+#import "SandboxInitializationParameters.h"
 
 namespace WebKit {
 

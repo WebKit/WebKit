@@ -1,3 +1,126 @@
+2020-04-20  Darin Adler  <darin@apple.com>
+
+        Use #import instead of #include in Objective-C and don't use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=210724
+
+        Reviewed by David Kilzer.
+
+        * mac/MigrateHeadersFromWebKitLegacy.make: Delete stale MemoryMeasure.h
+        forwarding header from incremental WebKit builds and ignore when generating
+        new forwarding headers.
+
+        * Platform/foundation/LoggingFoundation.mm:
+        (WebKit::logLevelString): Use string directly instead of a named constant.
+
+        * UIProcess/mac/WebColorPickerMac.h: Mark class final.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm:
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        * NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/webrtc/NetworkRTCProvider.mm:
+        * Platform/spi/Cocoa/DeviceManagementSPI.h:
+        * Platform/spi/Cocoa/LocalAuthenticationSPI.h:
+        * Platform/spi/Cocoa/NearFieldSPI.h:
+        * Platform/spi/Cocoa/SafeBrowsingSPI.h:
+        * Platform/spi/mac/AppKitSPI.h:
+        * Shared/API/Cocoa/RemoteObjectInvocation.mm:
+        * Shared/API/Cocoa/WKMain.mm:
+        * Shared/APIWebArchive.mm:
+        * Shared/APIWebArchiveResource.mm:
+        * Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm:
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        * Shared/Cocoa/SandboxInitialiationParametersCocoa.mm:
+        * Shared/Cocoa/WKNSData.mm:
+        * Shared/DocumentEditingContext.mm:
+        * Shared/Plugins/mac/PluginSandboxProfile.mm:
+        * Shared/RemoteLayerTree/WKAnimationDelegate.h:
+        * Shared/UserInterfaceIdiom.mm:
+        * Shared/ios/WebIconUtilities.mm:
+        * Shared/mac/CodeSigning.mm:
+        * Shared/mac/ColorSpaceData.mm:
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        * Shared/mac/PDFKitImports.mm:
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm:
+        * UIProcess/API/Cocoa/WKContentRuleList.mm:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstPartyInternal.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdPartyInternal.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h:
+        * UIProcess/Authentication/mac/WebCredentialMac.mm:
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        * UIProcess/Cocoa/IconLoadingDelegate.mm:
+        * UIProcess/Cocoa/MediaUtilities.mm:
+        * UIProcess/Cocoa/PreferenceObserver.h:
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        * UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        * UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.h:
+        * UIProcess/Cocoa/WKEditCommand.h:
+        * UIProcess/Cocoa/WKFullKeyboardAccessWatcher.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm:
+        * UIProcess/Inspector/mac/WKInspectorViewController.h:
+        * UIProcess/Inspector/mac/WKInspectorWKWebView.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.mm:
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        * UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+        * UIProcess/ios/WKHighlightLongPressGestureRecognizer.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        * UIProcess/ios/forms/WKDatePickerViewController.h:
+        * UIProcess/ios/forms/WKDatePickerViewController.mm:
+        * UIProcess/ios/forms/WKFocusedFormControlView.h:
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm:
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        * UIProcess/ios/forms/WKNumberPadViewController.h:
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        * UIProcess/ios/forms/WKQuickboardListViewController.h:
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        * UIProcess/ios/forms/WKSelectMenuListViewController.h:
+        * UIProcess/ios/forms/WKTimePickerViewController.h:
+        * UIProcess/ios/forms/WKTimePickerViewController.mm:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.h:
+        * UIProcess/ios/fullscreen/WKFullscreenStackView.mm:
+        * UIProcess/mac/PageClientImplMac.mm:
+        * UIProcess/mac/WKSharingServicePickerDelegate.h:
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.h:
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp:
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.h:
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        More #import, less #pragma once.
+
 2020-04-20  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] lowWatermarkPages() in MemoryPressureMonitor.cpp only searches the "low" value inside the first "Node" section

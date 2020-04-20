@@ -22,12 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocalDefaultSystemAppearance.h"
+#import "config.h"
+#import "LocalDefaultSystemAppearance.h"
 
 #if USE(APPKIT)
 
-#include <AppKit/NSAppearance.h>
+#import <AppKit/NSAppearance.h>
 
 namespace WebCore {
 

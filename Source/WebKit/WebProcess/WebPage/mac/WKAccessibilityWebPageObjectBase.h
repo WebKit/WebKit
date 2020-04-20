@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAccessibilityWebPageObjectBase_h
-#define WKAccessibilityWebPageObjectBase_h
-
-#include <WebCore/PageIdentifier.h>
-#include <wtf/NakedPtr.h>
+#import <WebCore/PageIdentifier.h>
+#import <wtf/NakedPtr.h>
 
 namespace WebKit {
 class WebPage;
@@ -48,5 +45,3 @@ class WebPage;
 - (id)accessibilityFocusedUIElement;
 
 @end
-
-#endif // WKAccessibilityWebPageObjectBase_h

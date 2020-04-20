@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
-
 #import "SecurityOrigin.h"
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>

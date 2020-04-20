@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #if PLATFORM(MAC)
 
-#include "JavaScriptTest.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
-#include <WebKit/WKBackForwardListItemRef.h>
-#include <WebKit/WKBackForwardListRef.h>
-#include <WebKit/WKData.h>
-#include <WebKit/WKPagePrivate.h>
-#include <WebKit/WKSessionStateRef.h>
-#include <WebKit/WKURL.h>
-#include <WebKit/WKURLCF.h>
-#include <WebKit/WKWebViewPrivate.h>
-#include <wtf/RetainPtr.h>
+#import "JavaScriptTest.h"
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import "Test.h"
+#import <WebKit/WKBackForwardListItemRef.h>
+#import <WebKit/WKBackForwardListRef.h>
+#import <WebKit/WKData.h>
+#import <WebKit/WKPagePrivate.h>
+#import <WebKit/WKSessionStateRef.h>
+#import <WebKit/WKURL.h>
+#import <WebKit/WKURLCF.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;

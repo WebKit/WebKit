@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingStateNode.h"
+#import "config.h"
+#import "ScrollingStateNode.h"
 
-#include "PlatformLayer.h"
+#import "PlatformLayer.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 

@@ -23,8 +23,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include "UserInterfaceIdiom.h"
+#import "config.h"
+#import "UserInterfaceIdiom.h"
 
 #if PLATFORM(IOS_FAMILY)
 

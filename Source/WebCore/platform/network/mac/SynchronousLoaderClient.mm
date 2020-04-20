@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SynchronousLoaderClient.h"
+#import "config.h"
+#import "SynchronousLoaderClient.h"
 
-#include "AuthenticationChallenge.h"
+#import "AuthenticationChallenge.h"
 
 namespace WebCore {
 

@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkRTCProvider.h"
+#import "config.h"
+#import "NetworkRTCProvider.h"
 
 #if USE(LIBWEBRTC)
 
-#include "NetworkSessionCocoa.h"
-#include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/async_packet_socket.h>
-#include <webrtc/rtc_base/logging.h>
-#include <wtf/RetainPtr.h>
+#import "NetworkSessionCocoa.h"
+#import <WebCore/LibWebRTCMacros.h>
+#import <webrtc/rtc_base/async_packet_socket.h>
+#import <webrtc/rtc_base/logging.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 

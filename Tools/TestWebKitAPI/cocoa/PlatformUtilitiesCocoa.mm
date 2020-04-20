@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
+#import "config.h"
+#import "PlatformUtilities.h"
 
-#include <wtf/RetainPtr.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/UniqueArray.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 namespace Util {

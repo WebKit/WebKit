@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "MediaSourcePrivateAVFObjC.h"
+#import "config.h"
+#import "MediaSourcePrivateAVFObjC.h"
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 

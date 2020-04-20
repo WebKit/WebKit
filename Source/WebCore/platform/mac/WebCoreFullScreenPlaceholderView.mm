@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebCoreFullScreenPlaceholderView.h"
+#import "config.h"
+#import "WebCoreFullScreenPlaceholderView.h"
 
 #if PLATFORM(MAC)
 
-#include "LocalizedStrings.h"
-#include "WebCoreFullScreenWarningView.h"
-#include <wtf/text/WTFString.h>
+#import "LocalizedStrings.h"
+#import "WebCoreFullScreenWarningView.h"
+#import <wtf/text/WTFString.h>
 
 @implementation WebCoreFullScreenPlaceholderView
 

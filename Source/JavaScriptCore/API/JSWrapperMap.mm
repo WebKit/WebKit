@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "JavaScriptCore.h"
 
 #if JSC_OBJC_API_ENABLED
@@ -45,7 +45,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#include <mach-o/dyld.h>
+#import <mach-o/dyld.h>
 
 #if PLATFORM(APPLETV)
 #else

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaPlayerPrivateRemote.h"
+#import "config.h"
+#import "MediaPlayerPrivateRemote.h"
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 

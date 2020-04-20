@@ -25,23 +25,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RealtimeIncomingVideoSourceCocoa.h"
+#import "config.h"
+#import "RealtimeIncomingVideoSourceCocoa.h"
 
 #if USE(LIBWEBRTC)
 
-#include "Logging.h"
-#include "MediaSampleAVFObjC.h"
-#include "RealtimeVideoUtilities.h"
-#include <pal/cf/CoreMediaSoftLink.h>
+#import "Logging.h"
+#import "MediaSampleAVFObjC.h"
+#import "RealtimeVideoUtilities.h"
+#import <wtf/cf/TypeCastsCF.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
-
-#include <webrtc/sdk/WebKit/WebKitUtilities.h>
-
+#import <webrtc/sdk/WebKit/WebKitUtilities.h>
 ALLOW_UNUSED_PARAMETERS_END
 
-#include <wtf/cf/TypeCastsCF.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 using namespace PAL;

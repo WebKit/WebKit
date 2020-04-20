@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 
 @interface TestWebsiteDataStoreDelegate: NSObject <_WKWebsiteDataStoreDelegate> {
 @private

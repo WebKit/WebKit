@@ -24,8 +24,8 @@
  */
 
 
-#include "config.h"
-#include "EditingTestHarness.h"
+#import "config.h"
+#import "EditingTestHarness.h"
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>

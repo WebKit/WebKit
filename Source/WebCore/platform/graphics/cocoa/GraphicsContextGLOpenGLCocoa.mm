@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 
 #if ENABLE(GRAPHICS_CONTEXT_GL)
 #import "GraphicsContextGLOpenGL.h"
@@ -64,21 +64,21 @@
 #define GL_ANGLE_explicit_context
 #define GL_ANGLE_explicit_context_gles1
 typedef void* GLeglContext;
-#include <ANGLE/egl.h>
-#include <ANGLE/eglext.h>
-#include <ANGLE/eglext_angle.h>
-#include <ANGLE/entry_points_egl.h>
-#include <ANGLE/entry_points_egl_ext.h>
-#include <ANGLE/entry_points_gles_2_0_autogen.h>
-#include <ANGLE/entry_points_gles_ext_autogen.h>
-#include <ANGLE/gl2ext.h>
-#include <ANGLE/gl2ext_angle.h>
+#import <ANGLE/egl.h>
+#import <ANGLE/eglext.h>
+#import <ANGLE/eglext_angle.h>
+#import <ANGLE/entry_points_egl.h>
+#import <ANGLE/entry_points_egl_ext.h>
+#import <ANGLE/entry_points_gles_2_0_autogen.h>
+#import <ANGLE/entry_points_gles_ext_autogen.h>
+#import <ANGLE/gl2ext.h>
+#import <ANGLE/gl2ext_angle.h>
 #endif
 
 #if USE(OPENGL_ES) || USE(OPENGL)
-#include "ExtensionsGLOpenGL.h"
+#import "ExtensionsGLOpenGL.h"
 #elif USE(ANGLE)
-#include "ExtensionsGLANGLE.h"
+#import "ExtensionsGLANGLE.h"
 #endif
 
 #if PLATFORM(MAC)

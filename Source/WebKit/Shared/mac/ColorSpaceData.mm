@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ColorSpaceData.h"
+#import "config.h"
+#import "ColorSpaceData.h"
 
-#include "ArgumentCodersCF.h"
-#include "Decoder.h"
-#include "Encoder.h"
+#import "ArgumentCodersCF.h"
+#import "Decoder.h"
+#import "Encoder.h"
 
 namespace WebKit {
 

@@ -25,8 +25,6 @@
 
 #if HAVE(CELESTIAL)
 
-#pragma once
-
 #import <Foundation/Foundation.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -37,7 +35,7 @@
 
 @interface AVSystemController : NSObject
 
-+(AVSystemController*)sharedAVSystemController;
++ (AVSystemController*)sharedAVSystemController;
 
 - (id)attributeForKey:(NSString *)attributeKey;
 - (BOOL)setAttribute:(id)value forKey:(NSString *)attributeKey error:(NSError **)errorPtr;

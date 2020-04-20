@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKitAgnosticTest.h"
+#import "config.h"
+#import "WebKitAgnosticTest.h"
 
-#include <WebKit/WKURLCF.h>
-#include <WebKit/WKViewPrivate.h>
-#include <WebKit/WebViewPrivate.h>
-#include <wtf/RetainPtr.h>
+#import <WebKit/WKURLCF.h>
+#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 @interface FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
     bool* _didFinishLoad;

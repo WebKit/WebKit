@@ -1,3 +1,22 @@
+2020-04-20  Darin Adler  <darin@apple.com>
+
+        Use #import instead of #include in Objective-C and don't use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=210724
+
+        Reviewed by David Kilzer.
+
+        * API/JSAPIWrapperObject.mm:
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        * API/JSScriptInternal.h:
+        * API/JSValue.mm:
+        * API/JSVirtualMachine.mm:
+        * API/JSVirtualMachinePrivate.h:
+        * API/JSWrapperMap.mm:
+        * API/ObjCCallbackFunction.mm:
+        * API/tests/CurrentThisInsideBlockGetterTest.mm:
+        More #import, less #pragma once.
+
 2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         StructuredClone algorithm should be aware of BigInt

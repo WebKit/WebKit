@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkActivityTracker.h"
+#import "config.h"
+#import "NetworkActivityTracker.h"
 
 #if HAVE(NW_ACTIVITY)
 

@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include <wtf/RetainPtr.h>
+#import "config.h"
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import <wtf/RetainPtr.h>
 
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>

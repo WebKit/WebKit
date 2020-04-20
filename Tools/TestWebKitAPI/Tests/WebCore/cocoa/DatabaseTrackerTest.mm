@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
-#include <WebCore/DatabaseTracker.h>
-#include <WebCore/OriginLock.h>
-#include <WebCore/SQLiteDatabase.h>
-#include <WebCore/SQLiteStatement.h>
-#include <WebCore/SecurityOriginData.h>
-#include <wtf/FileSystem.h>
+#import <WebCore/DatabaseTracker.h>
+#import <WebCore/OriginLock.h>
+#import <WebCore/SQLiteDatabase.h>
+#import <WebCore/SQLiteStatement.h>
+#import <WebCore/SecurityOriginData.h>
+#import <wtf/FileSystem.h>
 
 using namespace WebCore;
 

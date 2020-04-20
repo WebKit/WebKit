@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Utilities.h"
+#import "config.h"
+#import "Utilities.h"
 
 namespace TestWebKitAPI {
 namespace Util {

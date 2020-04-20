@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MemoryRelease.h"
+#import "config.h"
+#import "MemoryRelease.h"
 
 #import "FontFamilySpecificationCoreText.h"
 #import "GCController.h"

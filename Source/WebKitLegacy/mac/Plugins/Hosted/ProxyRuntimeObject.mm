@@ -25,14 +25,14 @@
 
 #if USE(PLUGIN_HOST_PROCESS)
 
-#include "ProxyRuntimeObject.h"
-#include "ProxyInstance.h"
-#include <JavaScriptCore/ObjectPrototype.h>
+#import "ProxyRuntimeObject.h"
+
+#import "ProxyInstance.h"
+#import <JavaScriptCore/ObjectPrototype.h>
 
 using namespace JSC;
 
 namespace WebKit {
-
 
 const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyRuntimeObject) };
 
@@ -51,7 +51,6 @@ ProxyInstance* ProxyRuntimeObject::getInternalProxyInstance() const
 {
     return static_cast<ProxyInstance*>(getInternalInstance());
 }
-
 
 }
 

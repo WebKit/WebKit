@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DocumentEditingContext.h"
+#import "config.h"
+#import "DocumentEditingContext.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "UIKitSPI.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/ElementContext.h>
+#import "UIKitSPI.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/ElementContext.h>
 
 namespace WebKit {
 

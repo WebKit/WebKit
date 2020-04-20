@@ -1,3 +1,29 @@
+2020-04-20  Darin Adler  <darin@apple.com>
+
+        Use #import instead of #include in Objective-C and don't use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=210724
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebKitLegacy.xcconfig: Removed MemoryMeasure.h from
+        EXCLUDED_SOURCE_FILE_NAMES.
+
+        * Misc/WebCache.mm:
+        (+[WebCache emptyInMemoryResources]): Removed invocation of MemoryMeasure.
+        This is no longer used for anything.
+
+        * History/BackForwardList.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * WebCoreSupport/SearchPopupMenuMac.mm:
+        * WebCoreSupport/WebAlternativeTextClient.mm:
+        * WebCoreSupport/WebSecurityOriginInternal.h:
+        * WebInspector/WebInspector.mm:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebScriptWorld.h:
+        * WebView/WebView.mm:
+        More #import, less #pragma once.
+
 2020-04-18  Rob Buis  <rbuis@igalia.com>
 
         Reduce parameter list of the FrameLoadRequest constructor

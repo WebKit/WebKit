@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <objc/runtime.h>
 #import <wtf/Platform.h>
 #import <wtf/SoftLinking.h>
@@ -367,7 +365,7 @@ typedef NS_ENUM(NSInteger, AVPlayerResourceConservationLevel) {
 
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
 #if USE(APPLE_INTERNAL_SDK)
-#include <AVFoundation/AVSampleBufferVideoOutput.h>
+#import <AVFoundation/AVSampleBufferVideoOutput.h>
 #else
 
 NS_ASSUME_NONNULL_BEGIN

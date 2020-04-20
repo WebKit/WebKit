@@ -1,3 +1,124 @@
+2020-04-20  Darin Adler  <darin@apple.com>
+
+        Use #import instead of #include in Objective-C and don't use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=210724
+
+        Reviewed by David Kilzer.
+
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::sansSerifTraditionalHanFontFamily): Deleted.
+        (WebCore::sansSerifSimplifiedHanFontFamily): Deleted.
+        (WebCore::SettingsBase::initializeDefaultFontFamilies): Just use font name
+        strings directly since there are no conditionals any more.
+
+        * Modules/applepay/PaymentRequestValidator.mm:
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+        * bridge/objc/WebScriptObjectPrivate.h:
+        * bridge/objc/objc_class.mm:
+        * bridge/testbindings.mm:
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        * editing/cocoa/WebArchiveResourceFromNSAttributedString.h:
+        * editing/cocoa/WebArchiveResourceWebResourceHandler.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        * history/mac/HistoryItemMac.mm:
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        * loader/cocoa/SubresourceLoaderCocoa.mm:
+        * loader/mac/ResourceLoaderMac.mm:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        * page/ios/WebEventRegion.h:
+        * page/mac/ChromeMac.mm:
+        * page/mac/EventHandlerMac.mm:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        * page/scrolling/cocoa/ScrollingStateNode.mm:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        * platform/cocoa/PasteboardCocoa.mm:
+        * platform/cocoa/ScrollSnapAnimatorState.mm:
+        * platform/cocoa/SystemVersion.mm:
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/graphics/ca/cocoa/WebSystemBackdropLayer.h:
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.h:
+        * platform/graphics/ca/cocoa/WebVideoContainerLayer.h:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        * platform/graphics/cocoa/IOSurfacePoolCocoa.mm:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        * platform/graphics/cocoa/WebGPULayer.h:
+        * platform/graphics/cocoa/WebGPULayer.mm:
+        * platform/graphics/cv/ImageRotationSessionVT.mm:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        * platform/graphics/cv/TextureCacheCV.mm:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/FloatPointMac.mm:
+        * platform/graphics/mac/FloatSizeMac.mm:
+        * platform/graphics/mac/IntPointMac.mm:
+        * platform/graphics/mac/IntSizeMac.mm:
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/LegacyTileGrid.mm:
+        * platform/ios/LegacyTileGridTile.mm:
+        * platform/ios/LegacyTileLayer.h:
+        * platform/ios/LegacyTileLayer.mm:
+        * platform/ios/LegacyTileLayerPool.mm:
+        * platform/ios/LocalCurrentTraitCollection.mm:
+        * platform/ios/LocalizedDeviceModel.mm:
+        * platform/ios/ScrollbarThemeIOS.mm:
+        * platform/ios/WebCoreMotionManager.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        * platform/mac/LocalDefaultSystemAppearance.mm:
+        * platform/mac/LoggingMac.mm:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        * platform/mac/RemoteCommandListenerMac.mm:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/SerializedPlatformDataCueMac.mm:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        * platform/mac/WebCoreFullScreenWarningView.h:
+        * platform/mac/WebCoreFullScreenWarningView.mm:
+        * platform/mac/WebCoreFullScreenWindow.h:
+        * platform/mac/WebCoreObjCExtras.mm:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        * platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm:
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.mm:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.mm:
+        * platform/mediastream/mac/RealtimeVideoUtilities.mm:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        * platform/network/cocoa/CertificateInfoCocoa.mm:
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        * platform/network/mac/CredentialStorageMac.mm:
+        * platform/network/mac/SynchronousLoaderClient.mm:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/text/cocoa/LocaleCocoa.mm:
+        * testing/ServiceWorkerInternals.mm:
+        * testing/cocoa/WebViewVisualIdentificationOverlay.h:
+        More #import, less #pragma once.
+
 2020-04-20  Youenn Fablet  <youenn@apple.com>
 
         Safari doesn't apply frameRate limit when request stream from Camera

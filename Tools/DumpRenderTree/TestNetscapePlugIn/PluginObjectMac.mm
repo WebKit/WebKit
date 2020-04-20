@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "PluginObject.h"
+#import "PluginObject.h"
 
-#include <QuartzCore/QuartzCore.h>
-#include <wtf/RetainPtr.h>
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/RetainPtr.h>
 
 @interface TestPluginLayer : CALayer
 @end

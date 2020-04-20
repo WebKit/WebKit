@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HangDetectionDisabler.h"
+#import "config.h"
+#import "HangDetectionDisabler.h"
 
 #if PLATFORM(MAC)
 
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <wtf/ProcessPrivilege.h>
-#include <wtf/RetainPtr.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/ProcessPrivilege.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 

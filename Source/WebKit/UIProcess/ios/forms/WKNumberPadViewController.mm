@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKNumberPadViewController.h"
+#import "config.h"
+#import "WKNumberPadViewController.h"
 
 #if PLATFORM(WATCHOS)
 

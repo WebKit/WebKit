@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Pasteboard.h"
+#import "config.h"
+#import "Pasteboard.h"
 
-#include "LegacyNSPasteboardTypes.h"
-#include "PasteboardStrategy.h"
-#include "PlatformStrategies.h"
-#include "SharedBuffer.h"
-#include <ImageIO/ImageIO.h>
-#include <wtf/ListHashSet.h>
-#include <wtf/text/StringHash.h>
+#import "LegacyNSPasteboardTypes.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
+#import "SharedBuffer.h"
+#import <ImageIO/ImageIO.h>
+#import <wtf/ListHashSet.h>
+#import <wtf/text/StringHash.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <MobileCoreServices/MobileCoreServices.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 namespace WebCore {

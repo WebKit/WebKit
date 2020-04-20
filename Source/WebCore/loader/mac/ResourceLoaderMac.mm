@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#include "config.h"
-#include "ResourceLoader.h"
+#import "config.h"
+#import "ResourceLoader.h"
 
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
-#include <wtf/CompletionHandler.h>
+#import "FrameLoader.h"
+#import "FrameLoaderClient.h"
+#import <wtf/CompletionHandler.h>
 
 namespace WebCore {
 

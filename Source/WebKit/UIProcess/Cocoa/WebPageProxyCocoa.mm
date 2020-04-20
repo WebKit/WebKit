@@ -52,7 +52,7 @@
 #endif
 
 #if ENABLE(MEDIA_USAGE)
-#include "MediaUsageManagerCocoa.h"
+#import "MediaUsageManagerCocoa.h"
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())

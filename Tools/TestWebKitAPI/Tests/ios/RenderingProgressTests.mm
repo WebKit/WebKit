@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
-#include "PlatformUtilities.h"
-#include "TestNavigationDelegate.h"
-#include "TestWKWebView.h"
-#include <WebKit/WKNavigationDelegatePrivate.h>
-#include <wtf/BlockPtr.h>
+#import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKNavigationDelegatePrivate.h>
+#import <wtf/BlockPtr.h>
 
 @interface MissingResourceSchemeHandler : NSObject<WKURLSchemeHandler>
 @end

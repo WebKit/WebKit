@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
+#import "JavaScriptTest.h"
 
 #if PLATFORM(MAC)
 
-#include "JavaScriptTest.h"
-
-#include <WebKit/WebView.h>
-#include <WebKit/WKViewPrivate.h>
+#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WebView.h>
 
 namespace TestWebKitAPI {
 

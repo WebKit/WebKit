@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKPreviewActionItemIdentifiers.h"
+#import "config.h"
+#import "WKPreviewActionItemIdentifiers.h"
 
 #if PLATFORM(IOS_FAMILY)
 

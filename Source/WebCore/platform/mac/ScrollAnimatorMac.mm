@@ -23,25 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
+#import "ScrollAnimatorMac.h"
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#include "ScrollAnimatorMac.h"
-
-#include "FloatPoint.h"
-#include "GraphicsLayer.h"
-#include "Logging.h"
-#include "NSScrollerImpDetails.h"
-#include "PlatformWheelEvent.h"
-#include "ScrollView.h"
-#include "ScrollableArea.h"
-#include "ScrollbarTheme.h"
-#include "ScrollbarThemeMac.h"
-#include <pal/spi/mac/NSScrollerImpSPI.h>
-#include <wtf/BlockObjCExceptions.h>
-#include <wtf/NakedPtr.h>
-#include <wtf/text/TextStream.h>
+#import "FloatPoint.h"
+#import "GraphicsLayer.h"
+#import "Logging.h"
+#import "NSScrollerImpDetails.h"
+#import "PlatformWheelEvent.h"
+#import "ScrollView.h"
+#import "ScrollableArea.h"
+#import "ScrollbarTheme.h"
+#import "ScrollbarThemeMac.h"
+#import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/NakedPtr.h>
+#import <wtf/text/TextStream.h>
 
 namespace WebCore {
 

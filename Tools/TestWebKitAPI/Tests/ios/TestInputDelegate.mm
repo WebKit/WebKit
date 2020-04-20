@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TestInputDelegate.h"
+#import "config.h"
+#import "TestInputDelegate.h"
 
 #if PLATFORM(IOS_FAMILY)
 

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 @interface NSURL (SOAuthorizationExtras)
 
 // FIXME: <rdar://problem/50028246> Remove the following once the radar is fixed.

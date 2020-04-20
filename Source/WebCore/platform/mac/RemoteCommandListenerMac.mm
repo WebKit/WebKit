@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteCommandListenerMac.h"
+#import "config.h"
+#import "RemoteCommandListenerMac.h"
 
 #if PLATFORM(MAC)
 

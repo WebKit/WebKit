@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if HAVE(SEC_KEY_PROXY)
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -34,8 +32,8 @@
 #else
 
 #import <Foundation/Foundation.h>
-#include <Security/SecBase.h>
-#include <Security/SecKey.h>
+#import <Security/SecBase.h>
+#import <Security/SecKey.h>
 
 NS_ASSUME_NONNULL_BEGIN
 @interface SecKeyProxy : NSObject {

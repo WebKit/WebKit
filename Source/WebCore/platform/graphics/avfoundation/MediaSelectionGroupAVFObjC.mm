@@ -37,8 +37,8 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <MediaAccessibility/MediaAccessibility.h>
-#include "MediaAccessibilitySoftLink.h"
+#import <MediaAccessibility/MediaAccessibility.h>
+#import "MediaAccessibilitySoftLink.h"
 #endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>

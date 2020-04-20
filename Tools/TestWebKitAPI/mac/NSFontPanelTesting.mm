@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NSFontPanelTesting.h"
+#import "config.h"
+#import "NSFontPanelTesting.h"
 
 #if PLATFORM(MAC)
 

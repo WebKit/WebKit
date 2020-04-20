@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import <AppKit/NSDragging.h>

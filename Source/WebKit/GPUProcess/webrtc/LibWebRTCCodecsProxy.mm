@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LibWebRTCCodecsProxy.h"
+#import "config.h"
+#import "LibWebRTCCodecsProxy.h"
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
-#include "DataReference.h"
-#include "GPUConnectionToWebProcess.h"
-#include "LibWebRTCCodecsMessages.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/LibWebRTCMacros.h>
-#include <WebCore/RemoteVideoSample.h>
-#include <webrtc/sdk/WebKit/WebKitDecoder.h>
-#include <webrtc/sdk/WebKit/WebKitEncoder.h>
-#include <wtf/MediaTime.h>
+#import "DataReference.h"
+#import "GPUConnectionToWebProcess.h"
+#import "LibWebRTCCodecsMessages.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/LibWebRTCMacros.h>
+#import <WebCore/RemoteVideoSample.h>
+#import <webrtc/sdk/WebKit/WebKitDecoder.h>
+#import <webrtc/sdk/WebKit/WebKitEncoder.h>
+#import <wtf/MediaTime.h>
 
 namespace WebKit {
 

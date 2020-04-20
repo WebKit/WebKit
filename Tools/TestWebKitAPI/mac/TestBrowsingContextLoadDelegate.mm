@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TestBrowsingContextLoadDelegate.h"
+#import "config.h"
+#import "TestBrowsingContextLoadDelegate.h"
 
 #if PLATFORM(MAC)
 

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#include "config.h"
-#include "FloatSize.h"
+#import "config.h"
+#import "FloatSize.h"
 
 namespace WebCore {
 

@@ -23,24 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Logging.h"
-#include "LogInitialization.h"
+#import "config.h"
 
-namespace WebKit {
+#import "LogInitialization.h"
+#import "Logging.h"
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+namespace WebKit {
 
 String logLevelString()
 {
 #if !LOG_DISABLED
-    static NSString * const defaultsDomain = @"WebKit2Logging";
-    return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
 #else
     return String();
 #endif
 }
 
-#endif
-
 } // namespace WebKit
+
+#endif

@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

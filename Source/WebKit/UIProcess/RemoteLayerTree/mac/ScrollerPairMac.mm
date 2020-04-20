@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollerPairMac.h"
+#import "config.h"
+#import "ScrollerPairMac.h"
 
 #if PLATFORM(MAC)
 
-#include "RemoteScrollingTree.h"
-#include <WebCore/FloatPoint.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/NSScrollerImpDetails.h>
-#include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformWheelEvent.h>
-#include <WebCore/ScrollTypes.h>
-#include <WebCore/ScrollableArea.h>
-#include <WebCore/ScrollingTreeScrollingNode.h>
-#include <pal/spi/mac/NSScrollerImpSPI.h>
+#import "RemoteScrollingTree.h"
+#import <WebCore/FloatPoint.h>
+#import <WebCore/IntRect.h>
+#import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/PlatformWheelEvent.h>
+#import <WebCore/ScrollTypes.h>
+#import <WebCore/ScrollableArea.h>
+#import <WebCore/ScrollingTreeScrollingNode.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 
 @interface WKScrollerImpPairDelegate : NSObject <NSScrollerImpPairDelegate> {
     WebKit::ScrollerPairMac* _scrollerPair;

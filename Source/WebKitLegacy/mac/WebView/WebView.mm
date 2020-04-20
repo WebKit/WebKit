@@ -273,7 +273,6 @@
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #else
-#import "MemoryMeasure.h"
 #import "WebCaretChangeListener.h"
 #import "WebChromeClientIOS.h"
 #import "WebDefaultFormDelegate.h"
@@ -308,7 +307,6 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <libkern/OSAtomic.h>
-#import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
@@ -322,7 +320,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#include <WebCore/QuickLook.h>
+#import <WebCore/QuickLook.h>
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -347,14 +345,21 @@
 #if ENABLE(DATA_INTERACTION)
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
+#endif
+
+#if ENABLE(DATA_INTERACTION)
 #import <pal/ios/UIKitSoftLink.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 #endif
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
 SOFT_LINK_CLASS(AVKit, AVTouchBarScrubber)
-#endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+#endif
 
 #if !PLATFORM(IOS_FAMILY)
 

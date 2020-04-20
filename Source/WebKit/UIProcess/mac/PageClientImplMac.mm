@@ -84,7 +84,7 @@
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include <WebCore/WebMediaSessionManager.h>
+#import <WebCore/WebMediaSessionManager.h>
 #endif
 
 static NSString * const kAXLoadCompleteNotification = @"AXLoadComplete";

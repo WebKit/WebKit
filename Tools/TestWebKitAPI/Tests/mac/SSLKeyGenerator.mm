@@ -36,7 +36,7 @@
 #import <wtf/text/Base64.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <Security/SecKeyPriv.h>
+#import <Security/SecKeyPriv.h>
 #else
 extern const SecKeyAlgorithm kSecKeyAlgorithmRSASignatureMessagePKCS1v15MD5;
 #endif

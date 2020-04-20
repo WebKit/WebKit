@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebIconUtilities.h"
+#import "config.h"
+#import "WebIconUtilities.h"
 
 #if PLATFORM(IOS_FAMILY)
 

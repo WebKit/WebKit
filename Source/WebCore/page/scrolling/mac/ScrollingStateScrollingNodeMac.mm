@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingStateScrollingNode.h"
+#import "config.h"
+#import "ScrollingStateScrollingNode.h"
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "GraphicsLayer.h"
-#include "Scrollbar.h"
-#include "ScrollbarThemeMac.h"
-#include "ScrollingStateTree.h"
+#import "GraphicsLayer.h"
+#import "Scrollbar.h"
+#import "ScrollbarThemeMac.h"
+#import "ScrollingStateTree.h"
 
 namespace WebCore {
 

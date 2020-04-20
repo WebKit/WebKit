@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PaymentContact.h"
+#import "config.h"
+#import "PaymentContact.h"
 
 #if ENABLE(APPLE_PAY)
 

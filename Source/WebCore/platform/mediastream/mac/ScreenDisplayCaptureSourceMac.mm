@@ -23,23 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScreenDisplayCaptureSourceMac.h"
+#import "config.h"
+#import "ScreenDisplayCaptureSourceMac.h"
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
-#include "GraphicsContextCG.h"
-#include "ImageBuffer.h"
-#include "Logging.h"
-#include "MediaConstraints.h"
-#include "MediaSampleAVFObjC.h"
-#include "NotImplemented.h"
-#include "PlatformLayer.h"
-#include "PlatformScreen.h"
-#include "RealtimeMediaSourceSettings.h"
-#include "RealtimeVideoUtilities.h"
+#import "GraphicsContextCG.h"
+#import "ImageBuffer.h"
+#import "Logging.h"
+#import "MediaConstraints.h"
+#import "MediaSampleAVFObjC.h"
+#import "NotImplemented.h"
+#import "PlatformLayer.h"
+#import "PlatformScreen.h"
+#import "RealtimeMediaSourceSettings.h"
+#import "RealtimeVideoUtilities.h"
 
-#include "CoreVideoSoftLink.h"
+#import "CoreVideoSoftLink.h"
 
 extern "C" {
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);

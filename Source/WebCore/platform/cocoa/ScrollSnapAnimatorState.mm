@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollSnapAnimatorState.h"
-#include <wtf/MathExtras.h>
+#import "config.h"
+#import "ScrollSnapAnimatorState.h"
 
 #if ENABLE(CSS_SCROLL_SNAP)
+
+#import <wtf/MathExtras.h>
 
 namespace WebCore {
 

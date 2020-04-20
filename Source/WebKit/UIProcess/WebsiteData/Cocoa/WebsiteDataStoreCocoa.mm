@@ -46,7 +46,7 @@
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebsiteDataStoreAdditions.h>
+#import <WebKitAdditions/WebsiteDataStoreAdditions.h>
 #else
 #define WEBSITE_DATA_STORE_ADDITIONS
 #endif

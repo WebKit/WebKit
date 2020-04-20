@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SerializedPlatformDataCueMac.h"
+#import "config.h"
+#import "SerializedPlatformDataCueMac.h"
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
 

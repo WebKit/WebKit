@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebFrameNetworkingContext.h"
+#import "config.h"
+#import "WebFrameNetworkingContext.h"
 
-#include "NetworkSession.h"
-#include "WebPage.h"
-#include "WebProcess.h"
-#include "WebsiteDataStoreParameters.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameLoader.h>
-#include <WebCore/FrameLoaderClient.h>
-#include <WebCore/NetworkStorageSession.h>
-#include <WebCore/Page.h>
-#include <WebCore/ResourceError.h>
-#include <WebCore/Settings.h>
-#include <wtf/ProcessPrivilege.h>
+#import "NetworkSession.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+#import "WebsiteDataStoreParameters.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderClient.h>
+#import <WebCore/NetworkStorageSession.h>
+#import <WebCore/Page.h>
+#import <WebCore/ResourceError.h>
+#import <WebCore/Settings.h>
+#import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
 using namespace WebCore;

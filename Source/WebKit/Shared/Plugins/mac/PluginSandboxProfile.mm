@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PluginSandboxProfile.h"
+#import "config.h"
+#import "PluginSandboxProfile.h"
 
-#include "WKFoundation.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/text/StringConcatenate.h>
-#include <wtf/text/WTFString.h>
+#import "WKFoundation.h"
+#import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenate.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 

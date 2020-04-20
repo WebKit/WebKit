@@ -23,16 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) && ENABLE(FULLSCREEN_API)
 
-#ifndef WebCoreFullScreenWarningView_h
-#define WebCoreFullScreenWarningView_h
+#import <wtf/RetainPtr.h>
 
-#if ENABLE(FULLSCREEN_API)
-
-#include <wtf/RetainPtr.h>
-
-WEBCORE_EXPORT @interface  WebCoreFullScreenWarningView : NSBox {
+WEBCORE_EXPORT @interface WebCoreFullScreenWarningView : NSBox {
 @private
     RetainPtr<NSTextField> _textField;
 }
@@ -40,7 +35,3 @@ WEBCORE_EXPORT @interface  WebCoreFullScreenWarningView : NSBox {
 @end
 
 #endif
-
-#endif // WebCoreFullScreenWarningView_h
-
-#endif // !PLATFORM(IOS_FAMILY)

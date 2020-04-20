@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "IntSize.h"
+#import "config.h"
+#import "IntSize.h"
 
 namespace WebCore {
 

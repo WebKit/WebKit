@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKDatePickerViewController.h"
+#import "config.h"
+#import "WKDatePickerViewController.h"
 
 #if PLATFORM(WATCHOS)
 

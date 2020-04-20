@@ -1,3 +1,20 @@
+2020-04-20  Darin Adler  <darin@apple.com>
+
+        Use #import instead of #include in Objective-C and don't use #pragma once
+        https://bugs.webkit.org/show_bug.cgi?id=210724
+
+        Reviewed by David Kilzer.
+
+        * wtf/cocoa/Entitlements.mm:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        * wtf/cocoa/SystemTracingCocoa.cpp:
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        * wtf/mac/SchedulePairMac.mm:
+        * wtf/text/cocoa/StringCocoa.mm:
+        * wtf/text/cocoa/TextStreamCocoa.mm:
+        More #import.
+
 2020-04-19  Brady Eidson  <beidson@apple.com>
 
         Add WKScriptMessageHandler API that asynchronously responds with a promise.

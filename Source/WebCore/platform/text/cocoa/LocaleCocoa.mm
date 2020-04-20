@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocaleCocoa.h"
+#import "config.h"
+#import "LocaleCocoa.h"
 
 #import "LocalizedStrings.h"
 #import <Foundation/NSDateFormatter.h>

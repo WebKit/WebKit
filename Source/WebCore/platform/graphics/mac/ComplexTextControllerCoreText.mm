@@ -22,15 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ComplexTextController.h"
+#import "config.h"
+#import "ComplexTextController.h"
 
-#include "FontCache.h"
-#include "FontCascade.h"
-#include <pal/spi/cocoa/CoreTextSPI.h>
-#include <wtf/SoftLinking.h>
-#include <wtf/WeakPtr.h>
-#include <CoreText/CoreText.h>
+#import "FontCache.h"
+#import "FontCascade.h"
+#import <CoreText/CoreText.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebCore {
 

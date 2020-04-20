@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #import "InstanceMethodSwizzler.h"
 #import "TestWKWebView.h"

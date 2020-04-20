@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "IntPoint.h"
+#import "config.h"
+#import "IntPoint.h"
 
 namespace WebCore {
 

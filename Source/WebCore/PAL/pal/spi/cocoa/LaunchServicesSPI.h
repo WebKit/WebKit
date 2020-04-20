@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <Foundation/Foundation.h>
 
 #if USE(APPLE_INTERNAL_SDK)

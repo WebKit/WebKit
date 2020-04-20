@@ -26,14 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebCoreObjCExtras.h"
+#import "config.h"
+#import "WebCoreObjCExtras.h"
 
-#include <utility>
-#include <wtf/Assertions.h>
-#include <wtf/MainThread.h>
-#include <wtf/ObjCRuntimeExtras.h>
-#include <wtf/Threading.h>
+#import <utility>
+#import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
+#import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/Threading.h>
 
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
 {

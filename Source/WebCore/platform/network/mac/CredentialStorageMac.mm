@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CredentialStorage.h"
+#import "config.h"
+#import "CredentialStorage.h"
 
-#include "AuthenticationMac.h"
-#include "Credential.h"
-#include "ProtectionSpace.h"
+#import "AuthenticationMac.h"
+#import "Credential.h"
+#import "ProtectionSpace.h"
 
 namespace WebCore {
 

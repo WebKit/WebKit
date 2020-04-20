@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationActionPrivate.h>

@@ -28,7 +28,7 @@
 
 #if HAVE(IOSURFACE)
 
-#include <QuartzCore/QuartzCore.h>
+#import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
 

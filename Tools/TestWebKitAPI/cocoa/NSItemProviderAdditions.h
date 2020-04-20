@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <Foundation/Foundation.h>
 
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);

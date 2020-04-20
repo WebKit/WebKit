@@ -29,7 +29,7 @@
 @class _WKUserInitiatedAction;
 
 #if TARGET_OS_IPHONE
-#include <UIKit/UIKit.h>
+#import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
     WKSyntheticClickTypeNoTap,

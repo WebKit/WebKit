@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
+#import <wtf/RefPtr.h>
 
 namespace WebKit {
 class WebEditCommandProxy;
