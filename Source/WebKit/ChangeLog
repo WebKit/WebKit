@@ -1,3 +1,25 @@
+2020-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        When SpeculativeLoadManager is destroyed, properly clean up its PendingFrameLoads
+        https://bugs.webkit.org/show_bug.cgi?id=210759
+        <rdar://problem/62056856>
+
+        Reviewed by Darin Adler.
+
+        Recent work on the resourceLoadStatistics layout tests increased the amount we swap out the WebsiteDataStore.
+        When this happens, the NetworkSession is eventually destroyed in the NetworkProcess, sometimes when running the next test.
+        An assertion was firing in the PendingFrameLoad destructor because it hadn't been marked as complete when it was destroyed.
+        Rather than remove the assertion, when we destroy the SpeculativeLoadManager (which only happens when a WebsiteDataStore
+        is destroyed) during a speculative pending frame load, just mark the pending frame load as complete because it is being cancelled.
+        Marking the pending frame load as complete can tell the SpeculativeLoadManager to mutate m_pendingFrameLoads, which we don't want
+        to do while iterating, so copy the RefPtrs into a Vector first then iterate that to get them all.
+
+        This fixes an assertion that was sometimes hit in http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects-database.html
+        but only after running other tests that had initiated speculative pending frame loads.  This was ostensibly started by r260322 but is quite unrelated.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::~SpeculativeLoadManager):
+
 2020-04-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix build after r260277
