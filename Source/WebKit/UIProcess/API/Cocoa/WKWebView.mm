@@ -898,15 +898,13 @@ static bool validateArgument(id argument)
 
     for (id key in arguments) {
         id value = [arguments objectForKey:key];
-        if (!validateArgument(value)) {
-            errorMessage = @"Function argument values must be one of the following types, or contain only the following types: NSString, NSNumber, NSDate, NSArray, and NSDictionary";
+        auto serializedValue = API::SerializedScriptValue::createFromNSObject(value);
+        if (!serializedValue) {
+            errorMessage = @"Function argument values must be one of the following types, or contain only the following types: NSNumber, NSNull, NSDate, NSString, NSArray, and NSDictionary";
             break;
         }
-    
-        auto wireBytes = API::SerializedScriptValue::wireBytesFromNSObject(value);
-        // Since we've validated the input dictionary above, we should never fail to serialize it into wire bytes.
-        ASSERT(wireBytes);
-        argumentsMap->set(key, *wireBytes);
+
+        argumentsMap->set(key, serializedValue->internalRepresentation().toWireBytes());
     }
 
     if (errorMessage && handler) {

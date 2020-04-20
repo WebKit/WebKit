@@ -1,3 +1,14 @@
+2020-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add WKScriptMessageHandler API that asynchronously responds with a promise.
+        rdar://problem/57243492 and https://bugs.webkit.org/show_bug.cgi?id=206398
+
+        Reviewed by Andy Estes.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandlerWithFinalizer<Out): Add a variant of CompletionHandler that allows for a Finalizer function
+          to handle cases where the Completion function hasn't been called at destruction time.
+
 2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable BigInt

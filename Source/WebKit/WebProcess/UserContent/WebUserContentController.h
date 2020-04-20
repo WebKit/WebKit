@@ -100,7 +100,8 @@ private:
     void removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>&);
 
     void removeUserScriptMessageHandler(ContentWorldIdentifier, uint64_t userScriptIdentifier);
-    void removeAllUserScriptMessageHandlers(const Vector<ContentWorldIdentifier>&);
+    void removeAllUserScriptMessageHandlersForWorlds(const Vector<ContentWorldIdentifier>&);
+    void removeAllUserScriptMessageHandlers();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void removeContentRuleList(const String& name);

@@ -57,6 +57,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "EventListener.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"

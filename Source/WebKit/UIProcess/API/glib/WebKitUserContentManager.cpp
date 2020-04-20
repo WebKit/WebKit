@@ -190,13 +190,22 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy&, FrameInfoData&&, WebCore::SerializedScriptValue& serializedScriptValue) override
+    void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
     }
 
+    bool supportsAsyncReply() override
+    {
+        return false;
+    }
+    
+    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&) override
+    {
+    }
+    
     virtual ~ScriptMessageClientGtk() { }
 
 private:

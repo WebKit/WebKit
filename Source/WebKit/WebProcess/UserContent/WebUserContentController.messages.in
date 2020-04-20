@@ -37,7 +37,8 @@ messages -> WebUserContentController {
 
     AddUserScriptMessageHandlers(Vector<struct WebKit::WebScriptMessageHandlerData> scriptMessageHandlers);
     RemoveUserScriptMessageHandler(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
-    RemoveAllUserScriptMessageHandlers(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
+    RemoveAllUserScriptMessageHandlersForWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
+    RemoveAllUserScriptMessageHandlers();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     AddContentRuleLists(Vector<std::pair<String, WebKit::WebCompiledContentRuleListData>> contentFilters);

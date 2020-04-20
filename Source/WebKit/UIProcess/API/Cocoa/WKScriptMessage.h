@@ -29,6 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKContentWorld;
 @class WKFrameInfo;
 @class WKWebView;
 
@@ -53,6 +54,9 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract The name of the message handler to which the message is sent.
  */
 @property (nonatomic, readonly, copy) NSString *name;
+
+/*! @abstract The content world from which the message was sent. */
+@property (nonatomic, readonly) WKContentWorld *world WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

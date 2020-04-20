@@ -26,5 +26,5 @@
 [
     Conditional=USER_MESSAGE_HANDLERS
 ] interface UserMessageHandler {
-    [MayThrowException] void postMessage(SerializedScriptValue message);
+    [MayThrowException] Promise<any> postMessage(SerializedScriptValue message);
 };

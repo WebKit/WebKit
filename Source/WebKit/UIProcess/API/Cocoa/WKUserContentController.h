@@ -30,8 +30,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKContentRuleList;
+@class WKContentWorld;
 @class WKUserScript;
 @protocol WKScriptMessageHandler;
+@protocol WKScriptMessageHandlerWithReply;
 
 /*! A WKUserContentController object provides a way for JavaScript to post
  messages to a web view.
@@ -56,18 +58,74 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (void)removeAllUserScripts;
 
 /*! @abstract Adds a script message handler.
- @param scriptMessageHandler The message handler to add.
+ @param scriptMessageHandler The script message handler to add.
+ @param contentWorld The WKContentWorld in which to add the script message handler.
  @param name The name of the message handler.
- @discussion Adding a scriptMessageHandler adds a function
- window.webkit.messageHandlers.<name>.postMessage(<messageBody>) for all
- frames.
+ @discussion Adding a script message handler adds a function
+ window.webkit.messageHandlers.<name>.postMessage(<messageBody>) to all frames, available in the given WKContentWorld.
+
+ The name argument must be a non-empty string.
+
+ Each WKContentWorld can have any number of script message handlers, but only one per unique name.
+
+ Once any script message handler has been added to a WKContentWorld for a given name, it is an error to add another
+ script message handler to that WKContentWorld for that same name without first removing the previous script message handler.
+
+ The above restriction applies to any type of script message handler - WKScriptMessageHandler and WKScriptMessageHandlerWithReply
+ objects will conflict with each other if you try to add them to the same WKContentWorld with the same name.
+ */
+- (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler contentWorld:(WKContentWorld *)world name:(NSString *)name WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Adds a script message handler.
+ @param scriptMessageHandlerWithReply The script message handler to add.
+ @param contentWorld The WKContentWorld in which to add the script message handler.
+ @param name The name of the message handler.
+ @discussion Adding a script message handler adds a function
+ window.webkit.messageHandlers.<name>.postMessage(<messageBody>) to all frames, available in the given WKContentWorld.
+
+ The name argument must be a non-empty string.
+
+ Each WKContentWorld can have any number of script message handlers, but only one per unique name.
+
+ Once any script message handler has been added to a WKContentWorld for a given name, it is an error to add another
+ script message handler to that WKContentWorld for that same name without first removing the previous script message handler.
+
+ The above restriction applies to any type of script message handler - WKScriptMessageHandlerWithReply and WKScriptMessageHandler
+ objects will conflict with each other if you try to add them to the same WKContentWorld with the same name.
+
+ Refer to the WKScriptMessageHandlerWithReply documentation for examples of how it is more flexible than WKScriptMessageHandler.
+ */
+- (void)addScriptMessageHandlerWithReply:(id <WKScriptMessageHandlerWithReply>)scriptMessageHandlerWithReply contentWorld:(WKContentWorld *)contentWorld name:(NSString *)name WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Adds a script message handler to the main world used by page content itself.
+ @param scriptMessageHandler The script message handler to add.
+ @param name The name of the message handler.
+ @discussion Calling this method is equivalent to calling addScriptMessageHandler:contentWorld:name:
+ with [WKContentWorld pageWorld] as the contentWorld argument.
  */
 - (void)addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name;
 
 /*! @abstract Removes a script message handler.
  @param name The name of the message handler to remove.
+ @param contentWorld The WKContentWorld from which to remove the script message handler.
+ */
+- (void)removeScriptMessageHandlerForName:(NSString *)name contentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Removes a script message handler.
+ @param name The name of the message handler to remove.
+ @discussion Calling this method is equivalent to calling removeScriptMessageHandlerForName:contentWorld:
+  with [WKContentWorld pageWorld] as the contentWorld argument.
  */
 - (void)removeScriptMessageHandlerForName:(NSString *)name;
+
+/*! @abstract Removes all script message handlers from a given WKContentWorld.
+ @param contentWorld The WKContentWorld from which to remove all script message handlers.
+ */
+- (void)removeAllScriptMessageHandlersFromContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Removes all associated script message handlers.
+ */
+- (void)removeAllScriptMessageHandlers WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Adds a content rule list.
  @param contentRuleList The content rule list to add.

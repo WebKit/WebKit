@@ -254,7 +254,7 @@ private:
     }
 
     // WebCore::UserMessageHandlerDescriptor
-    void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value) override
+    void didPostMessage(WebCore::UserMessageHandler& handler, WebCore::SerializedScriptValue* value, WTF::Function<void(SerializedScriptValue*, const String&)>&& completionHandler) override
     {
         WebCore::Frame* frame = handler.frame();
         if (!frame)
@@ -268,7 +268,17 @@ private:
         if (!webPage)
             return;
 
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
+        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& resultValue, const String& errorMessage) {
+            if (!errorMessage.isNull()) {
+                completionHandler(nullptr, errorMessage);
+                return;
+            }
+
+            auto value = SerializedScriptValue::createFromWireBytes(resultValue.vector());
+            completionHandler(value.ptr(), { });
+        };
+
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), WTFMove(messageReplyHandler), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;
@@ -309,7 +319,18 @@ void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdenti
 #endif
 }
 
-void WebUserContentController::removeAllUserScriptMessageHandlers(const Vector<ContentWorldIdentifier>& worldIdentifiers)
+void WebUserContentController::removeAllUserScriptMessageHandlers()
+{
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    if (m_userMessageHandlers.isEmpty())
+        return;
+
+    m_userMessageHandlers.clear();
+    invalidateAllRegisteredUserMessageHandlerInvalidationClients();
+#endif
+}
+
+void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     bool userMessageHandlersChanged = false;

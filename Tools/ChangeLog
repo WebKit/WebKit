@@ -1,3 +1,15 @@
+2020-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add WKScriptMessageHandler API that asynchronously responds with a promise.
+        rdar://problem/57243492 and https://bugs.webkit.org/show_bug.cgi?id=206398
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (-[AsyncScriptMessageHandler userContentController:didReceiveScriptMessage:replyHandler:]):
+
 2020-04-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Intl.RelativeTimeFormat missing in WebKit

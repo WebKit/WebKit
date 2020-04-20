@@ -39,6 +39,7 @@ class SerializedScriptValue;
 
 namespace API {
 class ContentWorld;
+class SerializedScriptValue;
 }
 
 namespace WebKit {
@@ -52,7 +53,9 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, WebCore::SerializedScriptValue&) = 0;
+        virtual void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&) = 0;
+        virtual bool supportsAsyncReply() = 0;
+        virtual void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&) = 0;
     };
 
     static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::ContentWorld&);

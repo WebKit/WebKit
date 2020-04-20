@@ -48,6 +48,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ElementChildIterator.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"

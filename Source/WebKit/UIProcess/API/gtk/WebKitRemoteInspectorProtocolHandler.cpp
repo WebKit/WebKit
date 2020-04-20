@@ -42,7 +42,7 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, FrameInfoData&&, WebCore::SerializedScriptValue& serializedScriptValue) override
+    void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
         String message = serializedScriptValue.toString();
         Vector<String> tokens = message.split(':');
@@ -51,6 +51,15 @@ public:
 
         URL requestURL = URL({ }, page.pageLoadState().url());
         m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUInt64(), tokens[1].toUInt64(), tokens[2]);
+    }
+
+    bool supportsAsyncReply() override
+    {
+        return false;
+    }
+    
+    void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue&, WTF::Function<void(API::SerializedScriptValue*, const String&)>&&) override
+    {
     }
 
     ~ScriptMessageClient() { }

@@ -27,6 +27,7 @@
 #include "JSDOMPromiseDeferred.h"
 
 #include "DOMWindow.h"
+#include "EventLoop.h"
 #include "JSDOMPromise.h"
 #include "JSDOMWindow.h"
 #include <JavaScriptCore/BuiltinNames.h>

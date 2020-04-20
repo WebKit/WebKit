@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebUserContentControllerProxyMessages.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
@@ -98,6 +99,7 @@ public:
     bool addUserScriptMessageHandler(WebScriptMessageHandler&);
     void removeUserMessageHandlerForName(const String&, API::ContentWorld&);
     void removeAllUserMessageHandlers(API::ContentWorld&);
+    void removeAllUserMessageHandlers();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void addNetworkProcess(NetworkProcessProxy&);
@@ -118,7 +120,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didPostMessage(IPC::Connection&, WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&);
+    void didPostMessage(WebPageProxyIdentifier, FrameInfoData&&, uint64_t messageHandlerID, const IPC::DataReference&, Messages::WebUserContentControllerProxy::DidPostMessage::AsyncReply&&);
 
     void addContentWorld(API::ContentWorld&);
 

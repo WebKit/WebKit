@@ -35,9 +35,10 @@
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKFrameInfo> _frameInfo;
     RetainPtr<NSString> _name;
+    RetainPtr<WKContentWorld> _world;
 }
 
-- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name
+- (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name world:(WKContentWorld *)world
 {
     if (!(self = [super init]))
         return nil;
@@ -46,6 +47,7 @@
     _webView = webView;
     _frameInfo = frameInfo;
     _name = adoptNS([name copy]);
+    _world = world;
 
     return self;
 }
@@ -68,6 +70,11 @@
 - (NSString *)name
 {
     return _name.get();
+}
+
+- (WKContentWorld *)world
+{
+    return _world.get();
 }
 
 @end

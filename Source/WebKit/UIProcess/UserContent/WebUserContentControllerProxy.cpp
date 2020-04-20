@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIContentWorld.h"
+#include "APISerializedScriptValue.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "DataReference.h"
@@ -316,7 +317,7 @@ void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String
 void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::ContentWorld& world)
 {
     for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlers({ world.identifier() }), identifier());
+        process.send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlersForWorlds({ world.identifier() }), identifier());
 
     unsigned numberRemoved = 0;
     m_scriptMessageHandlers.removeIf([&](auto& entry) {
@@ -328,7 +329,13 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::ContentWor
     });
 }
 
-void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
+void WebUserContentControllerProxy::removeAllUserMessageHandlers()
+{
+    for (auto& process : m_processes)
+        process.send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlers(), identifier());
+}
+
+void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference, Messages::WebUserContentControllerProxy::DidPostMessage::AsyncReply&& reply)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageProxyID);
     if (!page)
@@ -341,7 +348,21 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
     if (!handler)
         return;
 
-    handler->client().didPostMessage(*page, WTFMove(frameInfoData), WebCore::SerializedScriptValue::adopt(dataReference.vector()));
+    if (!handler->client().supportsAsyncReply()) {
+        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt(dataReference.vector()));
+        reply({ }, { });
+        return;
+    }
+
+    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt(dataReference.vector()), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
+        if (errorMessage.isNull()) {
+            ASSERT(value);
+            reply({ value->internalRepresentation().toWireBytes() }, { });
+            return;
+        }
+
+        reply({ }, errorMessage);
+    });
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

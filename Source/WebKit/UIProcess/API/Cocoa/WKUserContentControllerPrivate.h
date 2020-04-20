@@ -25,6 +25,7 @@
 
 #import <WebKit/WKUserContentController.h>
 
+@class WKContentWorld;
 @class WKUserScript;
 @class _WKUserContentFilter;
 @class _WKUserContentWorld;

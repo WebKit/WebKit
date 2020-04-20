@@ -1,3 +1,25 @@
+2020-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add WKScriptMessageHandler API that asynchronously responds with a promise.
+        rdar://problem/57243492 and https://bugs.webkit.org/show_bug.cgi?id=206398
+
+        Reviewed by Andy Estes.
+
+        Covered by new API tests.
+
+        Updated for moving an #include into implementation files:
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        * bindings/js/JSDOMPromiseDeferred.h:    
+        * html/HTMLMediaElement.cpp:
+        * page/DOMWindow.cpp:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        
+        * page/UserMessageHandler.cpp:
+        (WebCore::UserMessageHandler::postMessage): Return a promise to be fulfilled by the API client.
+        * page/UserMessageHandler.h:
+        * page/UserMessageHandler.idl:
+        * page/UserMessageHandlerDescriptor.h:
+
 2020-04-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add column spanning support for flexible table width

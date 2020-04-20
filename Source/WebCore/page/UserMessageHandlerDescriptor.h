@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT DOMWrapperWorld& world();
     WEBCORE_EXPORT const DOMWrapperWorld& world() const;
 
-    virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
+    virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*, WTF::Function<void(SerializedScriptValue*, const String&)>&&) = 0;
 
 private:
     AtomString m_name;

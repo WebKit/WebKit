@@ -1,3 +1,73 @@
+2020-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add WKScriptMessageHandler API that asynchronously responds with a promise.
+        rdar://problem/57243492 and https://bugs.webkit.org/show_bug.cgi?id=206398
+
+        Reviewed by Andy Estes.
+        
+        Change webkit.messageHandlers.<name>.postMessage() to return a promise instead of undefined.
+        
+        Allow for that promise to be resolved by an asynchronous reply block up in the API client.
+        This is like the spiritual opposite version of [WKWebView callAsyncFunction:...]
+        
+        And while we're adding a new script message handler variant, we're adding it sandboxed by WKContentWorld.
+
+        * Shared/API/APISerializedScriptValue.h:
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm:
+        (API::validateObject):
+        (API::coreValueFromNSObject):
+        (API::SerializedScriptValue::createFromNSObject):
+        (API::SerializedScriptValue::wireBytesFromNSObject): Deleted.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.h: Now that script message handlers can be per-world, messages
+          declare which world they were posted from.
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        (-[WKScriptMessage _initWithBody:webView:frameInfo:name:world:]):
+        (-[WKScriptMessage world]):
+        (-[WKScriptMessage _initWithBody:webView:frameInfo:name:]): Deleted.
+        * UIProcess/API/Cocoa/WKScriptMessageInternal.h:
+
+        * UIProcess/API/Cocoa/WKScriptMessageHandlerWithReply.h: Added.
+          Declare the new protocol for a script message handler that can reply to messages asynchronously.
+
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _addScriptMessageHandler:]):
+        (-[WKUserContentController addScriptMessageHandler:name:]):
+        (-[WKUserContentController addScriptMessageHandler:contentWorld:name:]):
+        (-[WKUserContentController addScriptMessageHandlerWithReply:contentWorld:name:]):
+        (-[WKUserContentController removeScriptMessageHandlerForName:contentWorld:]):
+        (-[WKUserContentController removeAllScriptMessageHandlersFromContentWorld:]):
+        (-[WKUserContentController removeAllScriptMessageHandlers]):
+        * UIProcess/API/Cocoa/WKUserContentControllerInternal.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+        Update for new shared API::SerializedScriptValue initialization.
+        
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp:
+        
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_webkit_message_handlers_post_message):
+        
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeAllUserScriptMessageHandlers):
+        (WebKit::WebUserContentController::removeAllUserScriptMessageHandlersForWorlds):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+
 2020-04-19  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r244091): Leak of TaskStateChangedCallbackType due to missing -dealloc

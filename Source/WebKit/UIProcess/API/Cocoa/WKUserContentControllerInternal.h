@@ -29,15 +29,18 @@
 #import "WebUserContentControllerProxy.h"
 
 namespace WebKit {
-
 template<> struct WrapperTraits<WebUserContentControllerProxy> {
     using WrapperClass = WKUserContentController;
 };
 
+class WebScriptMessageHandler;
 }
 
 @interface WKUserContentController () <WKObject> {
 @package
     API::ObjectStorage<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
 }
+
+- (void)_addScriptMessageHandler:(WebKit::WebScriptMessageHandler&)scriptMessageHandler;
+
 @end
