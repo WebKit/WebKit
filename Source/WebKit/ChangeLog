@@ -1,3 +1,11 @@
+2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        <rdar://problem/62059046>
+
+        Unreviewed macCatalyst build fix.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         Use #import instead of #include in Objective-C and don't use #pragma once
