@@ -1,3 +1,10 @@
+2020-04-20  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, revert accidental test changes.
+
+        * microbenchmarks/for-of-iterate-array-entries.js:
+        (foo):
+
 2020-04-20  Paulo Matos  <pmatos@igalia.com>
 
         [32-bits] stress/for-of-array-different-globals.js is failing
