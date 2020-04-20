@@ -85,6 +85,7 @@ class WPEPort(Port):
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_FILE')
         self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_NO_COLOR')
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
+        self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         return environment
 
     def show_results_html_file(self, results_filename):

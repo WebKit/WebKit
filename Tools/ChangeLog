@@ -1,3 +1,16 @@
+2020-04-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR][WPE] Let XR_RUNTIME_JSON environment variable go through for testing
+        https://bugs.webkit.org/show_bug.cgi?id=210738
+
+        Reviewed by Žan Doberšek.
+
+        The OpenXR loader might be instructed to load a specific runtime by
+        using the XR_RUNTIME_JSON environment variable. Let it get in for testing.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server): Copy XR_RUNTIME_JSON if set.
+
 2020-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable resource load statistics
