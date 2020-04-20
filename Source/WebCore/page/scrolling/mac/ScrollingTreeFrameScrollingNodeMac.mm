@@ -138,12 +138,12 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition(const Floa
 
 void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged()
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << shouldUpdateScrollLayerPositionSynchronously());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
 
     if (isRootNode())
         updateMainFramePinAndRubberbandState();
 
-    if (shouldUpdateScrollLayerPositionSynchronously())
+    if (hasSynchronousScrollingReasons())
         scrollingTree().scrollingTreeNodeDidScroll(*this, ScrollingLayerPositionAction::Set);
     else
         ScrollingTreeFrameScrollingNode::currentScrollPositionChanged();

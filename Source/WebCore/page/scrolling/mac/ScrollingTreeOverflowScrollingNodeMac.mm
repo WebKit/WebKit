@@ -69,6 +69,11 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const Scrol
 
 ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+#if ENABLE(SCROLLING_THREAD)
+    if (hasSynchronousScrollingReasons())
+        return ScrollingEventResult::SendToMainThread;
+#endif
+
     if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 

@@ -2749,7 +2749,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     if (usesCompositedScrolling()) {
         setNeedsCompositingGeometryUpdate();
         setDescendantsNeedUpdateBackingAndHierarchyTraversal();
-        requiresRepaint = false;
+        requiresRepaint = backing()->needsRepaintOnCompositedScroll();
     }
 
     // Just schedule a full repaint of our object.

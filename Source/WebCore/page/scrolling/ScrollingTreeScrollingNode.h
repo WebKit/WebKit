@@ -77,7 +77,7 @@ public:
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     void addSynchronousScrollingReason(SynchronousScrollingReason reason) { m_synchronousScrollingReasons.add(reason); }
-    bool shouldUpdateScrollLayerPositionSynchronously() const { return !m_synchronousScrollingReasons.isEmpty(); }
+    bool hasSynchronousScrollingReasons() const { return !m_synchronousScrollingReasons.isEmpty(); }
 #endif
 
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }

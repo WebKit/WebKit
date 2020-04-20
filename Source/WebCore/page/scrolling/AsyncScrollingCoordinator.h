@@ -133,6 +133,7 @@ private:
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
     WEBCORE_EXPORT void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) final;
+    WEBCORE_EXPORT bool hasSynchronousScrollingReasons(ScrollingNodeID) const final;
 
     virtual void scheduleTreeStateCommit() = 0;
 

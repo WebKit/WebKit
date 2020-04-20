@@ -120,6 +120,8 @@ public:
     GraphicsLayer* backgroundLayer() const { return m_backgroundLayer.get(); }
     bool backgroundLayerPaintsFixedRootBackground() const { return m_backgroundLayerPaintsFixedRootBackground; }
 
+    bool needsRepaintOnCompositedScroll() const;
+
     bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
     void setRequiresBackgroundLayer(bool);
 

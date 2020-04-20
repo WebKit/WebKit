@@ -1,3 +1,14 @@
+2020-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling with background-attachment: fixed needs to trigger repaints
+        https://bugs.webkit.org/show_bug.cgi?id=193893
+        <rdar://problem/47587017>
+
+        Reviewed by Dean Jackson.
+
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-repaint-expected.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-repaint.html: Added.
+
 2020-04-20  Megan Gardner  <megan_gardner@apple.com>
 
         Date and Time form controls not showing correct initial values on immediate second invocation.

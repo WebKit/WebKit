@@ -1,3 +1,47 @@
+2020-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling with background-attachment: fixed needs to trigger repaints
+        https://bugs.webkit.org/show_bug.cgi?id=193893
+        <rdar://problem/47587017>
+
+        Reviewed by Dean Jackson.
+
+        When scrolling an overflow scroll which has "background-atttachment:fixed" in the content,
+        the node will have non-empty synchronous scrolling reasons. In this case we need to
+        send the scroll to the main thread, and trigger a repaint on scroll.
+
+        If handling the wheel event on the scrolling thread determines that the scroll must be sent
+        to the main thread, EventDispatcher::wheelEvent() does so in the callback function.
+
+        To trigger the repaint, RenderLayer::scrollTo() asks the composited layers backing whether
+        the node has synchronous scrolling reasons; this is implemented by asking the scrolling
+        coordinator.
+
+        Test: scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-repaint.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::hasSynchronousScrollingReasons const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::hasSynchronousScrollingReasons const):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::hasSynchronousScrollingReasons const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent): Return SendToMainThread if this node
+        needs to do synchronous scrolling.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::needsRepaintOnCompositedScroll const):
+        (WebCore::RenderLayerBacking::setRequiresOwnBackingStore):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        * rendering/RenderLayerBacking.h:
+
 2020-04-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         MSVC: LayoutUnits.h(248): warning C4245: 'argument': conversion from 'const int' to 'size_t', signed/unsigned mismatch

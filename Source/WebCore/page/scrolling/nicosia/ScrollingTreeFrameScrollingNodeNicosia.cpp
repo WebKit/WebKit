@@ -164,9 +164,9 @@ FloatPoint ScrollingTreeFrameScrollingNodeNicosia::adjustedScrollPosition(const 
 
 void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged()
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << shouldUpdateScrollLayerPositionSynchronously());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
 
-    if (shouldUpdateScrollLayerPositionSynchronously())
+    if (hasSynchronousScrollingReasons())
         scrollingTree().scrollingTreeNodeDidScroll(*this, ScrollingLayerPositionAction::Set);
     else
         ScrollingTreeFrameScrollingNode::currentScrollPositionChanged();

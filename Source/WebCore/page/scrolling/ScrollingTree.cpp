@@ -121,10 +121,13 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     while (node) {
         if (is<ScrollingTreeScrollingNode>(*node)) {
             auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-            if (scrollingNode.handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent) {
+            auto result = scrollingNode.handleWheelEvent(wheelEvent);
+            if (result == ScrollingEventResult::DidHandleEvent) {
                 m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
                 return ScrollingEventResult::DidHandleEvent;
             }
+            if (result == ScrollingEventResult::SendToMainThread)
+                return ScrollingEventResult::SendToMainThread;
         }
 
         if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {

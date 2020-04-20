@@ -158,6 +158,7 @@ public:
     virtual void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) { }
     virtual void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) { }
     virtual void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) { }
+    virtual bool hasSynchronousScrollingReasons(ScrollingNodeID) const { return false; }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;

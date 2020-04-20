@@ -774,6 +774,19 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID n
 #endif
 }
 
+bool AsyncScrollingCoordinator::hasSynchronousScrollingReasons(ScrollingNodeID nodeID) const
+{
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!is<ScrollingStateScrollingNode>(node))
+        return false;
+
+#if ENABLE(SCROLLING_THREAD)
+    return downcast<ScrollingStateScrollingNode>(*node).hasSynchronousScrollingReasons();
+#else
+    return false;
+#endif
+}
+
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const
 {
     return scrollingTree()->isRubberBandInProgress();

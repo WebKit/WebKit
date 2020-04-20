@@ -1775,6 +1775,17 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
     return layersChanged;
 }
 
+bool RenderLayerBacking::needsRepaintOnCompositedScroll() const
+{
+    if (!hasScrollingLayer())
+        return false;
+
+    if (auto scrollingCoordinator = m_owningLayer.page().scrollingCoordinator())
+        return scrollingCoordinator->hasSynchronousScrollingReasons(m_scrollingNodeID);
+    
+    return false;
+}
+
 void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgroundLayerPaintsFixedRootBackground)
 {
     if (backgroundLayerPaintsFixedRootBackground == m_backgroundLayerPaintsFixedRootBackground)
@@ -2787,14 +2798,14 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
 {
     if (requiresOwnBacking == m_requiresOwnBackingStore)
         return;
-    
+
     m_requiresOwnBackingStore = requiresOwnBacking;
 
     // This affects the answer to paintsIntoCompositedAncestor(), which in turn affects
     // cached clip rects, so when it changes we have to clear clip rects on descendants.
     m_owningLayer.clearClipRectsIncludingDescendants(PaintingClipRects);
     m_owningLayer.computeRepaintRectsIncludingDescendants();
-    
+
     compositor().repaintInCompositedAncestor(m_owningLayer, compositedBounds());
 }
 
@@ -2811,7 +2822,7 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
     auto& frameView = renderer().view().frameView();
     if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
         frameView.addTrackedRepaintRect(owningLayer().absoluteBoundingBoxForPainting());
-    
+
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         // By default, setNeedsDisplay will clip to the size of the GraphicsLayer, which does not include margin tiles.
         // So if the TiledBacking has a margin that needs to be invalidated, we need to send in a rect to setNeedsDisplayInRect
@@ -2820,7 +2831,7 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
         FloatRect rectToRepaint = tiledBacking ? tiledBacking->bounds() : FloatRect(FloatPoint(0, 0), m_graphicsLayer->size());
         m_graphicsLayer->setNeedsDisplayInRect(rectToRepaint, shouldClip);
     }
-    
+
     if (m_foregroundLayer && m_foregroundLayer->drawsContent())
         m_foregroundLayer->setNeedsDisplay();
 
