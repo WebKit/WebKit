@@ -1,3 +1,17 @@
+2020-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FTL doesn't observe the use kind of CheckIsConstant's child1
+        https://bugs.webkit.org/show_bug.cgi?id=210763
+
+        Reviewed by Yusuke Suzuki.
+
+        Somehow, this didn't get added when I changed CheckIsConstant and didn't show up
+        when I tested r260377 because I tested in release. Fortunately, the produced
+        DFG IR will be the same.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckIsConstant):
+
 2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Skip test262 for non-safe-integer range BigIntConstructor

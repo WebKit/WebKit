@@ -3584,11 +3584,20 @@ private:
     
     void compileCheckIsConstant()
     {
-        LValue cell = lowCell(m_node->child1());
+        if (m_node->child1().useKind() == CellUse) {
+            LValue cell = lowCell(m_node->child1());
         
-        speculate(
-            BadCell, jsValueValue(cell), m_node->child1().node(),
-            m_out.notEqual(cell, weakPointer(m_node->cellOperand()->cell())));
+            speculate(
+                BadCell, jsValueValue(cell), m_node->child1().node(),
+                m_out.notEqual(cell, weakPointer(m_node->cellOperand()->cell())));
+        } else {
+            LValue value = lowJSValue(m_node->child1());
+
+            ASSERT(!m_node->constant()->value().isCell() || !m_node->constant()->value());
+            speculate(
+                BadType, jsValueValue(value), m_node->child1().node(),
+                m_out.notEqual(value, m_out.constInt64(JSValue::encode(m_node->constant()->value()))));
+        }
     }
     
     void compileCheckBadCell()
