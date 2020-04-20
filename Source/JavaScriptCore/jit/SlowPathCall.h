@@ -64,6 +64,8 @@ public:
 #if CPU(X86_64) && OS(WINDOWS)
         m_jit->pop(JIT::regT0); // vPC
         m_jit->pop(JIT::regT1); // callFrame register
+        static_assert(JIT::regT0 == GPRInfo::returnValueGPR);
+        static_assert(JIT::regT1 == GPRInfo::returnValueGPR2);
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)

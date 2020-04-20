@@ -1,5 +1,20 @@
 2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] SlowPathCall is not supported by callOperation in Windows
+        https://bugs.webkit.org/show_bug.cgi?id=210727
+
+        Reviewed by Ross Kirsling.
+
+        In Windows, SlowPathCall should be handled by JITSlowPathCall, otherwise, stack is not correctly allocated.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+
+2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Enable BigInt
         https://bugs.webkit.org/show_bug.cgi?id=210726
 

@@ -393,8 +393,9 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
         default: RELEASE_ASSERT_NOT_REACHED();
         }
     })();
-    setupArguments<decltype(tryFastFunction)>(instruction);
-    appendCallWithExceptionCheck(tryFastFunction);
+
+    JITSlowPathCall slowPathCall(this, instruction, tryFastFunction);
+    slowPathCall.call();
     Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
 
     compileOpCall<OpIteratorOpen>(instruction, m_callLinkInfoIndex++);
@@ -454,8 +455,9 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
 
     emitGetVirtualRegister(bytecode.m_next, regT0);
     Jump genericCase = branchIfNotEmpty(regT0);
-    setupArguments<decltype(tryFastFunction)>(instruction);
-    appendCallWithExceptionCheck(tryFastFunction);
+
+    JITSlowPathCall slowPathCall(this, instruction, tryFastFunction);
+    slowPathCall.call();
     Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
 
     genericCase.link(this);
