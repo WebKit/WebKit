@@ -1,3 +1,18 @@
+2020-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, skip imported/w3c/web-platform-tests/IndexedDB/structured-clone
+        https://bugs.webkit.org/show_bug.cgi?id=210731#c4
+
+        Skipping this test based on the following rationales.
+
+            1. This test was previously *effectively* skipped because it is including BigInt syntax. This test immediately throws SyntaxError. So nothing in this test was executed before.
+            2. Now JSC supports BigInt syntax. Then, this test is now executed finally. And crash happens when deserializaing DOMMatrixReadOnly.
+            3. This is because DOMMatrixReadOnly requires JSDOMGlobalObject since DOMMatrixReadOnly is WebCore object, not JSC object.
+            4. However, IDBSerializationContext.cpp is using plain JSGlobalObject. This is not correct since it is JSC JSGlobalObject and it does not include DOMMatrix implementations.
+            5. So, nothing is related to BigInt here.
+
+        * TestExpectations:
+
 2020-04-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add column spanning support for flexible table width
