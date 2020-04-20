@@ -892,11 +892,12 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, static_cast<const LChar*>(nullptr), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
-    if constexpr (std::is_same<Malloc, StringImplMalloc>::value)
+    if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data8 = characters.leakPtr();
     else {
-        m_data8 = static_cast<const LChar*>(StringImplMalloc::malloc(length));
-        memcpy((void*)m_data8, characters.get(), length);
+        auto data8 = static_cast<LChar*>(StringImplMalloc::malloc(length * sizeof(LChar)));
+        copyCharacters(data8, characters.get(), length);
+        m_data8 = data8;
     }
 
     ASSERT(m_data8);
@@ -927,11 +928,12 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), StringNormal | BufferOwned)
 {
-    if constexpr (std::is_same<Malloc, StringImplMalloc>::value)
+    if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakPtr();
     else {
-        m_data16 = static_cast<const UChar*>(StringImplMalloc::malloc(length * sizeof(UChar)));
-        memcpy((void*)m_data16, characters.get(), length * sizeof(UChar));
+        auto data16 = static_cast<UChar*>(StringImplMalloc::malloc(length * sizeof(UChar)));
+        copyCharacters(data16, characters.get(), length);
+        m_data16 = data16;
     }
 
     ASSERT(m_data16);
@@ -1031,22 +1033,15 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
 template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector)
 {
-    if (size_t size = vector.size()) {
-        ASSERT(vector.data());
-        if (size > MaxLength)
+    if constexpr (std::is_same_v<Malloc, StringImplMalloc>) {
+        auto length = vector.size();
+        if (!length)
+            return *empty();
+        if (length > MaxLength)
             CRASH();
-
-        if constexpr (std::is_same<Malloc, StringImplMalloc>::value)
-            return adoptRef(*new StringImpl(vector.releaseBuffer(), size));
-        else {
-            // We have to copy between malloc zones.
-            auto vectorBuffer = vector.releaseBuffer();
-            auto stringImplBuffer = MallocPtr<CharacterType, StringImplMalloc>::malloc(size);
-            memcpy(stringImplBuffer.get(), vectorBuffer.get(), size);
-            return adoptRef(*new StringImpl(WTFMove(stringImplBuffer), size));
-        }
-    }
-    return *empty();
+        return adoptRef(*new StringImpl(vector.releaseBuffer(), length));
+    } else
+        return create(vector.data(), vector.size());
 }
 
 inline size_t StringImpl::cost() const
@@ -1134,9 +1129,9 @@ inline void StringImpl::deref()
 template<typename SourceCharacterType, typename DestinationCharacterType>
 inline void StringImpl::copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters)
 {
-    static_assert(std::is_same<SourceCharacterType, LChar>::value || std::is_same<SourceCharacterType, UChar>::value);
-    static_assert(std::is_same<DestinationCharacterType, LChar>::value || std::is_same<DestinationCharacterType, UChar>::value);
-    if constexpr (std::is_same<SourceCharacterType, DestinationCharacterType>::value) {
+    static_assert(std::is_same_v<SourceCharacterType, LChar> || std::is_same_v<SourceCharacterType, UChar>);
+    static_assert(std::is_same_v<DestinationCharacterType, LChar> || std::is_same_v<DestinationCharacterType, UChar>);
+    if constexpr (std::is_same_v<SourceCharacterType, DestinationCharacterType>) {
         if (numCharacters == 1) {
             *destination = *source;
             return;

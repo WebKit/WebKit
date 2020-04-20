@@ -1302,7 +1302,7 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
     UChar* data;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data);
 
-    memcpy(data, m_data16, i * sizeof(UChar));
+    copyCharacters(data, m_data16, i);
     for (unsigned j = i; j != m_length; ++j) {
         UChar character = m_data16[j];
         if (character == target)
