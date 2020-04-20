@@ -1,3 +1,12 @@
+2020-04-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Fix build after r260277
+        https://bugs.webkit.org/show_bug.cgi?id=210756
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/PlatformPlayStation.cmake:
+
 2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Oversized caret and selection rects in text fields on ganji.com and netflix.com/login

@@ -162,4 +162,5 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 # so they are added here.
 list(APPEND WebKit_PRIVATE_LIBRARIES
     $<TARGET_OBJECTS:PAL>
+    $<TARGET_OBJECTS:WebCore>
 )

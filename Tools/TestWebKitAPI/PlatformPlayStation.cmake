@@ -27,6 +27,7 @@ list(APPEND TestWebCore_SOURCES
 # so they are added here.
 list(APPEND TestWebCore_PRIVATE_LIBRARIES
     $<TARGET_OBJECTS:PAL>
+    $<TARGET_OBJECTS:WebCore>
 )
 
 # TestWebKit
