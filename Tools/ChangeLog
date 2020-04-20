@@ -1,3 +1,16 @@
+2020-04-20  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/61950472
+
+    2020-04-20  Brady Eidson  <beidson@apple.com>
+
+            Pass sandbox extensions for back/forward list navigations after the policy is decided at process-swap time.
+            <rdar://problem/59535167> and https://bugs.webkit.org/show_bug.cgi?id=210623
+
+            Reviewed by Geoff Garen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2020-04-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r260278. rdar://problem/61950220

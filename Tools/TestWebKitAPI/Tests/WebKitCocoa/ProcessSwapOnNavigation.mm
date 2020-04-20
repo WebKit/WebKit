@@ -6548,3 +6548,88 @@ TEST(ProcessSwap, PassSandboxExtension)
 
     EXPECT_WK_STREQ(webView.get()._resourceDirectoryURL.path, file.URLByDeletingLastPathComponent.path);
 }
+
+#if PLATFORM(MAC)
+
+static const char* pageThatOpensBytes = R"PSONRESOURCE(
+<script>
+window.onload = function() {
+    window.open("pson://www.webkit.org/window.html", "_blank");
+}
+</script>
+)PSONRESOURCE";
+
+static const char* openedPage = "Hello World";
+
+TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().processSwapsOnWindowOpenWithOpener = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:pageThatOpensBytes];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/window.html" toData:openedPage];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_EQ(pid1, pid2);
+
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([url.scheme isEqualToString:@"file"]);
+
+    [createdWebView loadRequest:[NSURLRequest requestWithURL:url]];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+    auto pid3 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid3);
+    EXPECT_NE(pid2, pid3);
+
+    [createdWebView goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(4, numberOfDecidePolicyCalls);
+    auto pid4 = [createdWebView _webProcessIdentifier];
+    EXPECT_NE(pid3, pid4);
+
+    [createdWebView goForward];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(5, numberOfDecidePolicyCalls);
+    auto pid5 = [createdWebView _webProcessIdentifier];
+    EXPECT_NE(pid4, pid5);
+}
+
+#endif // PLATFORM(MAC)

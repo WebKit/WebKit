@@ -52,7 +52,7 @@ public:
 
     Ref<API::Navigation> createBackForwardNavigation(WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, WebCore::FrameLoadType);
     Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&, WebBackForwardListItem* currentItem);
-    Ref<API::Navigation> createReloadNavigation();
+    Ref<API::Navigation> createReloadNavigation(WebBackForwardListItem* currentAndTargetItem);
     Ref<API::Navigation> createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&&);
 
     bool hasNavigation(uint64_t navigationID) const { return m_navigations.contains(navigationID); }

@@ -27,6 +27,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
+#include "SandboxExtension.h"
 #include "SessionState.h"
 #include "WebCompiledContentRuleListData.h"
 #include "WebCoreArgumentCoders.h"

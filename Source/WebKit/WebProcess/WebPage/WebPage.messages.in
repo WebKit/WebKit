@@ -183,7 +183,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier policyCheckIdentifier, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, Optional<WebKit::WebsitePoliciesData> websitePolicies)
+    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier policyCheckIdentifier, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, Optional<WebKit::WebsitePoliciesData> websitePolicies, Optional<WebKit::SandboxExtension::Handle> sandboxExtensionHandle)
     ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, uint64_t listenerID)
 
     ClearSelection()

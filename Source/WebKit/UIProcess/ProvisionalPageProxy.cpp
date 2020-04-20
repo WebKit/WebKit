@@ -334,7 +334,7 @@ void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& paramete
     m_page.startURLSchemeTaskShared(m_process.copyRef(), m_webPageID, WTFMove(parameters));
 }
 
-void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
+void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void()>&& completionHandler)
 {
     m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, WTFMove(completionHandler));
 }
@@ -345,7 +345,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     if (!isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameID) || navigationID != m_navigationID) {
-        reply(identifier, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt);
+        reply(identifier, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt, WTF::nullopt);
         return;
     }
 

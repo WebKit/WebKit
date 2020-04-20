@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "DownloadID.h"
+#include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
 #include "WKBase.h"
@@ -82,7 +83,7 @@ public:
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&, Optional<SandboxExtension::Handle>&&);
 
     uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(uint64_t);
