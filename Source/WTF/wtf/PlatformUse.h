@@ -140,7 +140,7 @@
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 
 #if USE(JSVALUE64)
-#define USE_BIGINT32 0
+#define USE_BIGINT32 1
 #endif
 
 /* FIXME: This name should be more specific if it is only for use with CallFrame* */
