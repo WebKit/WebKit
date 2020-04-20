@@ -245,10 +245,10 @@ struct SlotPositionHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct HashTraits<WebCore::Layout::SlotPosition> : GenericHashTraits<WebCore::Layout::SlotPosition> {
-    static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(0, WebCore::intMinForLayoutUnit); }
+    static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(0, std::numeric_limits<size_t>::max()); }
 
-    static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot = WebCore::Layout::SlotPosition(WebCore::intMinForLayoutUnit, 0); }
-    static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot == WebCore::Layout::SlotPosition(WebCore::intMinForLayoutUnit, 0); }
+    static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot = WebCore::Layout::SlotPosition(std::numeric_limits<size_t>::max(), 0); }
+    static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot == WebCore::Layout::SlotPosition(std::numeric_limits<size_t>::max(), 0); }
 };
 template<> struct DefaultHash<WebCore::Layout::SlotPosition> {
     typedef SlotPositionHash Hash;

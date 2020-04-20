@@ -1,3 +1,17 @@
+2020-04-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        MSVC: LayoutUnits.h(248): warning C4245: 'argument': conversion from 'const int' to 'size_t', signed/unsigned mismatch
+        https://bugs.webkit.org/show_bug.cgi?id=210592
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/LayoutUnits.h:
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::emptyValue):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::isDeletedValue):
+        Use std::numeric_limits<size_t>::max() for empty and deleted
+        values instead of WebCore::intMinForLayoutUnit.
+
 2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation sometimes fails to replace text in title elements
