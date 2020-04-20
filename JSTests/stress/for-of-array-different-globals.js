@@ -1,3 +1,4 @@
+//@ skip if ["arm", "mips"].include?($architecture)
 let count = 0;
 
 function foo(array) {
