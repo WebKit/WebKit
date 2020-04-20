@@ -1,3 +1,13 @@
+2020-04-20  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerPrivateMediaStreamAVFObjC should start play a newly added audio track if it is playing
+        https://bugs.webkit.org/show_bug.cgi?id=210740
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/play-newly-added-audio-track-expected.txt: Added.
+        * fast/mediastream/play-newly-added-audio-track.html: Added.
+
 2020-04-20  Zalan Bujtas  <zalan@apple.com>
 
         fast/layoutformattingcontext/simple-absolute-positioned-replaced-inline-element-with-percentage-height.html is flaky

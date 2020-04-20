@@ -895,8 +895,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         case TrackState::Configure:
             track.setTrackIndex(index);
-            bool enabled = track.streamTrack().enabled() && !track.streamTrack().muted();
-            track.setEnabled(enabled);
+            track.setVolume(m_volume);
+            track.setMuted(m_muted);
+            track.setEnabled(track.streamTrack().enabled() && !track.streamTrack().muted());
+            if (playing())
+                track.play();
             break;
         }
     };

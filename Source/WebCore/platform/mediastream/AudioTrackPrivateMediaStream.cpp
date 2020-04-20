@@ -72,6 +72,9 @@ void AudioTrackPrivateMediaStream::clear()
 
 void AudioTrackPrivateMediaStream::play()
 {
+    if (m_shouldPlay)
+        return;
+
     m_shouldPlay = true;
     updateRenderer();
 }

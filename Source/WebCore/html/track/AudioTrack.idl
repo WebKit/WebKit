@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO_TRACK,
+    ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction
 ] interface AudioTrack {

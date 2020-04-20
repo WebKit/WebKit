@@ -54,7 +54,8 @@ public:
 
     void play();
     void pause();
-    bool isPlaying() { return m_isPlaying; }
+    bool isPlaying() const { return m_isPlaying; }
+    bool shouldPlay() const { return m_shouldPlay; }
 
     void setVolume(float);
     float volume() const;
@@ -75,6 +76,7 @@ protected:
     AtomString id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     int trackIndex() const final { return m_index; }
+    bool isBackedByMediaStreamTrack() const final { return true; }
 
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) final;
@@ -106,5 +108,9 @@ protected:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackPrivateMediaStream)
+    static bool isType(const WebCore::AudioTrackPrivate& track) { return track.isBackedByMediaStreamTrack(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)

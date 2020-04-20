@@ -52,6 +52,7 @@ namespace WebCore {
 
 class AnimationTimeline;
 class AudioContext;
+class AudioTrack;
 class CacheStorageConnection;
 class DOMRect;
 class DOMRectList;
@@ -764,6 +765,7 @@ public:
     void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
     bool isMockRealtimeMediaSourceCenterEnabled();
+    bool shouldAudioTrackPlay(const AudioTrack&);
 #endif
 
     bool supportsAudioSession() const;

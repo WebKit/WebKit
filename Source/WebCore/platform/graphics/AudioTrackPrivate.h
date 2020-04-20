@@ -62,6 +62,8 @@ public:
     enum Kind { Alternative, Description, Main, MainDesc, Translation, Commentary, None };
     virtual Kind kind() const { return None; }
 
+    virtual bool isBackedByMediaStreamTrack() const { return false; }
+
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "AudioTrackPrivate"; }
 #endif

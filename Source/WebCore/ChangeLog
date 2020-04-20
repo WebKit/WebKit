@@ -1,5 +1,35 @@
 2020-04-20  Youenn Fablet  <youenn@apple.com>
 
+        MediaPlayerPrivateMediaStreamAVFObjC should start play a newly added audio track if it is playing
+        https://bugs.webkit.org/show_bug.cgi?id=210740
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, MediaPlayerPrivateMediaStreamAVFObjC was not calling play on the audio renderer when the audio renderer
+        was added after the MediaPlayerPrivateMediaStreamAVFObjC was asked to play.
+        This patch makes it so that, on configuration of an audio track, it will be asked to play if its MediaPlayerPrivateMediaStreamAVFObjC is playing.
+        Add internals API to be able to write a test.
+
+        Test: fast/mediastream/play-newly-added-audio-track.html
+
+        * html/track/AudioTrack.h:
+        * html/track/AudioTrack.idl:
+        * platform/graphics/AudioTrackPrivate.h:
+        (WebCore::AudioTrackPrivate::isBackedByMediaStreamTrack const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateTracks):
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::play):
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+        (isType):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMockRealtimeMediaSourceCenterEnabled):
+        (WebCore::Internals::shouldAudioTrackPlay):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2020-04-20  Youenn Fablet  <youenn@apple.com>
+
         Use a WeakHashSet to store MediaStreamPrivate observers
         https://bugs.webkit.org/show_bug.cgi?id=210494
 
