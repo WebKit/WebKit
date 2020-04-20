@@ -171,6 +171,25 @@ TEST(Challenge, ClientCertificate)
     EXPECT_TRUE([methods[0] isEqualToString:NSURLAuthenticationMethodServerTrust]);
     EXPECT_TRUE([methods[1] isEqualToString:NSURLAuthenticationMethodClientCertificate]);
 }
+
+TEST(Challenge, ClientCertificateNonPersistentDataStore)
+{
+    using namespace TestWebKitAPI;
+    TCPServer server(TCPServer::Protocol::HTTPSWithClientCertificateRequest, TCPServer::respondWithOK);
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([ClientCertificateDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+    
+    Util::run(&navigationFinished);
+    auto& methods = [delegate authenticationMethods];
+    EXPECT_EQ(methods.size(), 2ull);
+    EXPECT_TRUE([methods[0] isEqualToString:NSURLAuthenticationMethodServerTrust]);
+    EXPECT_TRUE([methods[1] isEqualToString:NSURLAuthenticationMethodClientCertificate]);
+}
 #endif
 
 static bool receivedSecondChallenge;

@@ -295,8 +295,6 @@ private:
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 #endif
 
-    HashMap<PAL::SessionID, RefPtr<WebsiteDataStore>> m_websiteDataStores;
-    
     std::unique_ptr<ProcessAssertion> m_uploadAssertion;
 };
 
