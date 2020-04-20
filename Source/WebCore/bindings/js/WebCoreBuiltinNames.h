@@ -236,6 +236,7 @@ namespace WebCore {
     macro(WorkletGlobalScope) \
     macro(WritableStream) \
     macro(XMLHttpRequest) \
+    macro(XR) \
     macro(XRBoundedReferenceSpace) \
     macro(XRFrame) \
     macro(XRInputSource) \
@@ -250,7 +251,6 @@ namespace WebCore {
     macro(XRSession) \
     macro(XRSessionEvent) \
     macro(XRSpace) \
-    macro(XRSystem) \
     macro(XRView) \
     macro(XRViewerPose) \
     macro(XRViewport) \

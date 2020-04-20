@@ -29,7 +29,7 @@
     ActiveDOMObject,
     SecureContext,
     Exposed=Window,
-    InterfaceName=XRSystem
+    InterfaceName=XR
 ] interface WebXRSystem : EventTarget {
     // Methods
     Promise<void> isSessionSupported(XRSessionMode mode);

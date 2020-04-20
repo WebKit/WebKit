@@ -1,3 +1,17 @@
+2020-04-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Update WebXRSession and WebXRSystem interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=210553
+
+        Reviewed by Žan Doberšek.
+
+        Update WebXRSession and WebXRSystem to the latest changes in the specs.
+
+        * Modules/webxr/WebXRSession.idl: Added 3 new events.
+        * Modules/webxr/WebXRSystem.idl: Interface name is XR not XRSystem.
+        * bindings/js/WebCoreBuiltinNames.h: Renamed macro.
+        * dom/EventNames.h: Added 3 new events.
+
 2020-04-20  Chris Dumez  <cdumez@apple.com>
 
         Sending beacons when Fetch KeepAlive feature is disabled crashes the WebProcess

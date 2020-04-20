@@ -52,5 +52,8 @@
     attribute EventHandler oninputsourceschange;
     attribute EventHandler onselectstart;
     attribute EventHandler onselectend;
+    attribute EventHandler onsqueeze;
+    attribute EventHandler onsqueezestart;
+    attribute EventHandler onsqueezeend;
     attribute EventHandler onvisibilitychange;
 };

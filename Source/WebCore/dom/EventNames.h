@@ -249,6 +249,9 @@ namespace WebCore {
     macro(sourceopen) \
     macro(speechend) \
     macro(speechstart) \
+    macro(squeeze) \
+    macro(squeezestart) \
+    macro(squeezeend) \
     macro(stalled) \
     macro(start) \
     macro(started) \

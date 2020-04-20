@@ -1,3 +1,12 @@
+2020-04-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Update WebXRSession and WebXRSystem interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=210553
+
+        Reviewed by Žan Doberšek.
+
+        * platform/wpe/TestExpectations: Mark idlharness.https.window.html test as Passed.
+
 2020-04-20  Chris Dumez  <cdumez@apple.com>
 
         Sending beacons when Fetch KeepAlive feature is disabled crashes the WebProcess
