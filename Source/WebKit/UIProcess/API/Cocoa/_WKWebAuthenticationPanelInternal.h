@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "_WKWebAuthenticationPanel.h"
+
 #if ENABLE(WEB_AUTHN)
 
 #import "APIWebAuthenticationPanel.h"
 #import "WKObject.h"
-#import "_WKWebAuthenticationPanel.h"
 
 namespace WebKit {
 
