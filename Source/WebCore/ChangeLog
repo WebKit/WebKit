@@ -1,3 +1,17 @@
+2020-04-19  Rob Buis  <rbuis@igalia.com>
+
+        Remove unneeded code from FrameLoader::loadURL
+        https://bugs.webkit.org/show_bug.cgi?id=210696
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded code from FrameLoader::loadURL, since the only way the load type can be Reload
+        is if loadFrameRequest set it, and the only way loadFrameRequest can set it is if cachePolicy
+        is ReloadIgnoringCacheData, so no need to set it again in FrameLoader::loadURL.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+
 2020-04-19  Brady Eidson  <beidson@apple.com>
 
         Add WKScriptMessageHandler API that asynchronously responds with a promise.

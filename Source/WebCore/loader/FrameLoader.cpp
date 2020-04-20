@@ -1363,8 +1363,6 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         request.setHTTPReferrer(referrer);
 
     addExtraFieldsToRequest(request, IsMainResource::Yes, newLoadType);
-    if (isReload(newLoadType))
-        request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
