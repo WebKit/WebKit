@@ -1,3 +1,15 @@
+2020-04-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for border-collapse: collapse.
+        https://bugs.webkit.org/show_bug.cgi?id=210747
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-flex-width-border-collapse.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+
 2020-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Oversized caret and selection rects in text fields on ganji.com and netflix.com/login

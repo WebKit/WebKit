@@ -194,8 +194,10 @@ void TableFormattingContext::ensureTableGrid()
 {
     auto& tableBox = root();
     auto& tableGrid = formattingState().tableGrid();
-    tableGrid.setHorizontalSpacing(LayoutUnit { tableBox.style().horizontalBorderSpacing() });
-    tableGrid.setVerticalSpacing(LayoutUnit { tableBox.style().verticalBorderSpacing() });
+    auto& tableStyle = tableBox.style();
+    auto shouldApplyBorderSpacing = tableStyle.borderCollapse() == BorderCollapse::Separate;
+    tableGrid.setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.horizontalBorderSpacing() : 0 });
+    tableGrid.setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.verticalBorderSpacing() : 0 });
 
     auto* firstChild = tableBox.firstChild();
     const Box* tableCaption = nullptr;
