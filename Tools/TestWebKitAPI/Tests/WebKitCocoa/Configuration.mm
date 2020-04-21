@@ -59,19 +59,4 @@ TEST(WebKit, ConfigurationDrawsBackground)
     EXPECT_EQ([configedWebView _drawsBackground], NO);
 }
 
-TEST(WebKit, WebViewCategory)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryInAppBrowser];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryInAppBrowser);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryWebBrowser];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryWebBrowser);
-
-    [configuration _setWebViewCategory:_WKWebViewCategoryAppBoundDomain];
-    EXPECT_EQ([configuration _webViewCategory], _WKWebViewCategoryAppBoundDomain);
-}
-
 #endif

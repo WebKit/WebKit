@@ -1,3 +1,18 @@
+2020-04-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Move WebKit.WebViewCategory test to InAppBrowserPrivacy.mm
+        https://bugs.webkit.org/show_bug.cgi?id=210811
+        <rdar://problem/60972505> 
+
+        Reviewed by Alexey Proskuryakov.
+
+        This test was added before InAppBrowserPrivacy.mm existed. It should
+        be moved here so it has access to all setup/cleanup needed by these
+        tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Configuration.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+
 2020-04-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed
