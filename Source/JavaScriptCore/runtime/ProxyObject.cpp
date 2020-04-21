@@ -852,7 +852,8 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
         return performDefaultDefineOwnProperty();
 
     JSObject* descriptorObject = constructObjectFromPropertyDescriptor(globalObject, descriptor);
-    RETURN_IF_EXCEPTION(scope, false);
+    scope.assertNoException();
+    ASSERT(descriptorObject);
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);

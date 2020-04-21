@@ -191,9 +191,8 @@ JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* result = constructObjectFromPropertyDescriptor(globalObject, descriptor);
-    EXCEPTION_ASSERT(!!scope.exception() == !result);
-    if (!result)
-        return jsUndefined();
+    scope.assertNoException();
+    ASSERT(result);
     return result;
 }
 
@@ -217,9 +216,8 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject* globalObject,
             continue;
 
         JSObject* fromDescriptor = constructObjectFromPropertyDescriptor(globalObject, descriptor);
-        EXCEPTION_ASSERT(!!scope.exception() == !fromDescriptor);
-        if (!fromDescriptor)
-            return jsUndefined();
+        scope.assertNoException();
+        ASSERT(fromDescriptor);
 
         PutPropertySlot slot(descriptors);
         descriptors->putOwnDataPropertyMayBeIndex(globalObject, propertyName, fromDescriptor, slot);

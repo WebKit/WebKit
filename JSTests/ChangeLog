@@ -1,3 +1,12 @@
+2020-04-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        constructObjectFromPropertyDescriptor() is incorrect with partial descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=184629
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Move value-pow-ai-rule-should-box-the-same-way-as-the-runtime.js to JSTests/stress/

@@ -1246,12 +1246,6 @@ test/built-ins/Proxy/create-target-is-revoked-proxy.js:
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
-test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls-index.js:
-  default: 'Test262Error: Expected [0] and [0, 0, 0] to have the same contents. getOwnPropertyDescriptor: key present on [[ProxyTarget]]'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Proxy/set/trap-is-missing-receiver-multiple-calls.js:
-  default: 'Test262Error: Expected [foo] and [foo, foo, foo] to have the same contents. getOwnPropertyDescriptor: key present on [[ProxyTarget]]'
-  strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Reflect/ownKeys/order-after-define-property.js:
   default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
   strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
