@@ -76,21 +76,20 @@ private:
         void operator()(UCollator*) const;
     };
 
-    void createCollator(JSGlobalObject*);
     static ASCIILiteral usageString(Usage);
     static ASCIILiteral sensitivityString(Sensitivity);
     static ASCIILiteral caseFirstString(CaseFirst);
 
-    String m_locale;
-    String m_collation;
     WriteBarrier<JSBoundFunction> m_boundCompare;
     std::unique_ptr<UCollator, UCollatorDeleter> m_collator;
+
+    String m_locale;
+    String m_collation;
     Usage m_usage;
     Sensitivity m_sensitivity;
     CaseFirst m_caseFirst;
     bool m_numeric;
     bool m_ignorePunctuation;
-    bool m_initializedCollator { false };
 };
 
 } // namespace JSC

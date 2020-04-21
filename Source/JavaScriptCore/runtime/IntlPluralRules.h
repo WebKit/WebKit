@@ -70,7 +70,6 @@ private:
         void operator()(UNumberFormat*) const;
     };
 
-    bool m_initializedPluralRules { false };
     std::unique_ptr<UPluralRules, UPluralRulesDeleter> m_pluralRules;
     std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
 

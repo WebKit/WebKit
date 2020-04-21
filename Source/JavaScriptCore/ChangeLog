@@ -1,3 +1,54 @@
+2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Intl classes shouldn't need an m_initialized* field
+        https://bugs.webkit.org/show_bug.cgi?id=210764
+
+        Reviewed by Darin Adler.
+
+        Existing Intl classes each have a field like m_initializedNumberFormat, but this is unnecessary on two levels:
+          1. The thing that gets initialized is a unique pointer to an ICU struct, so we can check it directly.
+          2. Everywhere we're checking this is redundant since we've already done the same check on the prototype side,
+             therefore we can just ASSERT before using said ICU struct.
+
+        While we're at it, clean up other stuff like:
+          - Move stuff that doesn't need to be part of the class to the CPP file (e.g. UFieldPositionIteratorDeleter).
+          - Merge createCollator into initializeCollator (seems like this is probably the oldest code in this space).
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::compareStrings):
+        (JSC::IntlCollator::resolvedOptions):
+        (JSC::IntlCollator::createCollator): Deleted.
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::UFieldPositionIteratorDeleter::operator() const):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::resolvedOptions):
+        (JSC::IntlDateTimeFormat::format):
+        (JSC::partTypeString):
+        (JSC::IntlDateTimeFormat::formatToParts):
+        (JSC::IntlDateTimeFormat::UFieldPositionIteratorDeleter::operator() const): Deleted.
+        (JSC::IntlDateTimeFormat::partTypeString): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::UFieldPositionIteratorDeleter::operator() const):
+        (JSC::IntlNumberFormatField::IntlNumberFormatField):
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::format):
+        (JSC::IntlNumberFormat::resolvedOptions):
+        (JSC::partTypeString):
+        (JSC::IntlNumberFormat::formatToParts):
+        (JSC::IntlNumberFormat::UFieldPositionIteratorDeleter::operator() const): Deleted.
+        (JSC::IntlNumberFormat::partTypeString): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::localeData):
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions):
+        (JSC::IntlPluralRules::select):
+        (JSC::IntlPRInternal::localeData): Deleted.
+        * runtime/IntlPluralRules.h:
+
 2020-04-20  Keith Miller  <keith_miller@apple.com>
 
         FTL doesn't observe the use kind of CheckIsConstant's child1

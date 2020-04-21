@@ -110,13 +110,6 @@ private:
     Minute m_minute { Minute::None };
     Second m_second { Second::None };
     TimeZoneName m_timeZoneName { TimeZoneName::None };
-    bool m_initializedDateTimeFormat { false };
-
-    struct UFieldPositionIteratorDeleter {
-        void operator()(UFieldPositionIterator*) const;
-    };
-
-    static ASCIILiteral partTypeString(UDateFormatField);
 };
 
 } // namespace JSC

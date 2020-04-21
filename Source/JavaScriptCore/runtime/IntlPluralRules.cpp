@@ -88,21 +88,17 @@ void IntlPluralRules::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-namespace IntlPRInternal {
 static Vector<String> localeData(const String&, size_t)
 {
-    Vector<String> data;
-    return data;
-}
+    return { };
 }
 
+// https://tc39.github.io/ecma402/#sec-initializepluralrules
 void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValue locales, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 13.1.1 InitializePluralRules (pluralRules, locales, options)
-    // https://tc39.github.io/ecma402/#sec-initializepluralrules
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -120,7 +116,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
     const HashSet<String>& availableLocales = intlPluralRulesAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
+    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeOpt, nullptr, 0, localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules due to invalid locale"_s);
@@ -183,21 +179,15 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
     }
-
-    m_initializedPluralRules = true;
 }
 
+// https://tc39.es/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
 JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
 {
+    ASSERT(m_pluralRules);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
-    // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
-    if (UNLIKELY(!m_initializedPluralRules)) {
-        throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
-        return nullptr;
-    }
 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
@@ -233,15 +223,13 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
     RELEASE_AND_RETURN(scope, options);
 }
 
+// https://tc39.es/ecma402/#sec-resolveplural
 JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value)
 {
+    ASSERT(m_pluralRules);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 13.1.4 ResolvePlural (pluralRules, n)
-    // https://tc39.github.io/ecma402/#sec-resolveplural
-    if (!m_initializedPluralRules)
-        return throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s);
 
     if (!std::isfinite(value))
         return jsNontrivialString(vm, "other"_s);

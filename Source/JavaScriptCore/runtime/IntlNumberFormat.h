@@ -82,11 +82,12 @@ private:
     static ASCIILiteral styleString(Style);
     static ASCIILiteral currencyDisplayString(CurrencyDisplay);
 
+    WriteBarrier<JSBoundFunction> m_boundFormat;
+    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
+
     String m_locale;
     String m_numberingSystem;
     String m_currency;
-    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
-    WriteBarrier<JSBoundFunction> m_boundFormat;
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };
@@ -95,22 +96,6 @@ private:
     Style m_style { Style::Decimal };
     CurrencyDisplay m_currencyDisplay;
     bool m_useGrouping { true };
-    bool m_initializedNumberFormat { false };
-
-    struct UFieldPositionIteratorDeleter {
-        void operator()(UFieldPositionIterator*) const;
-    };
-
-    struct IntlNumberFormatField {
-        int32_t type;
-        int32_t size;
-        IntlNumberFormatField(int32_t type, int32_t size)
-            : type(type)
-            , size(size)
-        { }
-    };
-
-    static ASCIILiteral partTypeString(UNumberFormatFields, double);
 };
 
 } // namespace JSC

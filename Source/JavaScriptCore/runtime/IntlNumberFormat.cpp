@@ -44,6 +44,19 @@ const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, n
 
 static const char* const relevantNumberExtensionKeys[1] = { "nu" };
 
+struct UFieldPositionIteratorDeleter {
+    void operator()(UFieldPositionIterator* iterator) const
+    {
+        if (iterator)
+            ufieldpositer_close(iterator);
+    }
+};
+
+struct IntlNumberFormatField {
+    int32_t type;
+    size_t size;
+};
+
 void IntlNumberFormat::UNumberFormatDeleter::operator()(UNumberFormat* numberFormat) const
 {
     if (numberFormat)
@@ -150,13 +163,11 @@ static unsigned computeCurrencyDigits(const String& currency)
     return 2;
 }
 
+// https://tc39.github.io/ecma402/#sec-initializenumberformat
 void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSValue locales, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 11.1.2 InitializeNumberFormat (numberFormat, locales, options) (ECMA-402)
-    // https://tc39.github.io/ecma402/#sec-initializenumberformat
 
     auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
@@ -280,9 +291,9 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     bool usesFallback;
     bool useGrouping = intlBooleanOption(globalObject, options, Identifier::fromString(vm, "useGrouping"), usesFallback);
+    RETURN_IF_EXCEPTION(scope, void());
     if (usesFallback)
         useGrouping = true;
-    RETURN_IF_EXCEPTION(scope, void());
     m_useGrouping = useGrouping;
 
     UNumberFormatStyle style = UNUM_DEFAULT;
@@ -337,18 +348,15 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
     unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_USED, m_useGrouping);
     unum_setAttribute(m_numberFormat.get(), UNUM_ROUNDING_MODE, UNUM_ROUND_HALFUP);
-
-    m_initializedNumberFormat = true;
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
 JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
 {
+    ASSERT(m_numberFormat);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!m_initializedNumberFormat)
-        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
@@ -364,13 +372,13 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
     return jsString(vm, String(buffer.data(), length));
 }
 
+// https://tc39.es/ecma402/#sec-formatnumber
 JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value)
 {
+    ASSERT(m_numberFormat);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!m_initializedNumberFormat)
-        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
     auto string = value->toString(globalObject, 10);
     RETURN_IF_EXCEPTION(scope, { });
@@ -420,25 +428,10 @@ ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDis
     return ASCIILiteral::null();
 }
 
+// https://tc39.es/ecma402/#sec-intl.numberformat.prototype.resolvedoptions
 JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    // The function returns a new object whose properties and attributes are set as if
-    // constructed by an object literal assigning to each of the following properties the
-    // value of the corresponding internal slot of this NumberFormat object (see 11.4):
-    // locale, numberingSystem, style, currency, currencyDisplay, minimumIntegerDigits,
-    // minimumFractionDigits, maximumFractionDigits, minimumSignificantDigits,
-    // maximumSignificantDigits, and useGrouping. Properties whose corresponding internal
-    // slots are not present are not assigned.
-
-    if (!m_initializedNumberFormat) {
-        initializeNumberFormat(globalObject, jsUndefined(), jsUndefined());
-        scope.assertNoException();
-    }
-
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
@@ -464,13 +457,7 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-void IntlNumberFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
-{
-    if (iterator)
-        ufieldpositer_close(iterator);
-}
-
-ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double value)
+static ASCIILiteral partTypeString(UNumberFormatFields field, double value)
 {
     switch (field) {
     case UNUM_INTEGER_FIELD:
@@ -512,17 +499,17 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, doubl
     auto stringLength = formatted.length();
 
     int32_t literalFieldType = -1;
-    auto literalField = IntlNumberFormatField(literalFieldType, stringLength);
+    IntlNumberFormatField literalField { literalFieldType, stringLength };
     Vector<IntlNumberFormatField, 32> fields(stringLength, literalField);
     int32_t beginIndex = 0;
     int32_t endIndex = 0;
     auto fieldType = ufieldpositer_next(iterator, &beginIndex, &endIndex);
     while (fieldType >= 0) {
-        auto size = endIndex - beginIndex;
+        size_t size = endIndex - beginIndex;
         for (auto i = beginIndex; i < endIndex; ++i) {
             // Only override previous value if new value is more specific.
             if (fields[i].size >= size)
-                fields[i] = IntlNumberFormatField(fieldType, size);
+                fields[i] = IntlNumberFormatField { fieldType, size };
         }
         fieldType = ufieldpositer_next(iterator, &beginIndex, &endIndex);
     }
@@ -550,17 +537,13 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, doubl
     }
 }
 
+// https://tc39.github.io/ecma402/#sec-formatnumbertoparts
 JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value)
 {
+    ASSERT(m_numberFormat);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // FormatNumberToParts (ECMA-402)
-    // https://tc39.github.io/ecma402/#sec-formatnumbertoparts
-    // https://tc39.github.io/ecma402/#sec-partitionnumberpattern
-
-    if (!m_initializedNumberFormat)
-        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));

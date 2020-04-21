@@ -54,16 +54,18 @@ static const size_t indexOfExtensionKeyCa = 0;
 static const size_t indexOfExtensionKeyNu = 1;
 static const size_t indexOfExtensionKeyHc = 2;
 
+struct UFieldPositionIteratorDeleter {
+    void operator()(UFieldPositionIterator* iterator) const
+    {
+        if (iterator)
+            ufieldpositer_close(iterator);
+    }
+};
+
 void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
 {
     if (dateFormat)
         udat_close(dateFormat);
-}
-
-void IntlDateTimeFormat::UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
-{
-    if (iterator)
-        ufieldpositer_close(iterator);
 }
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
@@ -437,13 +439,11 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
     }
 }
 
+// https://tc39.github.io/ecma402/#sec-initializedatetimeformat
 void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, JSValue locales, JSValue originalOptions)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 12.1.1 InitializeDateTimeFormat (dateTimeFormat, locales, options) (ECMA-402)
-    // https://tc39.github.io/ecma402/#sec-initializedatetimeformat
 
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
@@ -701,8 +701,6 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     // Failure here means unsupported calendar, and can safely be ignored.
     UCalendar* cal = const_cast<UCalendar*>(udat_getCalendar(m_dateFormat.get()));
     ucal_setGregorianChange(cal, minECMAScriptTime, &status);
-
-    m_initializedDateTimeFormat = true;
 }
 
 ASCIILiteral IntlDateTimeFormat::weekdayString(Weekday weekday)
@@ -850,18 +848,10 @@ ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
     return ASCIILiteral::null();
 }
 
+// https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.resolvedoptions
 JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    // The function returns a new object whose properties and attributes are set as if constructed by an object literal assigning to each of the following properties the value of the corresponding internal slot of this DateTimeFormat object (see 12.4): locale, calendar, numberingSystem, timeZone, hour12, weekday, era, year, month, day, hour, minute, second, and timeZoneName. Properties whose corresponding internal slots are not present are not assigned.
-    // Note: In this version of the ECMAScript 2015 Internationalization API, the timeZone property will be the name of the default time zone if no timeZone property was provided in the options object provided to the Intl.DateTimeFormat constructor. The previous version left the timeZone property undefined in this case.
-    if (!m_initializedDateTimeFormat) {
-        initializeDateTimeFormat(globalObject, jsUndefined(), jsUndefined());
-        scope.assertNoException();
-    }
 
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
@@ -904,22 +894,17 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
     return options;
 }
 
+// https://tc39.es/ecma402/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value)
 {
+    ASSERT(m_dateFormat);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 12.3.4 FormatDateTime abstract operation (ECMA-402 2.0)
-    if (!m_initializedDateTimeFormat) {
-        initializeDateTimeFormat(globalObject, jsUndefined(), jsUndefined());
-        scope.assertNoException();
-    }
-
-    // 1. If x is not a finite Number, then throw a RangeError exception.
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
 
-    // Delegate remaining steps to ICU.
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
     auto resultLength = udat_format(m_dateFormat.get(), value, result.data(), result.size(), nullptr, &status);
@@ -934,7 +919,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value)
     return jsString(vm, String(result.data(), resultLength));
 }
 
-ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
+static ASCIILiteral partTypeString(UDateFormatField field)
 {
     switch (field) {
     case UDAT_ERA_FIELD:
@@ -996,14 +981,13 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
     return "unknown"_s;
 }
 
-
+// https://tc39.es/ecma402/#sec-formatdatetimetoparts
 JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value)
 {
+    ASSERT(m_dateFormat);
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 12.1.8 FormatDateTimeToParts (ECMA-402 4.0)
-    // https://tc39.github.io/ecma402/#sec-formatdatetimetoparts
 
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatToParts()"_s);
