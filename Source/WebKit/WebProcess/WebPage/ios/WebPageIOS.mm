@@ -4378,7 +4378,7 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const SharedBuffer& b
 
     ShareableResource::Handle handle;
     auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
-    if (!shareableResource->createHandle(handle))
+    if (!shareableResource || !shareableResource->createHandle(handle))
         return;
 
     send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(handle));

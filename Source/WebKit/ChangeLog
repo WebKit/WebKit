@@ -1,3 +1,31 @@
+2020-04-21  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] ShareableResource::create() should validate its parameters
+        <https://webkit.org/b/210779>
+        <rdar://problem/60887693>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didFinishLoadForQuickLookDocumentInMainFrame):
+        - Handle nullptr returned from ShareableResource::create().
+
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::create):
+        - Change to return RefPtr<>.
+        - Validate parameters before calling constructor.  Return
+          nullptr on failure.
+        (WebKit::ShareableResource::ShareableResource):
+        - Remove assert and comment since checks are now done in
+          ShareableResource::create().
+        * Shared/ShareableResource.h:
+        (WebKit::ShareableResource::create):
+        - Change to return RefPtr<>.
+
 2020-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Tighten up some more IPC message checks in WebPasteboardProxy

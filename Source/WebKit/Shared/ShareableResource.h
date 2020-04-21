@@ -65,7 +65,7 @@ public:
     };
 
     // Create a shareable resource that uses malloced memory.
-    static Ref<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
+    static RefPtr<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
     static RefPtr<ShareableResource> map(const Handle&);

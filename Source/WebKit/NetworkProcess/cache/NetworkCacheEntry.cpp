@@ -176,6 +176,8 @@ void Entry::initializeShareableResourceHandleFromStorageRecord() const
         return;
 
     auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size());
+    if (!shareableResource)
+        return;
     shareableResource->createHandle(m_shareableResourceHandle);
 }
 #endif
