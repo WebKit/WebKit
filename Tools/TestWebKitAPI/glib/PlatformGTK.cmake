@@ -14,14 +14,16 @@ list(APPEND WebKitGLibAPITests_INCLUDE_DIRECTORIES
 
 list(APPEND WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
     ${ATSPI_INCLUDE_DIRS}
-    ${GTK_UNIX_PRINT_INCLUDE_DIRS}
 )
 
 list(APPEND WebKitGLibAPITest_LIBRARIES
     ${ATSPI_LIBRARIES}
-    ${GTK_UNIX_PRINT_LIBRARIES}
     GTK::GTK
 )
+
+if (GTK_UNIX_PRINT_FOUND)
+    list(APPEND WebKitGLibAPITest_LIBRARIES GTK::UnixPrint)
+endif ()
 
 list(APPEND WebKitGLibAPIWebProcessTests
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/AutocleanupsTest.cpp

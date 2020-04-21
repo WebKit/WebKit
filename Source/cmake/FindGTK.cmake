@@ -30,11 +30,22 @@ FindGTK
 
 Find GTK headers and libraries.
 
+Optional Components
+^^^^^^^^^^^^^^^^^^^
+
+The ``COMPONENTS`` (or ``OPTIONAL_COMPONENTS``) keyword can be passed to
+``find_package()``, the following GTK components can be searched for:
+
+- ``unix-print``
+
+
 Imported Targets
 ^^^^^^^^^^^^^^^^
 
 ``GTK::GTK``
   The GTK library, if found.
+``GTK::UnixPrint``
+  The GTK unix-print library, if found.
 
 Result Variables
 ^^^^^^^^^^^^^^^^
@@ -43,6 +54,8 @@ This will define the following variables in your project:
 
 ``GTK_FOUND``
   true if (the requested version of) GTK is available.
+``GTK_UNIX_PRINT_FOUND``
+  true if the ``unix-print`` component is available.
 ``GTK_4``
   whether GTK 4 was detected
 ``GTK_3``
@@ -68,10 +81,12 @@ endif ()
 
 if (GTK_FIND_VERSION VERSION_LESS 3.90)
     set(GTK_PC_MODULE "gtk+-3.0")
+    set(GTK_PC_UNIX_PRINT_MODULE "gtk+-unix-print-3.0")
     set(GTK_4 FALSE)
     set(GTK_3 TRUE)
 else ()
     set(GTK_PC_MODULE "gtk4")
+    set(GTK_PC_UNIX_PRINT_MODULE "gtk4-unix-print")
     set(GTK_4 TRUE)
     set(GTK_3 FALSE)
 endif ()
@@ -114,6 +129,22 @@ if (TARGET PkgConfig::GTK AND NOT TARGET GTK::GTK)
         INTERFACE_LINK_LIBRARIES PkgConfig::GTK
     )
 endif ()
+
+# Try to find additional components
+foreach (gtk_component ${GTK_FIND_COMPONENTS})
+    if (NOT "${gtk_component}" STREQUAL unix-print)
+        message(FATAL_ERROR "Invalid component name: ${gtk_component}")
+    endif ()
+    pkg_check_modules(GTK_UNIX_PRINT IMPORTED_TARGET "${GTK_PC_UNIX_PRINT_MODULE}")
+    if (GTK_FIND_REQUIRED_unix-print AND NOT GTK_UNIX_PRINT_FOUND)
+        message(FATAL_ERROR "Component unix-print not found")
+    endif ()
+    if (TARGET PkgConfig::GTK_UNIX_PRINT AND NOT TARGET GTK::UnixPrint)
+        add_library(GTK::UnixPrint INTERFACE IMPORTED GLOBAL)
+        set_property(TARGET GTK::UnixPrint PROPERTY
+            INTERFACE_LINK_LIBRARIES PkgConfig::GTK_UNIX_PRINT)
+    endif ()
+endforeach ()
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK DEFAULT_MSG GTK_VERSION GTK_VERSION_OK)
