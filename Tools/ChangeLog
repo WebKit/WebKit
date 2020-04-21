@@ -1,3 +1,22 @@
+2020-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake][Flatpak SDK] gst-build-backed build fails
+        https://bugs.webkit.org/show_bug.cgi?id=210742
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add non-core GStreamer include-dirs necessary for the compilation
+        of the GStreamer API test. Usually GSTREAMER_INCLUDE_DIRS is
+        sufficient because on a GStreamer system-wide installation, all
+        headers are stored in the same root include dir, the same as the
+        core GStreamer library.
+
+        But when building with gst-build, include-dirs are scattered all
+        over the place.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+
 2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Classes marked final should not use protected access specifier

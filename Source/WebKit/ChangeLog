@@ -1,3 +1,12 @@
+2020-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] gst-build-backed build fails
+        https://bugs.webkit.org/show_bug.cgi?id=210742
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * PlatformWPE.cmake:
+
 2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late February 2020 edition
