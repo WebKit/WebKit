@@ -1,3 +1,24 @@
+2020-04-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r256808): “A problem repeatedly occurred” when attempting to load https://bungalow.com/listings/bay-area
+        https://bugs.webkit.org/show_bug.cgi?id=210801
+        <rdar://problem/61658940>
+
+        Reviewed by Antti Koivisto.
+
+        Even though the page uses the 'async' attribute on the mapbox-gl.js script, deferring the execution of this
+        script gets the page into a bad state, causing it to use a lot of CPU & memory until the process crashes.
+        Since we don't have any other evidence of breakage from r256808 yet and since r256808 was a massive PLT
+        progression, I am opting to add a quirk to disable the async script optimization on bungalow.com for now.
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldDeferAsynchronousScriptsUntilParsingFinishes const):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldBypassAsyncScriptDeferring const):
+        * page/Quirks.h:
+        * platform/RegistrableDomain.h:
+        (WebCore::RegistrableDomain::operator== const):
+
 2020-04-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Test IDLs and stubs

@@ -678,6 +678,19 @@ bool Quirks::shouldBypassBackForwardCache() const
     return false;
 }
 
+bool Quirks::shouldBypassAsyncScriptDeferring() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldBypassAsyncScriptDeferring) {
+        auto domain = RegistrableDomain { m_document->topDocument().url() };
+        // Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).
+        m_shouldBypassAsyncScriptDeferring = (domain == "bungalow.com");
+    }
+    return *m_shouldBypassAsyncScriptDeferring;
+}
+
 bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
 {
     if (eventNames().isTouchScrollBlockingEventType(eventType)) {

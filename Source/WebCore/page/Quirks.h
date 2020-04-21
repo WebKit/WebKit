@@ -88,6 +88,7 @@ public:
     bool needsPreloadAutoQuirk() const;
 
     bool shouldBypassBackForwardCache() const;
+    bool shouldBypassAsyncScriptDeferring() const;
 
     static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType, const EventListener&);
 
@@ -121,6 +122,7 @@ private:
     mutable Optional<bool> m_shouldDispatchSimulatedMouseEventsQuirk;
 #endif
     mutable Optional<bool> m_needsCanPlayAfterSeekedQuirk;
+    mutable Optional<bool> m_shouldBypassAsyncScriptDeferring;
 };
 
 }

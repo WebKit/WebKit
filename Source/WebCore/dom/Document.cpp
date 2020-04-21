@@ -5557,6 +5557,9 @@ bool Document::shouldDeferAsynchronousScriptsUntilParsingFinishes() const
     if (!settings().shouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint())
         return false;
 
+    if (quirks().shouldBypassAsyncScriptDeferring())
+        return false;
+
     return parsing() && !(view() && view()->hasEverPainted());
 }
 
