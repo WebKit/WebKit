@@ -1,3 +1,22 @@
+2020-04-21  Charlie Turner  <cturner@igalia.com>
+
+        [Clang 10] Fix warning: definition of implicit copy assignment operator for 'PageBlock' is deprecated because it has a user-declared copy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=210748
+
+        Reviewed by Adrian Perez de Castro.
+
+        Recent Clang's will issue a warning if you declare an explicit
+        copy construction, but leave the compiler to fill in an implicit
+        assignment operator. I think this is to catch cases where you do
+        something exciting in an assignment operator/copy constructor and
+        forget to do the same exciting thing in the other.
+
+        * wtf/PageAllocation.h: Import the base's constructor to avoid
+        defining our own identical one.
+        * wtf/PageBlock.h: Remove trivial constructor and replace with
+        member initializers. Remove copy constructor. This looks identical
+        to what the compiler would generate anyway.
+
 2020-04-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Adapt to GtkIconTheme API changes

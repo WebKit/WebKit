@@ -69,10 +69,7 @@ namespace WTF {
 
 class PageAllocation : private PageBlock {
 public:
-    PageAllocation()
-    {
-    }
-
+    using PageBlock::PageBlock;
     using PageBlock::size;
     using PageBlock::base;
 
