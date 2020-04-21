@@ -100,6 +100,28 @@ void ProcessThrottler::updateAssertionTypeNow()
     setAssertionType(expectedAssertionType());
 }
 
+String ProcessThrottler::assertionName(ProcessAssertionType type) const
+{
+    ASCIILiteral typeString = [type] {
+        switch (type) {
+        case ProcessAssertionType::Foreground:
+            return "Foreground"_s;
+        case ProcessAssertionType::Background:
+            return "Background"_s;
+        case ProcessAssertionType::Suspended:
+            return "Suspended"_s;
+        case ProcessAssertionType::UnboundedNetworking:
+        case ProcessAssertionType::MediaPlayback:
+        case ProcessAssertionType::DependentProcessLink:
+            ASSERT_NOT_REACHED(); // These other assertion types are not used by the ProcessThrottler.
+            break;
+        }
+        return "Unknown"_s;
+    }();
+
+    return makeString(m_process.clientName(), " ", typeString, " Assertion");
+}
+
 void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
 {
     if (m_assertion && m_assertion->type() == newType)
@@ -107,9 +129,9 @@ void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
 
     PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities: %u, backgroundActivities: %u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
     if (m_shouldTakeUIBackgroundAssertion)
-        m_assertion = makeUnique<ProcessAndUIAssertion>(m_processIdentifier, "Web content visibility"_s, newType);
+        m_assertion = makeUnique<ProcessAndUIAssertion>(m_processIdentifier, assertionName(newType), newType);
     else
-        m_assertion = makeUnique<ProcessAssertion>(m_processIdentifier, "Web content visibility"_s, newType);
+        m_assertion = makeUnique<ProcessAssertion>(m_processIdentifier, assertionName(newType), newType);
     m_process.didSetAssertionType(newType);
 }
     

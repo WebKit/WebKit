@@ -1,3 +1,27 @@
+2020-04-21  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Provide better names for ProcessThrottler process assertions
+        https://bugs.webkit.org/show_bug.cgi?id=210808
+
+        Reviewed by Geoffrey Garen.
+
+        Provide better names for ProcessThrottler process assertions, to facilitate debugging.
+
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::assertionName const):
+        (WebKit::ProcessThrottler::setAssertionType):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+
 2020-04-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed

@@ -39,6 +39,7 @@ public:
     virtual void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) = 0;
     virtual void sendProcessDidResume() = 0;
     virtual void didSetAssertionType(ProcessAssertionType) { };
+    virtual ASCIILiteral clientName() const = 0;
 };
 
 } // namespace WebKit

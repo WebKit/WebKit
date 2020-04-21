@@ -62,6 +62,7 @@ public:
 
     // ProcessThrottlerClient
     void sendProcessDidResume() final { }
+    ASCIILiteral clientName() const final { return "GPUProcess"_s; }
 
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);

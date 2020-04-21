@@ -357,22 +357,21 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
     }
 }
 
-ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssertionType assertionType)
+ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
     , m_pid(pid)
 {
     auto weakThis = makeWeakPtr(*this);
-    NSString *nsReason = [NSString stringWithCString:reason.characters() encoding:NSASCIIStringEncoding];
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     if (runningBoardAssertionName) {
         if (!pid) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.characters());
+            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.utf8().data());
             return;
         }
 
         RBSTarget *target = [RBSTarget targetWithPid:pid];
         RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:runningBoardAssertionName];
-        m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:nsReason target:target attributes:@[domainAttribute]]);
+        m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
 
         m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
         [m_rbsAssertion addObserver:m_delegate.get()];
@@ -383,13 +382,13 @@ ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssert
 
         NSError *acquisitionError = nil;
         if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.characters(), pid, acquisitionError);
+            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakThis)
                     processAssertionWasInvalidated();
             });
         } else
-            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.characters(), pid);
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.utf8().data(), pid);
     } else {
         // Legacy code path.
         BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
@@ -401,9 +400,9 @@ ProcessAssertion::ProcessAssertion(pid_t pid, ASCIILiteral reason, ProcessAssert
                 });
             }
         };
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring BKS assertion for process with PID %d, name '%s'", this, getpid(), pid, reason.characters());
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring BKS assertion for process with PID %d, name '%s'", this, getpid(), pid, reason.utf8().data());
 
-        m_bksAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForAssertionType(assertionType) reason:toBKSProcessAssertionReason(assertionType) name:nsReason withHandler:handler]);
+        m_bksAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForAssertionType(assertionType) reason:toBKSProcessAssertionReason(assertionType) name:reason withHandler:handler]);
 
         m_bksAssertion.get().invalidationHandler = ^() {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -450,7 +449,7 @@ void ProcessAndUIAssertion::updateRunInBackgroundCount()
     m_isHoldingBackgroundTask = shouldHoldBackgroundTask;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, ASCIILiteral reason, ProcessAssertionType assertionType)
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
     : ProcessAssertion(pid, reason, assertionType)
 {
     updateRunInBackgroundCount();

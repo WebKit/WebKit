@@ -120,6 +120,7 @@ private:
     void removeActivity(ForegroundActivity&);
     void removeActivity(BackgroundActivity&);
     void invalidateAllActivities();
+    String assertionName(ProcessAssertionType) const;
 
     // ProcessAssertionClient
     void uiAssertionWillExpireImminently() override;
