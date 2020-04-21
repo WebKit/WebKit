@@ -1,3 +1,13 @@
+2020-04-21  Darin Adler  <darin@apple.com>
+
+        WTF API test for StringConcatenate failing for internal Apple builds
+        https://bugs.webkit.org/show_bug.cgi?id=210812
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        (TestWebKitAPI::TEST): Add back a case for when UChar is uint16_t.
+
 2020-04-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Move WebKit.WebViewCategory test to InAppBrowserPrivacy.mm
