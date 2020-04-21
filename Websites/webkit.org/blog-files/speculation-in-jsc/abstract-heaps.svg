@@ -7,7 +7,7 @@
         <font-face-name name="Monaco"/>
       </font-face-src>
     </font-face>
-    <font-face font-family="Monaco" font-size="8" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+    <font-face font-family="Monaco" font-size="7" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
       <font-face-src>
         <font-face-name name="Monaco"/>
       </font-face-src>
@@ -27,9 +27,14 @@
         <font-face-name name="Monaco"/>
       </font-face-src>
     </font-face>
+    <font-face font-family="Monaco" font-size="8" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
   </defs>
   <metadata> Produced by OmniGraffle 7.15 
-    <dc:date>2020-04-21 22:32:40 +0000</dc:date>
+    <dc:date>2020-04-21 22:36:32 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
@@ -60,9 +65,9 @@
       <g id="Graphic_5">
         <rect x="661.5" y="171.5" width="27" height="28.5" fill="white"/>
         <rect x="661.5" y="171.5" width="27" height="28.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(662.99805 175.08203)" fill="black">
-          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="2.4003906" y="8">Side</tspan>
-          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="18.667969">State</tspan>
+        <text transform="translate(664.4983 176.16553)" fill="black">
+          <tspan font-family="Monaco" font-size="7" font-weight="400" fill="black" x="2.1003418" y="7">Side</tspan>
+          <tspan font-family="Monaco" font-size="7" font-weight="400" fill="black" x="0" y="16.584473">State</tspan>
         </text>
       </g>
       <g id="Graphic_6">
@@ -144,23 +149,23 @@
         </text>
       </g>
       <g id="Graphic_21">
-        <rect x="291.5" y="207" width="51.5" height="28.5" fill="white"/>
-        <rect x="291.5" y="207" width="51.5" height="28.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(293.5957 210.58203)" fill="black">
-          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="8.601562" y="8">JSCell_</tspan>
+        <rect x="291.5" y="207" width="61" height="28.5" fill="white"/>
+        <rect x="291.5" y="207" width="61" height="28.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(295.5957 210.58203)" fill="black">
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="9.601562" y="8">JSCell_</tspan>
           <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="18.667969">structureID</tspan>
         </text>
       </g>
       <g id="Graphic_22">
-        <rect x="347" y="207" width="51.5" height="28.5" fill="white"/>
-        <rect x="347" y="207" width="51.5" height="28.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(351.1465 210.58203)" fill="black">
+        <rect x="356.5" y="207" width="58.5" height="28.5" fill="white"/>
+        <rect x="356.5" y="207" width="58.5" height="28.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(364.1465 210.58203)" fill="black">
           <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="8">JSObject_</tspan>
           <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="18.667969">butterfly</tspan>
         </text>
       </g>
       <g id="Graphic_23">
-        <text transform="translate(405.8994 212)" fill="black">
+        <text transform="translate(420.8994 212)" fill="black">
           <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="0" y="12">…</tspan>
         </text>
       </g>
