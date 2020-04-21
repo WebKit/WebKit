@@ -1352,10 +1352,15 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     // Anchor target is ignored when the download attribute is set since it will download the hyperlink rather than follow it.
     String effectiveFrameName = frameLoadRequest.downloadAttribute().isNull() ? frameLoadRequest.frameName() : String();
-    AllowNavigationToInvalidURL allowNavigationToInvalidURL = frameLoadRequest.allowNavigationToInvalidURL();
-    NewFrameOpenerPolicy openerPolicy = frameLoadRequest.newFrameOpenerPolicy();
-    LockHistory lockHistory = frameLoadRequest.lockHistory();
     bool isFormSubmission = formState;
+
+    // The search for a target frame is done earlier in the case of form submission.
+    auto targetFrame = isFormSubmission ? nullptr : makeRefPtr(findFrameForNavigation(effectiveFrameName));
+    if (targetFrame && targetFrame != &m_frame) {
+        frameLoadRequest.setFrameName("_self");
+        targetFrame->loader().loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(adClickAttribution), completionHandlerCaller.release());
+        return;
+    }
 
     const URL& newURL = frameLoadRequest.resourceRequest().url();
     ResourceRequest request(newURL);
@@ -1366,23 +1371,17 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
-    // The search for a target frame is done earlier in the case of form submission.
-    Frame* targetFrame = isFormSubmission ? nullptr : findFrameForNavigation(effectiveFrameName);
-    if (targetFrame && targetFrame != &m_frame) {
-        frameLoadRequest.setFrameName("_self");
-        targetFrame->loader().loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(adClickAttribution), completionHandlerCaller.release());
-        return;
-    }
-
     if (!isNavigationAllowed())
         return;
 
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
-    action.setLockHistory(lockHistory);
+    action.setLockHistory(frameLoadRequest.lockHistory());
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
     if (adClickAttribution && m_frame.isMainFrame())
         action.setAdClickAttribution(WTFMove(*adClickAttribution));
 
+    NewFrameOpenerPolicy openerPolicy = frameLoadRequest.newFrameOpenerPolicy();
+    AllowNavigationToInvalidURL allowNavigationToInvalidURL = frameLoadRequest.allowNavigationToInvalidURL();
     if (!targetFrame && !effectiveFrameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), WTFMove(formState), effectiveFrameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, PolicyChecker::ShouldContinue shouldContinue) mutable {

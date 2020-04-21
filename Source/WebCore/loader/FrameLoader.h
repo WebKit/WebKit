@@ -281,6 +281,7 @@ public:
 
     FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
 
+    // FIXME: should return RefPtr.
     WEBCORE_EXPORT Frame* findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 
     void applyUserAgentIfNeeded(ResourceRequest&);
