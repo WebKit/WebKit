@@ -28,6 +28,7 @@ import time
 
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
+from ews.config import ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
 from ews.models.patch import Patch
 from ews.views.statusbubble import StatusBubble
 
@@ -66,7 +67,7 @@ class BugzillaPatchFetcher():
         Patch.save_patches(patch_ids)
         patches_to_send = self.patches_to_send_to_buildbot(patch_ids)
         _log.info('{} r? patches, {} patches need to be sent to Buildbot: {}'.format(len(patch_ids), len(patches_to_send), patches_to_send))
-        self.send_patches_to_buildbot(patches_to_send)
+        return self.send_patches_to_buildbot(patches_to_send)
 
     def fetch_commit_queue_patches(self):
         patch_ids_commit_queue = Bugzilla.get_list_of_patches_for_commit_queue()
@@ -84,10 +85,14 @@ class BugzillaPatchFetcher():
             bz_patch = Bugzilla.retrieve_attachment(patch_id)
             if not bz_patch or bz_patch['id'] != patch_id:
                 _log.error('Unable to retrive patch "{}"'.format(patch_id))
+                if len(patches_to_send) == 1:
+                    return ERR_UNABLE_TO_FETCH_PATCH
                 continue
             if bz_patch.get('is_obsolete'):
                 _log.warn('Patch is obsolete, skipping')
                 Patch.set_obsolete(patch_id)
+                if len(patches_to_send) == 1:
+                    return ERR_OBSOLETE_PATCH
                 continue
             if not send_to_commit_queue and Patch.is_patch_sent_to_buildbot(patch_id):
                 _log.error('Patch {} is already sent to buildbot.'.format(patch_id))

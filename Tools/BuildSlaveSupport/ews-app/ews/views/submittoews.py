@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 
+from ews.config import ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
 from ews.fetcher import BugzillaPatchFetcher
 from ews.models.patch import Patch
 
@@ -55,7 +56,11 @@ class SubmitToEWS(View):
                 return redirect('/status-bubble/{}'.format(patch_id))
             return HttpResponse("Patch {} already submitted. Please wait for status-bubbles.".format(patch_id))
 
-        BugzillaPatchFetcher().fetch([patch_id])
+        rc = BugzillaPatchFetcher().fetch([patch_id])
+        if rc == ERR_UNABLE_TO_FETCH_PATCH:
+            return HttpResponse('EWS is unable to access patch {}. Please ensure that this patch is publicly accessible or has r? set.'.format(patch_id))
+        if rc == ERR_OBSOLETE_PATCH:
+            return HttpResponse('Patch {} is obsolete, not submitting to EWS.'.format(patch_id))
 
         if request.POST.get('next_action') == 'return_to_bubbles':
             return redirect('/status-bubble/{}'.format(patch_id))

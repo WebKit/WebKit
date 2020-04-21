@@ -1,3 +1,17 @@
+2020-04-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Display error message when submit for EWS analysis button doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=210803
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/submittoews.py:
+        (SubmitToEWS.post): Display relevant error message on submit for EWS analysis button failure.
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (BugzillaPatchFetcher.fetch):
+        (BugzillaPatchFetcher.send_patches_to_buildbot):
+        * BuildSlaveSupport/ews-app/ews/config.py: Add few more error codes.
+
 2020-04-21  Lauro Moura  <lmoura@igalia.com>
 
         [GStreamer][JHBuild] Update to 1.16.2
