@@ -1,5 +1,8 @@
 // This test takes too long on mips devices.
-//@ skip if ["mips"].include?($architecture)
+//@ requireOptions("-e", "let iterations=1e5") if ["mips"].include?($architecture)
+
+iterations = typeof(iterations) === 'undefined' ? 1e6 : iterations;
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
@@ -32,10 +35,10 @@ function test(gen)
 }
 noInline(test);
 var gen = generator();
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < iterations; ++i)
     test(gen);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < iterations; ++i) {
     test(gen);
     shouldThrow(() => {
         test({

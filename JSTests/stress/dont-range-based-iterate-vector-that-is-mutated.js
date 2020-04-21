@@ -1,4 +1,3 @@
-//@ skip if not $jitTests and $architecture =~ /mips/ and $hostOS == "linux"
 // Should not crash when run with ASAN.
 
 function foo(arr1, arr2) {

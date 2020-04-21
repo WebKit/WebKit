@@ -1,5 +1,4 @@
 //@ requireOptions("--jitPolicyScale=0")
-//@ skip if ["mips"].include?($architecture)
 //@ slow!
 
 for (let j = 0; j < 500; j++) {

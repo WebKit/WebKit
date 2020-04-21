@@ -1,4 +1,4 @@
-//@ skip if $buildType == "debug" or ["mips"].include?($architecture)
+//@ skip if $buildType == "debug"
 
 let code = `
     function foo() {

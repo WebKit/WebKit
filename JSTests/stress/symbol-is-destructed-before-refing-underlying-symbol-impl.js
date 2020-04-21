@@ -1,4 +1,4 @@
-//@ skip if $buildType == "debug" || ["mips"].include?($architecture)
+//@ skip if $buildType == "debug"
 //@ slow!
 //@ runDefault("--collectContinuously=1", "--slowPathAllocsBetweenGCs=100")
 
