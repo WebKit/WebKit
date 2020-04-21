@@ -9495,6 +9495,20 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
     send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference), callbackID));
 }
 
+#if HAVE(QUICKLOOK_THUMBNAILING)
+void WebPageProxy::updateAttachmentIcon(const String& identifier, const RefPtr<ShareableBitmap>& bitmap)
+{
+    if (!hasRunningProcess())
+        return;
+    
+    ShareableBitmap::Handle handle;
+    if (bitmap)
+        bitmap->createHandle(handle);
+
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle));
+}
+#endif
+
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::SharedBufferDataReference& data)
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
@@ -9522,8 +9536,10 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identi
     attachment->setContentType(contentType);
     attachment->setFilePath(filePath);
     m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
-
     platformRegisterAttachment(WTFMove(attachment), filePath);
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    requestThumbnailWithPath(identifier, filePath);
+#endif
 }
 
 void WebPageProxy::registerAttachmentIdentifier(const String& identifier)

@@ -1,3 +1,49 @@
+2020-04-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        WK2 Quicklook for attachments
+        https://bugs.webkit.org/show_bug.cgi?id=208891
+
+        Reviewed by Darin Adler.
+
+        Allow attachment elements to render QuickLook thumbnail generated
+        from contents of the file as its icon, rather than the default
+        icons associated with each mime type.
+
+        * Configurations/WebKit.xcconfig:
+        Link QuickLook thumbnailing framework.
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        Create thumbnail request and add to queue.
+        (WebKit::convertNSImageToBitmap):
+        (WebKit::convertUIImageToBitmap):
+        (WebKit::WebPageProxy::getQLThumbnailForGenerationRequestion):
+        (WebKit::WebPageProxy::getQLThumbnailForFileWrapper):
+        (WebKit::WebPageProxy::getQLThumbnailForAttachment):
+        * UIProcess/QLThumbnailLoad.h: Added.
+        * UIProcess/QLThumbnailLoad.mm: Added.
+        Add code to request thumbnail for file data.
+        (-[WKQLThumbnailQueueManager init]):
+        (+[WKQLThumbnailQueueManager sharedInstance]):
+        (-[WKQLThumbnailLoadOperation initWithAttachment:identifier:]):
+        (-[WKQLThumbnailLoadOperation initWithURL:identifier:]):
+        (-[WKQLThumbnailLoadOperation start]):
+        (-[WKQLThumbnailLoadOperation isAsynchronous]):
+        (-[WKQLThumbnailLoadOperation isExecuting]):
+        (-[WKQLThumbnailLoadOperation setExecuting:]):
+        (-[WKQLThumbnailLoadOperation isFinished]):
+        (-[WKQLThumbnailLoadOperation setFinished:]):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateAttachmentIcon):
+        Set thumbnail of attachment element
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Thumbnail request message.
+
 2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Unreviewed macCatalyst build fix.

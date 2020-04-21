@@ -201,6 +201,8 @@ class Decoder;
 class FormDataReference;
 class SharedBufferDataReference;
 }
+OBJC_CLASS NSFileWrapper;
+OBJC_CLASS WKQLThumbnailLoadOperation;
 
 namespace WebCore {
 class AuthenticationChallenge;
@@ -1596,7 +1598,12 @@ public:
     void serializedAttachmentDataForIdentifiers(const Vector<String>&, CompletionHandler<void(Vector<WebCore::SerializedAttachmentData>&&)>&&);
     void registerAttachmentIdentifier(const String&);
     void didInvalidateDataForAttachment(API::Attachment&);
-
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    void updateAttachmentIcon(const String&, const RefPtr<ShareableBitmap>&);
+    void requestThumbnailWithPath(const String&, const String&);
+    void requestThumbnailWithFileWrapper(NSFileWrapper*, const String&);
+    void requestThumbnailWithOperation(WKQLThumbnailLoadOperation*);
+#endif
     enum class ShouldUpdateAttachmentAttributes : bool { No, Yes };
     ShouldUpdateAttachmentAttributes willUpdateAttachmentAttributes(const API::Attachment&);
 #endif

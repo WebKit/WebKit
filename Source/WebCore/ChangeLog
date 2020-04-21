@@ -1,3 +1,27 @@
+2020-04-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        WK2 Quicklook for attachments
+        https://bugs.webkit.org/show_bug.cgi?id=208891
+
+        Reviewed by Darin Adler.
+
+        Added to HTMLAttachmentElement to have member image representing
+        QuickLook thumbnail. Added code to render this image on both iOS and Mac.
+
+        No new tests. Test will be added after additions to test infrastructure.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateThumbnailRepresentation):
+        Allow setting of thumbnail member.
+        * html/HTMLAttachmentElement.h:
+        * rendering/RenderThemeIOS.mm:
+        Added rendering of image member of attachment element.
+        (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+        (WebCore::paintAttachmentIcon):
+        (WebCore::RenderThemeIOS::paintAttachment):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::paintAttachmentIcon):
+
 2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add more structure-cloning tests for BigInt

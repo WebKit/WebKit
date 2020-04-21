@@ -1619,6 +1619,7 @@ struct RenderAttachmentInfo {
     float progress;
 
     RetainPtr<UIImage> icon;
+    RefPtr<Image> thumbnailIcon;
 
     int baseline { 0 };
 
@@ -1803,8 +1804,11 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
     if (action.isEmpty() && !hasProgress) {
         FloatSize iconSize;
         icon = iconForAttachment(attachment, iconSize);
-        if (icon) {
-            iconRect = FloatRect(FloatPoint((attachmentRect.width() / 2) - (iconSize.width() / 2), 0), iconSize);
+        thumbnailIcon = attachment.attachmentElement().thumbnail();
+        
+        if (thumbnailIcon || icon) {
+            auto visibleIconSize = thumbnailIcon ? FloatSize(attachmentIconSize, attachmentIconSize) : iconSize;
+            iconRect = FloatRect(FloatPoint((attachmentRect.width() / 2) - (visibleIconSize.width() / 2), 0), visibleIconSize);
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else
@@ -1839,11 +1843,13 @@ int RenderThemeIOS::attachmentBaseline(const RenderAttachment& attachment) const
 
 static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& info)
 {
-    if (!info.icon)
-        return;
-
-    auto iconImage = BitmapImage::create([info.icon CGImage]);
-    context.drawImage(iconImage.get(), info.iconRect);
+    RefPtr<Image> iconImage;
+    if (info.thumbnailIcon)
+        iconImage = info.thumbnailIcon;
+    else if (info.icon)
+        iconImage = BitmapImage::create([info.icon CGImage]);
+    
+    context.drawImage(*iconImage, info.iconRect);
 }
 
 static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
@@ -1919,7 +1925,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     if (info.hasProgress)
         paintAttachmentProgress(context, info);
-    else if (info.icon)
+    else if (info.icon || info.thumbnailIcon)
         paintAttachmentIcon(context, info);
 
     paintAttachmentText(context, info);

@@ -6841,6 +6841,14 @@ void WebPage::updateAttachmentAttributes(const String& identifier, Optional<uint
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
+void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
+{
+    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
+        if (RefPtr<ShareableBitmap> thumbnail = !qlThumbnailHandle.isNull() ? ShareableBitmap::create(qlThumbnailHandle) : nullptr)
+            attachment->updateThumbnail(thumbnail->createImage());
+    }
+}
+
 RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const String& identifier) const
 {
     // FIXME: Handle attachment elements in subframes too as well.

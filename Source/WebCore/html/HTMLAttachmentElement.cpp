@@ -249,6 +249,14 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(WTFMove(data), mimeType)));
 }
 
+void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
+{
+    m_thumbnail = thumbnail;
+    
+    if (auto* renderer = this->renderer())
+        renderer->invalidate();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

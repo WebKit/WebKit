@@ -49,6 +49,7 @@
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "ShareSheetCallbackID.h"
+#include "ShareableBitmap.h"
 #include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
 #include "TransactionID.h"
@@ -1218,6 +1219,7 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
     void updateAttachmentAttributes(const String& identifier, Optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, const IPC::SharedBufferDataReference& enclosingImageData, CallbackID);
+    void updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

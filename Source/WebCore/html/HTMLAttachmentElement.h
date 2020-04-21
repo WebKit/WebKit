@@ -33,7 +33,9 @@ namespace WebCore {
 
 class File;
 class HTMLImageElement;
+class Image;
 class RenderAttachment;
+class ShareableBitmap;
 class SharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
@@ -56,6 +58,7 @@ public:
 
     WEBCORE_EXPORT void updateAttributes(Optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename);
     WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<SharedBuffer>&& data);
+    WEBCORE_EXPORT void updateThumbnail(const RefPtr<Image>& thumbnail);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
@@ -67,7 +70,7 @@ public:
     String attachmentTitleForDisplay() const;
     String attachmentType() const;
     String attachmentPath() const;
-
+    RefPtr<Image> thumbnail() const { return m_thumbnail; }
     RenderAttachment* renderer() const;
 
 private:
@@ -87,6 +90,7 @@ private:
     
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
+    RefPtr<Image> m_thumbnail;
 };
 
 } // namespace WebCore

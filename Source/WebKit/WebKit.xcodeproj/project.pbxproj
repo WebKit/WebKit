@@ -164,6 +164,7 @@
 		1A07D2F91919B3A900ECDA16 /* messages.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856F187CE0A900780D86 /* messages.py */; };
 		1A07D2FA1919B3A900ECDA16 /* model.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08570187CE0A900780D86 /* model.py */; };
 		1A07D2FB1919B3A900ECDA16 /* parser.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08571187CE0A900780D86 /* parser.py */; };
+		1A0C225E243575CD00ED614D /* QuickLookThumbnailLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE57242409F142002005D6 /* QuickLookThumbnailLoader.mm */; };
 		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
 		1A0EC6C0124BBD9B007EF4A5 /* PluginProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */; };
 		1A0EC75E124BC7B2007EF4A5 /* PluginProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC75C124BC7B2007EF4A5 /* PluginProcessProxy.h */; };
@@ -379,6 +380,7 @@
 		1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE4987611FF7FAA0048B464 /* JSNPObject.h */; };
 		1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE49A4711FFA8CE0048B464 /* JSNPMethod.h */; };
 		1AE52F981920267200A1FA37 /* WKContextConfigurationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE52F9419201F6B00A1FA37 /* WKContextConfigurationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEE57232409F142002005D6 /* QuickLookThumbnailLoader.h */; };
 		1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */; };
 		1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD27811D16C81008219D3 /* ArgumentCoder.h */; };
 		1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFD2F611D1807B008219D3 /* ArgumentCoders.h */; };
@@ -2663,6 +2665,8 @@
 		1AE52F9319201F6B00A1FA37 /* WKContextConfigurationRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextConfigurationRef.cpp; sourceTree = "<group>"; };
 		1AE52F9419201F6B00A1FA37 /* WKContextConfigurationRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextConfigurationRef.h; sourceTree = "<group>"; };
 		1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapePluginMac.mm; sourceTree = "<group>"; };
+		1AEE57232409F142002005D6 /* QuickLookThumbnailLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickLookThumbnailLoader.h; sourceTree = "<group>"; };
+		1AEE57242409F142002005D6 /* QuickLookThumbnailLoader.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = QuickLookThumbnailLoader.mm; sourceTree = "<group>"; };
 		1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoStore.cpp; sourceTree = "<group>"; };
 		1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInfoStoreMac.mm; sourceTree = "<group>"; };
@@ -8933,6 +8937,8 @@
 				83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */,
 				4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */,
 				4683569A21E81CC7006E27A3 /* ProvisionalPageProxy.h */,
+				1AEE57232409F142002005D6 /* QuickLookThumbnailLoader.h */,
+				1AEE57242409F142002005D6 /* QuickLookThumbnailLoader.mm */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */,
@@ -10999,6 +11005,7 @@
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
 				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
 				A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */,
+				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
 				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
 				9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */,
 				9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */,
@@ -11327,7 +11334,6 @@
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */,
-				5109099723DACBF2003B1E4C /* WKScriptMessageHandlerWithReply.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
 				461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
@@ -11681,6 +11687,7 @@
 				5CA26D81217ABD5B00F97A35 /* WKSafeBrowsingWarning.h in Headers */,
 				1A7E377918E4A4FE003D0FFF /* WKScriptMessage.h in Headers */,
 				1A7E377518E4A33A003D0FFF /* WKScriptMessageHandler.h in Headers */,
+				5109099723DACBF2003B1E4C /* WKScriptMessageHandlerWithReply.h in Headers */,
 				7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */,
 				0FCB4E5418BBE044000FCFC9 /* WKScrollView.h in Headers */,
 				0F04159C23C7CC730060A3E2 /* WKScrollViewMac.h in Headers */,
@@ -12738,6 +12745,7 @@
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
 				CD2865EF2255562000606AC7 /* ProcessTaskStateObserver.mm in Sources */,
+				1A0C225E243575CD00ED614D /* QuickLookThumbnailLoader.mm in Sources */,
 				9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */,
 				CDAC20F723FC726C0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp in Sources */,
 				CDAC20F823FC726C0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp in Sources */,

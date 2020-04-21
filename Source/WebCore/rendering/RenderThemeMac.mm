@@ -2777,6 +2777,10 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
 
 static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
+    if (auto thumbnailIcon = attachment.attachmentElement().thumbnail()) {
+        context.drawImage(*thumbnailIcon, layout.iconRect);
+        return;
+    }
     auto icon = iconForAttachment(attachment);
     if (!icon)
         return;

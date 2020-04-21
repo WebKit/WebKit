@@ -46,6 +46,7 @@
 #import "ObjCObjectGraph.h"
 #import "PageClient.h"
 #import "ProvisionalPageProxy.h"
+#import "QuickLookThumbnailLoader.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -2160,7 +2161,9 @@ static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipul
         if (capturedHandler)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });
-
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    _page->requestThumbnailWithFileWrapper(fileWrapper, identifier);
+#endif
     return wrapper(attachment);
 #else
     return nil;

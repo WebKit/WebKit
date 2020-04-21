@@ -33,6 +33,7 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PageClient.h"
+#import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferDataReference.h"
@@ -387,6 +388,68 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 }
 #endif
 
+#if HAVE(QUICKLOOK_THUMBNAILING)
+#if PLATFORM(MAC)
+using PlatformImage = NSImage*;
+#elif PLATFORM(IOS_FAMILY)
+using PlatformImage = UIImage*;
+#endif
+
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(PlatformImage image, const WebCore::IntSize& size)
+{
+    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    auto bitmap = WebKit::ShareableBitmap::createShareable(size, bitmapConfiguration);
+    if (!bitmap)
+        return nullptr;
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+#if PLATFORM(IOS_FAMILY)
+    UIGraphicsPushContext(graphicsContext->platformContext());
+    [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
+    UIGraphicsPopContext();
+#elif PLATFORM(MAC)
+    auto savedContext = adoptNS([NSGraphicsContext currentContext]);
+
+    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithCGContext:graphicsContext->platformContext() flipped:YES]];
+    [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
+
+    [NSGraphicsContext setCurrentContext:savedContext.get()];
+#endif
+    return bitmap;
+}
+
+void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
+{
+    [operation setCompletionBlock:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            auto identifier = [operation identifier];
+            auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
+            if (!convertedImage)
+                return;
+            this->updateAttachmentIcon(identifier, convertedImage);
+        });
+    }];
+        
+    [[WKQLThumbnailQueueManager sharedInstance].qlThumbnailGenerationQueue addOperation:operation];
+}
+
+
+void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper* fileWrapper, const String& identifier)
+{
+    auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithAttachment:fileWrapper identifier:identifier]);
+    requestThumbnailWithOperation(operation.get());
+}
+
+void WebPageProxy::requestThumbnailWithPath(const String& identifier, const String& filePath)
+{
+    auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithURL:filePath identifier:identifier]);
+    requestThumbnailWithOperation(operation.get());
+    
+}
+
+#endif
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION
