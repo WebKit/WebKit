@@ -186,6 +186,15 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 # testRunner.queueLoad() does not support loading data URLs in Mac WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 
+# Color well is turned off.
+accessibility/color-well.html [ Skip ]
+editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
+editing/pasteboard/drag-and-drop-color-input.html [ Skip ]
+fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
+fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
+fast/forms/color [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////

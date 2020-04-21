@@ -1,3 +1,32 @@
+2020-04-21  Darin Adler  <darin@apple.com>
+
+        [Mac] Enable color well tests on modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210810
+
+        Reviewed by Alexey Proskuryakov.
+
+        When running tests I was informed of "unexpected passing" for the
+        test fast/css/pseudo-visited-background-color-on-input.html.
+        After doing some research, I found that we have tests of color well
+        that are still disabled on Mac even though we have implemented it
+        now, just not for legacy WebKit.
+
+        Looking at history I see these tests have been passing consistently
+        on bots. So changed their expectations to Pass, and also un-skipped
+        some other tests of the same feature that passed for me locally.
+
+        * platform/mac-highsierra-wk1/*: Removed.
+        * platform/mac-highsierra/*: Removed.
+
+        * platform/mac-wk1/TestExpectations: Moved expectations here for tests
+        that we should not run because we don't have color wells enabled.
+
+        * platform/mac-wk2/TestExpectations: Moved expectations here
+        for color well tests that still don't work in modern WebKit because we
+        need more support for dragging tests.
+
+        * platform/mac/TestExpectations: Moved the expections *from* here.
+
 2020-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow scroll] Overflow that's hidden on one axis is scrollable on that axis

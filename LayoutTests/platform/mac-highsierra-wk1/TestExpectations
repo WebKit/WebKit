@@ -1,7 +1,0 @@
-# These are the layout test expectations for Apple's Mac port of WebKit Legacy
-#
-# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
-#
-
-webkit.org/b/203984 [ Debug ] webgl/1.0.3/conformance/context/context-release-upon-reload.html [ Skip ]
-webkit.org/b/203984 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Skip ]
