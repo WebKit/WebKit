@@ -39,11 +39,11 @@ class WebXRSystem;
 class NavigatorWebXR final : public Supplement<Navigator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+    static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
 
 private:
+    static NavigatorWebXR& from(Navigator&);
+
     RefPtr<WebXRSystem> m_xr;
 };
 

@@ -1118,15 +1118,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/MockWebAuthenticationConfiguration.idl \
     $(WebCore)/testing/ServiceWorkerInternals.idl \
     $(WebCore)/testing/TypeConversions.idl \
-    $(WebCore)/testing/FakeXRBoundsPoint.idl \
-    $(WebCore)/testing/FakeXRButtonStateInit.idl \
-    $(WebCore)/testing/FakeXRInputSourceInit.idl \
-    $(WebCore)/testing/FakeXRRigidTransformInit.idl \
-    $(WebCore)/testing/FakeXRViewInit.idl \
-    $(WebCore)/testing/WebFakeXRDevice.idl \
-    $(WebCore)/testing/WebFakeXRInputController.idl \
-    $(WebCore)/testing/WebXRTest.idl \
-    $(WebCore)/testing/XRSimulateUserActivationFunction.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
     $(WebCore)/workers/Worker.idl \

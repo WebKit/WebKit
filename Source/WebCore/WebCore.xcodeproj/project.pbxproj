@@ -15148,45 +15148,8 @@
 		E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceFromNSAttributedString.mm; sourceTree = "<group>"; };
 		E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceWebResourceHandler.h; sourceTree = "<group>"; };
 		E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceWebResourceHandler.mm; sourceTree = "<group>"; };
-		E18D83DC243F71CB009247D6 /* FakeXRInputSourceInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FakeXRInputSourceInit.idl; sourceTree = "<group>"; };
-		E18D83DD243F71CC009247D6 /* WebFakeXRInputController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFakeXRInputController.cpp; sourceTree = "<group>"; };
-		E18D83DE243F71CD009247D6 /* FakeXRButtonStateInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeXRButtonStateInit.h; sourceTree = "<group>"; };
-		E18D83DF243F71CD009247D6 /* FakeXRViewInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeXRViewInit.h; sourceTree = "<group>"; };
-		E18D83E0243F71CE009247D6 /* WebXRTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebXRTest.cpp; sourceTree = "<group>"; };
-		E18D83E1243F71CE009247D6 /* WebFakeXRInputController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebFakeXRInputController.idl; sourceTree = "<group>"; };
-		E18D83E2243F71CF009247D6 /* FakeXRViewInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FakeXRViewInit.idl; sourceTree = "<group>"; };
-		E18D83E3243F71CF009247D6 /* FakeXRButtonStateInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FakeXRButtonStateInit.idl; sourceTree = "<group>"; };
-		E18D83E4243F71D0009247D6 /* FakeXRBoundsPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeXRBoundsPoint.h; sourceTree = "<group>"; };
-		E18D83E5243F71D1009247D6 /* FakeXRRigidTransformInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeXRRigidTransformInit.h; sourceTree = "<group>"; };
-		E18D83E6243F71D1009247D6 /* FakeXRRigidTransformInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FakeXRRigidTransformInit.idl; sourceTree = "<group>"; };
-		E18D83E7243F71D2009247D6 /* WebFakeXRDevice.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebFakeXRDevice.idl; sourceTree = "<group>"; };
-		E18D83E8243F71D2009247D6 /* WebXRTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRTest.h; sourceTree = "<group>"; };
-		E18D83E9243F71D3009247D6 /* WebFakeXRDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFakeXRDevice.cpp; sourceTree = "<group>"; };
-		E18D83EA243F71D4009247D6 /* FakeXRInputSourceInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FakeXRInputSourceInit.h; sourceTree = "<group>"; };
-		E18D83EB243F71D5009247D6 /* WebXRTest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRTest.idl; sourceTree = "<group>"; };
-		E18D83EC243F71D5009247D6 /* XRSimulateUserActivationFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRSimulateUserActivationFunction.h; sourceTree = "<group>"; };
-		E18D83ED243F71D6009247D6 /* WebFakeXRDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFakeXRDevice.h; sourceTree = "<group>"; };
-		E18D83EE243F71D7009247D6 /* WebFakeXRInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFakeXRInputController.h; sourceTree = "<group>"; };
-		E18D83EF243F71D7009247D6 /* FakeXRBoundsPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FakeXRBoundsPoint.idl; sourceTree = "<group>"; };
-		E18D83F0243F71D8009247D6 /* XRSimulateUserActivationFunction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRSimulateUserActivationFunction.idl; sourceTree = "<group>"; };
 		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
 		E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedCryptoKeyWrapMac.mm; sourceTree = "<group>"; };
-		E19490862434F15800416A99 /* WebXRView.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRView.idl; sourceTree = "<group>"; };
-		E19490872434F15900416A99 /* WebXRViewport.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRViewport.idl; sourceTree = "<group>"; };
-		E19490882434F15900416A99 /* WebXRFrame.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRFrame.idl; sourceTree = "<group>"; };
-		E19490892434F15A00416A99 /* WebXRInputSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRInputSource.idl; sourceTree = "<group>"; };
-		E194908F2434F15D00416A99 /* WebXRWebGLLayer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRWebGLLayer.idl; sourceTree = "<group>"; };
-		E19490932434F16000416A99 /* WebXRInputSourceArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRInputSourceArray.idl; sourceTree = "<group>"; };
-		E19490942434F16000416A99 /* WebXRBoundedReferenceSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRBoundedReferenceSpace.idl; sourceTree = "<group>"; };
-		E19490952434F16100416A99 /* WebXRWebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRWebGLLayer.h; sourceTree = "<group>"; };
-		E19490982434F16200416A99 /* WebXRRigidTransform.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRRigidTransform.idl; sourceTree = "<group>"; };
-		E194909A2434F16400416A99 /* WebXRSystem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRSystem.idl; sourceTree = "<group>"; };
-		E194909C2434F16500416A99 /* WebXRViewerPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRViewerPose.idl; sourceTree = "<group>"; };
-		E194909E2434F16600416A99 /* WebXRSession.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRSession.idl; sourceTree = "<group>"; };
-		E19490A12434F16800416A99 /* WebXRPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRPose.idl; sourceTree = "<group>"; };
-		E19490A22434F16800416A99 /* WebXRSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRSpace.idl; sourceTree = "<group>"; };
-		E19490A42434F16900416A99 /* WebXRRenderState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRRenderState.idl; sourceTree = "<group>"; };
-		E19490A62434F16B00416A99 /* WebXRReferenceSpace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebXRReferenceSpace.idl; sourceTree = "<group>"; };
 		E19727151820549E00592D51 /* CryptoKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyType.h; sourceTree = "<group>"; };
 		E19AC3E61824DC7900349426 /* CryptoAlgorithmSHA224.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmSHA224.cpp; sourceTree = "<group>"; };
 		E19AC3E71824DC7900349426 /* CryptoAlgorithmSHA224.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA224.h; sourceTree = "<group>"; };
@@ -18362,16 +18325,6 @@
 			children = (
 				A1763F3B1E2051AB001D58DE /* cocoa */,
 				41815C1B138319630057AAA4 /* js */,
-				E18D83E4243F71D0009247D6 /* FakeXRBoundsPoint.h */,
-				E18D83EF243F71D7009247D6 /* FakeXRBoundsPoint.idl */,
-				E18D83DE243F71CD009247D6 /* FakeXRButtonStateInit.h */,
-				E18D83E3243F71CF009247D6 /* FakeXRButtonStateInit.idl */,
-				E18D83EA243F71D4009247D6 /* FakeXRInputSourceInit.h */,
-				E18D83DC243F71CB009247D6 /* FakeXRInputSourceInit.idl */,
-				E18D83E5243F71D1009247D6 /* FakeXRRigidTransformInit.h */,
-				E18D83E6243F71D1009247D6 /* FakeXRRigidTransformInit.idl */,
-				E18D83DF243F71CD009247D6 /* FakeXRViewInit.h */,
-				E18D83E2243F71CF009247D6 /* FakeXRViewInit.idl */,
 				51714EA91CF65899004723C4 /* GCObservation.cpp */,
 				51714EAA1CF65899004723C4 /* GCObservation.h */,
 				51714EAB1CF65899004723C4 /* GCObservation.idl */,
@@ -18436,17 +18389,6 @@
 				EB081CD81696084400553730 /* TypeConversions.h */,
 				EB081CD91696084400553730 /* TypeConversions.idl */,
 				E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */,
-				E18D83E9243F71D3009247D6 /* WebFakeXRDevice.cpp */,
-				E18D83ED243F71D6009247D6 /* WebFakeXRDevice.h */,
-				E18D83E7243F71D2009247D6 /* WebFakeXRDevice.idl */,
-				E18D83DD243F71CC009247D6 /* WebFakeXRInputController.cpp */,
-				E18D83EE243F71D7009247D6 /* WebFakeXRInputController.h */,
-				E18D83E1243F71CE009247D6 /* WebFakeXRInputController.idl */,
-				E18D83E0243F71CE009247D6 /* WebXRTest.cpp */,
-				E18D83E8243F71D2009247D6 /* WebXRTest.h */,
-				E18D83EB243F71D5009247D6 /* WebXRTest.idl */,
-				E18D83EC243F71D5009247D6 /* XRSimulateUserActivationFunction.h */,
-				E18D83F0243F71D8009247D6 /* XRSimulateUserActivationFunction.idl */,
 			);
 			path = testing;
 			sourceTree = "<group>";
@@ -27279,49 +27221,33 @@
 				E1EE8B0E2412B17000E794D6 /* NavigatorWebXR.idl */,
 				E1EE8AD32412B17000E794D6 /* WebXRBoundedReferenceSpace.cpp */,
 				E1EE8AD12412B17000E794D6 /* WebXRBoundedReferenceSpace.h */,
-				E19490942434F16000416A99 /* WebXRBoundedReferenceSpace.idl */,
 				E1EE8AF02412B17000E794D6 /* WebXRFrame.cpp */,
 				E1EE8AE32412B17000E794D6 /* WebXRFrame.h */,
-				E19490882434F15900416A99 /* WebXRFrame.idl */,
 				E1EE8B0D2412B17000E794D6 /* WebXRInputSource.cpp */,
 				E1EE8B172412B17000E794D6 /* WebXRInputSource.h */,
-				E19490892434F15A00416A99 /* WebXRInputSource.idl */,
 				E1EE8AE62412B17000E794D6 /* WebXRInputSourceArray.cpp */,
 				E1EE8ADD2412B17000E794D6 /* WebXRInputSourceArray.h */,
-				E19490932434F16000416A99 /* WebXRInputSourceArray.idl */,
 				E1EE8AE52412B17000E794D6 /* WebXRPose.cpp */,
 				E1EE8AE12412B17000E794D6 /* WebXRPose.h */,
-				E19490A12434F16800416A99 /* WebXRPose.idl */,
 				E1EE8AD22412B17000E794D6 /* WebXRReferenceSpace.cpp */,
 				E1EE8B142412B17000E794D6 /* WebXRReferenceSpace.h */,
-				E19490A62434F16B00416A99 /* WebXRReferenceSpace.idl */,
 				E1EE8ACE2412B17000E794D6 /* WebXRRenderState.cpp */,
 				E1EE8AD52412B17000E794D6 /* WebXRRenderState.h */,
-				E19490A42434F16900416A99 /* WebXRRenderState.idl */,
 				E1EE8ACD2412B17000E794D6 /* WebXRRigidTransform.cpp */,
 				E1EE8B062412B17000E794D6 /* WebXRRigidTransform.h */,
-				E19490982434F16200416A99 /* WebXRRigidTransform.idl */,
 				E1EE8B0F2412B17000E794D6 /* WebXRSession.cpp */,
 				E1EE8B112412B17000E794D6 /* WebXRSession.h */,
-				E194909E2434F16600416A99 /* WebXRSession.idl */,
 				E1EE8AF82412B17000E794D6 /* WebXRSpace.cpp */,
 				E1EE8ACF2412B17000E794D6 /* WebXRSpace.h */,
-				E19490A22434F16800416A99 /* WebXRSpace.idl */,
 				E1EE8AE82412B17000E794D6 /* WebXRSystem.cpp */,
 				E1EE8AE22412B17000E794D6 /* WebXRSystem.h */,
-				E194909A2434F16400416A99 /* WebXRSystem.idl */,
 				E1EE8B122412B17000E794D6 /* WebXRView.cpp */,
 				E1EE8AE02412B17000E794D6 /* WebXRView.h */,
-				E19490862434F15800416A99 /* WebXRView.idl */,
 				E1EE8B0B2412B17000E794D6 /* WebXRViewerPose.cpp */,
 				E1EE8AC72412B16F00E794D6 /* WebXRViewerPose.h */,
-				E194909C2434F16500416A99 /* WebXRViewerPose.idl */,
 				E1EE8AEB2412B17000E794D6 /* WebXRViewport.cpp */,
 				E1EE8AF42412B17000E794D6 /* WebXRViewport.h */,
-				E19490872434F15900416A99 /* WebXRViewport.idl */,
 				E1EE8AD82412B17000E794D6 /* WebXRWebGLLayer.cpp */,
-				E19490952434F16100416A99 /* WebXRWebGLLayer.h */,
-				E194908F2434F15D00416A99 /* WebXRWebGLLayer.idl */,
 				E1EE8AF72412B17000E794D6 /* XRBoundedReferenceSpace.idl */,
 				E1EE8B052412B17000E794D6 /* XREnvironmentBlendMode.h */,
 				E1EE8ADA2412B17000E794D6 /* XREnvironmentBlendMode.idl */,
