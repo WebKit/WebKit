@@ -1,5 +1,16 @@
 2020-04-21  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Silence git stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=210789
+
+        Reviewed by Sergio Villar Senin.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.is_branch_build): Don't display git errors, usually
+        emitted when operating on a SVN checkout.
+
+2020-04-21  Philippe Normand  <pnormand@igalia.com>
+
         [CMake][Flatpak SDK] gst-build-backed build fails
         https://bugs.webkit.org/show_bug.cgi?id=210742
 

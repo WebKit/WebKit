@@ -559,8 +559,10 @@ class WebkitFlatpak:
 
     def is_branch_build(self):
         try:
-            rev_parse = subprocess.check_output(("git", "rev-parse", "--abbrev-ref", "HEAD"))
+            with open(os.devnull, 'w') as devnull:
+                rev_parse = subprocess.check_output(("git", "rev-parse", "--abbrev-ref", "HEAD"), stderr=devnull)
         except subprocess.CalledProcessError:
+            # This is likely not a git checkout.
             return False
         git_branch_name = rev_parse.decode("utf-8").strip()
         for option_name in ("branch.%s.webKitBranchBuild" % git_branch_name,
