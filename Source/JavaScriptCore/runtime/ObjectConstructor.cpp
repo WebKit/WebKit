@@ -320,6 +320,10 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
                     return false;
                 if (structure->hasGetterSetterProperties())
                     return false;
+                if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto())
+                    return false;
+                if (structure->hasCustomGetterSetterProperties())
+                    return false;
                 if (structure->isUncacheableDictionary())
                     return false;
                 // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".

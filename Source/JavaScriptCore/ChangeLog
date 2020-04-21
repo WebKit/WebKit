@@ -1,3 +1,14 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Check Structure attributes in Object.assign exhaustively
+        https://bugs.webkit.org/show_bug.cgi?id=210782
+        <rdar://problem/62065853>
+
+        Reviewed by Mark Lam.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+
 2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late February 2020 edition
