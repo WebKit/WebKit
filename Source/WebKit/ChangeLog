@@ -1,3 +1,46 @@
+2020-04-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed
+        https://bugs.webkit.org/show_bug.cgi?id=210697
+        <rdar://problem/60997530>
+
+        Reviewed by Wenson Hsieh. 
+
+        Add a new state variable to use to track whether -_focusTextInputContext invoked during a
+        text interaction actually focused an element. Then in -_didFinishTextInteractionInTextInputContext
+        condition marking the page to reveal the focused element on this state.
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _willBeginTextInteractionInTextInputContext:]): Turn around and call the same
+        function on the content view.
+        (-[WKWebView _didFinishTextInteractionInTextInputContext:]): Ditto.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]): Reset state.
+        (-[WKContentView _didCommitLoadForMainFrame]): Ditto.
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]): Update state to
+        indicate whether the focusd element did change or not. I use bitwise ORing instead of strict
+        assignment to update it because this function can be called multiple times by an internal
+        Apple client during a text interaction (e.g. <rdar://problem/59430806>). I thought about
+        making this a FIXME, but this function is otherwise capable of handling multiple invocations
+        so I didn't.
+        (-[WKContentView _willBeginTextInteractionInTextInputContext:]): Reset added state.
+        (-[WKContentView _didFinishTextInteractionInTextInputContext:]): Check if state was set to
+        indicate that a focus change happened. If so, do what we do now + reset state. Otherwise,
+        do everything we do now except for marking the page as needing to reveal the focused element
+        on the next editor state update.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret): Check that the target is focusable
+        before calling FocusController::setFocusedElement() because it ultimately calls Document::setFocusedElement()
+        that can return true for a non-focusable element. I added a comment in Document.h to explain
+        this subtlety. I also decided not to check the return value of FocusController::setFocusedElement().
+        Instead I am checking the more important condition that the focused element is the target
+        element. Passing true to visiblePositionInFocusedNodeForPoint() will ultimately assert this
+        to be true. Note that setFocusedElement() may not have done anything as m_focusedElement
+        could have already been equal to the target element. This is OK and I still update the
+        caret position.
+
 2020-04-21  Timothy Hatcher  <timothy@apple.com>
 
         Reset m_userScriptsNotified when web process crashes.

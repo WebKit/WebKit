@@ -4329,21 +4329,20 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     // Performing layout could have could torn down the element's renderer. Check that we still
     // have one. Otherwise, bail out as this function only focuses elements that have a visual
     // representation.
-    if (!target->renderer()) {
+    if (!target->renderer() || !target->isFocusable()) {
         completionHandler(false);
         return;
     }
 
     UserGestureIndicator gestureIndicator { ProcessingUserGesture, &target->document() };
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
-    bool didFocus = m_page->focusController().setFocusedElement(target.get(), targetFrame);
+    m_page->focusController().setFocusedElement(target.get(), targetFrame);
 
     // Setting the focused element could tear down the element's renderer. Check that we still have one.
-    if (!didFocus || !target->renderer()) {
+    if (m_focusedElement != target || !target->renderer()) {
         completionHandler(false);
         return;
     }
-    ASSERT(m_focusedElement == target);
     // The function visiblePositionInFocusedNodeForPoint constrains the point to be inside
     // the bounds of the target element.
     auto position = visiblePositionInFocusedNodeForPoint(targetFrame, point, true /* isInteractingWithFocusedElement */);

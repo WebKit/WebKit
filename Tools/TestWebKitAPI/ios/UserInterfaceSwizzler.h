@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,23 @@
 
 namespace TestWebKitAPI {
 
-class IPadUserInterfaceSwizzler {
+template<UIUserInterfaceIdiom idiom>
+class UserInterfaceSwizzler : private InstanceMethodSwizzler {
 public:
-    IPadUserInterfaceSwizzler()
-        : m_swizzler([UIDevice class], @selector(userInterfaceIdiom), reinterpret_cast<IMP>(padUserInterfaceIdiom))
+    UserInterfaceSwizzler()
+        : InstanceMethodSwizzler { UIDevice.class, @selector(userInterfaceIdiom), reinterpret_cast<IMP>(effectiveUserInterfaceIdiom) }
     {
     }
+
 private:
-    static UIUserInterfaceIdiom padUserInterfaceIdiom(id, SEL)
+    static UIUserInterfaceIdiom effectiveUserInterfaceIdiom(id, SEL)
     {
-        return UIUserInterfaceIdiomPad;
+        return idiom;
     }
-    InstanceMethodSwizzler m_swizzler;
 };
+
+using IPadUserInterfaceSwizzler = UserInterfaceSwizzler<UIUserInterfaceIdiomPad>;
+using IPhoneUserInterfaceSwizzler = UserInterfaceSwizzler<UIUserInterfaceIdiomPhone>;
 
 } // namespace TestWebKitAPI
 

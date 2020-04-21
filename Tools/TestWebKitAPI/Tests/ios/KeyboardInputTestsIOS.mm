@@ -27,13 +27,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "IPadUserInterfaceSwizzler.h"
-#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import "UserInterfaceSwizzler.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>

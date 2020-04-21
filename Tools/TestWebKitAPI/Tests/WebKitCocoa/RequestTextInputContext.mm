@@ -32,11 +32,32 @@
 #import "TestInputDelegate.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UserInterfaceSwizzler.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
+
+class TextInteractionForScope {
+public:
+    TextInteractionForScope(const RetainPtr<TestWKWebView>& webView, const RetainPtr<_WKTextInputContext>& textInputContext)
+        : m_webView { webView }
+        , m_textInputContext { textInputContext }
+    {
+        [m_webView _willBeginTextInteractionInTextInputContext:m_textInputContext.get()];
+    }
+
+    ~TextInteractionForScope()
+    {
+        [m_webView _didFinishTextInteractionInTextInputContext:m_textInputContext.get()];
+        [m_webView waitForNextPresentationUpdate];
+    }
+
+private:
+    RetainPtr<TestWKWebView> m_webView;
+    RetainPtr<_WKTextInputContext> m_textInputContext;
+};
 
 @implementation TestWKWebView (SynchronousTextInputContext)
 
@@ -333,6 +354,34 @@ TEST(RequestTextInputContext, CaretShouldNotMoveInAlreadyFocusedField2)
     EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
 }
 
+TEST(RequestTextInputContext, PlaceCaretInNonAssistedFocusedField)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' id='input' value='hello world' style='width: 100px; height: 50px;'>")];
+
+    // Use JavaScript to place the caret after the 'h' in the field.
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyDisallow; }];
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView stringByEvaluatingJavaScript:@"input.setSelectionRange(1, 1)"];
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
+
+    // Use -focusTextInputContext: to place the caret at the beginning of the field; the caret should move.
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+    EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionStart"] intValue]);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.activeElement.selectionEnd"] intValue]);
+}
+
 TEST(RequestTextInputContext, FocusTextFieldThenProgrammaticallyReplaceWithTextAreaAndFocusTextArea)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -469,6 +518,231 @@ TEST(RequestTextInputContext, SwitchFocusBetweenFrames)
     EXPECT_WK_STREQ("IFRAME", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
     EXPECT_WK_STREQ("iframeField", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.value"]);
+}
+
+TEST(RequestTextInputContext, FocusingAssistedElementShouldNotScrollPage)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><div id='editable' style='position: fixed; width: 100%; height: 50px; background-color: blue' contenteditable='true'></div></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+
+    // Focus the field using JavaScript and scroll the page.
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"editable.focus()"];
+    EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView stringByEvaluatingJavaScript:@"window.scrollTo(0, 2000)"];
+    EXPECT_EQ(2000, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
+
+    // Focus the field using -focusTextInputContext; page should not scroll.
+    RetainPtr<_WKTextInputContext> editableElement = contexts[0];
+    EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:editableElement.get() placeCaretAt:[editableElement boundingRect].origin]);
+    EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_EQ(2000, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementChangesZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView stringByEvaluatingJavaScript:@"input.readOnly = true"];
+    [webView scrollView].zoomScale = 2;
+
+    // Focus the field using -focusTextInputContext; zoom scale of scroll view should change to reveal the focused element.
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_LT([webView scrollView].zoomScale, 2);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusingElementChangesZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    // Zoom scale of scroll view should change to reveal the focused element.
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_LT([webView scrollView].zoomScale, 2);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusingElementMultipleTimesChangesZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    // Zoom scale of scroll view should change to reveal the focused element.
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_LT([webView scrollView].zoomScale, 2);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusDefocusDisableFocusAgainShouldNotChangeZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        // 1. Focus
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+        // 2. Defocus
+        [webView stringByEvaluatingJavaScript:@"input.blur()"];
+        EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+        // 3. Disable
+        [webView stringByEvaluatingJavaScript:@"input.disabled = true"];
+
+        // 4. Focus again; focused element and zoom scale of scroll view should be unchanged.
+        EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    }
+    EXPECT_EQ(2, [webView scrollView].zoomScale);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldChangeZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        // 1. Focus
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+        // 2. Defocus
+        [webView stringByEvaluatingJavaScript:@"input.blur()"];
+        EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+        // 3. Focus again; focused element and zoom scale of scroll view should change.
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    }
+    EXPECT_LT([webView scrollView].zoomScale, 2);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldNotChangeZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.focus()"];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    // Focus the field using -focusTextInputContext; zoom scale of scroll view should be unchanged.
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_EQ(2, [webView scrollView].zoomScale);
+}
+
+TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementChangesZoomScale)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body style='height: 4096px'><input id='input'></body>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyDisallow; }];
+    [webView stringByEvaluatingJavaScript:@"input.focus()"]; // Will not start input assistance
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    // Focus the field using -focusTextInputContext; zoom scale of scroll view should change to reveal the focused element.
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        // Will start input assistance
+        EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_LT([webView scrollView].zoomScale, 2);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

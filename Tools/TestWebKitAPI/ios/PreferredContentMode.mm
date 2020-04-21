@@ -27,10 +27,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "IPadUserInterfaceSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UserInterfaceSwizzler.h"
 #import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <wtf/BlockPtr.h>
@@ -165,22 +165,6 @@
 }
 
 @end
-
-class IPhoneUserInterfaceSwizzler {
-public:
-    IPhoneUserInterfaceSwizzler()
-        : m_swizzler(UIDevice.class, @selector(userInterfaceIdiom), reinterpret_cast<IMP>(phoneUserInterfaceIdiom))
-    {
-    }
-
-private:
-    static UIUserInterfaceIdiom phoneUserInterfaceIdiom(id, SEL)
-    {
-        return UIUserInterfaceIdiomPhone;
-    }
-
-    InstanceMethodSwizzler m_swizzler;
-};
 
 namespace TestWebKitAPI {
 

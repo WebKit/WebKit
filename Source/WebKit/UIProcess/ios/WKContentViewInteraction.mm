@@ -924,6 +924,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _seenHardwareKeyDownInNonEditableElement = NO;
 #endif
 
+    _textInteractionDidChangeFocusedElement = NO;
+
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
         [_interactionViewsContainerView removeFromSuperview];
@@ -4251,6 +4253,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _hideTargetedPreviewContainerViews];
     [_webView _didCommitLoadForMainFrame];
 
+    _textInteractionDidChangeFocusedElement = NO;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
 }
@@ -5100,6 +5103,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_focusTextInputContext:(_WKTextInputContext *)context placeCaretAt:(CGPoint)point completionHandler:(void (^)(UIResponder<UITextInput> *))completionHandler
 {
     ASSERT(context);
+    // This function can be called more than once during a text interaction (e.g. <rdar://problem/59430806>).
     if (![self becomeFirstResponder]) {
         completionHandler(nil);
         return;
@@ -5111,14 +5115,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _usingGestureForSelection = YES;
     auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = [context copy], completionHandler = makeBlockPtr(completionHandler)] (bool success) {
         auto strongSelf = weakSelf.get();
-        if (strongSelf)
-            strongSelf->_usingGestureForSelection = NO;
-        if (!strongSelf || !success) {
+        if (!strongSelf) {
             completionHandler(nil);
             return;
         }
-        bool focusedAndEditable = [strongSelf _isTextInputContextFocused:context] && !strongSelf->_focusedElementInformation.isReadOnly;
-        completionHandler(focusedAndEditable ? strongSelf.autorelease() : nil);
+        bool isFocused = success && [strongSelf _isTextInputContextFocused:context];
+        bool isEditable = success && !strongSelf->_focusedElementInformation.isReadOnly;
+        strongSelf->_textInteractionDidChangeFocusedElement |= isFocused;
+        strongSelf->_usingGestureForSelection = NO;
+        completionHandler(isFocused && isEditable ? strongSelf.get() : nil);
     };
     _page->focusTextInputContextAndPlaceCaret(context._textInputContext, WebCore::IntPoint { point }, WTFMove(checkFocusedElement));
 }
@@ -5143,11 +5148,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     });
 }
 
-#if USE(TEXT_INTERACTION_ADDITIONS)
-
 - (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
+    _textInteractionDidChangeFocusedElement = NO;
     _page->setShouldRevealCurrentSelectionAfterInsertion(false);
     _page->setCanShowPlaceholder(context._textInputContext, false);
     [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
@@ -5158,16 +5162,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     ASSERT(context);
     [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
     _page->setCanShowPlaceholder(context._textInputContext, true);
-    // Mark to zoom to reveal the newly focused element on the next editor state update.
-    // Then tell the web process to reveal the current selection, which will send us (the
-    // UI process) an editor state update.
-    // FIXME: Only do this if focus changed since -willBeginTextInteractionInTextInputContext was called.
-    // See <rdar://problem/60997530> for more details.
-    _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
+    if (_textInteractionDidChangeFocusedElement) {
+        // Mark to zoom to reveal the newly focused element on the next editor state update.
+        // Then tell the web process to reveal the current selection, which will send us (the
+        // UI process) an editor state update.
+        _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
+        _textInteractionDidChangeFocusedElement = NO;
+    }
     _page->setShouldRevealCurrentSelectionAfterInsertion(true);
 }
-
-#endif
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
 

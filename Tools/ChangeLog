@@ -1,3 +1,55 @@
+2020-04-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed
+        https://bugs.webkit.org/show_bug.cgi?id=210697
+        <rdar://problem/60997530>
+
+        Reviewed by Wenson Hsieh.
+
+        I use the term "assisted" below and in the tests to describe an element that is both DOM
+        focused and the UI process is showing an input view (like the software keyboard) for it.
+        For many of the tests I check for a zoom scale change as a way to detect if the page
+        zoomed to reveal the focused element.
+
+        Add some tests for the following cases:
+            1. Place the caret in a focused field that isn't being assisted.
+            2. Focusing an assisted element should not scroll the page.
+            3. Focusing an offscreen read-only element should not change zoom scale.
+            4. Focusing an offscreen element should change the zoom scale.
+            5. Calling -_focusTextInputContext on an offscreen element multiple times
+            during a text interaction should change the zoom scale. The purpose of this test is
+            to ensure that later calls that do not focus the element (because it is already focused)
+            don't prevent zooming for the first call that did focus the element.
+            6. Focusing an offscreen element, defocusing it, disabling it, and focusing it
+            again during a text interaction should not change zoom scale.
+            7. Focusing an offscreen element, defocusing it, and focusing it again during a
+            text interaction should change zoom scale.
+            8. Focusing an assisted element during a text interaction should not change zoom scale.
+            9. Focusing a non-assisted focused element during a text interaction should change zoom scale.
+
+        While I am here, I consolidated the RAII helper classes IPhoneUserInterfaceSwizzler and
+        IPadUserInterfaceSwizzler into a single UserInterfaceSwizzler templated class and defined
+        the former two as template instances.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TextInteractionForScope::TextInteractionForScope):
+        (TextInteractionForScope::~TextInteractionForScope):
+        Added convenience RAII object to call -_willBeginTextInteractionInTextInputContext
+        and -_didFinishTextInteractionInTextInputContext.
+        (TEST): Added.
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        * TestWebKitAPI/ios/IPadUserInterfaceSwizzler.h: Removed.
+        * TestWebKitAPI/ios/PreferredContentMode.mm:
+        (IPhoneUserInterfaceSwizzler::IPhoneUserInterfaceSwizzler): Deleted; movedinto UserInterfaceSwizzler.h.
+        (IPhoneUserInterfaceSwizzler::phoneUserInterfaceIdiom): Deleted; no longer needed.
+        * TestWebKitAPI/ios/UserInterfaceSwizzler.h: Renamed from Tools/TestWebKitAPI/ios/IPadUserInterfaceSwizzler.h.
+        (TestWebKitAPI::UserInterfaceSwizzler::UserInterfaceSwizzler): Formerly named IPadUserInterfaceSwizzler;
+        repurposed into general purpose template class, consolidating code from PreferredContentMode.mm.
+        Privately inherits from InstanceMethodSwizzler instead of using composition as that simplifies
+        the source code a tiny bit.
+        (TestWebKitAPI::UserInterfaceSwizzler::effectiveUserInterfaceIdiom): Renamed; formerly padUserInterfaceIdiom.
+
 2020-04-21  Timothy Hatcher  <timothy@apple.com>
 
         Reset m_userScriptsNotified when web process crashes.

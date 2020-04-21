@@ -68,6 +68,16 @@
     [_contentView _focusTextInputContext:context placeCaretAt:adjustedPoint completionHandler:completionHandler];
 }
 
+- (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
+{
+    [_contentView _willBeginTextInteractionInTextInputContext:context];
+}
+
+- (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
+{
+    [_contentView _didFinishTextInteractionInTextInputContext:context];
+}
+
 - (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
 {
     [_contentView requestDocumentContext:request completionHandler:completionHandler];

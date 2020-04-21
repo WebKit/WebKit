@@ -1,3 +1,22 @@
+2020-04-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed
+        https://bugs.webkit.org/show_bug.cgi?id=210697
+        <rdar://problem/60997530>
+
+        Reviewed by Wenson Hsieh.
+
+        For now, add a comment about the return value of setFocusedElement: it returns
+        whether focus was blocked. If focused wasn't blocked then it will return true
+        even if the element wasn't actually focused. For example, it will return true
+        for non-focusable elements: <input disabled>.
+
+        I was tempted to fix setFocusedElement() to return true when it actually focused
+        the element or if the element was already focused, but I decided to defer this
+        until I audit the callers and run some tests.
+
+        * dom/Document.h:
+
 2020-04-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for remoteParentObject and platformWidget not being stored properly in the AXIsolatedObject attributes variant.
