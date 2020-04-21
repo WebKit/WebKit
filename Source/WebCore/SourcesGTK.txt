@@ -110,7 +110,6 @@ platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
 platform/gtk/PasteboardHelper.cpp
 platform/gtk/PlatformKeyboardEventGtk.cpp
-platform/gtk/PlatformMouseEventGtk.cpp
 platform/gtk/PlatformPasteboardGtk.cpp
 platform/gtk/PlatformScreenGtk.cpp
 platform/gtk/PlatformWheelEventGtk.cpp

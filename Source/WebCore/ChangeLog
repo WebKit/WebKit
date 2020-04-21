@@ -1,3 +1,16 @@
+2020-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove PlatformMouseEventGtk
+        https://bugs.webkit.org/show_bug.cgi?id=210743
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's unused, we no longer create PlatformMouseEvent from a GdkEvent since WebKit2.
+
+        * SourcesGTK.txt:
+        * platform/PlatformMouseEvent.h:
+        * platform/gtk/PlatformMouseEventGtk.cpp: Removed.
+
 2020-04-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Fix platform GDK includes
