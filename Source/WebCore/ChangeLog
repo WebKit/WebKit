@@ -1,3 +1,19 @@
+2020-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow scroll] Overflow that's hidden on one axis is scrollable on that axis
+        https://bugs.webkit.org/show_bug.cgi?id=210771
+        <rdar://problem/62080331>
+
+        Reviewed by Tim Horton.
+
+        eventCanScrollContents() should check the presence of enabled scrollbars, like 
+        ScrollAnimator::handleWheelEvent() does.
+
+        Test: fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::eventCanScrollContents const):
+
 2020-04-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] -_didFinishTextInteractionInTextInputContext should only zoom to reveal focused element if it changed
