@@ -45,9 +45,11 @@ void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::Media
     m_videoContentScale = videoContentScale;
     if (!m_inlineLayerHostingContext)
         m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     if (!m_fullscreenLayerHostingContext)
         m_fullscreenLayerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     completionHandler(m_inlineLayerHostingContext->contextID(), m_fullscreenLayerHostingContext->contextID());
+#endif
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
@@ -72,6 +74,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& si
     [CATransaction commit];
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void RemoteMediaPlayerProxy::enterFullscreen(CompletionHandler<void()>&& completionHandler)
 {
     auto videoFullscreenLayer = m_player->createVideoFullscreenLayer();
@@ -93,6 +96,7 @@ void RemoteMediaPlayerProxy::setVideoFullscreenFrameFenced(const WebCore::FloatR
     m_fullscreenLayerHostingContext->setFencePort(machSendRight.sendRight());
     m_player->setVideoFullscreenFrame(rect);
 }
+#endif
 
 } // namespace WebKit
 

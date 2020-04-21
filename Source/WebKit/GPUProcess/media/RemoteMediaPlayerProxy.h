@@ -82,12 +82,13 @@ public:
     MediaPlayerPrivateRemoteIdentifier idendifier() const { return m_id; }
     void invalidate();
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void updateVideoFullscreenInlineImage();
     void setVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode);
+    void videoFullscreenStandbyChanged();
+#endif
 
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy);
-
-    void videoFullscreenStandbyChanged();
 
 #if PLATFORM(IOS_FAMILY)
     void accessLog(CompletionHandler<void(String)>&&);
@@ -122,9 +123,11 @@ public:
 
     void setVisible(bool);
     void setShouldMaintainAspectRatio(bool);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void enterFullscreen(CompletionHandler<void()>&&);
     void exitFullscreen(CompletionHandler<void()>&&);
     void setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity);
+#endif
     void acceleratedRenderingStateChanged(bool);
     void setShouldDisableSleep(bool);
     void setRate(double);
@@ -135,7 +138,9 @@ public:
 
 #if PLATFORM(COCOA)
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void setVideoFullscreenFrameFenced(const WebCore::FloatRect&, const WTF::MachSendRight&);
+#endif
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -252,8 +257,10 @@ private:
     String mediaPlayerSourceApplicationIdentifier() const final;
 
     double mediaPlayerRequestedPlaybackRate() const final;
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     WebCore::MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const final;
     bool mediaPlayerIsVideoFullscreenStandby() const final;
+#endif
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const final;
 
     bool mediaPlayerShouldDisableSleep() const final;
@@ -279,7 +286,9 @@ private:
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
     std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;
+#endif
     RemoteMediaPlayerManagerProxy& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;

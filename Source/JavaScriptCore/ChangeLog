@@ -1,3 +1,12 @@
+2020-04-20  Peng Liu  <peng.liu6@apple.com>
+
+        Fix build failures when video fullscreen and picture-in-picture is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=210777
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl classes shouldn't need an m_initialized* field

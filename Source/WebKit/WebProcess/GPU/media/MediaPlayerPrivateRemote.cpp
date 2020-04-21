@@ -129,8 +129,9 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
             return;
 
         m_videoInlineLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value());
-
+#if ENABLE(VIDEO_PRESENTATION_MODE)
         m_fullscreenLayerHostingContextId = fullscreenLayerHostingContextId;
+#endif
     }, m_id);
 }
 

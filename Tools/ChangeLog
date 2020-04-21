@@ -1,3 +1,12 @@
+2020-04-20  Peng Liu  <peng.liu6@apple.com>
+
+        Fix build failures when video fullscreen and picture-in-picture is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=210777
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2020-04-20  Alex Christensen  <achristensen@webkit.org>
 
         SPI clients using fastServerTrustEvaluationEnabled need SPI to inform them of modern TLS negotiation

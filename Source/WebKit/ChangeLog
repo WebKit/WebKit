@@ -1,3 +1,26 @@
+2020-04-20  Peng Liu  <peng.liu6@apple.com>
+
+        Fix build failures when video fullscreen and picture-in-picture is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=210777
+
+        Reviewed by Eric Carlson.
+
+        Wrap video fullscreen and picture-in-picture related code with "#if ENABLE(VIDEO_PRESENTATION_MODE)".
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenGravity):
+        (WebKit::RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage):
+        (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+        (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+        (WebKit::RemoteMediaPlayerProxy::setBufferingPolicy):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+
 2020-04-20  Alex Christensen  <achristensen@webkit.org>
 
         SPI clients using fastServerTrustEvaluationEnabled need SPI to inform them of modern TLS negotiation

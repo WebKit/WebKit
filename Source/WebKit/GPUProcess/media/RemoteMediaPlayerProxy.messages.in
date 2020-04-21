@@ -47,14 +47,18 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     PrepareForRendering()
     SetVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
+#endif
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
     SetRate(double rate)
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     UpdateVideoFullscreenInlineImage()
     SetVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode mode)
     VideoFullscreenStandbyChanged()
+#endif
 
     SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
 
@@ -64,11 +68,15 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
 #if PLATFORM(COCOA)
     SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     SetVideoFullscreenFrameFenced(WebCore::FloatRect rect, MachSendRight machSendRight)
 #endif
+#endif
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     EnterFullscreen() -> () Async
     ExitFullscreen() -> () Async
+#endif
 
     # Paint
     # PaintCurrentFrameInContext
