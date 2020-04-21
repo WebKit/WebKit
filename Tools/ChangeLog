@@ -1,3 +1,13 @@
+2020-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct the path to libclang_rt.asan_iossim_dynamic.dylib in LC_RPATH
+        https://bugs.webkit.org/show_bug.cgi?id=210770
+        rdar://problem/61904541
+
+        Reviewed by Alex Christensen.
+
+        * asan/asan.xcconfig:
+
 2020-04-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK] Keep env variable 'RESULTS_SERVER_API_KEY'

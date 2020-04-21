@@ -13,4 +13,4 @@ WK_ASAN_OTHER_CFLAGS_YES = -fno-omit-frame-pointer -g;
 
 // Workaround for rdar://problem/49498092
 OTHER_LDFLAGS = $(inherited) $(WK_LDFLAGS_ASAN_$(ENABLE_ADDRESS_SANITIZER));
-WK_LDFLAGS_ASAN_YES = -Wl,-rpath,@executable_path/../Frameworks;
+WK_LDFLAGS_ASAN_YES = -Wl,-rpath,@executable_path/Frameworks;
