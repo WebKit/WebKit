@@ -104,8 +104,6 @@ bool WebPasteboardProxy::canAccessPasteboardData(IPC::Connection& connection, co
 
 void WebPasteboardProxy::didModifyContentsOfPasteboard(IPC::Connection& connection, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount)
 {
-    MESSAGE_CHECK(!pasteboardName.isEmpty());
-
     auto* process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK(process);
 
@@ -127,7 +125,7 @@ void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Comple
 void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType,
     CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&& sandboxExtensions)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, { }));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, { }));
 
     // FIXME: This should consult canAccessPasteboardData() as well, and avoid responding with file paths if it returns false.
     Vector<String> pathnames;
@@ -151,7 +149,7 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 
 void WebPasteboardProxy::getPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
@@ -161,7 +159,7 @@ void WebPasteboardProxy::getPasteboardStringForType(IPC::Connection& connection,
 
 void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
@@ -171,7 +169,7 @@ void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection
 
 void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, 0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, 0));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
@@ -214,6 +212,11 @@ void WebPasteboardProxy::getPasteboardURL(IPC::Connection& connection, const Str
 
 void WebPasteboardProxy::addPasteboardTypes(IPC::Connection& connection, const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+
+    for (auto& type : pasteboardTypes)
+        MESSAGE_CHECK_COMPLETION(!type.isEmpty(), completionHandler(0));
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, previousChangeCount);
@@ -222,6 +225,11 @@ void WebPasteboardProxy::addPasteboardTypes(IPC::Connection& connection, const S
 
 void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+
+    for (auto& type : pasteboardTypes)
+        MESSAGE_CHECK_COMPLETION(!type.isEmpty(), completionHandler(0));
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
@@ -230,6 +238,8 @@ void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const S
 
 void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+
     if (auto* webProcessProxy = webProcessProxyForConnection(connection)) {
         if (!webProcessProxy->checkURLReceivedFromWebProcess(pasteboardURL.url.string()))
             return completionHandler(0);
@@ -244,6 +254,8 @@ void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const Pas
 
 void WebPasteboardProxy::setPasteboardColor(IPC::Connection& connection, const String& pasteboardName, const WebCore::Color& color, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).setColor(color);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
@@ -252,7 +264,8 @@ void WebPasteboardProxy::setPasteboardColor(IPC::Connection& connection, const S
 
 void WebPasteboardProxy::setPasteboardStringForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const String& string, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler(0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler(0));
 
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
@@ -277,7 +290,8 @@ void WebPasteboardProxy::urlStringSuitableForLoading(IPC::Connection& connection
 
 void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler(0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler(0));
 
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     if (handle.isNull()) {
@@ -312,6 +326,8 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection& connecti
 
 void WebPasteboardProxy::writeCustomData(IPC::Connection& connection, const Vector<PasteboardCustomData>& data, const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     auto newChangeCount = PlatformPasteboard(pasteboardName).write(data);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
@@ -335,7 +351,7 @@ void WebPasteboardProxy::getPasteboardItemsCount(const String& pasteboardName, C
 
 void WebPasteboardProxy::readStringFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ });
@@ -355,7 +371,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
 
 void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isNull(), completionHandler({ }, 0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, 0));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
         return completionHandler({ }, 0);
@@ -384,6 +400,8 @@ void WebPasteboardProxy::containsStringSafeForDOMToReadForType(const String& typ
 
 void WebPasteboardProxy::writeURLToPasteboard(IPC::Connection& connection, const PasteboardURL& url, const String& pasteboardName)
 {
+    MESSAGE_CHECK(!pasteboardName.isEmpty());
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(url);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
@@ -391,6 +409,8 @@ void WebPasteboardProxy::writeURLToPasteboard(IPC::Connection& connection, const
 
 void WebPasteboardProxy::writeWebContentToPasteboard(IPC::Connection& connection, const WebCore::PasteboardWebContent& content, const String& pasteboardName)
 {
+    MESSAGE_CHECK(!pasteboardName.isEmpty());
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(content);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
@@ -398,6 +418,8 @@ void WebPasteboardProxy::writeWebContentToPasteboard(IPC::Connection& connection
 
 void WebPasteboardProxy::writeImageToPasteboard(IPC::Connection& connection, const WebCore::PasteboardImage& pasteboardImage, const String& pasteboardName)
 {
+    MESSAGE_CHECK(!pasteboardName.isEmpty());
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(pasteboardImage);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());
@@ -405,6 +427,9 @@ void WebPasteboardProxy::writeImageToPasteboard(IPC::Connection& connection, con
 
 void WebPasteboardProxy::writeStringToPasteboard(IPC::Connection& connection, const String& pasteboardType, const String& text, const String& pasteboardName)
 {
+    MESSAGE_CHECK(!pasteboardName.isEmpty());
+    MESSAGE_CHECK(!pasteboardType.isEmpty() || text.isEmpty());
+
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
     PlatformPasteboard(pasteboardName).write(pasteboardType, text);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, PlatformPasteboard(pasteboardName).changeCount());

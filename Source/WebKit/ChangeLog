@@ -1,3 +1,45 @@
+2020-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Tighten up some more IPC message checks in WebPasteboardProxy
+        https://bugs.webkit.org/show_bug.cgi?id=210780
+        <rdar://problem/62088479>
+
+        Reviewed by Alex Christensen.
+
+        Adjust some existing IPC message checks in WebPasteboardProxy, and also introduces some new ones. See below for
+        more details.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::didModifyContentsOfPasteboard):
+
+        Move the `pasteboardName` check here out of `didModifyContentsOfPasteboard`, and into each call site, such that
+        we bail and kill the web process before invoking `didModifyContentsOfPasteboard` in the case where the name is
+        empty.
+
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringForType):
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::addPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardTypes):
+        (WebKit::WebPasteboardProxy::setPasteboardURL):
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        (WebKit::WebPasteboardProxy::setPasteboardStringForType):
+
+        Add message checks for empty pasteboard types.
+
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        (WebKit::WebPasteboardProxy::readStringFromPasteboard):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+
+        Add a message check for empty pasteboard types, but only when the string is also empty; this is because iOS
+        clears pasteboard data by writing an empty pasteboard string and type.
+
 2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][CMake] Make gtk-unix-print a component of FindGTK.cmake
