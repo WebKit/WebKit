@@ -52,7 +52,7 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch hash="sha256:02211c3447c4daa55919c5c0f43a82a6fbb51740d57fc3af0639d46f1cf4377d" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.16.1">
+    <branch hash="sha256:e3f044246783fd685439647373fa13ba14f7ab0b346eadd06437092f8419e94e" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.16.2">
     </branch>
   </meson>
 
@@ -63,9 +63,8 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch hash="sha256:5c3cc489933d0597087c9bc6ba251c93693d64554bcc563539a084fa2d5fcb2b" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.16.1">
-      <patch file="base-0001-playbin-Handle-error-message-with-redirection-indica.patch" strip="1"/>
-      <patch file="base-0001-glupload-Add-VideoMetas-and-GLSyncMeta-to-the-raw-up.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
+    <branch hash="sha256:b13e73e2fe74a4166552f9577c3dcb24bed077021b9c7fa600d910ec6987816a" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.16.2">
+      <patch file="base-0001-playbin-Handle-error-message-with-redirection-indica.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.3 -->
     </branch>
   </meson>
 
@@ -74,8 +73,8 @@
       <dep package="gst-plugins-base"/>
     </dependencies>
 
-    <branch hash="sha256:9fbabe69018fcec707df0b71150168776040cde6c1a26bb5a82a136755fa8f1f" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.1">
-      <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.2 -->
+    <branch hash="sha256:40bb3bafda25c0b739c8fc36e48380fccf61c4d3f83747e97ac3f9b0171b1319" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.16.2">
+      <patch file="good-0001-qtdemux-Specify-REDIRECT-information-in-error-messag.patch" strip="1"/> <!-- Merged upstream, should be shipped in 1.16.3 -->
     </branch>
   </meson>
 
@@ -87,7 +86,7 @@
       <dep package="aom"/>
       <dep package="libsrtp"/>
     </dependencies>
-    <branch hash="sha256:56481c95339b8985af13bac19b18bc8da7118c2a7d9440ed70e7dcd799c2adb5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.1">
+    <branch hash="sha256:f1cb7aa2389569a5343661aae473f0a940a90b872001824bc47fa8072a041e74" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.16.2">
       <patch file="gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch" strip="1"/> <!-- Merged, discussing backporting https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/386-->
     </branch>
   </meson>
@@ -101,13 +100,13 @@
       <dep package="gst-plugins-base"/>
       <dep package="ffmpeg"/>
     </dependencies>
-    <branch hash="sha256:e8a5748ae9a4a7be9696512182ea9ffa6efe0be9b7976916548e9d4381ca61c4" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.1">
+    <branch hash="sha256:c724f612700c15a933c7356fbeabb0bb9571fb5538f8b1b54d4d2d94188deef2" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.16.2">
       <patch file="libav-0001-gstavviddec-Limit-default-number-of-decoder-threads.patch" strip="1"/> <!-- Merged, should be shipped in 1.16.3 https://gitlab.freedesktop.org/gstreamer/gst-libav/merge_requests/56 -->
     </branch>
   </meson>
 
   <meson id="gstreamer-vaapi" mesonargs="-Dgtk_doc=disabled -Dexamples=disabled">
-    <branch hash="sha256:cb570f6f1e78cb364fbe3c4fb8751824ee9db0c942ba61b62380b9b5abb7603a" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.16.1" />
+    <branch hash="sha256:191de7b0ab64a85dd0875c990721e7be95518f60e2a9106beca162004ed7c601" module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" repo="gstreamer" version="1.16.2" />
     <dependencies>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
