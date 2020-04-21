@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UpdateInfo.h"
 
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -68,3 +70,5 @@ bool UpdateInfo::decode(IPC::Decoder& decoder, UpdateInfo& result)
 }
 
 } // namespace WebKit
+
+#endif

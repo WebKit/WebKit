@@ -47,9 +47,12 @@ class MachSendRight;
 namespace WebKit {
 
 class LayerTreeContext;
-class UpdateInfo;
 class WebPageProxy;
 class WebProcessProxy;
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+class UpdateInfo;
+#endif
 
 class DrawingAreaProxy : public IPC::MessageReceiver, protected IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
