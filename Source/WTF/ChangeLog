@@ -1,3 +1,14 @@
+2020-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add document about WTF malloc-related macros
+        https://bugs.webkit.org/show_bug.cgi?id=208367
+
+        Reviewed by Anders Carlsson, Simon Fraser, and Darin Adler.
+
+        This adds document about WTF malloc-related macros since we have bunch of macros now.
+
+        * wtf/FastMalloc.h:
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         REGRESSION (r253987): StringImpl::adopt(Vector&&) copies only half of the characters in the Vector when copying across malloc zones

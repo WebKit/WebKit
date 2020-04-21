@@ -27,6 +27,49 @@
 
 namespace WTF {
 
+// There are several malloc-related macros to annotate class / struct. If these annotations are attached,
+// allocation is handled by bmalloc if bmalloc is available.
+//
+// TLDR; Here is a quick guidance.
+//
+//   1. If your class / struct is derived from a base class which uses WTF_MAKE_ISO_ALLOCATED / WTF_MAKE_ISO_ALLOCATED_EXPORT,
+//      you must use WTF_MAKE_ISO_ALLOCATED / WTF_MAKE_ISO_ALLOCATED_EXPORT.
+//   2. If your class / struct is a DOM object, use WTF_MAKE_ISO_ALLOCATED.
+//   3. If your class / struct is particularly memory consuming and if you think tracking footprint of your class is helpful for memory-reduction work,
+//      use WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER / WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER.
+//   4. Otherwise, use WTF_MAKE_FAST_ALLOCATED / WTF_MAKE_STRUCT_FAST_ALLOCATED.
+//
+// Let's explain the differences in detail.
+//
+// - WTF_MAKE_FAST_ALLOCATED
+// - WTF_MAKE_STRUCT_FAST_ALLOCATED
+//     class / struct is allocated with FastMalloc (bmalloc if it is available). We encourage using FastMalloc for all the class / struct allocations if possible
+//     to avoid using system malloc. If a class is not having WTF_MAKE_FAST_ALLOCATED, the class will be allocated with system malloc, which is less efficient
+//     compared to FastMalloc in terms of performance and memory footprint. We would like to minimize the use of system malloc.
+//     These annotations should be the default choice for allocations.
+//     WTF_MAKE_FAST_ALLOCATED is for classes and WTF_MAKE_STRUCT_FAST_ALLOCATED is for structs. The difference between them is how we
+//     use `public:` / `private:` access specifiers in the expanded macro.
+//
+// - WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName)
+// - WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName)
+//     Normally, these are identical to WTF_MAKE_FAST_ALLOCATED.
+//     When the MallocHeapBreakdown debugging feature is enabled, these macros act differently. bmalloc is switched
+//     to using system malloc internally, and bmalloc creates a named MallocZone per this annotation. MallocZone allows us to track heap usage
+//     per this annotation, offering quick way of breaking down memory usage.
+//     To enable MallocHeapBreakdown, set ENABLE_MALLOC_HEAP_BREAKDOWN in WTF and BENABLE_MALLOC_HEAP_BREAKDOWN in bmalloc.
+//     For the details of MallocHeapBreakdown, please look at ChangeLog of https://trac.webkit.org/changeset/253987/webkit.
+//
+// - WTF_MAKE_ISO_ALLOCATED(ClassName)
+// - WTF_MAKE_ISO_ALLOCATED_EXPORT(ClassName, exportMacro)
+//     class / struct is allocated from bmalloc IsoHeap. IsoHeap assigns virtual address only for particular type,
+//     so that this avoids use-after-free based type punning. We are adopting IsoHeap mainly for class / struct which is exposed to user JavaScript (e.g. DOM objects).
+//     For example , all the derived classes of ScriptWrappable must be allocated in IsoHeap.
+//     Unlike the other macros, you need to annotate each derived class with WTF_MAKE_ISO_ALLOCATED if your base class is annotated with WTF_MAKE_ISO_ALLOCATED.
+//     When you annotate the class with WTF_MAKE_ISO_ALLOCATED(XXX), you need to add WTF_MAKE_ISO_ALLOCATED_IMPL(XXX) in cpp file side.
+//     Because WTF_MAKE_ISO_ALLOCATED_IMPL defines functions in cpp side, you sometimes need to annotate these functions with export macros when your class is
+//     used outside of the component defining your class (e.g. your class is in WebCore and it is also used in WebKit). In this case, you can use WTF_MAKE_ISO_ALLOCATED_EXPORT
+//     to annotate these functions with appropriate export macros: e.g. WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBTransaction, WEBCORE_EXPORT).
+
 #if !defined(NDEBUG)
 WTF_EXPORT_PRIVATE void fastSetMaxSingleAllocationSize(size_t);
 #endif
