@@ -1,3 +1,26 @@
+2020-04-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        Import latest changes from web-platform-test/webxr/resources to enable testing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210788
+
+        Reviewed by Žan Doberšek.
+
+        We landed in wpt new code in webxr_utils.js to map internal.xrTest to
+        navigator.xr.test to be able to run WebXR WPT in WebKit. Import those changes
+        from upstream in order to be able to run the tests.
+
+        Apart from that we take the chance to import the latest fixes to the
+        files in resources/ directory.
+
+        * web-platform-tests/webxr/resources/webxr_test_constants.js: Updated.
+        * web-platform-tests/webxr/resources/webxr_test_constants_fake_world.js:
+        (createFakeWorld): Ditto.
+        * web-platform-tests/webxr/resources/webxr_util.js: Map internals.xrTest 
+        to navigator.xr.test for WebKit browsers.
+        (xr_debug): Updated.
+        (async xr_session_promise_test): Ditto.
+        (xr_promise_test): Deleted.
+
 2020-04-15  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Update WebXRSession and WebXRSystem interfaces

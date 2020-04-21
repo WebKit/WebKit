@@ -7,13 +7,24 @@
 //
 //   --enable-blink-features=MojoJS,MojoJSTest
 
+// Debugging message helper, by default does nothing. Implementations can
+// override this.
+var xr_debug = function(name, msg) {}
+
 function xr_promise_test(name, func, properties) {
   promise_test(async (t) => {
     // Perform any required test setup:
+    xr_debug(name, 'setup');
 
     if (window.XRTest === undefined) {
       // Chrome setup
       await loadChromiumResources;
+      xr_debug = navigator.xr.test.Debug;
+    }
+
+    if (self.internals && internals.xrTest && navigator.xr) {
+      // WebKit setup
+      await setupWebKitWebXRTestAPI;
     }
 
     // Ensure that any devices are disconnected when done. If this were done in
@@ -22,9 +33,11 @@ function xr_promise_test(name, func, properties) {
     // interfere with the next test.
     t.add_cleanup(async () => {
       // Ensure system state is cleaned up.
+      xr_debug(name, 'cleanup');
       await navigator.xr.test.disconnectAllDevices();
     });
 
+    xr_debug(name, 'main');
     return func(t);
   }, name, properties);
 }
@@ -74,9 +87,12 @@ function xr_session_promise_test(
               })
               .then(() => new Promise((resolve, reject) => {
                       // Perform the session request in a user gesture.
+                      xr_debug(name, 'simulateUserActivation');
                       navigator.xr.test.simulateUserActivation(() => {
+                        xr_debug(name, 'document.hasFocus()=' + document.hasFocus());
                         navigator.xr.requestSession(sessionMode, sessionInit || {})
                             .then((session) => {
+                              xr_debug(name, 'session start');
                               testSession = session;
                               session.mode = sessionMode;
                               let glLayer = new XRWebGLLayer(session, gl, gllayerProperties);
@@ -87,9 +103,11 @@ function xr_session_promise_test(
                                   baseLayer: glLayer
                               });
                               sessionObjects.glLayer = glLayer;
+                              xr_debug(name, 'session.visibilityState=' + session.visibilityState);
                               resolve(func(session, testDeviceController, t, sessionObjects));
                             })
                             .catch((err) => {
+                              xr_debug(name, 'error: ' + err);
                               reject(
                                   'Session with params ' +
                                   JSON.stringify(sessionMode) +
@@ -185,4 +203,17 @@ let loadChromiumResources = Promise.resolve().then(() => {
   });
 
   return chain;
+});
+
+let setupWebKitWebXRTestAPI = Promise.resolve().then(() => {
+  if (!self.internals) {
+    // Do nothing on non-WebKit-based browsers.
+    return;
+  }
+
+  // WebKit setup. The internals object is used by the WebKit test runner
+  // to provide JS access to internal APIs. In this case it's used to
+  // ensure that XRTest is only exposed to wpt tests.
+  navigator.xr.test = internals.xrTest;
+  return Promise.resolve();
 });
