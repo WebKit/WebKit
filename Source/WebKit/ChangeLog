@@ -1,3 +1,9 @@
+2020-04-21  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * Configurations/WebKit.xcconfig:
+
 2020-04-21  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] ShareableResource::create() should validate its parameters
