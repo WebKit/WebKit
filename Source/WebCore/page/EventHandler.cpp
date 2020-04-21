@@ -1545,7 +1545,7 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
         if (renderer) {
             if (RenderLayer* layer = renderer->enclosingLayer()) {
                 if (FrameView* view = m_frame.view())
-                    inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint())));
+                    inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint()))); // This coordinate conversion is wrong: webkit.org/b/210778.
             }
         }
 

@@ -1,3 +1,55 @@
+2020-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Horizontal overflow overlay scrollbar is misplaced in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=210673
+        <rdar://problem/61950751>
+
+        Reviewed by Antti Koivisto.
+        
+        Code for positioning RenderLayer overflow controls (scrollbars and scroll corner)
+        was scattered across lots of different functions, making it hard to follow,
+        and prone to bugs.
+
+        Fix by making one source of truth, overflowControlsRects(), which computes
+        rects for the two scrollbars, the "scroll corner" (the square in the corner which
+        shows, only for non-overlay scrollbars, when both scrollbars or the resize control
+        is visible), and the resize control which shows when style specifies the "resize" property.
+        
+        Call this function in all the places that need to know about overflow control
+        geometry. RenderLayer::hitTestResizerInFragments() is a little tricky because it wants
+        the resize control relative to the fragment rect; achieve this by computing the position
+        of the resizer rect relative to the border box, then shifting it into position relative
+        to the fragment bounds (which include border).
+
+        Test: compositing/overflow/rtl-scrollbar-layer-positioning.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollCornerRect const):
+        (WebCore::RenderLayer::overflowControlsRects const):
+        (WebCore::RenderLayer::scrollbarOffset const):
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::overflowControlsIntersectRect const):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::isPointInResizeControl const):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::hitTestResizerInFragments const):
+        (WebCore::cornerStart): Deleted.
+        (WebCore::cornerRect): Deleted.
+        (WebCore::resizerCornerRect): Deleted.
+        (WebCore::RenderLayer::scrollCornerAndResizerRect const): Deleted.
+        (WebCore::RenderLayer::rectForHorizontalScrollbar const): Deleted.
+        (WebCore::RenderLayer::rectForVerticalScrollbar const): Deleted.
+        (WebCore::RenderLayer::verticalScrollbarStart const): Deleted.
+        (WebCore::RenderLayer::horizontalScrollbarStart const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::requiresScrollCornerLayer const):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::paintContents):
+
 2020-04-21  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, reverting r260432.

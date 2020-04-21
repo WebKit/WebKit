@@ -1142,9 +1142,6 @@ private:
     void unregisterAsTouchEventListenerForScrolling();
 #endif
 
-    // Rectangle encompassing the scroll corner and resizer rect.
-    LayoutRect scrollCornerAndResizerRect() const;
-
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);
     void updateCompositingLayersAfterScroll();
@@ -1210,11 +1207,17 @@ private:
     LayoutUnit overflowLeft() const;
     LayoutUnit overflowRight() const;
 
-    IntRect rectForHorizontalScrollbar(const IntRect& borderBoxRect) const;
-    IntRect rectForVerticalScrollbar(const IntRect& borderBoxRect) const;
-
-    LayoutUnit verticalScrollbarStart(int minX, int maxX) const;
-    LayoutUnit horizontalScrollbarStart(int minX) const;
+    struct OverflowControlRects {
+        IntRect horizontalScrollbar;
+        IntRect verticalScrollbar;
+        IntRect scrollCorner;
+        IntRect resizer;
+        IntRect scrollCornerOrResizerRect() const
+        {
+            return !scrollCorner.isEmpty() ? scrollCorner : resizer;
+        }
+    };
+    OverflowControlRects overflowControlsRects() const;
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
 

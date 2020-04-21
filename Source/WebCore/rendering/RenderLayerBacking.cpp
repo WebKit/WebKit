@@ -1829,7 +1829,11 @@ bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
 {
-    if (m_owningLayer.scrollCornerAndResizerRect().isEmpty())
+    if (!is<RenderBox>(m_owningLayer.renderer()))
+        return false;
+
+    auto cornerRect = m_owningLayer.overflowControlsRects().scrollCornerOrResizerRect();
+    if (cornerRect.isEmpty())
         return false;
 
     auto verticalScrollbar = m_owningLayer.verticalScrollbar();
@@ -1901,21 +1905,24 @@ void RenderLayerBacking::positionOverflowControlsLayers()
         }
     };
 
+    // These rects are relative to the borderBoxRect.
+    auto rects = m_owningLayer.overflowControlsRects();
+
     if (auto* layer = layerForHorizontalScrollbar()) {
-        positionScrollbarLayer(*layer, m_owningLayer.rectForHorizontalScrollbar(borderBox), paddingBoxInset);
+        positionScrollbarLayer(*layer, rects.horizontalScrollbar, paddingBoxInset);
         layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (auto* layer = layerForVerticalScrollbar()) {
-        positionScrollbarLayer(*layer, m_owningLayer.rectForVerticalScrollbar(borderBox), paddingBoxInset);
+        positionScrollbarLayer(*layer, rects.verticalScrollbar, paddingBoxInset);
         layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (auto* layer = layerForScrollCorner()) {
-        const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
-        layer->setPosition(scrollCornerAndResizer.location() - paddingBoxInset);
-        layer->setSize(scrollCornerAndResizer.size());
-        layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
+        auto cornerRect = rects.scrollCornerOrResizerRect();
+        layer->setPosition(cornerRect.location() - paddingBoxInset);
+        layer->setSize(cornerRect.size());
+        layer->setDrawsContent(!cornerRect.isEmpty());
     }
 }
 
@@ -3184,11 +3191,11 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
         paintScrollbar(m_owningLayer.verticalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForScrollCorner()) {
-        const LayoutRect& scrollCornerAndResizer = m_owningLayer.scrollCornerAndResizerRect();
+        auto cornerRect = m_owningLayer.overflowControlsRects().scrollCornerOrResizerRect();
         GraphicsContextStateSaver stateSaver(context);
-        context.translate(-scrollCornerAndResizer.location());
+        context.translate(-cornerRect.location());
         LayoutRect transformedClip = LayoutRect(clip);
-        transformedClip.moveBy(scrollCornerAndResizer.location());
+        transformedClip.moveBy(cornerRect.location());
         m_owningLayer.paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
         m_owningLayer.paintResizer(context, IntPoint(), transformedClip);
     }
