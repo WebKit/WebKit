@@ -1,3 +1,22 @@
+2020-04-21  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for remoteParentObject and platformWidget not being stored properly in the AXIsolatedObject attributes variant.
+        https://bugs.webkit.org/show_bug.cgi?id=210809
+
+        Reviewed by Chris Fleizach.
+
+        Adding these properties to the AXIsolatedObject attributes variant as
+        WeakPtr<void*> fails. So they are now cached as member variables.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::platformWidget const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        (WebCore::AXIsolatedObject::propertyValue const): Deleted.
+        * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+        (WebCore::AXIsolatedObject::initializePlatformProperties):
+        (WebCore::AXIsolatedObject::remoteParentObject const):
+
 2020-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Horizontal overflow overlay scrollbar is misplaced in RTL

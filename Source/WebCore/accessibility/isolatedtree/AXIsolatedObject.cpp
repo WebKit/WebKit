@@ -374,15 +374,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setMathscripts(AXPropertyName::MathPostscripts, object);
     }
 
-    if (object.isScrollView()) {
-#if PLATFORM(COCOA)
-        setProperty(AXPropertyName::PlatformWidget, object.platformWidget());
-        setProperty(AXPropertyName::RemoteParentObject, object.remoteParentObject());
-#else
-        setProperty(AXPropertyName::PlatformWidget, object.platformWidget());
-#endif
-    }
-
     if (isRoot) {
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
@@ -391,6 +382,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding());
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
     }
+
+    initializePlatformProperties(object);
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
@@ -1569,6 +1562,15 @@ Widget* AXIsolatedObject::widget() const
     if (auto* object = associatedAXObject())
         return object->widget();
     return nullptr;
+}
+
+PlatformWidget AXIsolatedObject::platformWidget() const
+{
+#if PLATFORM(COCOA)
+    return m_platformWidget.get();
+#else
+    return m_platformWidget;
+#endif
 }
 
 Widget* AXIsolatedObject::widgetForAttachmentView() const

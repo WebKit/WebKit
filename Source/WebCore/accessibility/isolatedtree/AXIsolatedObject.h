@@ -73,6 +73,7 @@ private:
     AXIsolatedObject(AXCoreObject&, AXIsolatedTreeID, AXID parentID);
     bool isAXIsolatedObjectInstance() const override { return true; }
     void initializeAttributeData(AXCoreObject&, bool isRoot);
+    void initializePlatformProperties(const AXCoreObject&);
     AXCoreObject* associatedAXObject() const
     {
         ASSERT(isMainThread());
@@ -276,15 +277,11 @@ private:
         MinValueForRange,
         Orientation,
         PlaceholderValue,
-        PlatformWidget,
         PressedIsPresent,
         PopupValue,
         PosInSet,
         PreventKeyboardDOMEventDispatch,
         ReadOnlyValue,
-#if PLATFORM(COCOA)
-        RemoteParentObject,
-#endif
         RoleValue,
         RolePlatformString,
         RoleDescription,
@@ -341,13 +338,7 @@ private:
         AccessibilityTextSource textSource;
     };
 
-    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>,
-#if PLATFORM(COCOA)
-        WeakPtr<void*> // To hold an ObjectiveC object, e.g., NSView* or id.
-#else
-        PlatformWidget
-#endif
-    >;
+    using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);
     void setObjectProperty(AXPropertyName, AXCoreObject*);
     void setObjectVectorProperty(AXPropertyName, const AccessibilityChildrenVector&);
@@ -831,7 +822,7 @@ private:
     bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
     TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
     Widget* widget() const override;
-    PlatformWidget platformWidget() const override { return propertyValue<PlatformWidget>(AXPropertyName::PlatformWidget); }
+    PlatformWidget platformWidget() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
 #endif
@@ -910,17 +901,13 @@ private:
     Vector<RefPtr<AXCoreObject>> m_children;
 
     HashMap<AXPropertyName, AttributeValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>> m_attributeMap;
+#if PLATFORM(COCOA)
+    RetainPtr<NSView> m_platformWidget;
+    RetainPtr<RemoteAXObjectRef> m_remoteParent;
+#else
+    PlatformWidget m_platformWidget;
+#endif
 };
-
-template<typename T>
-inline T AXIsolatedObject::propertyValue(AXPropertyName propertyName) const
-{
-    auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value,
-        [] (WeakPtr<T>& typedValue) { return typedValue; },
-        [] (auto&) { return nullptr; }
-    );
-}
 
 } // namespace WebCore
 
