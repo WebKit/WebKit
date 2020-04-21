@@ -53,11 +53,9 @@ public:
     JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&, JSObject*);
     static JSValue instantiate(JSGlobalObject*, JSPromise*, const Identifier&, JSValue);
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
 private:
     JSWebAssembly(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(JSGlobalObject*, CallFrame*);

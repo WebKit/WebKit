@@ -27,9 +27,6 @@ namespace JSC {
 class ObjectPrototype;
 
 class DatePrototype final : public JSNonFinalObject {
-private:
-    DatePrototype(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -55,7 +52,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
+private:
+    DatePrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

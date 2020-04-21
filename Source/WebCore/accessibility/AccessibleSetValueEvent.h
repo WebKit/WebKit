@@ -41,13 +41,12 @@ public:
 
     const AtomString& value() const { return m_value; }
 
-protected:
+private:
     AccessibleSetValueEvent(const AtomString& type, const AtomString& value);
 
     // Event.
     EventInterface eventInterface() const override { return AccessibleSetValueEventInterfaceType; }
 
-private:
     const AtomString m_value;
 };
 

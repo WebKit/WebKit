@@ -46,12 +46,11 @@ public:
     ExceptionOr<void> bindingsPlay() final;
     ExceptionOr<void> bindingsPause() final;
 
-protected:
-    void syncPropertiesWithBackingAnimation() final;
-    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
-
 private:
     CSSAnimation(Element&, const Animation&);
+
+    void syncPropertiesWithBackingAnimation() final;
+    Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
 
     String m_animationName;
     bool m_stickyPaused { false };

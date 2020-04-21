@@ -34,10 +34,7 @@ class DECLSPEC_UUID("FD3B2381-0BB6-4B59-AF09-0E599C8901CF") WebURLAuthentication
 public:
     static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&);
     static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);
-private:
-    WebURLAuthenticationChallenge(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);
-    ~WebURLAuthenticationChallenge();
-public:
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -57,7 +54,10 @@ public:
     // WebURLAuthenticationChallenge
     const WebCore::AuthenticationChallenge& authenticationChallenge() const;
 
-protected:
+private:
+    WebURLAuthenticationChallenge(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);
+    ~WebURLAuthenticationChallenge();
+
     ULONG m_refCount { 0 };
 
     WebCore::AuthenticationChallenge m_authenticationChallenge;

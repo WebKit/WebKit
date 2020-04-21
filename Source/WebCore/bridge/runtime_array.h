@@ -84,11 +84,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
     }
 
-protected:
-    void finishCreation(VM&, Bindings::Array*);
-
 private:
     RuntimeArray(VM&, Structure*);
+    void finishCreation(VM&, Bindings::Array*);
+
     static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 

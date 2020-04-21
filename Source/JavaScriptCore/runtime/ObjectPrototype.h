@@ -45,11 +45,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
 private:
     ObjectPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject*, CallFrame*);

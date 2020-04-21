@@ -54,7 +54,7 @@ public:
 
     void playerDidReceiveError(NSError *);
 
-protected:
+private:
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     LegacyCDMSessionClient* m_client;
     String m_sessionId;

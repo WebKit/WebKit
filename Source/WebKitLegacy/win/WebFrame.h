@@ -79,11 +79,7 @@ class DECLSPEC_UUID("{A3676398-4485-4a9d-87DC-CB5A40E6351D}") WebFrame final : p
 {
 public:
     static WebFrame* createInstance();
-protected:
-    WebFrame();
-    ~WebFrame();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -199,7 +195,10 @@ public:
 
     COMPtr<IAccessible> accessible() const;
 
-protected:
+private:
+    WebFrame();
+    ~WebFrame();
+
     void loadHTMLString(_In_ BSTR string, _In_ BSTR baseURL, _In_ BSTR unreachableURL);
     void loadData(Ref<WebCore::SharedBuffer>&&, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
@@ -210,7 +209,6 @@ protected:
     void drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate*, const WebCore::IntRect& pageRect, float headerHeight);
     void drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate*, const WebCore::IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight);
 
-protected:
     ULONG m_refCount { 0 };
     class WebFramePrivate;
     WebFramePrivate* d;

@@ -69,11 +69,9 @@ public:
 
     AbstractModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
-protected:
-    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&);
-    JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
-
 private:
+    JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
+    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&);
     static void visitChildren(JSCell*, SlotVisitor&);
     bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
 

@@ -39,11 +39,7 @@ class WebDataSource final : public IWebDataSource, public IWebDataSourcePrivate
 {
 public:
     static WebDataSource* createInstance(WebDocumentLoader*);
-protected:
-    WebDataSource(WebDocumentLoader*);
-    ~WebDataSource();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -76,7 +72,10 @@ public:
     // WebDataSource
     WebDocumentLoader* documentLoader() const;
 
-protected:
+private:
+    WebDataSource(WebDocumentLoader*);
+    ~WebDataSource();
+
     ULONG m_refCount { 0 };
     RefPtr<WebDocumentLoader> m_loader;
     COMPtr<IWebDocumentRepresentation> m_representation;

@@ -67,7 +67,7 @@ public:
 
     WEBCORE_EXPORT static void setFocusRingColor(const Color&);
 
-protected:
+private:
     LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
     
     FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;

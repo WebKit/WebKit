@@ -128,7 +128,7 @@ public:
         return sizeof(RegExpObject);
     }
 
-protected:
+private:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 
@@ -150,7 +150,6 @@ protected:
     JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-private:
     MatchResult matchInline(JSGlobalObject*, JSString*);
 
     uintptr_t m_regExpAndLastIndexIsNotWritableFlag { 0 };

@@ -126,12 +126,11 @@ public:
 
     Document* document();
     
-protected:
-    void refThreadableWebSocketChannel() override { ref(); }
-    void derefThreadableWebSocketChannel() override { deref(); }
-
 private:
     WEBCORE_EXPORT WebSocketChannel(Document&, WebSocketChannelClient&, SocketProvider&);
+
+    void refThreadableWebSocketChannel() override { ref(); }
+    void derefThreadableWebSocketChannel() override { deref(); }
 
     bool appendToBuffer(const char* data, size_t len);
     void skipBuffer(size_t len);

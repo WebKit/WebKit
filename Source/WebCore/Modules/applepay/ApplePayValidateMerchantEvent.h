@@ -44,13 +44,12 @@ public:
 
     const String& validationURL() const { return m_validationURL.string(); }
 
-protected:
+private:
     ApplePayValidateMerchantEvent(const AtomString& type, URL&& validationURL);
 
     // Event.
     EventInterface eventInterface() const override;
 
-private:
     const URL m_validationURL;
 };
 

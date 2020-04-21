@@ -99,11 +99,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static constexpr unsigned elementSize = sizeof(typename Adaptor::Type);
-    
-protected:
-    JSGenericTypedArrayView(VM&, ConstructionContext&);
-    
-public:
+
     static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, unsigned length);
     static JSGenericTypedArrayView* createWithFastVector(JSGlobalObject*, Structure*, unsigned length, void* vector);
     static JSGenericTypedArrayView* createUninitialized(JSGlobalObject*, Structure*, unsigned length);
@@ -297,8 +293,10 @@ public:
     // This is the default DOM unwrapping. It calls toUnsharedNativeTypedView().
     static RefPtr<typename Adaptor::ViewType> toWrapped(VM&, JSValue);
     
-protected:
+private:
     friend struct TypedArrayClassInfos;
+
+    JSGenericTypedArrayView(VM&, ConstructionContext&);
 
     static EncodedJSValue throwNeuteredTypedArrayTypeError(JSGlobalObject*, EncodedJSValue, PropertyName);
 
@@ -316,7 +314,6 @@ protected:
     static size_t estimatedSize(JSCell*, VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-private:
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>
     bool setWithSpecificType(

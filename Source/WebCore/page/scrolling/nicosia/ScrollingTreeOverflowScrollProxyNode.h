@@ -45,7 +45,7 @@ public:
 
     ScrollingNodeID overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
 
-protected:
+private:
     ScrollingTreeOverflowScrollProxyNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;

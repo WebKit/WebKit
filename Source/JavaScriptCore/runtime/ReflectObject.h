@@ -30,9 +30,6 @@
 namespace JSC {
 
 class ReflectObject final : public JSNonFinalObject {
-private:
-    ReflectObject(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -58,7 +55,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
+private:
+    ReflectObject(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

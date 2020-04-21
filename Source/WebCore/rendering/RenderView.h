@@ -201,13 +201,12 @@ public:
     const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 #endif
 
-protected:
+private:
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
     void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
     bool requiresColumns(int desiredColumnCount) const override;
 
-private:
     void computeColumnCountAndWidth() override;
 
     bool shouldRepaint(const LayoutRect&) const;
@@ -219,7 +218,6 @@ private:
 
     Node* nodeForHitTest() const override;
 
-private:
     FrameView& m_frameView;
 
     // Include this RenderView.

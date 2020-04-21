@@ -71,10 +71,9 @@ public:
     bool isOnLine() const final;
     void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) final;
 
-protected:
+private:
     virtual ~WebResourceLoadScheduler();
 
-private:
     void scheduleLoad(WebCore::ResourceLoader*);
     void scheduleServePendingRequests();
     void requestTimerFired();

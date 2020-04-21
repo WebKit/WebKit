@@ -103,9 +103,6 @@ struct RegExpTest {
 };
 
 class GlobalObject final : public JSGlobalObject {
-private:
-    GlobalObject(VM&, Structure*, const Vector<String>& arguments);
-
 public:
     using Base = JSGlobalObject;
 
@@ -124,7 +121,9 @@ public:
         return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
     }
 
-protected:
+private:
+    GlobalObject(VM&, Structure*, const Vector<String>& arguments);
+
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
         Base::finishCreation(vm);

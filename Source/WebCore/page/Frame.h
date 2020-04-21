@@ -371,7 +371,6 @@ private:
     bool m_hasHadUserInteraction { false };
     unsigned m_localStoragePrewarmingCount { 0 };
 
-protected:
     UniqueRef<EventHandler> m_eventHandler;
 };
 

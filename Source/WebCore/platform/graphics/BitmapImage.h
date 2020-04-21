@@ -143,7 +143,7 @@ public:
     void imageFrameAvailableAtIndex(size_t);
     void decode(Function<void()>&&);
 
-protected:
+private:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
@@ -195,7 +195,6 @@ protected:
     RetainPtr<CFDataRef> tiffRepresentation(const Vector<NativeImagePtr>&);
 #endif
 
-private:
     void clearTimer();
     void startTimer(Seconds delay);
     SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor);

@@ -46,13 +46,12 @@ public:
 
     const ApplePayPaymentMethod& paymentMethod() { return m_paymentMethod; }
 
-protected:
+private:
     ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod&);
 
     // Event.
     EventInterface eventInterface() const override;
 
-private:
     const ApplePayPaymentMethod m_paymentMethod;
 };
 

@@ -37,9 +37,6 @@
 namespace JSC {
 
 class AggregateErrorPrototype final : public ErrorPrototypeBase {
-private:
-    AggregateErrorPrototype(VM&, Structure*);
-
 public:
     using Base = ErrorPrototypeBase;
 
@@ -62,7 +59,8 @@ public:
         return prototype;
     }
 
-protected:
+private:
+    AggregateErrorPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

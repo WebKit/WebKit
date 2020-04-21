@@ -36,7 +36,7 @@ public:
     static Ref<WebGLSampler> create(WebGLRenderingContextBase&);
     virtual ~WebGLSampler();
 
-protected:
+private:
     explicit WebGLSampler(WebGLRenderingContextBase&);
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) final;
 };

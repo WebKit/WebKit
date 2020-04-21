@@ -44,11 +44,9 @@ public:
 
     Structure* relativeTimeFormatStructure(VM&) const { return globalObject()->relativeTimeFormatStructure(); }
 
-protected:
-    void finishCreation(VM&, IntlRelativeTimeFormatPrototype*);
-
 private:
     IntlRelativeTimeFormatConstructor(VM&, Structure*);
+    void finishCreation(VM&, IntlRelativeTimeFormatPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlRelativeTimeFormatConstructor, InternalFunction);
 

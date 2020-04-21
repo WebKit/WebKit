@@ -37,7 +37,7 @@ public:
 
     static Ref<WebGLTransformFeedback> create(WebGLRenderingContextBase&);
 
-protected:
+private:
     WebGLTransformFeedback(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;

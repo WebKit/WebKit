@@ -66,12 +66,11 @@ public:
 
     static void formatToPartsInternal(JSGlobalObject*, double, const String& formatted, UFieldPositionIterator*, JSArray*, JSString* unit = nullptr);
 
-protected:
+private:
     IntlNumberFormat(VM&, Structure*);
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-private:
     enum class Style : uint8_t { Decimal, Percent, Currency };
     enum class CurrencyDisplay : uint8_t { Code, Symbol, Name };
 

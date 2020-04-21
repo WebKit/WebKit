@@ -44,11 +44,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, WebAssemblyGlobalPrototype*);
-
 private:
     WebAssemblyGlobalConstructor(VM&, Structure*);
+    void finishCreation(VM&, WebAssemblyGlobalPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyGlobalConstructor, InternalFunction);
 

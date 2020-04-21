@@ -30,9 +30,6 @@ class RegExp;
 class RegExpObject;
 
 class StringPrototype final : public StringObject {
-private:
-    StringPrototype(VM&, Structure*);
-
 public:
     using Base = StringObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -46,7 +43,8 @@ public:
 
     DECLARE_INFO;
 
-protected:
+private:
+    StringPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*, JSString*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringPrototype, StringObject);

@@ -149,10 +149,9 @@ public:
 
     void willInsertTableRow(RenderTableRow& child, RenderObject* beforeChild);
 
-protected:
+private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-private:
     static RenderPtr<RenderTableSection> createTableSectionWithStyle(Document&, const RenderStyle&);
 
     enum ShouldIncludeAllIntersectingCells {

@@ -76,13 +76,11 @@ public:
 
     NPObject* npObject() const { return m_npObject; }
 
-protected:
-    void finishCreation(JSC::JSGlobalObject*);
-
 private:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
     
     JSNPObject(JSC::JSGlobalObject*, JSC::Structure*, NPRuntimeObjectMap*, NPObject*);
+    void finishCreation(JSC::JSGlobalObject*);
     
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {

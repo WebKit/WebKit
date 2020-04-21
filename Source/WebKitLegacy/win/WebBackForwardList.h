@@ -37,11 +37,7 @@ class WebBackForwardList final : public IWebBackForwardList, IWebBackForwardList
 {
 public:
     static WebBackForwardList* createInstance(RefPtr<BackForwardList>&&);
-protected:
-    WebBackForwardList(RefPtr<BackForwardList>&&);
-    ~WebBackForwardList();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -67,7 +63,10 @@ public:
     // IWebBackForwardListPrivate
     virtual HRESULT STDMETHODCALLTYPE removeItem(_In_opt_ IWebHistoryItem*);
 
-protected:
+private:
+    WebBackForwardList(RefPtr<BackForwardList>&&);
+    ~WebBackForwardList();
+
     ULONG m_refCount { 0 };
     RefPtr<BackForwardList> m_backForwardList;
 };

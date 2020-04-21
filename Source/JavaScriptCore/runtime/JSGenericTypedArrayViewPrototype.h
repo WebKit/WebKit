@@ -41,11 +41,6 @@ public:
         return &vm.plainObjectSpace;
     }
 
-protected:
-    JSGenericTypedArrayViewPrototype(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*);
-
-public:
     static JSGenericTypedArrayViewPrototype* create(
         VM&, JSGlobalObject*, Structure*);
 
@@ -55,6 +50,10 @@ public:
     IGNORE_CLANG_WARNINGS_END
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+private:
+    JSGenericTypedArrayViewPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

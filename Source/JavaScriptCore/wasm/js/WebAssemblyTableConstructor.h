@@ -44,11 +44,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, WebAssemblyTablePrototype*);
-
 private:
     WebAssemblyTableConstructor(VM&, Structure*);
+    void finishCreation(VM&, WebAssemblyTablePrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyTableConstructor, InternalFunction);
 

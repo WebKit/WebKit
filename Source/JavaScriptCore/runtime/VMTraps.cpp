@@ -244,7 +244,7 @@ public:
 
     VMTraps& traps() { return m_vm.traps(); }
 
-protected:
+private:
     PollResult poll(const AbstractLocker&) override
     {
         if (traps().m_isShuttingDown)
@@ -288,8 +288,6 @@ protected:
         }
         return WorkResult::Continue;
     }
-    
-private:
 
     VM& m_vm;
 };

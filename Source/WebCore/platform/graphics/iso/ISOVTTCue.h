@@ -118,7 +118,7 @@ public:
         }};
     }
 
-protected:
+private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
     MediaTime m_presentationTime;

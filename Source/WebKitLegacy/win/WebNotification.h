@@ -32,11 +32,7 @@ class WebNotification final : public IWebNotification
 {
 public:
     static WebNotification* createInstance(BSTR name = 0, IUnknown* anObject = 0, IPropertyBag* userInfo = 0);
-protected:
-    WebNotification(BSTR name, IUnknown* anObject, IPropertyBag* userInfo);
-    ~WebNotification();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -48,7 +44,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE getObject(_COM_Outptr_opt_ IUnknown** result);
     virtual HRESULT STDMETHODCALLTYPE userInfo(_COM_Outptr_opt_ IPropertyBag ** result);
 
-protected:
+private:
+    WebNotification(BSTR name, IUnknown* anObject, IPropertyBag* userInfo);
+    ~WebNotification();
+
     ULONG m_refCount { 0 };
     BSTR m_name { nullptr };
     IUnknown* m_anObject;

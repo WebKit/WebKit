@@ -46,13 +46,12 @@ public:
 
     FloatSize size(ImageOrientation = ImageOrientation::FromImage) const override { return m_crossfadeSize; }
 
-protected:
+private:
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;
     void drawPattern(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) override;
 
     CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
 
-private:
     bool isCrossfadeGeneratedImage() const override { return true; }
     void dump(WTF::TextStream&) const override;
     

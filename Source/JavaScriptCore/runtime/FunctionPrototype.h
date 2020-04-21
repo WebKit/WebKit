@@ -46,11 +46,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, const String& name);
-
 private:
     FunctionPrototype(VM&, Structure*);
+    void finishCreation(VM&, const String& name);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionPrototype, InternalFunction);
 

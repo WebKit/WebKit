@@ -1,3 +1,123 @@
+2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Classes marked final should not use protected access specifier
+        https://bugs.webkit.org/show_bug.cgi?id=210775
+
+        Reviewed by Daniel Bates.
+
+        * API/JSAPIValueWrapper.h:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * b3/B3ExtractValue.h:
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSJavaScriptCallFrame.h:
+        * jsc.cpp:
+        * runtime/AggregateError.h:
+        * runtime/AggregateErrorPrototype.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/AsyncFunctionPrototype.h:
+        * runtime/AsyncGeneratorFunctionPrototype.h:
+        * runtime/AtomicsObject.h:
+        * runtime/BigIntConstructor.h:
+        * runtime/BigIntObject.h:
+        * runtime/BigIntPrototype.h:
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanPrototype.h:
+        * runtime/ConsoleObject.h:
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/FileBasedFuzzerAgent.h:
+        * runtime/FunctionPrototype.h:
+        * runtime/FunctionRareData.h:
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/InspectorInstrumentationObject.h:
+        * runtime/IntlCollator.h:
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlCollatorPrototype.h:
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlDateTimeFormatPrototype.h:
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlNumberFormatPrototype.h:
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlPluralRulesPrototype.h:
+        * runtime/IntlRelativeTimeFormatConstructor.h:
+        * runtime/IntlRelativeTimeFormatPrototype.h:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSAsyncGenerator.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSGenerator.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewPrototype.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSTemplateObjectDescriptor.h:
+        * runtime/JSTypedArrayViewConstructor.h:
+        * runtime/JSTypedArrayViewPrototype.h:
+        * runtime/MathObject.h:
+        * runtime/NativeExecutable.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.h:
+        * runtime/PredictionFileCreatingFuzzerAgent.h:
+        * runtime/ReflectObject.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/StringPrototype.h:
+        * runtime/Structure.h:
+        * runtime/Symbol.h:
+        * runtime/SymbolConstructor.h:
+        * runtime/SymbolObject.h:
+        * runtime/SymbolPrototype.h:
+        * runtime/VMTraps.cpp:
+        * testRegExp.cpp:
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmWorklist.cpp:
+        * wasm/js/JSWebAssembly.h:
+        * wasm/js/JSWebAssemblyCompileError.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyLinkError.h:
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyGlobalConstructor.h:
+        * wasm/js/WebAssemblyGlobalPrototype.h:
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyLinkErrorConstructor.h:
+        * wasm/js/WebAssemblyLinkErrorPrototype.h:
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTableConstructor.h:
+        * wasm/js/WebAssemblyTablePrototype.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2020-04-20  Peng Liu  <peng.liu6@apple.com>
 
         Fix build failures when video fullscreen and picture-in-picture is disabled

@@ -53,11 +53,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*, ObjectPrototype*);
-
 private:
     ObjectConstructor(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*, ObjectPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ObjectConstructor, InternalFunction);
 

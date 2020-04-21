@@ -30,9 +30,6 @@
 namespace JSC {
 
 class ConsoleObject final : public JSNonFinalObject {
-private:
-    ConsoleObject(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
 
@@ -57,7 +54,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
+private:
+    ConsoleObject(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

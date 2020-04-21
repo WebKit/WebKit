@@ -45,11 +45,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-protected:
-    void finishCreation(VM&, BooleanPrototype*);
-
 private:
     BooleanConstructor(VM&, Structure*);
+    void finishCreation(VM&, BooleanPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BooleanConstructor, InternalFunction);
 

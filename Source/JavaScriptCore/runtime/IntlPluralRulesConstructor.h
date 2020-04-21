@@ -45,11 +45,9 @@ public:
 
     Structure* pluralRulesStructure(VM&) const { return globalObject()->pluralRulesStructure(); }
 
-protected:
-    void finishCreation(VM&, IntlPluralRulesPrototype*);
-
 private:
     IntlPluralRulesConstructor(VM&, Structure*);
+    void finishCreation(VM&, IntlPluralRulesPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlPluralRulesConstructor, InternalFunction);
 

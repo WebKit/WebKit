@@ -37,7 +37,7 @@ public:
 
     static Ref<WebGLSync> create(WebGLRenderingContextBase&);
 
-protected:
+private:
     WebGLSync(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;

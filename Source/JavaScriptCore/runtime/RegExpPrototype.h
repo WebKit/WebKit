@@ -51,10 +51,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
-    RegExpPrototype(VM&, Structure*);
-
 private:
+    RegExpPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

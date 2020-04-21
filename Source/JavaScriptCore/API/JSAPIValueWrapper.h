@@ -57,7 +57,7 @@ public:
         return wrapper;
     }
 
-protected:
+private:
     void finishCreation(VM& vm, JSValue value)
     {
         Base::finishCreation(vm);
@@ -65,7 +65,6 @@ protected:
         ASSERT(!value.isCell());
     }
 
-private:
     JSAPIValueWrapper(VM& vm)
         : JSCell(vm, vm.apiWrapperStructure.get())
     {

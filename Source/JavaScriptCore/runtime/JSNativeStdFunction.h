@@ -62,13 +62,10 @@ public:
 
     const NativeStdFunction& function() { return m_function; }
 
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
-
 private:
     JSNativeStdFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, NativeStdFunction&&);
+    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
     NativeStdFunction m_function;
 };

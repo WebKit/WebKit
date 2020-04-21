@@ -62,7 +62,7 @@ public:
         return prototype;
     }
 
-protected:
+private:
     ErrorPrototype(VM&, Structure*);
 };
 

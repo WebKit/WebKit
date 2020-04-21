@@ -149,7 +149,7 @@ public:
 
     static RefPtr<AudioBus> loadPlatformResource(const char* name, float sampleRate);
 
-protected:
+private:
     AudioBus() { }
 
     AudioBus(unsigned numberOfChannels, size_t length, bool allocate);

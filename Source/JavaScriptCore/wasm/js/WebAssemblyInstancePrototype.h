@@ -49,11 +49,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&);
-
 private:
     WebAssemblyInstancePrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

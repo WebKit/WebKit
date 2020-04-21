@@ -41,17 +41,15 @@ public:
         return &vm.plainObjectSpace;
     }
 
-protected:
-    JSDataViewPrototype(VM&, Structure*);
-
-    void finishCreation(VM&);
-
-public:
     static JSDataViewPrototype* create(VM&, Structure*);
     
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+private:
+    JSDataViewPrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

@@ -43,11 +43,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
 private:
     NumberPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberPrototype, NumberObject);
 

@@ -40,7 +40,7 @@ public:
     
     void addModule(Document&, const String& moduleURL);
 
-protected:
+private:
     Worklet();
 };
 

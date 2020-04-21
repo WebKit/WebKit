@@ -49,11 +49,9 @@ public:
 
     static JSWebAssemblyModule* createModule(JSGlobalObject*, CallFrame*, Vector<uint8_t>&& buffer);
 
-protected:
-    void finishCreation(VM&, WebAssemblyModulePrototype*);
-
 private:
     WebAssemblyModuleConstructor(VM&, Structure*);
+    void finishCreation(VM&, WebAssemblyModulePrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyModuleConstructor, InternalFunction);
 

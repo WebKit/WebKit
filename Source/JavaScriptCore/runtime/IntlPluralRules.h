@@ -57,12 +57,11 @@ public:
     JSValue select(JSGlobalObject*, double value);
     JSObject* resolvedOptions(JSGlobalObject*);
 
-protected:
+private:
     IntlPluralRules(VM&, Structure*);
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-private:
     struct UPluralRulesDeleter {
         void operator()(UPluralRules*) const;
     };

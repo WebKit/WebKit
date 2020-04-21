@@ -34,10 +34,7 @@ class WebURLProtectionSpace final : public IWebURLProtectionSpace
 public:
     static WebURLProtectionSpace* createInstance();
     static WebURLProtectionSpace* createInstance(const WebCore::ProtectionSpace&);
-private:
-    WebURLProtectionSpace(const WebCore::ProtectionSpace&);
-    ~WebURLProtectionSpace();
-public:
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -58,7 +55,10 @@ public:
     // WebURLProtectionSpace
     const WebCore::ProtectionSpace& protectionSpace() const;
 
-protected:
+private:
+    WebURLProtectionSpace(const WebCore::ProtectionSpace&);
+    ~WebURLProtectionSpace();
+
     ULONG m_refCount { 0 };
     WebCore::ProtectionSpace m_protectionSpace;
 };

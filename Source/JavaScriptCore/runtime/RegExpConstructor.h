@@ -49,11 +49,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, RegExpPrototype*, GetterSetter* species);
-
 private:
     RegExpConstructor(VM&, Structure*);
+    void finishCreation(VM&, RegExpPrototype*, GetterSetter* species);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(RegExpConstructor, InternalFunction);
 

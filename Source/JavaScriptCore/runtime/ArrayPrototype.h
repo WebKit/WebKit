@@ -25,9 +25,6 @@
 namespace JSC {
 
 class ArrayPrototype final : public JSArray {
-private:
-    ArrayPrototype(VM&, Structure*);
-
 public:
     using Base = JSArray;
 
@@ -46,7 +43,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
     }
 
-protected:
+private:
+    ArrayPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ArrayPrototype, ArrayPrototype::Base);

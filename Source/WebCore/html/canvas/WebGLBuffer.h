@@ -66,12 +66,11 @@ public:
 
     bool hasEverBeenBound() const { return object() && m_target; }
 
-protected:
+private:
     WebGLBuffer(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
-private:
     GCGLenum m_target { 0 };
 
     RefPtr<JSC::ArrayBuffer> m_elementArrayBuffer;

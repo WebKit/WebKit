@@ -48,10 +48,9 @@ public:
 
     void discardInjectedScriptsFor(DOMWindow*);
 
-protected:
+private:
     void didCreateInjectedScript(const Inspector::InjectedScript&) override;
 
-private:
     RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
 };
 

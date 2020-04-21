@@ -70,12 +70,11 @@ public:
     bool attachShader(WebGLShader*);
     bool detachShader(WebGLShader*);
 
-protected:
+private:
     WebGLProgram(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
-private:
     void cacheActiveAttribLocations(GraphicsContextGLOpenGL*);
     void cacheInfoIfNeeded();
 

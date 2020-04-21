@@ -43,11 +43,7 @@ class WebHistoryItem final : public IWebHistoryItem, IWebHistoryItemPrivate
 public:
     static WebHistoryItem* createInstance();
     static WebHistoryItem* createInstance(RefPtr<WebCore::HistoryItem>&&);
-protected:
-    WebHistoryItem(RefPtr<WebCore::HistoryItem>&&);
-    ~WebHistoryItem();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -92,7 +88,10 @@ public:
     // WebHistoryItem
     WebCore::HistoryItem* historyItem() const;
 
-protected:
+private:
+    WebHistoryItem(RefPtr<WebCore::HistoryItem>&&);
+    ~WebHistoryItem();
+
     ULONG m_refCount { 0 };
 
     RefPtr<WebCore::HistoryItem> m_historyItem;

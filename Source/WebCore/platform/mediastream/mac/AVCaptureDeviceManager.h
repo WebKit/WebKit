@@ -53,7 +53,7 @@ public:
 
     void refreshCaptureDevices();
 
-protected:
+private:
     static bool isAvailable();
 
     AVCaptureDeviceManager();

@@ -36,7 +36,7 @@ public:
     FourCC schemeType() const { return m_schemeType; }
     uint32_t schemeVersion() const { return m_schemeVersion; }
 
-protected:
+private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
     FourCC m_schemeType { uint32_t { 0 } };

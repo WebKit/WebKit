@@ -37,7 +37,7 @@ class FileBasedFuzzerAgent final : public FileBasedFuzzerAgentBase {
 public:
     FileBasedFuzzerAgent(VM&);
 
-protected:
+private:
     SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) override;
 };
 

@@ -35,7 +35,7 @@ public:
 
     FourCC dataFormat() const { return m_dataFormat; }
 
-protected:
+private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
     FourCC m_dataFormat { uint32_t { 0 } };

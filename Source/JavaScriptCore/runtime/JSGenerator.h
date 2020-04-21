@@ -96,7 +96,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-protected:
+private:
     JSGenerator(VM&, Structure*);
     void finishCreation(VM&);
 };

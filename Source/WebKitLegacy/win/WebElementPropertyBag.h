@@ -37,11 +37,6 @@ class WebElementPropertyBag final : public IPropertyBag
 public:
     static WebElementPropertyBag* createInstance(const WebCore::HitTestResult&);
 
-protected:
-    WebElementPropertyBag(const WebCore::HitTestResult&);
-    ~WebElementPropertyBag();
-
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -52,6 +47,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Write(_In_ LPCOLESTR pszPropName, _In_ VARIANT* pVar);
 
 private:
+    WebElementPropertyBag(const WebCore::HitTestResult&);
+    ~WebElementPropertyBag();
+
     std::unique_ptr<WebCore::HitTestResult> m_result;
     ULONG m_refCount { 0 };
 };

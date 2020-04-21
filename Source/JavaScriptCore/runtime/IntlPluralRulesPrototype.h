@@ -47,11 +47,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&);
-
 private:
     IntlPluralRulesPrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

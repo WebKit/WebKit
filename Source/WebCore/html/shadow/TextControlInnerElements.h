@@ -37,7 +37,7 @@ class TextControlInnerContainer final : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(TextControlInnerContainer);
 public:
     static Ref<TextControlInnerContainer> create(Document&);
-protected:
+private:
     TextControlInnerContainer(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
@@ -48,11 +48,10 @@ class TextControlInnerElement final : public HTMLDivElement {
 public:
     static Ref<TextControlInnerElement> create(Document&);
 
-protected:
+private:
     TextControlInnerElement(Document&);
     Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 
-private:
     bool isMouseFocusable() const override { return false; }
 };
 

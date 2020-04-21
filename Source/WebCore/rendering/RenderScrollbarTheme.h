@@ -59,7 +59,7 @@ public:
     
     static RenderScrollbarTheme* renderScrollbarTheme();
 
-protected:
+private:
     bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;
 

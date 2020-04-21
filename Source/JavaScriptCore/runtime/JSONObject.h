@@ -55,11 +55,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&);
-
 private:
     JSONObject(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, const String&);

@@ -31,11 +31,7 @@
 class WebCoreStatistics final : public IWebCoreStatistics {
 public:
     static WebCoreStatistics* createInstance();
-protected:
-    WebCoreStatistics();
-    ~WebCoreStatistics();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -68,7 +64,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE cachedPageCount(_Out_ INT*);
     virtual HRESULT STDMETHODCALLTYPE cachedFrameCount(_Out_ INT*);
 
-protected:
+private:
+    WebCoreStatistics();
+    ~WebCoreStatistics();
+
     ULONG m_refCount { 0 };
 };
 

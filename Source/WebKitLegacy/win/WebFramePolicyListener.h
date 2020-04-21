@@ -38,11 +38,7 @@ namespace WebCore {
 class WebFramePolicyListener final : public IWebPolicyDecisionListener, public IWebFormSubmissionListener {
 public:
     static WebFramePolicyListener* createInstance(RefPtr<WebCore::Frame>&&);
-protected:
-    WebFramePolicyListener(RefPtr<WebCore::Frame>&&);
-    ~WebFramePolicyListener();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -61,6 +57,9 @@ public:
     void invalidate();
 
 private:
+    WebFramePolicyListener(RefPtr<WebCore::Frame>&&);
+    ~WebFramePolicyListener();
+
     ULONG m_refCount { 0 };
     RefPtr<WebCore::Frame> m_frame;
 };

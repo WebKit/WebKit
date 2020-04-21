@@ -47,7 +47,7 @@ public:
     void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_debuggerAgent = agent; }
     void setInspectorScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }
 
-protected:
+private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
     void count(JSC::JSGlobalObject*, const String& label) override;
     void countReset(JSC::JSGlobalObject*, const String& label) override;
@@ -62,7 +62,6 @@ protected:
     void recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
     void screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
 
-private:
     void warnUnimplemented(const String& method);
     void internalAddMessage(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&);
 

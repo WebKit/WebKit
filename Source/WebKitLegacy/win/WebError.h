@@ -34,11 +34,7 @@ class WebError final : public IWebError, IWebErrorPrivate {
 public:
     static WebError* createInstance(const WebCore::ResourceError&, IPropertyBag* userInfo = 0);
     static WebError* createInstance();
-protected:
-    WebError(const WebCore::ResourceError&, IPropertyBag* userInfo);
-    ~WebError();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -63,6 +59,9 @@ public:
     const WebCore::ResourceError& resourceError() const;
 
 private:
+    WebError(const WebCore::ResourceError&, IPropertyBag* userInfo);
+    ~WebError();
+
     ULONG m_refCount { 0 };
     COMPtr<IPropertyBag> m_userInfo;
 #if USE(CFURLCONNECTION)

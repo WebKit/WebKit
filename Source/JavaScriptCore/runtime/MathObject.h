@@ -25,9 +25,6 @@
 namespace JSC {
 
 class MathObject final : public JSNonFinalObject {
-private:
-    MathObject(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
 
@@ -52,7 +49,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
+private:
+    MathObject(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

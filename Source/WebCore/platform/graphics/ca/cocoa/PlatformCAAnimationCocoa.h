@@ -123,11 +123,10 @@ public:
     void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) override;
     void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
-protected:
+private:
     PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
     PlatformCAAnimationCocoa(PlatformAnimationRef);
 
-private:
     RetainPtr<CAPropertyAnimation> m_animation;
 };
 

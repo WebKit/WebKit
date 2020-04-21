@@ -73,7 +73,7 @@ public:
 
     bool ended() const { return m_ended; }
 
-protected:
+private:
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }

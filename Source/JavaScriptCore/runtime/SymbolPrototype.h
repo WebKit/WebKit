@@ -58,7 +58,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
+private:
     SymbolPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };

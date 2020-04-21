@@ -56,11 +56,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&);
-
 private:
     GeneratorFunctionPrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

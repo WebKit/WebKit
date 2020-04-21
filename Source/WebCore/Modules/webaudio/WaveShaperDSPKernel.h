@@ -48,7 +48,7 @@ public:
     // Oversampling requires more resources, so let's only allocate them if needed.
     void lazyInitializeOversampling();
 
-protected:
+private:
     // Apply the shaping curve.
     void processCurve(const float* source, float* dest, size_t framesToProcess);
 

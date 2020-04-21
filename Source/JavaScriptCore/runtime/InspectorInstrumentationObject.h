@@ -30,9 +30,6 @@
 namespace JSC {
 
 class InspectorInstrumentationObject final : public JSNonFinalObject {
-private:
-    InspectorInstrumentationObject(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -62,7 +59,8 @@ public:
     void disable(VM&);
     bool isEnabled(VM&) const;
 
-protected:
+private:
+    InspectorInstrumentationObject(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

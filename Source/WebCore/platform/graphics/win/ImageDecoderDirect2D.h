@@ -80,7 +80,7 @@ public:
 
     static IWICImagingFactory2* systemImagingFactory();
 
-protected:
+private:
     bool m_isAllDataReceived { false };
     mutable IntSize m_size;
     COMPtr<IWICBitmapDecoder> m_nativeDecoder;

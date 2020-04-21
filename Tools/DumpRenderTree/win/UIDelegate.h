@@ -118,7 +118,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE decidePolicyForGeolocationRequest(_In_opt_ IWebView* sender, _In_opt_ IWebFrame*, _In_opt_ IWebSecurityOrigin*, _In_opt_ IWebGeolocationPolicyListener*);
     virtual HRESULT STDMETHODCALLTYPE didPressMissingPluginButton(_In_opt_ IDOMElement*);
 
-protected:
+private:
     // IWebUIDelegatePrivate
     virtual HRESULT STDMETHODCALLTYPE unused1() { return E_NOTIMPL; }
     virtual HRESULT STDMETHODCALLTYPE unused2() { return E_NOTIMPL; }
@@ -140,7 +140,6 @@ protected:
 
     ULONG m_refCount { 1 };
 
-private:
     RECT m_frame;
     std::unique_ptr<DRTUndoManager> m_undoManager;
 

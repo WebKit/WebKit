@@ -403,7 +403,7 @@ public:
     bool isAudio() const override { return m_isAudio; }
     bool isText() const override { return m_isText; }
     
-protected:
+private:
     MediaDescriptionAVFObjC(AVAssetTrack* track)
         : m_isVideo([track hasMediaCharacteristic:AVMediaCharacteristicVisual])
         , m_isAudio([track hasMediaCharacteristic:AVMediaCharacteristicAudible])

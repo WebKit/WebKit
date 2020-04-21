@@ -98,7 +98,7 @@ public:
     bool isEasyToRead() const final { return m_isEasyToRead; }
     bool isDefault() const final { return m_isDefault; }
 
-protected:
+private:
     TextTrackPrivateRemote(MediaPlayerPrivateRemote&, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
     MediaPlayerPrivateRemote& m_player;

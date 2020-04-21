@@ -41,7 +41,7 @@ public:
     explicit WorkerConsoleClient(WorkerGlobalScope&);
     virtual ~WorkerConsoleClient();
 
-protected:
+private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void count(JSC::JSGlobalObject*, const String& label) override;
     void countReset(JSC::JSGlobalObject*, const String& label) override;
@@ -56,7 +56,6 @@ protected:
     void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void screenshot(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
 
-private:
     WorkerGlobalScope& m_workerGlobalScope;
 };
 

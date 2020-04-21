@@ -56,12 +56,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
 private:
     JSCustomGetterSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Type, const PropertyName&);
     void finishCreation(VM&, NativeExecutable*, CustomGetterSetter*, const String&);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
     static EncodedJSValue JSC_HOST_CALL customGetterSetterFunctionCall(JSGlobalObject*, CallFrame*);
 

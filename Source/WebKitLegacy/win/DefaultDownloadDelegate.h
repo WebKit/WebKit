@@ -37,10 +37,7 @@ class DefaultDownloadDelegate final : public IWebDownloadDelegate
 public:
     static DefaultDownloadDelegate* sharedInstance();
     static DefaultDownloadDelegate* createInstance();
-private:
-    DefaultDownloadDelegate();
-    ~DefaultDownloadDelegate();
-public:
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -63,7 +60,11 @@ public:
     // DefaultDownloadDelegate
     void registerDownload(IWebDownload*);
     void unregisterDownload(IWebDownload*);
-protected:
+
+private:
+    DefaultDownloadDelegate();
+    ~DefaultDownloadDelegate();
+
     ULONG m_refCount { 0 };
 
     HashSet<IWebDownload*> m_downloads;

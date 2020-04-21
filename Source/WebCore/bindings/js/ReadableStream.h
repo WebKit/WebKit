@@ -52,7 +52,7 @@ public:
 
     JSReadableStream* readableStream() const { return guarded(); }
 
-protected:
+private:
     ReadableStream(JSDOMGlobalObject& globalObject, JSReadableStream& readableStream) : DOMGuarded<JSReadableStream>(globalObject, readableStream) { }
 };
 

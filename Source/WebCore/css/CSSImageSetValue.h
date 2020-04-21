@@ -63,11 +63,10 @@ public:
 
     Ref<CSSImageSetValue> imageSetWithStylesResolved(Style::BuilderState&);
 
-protected:
-    ImageWithScale bestImageForScaleFactor();
-
 private:
     CSSImageSetValue();
+
+    ImageWithScale bestImageForScaleFactor();
 
     void fillImageSet();
     static inline bool compareByScaleFactor(ImageWithScale first, ImageWithScale second) { return first.scaleFactor < second.scaleFactor; }

@@ -43,11 +43,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
 private:
     BooleanPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BooleanPrototype, BooleanObject);
 

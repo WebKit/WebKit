@@ -38,11 +38,6 @@ public:
 
     static WebCore::ApplicationCacheStorage& storage();
 
-protected:
-    WebApplicationCache();
-    ~WebApplicationCache();
-
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -62,7 +57,10 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE originsWithCache(/*[out, retval]*/ IPropertyBag**);
 
-protected:
+private:
+    WebApplicationCache();
+    ~WebApplicationCache();
+
     ULONG m_refCount;
 };
 

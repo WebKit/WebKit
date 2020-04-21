@@ -62,12 +62,11 @@ public:
 
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
 
-protected:
+private:
     WebGLRenderbuffer(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
-private:
     bool isRenderbuffer() const override { return true; }
 
     GCGLenum m_internalFormat;

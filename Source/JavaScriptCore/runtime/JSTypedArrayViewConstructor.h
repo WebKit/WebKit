@@ -34,13 +34,8 @@ class GetterSetter;
 
 class JSTypedArrayViewConstructor final : public InternalFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = InternalFunction;
 
-protected:
-    JSTypedArrayViewConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSTypedArrayViewPrototype*, GetterSetter* speciesSymbol);
-
-public:
     static JSTypedArrayViewConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSTypedArrayViewPrototype* prototype, GetterSetter* speciesSymbol)
     {
         JSTypedArrayViewConstructor* result = new (NotNull, allocateCell<JSTypedArrayViewConstructor>(vm.heap)) JSTypedArrayViewConstructor(vm, structure);
@@ -51,6 +46,10 @@ public:
     DECLARE_INFO;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+private:
+    JSTypedArrayViewConstructor(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*, JSTypedArrayViewPrototype*, GetterSetter* speciesSymbol);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTypedArrayViewConstructor, InternalFunction);
     

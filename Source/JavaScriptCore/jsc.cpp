@@ -460,11 +460,8 @@ static inline String stringFromUTF(const Vector& utf8)
 }
 
 class GlobalObject final : public JSGlobalObject {
-private:
-    GlobalObject(VM&, Structure*);
-
 public:
-    typedef JSGlobalObject Base;
+    using Base = JSGlobalObject;
 
     static GlobalObject* create(VM& vm, Structure* structure, const Vector<String>& arguments)
     {
@@ -483,7 +480,9 @@ public:
 
     static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags::createAllEnabled(); }
 
-protected:
+private:
+    GlobalObject(VM&, Structure*);
+
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
         Base::finishCreation(vm);

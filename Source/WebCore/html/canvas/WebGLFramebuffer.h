@@ -105,12 +105,11 @@ public:
 
     GCGLenum getDrawBuffer(GCGLenum);
 
-protected:
+private:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
-private:
     WebGLAttachment* getAttachment(GCGLenum) const;
 
     // Return false if framebuffer is incomplete.

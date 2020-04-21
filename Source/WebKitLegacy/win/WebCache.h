@@ -32,11 +32,7 @@ class WebCache final : public IWebCache
 {
 public:
     static WebCache* createInstance();
-protected:
-    WebCache();
-    ~WebCache();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -50,7 +46,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE cacheFolder(__deref_out_opt BSTR* location);
     virtual HRESULT STDMETHODCALLTYPE setCacheFolder(_In_ BSTR location);
 
-protected:
+private:
+    WebCache();
+    ~WebCache();
+
     ULONG m_refCount { 0 };
 };
 

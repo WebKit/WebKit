@@ -86,12 +86,10 @@ public:
     static constexpr unsigned short GLOBAL_LEXICAL_ENVIRONMENT_SCOPE = 5;
     static constexpr unsigned short NESTED_LEXICAL_SCOPE = 6;
 
-protected:
-    void finishCreation(JSC::VM&);
-
 private:
     JSJavaScriptCallFrame(JSC::VM&, JSC::Structure*, Ref<JavaScriptCallFrame>&&);
     ~JSJavaScriptCallFrame();
+    void finishCreation(JSC::VM&);
 
     JavaScriptCallFrame* m_impl;
 };

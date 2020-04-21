@@ -34,11 +34,7 @@
 class WebKitStatistics final : public IWebKitStatistics {
 public:
     static WebKitStatistics* createInstance();
-protected:
-    WebKitStatistics();
-    ~WebKitStatistics();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -53,7 +49,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE comClassCount(_Out_ int*);
     virtual HRESULT STDMETHODCALLTYPE comClassNameCounts(__deref_out_opt BSTR*);
 
-protected:
+private:
+    WebKitStatistics();
+    ~WebKitStatistics();
+
     ULONG m_refCount { 0 };
 };
 

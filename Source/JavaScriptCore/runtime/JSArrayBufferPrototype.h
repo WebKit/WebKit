@@ -40,16 +40,15 @@ public:
         return &vm.plainObjectSpace;
     }
 
-protected:
-    JSArrayBufferPrototype(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, ArrayBufferSharingMode);
-
-public:
     static JSArrayBufferPrototype* create(VM&, JSGlobalObject*, Structure*, ArrayBufferSharingMode = ArrayBufferSharingMode::Default);
     
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+private:
+    JSArrayBufferPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*, ArrayBufferSharingMode);
 };
 
 } // namespace JSC

@@ -63,7 +63,7 @@ public:
 
     }
 
-protected:
+private:
     PollResult poll(const AbstractLocker&) override
     {
         auto& queue = worklist.m_queue;

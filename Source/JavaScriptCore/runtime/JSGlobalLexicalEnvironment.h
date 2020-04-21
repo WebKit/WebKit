@@ -66,7 +66,7 @@ public:
         return Structure::create(vm, globalObject, jsNull(), TypeInfo(GlobalLexicalEnvironmentType, StructureFlags), info());
     }
 
-protected:
+private:
     JSGlobalLexicalEnvironment(VM& vm, Structure* structure, JSScope* scope)
         : Base(vm, structure, scope)
     {

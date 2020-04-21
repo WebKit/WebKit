@@ -1167,23 +1167,22 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-protected:
-    void visitChildrenCommon(SlotVisitor&);
-        
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-        ASSERT(structure(vm)->totalStorageCapacity() == structure(vm)->inlineCapacity());
-        ASSERT(classInfo(vm));
-    }
-
 private:
     friend class LLIntOffsetsExtractor;
+
+    void visitChildrenCommon(SlotVisitor&);
 
     explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSObject(vm, structure, butterfly)
     {
         gcSafeZeroMemory(inlineStorageUnsafe(), structure->inlineCapacity() * sizeof(EncodedJSValue));
+    }
+
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+        ASSERT(structure(vm)->totalStorageCapacity() == structure(vm)->inlineCapacity());
+        ASSERT(classInfo(vm));
     }
 };
 

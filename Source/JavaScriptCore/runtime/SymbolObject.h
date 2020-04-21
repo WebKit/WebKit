@@ -64,7 +64,7 @@ public:
 
     static String toStringName(const JSObject*, JSGlobalObject*);
 
-protected:
+private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, Symbol*);
     JS_EXPORT_PRIVATE SymbolObject(VM&, Structure*);
 };

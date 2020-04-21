@@ -30,9 +30,6 @@
 namespace JSC {
 
 class AtomicsObject final : public JSNonFinalObject {
-private:
-    AtomicsObject(VM&, Structure*);
-
 public:
     using Base = JSNonFinalObject;
 
@@ -49,7 +46,8 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-protected:
+private:
+    AtomicsObject(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

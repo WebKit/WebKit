@@ -40,11 +40,7 @@ public:
     {
         return vm.dataViewSpace<mode>();
     }
-    
-protected:
-    JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
-    
-public:
+
     JS_EXPORT_PRIVATE static JSDataView* create(
         JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset,
         unsigned byteLength);
@@ -68,7 +64,13 @@ public:
     
     static const TypedArrayType TypedArrayStorageType = TypeDataView;
 
-protected:
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+    
+    DECLARE_EXPORT_INFO;
+
+private:
+    JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
+
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
@@ -76,12 +78,6 @@ protected:
 
     static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
-public:
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    
-    DECLARE_EXPORT_INFO;
-
-private:
     ArrayBuffer* m_buffer;
 };
 

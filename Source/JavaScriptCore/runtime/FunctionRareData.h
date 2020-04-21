@@ -138,12 +138,11 @@ public:
     Watchpoint* createAllocationProfileClearingWatchpoint();
     class AllocationProfileClearingWatchpoint;
 
-protected:
-    explicit FunctionRareData(VM&, ExecutableBase*);
-    ~FunctionRareData();
-
 private:
     friend class LLIntOffsetsExtractor;
+
+    explicit FunctionRareData(VM&, ExecutableBase*);
+    ~FunctionRareData();
 
     // Ideally, there would only be one allocation profile for subclassing but due to Reflect.construct we
     // have two. There are some pros and cons in comparison to our current system to using the same profile

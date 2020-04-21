@@ -39,7 +39,7 @@ class ISOStringBox final : public ISOBox {
 public:
     const String& contents() { return m_contents; }
 
-protected:
+private:
     bool parse(JSC::DataView& view, unsigned& offset) override
     {
         unsigned localOffset = offset;

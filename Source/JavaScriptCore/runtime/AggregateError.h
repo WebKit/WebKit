@@ -81,10 +81,9 @@ public:
         return m_errors;
     }
 
-protected:
+private:
     explicit AggregateError(VM&, Structure*, const MarkedArgumentBuffer& errors);
 
-private:
     Vector<WriteBarrier<Unknown>> m_errors;
 };
 

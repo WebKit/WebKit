@@ -1,3 +1,81 @@
+2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Classes marked final should not use protected access specifier
+        https://bugs.webkit.org/show_bug.cgi?id=210775
+
+        Reviewed by Daniel Bates.
+
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.h:
+        * Modules/applepay/ApplePayValidateMerchantEvent.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        * Modules/webaudio/BiquadDSPKernel.h:
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * Modules/webxr/WebXRSession.h:
+        * Modules/webxr/WebXRSystem.h:
+        * accessibility/AccessibilityARIAGridCell.h:
+        * accessibility/AccessibleSetValueEvent.h:
+        * animation/CSSAnimation.h:
+        * bindings/js/ReadableStream.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/runtime_array.h:
+        * css/CSSImageSetValue.h:
+        * html/HTMLKeygenElement.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLUniformLocation.h:
+        * html/shadow/TextControlInnerElements.h:
+        * inspector/InspectorStyleSheet.h:
+        * inspector/WebInjectedScriptManager.h:
+        * loader/cache/CachedCSSStyleSheet.h:
+        * page/Frame.h:
+        * page/FrameView.h:
+        * page/PageConsoleClient.h:
+        * page/animation/KeyframeAnimation.h:
+        * page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.h:
+        * platform/audio/AudioBus.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/NamedImageGeneratedImage.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.h:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.h:
+        * platform/graphics/cg/ImageDecoderCG.h:
+        * platform/graphics/iso/ISOOriginalFormatBox.h:
+        * platform/graphics/iso/ISOProtectionSchemeInfoBox.h:
+        * platform/graphics/iso/ISOSchemeInformationBox.h:
+        * platform/graphics/iso/ISOSchemeTypeBox.h:
+        * platform/graphics/iso/ISOTrackEncryptionBox.h:
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        * platform/graphics/iso/ISOVTTCue.h:
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mock/mediasource/MockBox.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.h:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderRuby.h:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderScrollbarTheme.h:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * svg/SVGTextPathElement.h:
+        * workers/WorkerConsoleClient.h:
+        * worklets/Worklet.h:
+
 2020-04-20  Peng Liu  <peng.liu6@apple.com>
 
         Fix build failures when video fullscreen and picture-in-picture is disabled

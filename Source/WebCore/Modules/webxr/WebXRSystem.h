@@ -55,7 +55,7 @@ public:
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
 
-protected:
+private:
     WebXRSystem(ScriptExecutionContext&);
 
     // EventTarget

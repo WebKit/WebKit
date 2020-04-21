@@ -83,11 +83,9 @@ public:
     JSC::JSValue queryInstances(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue queryHolders(JSC::JSGlobalObject*, JSC::CallFrame*);
 
-protected:
-    void finishCreation(JSC::VM&);
-
 private:
     JSInjectedScriptHost(JSC::VM&, JSC::Structure*, Ref<InjectedScriptHost>&&);
+    void finishCreation(JSC::VM&);
 
     Ref<InjectedScriptHost> m_wrapped;
 };

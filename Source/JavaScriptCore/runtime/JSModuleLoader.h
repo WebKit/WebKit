@@ -36,8 +36,6 @@ class JSModuleRecord;
 class SourceCode;
 
 class JSModuleLoader final : public JSNonFinalObject {
-private:
-    JSModuleLoader(VM&, Structure*);
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -93,7 +91,8 @@ public:
     JSModuleNamespaceObject* getModuleNamespaceObject(JSGlobalObject*, JSValue moduleRecord);
     JSArray* dependencyKeysIfEvaluated(JSGlobalObject*, JSValue key);
 
-protected:
+private:
+    JSModuleLoader(VM&, Structure*);
     void finishCreation(JSGlobalObject*, VM&);
 };
 

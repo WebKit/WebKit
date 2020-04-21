@@ -35,7 +35,7 @@ public:
 
     const ISOBox* schemeSpecificData() const { return m_schemeSpecificData.get(); }
 
-protected:
+private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
     std::unique_ptr<ISOBox> m_schemeSpecificData;

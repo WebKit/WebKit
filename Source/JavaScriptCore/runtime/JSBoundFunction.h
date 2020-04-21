@@ -80,13 +80,11 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
 private:
     JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, int length);
-    
+
     void finishCreation(VM&, NativeExecutable*, int length);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;

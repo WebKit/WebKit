@@ -34,10 +34,7 @@ class WebURLCredential final : public IWebURLCredential
 public:
     static WebURLCredential* createInstance();
     static WebURLCredential* createInstance(const WebCore::Credential&);
-private:
-    WebURLCredential(const WebCore::Credential&);
-    ~WebURLCredential();
-public:
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -53,7 +50,10 @@ public:
     // WebURLCredential
     const WebCore::Credential& credential() const;
 
-protected:
+private:
+    WebURLCredential(const WebCore::Credential&);
+    ~WebURLCredential();
+
     ULONG m_refCount { 0 };
     WebCore::Credential m_credential;
 };

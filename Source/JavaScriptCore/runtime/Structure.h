@@ -146,7 +146,7 @@ public:
 
     JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
 
-protected:
+private:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);

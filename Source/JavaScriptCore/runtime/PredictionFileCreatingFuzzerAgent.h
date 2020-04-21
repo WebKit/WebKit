@@ -37,7 +37,7 @@ class PredictionFileCreatingFuzzerAgent final : public FileBasedFuzzerAgentBase 
 public:
     PredictionFileCreatingFuzzerAgent(VM&);
 
-protected:
+private:
     SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) override;
 };
 

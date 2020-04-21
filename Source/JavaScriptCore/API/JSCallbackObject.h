@@ -123,13 +123,6 @@ public:
     
 template <class Parent>
 class JSCallbackObject final : public Parent {
-protected:
-    JSCallbackObject(JSGlobalObject*, Structure*, JSClassRef, void* data);
-    JSCallbackObject(VM&, JSClassRef, Structure*);
-
-    void finishCreation(JSGlobalObject*);
-    void finishCreation(VM&);
-
 public:
     using Base = Parent;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesGetPropertyNames | OverridesGetCallData;
@@ -190,6 +183,12 @@ public:
     using Parent::methodTable;
 
 private:
+    JSCallbackObject(JSGlobalObject*, Structure*, JSClassRef, void* data);
+    JSCallbackObject(VM&, JSClassRef, Structure*);
+
+    void finishCreation(JSGlobalObject*);
+    void finishCreation(VM&);
+
     static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
     static String className(const JSObject*, VM&);
     static String toStringName(const JSObject*, JSGlobalObject*);

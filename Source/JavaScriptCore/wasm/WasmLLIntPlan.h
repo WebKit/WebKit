@@ -75,12 +75,11 @@ public:
 
     bool didReceiveFunctionData(unsigned, const FunctionData&) override;
 
-protected:
+private:
     bool prepareImpl() override;
     void compileFunction(uint32_t functionIndex) override;
     void didCompleteCompilation(const AbstractLocker&) override;
 
-private:
     Vector<std::unique_ptr<FunctionCodeBlock>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;

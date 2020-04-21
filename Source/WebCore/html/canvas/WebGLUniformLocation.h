@@ -45,10 +45,9 @@ public:
     
     GCGLenum type() const;
 
-protected:
+private:
     WebGLUniformLocation(WebGLProgram*, GCGLint location, GCGLenum type);
 
-private:
     RefPtr<WebGLProgram> m_program;
     GCGLint m_location;
     unsigned m_linkCount;

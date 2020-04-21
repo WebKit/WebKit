@@ -54,11 +54,9 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&);
-
 private:
     AsyncGeneratorFunctionPrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

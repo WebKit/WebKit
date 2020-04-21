@@ -60,7 +60,6 @@ private:
 
     void setBodyDataFrom(const CachedResource&) final;
 
-protected:
     void checkNotify() final;
 
     RefPtr<TextResourceDecoder> m_decoder;

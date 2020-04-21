@@ -82,7 +82,7 @@ public:
 
     const MapType& map() const { return m_map; }
 
-protected:
+private:
     explicit Dictionary(MapType);
 
     MapType m_map;

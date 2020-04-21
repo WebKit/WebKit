@@ -32,10 +32,7 @@ class DefaultPolicyDelegate final : public IWebPolicyDelegate {
 public:
     static DefaultPolicyDelegate* sharedInstance();
     static DefaultPolicyDelegate* createInstance();
-private:
-    DefaultPolicyDelegate();
-    ~DefaultPolicyDelegate();
-public:
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -53,7 +50,10 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE unableToImplementPolicyWithError(_In_opt_ IWebView*, _In_opt_ IWebError*, _In_opt_ IWebFrame*);
 
-protected:
+private:
+    DefaultPolicyDelegate();
+    ~DefaultPolicyDelegate();
+
     ULONG m_refCount { 0 };
 };
 

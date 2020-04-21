@@ -129,10 +129,9 @@ public:
     LayoutRect columnRectAt(unsigned index) const;
     unsigned columnCount() const;
 
-protected:
+private:
     void addOverflowFromChildren() override;
     
-private:
     bool isRenderMultiColumnSet() const override { return true; }
     void layout() override;
 

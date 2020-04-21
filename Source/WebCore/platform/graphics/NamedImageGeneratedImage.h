@@ -38,13 +38,12 @@ public:
         return adoptRef(*new NamedImageGeneratedImage(name, size));
     }
 
-protected:
+private:
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;
     void drawPattern(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) override;
 
     NamedImageGeneratedImage(String name, const FloatSize&);
 
-private:
     bool isNamedImageGeneratedImage() const override { return true; }
     void dump(WTF::TextStream&) const override;
 

@@ -53,7 +53,7 @@ public:
         return adoptRef(*new KeygenSelectElement(document));
     }
 
-protected:
+private:
     KeygenSelectElement(Document& document)
         : HTMLSelectElement(selectTag, document, 0)
     {
@@ -61,7 +61,6 @@ protected:
         setPseudo(pseudoId);
     }
 
-private:
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) override
     {
         return create(targetDocument);

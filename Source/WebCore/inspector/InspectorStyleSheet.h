@@ -236,7 +236,7 @@ public:
     ExceptionOr<String> text() const final;
     CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const final { ASSERT_UNUSED(id, !id.ordinal()); return &inlineStyle(); }
 
-protected:
+private:
     InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 
     Document* ownerDocument() const final;
@@ -249,7 +249,6 @@ protected:
     ExceptionOr<void> setStyleText(CSSStyleDeclaration*, const String&) final;
     Vector<size_t> lineEndings() const final;
 
-private:
     CSSStyleDeclaration& inlineStyle() const;
     const String& elementStyleText() const;
     Ref<CSSRuleSourceData> ruleSourceData() const;

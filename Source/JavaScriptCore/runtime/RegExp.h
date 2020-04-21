@@ -139,12 +139,10 @@ public:
 
     RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 
-protected:
-    void finishCreation(VM&);
-
 private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
+    void finishCreation(VM&);
 
     static RegExp* createWithoutCaching(VM&, const String&, OptionSet<Yarr::Flags>);
 

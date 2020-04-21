@@ -57,11 +57,9 @@ public:
         return std::isfinite(number) && trunc(number) == number;
     }
 
-protected:
-    void finishCreation(VM&, NumberPrototype*);
-
 private:
     NumberConstructor(VM&, Structure*);
+    void finishCreation(VM&, NumberPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberConstructor, InternalFunction);
 

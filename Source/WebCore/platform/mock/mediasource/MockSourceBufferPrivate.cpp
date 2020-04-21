@@ -113,7 +113,7 @@ public:
     bool isAudio() const override { return m_box.kind() == MockTrackBox::Audio; }
     bool isText() const override { return m_box.kind() == MockTrackBox::Text; }
 
-protected:
+private:
     MockMediaDescription(const MockTrackBox& box) : m_box(box) { }
     MockTrackBox m_box;
 };

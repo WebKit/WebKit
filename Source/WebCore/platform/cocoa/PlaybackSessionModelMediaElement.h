@@ -98,10 +98,9 @@ public:
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
 
-protected:
+private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
 
-private:
     void progressEventTimerFired();
     static const Vector<WTF::AtomString>& observedEventNames();
     const WTF::AtomString& eventNameAll();

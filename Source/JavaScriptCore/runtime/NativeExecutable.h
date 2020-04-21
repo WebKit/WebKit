@@ -76,11 +76,9 @@ public:
     const DOMJIT::Signature* signatureFor(CodeSpecializationKind) const;
     Intrinsic intrinsic() const;
 
-protected:
-    void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
-
 private:
     NativeExecutable(VM&, TaggedNativeFunction, TaggedNativeFunction constructor);
+    void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
 
     TaggedNativeFunction m_function;
     TaggedNativeFunction m_constructor;

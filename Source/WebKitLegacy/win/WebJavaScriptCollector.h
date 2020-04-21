@@ -32,11 +32,7 @@ class WebJavaScriptCollector final : public IWebJavaScriptCollector
 {
 public:
     static WebJavaScriptCollector* createInstance();
-protected:
-    WebJavaScriptCollector();
-    ~WebJavaScriptCollector();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -47,7 +43,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE collectOnAlternateThread(BOOL waitUntilDone);
     virtual HRESULT STDMETHODCALLTYPE objectCount(_Out_ UINT*);
 
-protected:
+private:
+    WebJavaScriptCollector();
+    ~WebJavaScriptCollector();
+
     ULONG m_refCount { 0 };
 };
 

@@ -33,11 +33,7 @@ class WebURLResponse final : public IWebHTTPURLResponse, IWebURLResponsePrivate
 public:
     static WebURLResponse* createInstance();
     static WebURLResponse* createInstance(const WebCore::ResourceResponse& response);
-protected:
-    WebURLResponse();
-    ~WebURLResponse();
 
-public:
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef();
@@ -62,14 +58,16 @@ public:
     
     const WebCore::ResourceResponse& resourceResponse() const;
 
-protected:
+private:
+    WebURLResponse();
+    ~WebURLResponse();
+
     HRESULT suggestedFileExtension(BSTR* result);
 
 #if USE(CFURLCONNECTION)
     CFDictionaryRef certificateDictionary() const;
 #endif
 
-protected:
     ULONG m_refCount { 0 };
     WebCore::ResourceResponse m_response;
 

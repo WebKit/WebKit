@@ -37,14 +37,13 @@ public:
     static Ref<AccessibilityARIAGridCell> create(RenderObject*);
     virtual ~AccessibilityARIAGridCell();
 
-protected:
+private:
+    explicit AccessibilityARIAGridCell(RenderObject*);
+
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override;
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override;
-
-private:
-    explicit AccessibilityARIAGridCell(RenderObject*);
 
     AccessibilityTable* parentTable() const override;
     AccessibilityObject* parentRowGroup() const;

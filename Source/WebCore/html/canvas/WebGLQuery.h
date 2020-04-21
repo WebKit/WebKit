@@ -40,11 +40,10 @@ public:
 
     void makeResultAvailable() { m_isResultAvailable = true; }
 
-protected:
+private:
     explicit WebGLQuery(WebGLRenderingContextBase&);
     void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
-private:
     bool m_isResultAvailable { false };
 };
 

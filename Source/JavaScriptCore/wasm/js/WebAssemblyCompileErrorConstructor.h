@@ -44,11 +44,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, WebAssemblyCompileErrorPrototype*);
-
 private:
     WebAssemblyCompileErrorConstructor(VM&, Structure*);
+    void finishCreation(VM&, WebAssemblyCompileErrorPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WebAssemblyCompileErrorConstructor, InternalFunction);
 

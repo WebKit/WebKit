@@ -48,11 +48,9 @@ public:
 
     DECLARE_INFO;
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
 private:
     WebAssemblyGlobalPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

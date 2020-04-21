@@ -52,11 +52,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
     }
 
-protected:
-    void finishCreation(VM&, SymbolPrototype*);
-
 private:
     SymbolConstructor(VM&, Structure*);
+    void finishCreation(VM&, SymbolPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SymbolConstructor, InternalFunction);
 
