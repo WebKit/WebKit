@@ -1,3 +1,22 @@
+2020-04-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Adapt to GtkIconTheme API changes
+        https://bugs.webkit.org/show_bug.cgi?id=210745
+
+        Reviewed by Adrian Perez de Castro.
+
+        No new tests needed.
+
+        GtkIconTheme changes in GTK and since we're no longer following
+        the theme we can drop the missing image from the icon theme, so remove
+        now unnecessary code.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::Image::loadPlatformResource): Directly load image from compiled
+        GResource.
+        (WebCore::loadResourceSharedBuffer): Deleted.
+        (WebCore::loadMissingImageIconFromTheme): Deleted.
+
 2020-04-21  Rob Buis  <rbuis@igalia.com>
 
         Exit early in FrameLoader::loadURL when redirecting to another frame

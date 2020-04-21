@@ -82,7 +82,6 @@ typedef struct _GtkAdjustment GtkAdjustment;
 typedef struct _GtkBorder GtkBorder;
 typedef struct _GtkClipboard GtkClipboard;
 typedef struct _GtkContainer GtkContainer;
-typedef struct _GtkIconInfo GtkIconInfo;
 typedef struct _GtkMenu GtkMenu;
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkObject GtkObject;

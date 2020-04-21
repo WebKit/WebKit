@@ -26,11 +26,9 @@
 #include "config.h"
 
 #include "BitmapImage.h"
-#include "GUniquePtrGtk.h"
 #include "GdkCairoUtilities.h"
 #include "SharedBuffer.h"
 #include <cairo.h>
-#include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -46,37 +44,13 @@ static Ref<Image> loadImageFromGResource(const char* iconName)
     return icon;
 }
 
-static Ref<SharedBuffer> loadResourceSharedBuffer(const char* filename)
-{
-    GUniqueOutPtr<gchar> content;
-    gsize length;
-    if (!g_file_get_contents(filename, &content.outPtr(), &length, nullptr))
-        return SharedBuffer::create();
-
-    return SharedBuffer::create(content.get(), length);
-}
-
 void BitmapImage::invalidatePlatformData()
 {
 }
 
-static Ref<Image> loadMissingImageIconFromTheme(const char* name)
-{
-    int iconSize = g_str_has_suffix(name, "@2x") ? 32 : 16;
-    auto icon = BitmapImage::create();
-    GRefPtr<GtkIconInfo> iconInfo = adoptGRef(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), "image-missing", iconSize, GTK_ICON_LOOKUP_NO_SVG));
-    if (iconInfo) {
-        auto buffer = loadResourceSharedBuffer(gtk_icon_info_get_filename(iconInfo.get()));
-        icon->setData(WTFMove(buffer), true);
-        return icon;
-    }
-
-    return loadImageFromGResource(name);
-}
-
 Ref<Image> Image::loadPlatformResource(const char* name)
 {
-    return g_str_has_prefix(name, "missingImage") ? loadMissingImageIconFromTheme(name) : loadImageFromGResource(name);
+    return loadImageFromGResource(name);
 }
 
 GdkPixbuf* BitmapImage::getGdkPixbuf()

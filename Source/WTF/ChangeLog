@@ -1,3 +1,12 @@
+2020-04-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Adapt to GtkIconTheme API changes
+        https://bugs.webkit.org/show_bug.cgi?id=210745
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/glib/GTypedefs.h: Remove unneeded GtkIconInfo definition.
+
 2020-04-20  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the build after r260407
