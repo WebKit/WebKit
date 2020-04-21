@@ -33,6 +33,7 @@
 #include "XRSessionMode.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,14 +41,14 @@ class ScriptExecutionContext;
 class WebXRSession;
 struct XRSessionInit;
 
-class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTargetWithInlineData, public ActiveDOMObject {
+class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTargetWithInlineData, public ActiveDOMObject, public CanMakeWeakPtr<WebXRSystem> {
     WTF_MAKE_ISO_ALLOCATED(WebXRSystem);
 public:
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;
 
     static Ref<WebXRSystem> create(ScriptExecutionContext&);
-    virtual ~WebXRSystem();
+    ~WebXRSystem();
 
     using RefCounted<WebXRSystem>::ref;
     using RefCounted<WebXRSystem>::deref;
@@ -55,9 +56,7 @@ public:
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
 
-private:
-    WebXRSystem(ScriptExecutionContext&);
-
+protected:
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSystemEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
@@ -67,6 +66,9 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const override;
     void stop() override;
+
+private:
+    WebXRSystem(ScriptExecutionContext&);
 };
 
 } // namespace WebCore

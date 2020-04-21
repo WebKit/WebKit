@@ -310,6 +310,12 @@
 #include "PaymentCoordinator.h"
 #endif
 
+#if ENABLE(WEBXR)
+#include "NavigatorWebXR.h"
+#include "WebXRSystem.h"
+#include "WebXRTest.h"
+#endif
+
 #if PLATFORM(MAC) && USE(LIBWEBRTC)
 #include <webrtc/sdk/WebKit/VideoProcessingSoftLink.h>
 #endif
@@ -5654,5 +5660,31 @@ bool Internals::destroySleepDisabler(unsigned identifier)
 {
     return m_sleepDisablers.remove(identifier);
 }
+
+#if ENABLE(WEBXR)
+
+ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+        return Exception { InvalidAccessError };
+
+    if (!m_xrTest) {
+        if (!contextDocument() || !contextDocument()->domWindow())
+            return Exception { InvalidAccessError };
+
+        auto* navigator = contextDocument()->domWindow()->optionalNavigator();
+        if (!navigator)
+            return Exception { InvalidAccessError };
+
+        auto& navigatorXR = NavigatorWebXR::from(*navigator);
+        auto& xrSystem = navigatorXR.xr(*scriptExecutionContext(), *navigator);
+
+        m_xrTest = WebXRTest::create(makeWeakPtr(&xrSystem));
+    }
+    return m_xrTest.get();
+}
+
+#endif
+
 
 } // namespace WebCore

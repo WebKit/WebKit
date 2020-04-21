@@ -23,29 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebFakeXRDevice.h"
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "JSDOMPromiseDeferred.h"
+#include "WebFakeXRInputController.h"
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+void WebFakeXRDevice::setViews(Vector<FakeXRViewInit>)
+{
+}
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
+{
+    promise.resolve();
+}
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+void WebFakeXRDevice::setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition)
+{
+    UNUSED_PARAM(origin);
+    UNUSED_PARAM(emulatedPosition);
+}
 
-private:
-    RefPtr<WebXRSystem> m_xr;
-};
+void WebFakeXRDevice::clearViewerOrigin()
+{
+}
+
+void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
+{
+}
+
+void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>)
+{
+}
+
+void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit)
+{
+}
+
+void WebFakeXRDevice::clearFloorOrigin()
+{
+}
+
+void WebFakeXRDevice::simulateResetPose()
+{
+}
+
+WebFakeXRInputController WebFakeXRDevice::simulateInputSourceConnection(FakeXRInputSourceInit)
+{
+    return WebFakeXRInputController();
+}
 
 } // namespace WebCore
 

@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// This represents the native resolution of the device, but may not reflect the viewport exposed to the page.
+// https://immersive-web.github.io/webxr/#xrviewport
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRDeviceResolution {
+    required long width;
+    required long height;
+};
+
+// A set of 4 angles which describe the view from a center point, units are degrees.
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRFieldOfViewInit {
+    required float upDegrees;
+    required float downDegrees;
+    required float leftDegrees;
+    required float rightDegrees;
+};
+
+// https://immersive-web.github.io/webxr/#xrview
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRViewInit {
+    required XREye eye;
+    // https://immersive-web.github.io/webxr/#view-projection-matrix
+    required sequence<float> projectionMatrix;
+    // https://immersive-web.github.io/webxr/#dom-xrwebgllayer-getviewport
+    required FakeXRDeviceResolution resolution;
+    // https://immersive-web.github.io/webxr/#view-offset
+    // This is the origin of the view in the viewer space. In other words, this is
+    // a transform from the view space to the viewer space.
+    required FakeXRRigidTransformInit viewOffset;
+    // This is an optional means of specifying a decomposed form of the projection
+    // matrix.  If specified, the projectionMatrix should be ignored.
+    // Any test that wishes to test clip planes or similar features that would require
+    // decomposing/recomposing the projectionMatrix should use this instead of
+    // the projection matrix.
+    FakeXRFieldOfViewInit fieldOfView;
+};

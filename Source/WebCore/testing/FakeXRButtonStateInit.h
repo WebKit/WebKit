@@ -27,24 +27,23 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+struct FakeXRButtonStateInit {
+    enum class Type {
+        Grip,
+        Touchpad,
+        Thumbstick,
+        OptionalButton,
+        OptionalThumbstick
+    };
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+    Type buttonType;
+    bool pressed;
+    bool touched;
+    float pressedValue;
+    float xValue { 0.0 };
+    float yValue { 0.0 };
 };
 
 } // namespace WebCore

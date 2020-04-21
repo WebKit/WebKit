@@ -434,6 +434,10 @@ Modules/webxr/XRInputSourcesChangeEvent.cpp @no-unify
 Modules/webxr/XRReferenceSpaceEvent.cpp @no-unify
 Modules/webxr/XRSessionEvent.cpp @no-unify
 
+testing/WebFakeXRDevice.cpp @no-unify
+testing/WebFakeXRInputController.cpp @no-unify
+testing/WebXRTest.cpp @no-unify
+
 #endif
 
 accessibility/AXLogger.cpp
@@ -3557,6 +3561,16 @@ JSXPathResult.cpp
 JSXSLTProcessor.cpp
 
 #if ENABLE_WEBXR
+
+JSFakeXRBoundsPoint.cpp
+JSFakeXRButtonStateInit.cpp
+JSFakeXRInputSourceInit.cpp
+JSFakeXRRigidTransformInit.cpp
+JSFakeXRViewInit.cpp
+JSWebFakeXRDevice.cpp
+JSWebFakeXRInputController.cpp
+JSWebXRTest.cpp
+JSXRSimulateUserActivationFunction.cpp
 
 JSWebXRBoundedReferenceSpace.cpp
 JSXREnvironmentBlendMode.cpp

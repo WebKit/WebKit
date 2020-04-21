@@ -27,24 +27,29 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "FakeXRRigidTransformInit.h"
+#include "XREye.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+struct FakeXRViewInit {
+    struct DeviceResolution {
+        int width;
+        int height;
+    };
+    struct FieldOfViewInit {
+        float upDegrees;
+        float downDegrees;
+        float leftDegrees;
+        float rightDegrees;
+    };
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+    XREye eye;
+    Vector<float> projectionMatrix;
+    DeviceResolution resolution;
+    FakeXRRigidTransformInit viewOffset;
+    FieldOfViewInit fieldOfView;
 };
 
 } // namespace WebCore

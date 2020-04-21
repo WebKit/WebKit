@@ -906,4 +906,6 @@ enum CompositingPolicy {
 
     unsigned long createSleepDisabler(DOMString reason, boolean display);
     boolean destroySleepDisabler(unsigned long identifier);
+
+    [Conditional=WEBXR, MayThrowException] readonly attribute WebXRTest xrTest;
 };

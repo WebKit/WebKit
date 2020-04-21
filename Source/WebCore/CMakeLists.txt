@@ -159,6 +159,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/svg/properties"
+    "${WEBCORE_DIR}/testing"
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/workers/service"
@@ -1655,6 +1656,25 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/ServiceWorkerInternals.cpp
     testing/js/WebCoreTestSupport.cpp
 )
+
+
+if (ENABLE_WEBXR)
+    list(APPEND WebCoreTestSupport_IDL_FILES
+        testing/FakeXRBoundsPoint.idl
+        testing/FakeXRButtonStateInit.idl
+        testing/FakeXRInputSourceInit.idl
+        testing/FakeXRRigidTransformInit.idl
+        testing/FakeXRViewInit.idl
+        testing/WebFakeXRDevice.idl
+        testing/WebFakeXRInputController.idl
+        testing/WebXRTest.idl
+        testing/XRSimulateUserActivationFunction.idl
+    )
+    list(APPEND WebCoreTestSupport_SOURCES
+        testing/WebFakeXRDevice.cpp
+        testing/WebXRTest.cpp
+    )
+endif ()
 
 # Modules that the bindings generator scripts may use
 set(SCRIPTS_RESOLVE_SUPPLEMENTAL

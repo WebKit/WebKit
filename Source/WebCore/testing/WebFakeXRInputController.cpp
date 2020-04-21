@@ -23,29 +23,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebFakeXRInputController.h"
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+void WebFakeXRInputController::setHandedness(XRHandedness)
+{
+}
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+void WebFakeXRInputController::setTargetRayMode(XRTargetRayMode)
+{
+}
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+void WebFakeXRInputController::setProfiles(Vector<String>)
+{
+}
 
-private:
-    RefPtr<WebXRSystem> m_xr;
-};
+void WebFakeXRInputController::setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition)
+{
+    UNUSED_PARAM(gripOrigin);
+    UNUSED_PARAM(emulatedPosition);
+}
+
+void WebFakeXRInputController::clearGripOrigin()
+{
+}
+
+void WebFakeXRInputController::setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition)
+{
+    UNUSED_PARAM(pointerOrigin);
+    UNUSED_PARAM(emulatedPosition);
+}
+
+void WebFakeXRInputController::disconnect()
+{
+}
+
+void WebFakeXRInputController::reconnect()
+{
+}
+
+void WebFakeXRInputController::startSelection()
+{
+}
+
+void WebFakeXRInputController::endSelection()
+{
+}
+
+void WebFakeXRInputController::simulateSelect()
+{
+}
+
+void WebFakeXRInputController::setSupportedButtons(Vector<FakeXRButtonStateInit>)
+{
+}
+
+void WebFakeXRInputController::updateButtonState(FakeXRButtonStateInit)
+{
+}
 
 } // namespace WebCore
 

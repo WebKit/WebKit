@@ -27,24 +27,19 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+class WebXRFrame;
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+class XRSimulateUserActivationFunction : public RefCounted<XRSimulateUserActivationFunction>, public ActiveDOMCallback {
 public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+    using ActiveDOMCallback::ActiveDOMCallback;
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+    virtual CallbackResult<void> handleEvent(JSC::JSValue) = 0;
 };
 
 } // namespace WebCore
