@@ -39,6 +39,8 @@
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
 
+namespace TestWebKitAPI {
+
 class TextInteractionForScope {
 public:
     TextInteractionForScope(const RetainPtr<TestWKWebView>& webView, const RetainPtr<_WKTextInputContext>& textInputContext)
@@ -58,6 +60,8 @@ private:
     RetainPtr<TestWKWebView> m_webView;
     RetainPtr<_WKTextInputContext> m_textInputContext;
 };
+
+} // namespace TestWebKitAPI
 
 @implementation TestWKWebView (SynchronousTextInputContext)
 
@@ -86,6 +90,8 @@ private:
 }
 
 @end
+
+namespace TestWebKitAPI {
 
 static NSString *applyStyle(NSString *HTMLString)
 {
@@ -744,5 +750,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementC
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     EXPECT_LT([webView scrollView].zoomScale, 2);
 }
+
+} // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

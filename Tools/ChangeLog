@@ -1,3 +1,13 @@
+2020-04-21  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the build after r260449
+        (https://bugs.webkit.org/show_bug.cgi?id=210697)
+
+        Wrap the C++ methods in namespace TestWebKitAPI so that IPhoneUserInterfaceSwizzler can be
+        used unqualified.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+
 2020-04-21  Darin Adler  <darin@apple.com>
 
         WTF API test for StringConcatenate failing for internal Apple builds
