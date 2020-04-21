@@ -1,5 +1,16 @@
 2020-04-21  Paulo Matos  <pmatos@igalia.com>
 
+        [ARMv7][EWS] stress/check-stack-overflow-before-value-profiling-arguments.js is failing
+        https://bugs.webkit.org/show_bug.cgi?id=210720
+
+        Unreviewed gardening.
+
+        Skip test on arm since it is failing on EWS, causing significant delays.
+
+        * stress/check-stack-overflow-before-value-profiling-arguments.js:
+
+2020-04-21  Paulo Matos  <pmatos@igalia.com>
+
         Re-enable previously skipped mips tests
         https://bugs.webkit.org/show_bug.cgi?id=209964
 
