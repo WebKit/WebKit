@@ -1,3 +1,26 @@
+2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration
+        https://bugs.webkit.org/show_bug.cgi?id=210769
+        <rdar://problem/62065241>
+
+        Reviewed by Brent Fulgham.
+
+        Removes any tests for swapping between app-bound and non app-bound
+        domains as this behavior is no longer supported.
+
+        Sets the limitsNavigationsToAppBoundDomains flag for tests which should
+        have app-bound behavior to maintain test functionality.
+
+        Adds 5 new tests for new behavior.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+        (-[AppBoundDomainDelegate webView:didFinishNavigation:]):
+        (-[AppBoundDomainDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[AppBoundDomainDelegate waitForDidFinishNavigation]):
+        (-[AppBoundDomainDelegate waitForDidFailProvisionalNavigationError]):
+
 2020-04-20  Megan Gardner  <megan_gardner@apple.com>
 
         Date and Time form controls not showing correct initial values on immediate second invocation.

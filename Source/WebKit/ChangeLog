@@ -1,3 +1,36 @@
+2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration
+        https://bugs.webkit.org/show_bug.cgi?id=210769
+        <rdar://problem/62065241>
+
+        Reviewed by Brent Fulgham.
+
+        Changes app-bound domain behavior to be triggered by the value of
+        limitsNavigationsToAppBoundDomains, a WebView configuration flag.
+        If the WebView has this parameter set and is currently navigating to
+        an app bound domain, then app-bound privileges will be granted.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        Update this function to return a boolean to indicate whether the
+        navigation should fail. A failure should occur if a WebView has set
+        the limitsNavigationsToAppBoundDomains flag and attempts to navigate
+        away from an app-bound domain.
+
+        If the limitsNavigationsToAppBoundDomains value has not been set to
+        true, maintain non-app bound behavior regardless of whether the domain
+        is app-bound or not.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Check the result of setIsNavigatingToAppBoundDomainAndCheckIfPermitted and fail the
+        navigation if needed, with both RELEASE logging and an appropriate
+        error message.
+
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain): Deleted.
+        * UIProcess/WebPageProxy.h:
+        Renamed for clarity.
+
 2020-04-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         WK2 Quicklook for attachments

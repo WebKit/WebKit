@@ -3127,32 +3127,36 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
-void WebPageProxy::setIsNavigatingToAppBoundDomain(bool isMainFrame, const URL& requestURL, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL& requestURL, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if PLATFORM(IOS_FAMILY)
     if (isMainFrame) {
         if (WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
-            return;
+            return true;
         if (!isNavigatingToAppBoundDomain) {
             m_isNavigatingToAppBoundDomain = WTF::nullopt;
-            return;
+            return true;
         }
         if (m_ignoresAppBoundDomains)
-            return;
-        if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No) {
+            return true;
+        
+        if (m_limitsNavigationsToAppBoundDomains) {
+            if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No)
+                return false;
+            m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
+            m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
+        } else {
             m_configuration->setWebViewCategory(WebViewCategory::InAppBrowser);
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
             m_hasNavigatedAwayFromAppBoundDomain = NavigatedAwayFromAppBoundDomain::Yes;
-            return;
         }
-        m_configuration->setWebViewCategory(WebViewCategory::AppBoundDomain);
-        m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
     }
 #else
     UNUSED_PARAM(isMainFrame);
     UNUSED_PARAM(requestURL);
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
 #endif
+    return true;
 }
 
 void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&& completionHandler)
@@ -5155,10 +5159,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
 #endif
     
-    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
-
-        if (policyAction != PolicyAction::Ignore)
-            setIsNavigatingToAppBoundDomain(frame->isMainFrame(), navigation->currentRequest().url(), isAppBoundDomain);
+    auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation, frameInfo, userDataObject = process->transformHandlesToObjects(userData.object()).get()] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, Optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
 
         auto completionHandler = [this, protectedThis = protectedThis.copyRef(), frame = frame.copyRef(), sender = WTFMove(sender), navigation, processSwapRequestedByClient, policies = makeRefPtr(policies)] (PolicyAction policyAction) mutable {
             if (frame->isMainFrame()) {
@@ -5171,6 +5172,16 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             }
             receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, WTFMove(policies), WTFMove(sender));
         };
+        
+        if (policyAction != PolicyAction::Ignore) {
+            if (!setIsNavigatingToAppBoundDomainAndCheckIfPermitted(frame->isMainFrame(), navigation->currentRequest().url(), isAppBoundDomain)) {
+                auto error = ResourceError { String { }, 0, navigation->currentRequest().url(), "Attempted navigation away from app-bound domain"_s };
+                m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, userDataObject);
+                RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Ignoring request to load this main resource because it is attempting to navigate away from an app-bound domain");
+                completionHandler(PolicyAction::Ignore);
+                return;
+            }
+        }
 
         if (!m_pageClient)
             return completionHandler(policyAction);
