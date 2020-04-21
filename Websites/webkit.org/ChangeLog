@@ -1,3 +1,10 @@
+2020-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, check in some more files for a blog post.
+
+        * blog-files/speculation-in-jsc/abstract-heaps.graffle: Added.
+        * blog-files/speculation-in-jsc/abstract-heaps.svg: Added.
+
 2020-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, check in some more files for a blog post.
