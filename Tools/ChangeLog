@@ -1,3 +1,15 @@
+2020-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        SPI clients using fastServerTrustEvaluationEnabled need SPI to inform them of modern TLS negotiation
+        https://bugs.webkit.org/show_bug.cgi?id=210533
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (-[TLSNavigationDelegate waitForDidNegotiateModernTLS]):
+        (-[TLSNavigationDelegate _webView:didNegotiateModernTLS:]):
+        (TestWebKitAPI::TEST):
+
 2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration

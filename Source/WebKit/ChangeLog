@@ -1,3 +1,34 @@
+2020-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        SPI clients using fastServerTrustEvaluationEnabled need SPI to inform them of modern TLS negotiation
+        https://bugs.webkit.org/show_bug.cgi?id=210533
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTaskClient::didNegotiateModernTLS):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didNegotiateModernTLS):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::didNegotiateModernTLS):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didNegotiateModernTLS):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::didNegotiateModernTLS):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didNegotiateModernTLS):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration

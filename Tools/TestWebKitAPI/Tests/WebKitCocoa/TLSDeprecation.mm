@@ -73,6 +73,7 @@
 @interface TLSNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFailProvisionalNavigation;
+- (NSURLAuthenticationChallenge *)waitForDidNegotiateModernTLS;
 - (bool)receivedShouldAllowLegacyTLS;
 @property (nonatomic) bool shouldAllowLegacyTLS;
 @end
@@ -81,6 +82,7 @@
     bool _navigationFinished;
     bool _navigationFailed;
     bool _receivedShouldAllowLegacyTLS;
+    RetainPtr<NSURLAuthenticationChallenge> _negotiatedModernTLS;
 }
 
 - (void)waitForDidFinishNavigation
@@ -93,6 +95,13 @@
 {
     while (!_navigationFailed)
         TestWebKitAPI::Util::spinRunLoop();
+}
+
+- (NSURLAuthenticationChallenge *)waitForDidNegotiateModernTLS
+{
+    while (!_negotiatedModernTLS)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _negotiatedModernTLS.autorelease();
 }
 
 - (bool)receivedShouldAllowLegacyTLS
@@ -120,6 +129,11 @@
 {
     _receivedShouldAllowLegacyTLS = true;
     completionHandler([self shouldAllowLegacyTLS]);
+}
+
+- (void)_webView:(WKWebView *)webView didNegotiateModernTLS:(NSURLAuthenticationChallenge *)challenge
+{
+    _negotiatedModernTLS = challenge;
 }
 
 @end
@@ -367,6 +381,25 @@ TEST(TLSVersion, Subresource)
     EXPECT_TRUE([webView _negotiatedLegacyTLS]);
 
     [webView removeObserver:observer.get() forKeyPath:@"_negotiatedLegacyTLS"];
+}
+
+TEST(TLSVersion, DidNegotiateModernTLS)
+{
+    HTTPServer server({
+        { "/", { "hello" }}
+    }, HTTPServer::Protocol::Https);
+
+    auto delegate = adoptNS([TLSNavigationDelegate new]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    [dataStoreConfiguration setFastServerTrustEvaluationEnabled:YES];
+    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()] autorelease]];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    NSURLAuthenticationChallenge *challenge = [delegate waitForDidNegotiateModernTLS];
+    EXPECT_WK_STREQ(challenge.protectionSpace.host, "127.0.0.1");
+    EXPECT_EQ(challenge.protectionSpace.port, server.port());
 }
 
 TEST(TLSVersion, BackForwardHasOnlySecureContent)
