@@ -1,3 +1,13 @@
+2020-04-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reset m_userScriptsNotified when web process crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=210807
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebPageProxy::resetStateAfterProcessExited): Set m_userScriptsNotified to false.
+
 2020-04-21  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build

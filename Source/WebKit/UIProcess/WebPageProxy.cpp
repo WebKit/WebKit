@@ -7661,6 +7661,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_hasRunningProcess = false;
     m_isPageSuspended = false;
 
+    m_userScriptsNotified = false;
+
     m_editorState = EditorState();
     m_cachedFontAttributesAtSelectionStart.reset();
 
