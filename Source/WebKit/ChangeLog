@@ -1,3 +1,9 @@
+2020-04-21  Timothy Horton  <timothy_horton@apple.com>
+
+        One more build fix after r260407
+
+        * Configurations/WebKit.xcconfig:
+
 2020-04-21  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Provide better names for ProcessThrottler process assertions
