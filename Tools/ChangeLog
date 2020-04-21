@@ -1,3 +1,15 @@
+2020-04-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [Flatpak SDK] Keep env variable 'RESULTS_SERVER_API_KEY'
+        https://bugs.webkit.org/show_bug.cgi?id=210798
+
+        Reviewed by Philippe Normand.
+
+        The variable is needed by several bot steps to upload results.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][CMake] Make gtk-unix-print a component of FindGTK.cmake

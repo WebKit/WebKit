@@ -691,6 +691,7 @@ class WebkitFlatpak:
             "NUMBER_OF_PROCESSORS",
             "PLUGIN_PROCESS_CMD_PREFIX",
             "QML2_IMPORT_PATH",
+            "RESULTS_SERVER_API_KEY",
             "WAYLAND_DISPLAY",
             "WAYLAND_SOCKET",
             "WEB_PROCESS_CMD_PREFIX"
