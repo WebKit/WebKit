@@ -1,3 +1,13 @@
+2020-04-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Fix platform GDK includes
+        https://bugs.webkit.org/show_bug.cgi?id=210746
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/PlatformDisplay.cpp: Wayland, X11, etc.
+        platform includes changed path, so update accordingly.
+
 2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late February 2020 edition

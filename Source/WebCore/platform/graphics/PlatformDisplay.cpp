@@ -51,14 +51,22 @@
 #endif
 
 #if PLATFORM(GTK) && PLATFORM(X11)
+#if USE(GTK4)
+#include <gdk/x11/gdkx.h>
+#else
 #include <gdk/gdkx.h>
+#endif
 #if defined(None)
 #undef None
 #endif
 #endif
 
 #if PLATFORM(GTK) && PLATFORM(WAYLAND)
+#if USE(GTK4)
+#include <gdk/wayland/gdkwayland.h>
+#else
 #include <gdk/gdkwayland.h>
+#endif
 #endif
 
 #if USE(EGL)
