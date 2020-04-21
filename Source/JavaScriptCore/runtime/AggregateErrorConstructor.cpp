@@ -30,7 +30,10 @@
 #include "ClassInfo.h"
 #include "ExceptionScope.h"
 #include "GCAssertions.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "RuntimeType.h"
+#include "VMInlines.h"
 
 namespace JSC {
 

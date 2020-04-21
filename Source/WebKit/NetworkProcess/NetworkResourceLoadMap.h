@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 

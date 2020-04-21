@@ -29,6 +29,9 @@
 #include "ClassInfo.h"
 #include "ExceptionScope.h"
 #include "IteratorOperations.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include <wtf/Locker.h>
 
 namespace JSC {

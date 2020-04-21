@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IterationKind.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 

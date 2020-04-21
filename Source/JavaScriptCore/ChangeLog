@@ -1,3 +1,20 @@
+2020-04-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes late February 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=210767
+
+        Unreviewed build fix.
+
+        * dfg/DFGValueRepReductionPhase.cpp: Add missing JSCJSValueInlines.h header.
+        * jit/JITCall.cpp: Add missing SlowPathCall.h header.
+        * runtime/AggregateError.cpp: Add missing JSCJSValueInlines.h, JSCellInlines.h, and
+        JSGlobalObjectInlines.h headers.
+        * runtime/AggregateErrorConstructor.cpp: Added missing JSCJSValueInlines.h, JSCellInlines.h,
+        and VMInlines.h headers.
+        * runtime/AggregateErrorPrototype.cpp: Added missing AggregateError.h, IdentifierInlines.h,
+        JSCJSValueInlines.h, JSCellInlines.h, JSGlobalObjectInlines.h, and VMInlines.h headers.
+        * runtime/Intrinsic.h: Added missing wtf/Optional.h header.
+
 2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Classes marked final should not use protected access specifier

@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

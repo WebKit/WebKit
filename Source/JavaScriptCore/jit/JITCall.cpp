@@ -42,6 +42,7 @@
 #include "OpcodeInlines.h"
 #include "ResultType.h"
 #include "SetupVarargsFrame.h"
+#include "SlowPathCall.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
 
