@@ -1,3 +1,12 @@
+2020-04-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening of  WPT tests for Intersection Observer v2 after r260388
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Due to the override for Pass/Fail in the folder above
+        its needed to repeat the Skip expectation here to avoid the Missing result.
+
 2020-04-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update expectations after r260356
