@@ -29,7 +29,7 @@
     </marker>
   </defs>
   <metadata> Produced by OmniGraffle 7.15 
-    <dc:date>2020-04-21 22:50:59 +0000</dc:date>
+    <dc:date>2020-04-21 23:00:36 +0000</dc:date>
   </metadata>
   <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
     <title>Canvas 1</title>
@@ -119,7 +119,7 @@
         <path d="M 214 464.04934 C 214 464.04934 173.63636 452.30437 173.63636 439.05993 C 173.63636 429.5612 194.39772 422.4946 206.14086 419.25727" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Line_17">
-        <path d="M 214 510.7991 C 214 510.7991 134.31373 457.0329 134.31373 417.29956 C 134.31373 385.38096 185.73715 374.57535 205.96504 371.55956" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <path d="M 214 510.7991 C 214 510.7991 125 469.73467 125 430.00133 C 125 397.5395 184.40538 378.4373 206.14868 372.5328" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
       <g id="Line_18">
         <path d="M 214 557.5489 C 214 557.5489 154.16667 531.14575 154.16667 504.65686 C 154.16667 484.1642 189.97738 471.0752 206.19012 466.19946" marker-end="url(#FilledArrow_Marker)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -171,6 +171,12 @@
       </g>
       <g id="Line_36">
         <path d="M 568.5 695.8846 C 568.5 695.8846 537.1988 685.3709 538.5 676.65385 C 539.3862 670.71705 555.1107 667.5149 565.0511 666.0762" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_37">
+        <path d="M 214 603.9502 C 214 603.9502 173.63636 592.20525 173.63636 578.9608 C 173.63636 569.46205 194.39772 562.39546 206.14086 559.15815" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_38">
+        <path d="M 214 604.2987 C 214 604.2987 154.16667 577.8955 154.16667 551.40664 C 154.16667 530.91396 189.97738 517.825 206.19012 512.94924" marker-end="url(#FilledArrow_Marker_2)" stroke="#ff2f92" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </g>
     </g>
   </g>
