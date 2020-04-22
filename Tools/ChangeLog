@@ -1,3 +1,17 @@
+2020-04-22  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebCoreTestSupport target
+        https://bugs.webkit.org/show_bug.cgi?id=210867
+
+        Reviewed by Michael Catanzaro.
+
+        Use the WebKit::WebCoreTestSupport target in DumpRenderTree. Fix an
+        include for WPE in WebKitTestRunner.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * DumpRenderTree/PlatformWin.cmake:
+        * WebKitTestRunner/PlatformWPE.cmake:
+
 2020-04-22  Sihui Liu  <sihui_liu@apple.com>
 
         TextManipulation.CompleteTextManipulationAvoidCrashingWhenContentIsRemoved does not wait for result

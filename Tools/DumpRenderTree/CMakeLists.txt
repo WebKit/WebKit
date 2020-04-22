@@ -25,7 +25,7 @@ set(DumpRenderTree_SOURCES
 )
 
 set(DumpRenderTree_LIBRARIES
-    WebCoreTestSupport
+    WebKit::WebCoreTestSupport
     WebKit::JavaScriptCore
 )
 
@@ -35,10 +35,6 @@ set(DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
     ${DumpRenderTree_DIR}
     ${WebKitTestRunner_SHARED_DIR}/Bindings
     ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
-)
-
-list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
-    ${WEBCORE_DIR}/testing/js
 )
 
 list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES

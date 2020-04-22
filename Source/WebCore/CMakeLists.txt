@@ -1261,9 +1261,6 @@ set(WebCoreTestSupport_LIBRARIES
     WebKit::JavaScriptCore
     WebKit::PAL
 )
-if (NOT WTF_OS_WINDOWS)
-    list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
-endif ()
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
@@ -1704,7 +1701,13 @@ set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/Pai
 set(WebCore_INTERFACE_LIBRARIES WebCore)
 set(WebCore_INTERFACE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR})
 
+set(WebCoreTestSupport_INTERFACE_LIBRARIES WebCoreTestSupport)
+set(WebCoreTestSupport_INTERFACE_INCLUDE_DIRECTORIES
+    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
+)
+
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
+WEBKIT_FRAMEWORK_DECLARE(WebCoreTestSupport)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # Generate CommandLineAPIModuleSource.h
@@ -2045,20 +2048,26 @@ if (MSVC)
     WEBKIT_ADD_PRECOMPILED_HEADER("WebCoreTestSupportPrefix.h" "testing/js/WebCoreTestSupportPrefix.cpp" WebCoreTestSupport_SOURCES)
 endif ()
 
-add_library(WebCoreTestSupport ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
-add_dependencies(WebCoreTestSupport WebCore WebCoreTestSupportBindings)
-target_compile_definitions(WebCoreTestSupport PRIVATE "BUILDING_WebCoreTestSupport")
-target_include_directories(WebCoreTestSupport PUBLIC ${WebCoreTestSupport_INCLUDE_DIRECTORIES} ${WebCore_INCLUDE_DIRECTORIES})
-target_include_directories(WebCoreTestSupport PRIVATE ${WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES} ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})
-target_include_directories(WebCoreTestSupport SYSTEM PUBLIC ${WebCoreTestSupport_SYSTEM_INCLUDE_DIRECTORIES} ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
-target_link_libraries(WebCoreTestSupport PRIVATE ${WebCoreTestSupport_LIBRARIES})
+WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
+    DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
+    FILES testing/js/WebCoreTestSupport.h
+    FLATTENED
+)
+list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)
 
-if (WebCoreTestSupport_OUTPUT_NAME)
-    set_target_properties(WebCoreTestSupport PROPERTIES OUTPUT_NAME ${WebCoreTestSupport_OUTPUT_NAME})
-    if (MSVC)
-        add_compile_options(/WX-)
-    endif ()
+list(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES ${WebCore_INCLUDE_DIRECTORIES})
+list(APPEND WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})
+list(APPEND WebCoreTestSupport_SYSTEM_INCLUDE_DIRECTORIES ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
+
+if (WebCore_LIBRARY_TYPE STREQUAL SHARED)
+    list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
+else ()
+    list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
+    list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
 endif ()
+
+WEBKIT_FRAMEWORK(WebCoreTestSupport)
+WEBKIT_FRAMEWORK_TARGET(WebCoreTestSupport)
 
 if (${WebCore_LIBRARY_TYPE} MATCHES "SHARED")
     set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})

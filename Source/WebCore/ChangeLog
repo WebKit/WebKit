@@ -1,3 +1,15 @@
+2020-04-22  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::WebCoreTestSupport target
+        https://bugs.webkit.org/show_bug.cgi?id=210867
+
+        Reviewed by Michael Catanzaro.
+
+        Add the WebKit::WebCoreTestSupport target. Modify WebCoreTestSupport to only
+        have a dependency on WebCore if WebCore is built as a shared library.
+
+        * CMakeLists.txt:
+
 2020-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         fast/events/event-handler-detached-document-dispatchEvent.html is crashing

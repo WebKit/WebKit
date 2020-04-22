@@ -42,6 +42,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         ${DumpRenderTree_DIR}/cairo
     )
     list(APPEND DumpRenderTree_LIBRARIES
+        $<TARGET_OBJECTS:WebCoreTestSupport>
         Cairo::Cairo
     )
     list(APPEND DumpRenderTree_SOURCES
