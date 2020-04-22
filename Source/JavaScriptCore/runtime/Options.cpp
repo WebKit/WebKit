@@ -539,7 +539,7 @@ inline void* Options::addressOfOptionDefault(Options::ID id)
 // FIXME: Use equalLettersIgnoringASCIICase.
 inline bool strncasecmp(const char* str1, const char* str2, size_t n)
 {
-    return _strnimp(str1, str2, n);
+    return _strnicmp(str1, str2, n);
 }
 #endif
 
