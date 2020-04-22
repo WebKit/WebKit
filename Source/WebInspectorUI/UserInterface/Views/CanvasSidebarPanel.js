@@ -238,6 +238,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WI.Canvas
+            || representedObject instanceof WI.ShaderProgram
             || representedObject instanceof WI.Recording;
     }
 

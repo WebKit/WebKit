@@ -144,6 +144,7 @@
 
 .content-view.canvas-overview > .content-view.canvas > .preview > .message-text-view {
     position: static;
+    z-index: 0;
 }
 
 .content-view.canvas-overview > .content-view.canvas > footer {

@@ -1397,7 +1397,12 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.AuditTestCaseResult || representedObject instanceof WI.AuditTestGroupResult)
         return WI.AuditTabContentView;
 
-    if (representedObject instanceof WI.Canvas || representedObject instanceof WI.ShaderProgram || representedObject instanceof WI.Recording || representedObject instanceof WI.Animation)
+    if (representedObject instanceof WI.CanvasCollection
+        || representedObject instanceof WI.Canvas
+        || representedObject instanceof WI.Recording
+        || representedObject instanceof WI.ShaderProgram
+        || representedObject instanceof WI.AnimationCollection
+        || representedObject instanceof WI.Animation)
         return WI.GraphicsTabContentView;
 
     return null;

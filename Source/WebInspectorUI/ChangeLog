@@ -1,3 +1,29 @@
+2020-04-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r255396): Graphics: viewing a shader program hides the navigation sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=210838
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.canShowRepresentedObject):
+        Include `WI.ShaderProgram` in the list of displayable represented objects.
+
+        * UserInterface/Base/Main.js:
+        (WI.tabContentViewClassForRepresentedObject):
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView.prototype.canShowRepresentedObject):
+        Update the list of represented objects that are displayable by the Graphics Tab.
+
+        * UserInterface/Views/GraphicsOverviewContentView.css:
+        (.content-view.graphics-overview > section > .header):
+        (.content-view.graphics-overview > section:not(:first-of-type) > .header): Deleted.
+        Drive-by: add a top border to the first section when overscrolling.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview > .content-view.canvas > .preview > .message-text-view): Added.
+        Drive-by: ensure that the "No Preview Available" view doesn't overlap the section header.
+
 2020-04-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: the filter bar in the navigation sidebar should respect the global search settings

@@ -43,16 +43,14 @@
     display: flex;
     align-items: center;
     position: sticky;
-    top: 0;
+    top: -1px;
     z-index: 1;
     min-height: var(--navigation-bar-height);
+    margin-top: -1px;
     -webkit-padding-start: 8px;
     background-color: hsl(0, 0%, 97%);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.content-view.graphics-overview > section:not(:first-of-type) > .header {
     border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .content-view.graphics-overview > section > .header > h1 {

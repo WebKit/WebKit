@@ -112,9 +112,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
     {
         return representedObject instanceof WI.CanvasCollection
             || representedObject instanceof WI.Canvas
-            || representedObject instanceof WI.RecordingCollection
             || representedObject instanceof WI.Recording
-            || representedObject instanceof WI.ShaderProgramCollection
             || representedObject instanceof WI.ShaderProgram
             || representedObject instanceof WI.AnimationCollection
             || representedObject instanceof WI.Animation;
