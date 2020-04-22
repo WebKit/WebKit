@@ -1,3 +1,30 @@
+2020-04-22  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] Youtube 'live stream'/H264 URLs fail to play, VP8/9 URLs play OK
+        https://bugs.webkit.org/show_bug.cgi?id=209119
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The fix consists of removing the initial avoiding of seeking and just
+        issuing the proper segment instead of seeking (seeks in GStreamer can't
+        be done before prerolling anyway). Appsrc doesn't make easy to emit our
+        own custom segment, so what I did was to use a segment fixer probe to
+        modify the original [0, infinity] segment issued by appsrc and use
+        a [startTime, stopTime] with proper values depending on the seek target
+        and rate.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::checkShouldDelaySeek): Don't hold seeks on startup, when changing from READY to PAUSED.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek): Refactored seek delay condition. Also, don't do a regular
+        gst_element_seek() for initial seeks, just proceed with a special case in that situation.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (initialSeekSegmentFixerProbe): Probe that fixes the segment.
+        (webKitMediaSrcPrepareInitialSeek): Behave much like a regular seek, but also compute the right GstSegment, install
+        the segment fixer probe and setReadyForMoreSamples() on the SourceBufferPrivates.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+
 2020-04-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Test IDLs and stubs

@@ -3325,8 +3325,6 @@ webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
 
-webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
-
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
 webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]

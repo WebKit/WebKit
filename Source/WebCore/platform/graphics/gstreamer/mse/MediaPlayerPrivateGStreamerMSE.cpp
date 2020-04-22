@@ -241,6 +241,17 @@ void MediaPlayerPrivateGStreamerMSE::notifySeekNeedsDataForTime(const MediaTime&
     }
 }
 
+static bool checkShouldDelaySeek(GstStateChangeReturn getStateResult, GstState currentState, GstState newState)
+{
+    if (getStateResult != GST_STATE_CHANGE_ASYNC)
+        return false;
+    if (GST_STATE_TRANSITION(currentState, newState) == GST_STATE_CHANGE_PLAYING_TO_PAUSED)
+        return false;
+    if (currentState == GST_STATE_READY && newState >= GST_STATE_PAUSED)
+        return false;
+    return true;
+}
+
 bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate, GstSeekFlags seekType)
 {
     // FIXME: Make a copy here because in some cases below it is modified. This
@@ -259,13 +270,11 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
         m_isSeeking = false;
         return false;
     }
-    if ((getStateResult == GST_STATE_CHANGE_ASYNC
-        && !(state == GST_STATE_PLAYING && newState == GST_STATE_PAUSED))
-        || state < GST_STATE_PAUSED
-        || m_isEndReached
-        || !m_gstSeekCompleted) {
+
+    bool shouldDelaySeek = checkShouldDelaySeek(getStateResult, state, newState);
+    if (shouldDelaySeek || m_isEndReached || !m_gstSeekCompleted) {
         CString reason = "Unknown reason";
-        if (getStateResult == GST_STATE_CHANGE_ASYNC) {
+        if (shouldDelaySeek) {
             reason = makeString("In async change ",
                 gst_element_state_get_name(state), " --> ",
                 gst_element_state_get_name(newState)).utf8();
@@ -347,20 +356,26 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
 
     GST_DEBUG_OBJECT(pipeline(), "Actual seek to %s, end time:  %s, rate: %f", toString(startTime).utf8().data(), toString(endTime).utf8().data(), rate);
 
-    // This will call notifySeekNeedsData() after some time to tell that the pipeline is ready for sample enqueuing.
-    webKitMediaSrcPrepareSeek(WEBKIT_MEDIA_SRC(m_source.get()), seekTime);
-
     m_gstSeekCompleted = false;
-    if (!gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekType, GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime))) {
-        webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
-        m_isSeeking = false;
-        m_gstSeekCompleted = true;
-        GST_DEBUG_OBJECT(pipeline(), "doSeek(): gst_element_seek() failed, returning false");
-        return false;
-    }
+    if (state < GST_STATE_PAUSED) {
+        // Special case of initial seek. We set the right segment instead of a seek.
+        webKitMediaSrcPrepareInitialSeek(WEBKIT_MEDIA_SRC(m_source.get()), rate, startTime, endTime);
+        notifySeekNeedsDataForTime(seekTime);
+        GST_DEBUG("Initial seek succeeded, returning true");
+    } else {
+        // This will call notifySeekNeedsData() after some time to tell that the pipeline is ready for sample enqueuing.
+        webKitMediaSrcPrepareSeek(WEBKIT_MEDIA_SRC(m_source.get()), seekTime);
 
-    // The samples will be enqueued in notifySeekNeedsData().
-    GST_DEBUG_OBJECT(pipeline(), "doSeek(): gst_element_seek() succeeded, returning true");
+        if (!gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekType, GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime))) {
+            webKitMediaSrcSetReadyForSamples(WEBKIT_MEDIA_SRC(m_source.get()), true);
+            m_isSeeking = false;
+            m_gstSeekCompleted = true;
+            GST_DEBUG("gst_element_seek() failed, returning false");
+            return false;
+        }
+        // The samples will be enqueued in notifySeekNeedsData().
+        GST_DEBUG("gst_element_seek() succeeded, returning true");
+    }
     return true;
 }
 
