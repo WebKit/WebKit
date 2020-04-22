@@ -1,3 +1,28 @@
+2020-04-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r260410) Frequent Network process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=210825
+
+        Reviewed by Alex Christensen.
+
+        The webPageProxyID in the NetworkProcessProxy::DidNegotiateModernTLS() IPC was invalid because
+        NetworkProcessProxy::preconnectTo() was failing to initialize NetworkLoadParameters::webPageProxyID.
+        This patch addresses the issue.
+
+        No new tests, added new assertion that would be tripped by existing tests.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::preconnectTo):
+
 2020-04-21  Jer Noble  <jer.noble@apple.com>
 
         PiP buttons shows up in element fullscreen when PiP is disabled in WKWebViewConfiguration

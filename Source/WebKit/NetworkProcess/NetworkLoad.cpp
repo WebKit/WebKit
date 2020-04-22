@@ -63,6 +63,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegist
     , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
 {
+    ASSERT(m_parameters.webPageProxyID);
     initialize(networkSession, blobRegistry);
 }
 
