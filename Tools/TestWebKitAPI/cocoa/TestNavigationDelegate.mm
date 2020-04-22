@@ -44,6 +44,14 @@
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
 }
 
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    if (_decidePolicyForNavigationResponse)
+        _decidePolicyForNavigationResponse(navigationResponse, decisionHandler);
+    else
+        decisionHandler(WKNavigationResponsePolicyAllow);
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     if (_didStartProvisionalNavigation)

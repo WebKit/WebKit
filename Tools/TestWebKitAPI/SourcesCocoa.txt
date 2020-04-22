@@ -26,6 +26,7 @@ WKWebViewConfigurationExtras.mm
 
 cocoa/PlatformUtilitiesCocoa.mm
 cocoa/TestCocoa.mm
+cocoa/TestDownloadDelegate.mm
 cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
 cocoa/TestUIDelegate.mm

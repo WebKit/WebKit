@@ -37,50 +37,88 @@
 
 namespace TestWebKitAPI {
 
-HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>&& verify)
-    : m_protocol(protocol)
-    , m_certVerifier(WTFMove(verify))
-    , m_requestResponseMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
+struct HTTPServer::RequestData : public RefCounted<RequestData> {
+    RequestData(std::initializer_list<std::pair<String, HTTPResponse>> responses)
+    : requestMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
         HashMap<String, HTTPServer::HTTPResponse> map;
         for (auto& pair : list)
             map.add(pair.first, pair.second);
         return map;
-    }(responses))
+    }(responses)) { }
+    
+    size_t requestCount { 0 };
+    const HashMap<String, HTTPResponse> requestMap;
+};
+
+RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier)
 {
-    auto configureTLS = protocol == Protocol::Http ? NW_PARAMETERS_DISABLE_PROTOCOL : ^(nw_protocol_options_t protocolOptions) {
+    auto configureTLS = protocol == Protocol::Http ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr([protocol, verifier = WTFMove(verifier)] (nw_protocol_options_t protocolOptions) mutable {
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         auto options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
         auto identity = adoptNS(sec_identity_create(testIdentity().get()));
         sec_protocol_options_set_local_identity(options.get(), identity.get());
         if (protocol == Protocol::HttpsWithLegacyTLS)
             sec_protocol_options_set_max_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
-        if (m_certVerifier) {
+        if (verifier) {
             sec_protocol_options_set_peer_authentication_required(options.get(), true);
-            sec_protocol_options_set_verify_block(options.get(), ^(sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
-                m_certVerifier(metadata, trust, completion);
-            }, dispatch_get_main_queue());
+            sec_protocol_options_set_verify_block(options.get(), makeBlockPtr([verifier = WTFMove(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
+                verifier(metadata, trust, completion);
+            }).get(), dispatch_get_main_queue());
         }
 #else
         UNUSED_PARAM(protocolOptions);
         ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
 #endif
-    };
-    auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLS, NW_PARAMETERS_DEFAULT_CONFIGURATION));
-    m_listener = adoptNS(nw_listener_create(parameters.get()));
-    nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
-    nw_listener_set_new_connection_handler(m_listener.get(), ^(nw_connection_t connection) {
-        nw_connection_set_queue(connection, dispatch_get_main_queue());
-        nw_connection_start(connection);
-        respondToRequests(connection);
     });
+    return adoptNS(nw_parameters_create_secure_tcp(configureTLS.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
+}
+
+static void startListening(nw_listener_t listener)
+{
     __block bool ready = false;
-    nw_listener_set_state_changed_handler(m_listener.get(), ^(nw_listener_state_t state, nw_error_t error) {
+    nw_listener_set_state_changed_handler(listener, ^(nw_listener_state_t state, nw_error_t error) {
         ASSERT_UNUSED(error, !error);
         if (state == nw_listener_state_ready)
             ready = true;
     });
-    nw_listener_start(m_listener.get());
+    nw_listener_start(listener);
     Util::run(&ready);
+}
+
+HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, CertificateVerifier&& verifier)
+    : m_requestData(adoptRef(new RequestData(responses)))
+    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, WTFMove(verifier)).get())))
+    , m_protocol(protocol)
+{
+    nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
+    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData](nw_connection_t connection) {
+        nw_connection_set_queue(connection, dispatch_get_main_queue());
+        nw_connection_start(connection);
+        respondToRequests(connection, requestData);
+    }).get());
+    startListening(m_listener.get());
+}
+
+HTTPServer::HTTPServer(Function<void(nw_connection_t)>&& connectionHandler, Protocol protocol)
+    : m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr).get())))
+    , m_protocol(protocol)
+{
+    nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
+    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([connectionHandler = WTFMove(connectionHandler)] (nw_connection_t connection) {
+        nw_connection_set_queue(connection, dispatch_get_main_queue());
+        nw_connection_start(connection);
+        connectionHandler(connection);
+    }).get());
+    startListening(m_listener.get());
+}
+
+HTTPServer::~HTTPServer() = default;
+
+size_t HTTPServer::totalRequests() const
+{
+    if (!m_requestData)
+        return 0;
+    return m_requestData->requestCount;
 }
 
 static String statusText(unsigned statusCode)
@@ -97,19 +135,34 @@ static String statusText(unsigned statusCode)
     return { };
 }
 
-void HTTPServer::respondToRequests(nw_connection_t connection)
+RetainPtr<dispatch_data_t> dataFromString(String&& s)
 {
-    nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), ^(dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) {
+    auto impl = s.releaseImpl();
+    ASSERT(impl->is8Bit());
+    return adoptNS(dispatch_data_create(impl->characters8(), impl->length(), dispatch_get_main_queue(), ^{
+        (void)impl;
+    }));
+}
+
+Vector<char> nullTerminatedRequest(dispatch_data_t content)
+{
+    __block Vector<char> request;
+    dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
+        request.append(static_cast<const char*>(buffer), size);
+        return true;
+    });
+    request.append('\0');
+    return request;
+}
+
+void HTTPServer::respondToRequests(nw_connection_t connection, RefPtr<RequestData> requestData)
+{
+    nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection), requestData](dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) {
         if (error || !content)
             return;
-        __block Vector<char> request;
-        dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
-            request.append(static_cast<const char*>(buffer), size);
-            return true;
-        });
-        request.append('\0');
 
-        m_totalRequests++;
+        requestData->requestCount++;
+        auto request = nullTerminatedRequest(content);
 
         const char* getPathPrefix = "GET ";
         const char* postPathPrefix = "POST ";
@@ -126,10 +179,10 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
         ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
         size_t pathLength = pathEnd - request.data() - pathPrefixLength;
         String path(request.data() + pathPrefixLength, pathLength);
-        ASSERT_WITH_MESSAGE(m_requestResponseMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
+        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
 
-        CompletionHandler<void()> sendResponse = [this, connection = retainPtr(connection), context = retainPtr(context), path = WTFMove(path)] {
-            auto response = m_requestResponseMap.get(path);
+        CompletionHandler<void()> sendResponse = [connection, context = retainPtr(context), path = WTFMove(path), requestData] {
+            auto response = requestData->requestMap.get(path);
             if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes) {
                 nw_connection_cancel(connection.get());
                 return;
@@ -150,13 +203,9 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
             }
             responseBuilder.append("\r\n");
             responseBuilder.append(response.body);
-            auto responseBodyAndHeader = responseBuilder.toString().releaseImpl();
-            auto responseData = adoptNS(dispatch_data_create(responseBodyAndHeader->characters8(), responseBodyAndHeader->length(), dispatch_get_main_queue(), ^{
-                (void)responseBodyAndHeader;
-            }));
-            nw_connection_send(connection.get(), responseData.get(), context.get(), true, ^(nw_error_t error) {
+            nw_connection_send(connection.get(), dataFromString(responseBuilder.toString()).get(), context.get(), true, ^(nw_error_t error) {
                 ASSERT(!error);
-                respondToRequests(connection.get());
+                respondToRequests(connection.get(), requestData);
             });
         };
 
@@ -165,7 +214,7 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
             size_t headerLength = doubleNewline - request.data() + strlen("\r\n\r\n");
             constexpr size_t nullTerminationLength = 1;
             if (request.size() - nullTerminationLength - headerLength < contentLength) {
-                nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
+                nw_connection_receive(connection.get(), 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
                     if (error || !content)
                         return;
                     sendResponse();
@@ -174,7 +223,7 @@ void HTTPServer::respondToRequests(nw_connection_t connection)
             }
         }
         sendResponse();
-    });
+    }).get());
 }
 
 uint16_t HTTPServer::port() const

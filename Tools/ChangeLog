@@ -1,3 +1,46 @@
+2020-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test for resuming downloads
+        https://bugs.webkit.org/show_bug.cgi?id=210852
+
+        Reviewed by Brady Eidson.
+
+        This is a test that we should've written years ago.
+        I made HTTPServer able to take a Function that takes a nw_connection_t to give it more power than declarative request/response pairs.
+        I made TestDownloadDelegate to be reused by future tests, like those I'm going to add for  bug 210313.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (longString):
+        (TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::HTTPServer::totalRequests const): Deleted.
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::RequestData::RequestData):
+        (TestWebKitAPI::HTTPServer::listenerParameters):
+        (TestWebKitAPI::startListening):
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+        (TestWebKitAPI::HTTPServer::totalRequests const):
+        (TestWebKitAPI::dataFromString):
+        (TestWebKitAPI::nullTerminatedRequest):
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.h: Added.
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.mm: Added.
+        (-[TestDownloadDelegate _downloadDidStart:]):
+        (-[TestDownloadDelegate _download:didReceiveServerRedirectToURL:]):
+        (-[TestDownloadDelegate _download:didReceiveResponse:]):
+        (-[TestDownloadDelegate _download:didReceiveData:]):
+        (-[TestDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[TestDownloadDelegate _downloadDidFinish:]):
+        (-[TestDownloadDelegate _download:didFailWithError:]):
+        (-[TestDownloadDelegate _downloadDidCancel:]):
+        (-[TestDownloadDelegate _download:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestDownloadDelegate _download:didCreateDestination:]):
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+
 2020-04-22  Saam Barati  <sbarati@apple.com>
 
         makeValueRefForValue should be robust against the type encoding of a NSNumber backed by a boolean

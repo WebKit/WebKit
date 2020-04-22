@@ -39,21 +39,28 @@ namespace TestWebKitAPI {
 class HTTPServer {
 public:
     struct HTTPResponse;
+    struct RequestData;
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS };
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>&& = nullptr);
+    using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
+
+    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr);
+    HTTPServer(Function<void(nw_connection_t)>&&, Protocol = Protocol::Http);
+    ~HTTPServer();
     uint16_t port() const;
     NSURLRequest *request() const;
-    size_t totalRequests() const { return m_totalRequests; }
-    
+    size_t totalRequests() const;
+
 private:
-    void respondToRequests(nw_connection_t);
-    
+    static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&);
+    static void respondToRequests(nw_connection_t, RefPtr<RequestData>);
+
+    RefPtr<RequestData> m_requestData;
     RetainPtr<nw_listener_t> m_listener;
-    const Protocol m_protocol;
-    const Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)> m_certVerifier;
-    const HashMap<String, HTTPResponse> m_requestResponseMap;
-    size_t m_totalRequests { 0 };
+    Protocol m_protocol { Protocol::Http };
 };
+
+RetainPtr<dispatch_data_t> dataFromString(String&&);
+Vector<char> nullTerminatedRequest(dispatch_data_t);
 
 struct HTTPServer::HTTPResponse {
     enum class TerminateConnection { No, Yes };
