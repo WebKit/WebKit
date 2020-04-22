@@ -48,6 +48,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     notImplemented();
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void RemoteMediaPlayerProxy::enterFullscreen(CompletionHandler<void()>&& completionHandler)
 {
     notImplemented();
@@ -57,6 +58,7 @@ void RemoteMediaPlayerProxy::exitFullscreen(CompletionHandler<void()>&& completi
 {
     notImplemented();
 }
+#endif
 
 } // namespace WebKit
 

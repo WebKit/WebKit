@@ -1,3 +1,14 @@
+2020-04-21  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Fix GPU Process build for VIDEO_PRESENTATION_MODE changes
+        https://bugs.webkit.org/show_bug.cgi?id=210836
+
+        Reviewed by Darin Adler.
+
+        Build fix, no new tests.
+
+        * GPUProcess/media/playstation/RemoteMediaPlayerProxyPlayStation.cpp:
+
 2020-04-21  Peng Liu  <peng.liu6@apple.com>
 
         Fix MACCATALYST build failures
