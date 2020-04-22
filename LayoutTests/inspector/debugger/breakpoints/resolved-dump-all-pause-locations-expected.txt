@@ -1411,7 +1411,7 @@ PAUSES AT: 214:0
  => 214    |b(),
     215    c();
     216    
-    217    true && (a(), b(), c());
+    217    true && (a(), b(), c()) && true;
 
 INSERTING AT: 214:1
 PAUSES AT: 215:0
@@ -1421,7 +1421,7 @@ PAUSES AT: 215:0
  -> 214    b#(),
  => 215    |c();
     216    
-    217    true && (a(), b(), c());
+    217    true && (a(), b(), c()) && true;
     218    
 
 INSERTING AT: 215:1
@@ -1431,32 +1431,114 @@ PAUSES AT: 217:0
     214    b(),
  -> 215    c#();
     216    
- => 217    |true && (a(), b(), c());
+ => 217    |true && (a(), b(), c()) && true;
     218    
+    219    true && (
+    220        a(),
 
 INSERTING AT: 217:1
-PAUSES AT: 217:9
+PAUSES AT: 219:0
     214    b(),
     215    c();
     216    
--=> 217    t#rue && (|a(), b(), c());
+ -> 217    t#rue && (a(), b(), c()) && true;
     218    
+ => 219    |true && (
+    220        a(),
+    221        b(),
+    222        c()
 
-INSERTING AT: 217:10
-PAUSES AT: 217:14
-    214    b(),
-    215    c();
+INSERTING AT: 219:1
+PAUSES AT: 226:4
     216    
--=> 217    true && (a#(), |b(), c());
+    217    true && (a(), b(), c()) && true;
     218    
+ -> 219    t#rue && (
+    220        a(),
+    221        b(),
+    222        c()
+    223    ) && true;
+    224    
+    225    try {
+ => 226        |throw a(), b(), c();
+    227    } catch { }
+    228    
+    229    try {
 
-INSERTING AT: 217:15
-PAUSES AT: 217:19
-    214    b(),
-    215    c();
-    216    
--=> 217    true && (a(), b#(), |c());
-    218    
+INSERTING AT: 226:5
+PAUSES AT: 226:10
+    223    ) && true;
+    224    
+    225    try {
+-=> 226        t#hrow |a(), b(), c();
+    227    } catch { }
+    228    
+    229    try {
+
+INSERTING AT: 226:11
+PAUSES AT: 226:15
+    223    ) && true;
+    224    
+    225    try {
+-=> 226        throw a#(), |b(), c();
+    227    } catch { }
+    228    
+    229    try {
+
+INSERTING AT: 226:16
+PAUSES AT: 226:20
+    223    ) && true;
+    224    
+    225    try {
+-=> 226        throw a(), b#(), |c();
+    227    } catch { }
+    228    
+    229    try {
+
+INSERTING AT: 226:21
+PAUSES AT: 230:4
+    223    ) && true;
+    224    
+    225    try {
+ -> 226        throw a(), b(), c#();
+    227    } catch { }
+    228    
+    229    try {
+ => 230        |throw a(),
+    231            b(),
+    232            c();
+    233    } catch { }
+
+INSERTING AT: 230:5
+PAUSES AT: 230:10
+    227    } catch { }
+    228    
+    229    try {
+-=> 230        t#hrow |a(),
+    231            b(),
+    232            c();
+    233    } catch { }
+
+INSERTING AT: 230:11
+PAUSES AT: 231:8
+    227    } catch { }
+    228    
+    229    try {
+ -> 230        throw a#(),
+ => 231            |b(),
+    232            c();
+    233    } catch { }
+    234    
+
+INSERTING AT: 231:9
+PAUSES AT: 232:8
+    228    
+    229    try {
+    230        throw a(),
+ -> 231            b#(),
+ => 232            |c();
+    233    } catch { }
+    234    
 
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.Functions
@@ -2574,6 +2656,7 @@ PAUSES AT: 122:4
  => 122        |inline();
     123    }
     124    
+    125    function returnOneLine() {
 
 INSERTING AT: 122:5
 PAUSES AT: 123:0
@@ -2583,6 +2666,111 @@ PAUSES AT: 123:0
  -> 122        i#nline();
  => 123    |}
     124    
+    125    function returnOneLine() {
+    126        return inline(), inline(), inline();
+
+INSERTING AT: 125:0
+PAUSES AT: 126:4
+    122        inline();
+    123    }
+    124    
+ -> 125    #function returnOneLine() {
+ => 126        |return inline(), inline(), inline();
+    127    }
+    128    
+    129    function returnMultiLine() {
+
+INSERTING AT: 126:5
+PAUSES AT: 126:11
+    123    }
+    124    
+    125    function returnOneLine() {
+-=> 126        r#eturn |inline(), inline(), inline();
+    127    }
+    128    
+    129    function returnMultiLine() {
+
+INSERTING AT: 126:12
+PAUSES AT: 126:21
+    123    }
+    124    
+    125    function returnOneLine() {
+-=> 126        return i#nline(), |inline(), inline();
+    127    }
+    128    
+    129    function returnMultiLine() {
+
+INSERTING AT: 126:22
+PAUSES AT: 126:31
+    123    }
+    124    
+    125    function returnOneLine() {
+-=> 126        return inline(), i#nline(), |inline();
+    127    }
+    128    
+    129    function returnMultiLine() {
+
+INSERTING AT: 126:32
+PAUSES AT: 127:0
+    123    }
+    124    
+    125    function returnOneLine() {
+ -> 126        return inline(), inline(), i#nline();
+ => 127    |}
+    128    
+    129    function returnMultiLine() {
+    130        return inline(),
+
+INSERTING AT: 129:0
+PAUSES AT: 130:4
+    126        return inline(), inline(), inline();
+    127    }
+    128    
+ -> 129    #function returnMultiLine() {
+ => 130        |return inline(),
+    131            inline(),
+    132            inline();
+    133    }
+
+INSERTING AT: 130:5
+PAUSES AT: 130:11
+    127    }
+    128    
+    129    function returnMultiLine() {
+-=> 130        r#eturn |inline(),
+    131            inline(),
+    132            inline();
+    133    }
+
+INSERTING AT: 130:12
+PAUSES AT: 131:8
+    127    }
+    128    
+    129    function returnMultiLine() {
+ -> 130        return i#nline(),
+ => 131            |inline(),
+    132            inline();
+    133    }
+    134    
+
+INSERTING AT: 131:9
+PAUSES AT: 132:8
+    128    
+    129    function returnMultiLine() {
+    130        return inline(),
+ -> 131            i#nline(),
+ => 132            |inline();
+    133    }
+    134    
+
+INSERTING AT: 132:9
+PAUSES AT: 133:0
+    129    function returnMultiLine() {
+    130        return inline(),
+    131            inline(),
+ -> 132            i#nline();
+ => 133    |}
+    134    
 
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.Unicode

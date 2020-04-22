@@ -246,19 +246,19 @@ function test()
         expression: "setTimeout(entryForWithCommas)",
         steps: [
             "over",
-                "over", // complete: let i = 0
+                "next", // complete: let i = 0
                 "over", // complete: length = 0
-                "over", // complete: length = 2
+                "next", // complete: length = 2
                 "over", // complete: i < length
                 "over", // complete: a()
-                "over", // complete: length = 1
+                "next", // complete: length = 1
                 "over", // complete: ++i
-                "over", // complete: length = 2
+                "next", // complete: length = 2
                 "over", // complete: i < length [i=1]
                 "over", // complete: a()
-                "over", // complete: length = 1
+                "next", // complete: length = 1
                 "over", // complete: ++i
-                "over", // complete: length = 2
+                "next", // complete: length = 2
                 "over", // complete: i < length [i=2] - leaving entry
             "resume",
         ]

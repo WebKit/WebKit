@@ -1,3 +1,33 @@
+2020-04-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: Step Over should only step through comma expressions if they are comma statements
+        https://bugs.webkit.org/show_bug.cgi?id=210588
+
+        Reviewed by Brian Burg.
+
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isStatement const): Added.
+        (JSC::ExpressionNode::setIsStatement): Added.
+        * parser/NodeConstructors.h:
+        (JSC::ExprStatementNode::ExprStatementNode):
+        (JSC::DeclarationStatement::DeclarationStatement):
+        (JSC::ReturnNode::ReturnNode):
+        (JSC::ThrowNode::ThrowNode):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CommaNode::emitBytecode):
+        Only emit `WillExecuteStatement` debug hooks inside `CommaNode` if it's the only child of a
+        statement parent node (e.g. `a(), b(), c()` vs `true && (a(), b(), c()) && true`).
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseReturnStatement):
+        (JSC::Parser<LexerType>::parseThrowStatement):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseExpressionStatement):
+        (JSC::Parser<LexerType>::parseExpression):
+        Only record a pause location for each sub-expression in a comma separated expression if it's
+        the only child of a statement (e.g. `a(), b(), c()` vs `true && (a(), b(), c()) && true`).
+
 2020-04-22  Saam Barati  <sbarati@apple.com>
 
         ValueBitNot is wrong in FTL with AnyBigIntUse

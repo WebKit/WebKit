@@ -159,3 +159,22 @@ o = {
 o = {
     foo: async function() {}
 }
+// Commas
+
+function foo() {
+    a(),
+    b(),
+    c()
+}
+
+// Return
+
+function foo() {
+    return
+}
+function foo() {
+    return 42
+}
+function foo() {
+    return 42, a(), b()
+}

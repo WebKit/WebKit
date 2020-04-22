@@ -1646,7 +1646,10 @@ private:
     template <class TreeBuilder> TreeStatement parseExpressionOrLabelStatement(TreeBuilder&, bool allowFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseIfStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&, bool isCatchBlock = false);
-    template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&);
+
+    enum class IsOnlyChildOfStatement { Yes, No };
+    template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&, IsOnlyChildOfStatement = IsOnlyChildOfStatement::No);
+
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&, ExpressionErrorClassifier&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpressionOrPropagateErrorClass(TreeBuilder&);

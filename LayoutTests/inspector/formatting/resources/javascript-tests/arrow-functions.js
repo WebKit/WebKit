@@ -30,3 +30,9 @@ async(x)=>{x}
 
 a=>{for(b of[]);}
 ()=>{try{1}catch{2}}
+
+()=>{a(),b(),c()}
+
+()=>{return}
+()=>{return 42}
+()=>{return 42, a(), b()}

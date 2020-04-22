@@ -28,3 +28,5 @@ try{}catch(e){}finally{1}
 try{}catch(e){}finally{}try{}catch(e){}finally{}
 
 try{1}catch(e){1}finally{1}try{2}catch(e){2}finally{2}
+
+throw a(),b(),c();

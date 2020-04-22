@@ -122,3 +122,13 @@ function commaMultiLine() {
     inline(),
     inline();
 }
+
+function returnOneLine() {
+    return inline(), inline(), inline();
+}
+
+function returnMultiLine() {
+    return inline(),
+        inline(),
+        inline();
+}

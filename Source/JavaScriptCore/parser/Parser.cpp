@@ -1611,7 +1611,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStateme
 
     if (autoSemiColon())
         return context.createReturnStatement(location, 0, start, end);
-    TreeExpression expr = parseExpression(context);
+    TreeExpression expr = parseExpression(context, IsOnlyChildOfStatement::Yes);
     failIfFalse(expr, "Cannot parse the return expression");
     end = lastTokenEndPosition();
     if (match(SEMICOLON))
@@ -1631,7 +1631,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseThrowStatemen
     failIfTrue(match(SEMICOLON), "Expected expression after 'throw'");
     semanticFailIfTrue(autoSemiColon(), "Cannot have a newline after 'throw'");
     
-    TreeExpression expr = parseExpression(context);
+    TreeExpression expr = parseExpression(context, IsOnlyChildOfStatement::Yes);
     failIfFalse(expr, "Cannot parse expression for throw statement");
     JSTextPosition end = lastTokenEndPosition();
     failIfFalse(autoSemiColon(), "Expected a ';' after a throw statement");
@@ -3134,7 +3134,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
             // If we hit this path we're making a expression statement, which
             // by definition can't make use of continue/break so we can just
             // ignore any labels we might have accumulated.
-            TreeExpression expression = parseExpression(context);
+            TreeExpression expression = parseExpression(context, IsOnlyChildOfStatement::Yes);
             failIfFalse(expression, "Cannot parse expression statement");
             if (!autoSemiColon())
                 failDueToUnexpectedToken();
@@ -3201,7 +3201,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionSta
     }
     JSTextPosition start = tokenStartPosition();
     JSTokenLocation location(tokenLocation());
-    TreeExpression expression = parseExpression(context);
+    TreeExpression expression = parseExpression(context, IsOnlyChildOfStatement::Yes);
     failIfFalse(expression, "Cannot parse expression statement");
     failIfFalse(autoSemiColon(), "Parse error");
     return context.createExprStatement(location, expression, start, m_lastTokenEndPosition.line);
@@ -3703,7 +3703,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(TreeBuilder& context)
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(TreeBuilder& context, IsOnlyChildOfStatement isStatement)
 {
     failIfStackOverflow();
     JSTokenLocation headLocation(tokenLocation());
@@ -3720,9 +3720,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     failIfFalse(right, "Cannot parse expression in a comma expression");
     context.setEndOffset(right, m_lastTokenEndPosition.offset);
     typename TreeBuilder::Comma head = context.createCommaExpr(headLocation, node);
-    recordPauseLocation(context.breakpointLocation(head));
+    if (isStatement == IsOnlyChildOfStatement::Yes)
+        recordPauseLocation(context.breakpointLocation(head));
     typename TreeBuilder::Comma tail = context.appendToCommaExpr(tailLocation, head, head, right);
-    recordPauseLocation(context.breakpointLocation(tail));
+    if (isStatement == IsOnlyChildOfStatement::Yes)
+        recordPauseLocation(context.breakpointLocation(tail));
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
         tailLocation = tokenLocation();
@@ -3730,7 +3732,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
         failIfFalse(right, "Cannot parse expression in a comma expression");
         context.setEndOffset(right, m_lastTokenEndPosition.offset);
         tail = context.appendToCommaExpr(tailLocation, head, tail, right);
-        recordPauseLocation(context.breakpointLocation(tail));
+        if (isStatement == IsOnlyChildOfStatement::Yes)
+            recordPauseLocation(context.breakpointLocation(tail));
     }
     context.setEndOffset(head, m_lastTokenEndPosition.offset);
     return head;

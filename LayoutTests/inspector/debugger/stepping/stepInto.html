@@ -28,7 +28,7 @@ function testEval() {
     let after = 2;
 }
 
-function testInnerFunction() {
+function testAnonymousFunction() {
     (function() {
         debugger;
         let inner = 1;
@@ -42,12 +42,29 @@ function testCommas() {
         y = 2,
         z = 3;
     a(), b(), c();
-    true && (a(), b(), c());
+    true && (a(), b(), c()) && true;
 }
 
 function testChainedExpressions() {
     debugger;
     a() && b() && c();
+}
+
+function testDeclarations() {
+    debugger;
+    let x = a(),
+        y = b(),
+        z = c();
+}
+
+function testInnerFunction() {
+    function alpha() {
+        beta();
+    }
+    function beta() {
+        debugger;
+    }
+    alpha();
 }
 
 // ---------
@@ -56,7 +73,7 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("Debugger.stepInto");
 
-    // Always step-in when call frames change.
+    // Always step-into when call frames change.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
         if (!WI.debuggerManager.activeCallFrame)
             return;
@@ -87,7 +104,7 @@ function test()
     });
 
     addTestCase({
-        name: "Debugger.stepInto.function",
+        name: "Debugger.stepInto.functions",
         description: "step-into should step into function calls.",
         expression: "setTimeout(testFunctions)",
     });
@@ -99,9 +116,9 @@ function test()
     });
 
     addTestCase({
-        name: "Debugger.stepInto.innerFunction",
+        name: "Debugger.stepInto.anonymousFunction",
         description: "step-into should step out of a function to its caller.",
-        expression: "setTimeout(testInnerFunction)",
+        expression: "setTimeout(testAnonymousFunction)",
     });
 
     addTestCase({
@@ -114,6 +131,18 @@ function test()
         name: "Debugger.stepInto.chainedExpressions",
         description: "step-into should step into each sub-expression within chained expressions.",
         expression: "setTimeout(testChainedExpressions)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepInto.declarations",
+        description: "step-into should step into each declaration.",
+        expression: "setTimeout(testDeclarations)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepInto.innerFunction",
+        description: "step-into should step out of a function to its caller.",
+        expression: "setTimeout(testInnerFunction)",
     });
 
     loadMainPageContent().then(() => {

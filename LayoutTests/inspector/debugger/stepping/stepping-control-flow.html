@@ -114,6 +114,18 @@ function entryIfWithCommas() {
         b();
 }
 
+function entryReturnWithCommas() {
+    debugger;
+    return a(), b(), a();
+}
+
+function entryThrowWithCommas() {
+    debugger;
+    try {
+        throw a(), b(), a();
+    } catch { }
+}
+
 // ---------
 
 function test()
@@ -298,9 +310,37 @@ function test()
         expression: "setTimeout(entryIfWithCommas)",
         steps: [
             "over",
-                "over", // a()
-                "over", // b()
-                "over", // a()
+                "next", // a()
+                "next", // b()
+                "next", // a()
+                "over", // a() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ReturnWithCommas",
+        description: "Should pause before each comma sub-expression.",
+        expression: "setTimeout(entryReturnWithCommas)",
+        steps: [
+            "over",
+                "next", // a()
+                "next", // b()
+                "next", // a()
+                "over", // a() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ThrowWithCommas",
+        description: "Should pause before each comma sub-expression.",
+        expression: "setTimeout(entryThrowWithCommas)",
+        steps: [
+            "over",
+                "next", // a()
+                "next", // b()
+                "next", // a()
                 "over", // a() - leaving entry
             "resume",
         ]

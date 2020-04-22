@@ -155,6 +155,10 @@ TestPage.registerInitializer(() => {
             InspectorTest.log("ACTION: step-out");
             WI.debuggerManager.stepOut();
             break;
+        case "next":
+            InspectorTest.log("ACTION: step-next");
+            WI.debuggerManager.stepNext();
+            break;
         case "resume":
             InspectorTest.log("ACTION: resume");
             WI.debuggerManager.resume();

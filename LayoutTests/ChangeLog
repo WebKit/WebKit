@@ -1,3 +1,35 @@
+2020-04-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: Step Over should only step through comma expressions if they are comma statements
+        https://bugs.webkit.org/show_bug.cgi?id=210588
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.step):
+        * inspector/debugger/breakpoints/resources/dump-functions.js:
+        * inspector/debugger/breakpoints/resources/dump-general.js:
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt:
+        * inspector/debugger/breakpoints/resolved-dump-each-line-expected.txt:
+        * inspector/debugger/stepping/stepInto.html:
+        * inspector/debugger/stepping/stepInto-expected.txt:
+        * inspector/debugger/stepping/stepNext.html:
+        * inspector/debugger/stepping/stepNext-expected.txt:
+        * inspector/debugger/stepping/stepOut.html:
+        * inspector/debugger/stepping/stepOut-expected.txt:
+        * inspector/debugger/stepping/stepOver.html:
+        * inspector/debugger/stepping/stepOver-expected.txt:
+        * inspector/debugger/stepping/stepping-control-flow.html:
+        * inspector/debugger/stepping/stepping-control-flow-expected.txt:
+        * inspector/debugger/stepping/stepping-loops.html:
+        * inspector/debugger/stepping/stepping-loops-expected.txt:
+        * inspector/formatting/resources/javascript-tests/arrow-functions.js:
+        * inspector/formatting/resources/javascript-tests/arrow-functions-expected.js:
+        * inspector/formatting/resources/javascript-tests/functions.js:
+        * inspector/formatting/resources/javascript-tests/functions-expected.js:
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements.js:
+        * inspector/formatting/resources/javascript-tests/try-catch-finally-statements-expected.js:
+
 2020-04-22  Antoine Quint  <graouts@apple.com>
 
         [ Mojave wk1 Release ] animations/transition-and-animation-1.html is a flaky failure

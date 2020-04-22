@@ -8,7 +8,7 @@ function a() { return "a"; }
 function b() { return "b"; }
 function c() { return "c"; }
 
-function testFunctions() {
+function testFunction() {
     debugger;
     let x = 1;
     let y = 2;
@@ -44,12 +44,19 @@ function testCommas() {
         y = 2,
         z = 3;
     a(), b(), c();
-    true && (a(), b(), c());
+    true && (a(), b(), c()) && true;
 }
 
 function testChainedExpressions() {
     debugger;
     a() && b() && c();
+}
+
+function testDeclarations() {
+    debugger;
+    let x = a(),
+        y = b(),
+        z = c();
 }
 
 // ---------
@@ -85,7 +92,7 @@ function test()
     addTestCase({
         name: "Debugger.stepOut.function",
         description: "step-out should leave a function.",
-        expression: "setTimeout(testFunctions)",
+        expression: "setTimeout(testFunction)",
     });
 
     addTestCase({
@@ -116,6 +123,12 @@ function test()
         name: "Debugger.stepOut.chainedExpressions",
         description: "step-out should not enter any function calls in a chained expression.",
         expression: "setTimeout(testChainedExpressions)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.declarations",
+        description: "step-out should leave a function.",
+        expression: "setTimeout(testDeclarations)",
     });
 
     loadMainPageContent().then(() => {

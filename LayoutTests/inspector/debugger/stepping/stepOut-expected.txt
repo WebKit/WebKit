@@ -4,10 +4,10 @@ Checking pause locations when stepping with "stepOut".
 == Running test suite: Debugger.stepOut
 -- Running test case: Debugger.stepOut.function
 PAUSED (debugger-statement)
-PAUSE AT testFunctions:12:5
+PAUSE AT testFunction:12:5
       8    function c() { return "c"; }
       9    
-     10    function testFunctions() {
+     10    function testFunction() {
  ->  11        |debugger;
      12        let x = 1;
      13        let y = 2;
@@ -98,6 +98,19 @@ PAUSE AT testChainedExpressions:51:5
      51        a() && b() && c();
      52    }
      53    
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.declarations
+PAUSED (debugger-statement)
+PAUSE AT testDeclarations:56:5
+     52    }
+     53    
+     54    function testDeclarations() {
+ ->  55        |debugger;
+     56        let x = a(),
+     57            y = b(),
+     58            z = c();
 
 RESUMED
 

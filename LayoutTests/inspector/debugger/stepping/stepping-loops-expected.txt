@@ -847,7 +847,7 @@ PASS: Should have used all steps.
 
 -- Running test case: Debugger.stepping.ForWithCommasStepOver
 EXPRESSION: setTimeout(entryForWithCommas)
-STEPS: over, over, over, over, over, over, over, over, over, over, over, over, over, over, over, resume
+STEPS: over, next, over, next, over, over, next, over, next, over, over, next, over, next, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryForWithCommas:78:5
      74    }
@@ -868,7 +868,7 @@ PAUSE AT entryForWithCommas:79:10
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:21
      75    
      76    function entryForWithCommas() {
@@ -888,7 +888,7 @@ PAUSE AT entryForWithCommas:79:33
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
      75    
      76    function entryForWithCommas() {
@@ -918,7 +918,7 @@ PAUSE AT entryForWithCommas:79:57
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:69
      75    
      76    function entryForWithCommas() {
@@ -938,7 +938,7 @@ PAUSE AT entryForWithCommas:79:33
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
      75    
      76    function entryForWithCommas() {
@@ -968,7 +968,7 @@ PAUSE AT entryForWithCommas:79:57
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:69
      75    
      76    function entryForWithCommas() {
@@ -988,7 +988,7 @@ PAUSE AT entryForWithCommas:79:33
      80    }
      81    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryForWithCommas:79:45
      75    
      76    function entryForWithCommas() {

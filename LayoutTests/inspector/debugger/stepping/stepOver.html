@@ -28,7 +28,7 @@ function testEval() {
     let after = 2;
 }
 
-function testInnerFunction() {
+function testAnonymousFunction() {
     (function() {
         debugger;
         let inner = 1;
@@ -42,12 +42,29 @@ function testCommas() {
         y = 2,
         z = 3;
     a(), b(), c();
-    true && (a(), b(), c());
+    true && (a(), b(), c()) && true;
 }
 
 function testChainedExpressions() {
     debugger;
     a() && b() && c();
+}
+
+function testDeclarations() {
+    debugger;
+    let x = a(),
+        y = b(),
+        z = c();
+}
+
+function testInnerFunction() {
+    function alpha() {
+        beta();
+    }
+    function beta() {
+        debugger;
+    }
+    alpha();
 }
 
 // ---------
@@ -87,7 +104,7 @@ function test()
     });
 
     addTestCase({
-        name: "Debugger.stepOver.function",
+        name: "Debugger.stepOver.functions",
         description: "step-over should step over function calls.",
         expression: "setTimeout(testFunctions)",
     });
@@ -99,9 +116,9 @@ function test()
     });
 
     addTestCase({
-        name: "Debugger.stepOver.innerFunction",
+        name: "Debugger.stepOver.anonymousFunction",
         description: "step-over should step out of a function to its caller.",
-        expression: "setTimeout(testInnerFunction)",
+        expression: "setTimeout(testAnonymousFunction)",
     });
 
     addTestCase({
@@ -114,6 +131,18 @@ function test()
         name: "Debugger.stepOver.chainedExpressions",
         description: "step-over should step over chained expressions as a single statement.",
         expression: "setTimeout(testChainedExpressions)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.declarations",
+        description: "step-over should step over each declaration.",
+        expression: "setTimeout(testDeclarations)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.innerFunction",
+        description: "step-over should step out of a function to its caller.",
+        expression: "setTimeout(testInnerFunction)",
     });
 
     loadMainPageContent().then(() => {

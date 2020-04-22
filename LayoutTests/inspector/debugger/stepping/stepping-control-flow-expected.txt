@@ -828,7 +828,7 @@ PASS: Should have used all steps.
 
 -- Running test case: Debugger.stepping.IfWithCommas
 EXPRESSION: setTimeout(entryIfWithCommas)
-STEPS: over, over, over, over, over, resume
+STEPS: over, next, next, next, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryIfWithCommas:112:5
     108    }
@@ -849,7 +849,7 @@ PAUSE AT entryIfWithCommas:113:9
     114    }
     115    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryIfWithCommas:113:14
     109    
     110    function entryIfWithCommas() {
@@ -859,7 +859,7 @@ PAUSE AT entryIfWithCommas:113:14
     114    }
     115    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryIfWithCommas:113:19
     109    
     110    function entryIfWithCommas() {
@@ -869,7 +869,7 @@ PAUSE AT entryIfWithCommas:113:19
     114    }
     115    
 
-ACTION: step-over
+ACTION: step-next
 PAUSE AT entryIfWithCommas:114:9
     110    function entryIfWithCommas() {
     111        debugger;
@@ -877,7 +877,7 @@ PAUSE AT entryIfWithCommas:114:9
  -> 113            |b();
     114    }
     115    
-    116    // ---------
+    116    function entryReturnWithCommas() {
 
 ACTION: step-over
 PAUSE AT entryIfWithCommas:115:2
@@ -886,8 +886,142 @@ PAUSE AT entryIfWithCommas:115:2
     113            b();
  -> 114    }|
     115    
-    116    // ---------
-    117    
+    116    function entryReturnWithCommas() {
+    117        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ReturnWithCommas
+EXPRESSION: setTimeout(entryReturnWithCommas)
+STEPS: over, next, next, next, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryReturnWithCommas:118:5
+    114    }
+    115    
+    116    function entryReturnWithCommas() {
+ -> 117        |debugger;
+    118        return a(), b(), a();
+    119    }
+    120    
+
+ACTION: step-over
+PAUSE AT entryReturnWithCommas:119:5
+    115    
+    116    function entryReturnWithCommas() {
+    117        debugger;
+ -> 118        |return a(), b(), a();
+    119    }
+    120    
+    121    function entryThrowWithCommas() {
+
+ACTION: step-next
+PAUSE AT entryReturnWithCommas:119:12
+    115    
+    116    function entryReturnWithCommas() {
+    117        debugger;
+ -> 118        return |a(), b(), a();
+    119    }
+    120    
+    121    function entryThrowWithCommas() {
+
+ACTION: step-next
+PAUSE AT entryReturnWithCommas:119:17
+    115    
+    116    function entryReturnWithCommas() {
+    117        debugger;
+ -> 118        return a(), |b(), a();
+    119    }
+    120    
+    121    function entryThrowWithCommas() {
+
+ACTION: step-next
+PAUSE AT entryReturnWithCommas:119:22
+    115    
+    116    function entryReturnWithCommas() {
+    117        debugger;
+ -> 118        return a(), b(), |a();
+    119    }
+    120    
+    121    function entryThrowWithCommas() {
+
+ACTION: step-over
+PAUSE AT entryReturnWithCommas:120:2
+    116    function entryReturnWithCommas() {
+    117        debugger;
+    118        return a(), b(), a();
+ -> 119    }|
+    120    
+    121    function entryThrowWithCommas() {
+    122        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ThrowWithCommas
+EXPRESSION: setTimeout(entryThrowWithCommas)
+STEPS: over, next, next, next, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryThrowWithCommas:123:5
+    119    }
+    120    
+    121    function entryThrowWithCommas() {
+ -> 122        |debugger;
+    123        try {
+    124            throw a(), b(), a();
+    125        } catch { }
+
+ACTION: step-over
+PAUSE AT entryThrowWithCommas:125:9
+    121    function entryThrowWithCommas() {
+    122        debugger;
+    123        try {
+ -> 124            |throw a(), b(), a();
+    125        } catch { }
+    126    }
+    127    
+
+ACTION: step-next
+PAUSE AT entryThrowWithCommas:125:15
+    121    function entryThrowWithCommas() {
+    122        debugger;
+    123        try {
+ -> 124            throw |a(), b(), a();
+    125        } catch { }
+    126    }
+    127    
+
+ACTION: step-next
+PAUSE AT entryThrowWithCommas:125:20
+    121    function entryThrowWithCommas() {
+    122        debugger;
+    123        try {
+ -> 124            throw a(), |b(), a();
+    125        } catch { }
+    126    }
+    127    
+
+ACTION: step-next
+PAUSE AT entryThrowWithCommas:125:25
+    121    function entryThrowWithCommas() {
+    122        debugger;
+    123        try {
+ -> 124            throw a(), b(), |a();
+    125        } catch { }
+    126    }
+    127    
+
+ACTION: step-over
+PAUSE AT entryThrowWithCommas:127:2
+    123        try {
+    124            throw a(), b(), a();
+    125        } catch { }
+ -> 126    }|
+    127    
+    128    // ---------
+    129    
 
 ACTION: resume
 RESUMED

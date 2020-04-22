@@ -84,3 +84,5 @@ try {
 } finally {
     2
 }
+
+throw a(), b(), c();
