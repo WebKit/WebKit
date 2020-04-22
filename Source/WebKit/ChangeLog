@@ -1,3 +1,15 @@
+2020-04-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r260475.
+
+        New assert caused layout tests to exit early on iOS and macOS
+
+        Reverted changeset:
+
+        "REGRESSION(r260410) Frequent Network process crashes"
+        https://bugs.webkit.org/show_bug.cgi?id=210825
+        https://trac.webkit.org/changeset/260475
+
 2020-04-21  David Kilzer  <ddkilzer@apple.com>
 
         IPC::Encoder::reserve() can be private

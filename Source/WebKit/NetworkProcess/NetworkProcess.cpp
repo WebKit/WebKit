@@ -1326,7 +1326,7 @@ void NetworkProcess::setToSameSiteStrictCookiesForTesting(PAL::SessionID session
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkProcess::preconnectTo(WebPageProxyIdentifier webPageProxyID, PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if ENABLE(SERVER_PRECONNECT)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -1335,7 +1335,6 @@ void NetworkProcess::preconnectTo(WebPageProxyIdentifier webPageProxyID, PAL::Se
 #endif
 
     NetworkLoadParameters parameters;
-    parameters.webPageProxyID = webPageProxyID;
     parameters.request = ResourceRequest { url };
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     if (!userAgent.isEmpty()) {
