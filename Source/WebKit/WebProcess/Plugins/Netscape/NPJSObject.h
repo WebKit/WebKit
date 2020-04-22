@@ -56,7 +56,7 @@ public:
 
     static NPJSObject* toNPJSObject(NPObject* npObject)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(isNPJSObject(npObject));
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isNPJSObject(npObject));
         return static_cast<NPJSObject*>(npObject);
     }
 
