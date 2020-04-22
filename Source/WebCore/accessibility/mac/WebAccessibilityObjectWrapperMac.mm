@@ -3938,16 +3938,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
-
             auto ranges = backingObject->findTextRanges(criteria);
             if (ranges.isEmpty())
                 return nil;
-            NSMutableArray *markers = [NSMutableArray arrayWithCapacity:ranges.size()];
-            for (auto range : ranges) {
-                if (id marker = [protectedSelf textMarkerRangeFromRange:range])
-                    [markers addObject:marker];
-            }
-            return markers;
+            return createNSArray(ranges, [&] (auto& range) {
+                return [protectedSelf textMarkerRangeFromRange:range];
+            }).autorelease();
         });
     }
 
@@ -3962,10 +3958,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         });
         if (operationResult.isEmpty())
             return nil;
-        NSMutableArray *result = [NSMutableArray arrayWithCapacity:operationResult.size()];
-        for (auto str : operationResult)
-            [result addObject:str];
-        return result;
+        return createNSArray(operationResult).autorelease();
     }
 
     if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {

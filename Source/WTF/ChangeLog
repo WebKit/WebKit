@@ -1,3 +1,24 @@
+2020-04-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use createNSArray in many more places that build NSArray objects from C++ collections
+        https://bugs.webkit.org/show_bug.cgi?id=210702
+
+        Reviewed by Alex Christensen.
+
+        * wtf/cocoa/VectorCocoa.h: Improved the createNSArray function template:
+        1) Skip nil values. This matches what we do with Optional<> in makeVector and
+           was always my intention; apparently forgot to do it.
+        2) Instead of taking a const reference argument, take a forwarding reference
+           and use forwarding when passing collection elements to makeNSArrayElement
+           or the passed-in function. Can transfer ownership of collection elements
+           as they are transformed into array elements, which makes sense if the
+           Objective-C objects are wrappers that take ownership of what's wrapped.
+        3) Take any collection that works with std::size and a range-based for loop,
+           no longer requiring a size member function. Includes arrays.
+        4) Since this now intended for use on collections other than WTF::Vector,
+           added "using WTF::createNSArray" since argument-dependent lookup won't
+           find the function template in those cases.
+
 2020-04-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Use generic WorkQueue instead of WorkQueueWin.cpp

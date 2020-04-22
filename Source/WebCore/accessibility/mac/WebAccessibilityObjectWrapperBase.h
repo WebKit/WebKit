@@ -79,9 +79,9 @@ class VisiblePosition;
 - (void)accessibilityPostedNotification:(NSString *)notificationName;
 - (void)accessibilityPostedNotification:(NSString *)notificationName userInfo:(NSDictionary *)userInfo;
 
-- (CGPathRef)convertPathToScreenSpace:(WebCore::Path &)path;
+- (CGPathRef)convertPathToScreenSpace:(const WebCore::Path&)path;
 
-- (CGRect)convertRectToSpace:(WebCore::FloatRect &)rect space:(WebCore::AccessibilityConversionSpace)space;
+- (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(WebCore::AccessibilityConversionSpace)space;
 
 // Math related functions
 - (NSArray *)accessibilityMathPostscriptPairs;

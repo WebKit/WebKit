@@ -51,6 +51,7 @@
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(WEBGPU)
 #import "WebGPULayer.h"
@@ -456,12 +457,9 @@ void PlatformCALayerCocoa::setSublayers(const PlatformCALayerList& list)
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    NSMutableArray* sublayers = [[NSMutableArray alloc] init];
-    for (size_t i = 0; i < list.size(); ++i)
-        [sublayers addObject:list[i]->m_layer.get()];
-
-    [m_layer setSublayers:sublayers];
-    [sublayers release];
+    [m_layer setSublayers:createNSArray(list, [] (auto& layer) {
+        return layer->m_layer;
+    }).get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

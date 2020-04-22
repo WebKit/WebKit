@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -50,24 +51,22 @@ static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image
     if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
         return nullptr;
 
-    NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];
-
     FloatRect frameInContainerCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:previewContainer];
     if (frameInContainerCoordinates.isEmpty())
         return nullptr;
 
     FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
-    for (auto rect : clippingRectsInFrameCoordinates) {
+    auto clippingRectValuesInFrameCoordinates = createNSArray(clippingRectsInFrameCoordinates, [&] (auto rect) {
         rect.scale(scalingRatio);
-        [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
-    }
+        return [NSValue valueWithCGRect:rect];
+    });
 
     auto imageView = adoptNS([[UIImageView alloc] initWithImage:image]);
     [imageView setFrame:frameInContainerCoordinates];
 
     RetainPtr<UIDragPreviewParameters> parameters;
-    if (clippingRectValuesInFrameCoordinates.count)
-        parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates]);
+    if ([clippingRectValuesInFrameCoordinates count])
+        parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates.get()]);
     else
         parameters = adoptNS([[UIDragPreviewParameters alloc] init]);
 

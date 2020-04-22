@@ -30,6 +30,7 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <string.h>
 #import <wtf/MainThread.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @interface WebCoreSharedBufferData : NSData
 - (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position;
@@ -115,10 +116,9 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 
 RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 {
-    auto dataArray = adoptNS([[NSMutableArray alloc] initWithCapacity:m_segments.size()]);
-    for (const auto& segment : m_segments)
-        [dataArray addObject:segment.segment->createNSData().get()];
-    return WTFMove(dataArray);
+    return createNSArray(m_segments, [] (auto& segment) {
+        return segment.segment->createNSData();
+    });
 }
 
 RetainPtr<NSData> SharedBuffer::DataSegment::createNSData() const

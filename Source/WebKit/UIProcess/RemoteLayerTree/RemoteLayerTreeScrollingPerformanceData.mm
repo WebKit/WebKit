@@ -30,6 +30,7 @@
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/TileController.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -72,16 +73,13 @@ void RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount(BlankPixelCo
 
 NSArray *RemoteLayerTreeScrollingPerformanceData::data()
 {
-    NSMutableArray* dataArray = [NSMutableArray arrayWithCapacity:m_blankPixelCounts.size()];
-    
-    for (auto pixelData : m_blankPixelCounts) {
-        [dataArray addObject:@[
+    return createNSArray(m_blankPixelCounts, [] (auto& pixelData) {
+        return @[
             @(pixelData.startTime),
             (pixelData.eventType == BlankPixelCount::Filled) ? @"filled" : @"exposed",
             @(pixelData.blankPixelCount)
-        ]];
-    }
-    return dataArray;
+        ];
+    }).autorelease();
 }
 
 static CALayer *findTileGridContainerLayer(CALayer *layer)

@@ -615,11 +615,9 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
 
 int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 {
-    auto registrationLists = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
-    for (auto& data : itemData) {
-        if (auto itemList = createItemProviderRegistrationList(data))
-            [registrationLists addObject:itemList.get()];
-    }
+    auto registrationLists = createNSArray(itemData, [] (auto& data) {
+        return createItemProviderRegistrationList(data);
+    });
     registerItemsToPasteboard(registrationLists.get(), m_pasteboard.get());
     return [m_pasteboard changeCount];
 }

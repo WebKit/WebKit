@@ -67,11 +67,9 @@
 
 -(NSArray<NSURL *> *)redirectChain
 {
-    auto& redirectURLs = _download->redirectChain();
-    NSMutableArray<NSURL *> *nsURLs = [NSMutableArray arrayWithCapacity:redirectURLs.size()];
-    for (const auto& redirectURL : redirectURLs)
-        [nsURLs addObject:(NSURL *)redirectURL];
-    return nsURLs;
+    return createNSArray(_download->redirectChain(), [] (auto& url) -> NSURL * {
+        return url;
+    }).autorelease();
 }
 
 - (BOOL)wasUserInitiated

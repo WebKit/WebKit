@@ -1676,40 +1676,32 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (![_highlightView superview])
         return;
 
-    {
-        RetainPtr<UIColor> highlightUIKitColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(_tapHighlightInformation.color)]);
-        [_highlightView setColor:highlightUIKitColor.get()];
-    }
+    [_highlightView setColor:adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(_tapHighlightInformation.color)]).get()];
 
-    CGFloat selfScale = self.layer.transform.m11;
-    bool allHighlightRectsAreRectilinear = true;
-    float deviceScaleFactor = _page->deviceScaleFactor();
-    const Vector<WebCore::FloatQuad>& highlightedQuads = _tapHighlightInformation.quads;
-    const size_t quadCount = highlightedQuads.size();
-    RetainPtr<NSMutableArray> rects = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
-    for (size_t i = 0; i < quadCount; ++i) {
-        const WebCore::FloatQuad& quad = highlightedQuads[i];
-        if (quad.isRectilinear()) {
-            WebCore::FloatRect boundingBox = quad.boundingBox();
-            boundingBox.scale(selfScale);
-            boundingBox.inflate(minimumTapHighlightRadius);
-            CGRect pixelAlignedRect = static_cast<CGRect>(encloseRectToDevicePixels(boundingBox, deviceScaleFactor));
-            [rects addObject:[NSValue valueWithCGRect:pixelAlignedRect]];
-        } else {
-            allHighlightRectsAreRectilinear = false;
-            rects.clear();
+    auto& highlightedQuads = _tapHighlightInformation.quads;
+    bool allRectilinear = true;
+    for (auto& quad : highlightedQuads) {
+        if (!quad.isRectilinear()) {
+            allRectilinear = false;
             break;
         }
     }
 
-    if (allHighlightRectsAreRectilinear)
+    auto selfScale = self.layer.transform.m11;
+    if (allRectilinear) {
+        float deviceScaleFactor = _page->deviceScaleFactor();
+        auto rects = createNSArray(highlightedQuads, [&] (auto& quad) {
+            auto boundingBox = quad.boundingBox();
+            boundingBox.scale(selfScale);
+            boundingBox.inflate(minimumTapHighlightRadius);
+            return [NSValue valueWithCGRect:encloseRectToDevicePixels(boundingBox, deviceScaleFactor)];
+        });
         [_highlightView setFrames:rects.get() boundaryRect:_page->exposedContentRect()];
-    else {
-        RetainPtr<NSMutableArray> quads = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
-        for (size_t i = 0; i < quadCount; ++i) {
-            WebCore::FloatQuad quad = highlightedQuads[i];
+    } else {
+        auto quads = adoptNS([[NSMutableArray alloc] initWithCapacity:highlightedQuads.size() * 4]);
+        for (auto quad : highlightedQuads) {
             quad.scale(selfScale);
-            WebCore::FloatQuad extendedQuad = inflateQuad(quad, minimumTapHighlightRadius);
+            auto extendedQuad = inflateQuad(quad, minimumTapHighlightRadius);
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p1()]];
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p2()]];
             [quads addObject:[NSValue valueWithCGPoint:extendedQuad.p3()]];
@@ -1718,12 +1710,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         [_highlightView setQuads:quads.get() boundaryRect:_page->exposedContentRect()];
     }
 
-    RetainPtr<NSMutableArray> borderRadii = adoptNS([[NSMutableArray alloc] initWithCapacity:4]);
-    [borderRadii addObject:nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topLeftRadius, selfScale)];
-    [borderRadii addObject:nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topRightRadius, selfScale)];
-    [borderRadii addObject:nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomLeftRadius, selfScale)];
-    [borderRadii addObject:nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomRightRadius, selfScale)];
-    [_highlightView setCornerRadii:borderRadii.get()];
+    [_highlightView setCornerRadii:@[
+        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topLeftRadius, selfScale),
+        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.topRightRadius, selfScale),
+        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomLeftRadius, selfScale),
+        nsSizeForTapHighlightBorderRadius(_tapHighlightInformation.bottomRightRadius, selfScale),
+    ]];
 }
 
 - (void)_showTapHighlight
@@ -2566,14 +2558,11 @@ static Class tapAndAHalfRecognizerClass()
 
 - (NSArray *)webSelectionRectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects
 {
-    unsigned size = selectionRects.size();
-    if (!size)
+    if (selectionRects.isEmpty())
         return nil;
 
-    NSMutableArray *webRects = [NSMutableArray arrayWithCapacity:size];
-    for (unsigned i = 0; i < size; i++) {
-        const WebCore::SelectionRect& coreRect = selectionRects[i];
-        WebSelectionRect *webRect = [WebSelectionRect selectionRect];
+    return createNSArray(selectionRects, [] (auto& coreRect) {
+        auto webRect = [WebSelectionRect selectionRect];
         webRect.rect = coreRect.rect();
         webRect.writingDirection = coreRect.direction() == WebCore::TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
         webRect.isLineBreak = coreRect.isLineBreak();
@@ -2583,10 +2572,8 @@ static Class tapAndAHalfRecognizerClass()
         webRect.containsEnd = coreRect.containsEnd();
         webRect.isInFixedPosition = coreRect.isInFixedPosition();
         webRect.isHorizontal = coreRect.isHorizontal();
-        [webRects addObject:webRect];
-    }
-
-    return webRects;
+        return webRect;
+    }).autorelease();
 }
 
 - (NSArray *)webSelectionRects
@@ -4472,14 +4459,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
 }
 
-static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore::SelectionRect>& coreRects)
+static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore::SelectionRect>& rects)
 {
-    auto rects = adoptNS([[NSMutableArray alloc] initWithCapacity:coreRects.size()]);
-    for (auto& coreRect : coreRects) {
-        auto wkTextSelectionRect = adoptNS([[WKTextSelectionRect alloc] initWithSelectionRect:coreRect]);
-        [rects addObject:wkTextSelectionRect.get()];
-    }
-    return rects.autorelease();
+    return createNSArray(rects, [] (auto& rect) {
+        return adoptNS([[WKTextSelectionRect alloc] initWithSelectionRect:rect]);
+    }).autorelease();
 }
 
 - (UITextRange *)selectedTextRange
@@ -7597,17 +7581,15 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
     if (frameInContainerCoordinates.isEmpty())
         return nil;
 
-    WebCore::FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
-    NSMutableArray *clippingRectValuesInFrameCoordinates = [NSMutableArray arrayWithCapacity:clippingRectsInFrameCoordinates.size()];
-
-    for (auto rect : clippingRectsInFrameCoordinates) {
+    auto scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
+    auto clippingRectValuesInFrameCoordinates = createNSArray(clippingRectsInFrameCoordinates, [&] (WebCore::FloatRect rect) {
         rect.scale(scalingRatio);
-        [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
-    }
+        return [NSValue valueWithCGRect:rect];
+    });
 
     RetainPtr<UIPreviewParameters> parameters;
-    if (clippingRectValuesInFrameCoordinates.count)
-        parameters = adoptNS([[UIPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates]);
+    if ([clippingRectValuesInFrameCoordinates count])
+        parameters = adoptNS([[UIPreviewParameters alloc] initWithTextLineRects:clippingRectValuesInFrameCoordinates.get()]);
     else
         parameters = adoptNS([[UIPreviewParameters alloc] init]);
 
@@ -9669,23 +9651,15 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller
 {
-    RetainPtr<NSMutableArray> rectArray = adoptNS([[NSMutableArray alloc] init]);
-
     if (_positionInformation.linkIndicator.contentImage) {
-        WebCore::FloatPoint origin = _positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates.location();
-        for (WebCore::FloatRect& rect : _positionInformation.linkIndicator.textRectsInBoundingRectCoordinates) {
-            CGRect cgRect = rect;
-            cgRect.origin.x += origin.x();
-            cgRect.origin.y += origin.y();
-            [rectArray addObject:[NSValue valueWithCGRect:cgRect]];
-        }
+        auto origin = _positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates.location();
+        return createNSArray(_positionInformation.linkIndicator.textRectsInBoundingRectCoordinates, [&] (CGRect rect) {
+            return [NSValue valueWithCGRect:CGRectOffset(rect, origin.x(), origin.y())];
+        }).autorelease();
     } else {
-        const float marginInPx = 4 * _page->deviceScaleFactor();
-        CGRect cgRect = CGRectInset(_positionInformation.bounds, -marginInPx, -marginInPx);
-        [rectArray addObject:[NSValue valueWithCGRect:cgRect]];
+        float marginInPx = 4 * _page->deviceScaleFactor();
+        return @[[NSValue valueWithCGRect:CGRectInset(_positionInformation.bounds, -marginInPx, -marginInPx)]];
     }
-
-    return rectArray.autorelease();
 }
 
 - (void)_previewItemControllerDidCancelPreview:(UIPreviewItemController *)controller

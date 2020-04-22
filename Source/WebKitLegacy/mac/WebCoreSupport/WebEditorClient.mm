@@ -1039,13 +1039,10 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    NSMutableArray *corrections = [NSMutableArray array];
-    for (auto& guess : grammarDetail.guesses)
-        [corrections addObject:guess];
-    NSDictionary *dictionary = @{
-        NSGrammarRange : [NSValue valueWithRange:grammarDetail.range],
-        NSGrammarUserDescription : grammarDetail.userDescription,
-        NSGrammarCorrections : corrections,
+    auto dictionary = @{
+        NSGrammarRange: [NSValue valueWithRange:grammarDetail.range],
+        NSGrammarUserDescription: grammarDetail.userDescription,
+        NSGrammarCorrections: createNSArray(grammarDetail.guesses).get(),
     };
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:dictionary];
 }

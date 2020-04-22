@@ -28,6 +28,7 @@
 
 #import "ColorCocoa.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
@@ -129,10 +130,9 @@ RetainPtr<NSDictionary> FontAttributes::createDictionary() const
     }
 
     if (!textLists.isEmpty()) {
-        auto textListArray = adoptNS([[NSMutableArray alloc] initWithCapacity:textLists.size()]);
-        for (auto& textList : textLists)
-            [textListArray addObject:textList.createTextList().get()];
-        [style setTextLists:textListArray.get()];
+        [style setTextLists:createNSArray(textLists, [] (auto& textList) {
+            return textList.createTextList();
+        }).get()];
     }
 
     attributes[NSParagraphStyleAttributeName] = style.get();

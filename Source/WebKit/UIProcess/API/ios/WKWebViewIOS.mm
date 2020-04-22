@@ -56,6 +56,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(DATA_DETECTION)
 #import "WKDataDetectorTypesInternal.h"
@@ -3049,10 +3050,9 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     [_contentView _accessibilityRetrieveRectsAtSelectionOffset:offset withText:text completionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::SelectionRect>& selectionRects) {
         if (!capturedCompletionHandler)
             return;
-        auto rectValues = adoptNS([[NSMutableArray alloc] initWithCapacity:selectionRects.size()]);
-        for (auto& selectionRect : selectionRects)
-            [rectValues addObject:[NSValue valueWithCGRect:selectionRect.rect()]];
-        capturedCompletionHandler(rectValues.get());
+        capturedCompletionHandler(createNSArray(selectionRects, [] (auto& rect) {
+            return [NSValue valueWithCGRect:rect.rect()];
+        }).get());
     }];
 }
 

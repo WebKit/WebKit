@@ -258,10 +258,8 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 HistoryItem* core(WebHistoryItem *item)
 {
     if (!item)
-        return 0;
-    
+        return nullptr;
     ASSERT(historyItemWrappers().get(core(item->_private)) == item);
-
     return core(item->_private);
 }
 
@@ -269,11 +267,8 @@ WebHistoryItem *kit(HistoryItem* item)
 {
     if (!item)
         return nil;
-        
-    WebHistoryItem *kitItem = historyItemWrappers().get(item);
-    if (kitItem)
-        return kitItem;
-    
+    if (auto wrapper = historyItemWrappers().get(item))
+        return [[wrapper retain] autorelease];
     return [[[WebHistoryItem alloc] initWithWebCoreHistoryItem:*item] autorelease];
 }
 
@@ -284,23 +279,25 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];
-
+    auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];
+    if (!item)
+        return nil;
     item->_private->_lastVisitedTime = time;
-
     return item;
 }
 
 - (id)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
 {   
     WebCoreThreadViolationCheckRoundOne();
+
     // Need to tell WebCore what function to call for the 
     // "History Item has Changed" notification - no harm in doing this
     // everytime a WebHistoryItem is created
     // Note: We also do this in [WebFrameView initWithFrame:] where we do
     // other "init before WebKit is used" type things
+    // FIXME: This means that if we mix legacy WebKit and modern WebKit in the same process, we won't get both notifications.
     WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
-    
+
     if (!(self = [super init]))
         return nil;
 
@@ -480,17 +477,13 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSArray *)children
 {
-    const auto& children = core(_private)->children();
-    if (!children.size())
+    auto& children = core(_private)->children();
+    if (children.isEmpty())
         return nil;
 
-    unsigned size = children.size();
-    NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
-    
-    for (unsigned i = 0; i < size; ++i)
-        [result addObject:kit(const_cast<HistoryItem*>(children[i].ptr()))];
-    
-    return result;
+    return createNSArray(children, [] (auto& item) {
+        return kit(const_cast<HistoryItem*>(item.ptr()));
+    }).autorelease();
 }
 
 - (NSURL *)URL
@@ -514,16 +507,11 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSArray *)_redirectURLs
 {
-    Vector<String>* redirectURLs = _private->_redirectURLs.get();
+    auto& redirectURLs = _private->_redirectURLs;
     if (!redirectURLs)
         return nil;
 
-    size_t size = redirectURLs->size();
-    ASSERT(size);
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [result addObject:(NSString*)redirectURLs->at(i)];
-    return [result autorelease];
+    return createNSArray(*redirectURLs).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)

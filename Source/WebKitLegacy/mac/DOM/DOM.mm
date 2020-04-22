@@ -187,13 +187,9 @@ static WKQuad wkQuadFromFloatQuad(const FloatQuad& inQuad)
 
 static NSArray *kit(const Vector<FloatQuad>& quads)
 {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:quads.size()];
-    for (auto& quad : quads) {
-        WKQuadObject *quadObject = [[WKQuadObject alloc] initWithQuad:wkQuadFromFloatQuad(quad)];
-        [array addObject:quadObject];
-        [quadObject release];
-    }
-    return array;
+    return createNSArray(quads, [] (auto& quad) {
+        return adoptNS([[WKQuadObject alloc] initWithQuad:wkQuadFromFloatQuad(quad)]);
+    }).autorelease();
 }
 
 static inline WKQuad zeroQuad()
@@ -542,8 +538,6 @@ id <DOMEventTarget> kit(EventTarget* target)
             *cgImage = image->nativeImage().autorelease();
     }
 
-    RetainPtr<NSMutableArray> rectArray = adoptNS([[NSMutableArray alloc] init]);
-
     if (!*cgImage) {
         if (auto* renderer = node.renderer()) {
             FloatRect boundingBox;
@@ -551,27 +545,18 @@ id <DOMEventTarget> kit(EventTarget* target)
                 boundingBox = downcast<RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
             else
                 boundingBox = renderer->absoluteBoundingBoxRect();
-
             boundingBox.inflate(margin);
-
-            CGRect cgRect = node.document().frame()->view()->contentsToWindow(enclosingIntRect(boundingBox));
-            [rectArray addObject:[NSValue value:&cgRect withObjCType:@encode(CGRect)]];
-
-            *rects = rectArray.autorelease();
+            *rects = @[makeNSArrayElement(node.document().frame()->view()->contentsToWindow(enclosingIntRect(boundingBox)))];
         }
         return;
     }
 
     FloatPoint origin = textIndicator->textBoundingRectInRootViewCoordinates().location();
-    for (const FloatRect& rect : textIndicator->textRectsInBoundingRectCoordinates()) {
-        CGRect cgRect = rect;
-        cgRect.origin.x += origin.x();
-        cgRect.origin.y += origin.y();
-        cgRect = node.document().frame()->view()->contentsToWindow(enclosingIntRect(cgRect));
-        [rectArray addObject:[NSValue value:&cgRect withObjCType:@encode(CGRect)]];
-    }
-
-    *rects = rectArray.autorelease();
+    *rects = createNSArray(textIndicator->textRectsInBoundingRectCoordinates(), [&] (CGRect rect) {
+        rect.origin.x += origin.x();
+        rect.origin.y += origin.y();
+        return makeNSArrayElement(node.document().frame()->view()->contentsToWindow(enclosingIntRect(rect)));
+    }).autorelease();
 }
 
 @end

@@ -36,6 +36,7 @@
 #import <wtf/Optional.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 
 @interface NSURL ()
@@ -64,9 +65,9 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
-    for (const auto& cookie : cookies)
-        [nsCookies addObject:(NSHTTPCookie *)cookie];
+    auto nsCookies = createNSArray(cookies, [] (auto& cookie) -> NSHTTPCookie * {
+        return cookie;
+    });
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [nsCookieStorage() setCookies:nsCookies.get() forURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL];

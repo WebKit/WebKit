@@ -201,13 +201,12 @@ void ResourceRequest::doUpdatePlatformRequest()
     for (const auto& header : httpHeaderFields())
         [nsRequest setValue:header.value forHTTPHeaderField:header.key];
 
-    NSMutableArray *encodingFallbacks = [NSMutableArray array];
-    for (const auto& encodingName : m_responseContentDispositionEncodingFallbackArray) {
-        CFStringEncoding nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName.createCFString().get()));
-        if (nsEncoding != kCFStringEncodingInvalidId)
-            [encodingFallbacks addObject:[NSNumber numberWithUnsignedLong:nsEncoding]];
-    }
-    [nsRequest setContentDispositionEncodingFallbackArray:encodingFallbacks];
+    [nsRequest setContentDispositionEncodingFallbackArray:createNSArray(m_responseContentDispositionEncodingFallbackArray, [] (auto& name) -> NSNumber * {
+        auto encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(name.createCFString().get()));
+        if (encoding == kCFStringEncodingInvalidId)
+            return nil;
+        return @(encoding);
+    }).get()];
 
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {

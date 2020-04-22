@@ -43,6 +43,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/JSONValues.h>
 #import <wtf/LoggerHelper.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
 
@@ -692,10 +693,6 @@ static bool isEqual(const SharedBuffer& data, const String& value)
 void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, Ref<SharedBuffer>&& responseData, LicenseUpdateCallback&& callback)
 {
     if (!m_expiredSessions.isEmpty() && isEqual(responseData, "acknowledged"_s)) {
-        auto expiredSessions = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& session : m_expiredSessions)
-            [expiredSessions addObject:session.get()];
-
         auto* certificate = m_instance->serverCertificate();
         auto* storageURL = m_instance->storageURL();
 
@@ -706,7 +703,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         }
 
         DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "\"acknowledged\", Succeeded, removing expired session report");
-        RetainPtr<NSData> appIdentifier = certificate->createNSData();
+        auto expiredSessions = createNSArray(m_expiredSessions, [] (auto& data) {
+            return data.get();
+        });
+        auto appIdentifier = certificate->createNSData();
         [PAL::getAVContentKeySessionClass() removePendingExpiredSessionReports:expiredSessions.get() withAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL];
         callback(false, { }, WTF::nullopt, WTF::nullopt, Succeeded);
         return;

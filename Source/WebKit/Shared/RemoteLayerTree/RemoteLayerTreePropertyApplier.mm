@@ -35,6 +35,7 @@
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
@@ -313,35 +314,28 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
 
     if (hasViewChildren()) {
         ASSERT(node.uiView());
-
-        RetainPtr<NSMutableArray> subviews = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children) {
+        [contentView() _web_setSubviews:createNSArray(properties.children, [&] (auto& child) -> UIView * {
             auto* childNode = relatedLayers.get(child);
             ASSERT(childNode);
             if (!childNode)
-                continue;
+                return nil;
             ASSERT(childNode->uiView());
-            [subviews addObject:childNode->uiView()];
-        }
-
-        [contentView() _web_setSubviews:subviews.get()];
+            return childNode->uiView();
+        }).get()];
         return;
     }
 #endif
 
-    RetainPtr<NSMutableArray> sublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-    for (auto& child : properties.children) {
+    node.layer().sublayers = createNSArray(properties.children, [&] (auto& child) -> CALayer * {
         auto* childNode = relatedLayers.get(child);
         ASSERT(childNode);
         if (!childNode)
-            continue;
+            return nil;
 #if PLATFORM(IOS_FAMILY)
         ASSERT(!childNode->uiView());
 #endif
-        [sublayers addObject:childNode->layer()];
-    }
-
-    node.layer().sublayers = sublayers.get();
+        return childNode->layer();
+    }).get();
 }
 
 void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)

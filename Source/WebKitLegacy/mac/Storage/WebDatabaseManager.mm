@@ -92,14 +92,9 @@ static NSString *databasesDirectoryPath();
 
 - (NSArray *)origins
 {
-    auto coreOrigins = DatabaseTracker::singleton().origins();
-    NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
-    for (auto& coreOrigin : coreOrigins) {
-        WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigin.securityOrigin().ptr()];
-        [webOrigins addObject:webOrigin];
-        [webOrigin release];
-    }
-    return [webOrigins autorelease];
+    return createNSArray(DatabaseTracker::singleton().origins(), [] (auto& origin) {
+        return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
+    }).autorelease();
 }
 
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin

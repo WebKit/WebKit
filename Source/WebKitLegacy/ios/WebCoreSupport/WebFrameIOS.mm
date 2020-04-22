@@ -27,6 +27,16 @@
 
 #import "WebFrameIOS.h"
 
+#import "DOM.h"
+#import "DOMNodeInternal.h"
+#import "DOMRange.h"
+#import "DOMRangeInternal.h"
+#import "DOMUIKitExtensions.h"
+#import "WebFrameInternal.h"
+#import "WebSelectionRect.h"
+#import "WebUIKitDelegate.h"
+#import "WebViewPrivate.h"
+#import "WebVisiblePositionInternal.h"
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
@@ -40,7 +50,6 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Position.h>
 #import <WebCore/Range.h>
-#import <WebCore/RenderObject.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/SelectionRect.h>
@@ -49,20 +58,8 @@
 #import <WebCore/TextFlags.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
-#import <WebKitLegacy/DOM.h>
-#import <WebKitLegacy/DOMRange.h>
-#import <WebKitLegacy/DOMUIKitExtensions.h>
-#import <WebKitLegacy/WebSelectionRect.h>
-#import <WebKitLegacy/WebVisiblePosition.h>
 #import <unicode/uchar.h>
-
-#import "DOMNodeInternal.h"
-#import "DOMRangeInternal.h"
-#import "WebFrameInternal.h"
-#import "WebUIKitDelegate.h"
-#import "WebViewPrivate.h"
-#import "WebVisiblePosition.h"
-#import "WebVisiblePositionInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
 
@@ -214,13 +211,10 @@ using namespace WebCore;
     
     Vector<SelectionRect> rects;
     range->collectSelectionRects(rects);
-    unsigned size = rects.size();
     
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:size];
-    for (unsigned i = 0; i < size; i++) {
-        SelectionRect &coreRect = rects[i];
-        WebSelectionRect *webRect = [WebSelectionRect selectionRect];
-        webRect.rect = static_cast<CGRect>(coreRect.rect());
+    return createNSArray(rects, [] (auto& coreRect) {
+        auto webRect = [WebSelectionRect selectionRect];
+        webRect.rect = coreRect.rect();
         webRect.writingDirection = coreRect.direction() == TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
         webRect.isLineBreak = coreRect.isLineBreak();
         webRect.isFirstOnLine = coreRect.isFirstOnLine();
@@ -229,10 +223,8 @@ using namespace WebCore;
         webRect.containsEnd = coreRect.containsEnd();
         webRect.isInFixedPosition = coreRect.isInFixedPosition();
         webRect.isHorizontal = coreRect.isHorizontal();
-        [result addObject:webRect];
-    }
-    
-    return result;        
+        return webRect;
+    }).autorelease();
 }
 
 - (NSArray *)selectionRectsForRange:(DOMRange *)domRange

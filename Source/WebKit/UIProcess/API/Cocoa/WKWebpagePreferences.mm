@@ -251,11 +251,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (NSArray<_WKCustomHeaderFields *> *)_customHeaderFields
 {
-    const auto& fields = _websitePolicies->customHeaderFields();
-    NSMutableArray *array = [[[NSMutableArray alloc] initWithCapacity:fields.size()] autorelease];
-    for (const auto& field : fields)
-        [array addObject:wrapper(API::CustomHeaderFields::create(field))];
-    return array;
+    return createNSArray(_websitePolicies->customHeaderFields(), [] (auto& field) {
+        return wrapper(API::CustomHeaderFields::create(field));
+    }).autorelease();
 }
 
 - (void)_setCustomHeaderFields:(NSArray<_WKCustomHeaderFields *> *)fields

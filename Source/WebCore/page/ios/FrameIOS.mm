@@ -68,6 +68,7 @@
 #import "WAKWindow.h"
 #import <JavaScriptCore/JSLock.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 using namespace WebCore::HTMLNames;
@@ -789,11 +790,9 @@ NSArray *Frame::interpretationsForCurrentRoot() const
             append(interpretation, textAfterLastMarker);
     }
 
-    NSMutableArray *result = [NSMutableArray array];
-    for (auto& interpretation : interpretations)
-        [result addObject:adoptNS([[NSString alloc] initWithCharacters:reinterpret_cast<const unichar*>(interpretation.data()) length:interpretation.size()]).get()];
-
-    return result;
+    return createNSArray(interpretations, [] (auto& interpretation) {
+        return adoptNS([[NSString alloc] initWithCharacters:reinterpret_cast<const unichar*>(interpretation.data()) length:interpretation.size()]);
+    }).autorelease();
 }
 
 void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)

@@ -276,19 +276,17 @@ private:
     if (_findReplyCallbacks.isEmpty())
         return;
 
-    auto replyCallback = _findReplyCallbacks.takeFirst();
-    auto matchCount = rectsForMatches.size();
-    auto matchObjects = adoptNS([[NSMutableArray alloc] initWithCapacity:matchCount]);
-    for (unsigned i = 0; i < matchCount; i++) {
-        RetainPtr<NSArray> nsMatchRects;
+    unsigned index = 0;
+    auto matchObjects = createNSArray(rectsForMatches, [&] (auto& rects) {
+        RetainPtr<NSArray> rectsArray;
         if (_usePlatformFindUI)
-            nsMatchRects = createNSArray(rectsForMatches[i]);
+            rectsArray = createNSArray(rects);
         else
-            nsMatchRects = @[];
-        [matchObjects addObject:adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:_view index:i rects:nsMatchRects.get()]).get()];
-    }
+            rectsArray = @[];
+        return adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:_view index:index++ rects:rectsArray.get()]);
+    });
 
-    replyCallback(matchObjects.get(), didWrapAround);
+    _findReplyCallbacks.takeFirst()(matchObjects.get(), didWrapAround);
 }
 
 - (void)didGetImageForMatchResult:(WebKit::WebImage *)image

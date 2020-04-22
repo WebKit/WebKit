@@ -68,10 +68,12 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)
+#import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/mac/HIServicesSPI.h>
 #else
 #import "WAKView.h"
 #import "WAKWindow.h"
+#import "WebAccessibilityObjectWrapperIOS.h"
 #endif
 
 using namespace WebCore;
@@ -249,35 +251,34 @@ using namespace HTMLNames;
 
 static NSArray *convertMathPairsToNSArray(const AccessibilityObject::AccessibilityMathMultiscriptPairs& pairs, NSString *subscriptKey, NSString *superscriptKey)
 {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:pairs.size()];
-    for (const auto& pair : pairs) {
-        NSMutableDictionary *pairDictionary = [NSMutableDictionary dictionary];
-        if (pair.first && pair.first->wrapper() && !pair.first->accessibilityIsIgnored())
-            [pairDictionary setObject:pair.first->wrapper() forKey:subscriptKey];
-        if (pair.second && pair.second->wrapper() && !pair.second->accessibilityIsIgnored())
-            [pairDictionary setObject:pair.second->wrapper() forKey:superscriptKey];
-        [array addObject:pairDictionary];
-    }
-    return array;
-}
-
-static void addChildToArray(AXCoreObject& child, RetainPtr<NSMutableArray> array)
-{
-    WebAccessibilityObjectWrapper *wrapper = child.wrapper();
-    // We want to return the attachment view instead of the object representing the attachment,
-    // otherwise, we get palindrome errors in the AX hierarchy.
-    if (child.isAttachment() && [wrapper attachmentView])
-        [array.get() addObject:[wrapper attachmentView]];
-    else if (wrapper)
-        [array.get() addObject:wrapper];
+    return createNSArray(pairs, [&] (auto& pair) {
+        WebAccessibilityObjectWrapper *wrappers[2];
+        NSString *keys[2];
+        NSUInteger count = 0;
+        if (pair.first && pair.first->wrapper() && !pair.first->accessibilityIsIgnored()) {
+            wrappers[0] = pair.first->wrapper();
+            keys[0] = subscriptKey;
+            count = 1;
+        }
+        if (pair.second && pair.second->wrapper() && !pair.second->accessibilityIsIgnored()) {
+            wrappers[count] = pair.second->wrapper();
+            keys[count] = superscriptKey;
+            count += 1;
+        }
+        return adoptNS([[NSDictionary alloc] initWithObjects:wrappers forKeys:keys count:count]);
+    }).autorelease();
 }
 
 NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
-    for (const auto& child : children)
-        addChildToArray(*child, result);
-    return [result autorelease];
+    return createNSArray(children, [] (auto& child) -> id {
+        auto wrapper = child->wrapper();
+        // We want to return the attachment view instead of the object representing the attachment,
+        // otherwise, we get palindrome errors in the AX hierarchy.
+        if (child->isAttachment() && wrapper.attachmentView)
+            return wrapper.attachmentView;
+        return wrapper;
+    }).autorelease();
 }
 
 @implementation WebAccessibilityObjectWrapperBase
@@ -446,7 +447,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     }
 }
 
-- (CGPathRef)convertPathToScreenSpace:(Path &)path
+- (CGPathRef)convertPathToScreenSpace:(const Path&)path
 {
     PathConversionInfo conversion = { self, CGPathCreateMutable() };
     path.apply([&conversion](const PathElement& pathElement) {
@@ -463,7 +464,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     return nil;
 }
 
-- (CGRect)convertRectToSpace:(WebCore::FloatRect &)rect space:(AccessibilityConversionSpace)space
+- (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(AccessibilityConversionSpace)space
 {
     if (!self.axBackingObject)
         return CGRectZero;

@@ -31,6 +31,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -121,16 +122,9 @@ static NSString *applicationCachePath()
 
 + (NSArray *)originsWithCache
 {
-    auto coreOrigins = webApplicationCacheStorage().originsWithCache();
-    
-    NSMutableArray *webOrigins = [[[NSMutableArray alloc] initWithCapacity:coreOrigins.size()] autorelease];
-    
-    for (auto& coreOrigin : coreOrigins) {
-        auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:coreOrigin.ptr()]);
-        [webOrigins addObject:webOrigin.get()];
-    }
-    
-    return webOrigins;
+    return createNSArray(webApplicationCacheStorage().originsWithCache(), [] (auto& origin) {
+        return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]);
+    }).autorelease();
 }
 
 @end

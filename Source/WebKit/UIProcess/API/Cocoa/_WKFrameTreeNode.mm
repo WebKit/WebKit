@@ -29,6 +29,7 @@
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKFrameTreeNode
 
@@ -62,11 +63,9 @@
 
 - (NSArray<_WKFrameTreeNode *> *)childFrames
 {
-    const auto& children = _node->childFrames();
-    NSMutableArray<_WKFrameTreeNode *> *array = [NSMutableArray arrayWithCapacity:children.size()];
-    for (const auto& child : children)
-        [array addObject:wrapper(API::FrameTreeNode::create(WebKit::FrameTreeNodeData(child), _node->page()))];
-    return array;
+    return createNSArray(_node->childFrames(), [&] (auto& child) {
+        return wrapper(API::FrameTreeNode::create(WebKit::FrameTreeNodeData(child), _node->page()));
+    }).autorelease();
 }
 
 - (id)copyWithZone:(NSZone *)zone

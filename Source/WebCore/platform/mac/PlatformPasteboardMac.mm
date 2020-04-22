@@ -506,11 +506,10 @@ int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
     if (itemData.size() == 1)
         return write(itemData.first());
 
-    auto platformItems = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
-    for (auto& data : itemData)
-        [platformItems addObject:createPasteboardItem(data).get()];
     [m_pasteboard clearContents];
-    [m_pasteboard writeObjects:platformItems.get()];
+    [m_pasteboard writeObjects:createNSArray(itemData, [] (auto& data) {
+        return createPasteboardItem(data);
+    }).get()];
     return [m_pasteboard changeCount];
 }
 

@@ -99,6 +99,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -509,31 +510,28 @@ static void activateSystemCoreWebFonts()
 
 static void activateTestingFonts()
 {
-    static const char* fontFileNames[] = {
-        "AHEM____.TTF",
-        "WebKitWeightWatcher100.ttf",
-        "WebKitWeightWatcher200.ttf",
-        "WebKitWeightWatcher300.ttf",
-        "WebKitWeightWatcher400.ttf",
-        "WebKitWeightWatcher500.ttf",
-        "WebKitWeightWatcher600.ttf",
-        "WebKitWeightWatcher700.ttf",
-        "WebKitWeightWatcher800.ttf",
-        "WebKitWeightWatcher900.ttf",
-        "FontWithFeatures.ttf",
-        "FontWithFeatures.otf",
-        0
+    constexpr NSString *fontFileNames[] = {
+        @"AHEM____.TTF",
+        @"WebKitWeightWatcher100.ttf",
+        @"WebKitWeightWatcher200.ttf",
+        @"WebKitWeightWatcher300.ttf",
+        @"WebKitWeightWatcher400.ttf",
+        @"WebKitWeightWatcher500.ttf",
+        @"WebKitWeightWatcher600.ttf",
+        @"WebKitWeightWatcher700.ttf",
+        @"WebKitWeightWatcher800.ttf",
+        @"WebKitWeightWatcher900.ttf",
+        @"FontWithFeatures.ttf",
+        @"FontWithFeatures.otf",
     };
 
-    NSMutableArray *fontURLs = [NSMutableArray array];
     NSURL *resourcesDirectory = [NSURL URLWithString:@"DumpRenderTree.resources" relativeToURL:[[NSBundle mainBundle] executableURL]];
-    for (unsigned i = 0; fontFileNames[i]; ++i) {
-        NSURL *fontURL = [resourcesDirectory URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]] isDirectory:NO];
-        [fontURLs addObject:[fontURL absoluteURL]];
-    }
+    auto fontURLs = createNSArray(fontFileNames, [&] (NSString *name) {
+        return [resourcesDirectory URLByAppendingPathComponent:name isDirectory:NO].absoluteURL;
+    });
 
-    CFArrayRef errors = 0;
-    if (!CTFontManagerRegisterFontsForURLs((CFArrayRef)fontURLs, kCTFontManagerScopeProcess, &errors)) {
+    CFArrayRef errors = nullptr;
+    if (!CTFontManagerRegisterFontsForURLs((CFArrayRef)fontURLs.get(), kCTFontManagerScopeProcess, &errors)) {
         NSLog(@"Failed to activate fonts: %@", errors);
         CFRelease(errors);
         exit(1);
@@ -545,7 +543,9 @@ static void adjustFonts()
     activateSystemCoreWebFonts();
     activateTestingFonts();
 }
+
 #else
+
 static void activateFontIOS(const uint8_t* fontData, unsigned long length, std::string sectionName)
 {
     CGDataProviderRef data = CGDataProviderCreateWithData(nullptr, fontData, length, nullptr);

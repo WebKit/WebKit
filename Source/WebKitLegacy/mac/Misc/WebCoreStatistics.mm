@@ -80,34 +80,27 @@ using namespace WebCore;
     return commonVM().heap.protectedGlobalObjectCount();
 }
 
+static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<const char*>& set)
+{
+    auto result = adoptNS([[NSCountedSet alloc] initWithCapacity:set.size()]);
+    for (auto& entry : set) {
+        auto key = [NSString stringWithUTF8String:entry.key];
+        for (unsigned i = 0; i < entry.value; ++i)
+            [result addObject:key];
+    }
+    return result;
+}
+
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
 {
     JSLockHolder lock(commonVM());
-    
-    NSCountedSet *result = [NSCountedSet set];
-
-    std::unique_ptr<TypeCountSet> counts(commonVM().heap.protectedObjectTypeCounts());
-    HashCountedSet<const char*>::iterator end = counts->end();
-    for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
-        for (unsigned i = 0; i < it->value; ++i)
-            [result addObject:[NSString stringWithUTF8String:it->key]];
-    
-    return result;
+    return createNSCountedSet(*commonVM().heap.protectedObjectTypeCounts()).autorelease();
 }
 
 + (NSCountedSet *)javaScriptObjectTypeCounts
 {
     JSLockHolder lock(commonVM());
-    
-    NSCountedSet *result = [NSCountedSet set];
-
-    std::unique_ptr<TypeCountSet> counts(commonVM().heap.objectTypeCounts());
-    HashCountedSet<const char*>::iterator end = counts->end();
-    for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
-        for (unsigned i = 0; i < it->value; ++i)
-            [result addObject:[NSString stringWithUTF8String:it->key]];
-    
-    return result;
+    return createNSCountedSet(*commonVM().heap.objectTypeCounts()).autorelease();
 }
 
 + (void)garbageCollectJavaScriptObjects

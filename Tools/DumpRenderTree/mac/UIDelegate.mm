@@ -45,6 +45,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if !PLATFORM(IOS_FAMILY)
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
@@ -376,20 +377,18 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     }
 
     NSURL *baseURL = [NSURL URLWithString:[NSString stringWithUTF8String:gTestRunner->testURL().c_str()]];
-    auto filePaths = adoptNS([[NSMutableArray alloc] initWithCapacity:openPanelFiles.size()]);
-    for (auto& filePath : openPanelFiles) {
-        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:filePath.c_str()] relativeToURL:baseURL];
-        [filePaths addObject:fileURL.path];
-    }
+    auto filePaths = createNSArray(openPanelFiles, [&] (const std::string& filePath) {
+        return [NSURL fileURLWithPath:[NSString stringWithUTF8String:filePath.c_str()] relativeToURL:baseURL].path;
+    });
 
 #if PLATFORM(IOS_FAMILY)
     NSURL *firstURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:openPanelFiles[0].c_str()] relativeToURL:baseURL];
     NSString *displayString = firstURL.lastPathComponent;
-    const std::vector<char>& iconData = gTestRunner->openPanelFilesMediaIcon();
+    auto& iconData = gTestRunner->openPanelFilesMediaIcon();
     CGImageRef imageRef = nullptr;
     if (!iconData.empty()) {
-        RetainPtr<CFDataRef> dataRef = adoptCF(CFDataCreate(nullptr, (unsigned char *)iconData.data(), iconData.size()));
-        RetainPtr<CGDataProviderRef> imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
+        auto dataRef = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const UInt8*>(iconData.data()), iconData.size()));
+        auto imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
         imageRef = CGImageCreateWithJPEGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault);
     }
 #endif

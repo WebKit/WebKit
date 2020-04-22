@@ -164,11 +164,9 @@ static WKProcessPool *sharedProcessPool;
 
 + (NSArray<WKProcessPool *> *)_allProcessPoolsForTesting
 {
-    auto& allPools = WebKit::WebProcessPool::allProcessPools();
-    auto nsAllPools = adoptNS([[NSMutableArray alloc] initWithCapacity:allPools.size()]);
-    for (auto* pool : allPools)
-        [nsAllPools addObject:wrapper(*pool)];
-    return nsAllPools.autorelease();
+    return createNSArray(WebKit::WebProcessPool::allProcessPools(), [] (auto& pool) {
+        return wrapper(*pool);
+    }).autorelease();
 }
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL

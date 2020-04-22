@@ -38,6 +38,7 @@
 #import <AVFoundation/AVTime.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -155,20 +156,18 @@ void PlaybackSessionInterfaceAVKit::canPlayFastReverseChanged(bool canPlayFastRe
     [m_playerController setCanScanBackward:canPlayFastReverse];
 }
 
-static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
+static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
-    RetainPtr<NSMutableArray> webOptions = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
-    for (auto& option : options) {
-        RetainPtr<WebAVMediaSelectionOption> webOption = adoptNS([[WebAVMediaSelectionOption alloc] init]);
+    return createNSArray(options, [] (auto& option) {
+        auto webOption = adoptNS([[WebAVMediaSelectionOption alloc] init]);
         [webOption setLocalizedDisplayName:option.displayName];
-        [webOptions addObject:webOption.get()];
-    }
-    return webOptions;
+        return webOption;
+    });
 }
 
 void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    auto webOptions = mediaSelectionOptions(options);
     [m_playerController setAudioMediaSelectionOptions:webOptions.get()];
     if (selectedIndex < [webOptions count])
         [m_playerController setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
@@ -176,7 +175,7 @@ void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vect
 
 void PlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
+    auto webOptions = mediaSelectionOptions(options);
     [m_playerController setLegibleMediaSelectionOptions:webOptions.get()];
     if (selectedIndex < [webOptions count])
         [m_playerController setCurrentLegibleMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];

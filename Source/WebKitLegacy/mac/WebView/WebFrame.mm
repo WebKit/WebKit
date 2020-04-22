@@ -573,15 +573,6 @@ static NSURL *createUniqueWebDataURL();
 
 #endif
 
-- (NSArray *)_nodesFromList:(Vector<WebCore::Node*> *)nodesVector
-{
-    size_t size = nodesVector->size();
-    NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:size];
-    for (size_t i = 0; i < size; ++i)
-        [nodes addObject:kit((*nodesVector)[i])];
-    return nodes;
-}
-
 - (NSString *)_selectedString
 {
     return _private->coreFrame->displayStringModifiedByEncoding(_private->coreFrame->editor().selectedText());

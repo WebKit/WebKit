@@ -1673,37 +1673,23 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         if (!delegate)
             return;
 
-        if (![delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)]) {
-            for (auto& item : itemReferences) {
-                NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:item.tokens.size()];
-                for (auto& token : item.tokens) {
-                    auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
-                    [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
-                    [wkToken setContent:token.content];
-                    [wkToken setExcluded:token.isExcluded];
-                    [wkTokens addObject:wkToken.get()];
-                }
-                auto wkItem = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:wkTokens]);
-                [delegate _webView:retainedSelf.get() didFindTextManipulationItem:wkItem.get()];
-            }
-            return;
-        }
-
-        NSMutableArray *wkItems = [NSMutableArray arrayWithCapacity:itemReferences.size()];
-        for (auto& item : itemReferences) {
-            NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:item.tokens.size()];
-            for (auto& token : item.tokens) {
+        auto createWKItem = [] (const WebCore::TextManipulationController::ManipulationItem& item) {
+            auto tokens = createNSArray(item.tokens, [] (auto& token) {
                 auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
                 [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
                 [wkToken setContent:token.content];
                 [wkToken setExcluded:token.isExcluded];
-                [wkTokens addObject:wkToken.get()];
-            }
-            auto wkItem = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:wkTokens]);
-            [wkItems addObject:wkItem.get()];
-        }
-        [delegate _webView:retainedSelf.get() didFindTextManipulationItems:wkItems];
+                return wkToken;
+            });
+            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:tokens.get()]);
+        };
 
+        if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
+            [delegate _webView:retainedSelf.get() didFindTextManipulationItems:createNSArray(itemReferences, createWKItem).get()];
+        else {
+            for (auto& item : itemReferences)
+                [delegate _webView:retainedSelf.get() didFindTextManipulationItem:createWKItem(item).get()];
+        }
     }, [capturedCompletionBlock = makeBlockPtr(completionHandler)] () {
         capturedCompletionBlock();
     });
@@ -1748,36 +1734,32 @@ static RetainPtr<NSMutableArray> makeFailureSetForAllTextManipulationItems(NSArr
     return wkFailures;
 };
 
-static RetainPtr<NSMutableArray> wkTextManipulationErrors(NSArray<_WKTextManipulationItem *> *items, const Vector<WebCore::TextManipulationController::ManipulationFailure>& failures)
+static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationItem *> *items, const Vector<WebCore::TextManipulationController::ManipulationFailure>& failures)
 {
-    using ManipulationFailureType = WebCore::TextManipulationController::ManipulationFailureType;
-
     if (failures.isEmpty())
-        return RetainPtr<NSMutableArray> { nil };
+        return nil;
 
-    RetainPtr<NSMutableArray> wkFailures = adoptNS([[NSMutableArray alloc] initWithCapacity:failures.size()]);
-    for (auto& coreFailure : failures) {
+    return createNSArray(failures, [&] (auto& coreFailure) -> NSError * {
         ASSERT(coreFailure.index < items.count);
         if (coreFailure.index >= items.count)
-            continue;
-        auto* item = items[coreFailure.index];
-        ASSERT(coreTextManipulationItemIdentifierFromString(item.identifier) == coreFailure.identifier);
-        auto errorCode = ([&coreFailure]() {
+            return nil;
+        auto errorCode = static_cast<NSInteger>(([&coreFailure] {
+            using Type = WebCore::TextManipulationController::ManipulationFailureType;
             switch (coreFailure.type) {
-            case ManipulationFailureType::ContentChanged:
+            case Type::ContentChanged:
                 return _WKTextManipulationItemErrorContentChanged;
-            case ManipulationFailureType::InvalidItem:
+            case Type::InvalidItem:
                 return _WKTextManipulationItemErrorInvalidItem;
-            case ManipulationFailureType::InvalidToken:
+            case Type::InvalidToken:
                 return _WKTextManipulationItemErrorInvalidToken;
-            case ManipulationFailureType::ExclusionViolation:
+            case Type::ExclusionViolation:
                 return _WKTextManipulationItemErrorExclusionViolation;
             }
-        })();
-        [wkFailures addObject:[NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:static_cast<int>(errorCode) userInfo:@{_WKTextManipulationItemErrorItemKey: item}]];
-    }
-
-    return wkFailures;
+        })());
+        auto item = items[coreFailure.index];
+        ASSERT(coreTextManipulationItemIdentifierFromString(item.identifier) == coreFailure.identifier);
+        return [NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:errorCode userInfo:@{_WKTextManipulationItemErrorItemKey: item}];
+    });
 }
 
 - (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler

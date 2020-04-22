@@ -548,13 +548,9 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSArray *)subresources
 {
-    auto coreSubresources = toPrivate(_private)->loader->subresources();
-    auto subresources = adoptNS([[NSMutableArray alloc] initWithCapacity:coreSubresources.size()]);
-    for (auto& coreSubresource : coreSubresources) {
-        if (auto resource = adoptNS([[WebResource alloc] _initWithCoreResource:coreSubresource.copyRef()]))
-            [subresources addObject:resource.get()];
-    }
-    return subresources.autorelease();
+    return createNSArray(toPrivate(_private)->loader->subresources(), [] (auto& resource) {
+        return adoptNS([[WebResource alloc] _initWithCoreResource:resource.copyRef()]);
+    }).autorelease();
 }
 
 - (WebResource *)subresourceForURL:(NSURL *)URL

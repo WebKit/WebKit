@@ -3641,7 +3641,12 @@ static RetainPtr<NSMenuItem> createShareMenuItem(const WebCore::HitTestResult& h
     return [NSMenuItem standardShareMenuItemForItems:items.get()];
 }
 
-static RetainPtr<NSMutableArray> createMenuItems(const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>&);
+static RetainPtr<NSMutableArray> createMenuItems(const WebCore::HitTestResult& hitTestResult, const Vector<WebCore::ContextMenuItem>& items)
+{
+    return createNSArray(items, [&] (auto& item) {
+        return createMenuItem(hitTestResult, item);
+    });
+}
 
 static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTestResult, const WebCore::ContextMenuItem& item)
 {
@@ -3668,8 +3673,7 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
     case WebCore::SubmenuType: {
         auto menu = adoptNS([[NSMenu alloc] init]);
 
-        auto submenuItems = createMenuItems(hitTestResult, item.subMenuItems());
-        for (NSMenuItem *menuItem in submenuItems.get())
+        for (NSMenuItem *menuItem in createMenuItems(hitTestResult, item.subMenuItems()).get())
             [menu addItem:menuItem];
 
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
@@ -3682,18 +3686,6 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return menuItem;
     }
     }
-}
-
-static RetainPtr<NSMutableArray> createMenuItems(const WebCore::HitTestResult& hitTestResult, const Vector<WebCore::ContextMenuItem>& items)
-{
-    auto menuItems = adoptNS([[NSMutableArray alloc] init]);
-
-    for (auto& item : items) {
-        if (auto menuItem = createMenuItem(hitTestResult, item))
-            [menuItems addObject:menuItem.get()];
-    }
-
-    return menuItems;
 }
 
 static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const WebCore::ContextMenu& defaultMenu)

@@ -31,6 +31,7 @@
 #import "SubresourceLoader.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
 
@@ -92,7 +93,7 @@ NS_ASSUME_NONNULL_END
     {
         Locker<Lock> locker(_dataTasksLock);
         for (auto& task : _dataTasks)
-            ((__bridge WebCoreNSURLSessionDataTask *)task.get()).session = nil;
+            [task setSession:nil];
     }
 
     callOnMainThread([loader = WTFMove(_loader)] {
@@ -115,8 +116,8 @@ NS_ASSUME_NONNULL_END
     {
         Locker<Lock> locker(_dataTasksLock);
 
-        ASSERT(_dataTasks.contains((__bridge CFTypeRef)task));
-        _dataTasks.remove((__bridge CFTypeRef)task);
+        ASSERT(_dataTasks.contains(task));
+        _dataTasks.remove(task);
         if (!_dataTasks.isEmpty() || !_invalidated)
             return;
     }
@@ -217,23 +218,23 @@ NS_ASSUME_NONNULL_END
             return;
     }
 
-    RetainPtr<WebCoreNSURLSession> strongSelf { self };
-    [self addDelegateOperation:[strongSelf] {
-        if ([strongSelf.get().delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
-            [strongSelf.get().delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
+    [self addDelegateOperation:[strongSelf = retainPtr(self)] {
+        auto delegate = strongSelf.get().delegate;
+        if ([delegate respondsToSelector:@selector(URLSession:didBecomeInvalidWithError:)])
+            [delegate URLSession:(NSURLSession *)strongSelf.get() didBecomeInvalidWithError:nil];
     }];
 }
 
 - (void)invalidateAndCancel
 {
-    Vector<RetainPtr<CFTypeRef>> tasksCopy;
+    Vector<RetainPtr<WebCoreNSURLSessionDataTask>> tasksCopy;
     {
         Locker<Lock> locker(_dataTasksLock);
         tasksCopy = copyToVector(_dataTasks);
     }
 
     for (auto& task : tasksCopy)
-        [(__bridge WebCoreNSURLSessionDataTask *)task.get() cancel];
+        [task cancel];
 
     [self finishTasksAndInvalidate];
 }
@@ -256,29 +257,29 @@ NS_ASSUME_NONNULL_END
 
 - (void)getTasksWithCompletionHandler:(void (^)(NSArray<NSURLSessionDataTask *> *dataTasks, NSArray<NSURLSessionUploadTask *> *uploadTasks, NSArray<NSURLSessionDownloadTask *> *downloadTasks))completionHandler
 {
-    NSMutableArray *array = nullptr;
+    RetainPtr<NSArray> array;
     {
         Locker<Lock> locker(_dataTasksLock);
-        array = [NSMutableArray arrayWithCapacity:_dataTasks.size()];
-        for (auto& task : _dataTasks)
-            [array addObject:(__bridge WebCoreNSURLSessionDataTask *)task.get()];
+        array = createNSArray(_dataTasks, [] (auto& task) {
+            return task.get();
+        });
     }
     [self addDelegateOperation:^{
-        completionHandler(array, nil, nil);
+        completionHandler(array.get(), nil, nil);
     }];
 }
 
 - (void)getAllTasksWithCompletionHandler:(void (^)(NSArray<__kindof NSURLSessionTask *> *tasks))completionHandler
 {
-    NSMutableArray *array = nullptr;
+    RetainPtr<NSArray> array;
     {
         Locker<Lock> locker(_dataTasksLock);
-        array = [NSMutableArray arrayWithCapacity:_dataTasks.size()];
-        for (auto& task : _dataTasks)
-            [array addObject:(__bridge WebCoreNSURLSessionDataTask *)task.get()];
+        array = createNSArray(_dataTasks, [] (auto& task) {
+            return task.get();
+        });
     }
     [self addDelegateOperation:^{
-        completionHandler(array);
+        completionHandler(array.get());
     }];
 }
 
@@ -290,7 +291,7 @@ NS_ASSUME_NONNULL_END
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ request:request];
     {
         Locker<Lock> locker(_dataTasksLock);
-        _dataTasks.add((__bridge CFTypeRef)task);
+        _dataTasks.add(task);
     }
     return (NSURLSessionDataTask *)[task autorelease];
 }
@@ -303,7 +304,7 @@ NS_ASSUME_NONNULL_END
     WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:_nextTaskIdentifier++ URL:url];
     {
         Locker<Lock> locker(_dataTasksLock);
-        _dataTasks.add((__bridge CFTypeRef)task);
+        _dataTasks.add(task);
     }
     return (NSURLSessionDataTask *)[task autorelease];
 }

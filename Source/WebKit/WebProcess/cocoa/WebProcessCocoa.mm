@@ -463,14 +463,12 @@ void WebProcess::registerWithStateDumper()
                 [stateDict setObject:jsObjectCounts.get() forKey:@"JavaScript Object Counts"];
             }
 
-            auto pageLoadTimes = adoptNS([[NSMutableArray alloc] init]);
-            for (auto& page : m_pageMap.values()) {
+            auto pageLoadTimes = createNSArray(m_pageMap.values(), [] (auto& page) -> id {
                 if (page->usesEphemeralSession())
-                    continue;
+                    return nil;
 
-                NSDate* date = [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
-                [pageLoadTimes addObject:date];
-            }
+                return [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
+            });
 
             // Adding an empty array to the process state may provide an
             // indication of the existance of private sessions, which we'd like
@@ -631,20 +629,21 @@ static NSURL *origin(WebPage& page)
 #endif
 
 #if PLATFORM(MAC)
+
 static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
 {
-    RetainPtr<NSMutableArray<NSString *>> activeOrigins = adoptNS([[NSMutableArray alloc] init]);
-
-    for (auto& page : pageMap.values()) {
+    return createNSArray(pageMap.values(), [] (auto& page) -> NSString * {
         if (page->usesEphemeralSession())
-            continue;
+            return nil;
 
-        if (NSURL *originAsURL = origin(*page))
-            [activeOrigins addObject:WTF::userVisibleString(originAsURL)];
-    }
+        NSURL *originAsURL = origin(*page);
+        if (!originAsURL)
+            return nil;
 
-    return activeOrigins;
+        return WTF::userVisibleString(originAsURL);
+    });
 }
+
 #endif
 
 void WebProcess::updateActivePages(const String& overrideDisplayName)

@@ -143,11 +143,9 @@
     if (paths.isEmpty())
         return @[ ];
 
-    NSMutableArray *urls = [NSMutableArray arrayWithCapacity:paths.size()];
-    for (const auto& path : paths)
-        [urls addObject:[NSURL fileURLWithFileSystemRepresentation:path.data() isDirectory:NO relativeToURL:nil]];
-
-    return urls;
+    return createNSArray(paths, [] (auto& path) {
+        return [NSURL fileURLWithFileSystemRepresentation:path.data() isDirectory:NO relativeToURL:nil];
+    }).autorelease();
 }
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs

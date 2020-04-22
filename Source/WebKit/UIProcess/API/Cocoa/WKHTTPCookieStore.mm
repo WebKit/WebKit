@@ -34,15 +34,13 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies)
 {
-    NSMutableArray<NSHTTPCookie *> *nsCookies = [NSMutableArray arrayWithCapacity:coreCookies.size()];
-
-    for (auto& cookie : coreCookies)
-        [nsCookies addObject:(NSHTTPCookie *)cookie];
-
-    return nsCookies;
+    return createNSArray(coreCookies, [] (auto& cookie) -> NSHTTPCookie * {
+        return cookie;
+    }).autorelease();
 }
 
 class WKHTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {

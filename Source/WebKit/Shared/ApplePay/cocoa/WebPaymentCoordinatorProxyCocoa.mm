@@ -187,15 +187,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setOriginatingURL:originatingURL];
 
-    // FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be simplified.
-    if ([result respondsToSelector:@selector(setThumbnailURLs:)]) {
-        auto thumbnailURLs = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& linkIconURL : linkIconURLs)
-            [thumbnailURLs addObject:static_cast<NSURL *>(linkIconURL)];
-
-        [result setThumbnailURLs:thumbnailURLs.get()];
-    } else if (!linkIconURLs.isEmpty())
-        [result setThumbnailURL:linkIconURLs[0]];
+    [result setThumbnailURLs:createNSArray(linkIconURLs).get()];
 
     [result setAPIType:toAPIType(paymentRequest.requester())];
 
@@ -211,10 +203,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setShippingType:toPKShippingType(paymentRequest.shippingType())];
 
-    auto shippingMethods = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& shippingMethod : paymentRequest.shippingMethods())
-        [shippingMethods addObject:toPKShippingMethod(shippingMethod)];
-    [result setShippingMethods:shippingMethods.get()];
+    [result setShippingMethods:createNSArray(paymentRequest.shippingMethods(), [] (auto& method) {
+        return toPKShippingMethod(method);
+    }).get()];
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 

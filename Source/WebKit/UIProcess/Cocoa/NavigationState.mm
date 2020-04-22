@@ -79,6 +79,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -461,13 +462,13 @@ bool NavigationState::NavigationClient::didChangeBackForwardList(WebPageProxy&, 
     if (!navigationDelegate)
         return false;
 
-    NSMutableArray<WKBackForwardListItem *> *removedItems = nil;
-    if (removed.size()) {
-        removedItems = [[[NSMutableArray alloc] initWithCapacity:removed.size()] autorelease];
-        for (auto& removedItem : removed)
-            [removedItems addObject:wrapper(removedItem.get())];
+    RetainPtr<NSArray<WKBackForwardListItem *>> removedItems;
+    if (!removed.isEmpty()) {
+        removedItems = createNSArray(removed, [] (auto& removedItem) {
+            return wrapper(removedItem.get());
+        });
     }
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView backForwardListItemAdded:wrapper(added) removed:removedItems];
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView backForwardListItemAdded:wrapper(added) removed:removedItems.get()];
     return true;
 }
 

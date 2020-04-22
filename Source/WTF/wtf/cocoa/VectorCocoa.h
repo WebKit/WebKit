@@ -34,41 +34,47 @@ namespace WTF {
 
 // Specialize the behavior of these functions by overloading the makeNSArrayElement
 // functions and makeVectorElement functions. The makeNSArrayElement function takes
-// a const& to a vector element and can return either a RetainPtr<id> or an id
+// a const& to a collection element and can return either a RetainPtr<id> or an id
 // if the value is autoreleased. The makeVectorElement function takes an ignored
 // pointer to the vector element type, making argument-dependent lookup work, and an
 // id for the array element, and returns an Optional<T> of the the vector element,
 // allowing us to filter out array elements that are not of the expected type.
 //
-//    RetainPtr<id> makeNSArrayElement(const VectorElementType& vectorElement);
+//    RetainPtr<id> makeNSArrayElement(const CollectionElementType& collectionElement);
 //        -or-
 //    id makeNSArrayElement(const VectorElementType& vectorElement);
 //
 //    Optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
 
-template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType&);
+template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionType&&);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);
 
 // This overload of createNSArray takes a function to map each vector element to an Objective-C object.
 // The map function has the same interface as the makeNSArrayElement function above, but can be any
 // function including a lambda, a function-like object, or Function<>.
-template<typename VectorType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(const VectorType&, const MapFunctionType&);
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&&, const MapFunctionType&);
 
 // Implementation details of the function templates above.
 
-template<typename VectorType> RetainPtr<NSArray> createNSArray(const VectorType& vector)
+inline void addUnlessNil(NSMutableArray *array, id value)
 {
-    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
-    for (auto& element : vector)
-        [array addObject:getPtr(makeNSArrayElement(element))];
+    if (value)
+        [array addObject:value];
+}
+
+template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection)
+{
+    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
+    for (auto&& element : collection)
+        addUnlessNil(array.get(), getPtr(makeNSArrayElement(std::forward<decltype(element)>(element))));
     return array;
 }
 
-template<typename VectorType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(const VectorType& vector, const MapFunctionType& function)
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection, const MapFunctionType& function)
 {
-    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
-    for (auto& element : vector)
-        [array addObject:getPtr(function(element))];
+    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
+    for (auto&& element : collection)
+        addUnlessNil(array.get(), getPtr(function(std::forward<decltype(element)>(element))));
     return array;
 }
 
@@ -87,4 +93,5 @@ template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArra
 
 } // namespace WTF
 
+using WTF::createNSArray;
 using WTF::makeVector;

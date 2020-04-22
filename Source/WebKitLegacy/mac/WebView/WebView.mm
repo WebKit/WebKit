@@ -697,11 +697,7 @@ private:
     _dataInteractionImage = [PAL::allocUIImageInstance() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
     _selectionRectInRootViewCoordinates = indicatorData.selectionRectInRootViewCoordinates;
     _textBoundingRectInRootViewCoordinates = indicatorData.textBoundingRectInRootViewCoordinates;
-
-    NSMutableArray *textRectsInBoundingRectCoordinates = [NSMutableArray array];
-    for (auto rect : indicatorData.textRectsInBoundingRectCoordinates)
-        [textRectsInBoundingRectCoordinates addObject:[NSValue valueWithCGRect:rect]];
-    _textRectsInBoundingRectCoordinates = [[NSArray arrayWithArray:textRectsInBoundingRectCoordinates] retain];
+    _textRectsInBoundingRectCoordinates = createNSArray(indicatorData.textRectsInBoundingRectCoordinates).leakRef();
     _contentImageScaleFactor = indicatorData.contentImageScaleFactor;
     if (indicatorData.contentImageWithHighlight)
         _contentImageWithHighlight = [PAL::allocUIImageInstance() initWithCGImage:indicatorData.contentImageWithHighlight.get()->nativeImage().get() scale:scale orientation:UIImageOrientationDownMirrored];
@@ -4357,6 +4353,7 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(TOUCH_EVENTS)
+
 - (NSArray *)_touchEventRegions
 {
     auto* frame = [self _mainCoreFrame];
@@ -4370,38 +4367,33 @@ IGNORE_WARNINGS_END
     Vector<WebCore::IntRect> rects;
     document->getTouchRects(rects);
 
-    if (rects.size() == 0)
+    if (rects.isEmpty())
         return nil;
 
-    NSMutableArray *eventRegionArray = [[[NSMutableArray alloc] initWithCapacity:rects.size()] autorelease];
-
     NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
-    Vector<WebCore::IntRect>::const_iterator end = rects.end();
-    for (Vector<WebCore::IntRect>::const_iterator it = rects.begin(); it != end; ++it) {
-        const WebCore::IntRect& rect = *it;
+    return createNSArray(rects, [&] (auto& rect) -> RetainPtr<WebEventRegion> {
         if (rect.isEmpty())
-            continue;
+            return nil;
 
         // The touch rectangles are in the coordinate system of the document (inside the WebHTMLView), which is not
         // the same as the coordinate system of the WebView. UIWebView currently expects view coordinates, so we'll
         // convert them here now.
-        WebCore::IntRect viewRect = WebCore::IntRect([documentView convertRect:rect toView:self]);
+        auto viewRect = [documentView convertRect:rect toView:self];
 
         // The event region wants this points in this order:
         //  p2------p3
         //  |       |
         //  p1------p4
-        //
-        WebEventRegion *eventRegion = [[WebEventRegion alloc] initWithPoints:WebCore::FloatPoint(viewRect.x(), viewRect.maxY())
-            : WebCore::FloatPoint(viewRect.x(), viewRect.y()) : WebCore::FloatPoint(viewRect.maxX(), viewRect.y()) : WebCore::FloatPoint(viewRect.maxX(), viewRect.maxY())];
-        if (eventRegion) {
-            [eventRegionArray addObject:eventRegion];
-            [eventRegion release];
-        }
-    }
 
-    return eventRegionArray;
+        auto p1 = CGPointMake(CGRectGetMinX(viewRect), CGRectGetMaxY(viewRect));
+        auto p2 = CGPointMake(CGRectGetMinX(viewRect), CGRectGetMinY(viewRect));
+        auto p3 = CGPointMake(CGRectGetMaxX(viewRect), CGRectGetMinY(viewRect));
+        auto p4 = CGPointMake(CGRectGetMaxX(viewRect), CGRectGetMaxY(viewRect));
+
+        return adoptNS([[WebEventRegion alloc] initWithPoints:p1 :p2 :p3 :p4]);
+    }).autorelease();
 }
+
 #endif // ENABLE(TOUCH_EVENTS)
 
 // For backwards compatibility with the WebBackForwardList API, we honor both
@@ -4574,20 +4566,14 @@ IGNORE_WARNINGS_END
         view->resetTrackedRepaints();
 }
 
-- (NSArray*)trackedRepaintRects
+- (NSArray *)trackedRepaintRects
 {
-    auto* coreFrame = [self _mainCoreFrame];
-    auto* view = coreFrame->view();
+    auto view = self._mainCoreFrame->view();
     if (!view || !view->isTrackingRepaints())
         return nil;
-
-    const Vector<WebCore::FloatRect>& repaintRects = view->trackedRepaintRects();
-    NSMutableArray* rectsArray = [[NSMutableArray alloc] initWithCapacity:repaintRects.size()];
-
-    for (unsigned i = 0; i < repaintRects.size(); ++i)
-        [rectsArray addObject:[NSValue valueWithRect:snappedIntRect(WebCore::LayoutRect(repaintRects[i]))]];
-
-    return [rectsArray autorelease];
+    return createNSArray(view->trackedRepaintRects(), [] (auto& rect) {
+        return [NSValue valueWithRect:snappedIntRect(WebCore::LayoutRect { rect })];
+    }).autorelease();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -10204,13 +10190,9 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     auto* page = core(self);
     if (!page)
         return @[];
-    auto coreElements = page->editableElementsInRect(rect);
-    if (coreElements.isEmpty())
-        return @[];
-    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:coreElements.size()]);
-    for (auto& coreElement : coreElements)
-        [result addObject:kit(coreElement.ptr())];
-    return result.autorelease();
+    return createNSArray(page->editableElementsInRect(rect), [] (auto& coreElement) {
+        return kit(coreElement.ptr());
+    }).autorelease();
 }
 
 - (void)revealCurrentSelection

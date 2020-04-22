@@ -38,6 +38,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
 static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
@@ -713,8 +714,7 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
     RetainPtr<CAPropertyAnimation> caAnimation;
     switch (properties.animationType) {
     case PlatformCAAnimation::Basic: {
-        RetainPtr<CABasicAnimation> basicAnimation;
-        basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
+        auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
         
         if (properties.keyValues.size() > 1) {
             [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];
@@ -728,39 +728,31 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
         break;
     }
     case PlatformCAAnimation::Keyframe: {
-        RetainPtr<CAKeyframeAnimation> keyframeAnimation;
-        keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath];
+        auto keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size()) {
-            RetainPtr<NSMutableArray> keyframes = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.keyValues.size()]);
-            for (const auto& value : properties.keyValues)
-                [keyframes addObject:animationValueFromKeyframeValue(value)];
-            
-            [keyframeAnimation setValues:keyframes.get()];
+            [keyframeAnimation setValues:createNSArray(properties.keyValues, [] (auto& value) {
+                return animationValueFromKeyframeValue(value);
+            }).get()];
         }
 
         if (properties.keyTimes.size()) {
-            RetainPtr<NSMutableArray> keyTimes = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.keyTimes.size()]);
-            for (auto keyTime : properties.keyTimes)
-                [keyTimes addObject:@(keyTime)];
-            
-            [keyframeAnimation setKeyTimes:keyTimes.get()];
+            [keyframeAnimation setKeyTimes:createNSArray(properties.keyTimes, [] (auto& time) {
+                return @(time);
+            }).get()];
         }
 
         if (properties.timingFunctions.size()) {
-            RetainPtr<NSMutableArray> timingFunctions = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.timingFunctions.size()]);
-            for (const auto& timingFunction : properties.timingFunctions)
-                [timingFunctions addObject:toCAMediaTimingFunction(timingFunction.get(), properties.reverseTimingFunctions)];
-            
-            [keyframeAnimation setTimingFunctions:timingFunctions.get()];
+            [keyframeAnimation setTimingFunctions:createNSArray(properties.timingFunctions, [&] (auto& function) {
+                return toCAMediaTimingFunction(function.get(), properties.reverseTimingFunctions);
+            }).get()];
         }
         
         caAnimation = keyframeAnimation;
         break;
     }
     case PlatformCAAnimation::Spring: {
-        RetainPtr<CASpringAnimation> springAnimation;
-        springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
+        auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
         
         if (properties.keyValues.size() > 1) {
             [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0])];

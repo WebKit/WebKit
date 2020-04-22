@@ -542,11 +542,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     _websiteDataStore->getResourceLoadStatisticsDataSummary([completionHandler = makeBlockPtr(completionHandler)] (auto&& thirdPartyDomains) {
-        NSMutableArray<_WKResourceLoadStatisticsThirdParty *> *apiThirdParties = [[[NSMutableArray alloc] initWithCapacity:thirdPartyDomains.size()] autorelease];
-        for (auto& thirdParty : thirdPartyDomains)
-            [apiThirdParties addObject:wrapper(API::ResourceLoadStatisticsThirdParty::create(WTFMove(thirdParty)))];
-
-        completionHandler(apiThirdParties);
+        completionHandler(createNSArray(thirdPartyDomains, [] (auto&& domain) {
+            return wrapper(API::ResourceLoadStatisticsThirdParty::create(WTFMove(domain)));
+        }).get());
     });
 #else
     completionHandler(nil);

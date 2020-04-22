@@ -31,6 +31,7 @@
 #import <WebKit/WKStringCF.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
@@ -54,10 +55,10 @@ static NSURL *resourcesDirectoryURL()
 
 // Activating system copies of these fonts overrides any others that could be preferred, such as ones
 // in /Library/Fonts/Microsoft, and which don't always have the same metrics.
-// FIXME: Switch to a solution from <rdar://problem/19553550> once it's available.
+// FIXME: Now that <rdar://problem/19553550> has been resolved we should have a better solution.
 static void activateSystemCoreWebFonts()
 {
-    NSArray *coreWebFontNames = @[
+    constexpr NSString *coreWebFontNames[] = {
         @"Andale Mono",
         @"Arial",
         @"Arial Black",
@@ -69,7 +70,7 @@ static void activateSystemCoreWebFonts()
         @"Trebuchet MS",
         @"Verdana",
         @"Webdings"
-    ];
+    };
 
     NSArray *fontFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:@"/Library/Fonts" isDirectory:YES]
         includingPropertiesForKeys:@[NSURLFileResourceTypeKey, NSURLNameKey] options:0 error:0];
@@ -85,7 +86,7 @@ static void activateSystemCoreWebFonts()
 
         // Activate all font variations, such as Arial Bold Italic.ttf. This algorithm is not 100% precise, as it
         // also activates e.g. Arial Unicode, which is not a variation of Arial.
-        for (NSString *coreWebFontName in coreWebFontNames) {
+        for (auto& coreWebFontName : coreWebFontNames) {
             if ([fileName hasPrefix:coreWebFontName]) {
                 CFErrorRef error = nullptr;
                 if (!CTFontManagerRegisterFontsForURL((__bridge CFURLRef)fontURL, kCTFontManagerScopeProcess, &error)) {
@@ -102,30 +103,27 @@ static void activateSystemCoreWebFonts()
 
 void activateFonts()
 {
-    static const char* fontFileNames[] = {
-        "AHEM____.TTF",
-        "WebKitWeightWatcher100.ttf",
-        "WebKitWeightWatcher200.ttf",
-        "WebKitWeightWatcher300.ttf",
-        "WebKitWeightWatcher400.ttf",
-        "WebKitWeightWatcher500.ttf",
-        "WebKitWeightWatcher600.ttf",
-        "WebKitWeightWatcher700.ttf",
-        "WebKitWeightWatcher800.ttf",
-        "WebKitWeightWatcher900.ttf",
-        "FontWithFeatures.otf",
-        "FontWithFeatures.ttf",
-        0
+    constexpr NSString *fontFileNames[] = {
+        @"AHEM____.TTF",
+        @"WebKitWeightWatcher100.ttf",
+        @"WebKitWeightWatcher200.ttf",
+        @"WebKitWeightWatcher300.ttf",
+        @"WebKitWeightWatcher400.ttf",
+        @"WebKitWeightWatcher500.ttf",
+        @"WebKitWeightWatcher600.ttf",
+        @"WebKitWeightWatcher700.ttf",
+        @"WebKitWeightWatcher800.ttf",
+        @"WebKitWeightWatcher900.ttf",
+        @"FontWithFeatures.otf",
+        @"FontWithFeatures.ttf",
     };
 
-    NSMutableArray *fontURLs = [NSMutableArray array];
-    for (unsigned i = 0; fontFileNames[i]; ++i) {
-        NSURL *fontURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]] isDirectory:NO];
-        [fontURLs addObject:[fontURL absoluteURL]];
-    }
+    auto fontURLs = createNSArray(fontFileNames, [] (NSString *name) {
+        return [resourcesDirectoryURL() URLByAppendingPathComponent:name isDirectory:NO].absoluteURL;
+    });
 
     CFArrayRef errors = nullptr;
-    if (!CTFontManagerRegisterFontsForURLs((__bridge CFArrayRef)fontURLs, kCTFontManagerScopeProcess, &errors)) {
+    if (!CTFontManagerRegisterFontsForURLs((__bridge CFArrayRef)fontURLs.get(), kCTFontManagerScopeProcess, &errors)) {
         NSLog(@"Failed to activate fonts: %@", errors);
         CFRelease(errors);
         exit(1);
@@ -133,7 +131,7 @@ void activateFonts()
 
 #if USE(APPKIT)
     activateSystemCoreWebFonts();
-#endif // USE(APPKIT)
+#endif
 }
 
 void installFakeHelvetica(WKStringRef configuration)

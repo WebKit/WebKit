@@ -1,3 +1,81 @@
+2020-04-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use createNSArray in many more places that build NSArray objects from C++ collections
+        https://bugs.webkit.org/show_bug.cgi?id=210702
+
+        Reviewed by Alex Christensen.
+
+        * DOM/DOM.mm:
+        (kit): Use createNSArray.
+        (-[DOMNode getPreviewSnapshotImage:andRects:]): Ditto. Also use makeNSArrayElement
+        to convert FloatRect to an NSValue containing a CGRect, avoiding use of
+        +[NSValue value:withObjCType:], while working on macOS where +[NSValue valueWithCGRect:]
+        is not part of API.
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dictionaryRepresentation]): Use createNSArray, fewer local
+        variables, and use constexpr instead of #define.
+        (-[WebBackForwardList setToMatchDictionaryRepresentation:]): Use adoptNS instead
+        of explicit release and reference instead of pointer.
+        (vectorToNSArray): Deleted.
+        (-[WebBackForwardList backListWithLimit:]): Use createNSArray. Also use RetainPtr for
+        the "hack" here rather than explicit retain/release calls.
+        (-[WebBackForwardList forwardListWithLimit:]): Ditto.
+
+        * History/WebHistoryItem.mm:
+        (kit): Added a retain/autorelease pair that is important to have predictable lifetime.
+        (-[WebHistoryItem initWithURLString:title:displayTitle:lastVisitedTimeInterval:]):
+        Added a missing null check.
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]): Added a FIXME about something I
+        noticed that is not related to the rest of this patch.
+        (-[WebHistoryItem children]): Use createNSArray.
+        (-[WebHistoryItem _redirectURLs]): Ditto.
+
+        * Misc/WebCoreStatistics.mm:
+        (createNSCountedSet): Added. More efficient than the old code because it doesn't
+        create many NSString objects for each key, but also shared between functions.
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]): Use createNSCountedSet.
+        (+[WebCoreStatistics javaScriptObjectTypeCounts]): Ditto.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        Use @[] instead of NSMutableArray
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager origins]): Use createNSArray.
+        * Storage/WebStorageManager.mm:
+        (-[WebStorageManager origins]): Ditto.
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache originsWithCache]): Ditto.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::updateSpellingUIWithGrammarString): Ditto.
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::clearNotifications): Ditto.
+        * WebView/WebArchive.mm:
+        (-[WebArchive subresources]): Ditto.
+        (-[WebArchive subframeArchives]): Ditto.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource subresources]): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _nodesFromList:]): Deleted. This was not declared in any header and
+        was also unused.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]): Added a FIXME about something I noticed that is
+        not related to the rest of this patch.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation controlsInForm:]): Use createNSArray.
+
+        * WebView/WebHTMLView.mm:
+        (createMenuItems): Use createNSArray. Also moved up in the file.
+        (createMenuItem): Removed unneeded local variable.
+
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+        Use createNSArray.
+
 2020-04-20  Peng Liu  <peng.liu6@apple.com>
 
         Fix build failures when video fullscreen and picture-in-picture is disabled

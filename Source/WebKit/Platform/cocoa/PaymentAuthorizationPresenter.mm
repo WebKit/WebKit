@@ -34,6 +34,8 @@
 #import <WebCore/PaymentMerchantSession.h>
 #import <WebCore/PaymentMethodUpdate.h>
 #import <WebCore/PaymentSummaryItems.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 SOFT_LINK_FRAMEWORK(Contacts);
@@ -160,22 +162,18 @@ static NSError *toNSError(const WebCore::PaymentError& error)
     return [NSError errorWithDomain:PAL::get_PassKit_PKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code) userInfo:userInfo.get()];
 }
 
-static NSArray *toNSErrors(const Vector<WebCore::PaymentError>& errors)
+static RetainPtr<NSArray> toNSErrors(const Vector<WebCore::PaymentError>& errors)
 {
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:errors.size()];
-    for (const auto& error : errors) {
-        if (NSError *nsError = toNSError(error))
-            [result addObject:nsError];
-    }
-    return result;
+    return createNSArray(errors, [] (auto& error) {
+        return toNSError(error);
+    });
 }
 
-static NSArray *toPKShippingMethods(const Vector<WebCore::ApplePaySessionPaymentRequest::ShippingMethod>& shippingMethods)
+static RetainPtr<NSArray> toPKShippingMethods(const Vector<WebCore::ApplePaySessionPaymentRequest::ShippingMethod>& shippingMethods)
 {
-    NSMutableArray *pkShippingMethods = [NSMutableArray arrayWithCapacity:shippingMethods.size()];
-    for (auto& shippingMethod : shippingMethods)
-        [pkShippingMethods addObject:toPKShippingMethod(shippingMethod)];
-    return pkShippingMethods;
+    return createNSArray(shippingMethods, [] (auto& method) {
+        return toPKShippingMethod(method);
+    });
 }
 
 void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::PaymentMerchantSession& merchantSession)
@@ -199,8 +197,8 @@ void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCor
 {
     ASSERT(platformDelegate());
     auto status = result ? toPKPaymentAuthorizationStatus(result->status) : PKPaymentAuthorizationStatusSuccess;
-    NSArray *errors = result ? toNSErrors(result->errors) : @[ ];
-    [platformDelegate() completePaymentSession:status errors:errors didReachFinalState:WebCore::isFinalStateResult(result)];
+    RetainPtr<NSArray> errors = result ? toNSErrors(result->errors) : @[ ];
+    [platformDelegate() completePaymentSession:status errors:errors.get() didReachFinalState:WebCore::isFinalStateResult(result)];
 }
 
 void PaymentAuthorizationPresenter::completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
@@ -212,7 +210,9 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(const Optio
     }
 
     // FIXME: WebCore::ShippingContactUpdate should know how to convert itself to a PKPaymentRequestShippingContactUpdate.
-    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:toNSErrors(update->errors) paymentSummaryItems:WebCore::platformSummaryItems(update->newTotalAndLineItems) shippingMethods:toPKShippingMethods(update->newShippingMethods)]);
+    auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:toNSErrors(update->errors).get()
+        paymentSummaryItems:WebCore::platformSummaryItems(update->newTotalAndLineItems)
+        shippingMethods:toPKShippingMethods(update->newShippingMethods).get()]);
     [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
 

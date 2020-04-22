@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SearchPopupMenuCocoa.h"
 
+#import <wtf/cocoa/VectorCocoa.h>
+
 namespace WebCore {
 
 static NSString * const dateKey = @"date";
@@ -143,6 +145,7 @@ void saveRecentSearches(const String& name, const Vector<RecentSearch>& searchIt
 
     RetainPtr<NSDictionary> recentSearchesPlist = readSearchFieldRecentSearchesPlist();
     RetainPtr<NSMutableDictionary> itemsDictionary = [recentSearchesPlist objectForKey:itemsKey];
+
     // The NSMutableDictionary method we use to read the property list guarantees we get only
     // mutable containers, but it does not guarantee the file has a dictionary as expected.
     if (![itemsDictionary isKindOfClass:[NSDictionary class]]) {
@@ -153,10 +156,9 @@ void saveRecentSearches(const String& name, const Vector<RecentSearch>& searchIt
     if (searchItems.isEmpty())
         [itemsDictionary removeObjectForKey:name];
     else {
-        RetainPtr<NSMutableArray> items = adoptNS([[NSMutableArray alloc] initWithCapacity:searchItems.size()]);
-        for (auto& searchItem : searchItems)
-            [items addObject:adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:searchItem.string, searchStringKey, toNSDateFromSystemClock(searchItem.time), dateKey, nil]).get()];
-
+        auto items = createNSArray(searchItems, [] (auto& item) {
+            return adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:item.string, searchStringKey, toNSDateFromSystemClock(item.time), dateKey, nil]);
+        });
         [itemsDictionary setObject:adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:items.get(), searchesKey, nil]).get() forKey:name];
     }
 

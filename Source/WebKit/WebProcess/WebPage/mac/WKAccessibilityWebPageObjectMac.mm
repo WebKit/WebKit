@@ -47,6 +47,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace ax = WebCore::Accessibility;
 
@@ -97,15 +98,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif
 
     id names = ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
-        NSMutableArray *names = [NSMutableArray array];
-        if (!protectedSelf->m_page)
-            return names;
+        auto page = protectedSelf->m_page;
+        if (!page)
+            return @[];
 
-        if (auto* corePage = protectedSelf->m_page->corePage()) {
-            for (auto& name : corePage->pageOverlayController().copyAccessibilityAttributesNames(true))
-                [names addObject:(NSString *)name];
-        }
-        return names;
+        auto corePage = page->corePage();
+        if (!corePage)
+            return @[];
+
+        return createNSArray(corePage->pageOverlayController().copyAccessibilityAttributesNames(true));
     }).autorelease();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

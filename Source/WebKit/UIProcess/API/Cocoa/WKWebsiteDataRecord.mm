@@ -154,11 +154,9 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 
 - (NSArray<NSString *> *)_originsStrings
 {
-    auto origins = _websiteDataRecord->websiteDataRecord().origins;
-    NSMutableArray<NSString *> *array = [[NSMutableArray alloc] initWithCapacity:origins.size()];
-    for (auto& origin : origins)
-        [array addObject:(NSString *)origin.toString()];
-    return [array autorelease];
+    return createNSArray(_websiteDataRecord->websiteDataRecord().origins, [] (auto& origin) -> NSString * {
+        return origin.toString();
+    }).autorelease();
 }
 
 @end

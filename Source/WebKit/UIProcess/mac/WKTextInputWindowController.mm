@@ -40,10 +40,7 @@
 - (NSArray *)validAttributesForMarkedText
 {
     // Let TSM know that a bottom input window would be created for marked text.
-    NSArray *regularAttributes = [super validAttributesForMarkedText];
-    NSMutableArray *floatingWindowAttributes = [NSMutableArray arrayWithArray:regularAttributes];
-    [floatingWindowAttributes addObject:@"__NSUsesFloatingInputWindow"];
-    return floatingWindowAttributes;
+    return [[super validAttributesForMarkedText] arrayByAddingObject:@"__NSUsesFloatingInputWindow"];
 }
 
 @end

@@ -27,6 +27,7 @@
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 
 #import "APIArray.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKResourceLoadStatisticsThirdParty
 
@@ -43,12 +44,9 @@
 
 - (NSArray<_WKResourceLoadStatisticsFirstParty *> *)underFirstParties
 {
-    auto apiFirstParties = _thirdParty->underFirstParties();
-    NSMutableArray<_WKResourceLoadStatisticsFirstParty *> *apiUnderFirstParties = [NSMutableArray arrayWithCapacity:apiFirstParties.size()];
-    for (const auto& thirdPartyDataUnderFirstParty : apiFirstParties)
-        [apiUnderFirstParties addObject:wrapper(API::ResourceLoadStatisticsFirstParty::create(thirdPartyDataUnderFirstParty))];
-
-    return apiUnderFirstParties;
+    return createNSArray(_thirdParty->underFirstParties(), [] (auto& data) {
+        return wrapper(API::ResourceLoadStatisticsFirstParty::create(data));
+    }).autorelease();
 }
 
 - (API::Object&)_apiObject

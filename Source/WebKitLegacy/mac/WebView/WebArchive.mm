@@ -40,6 +40,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
 
@@ -280,19 +281,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this.     
     if (!_private->cachedSubresources) {
-        LegacyWebArchive* coreArchive = [_private coreArchive];
+        auto coreArchive = [_private coreArchive];
         if (!coreArchive)
             _private->cachedSubresources = [[NSArray alloc] init];
         else {
-            auto& subresources = coreArchive->subresources();
-            NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithCapacity:subresources.size()];
-            _private->cachedSubresources = mutableArray;
-            for (auto& subresource : subresources) {
-                if (WebResource *resource = [[WebResource alloc] _initWithCoreResource:subresource.get()]) {
-                    [mutableArray addObject:resource];
-                    [resource release];
-                }
-            }
+            _private->cachedSubresources = createNSArray(coreArchive->subresources(), [] (auto& subresource) {
+                return adoptNS([[WebResource alloc] _initWithCoreResource:subresource.get()]);
+            }).leakRef();
         }
     }
     // Maintain the WebKit 3 behavior of this API, which is documented and
@@ -311,14 +306,9 @@ static BOOL isArrayOfClass(id object, Class elementClass)
         if (!coreArchive)
             _private->cachedSubframeArchives = [[NSArray alloc] init];
         else {
-            auto& subframeArchives = coreArchive->subframeArchives();
-            auto mutableArray = [[NSMutableArray alloc] initWithCapacity:subframeArchives.size()];
-            _private->cachedSubframeArchives = mutableArray;
-            for (unsigned i = 0; i < subframeArchives.size(); ++i) {
-                WebArchive *archive = [[WebArchive alloc] _initWithCoreLegacyWebArchive:static_cast<LegacyWebArchive*>(subframeArchives[i].ptr())];
-                [mutableArray addObject:archive];
-                [archive release];
-            }
+            _private->cachedSubframeArchives = createNSArray(coreArchive->subframeArchives(), [] (auto& archive) {
+                return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:static_cast<LegacyWebArchive*>(archive.ptr())]);
+            }).leakRef();
         }
     }
     

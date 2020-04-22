@@ -43,6 +43,7 @@
 #import <objc/objc-runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -282,14 +283,9 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 
         RetainPtr<NSDictionary> options;
         if (!m_protocolVersions.isEmpty() && PAL::canLoad_AVFoundation_AVContentKeyRequestProtocolVersionsKey()) {
-            RetainPtr<NSMutableArray> protocolVersionsOption = adoptNS([[NSMutableArray alloc] init]);
-            for (auto& version : m_protocolVersions) {
-                if (!version)
-                    continue;
-                [protocolVersionsOption addObject:@(version)];
-            }
-
-            options = @{ AVContentKeyRequestProtocolVersionsKey: protocolVersionsOption.get() };
+            options = @{ AVContentKeyRequestProtocolVersionsKey: createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
+                return version ? @(version) : nil;
+            }).get() };
         }
 
         errorCode = MediaPlayer::NoError;

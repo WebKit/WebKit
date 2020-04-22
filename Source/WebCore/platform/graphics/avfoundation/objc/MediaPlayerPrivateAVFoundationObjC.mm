@@ -67,6 +67,16 @@
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebCoreNSURLSession.h"
+#import <AVFoundation/AVAssetImageGenerator.h>
+#import <AVFoundation/AVAssetTrack.h>
+#import <AVFoundation/AVMediaSelectionGroup.h>
+#import <AVFoundation/AVMetadataItem.h>
+#import <AVFoundation/AVPlayer.h>
+#import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVPlayerItemOutput.h>
+#import <AVFoundation/AVPlayerItemTrack.h>
+#import <AVFoundation/AVPlayerLayer.h>
+#import <AVFoundation/AVTime.h>
 #import <JavaScriptCore/DataView.h>
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
@@ -84,22 +94,12 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 #if ENABLE(AVF_CAPTIONS)
 #import "TextTrack.h"
 #endif
-
-#import <AVFoundation/AVAssetImageGenerator.h>
-#import <AVFoundation/AVAssetTrack.h>
-#import <AVFoundation/AVMediaSelectionGroup.h>
-#import <AVFoundation/AVMetadataItem.h>
-#import <AVFoundation/AVPlayer.h>
-#import <AVFoundation/AVPlayerItem.h>
-#import <AVFoundation/AVPlayerItemOutput.h>
-#import <AVFoundation/AVPlayerItemTrack.h>
-#import <AVFoundation/AVPlayerLayer.h>
-#import <AVFoundation/AVTime.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WAKAppKitStubs.h"
@@ -826,23 +826,18 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     }
 
 #if ENABLE(AVF_CAPTIONS)
-    const Vector<RefPtr<PlatformTextTrack>>& outOfBandTrackSources = player()->outOfBandTrackSources();
+    auto outOfBandTrackSources = player()->outOfBandTrackSources();
     if (!outOfBandTrackSources.isEmpty()) {
-        RetainPtr<NSMutableArray> outOfBandTracks = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& trackSource : outOfBandTrackSources) {
-            RetainPtr<CFStringRef> label = trackSource->label().createCFString();
-            RetainPtr<CFStringRef> language = trackSource->language().createCFString();
-            RetainPtr<CFStringRef> uniqueID = String::number(trackSource->uniqueId()).createCFString();
-            RetainPtr<CFStringRef> url = trackSource->url().createCFString();
-            [outOfBandTracks.get() addObject:@{
-                AVOutOfBandAlternateTrackDisplayNameKey: (__bridge NSString *)label.get(),
-                AVOutOfBandAlternateTrackExtendedLanguageTagKey: (__bridge NSString *)language.get(),
+        auto outOfBandTracks = createNSArray(outOfBandTrackSources, [] (auto& trackSource) {
+            return @{
+                AVOutOfBandAlternateTrackDisplayNameKey: trackSource->label(),
+                AVOutOfBandAlternateTrackExtendedLanguageTagKey: trackSource->language(),
                 AVOutOfBandAlternateTrackIsDefaultKey: trackSource->isDefault() ? @YES : @NO,
-                AVOutOfBandAlternateTrackIdentifierKey: (__bridge NSString *)uniqueID.get(),
-                AVOutOfBandAlternateTrackSourceKey: (__bridge NSString *)url.get(),
+                AVOutOfBandAlternateTrackIdentifierKey: String::number(trackSource->uniqueId()),
+                AVOutOfBandAlternateTrackSourceKey: trackSource->url(),
                 AVOutOfBandAlternateTrackMediaCharactersticsKey: mediaDescriptionForKind(trackSource->kind()),
-            }];
-        }
+            };
+        });
 
         [options.get() setObject:outOfBandTracks.get() forKey:AVURLAssetOutOfBandAlternateTracksKey];
     }
@@ -857,10 +852,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 #if PLATFORM(IOS_FAMILY)
     Vector<Cookie> cookies;
     if (player()->getRawCookies(url, cookies)) {
-        RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
-        for (auto& cookie : cookies)
-            [nsCookies addObject:(NSHTTPCookie *)cookie];
-
+        auto nsCookies = createNSArray(cookies, [] (auto& cookie) -> NSHTTPCookie * {
+            return cookie;
+        });
         if (PAL::canLoad_AVFoundation_AVURLAssetHTTPCookiesKey())
             [options setObject:nsCookies.get() forKey:AVURLAssetHTTPCookiesKey];
     }

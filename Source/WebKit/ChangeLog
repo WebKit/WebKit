@@ -1,3 +1,95 @@
+2020-04-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use createNSArray in many more places that build NSArray objects from C++ collections
+        https://bugs.webkit.org/show_bug.cgi?id=210702
+
+        Reviewed by Alex Christensen.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toNSErrors): Use createNSArray and return a RetainPtr to cut down
+        on autorelease.
+        (WebKit::toPKShippingMethods): Ditto.
+        (WebKit::PaymentAuthorizationPresenter::completePaymentSession): Updated for RetainPtr.
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection): Ditto.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Use createNSArray.
+        Also removed code to support platforms without -setThumbnailURLs: since we don't
+        have those any more.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::updateChildren): Use createNSArray.
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (coreCookiesToNSCookies); Ditto.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _allProcessPoolsForTesting]): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]): Cut down on
+        repeated code by adding a lambda to create a _WKTextManipulationItem and by using
+        createNSArray.
+        (wkTextManipulationErrors): Use createNSArray. Also tighten up the code that maps
+        WebCore::TextManipulationController::ManipulationFailureType to the
+        _WKTextManipulationItemError code.
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (-[WKWebpagePreferences _customHeaderFields]): Use createNSArray.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (-[WKWebsiteDataRecord _originsStrings]): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getResourceLoadStatisticsDataSummary:]): Ditto.
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload redirectChain]): Ditto.
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.mm:
+        (-[_WKFrameTreeNode childFrames]): Ditto.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration additionalReadAccessAllowedURLs]): Ditto.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm:
+        (-[_WKResourceLoadStatisticsThirdParty underFirstParties]): Ditto.
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _accessibilityRetrieveRectsAtSelectionOffset:withText:completionHandler:]): Ditto.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didChangeBackForwardList): Ditto.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm:
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::data): Ditto.
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::createTargetedDragPreview): Ditto.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateTapHighlight]): Removed uneeded RetainPtr local variable.
+        Use createNSArray. Refactored to make the "all rectilinear" case more parallel
+        to the general case.
+        (-[WKContentView webSelectionRectsForSelectionRects:]): Use createNSArray.
+        (wkTextSelectionRects): Ditto.
+        (createTargetedPreview): Ditto.
+        (-[WKContentView _presentationRectsForPreviewItemController:]): Ditto.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient didFindStringMatchesWithRects:didWrapAround:]): Use createNSArray.
+
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputView validAttributesForMarkedText]): Use +[NSArray arrayByAddingObject:].
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (collectIcons): Use createNSArray.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Marked class here
+        as final. Cut down on local variables a bit. Use createNSArray.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::addAnimationToLayer): Removed unnecessary use of RetainPtr. Use createNSArray.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy): Addd a FIXME about
+        a problem I noticed, unrelated to the rest of the changes.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]): Use createNSArray.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper): Ditto.
+        (WebKit::activePagesOrigins): Ditto.
+
 2020-04-21  David Kilzer  <ddkilzer@apple.com>
 
         Clean up QuickLookThumbnailLoader

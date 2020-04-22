@@ -298,9 +298,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
             extension = URL.pathExtension;
             [types addObjectsFromArray:[NSPasteboard _web_dragTypesForURL]];
             [self declareTypes:types.get() owner:source];
-            RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
-            [paths.get() addObject:title];
-            [self setPropertyList:paths.get() forType:legacyFilenamesPasteboardType()];
+            [self setPropertyList:@[title] forType:legacyFilenamesPasteboardType()];
         }
 #endif
     }

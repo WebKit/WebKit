@@ -499,7 +499,7 @@ def create_skeleton_parameters(all_parameters):
 
 
 def find_parameter_name_index(skeleton_parameter):
-    """Determines where the parametere name starts given the skeleton parameter."""
+    """Determines where the parameter name starts given the skeleton parameter."""
     # The first space from the right in the simplified parameter is where the parameter
     # name starts unless the first space is before any content in the simplified parameter.
     before_name_index = skeleton_parameter.rstrip().rfind(' ')
@@ -1777,6 +1777,8 @@ def _check_parameter_name_against_text(parameter, text, error):
     # case insensitive while still retaining word breaks. (This ensures that
     # 'elate' doesn't look like it is duplicating of 'NateLate'.)
     canonical_parameter_name = parameter.lower_with_underscores_name()
+    if canonical_parameter_name == "]":
+        return True  # Work around a bug parsing some Objective-C code.
 
     # Appends "object" to all text to catch variables that did the same (but only
     # do this when the parameter name is more than a single character to avoid

@@ -41,6 +41,7 @@
 #import <WebCore/IntPoint.h>
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation WKWebProcessPlugInFrame {
     API::ObjectStorage<WebKit::WebFrame> _frame;
@@ -111,16 +112,14 @@
 
 static RetainPtr<NSArray> collectIcons(WebCore::Frame* frame, OptionSet<WebCore::LinkIconType> iconTypes)
 {
-    auto result = adoptNS([[NSMutableArray alloc] init]);
-
-    if (frame) {
-        if (auto* document = frame->document()) {
-            for (auto& icon : WebCore::LinkIconCollector(*document).iconsOfTypes(iconTypes))
-                [result addObject:(NSURL *)icon.url];
-        }
-    }
-
-    return WTFMove(result);
+    if (!frame)
+        return @[];
+    auto document = frame->document();
+    if (!document)
+        return @[];
+    return createNSArray(WebCore::LinkIconCollector(*document).iconsOfTypes(iconTypes), [] (auto& icon) -> NSURL * {
+        return icon.url;
+    });
 }
 
 - (NSArray *)appleTouchIconURLs

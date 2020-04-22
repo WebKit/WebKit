@@ -1,3 +1,30 @@
+2020-04-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Use createNSArray in many more places that build NSArray objects from C++ collections
+        https://bugs.webkit.org/show_bug.cgi?id=210702
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateTestingFonts): Use constexpr and NSString instead of a null-pointer terminated
+        array for the font names. Use createNSArray.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+        Use createNSArray.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (find_parameter_name_index): Fixed a spelling error.
+        (_check_parameter_name_against_text): Added a special case to not complain that
+        parameters named "]" have redundant names. Not obvious to me how to write a test case for
+        this and how to fix this in a more sensible way, but immediately helpful to not get this
+        spurious warning.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::activateSystemCoreWebFonts): Use constexpr array instead of NSArray for font names.
+        (WTR::activateFonts): Use constexpr and NSString instead of a null-pointer terminated
+        array for the font names. Use createNSArray.
+
 2020-04-21  Matt Lewis  <jlewis3@apple.com>
 
         Bindings-test should not depend on current working directory.
