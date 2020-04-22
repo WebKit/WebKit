@@ -8,6 +8,8 @@ list(APPEND WTF_PUBLIC_HEADERS
 )
 
 list(APPEND WTF_SOURCES
+    generic/WorkQueueGeneric.cpp
+
     text/win/StringWin.cpp
     text/win/TextBreakIteratorInternalICUWin.cpp
 
@@ -22,7 +24,6 @@ list(APPEND WTF_SOURCES
     win/PathWalker.cpp
     win/RunLoopWin.cpp
     win/ThreadingWin.cpp
-    win/WorkQueueWin.cpp
 )
 
 list(APPEND WTF_LIBRARIES

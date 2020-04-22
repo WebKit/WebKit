@@ -140,6 +140,16 @@ RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
     return CycleResult::Continue;
 }
 
+void RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
+{
+    auto timer = new DispatchTimer(*this);
+    timer->setFunction([timer, function = WTFMove(function)] {
+        function();
+        delete timer;
+    });
+    timer->startOneShot(delay);
+}
+
 // RunLoop::Timer
 
 void RunLoop::TimerBase::timerFired()

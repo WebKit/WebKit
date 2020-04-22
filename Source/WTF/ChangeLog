@@ -1,3 +1,27 @@
+2020-04-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Use generic WorkQueue instead of WorkQueueWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=210785
+
+        Reviewed by Darin Adler.
+
+        WorkQueueWin was using random threads to execute dispatched
+        functions. This is not desired for IPC::Connection because it
+        needs to call CancelIo API in the same thread started aync
+        ReadFile operations.
+
+        Implemented RunLoop::dispatchAfter in RunLoopWin.cpp in order to
+        use generic WorkQueue.
+
+        * wtf/PlatformWin.cmake:
+        * wtf/RunLoop.h: Added DispatchTimer class for USE(WINDOWS_EVENT_LOOP).
+        (WTF::RunLoop::DispatchTimer::DispatchTimer):
+        (WTF::RunLoop::DispatchTimer::setFunction):
+        * wtf/WorkQueue.h: Removed code for USE(WINDOWS_EVENT_LOOP).
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::dispatchAfter): Added.
+        * wtf/win/WorkQueueWin.cpp: Removed.
+
 2020-04-21  Charlie Turner  <cturner@igalia.com>
 
         [Clang 10] Fix warning: definition of implicit copy assignment operator for 'PageBlock' is deprecated because it has a user-declared copy constructor
