@@ -651,6 +651,12 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
 
     setupFlags();
     initializeNewContext();
+
+    // If something goes wrong in initializeNewContext, it should have
+    // triggered a lost context. Check that before setting anything else up.
+    if (isContextLost())
+        return;
+
     registerWithWebGLStateTracker();
     m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 
