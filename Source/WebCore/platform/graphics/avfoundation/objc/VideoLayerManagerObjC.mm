@@ -57,9 +57,7 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize con
     [m_videoLayer web_disableAllActions];
 
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
-#ifndef NDEBUG
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
-#endif
     m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
     [m_videoInlineLayer setFrame:m_videoInlineFrame];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];

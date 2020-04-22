@@ -1,3 +1,27 @@
+2020-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Add a quirk to keep gizmodo videos visible when playing in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=210857
+        <rdar://problem/58875327>
+
+        Reviewed by Jer Noble.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsFullscreenDisplayNoneQuirk const):
+        * page/Quirks.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): Drive-by fix: always
+        set the layer name to make debugging in release builds easier.
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::setVideoLayer): Ditto.
+
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustForSiteSpecificQuirks const): Change `display:none` into
+        `display:block` on div with class "instream-native-video--mobile" when child video
+        element with id "vjs_video_3_html5_api" is in fullscreen.
+
 2020-04-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, commit updated xcfilelist files.

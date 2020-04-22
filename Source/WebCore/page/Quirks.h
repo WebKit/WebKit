@@ -82,6 +82,7 @@ public:
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
+    bool needsFullscreenDisplayNoneQuirk() const;
 
     bool shouldOpenAsAboutBlank(const String&) const;
 
@@ -116,6 +117,7 @@ private:
     mutable Optional<bool> m_needsGMailOverflowScrollQuirk;
     mutable Optional<bool> m_needsYouTubeOverflowScrollQuirk;
     mutable Optional<bool> m_needsPreloadAutoQuirk;
+    mutable Optional<bool> m_needsFullscreenDisplayNoneQuirk;
 #endif
     mutable Optional<bool> m_shouldDisableElementFullscreenQuirk;
 #if ENABLE(TOUCH_EVENTS)

@@ -573,6 +573,23 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+bool Quirks::needsFullscreenDisplayNoneQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsFullscreenDisplayNoneQuirk) {
+        auto host = m_document->topDocument().url().host();
+        m_needsFullscreenDisplayNoneQuirk = equalLettersIgnoringASCIICase(host, "gizmodo.com") || host.endsWithIgnoringASCIICase(".gizmodo.com");
+    }
+
+    return *m_needsFullscreenDisplayNoneQuirk;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldAvoidScrollingWhenFocusedContentIsVisible() const
 {
     if (!needsQuirks())

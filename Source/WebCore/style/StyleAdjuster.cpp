@@ -34,12 +34,14 @@
 #include "CSSFontSelector.h"
 #include "Element.h"
 #include "FrameView.h"
+#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
+#include "HTMLVideoElement.h"
 #include "MathMLElement.h"
 #include "Page.h"
 #include "Quirks.h"
@@ -538,17 +540,33 @@ void Adjuster::adjustAnimatedStyle(RenderStyle& style, const RenderStyle* parent
 
 void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 {
-    if (m_document.quirks().needsGMailOverflowScrollQuirk() && m_element) {
+    if (!m_element)
+        return;
+
+    if (m_document.quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
         static NeverDestroyed<AtomString> roleValue("navigation", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
-    if (m_document.quirks().needsYouTubeOverflowScrollQuirk() && m_element) {
+    if (m_document.quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
         static NeverDestroyed<AtomString> idValue("guide-inner-content", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
+    }
+    if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
+        if (is<HTMLDivElement>(m_element) && style.display() == DisplayType::None) {
+            static NeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile", AtomString::ConstructFromLiteral);
+            static NeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api", AtomString::ConstructFromLiteral);
+
+            auto& div = downcast<HTMLDivElement>(*m_element);
+            if (div.hasClass() && div.classNames().contains(instreamNativeVideoDivClass)) {
+                auto* video = div.treeScope().getElementById(videoElementID);
+                if (is<HTMLVideoElement>(video) && downcast<HTMLVideoElement>(*video).isFullscreen())
+                    style.setDisplay(DisplayType::Block);
+            }
+        }
     }
 }
 
