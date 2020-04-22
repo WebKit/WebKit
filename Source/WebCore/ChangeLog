@@ -1,5 +1,41 @@
 2020-04-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Composited layers are misplaced inside RTL overflow scroller with visible scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=210820
+
+        Reviewed by Zalan Bujtas.
+
+        RenderLayerBacking::computeParentGraphicsLayerRect() used renderBox.paddingBoxRectIncludingScrollbar()
+        to position layers inside composited overflow scroll, but this is wrong if the RTL left-side
+        scrollbar takes space.
+
+        Fix by making some static functions that we can call from the various places that ask
+        about box geometry, and using them.
+
+        Test: compositing/scrolling/async-overflow-scrolling/position-inside-rtl-overflow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overflowClipRect const):
+        (WebCore::RenderBox::clipRect const):
+        (WebCore::RenderBox::overflowClipRect): Deleted.
+        (WebCore::RenderBox::clipRect): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::overflowClipRectForChildLayers const):
+        (WebCore::RenderBox::overflowClipRectForChildLayers): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::scrollContainerLayerBox):
+        (WebCore::clippingLayerBox):
+        (WebCore::overflowControlsHostLayerBox):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::clipBox): Deleted.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect const):
+        (WebCore::RenderTable::overflowClipRect): Deleted.
+        * rendering/RenderTable.h:
+
+2020-04-21  Simon Fraser  <simon.fraser@apple.com>
+
         [Async overflow scroll] Overflow that's hidden on one axis is scrollable on that axis
         https://bugs.webkit.org/show_bug.cgi?id=210771
         <rdar://problem/62080331>

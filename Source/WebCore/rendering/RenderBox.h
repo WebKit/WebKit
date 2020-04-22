@@ -497,9 +497,9 @@ override;
     
     LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr) override;
 
-    virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground);
-    virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, fragment, relevancy); }
-    LayoutRect clipRect(const LayoutPoint& location, RenderFragmentContainer*);
+    virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
+    virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) const { return overflowClipRect(location, fragment, relevancy); }
+    LayoutRect clipRect(const LayoutPoint& location, RenderFragmentContainer*) const;
     virtual bool hasControlClip() const { return false; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const { return LayoutRect(); }
     bool pushContentsClip(PaintInfo&, const LayoutPoint& accumulatedOffset);

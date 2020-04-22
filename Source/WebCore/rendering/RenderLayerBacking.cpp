@@ -985,18 +985,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     return layerConfigChanged;
 }
 
-static LayoutRect clipBox(RenderBox& renderer)
-{
-    LayoutRect result = LayoutRect::infiniteRect();
-    if (renderer.hasOverflowClip())
-        result = renderer.overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
-
-    if (renderer.hasClip())
-        result.intersect(renderer.clipRect(LayoutPoint(), 0)); // FIXME: Incorrect for CSS regions.
-
-    return result;
-}
-
 static bool subpixelOffsetFromRendererChanged(const LayoutSize& oldSubpixelOffsetFromRenderer, const LayoutSize& newSubpixelOffsetFromRenderer, float deviceScaleFactor)
 {
     FloatSize previous = snapSizeToDevicePixel(oldSubpixelOffsetFromRenderer, LayoutPoint(), deviceScaleFactor);
@@ -1111,34 +1099,60 @@ LayoutRect RenderLayerBacking::computePrimaryGraphicsLayerRect(const RenderLayer
         deviceScaleFactor()));
 }
 
+static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
+{
+    return renderBox.paddingBoxRect();
+}
+
+static LayoutRect clippingLayerBox(const RenderBox& renderBox)
+{
+    LayoutRect result = LayoutRect::infiniteRect();
+    if (renderBox.hasOverflowClip())
+        result = renderBox.overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+
+    if (renderBox.hasClip())
+        result.intersect(renderBox.clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
+
+    return result;
+}
+
+static LayoutRect overflowControlsHostLayerBox(const RenderBox& renderBox)
+{
+    return renderBox.paddingBoxRectIncludingScrollbar();
+}
+
 // FIXME: See if we need this now that updateGeometry() is always called in post-order traversal.
 LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const
 {
     if (!compositedAncestor || !compositedAncestor->backing())
         return renderer().view().documentRect();
 
-    auto* ancestorBackingLayer = compositedAncestor->backing();
+    auto* ancestorBacking = compositedAncestor->backing();
     LayoutRect parentGraphicsLayerRect;
     if (m_owningLayer.isInsideFragmentedFlow()) {
         // FIXME: flows/columns need work.
-        LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
+        LayoutRect ancestorCompositedBounds = ancestorBacking->compositedBounds();
         ancestorCompositedBounds.setLocation(LayoutPoint());
         parentGraphicsLayerRect = ancestorCompositedBounds;
     }
 
-    if (ancestorBackingLayer->hasClippingLayer()) {
+    if (!is<RenderBox>(compositedAncestor->renderer()))
+        return parentGraphicsLayerRect;
+
+    auto& ancestorRenderBox = downcast<RenderBox>(compositedAncestor->renderer());
+
+    if (ancestorBacking->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore position relative to it.
-        LayoutRect clippingBox = clipBox(downcast<RenderBox>(compositedAncestor->renderer()));
+        LayoutRect clippingBox = clippingLayerBox(ancestorRenderBox);
         LayoutSize clippingBoxOffset = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, clippingBox.location(), deviceScaleFactor());
         parentGraphicsLayerRect = snappedGraphicsLayer(clippingBoxOffset, clippingBox.size(), deviceScaleFactor()).m_snappedRect;
     }
 
     if (compositedAncestor->hasCompositedScrollableOverflow()) {
-        LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
-        auto& renderBox = downcast<RenderBox>(compositedAncestor->renderer());
-        LayoutRect paddingBoxIncludingScrollbar = renderBox.paddingBoxRectIncludingScrollbar();
+        LayoutRect ancestorCompositedBounds = ancestorBacking->compositedBounds();
+        LayoutRect scrollContainerBox = scrollContainerLayerBox(ancestorRenderBox);
         ScrollOffset scrollOffset = compositedAncestor->scrollOffset();
-        parentGraphicsLayerRect = LayoutRect((paddingBoxIncludingScrollbar.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), paddingBoxIncludingScrollbar.size());
+        parentGraphicsLayerRect = LayoutRect((scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), scrollContainerBox.size());
     }
 
     return parentGraphicsLayerRect;
@@ -1246,8 +1260,9 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     // If we have a layer that clips children, position it.
     LayoutRect clippingBox;
     if (auto* clipLayer = clippingLayer()) {
+        auto& renderBox = downcast<RenderBox>(renderer());
         // clipLayer is the m_childContainmentLayer.
-        clippingBox = clipBox(downcast<RenderBox>(renderer()));
+        clippingBox = clippingLayerBox(renderBox);
         // Clipping layer is parented in the primary graphics layer.
         LayoutSize clipBoxOffsetFromGraphicsLayer = toLayoutSize(clippingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
         SnappedRectInfo snappedClippingGraphicsLayer = snappedGraphicsLayer(clipBoxOffsetFromGraphicsLayer, clippingBox.size(), deviceScaleFactor());
@@ -1256,7 +1271,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
         if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
-            LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
+            LayoutRect boxRect({ }, renderBox.size());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
             contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
             clipLayer->setMasksToBoundsRect(contentsClippingRect);
@@ -1264,7 +1279,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         if (m_childClippingMaskLayer && !m_scrollContainerLayer) {
             m_childClippingMaskLayer->setSize(clipLayer->size());
-            m_childClippingMaskLayer->setPosition(FloatPoint());
+            m_childClippingMaskLayer->setPosition({ });
             m_childClippingMaskLayer->setOffsetFromRenderer(clipLayer->offsetFromRenderer());
         }
     }
@@ -1322,24 +1337,23 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (m_scrollContainerLayer) {
         ASSERT(m_scrolledContentsLayer);
-        auto& renderBox = downcast<RenderBox>(renderer());
-        LayoutRect paddingBox = renderBox.paddingBoxRect();
-        LayoutRect parentLayerBounds = clippingLayer() ? clippingBox : compositedBounds();
+        LayoutRect scrollContainerBox = scrollContainerLayerBox(downcast<RenderBox>(renderer()));
+        LayoutRect parentLayerBounds = clippingLayer() ? scrollContainerBox : compositedBounds();
 
         // FIXME: need to do some pixel snapping here.
-        m_scrollContainerLayer->setPosition(FloatPoint(paddingBox.location() - parentLayerBounds.location()));
-        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(paddingBox.width(), paddingBox.height())));
+        m_scrollContainerLayer->setPosition(FloatPoint(scrollContainerBox.location() - parentLayerBounds.location()));
+        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(scrollContainerBox.width(), scrollContainerBox.height())));
 
         ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
         updateScrollOffset(scrollOffset);
 
         FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
-        m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
+        m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(scrollContainerBox.location()));
 
         if (m_childClippingMaskLayer) {
             m_childClippingMaskLayer->setPosition(m_scrollContainerLayer->position());
             m_childClippingMaskLayer->setSize(m_scrollContainerLayer->size());
-            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
+            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(scrollContainerBox.location()));
         }
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollContainerLayer->offsetFromRenderer();
@@ -1350,20 +1364,18 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         m_scrolledContentsLayer->setSize(scrollSize);
         m_scrolledContentsLayer->setScrollOffset(scrollOffset, GraphicsLayer::DontSetNeedsDisplay);
-        m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(paddingBox.location()), GraphicsLayer::DontSetNeedsDisplay);
+        m_scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(scrollContainerBox.location()), GraphicsLayer::DontSetNeedsDisplay);
         
         adjustTiledBackingCoverage();
     }
-    
+
     if (m_overflowControlsContainer) {
-        auto& renderBox = downcast<RenderBox>(renderer());
-        LayoutRect paddingBox = renderBox.paddingBoxRectIncludingScrollbar();
+        LayoutRect overflowControlsBox = overflowControlsHostLayerBox(downcast<RenderBox>(renderer()));
+        LayoutSize boxOffsetFromGraphicsLayer = toLayoutSize(overflowControlsBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
+        SnappedRectInfo snappedBoxInfo = snappedGraphicsLayer(boxOffsetFromGraphicsLayer, overflowControlsBox.size(), deviceScaleFactor());
 
-        LayoutSize paddingBoxOffsetFromGraphicsLayer = toLayoutSize(paddingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
-        SnappedRectInfo snappedPaddingBoxInfo = snappedGraphicsLayer(paddingBoxOffsetFromGraphicsLayer, paddingBox.size(), deviceScaleFactor());
-
-        m_overflowControlsContainer->setPosition(snappedPaddingBoxInfo.m_snappedRect.location());
-        m_overflowControlsContainer->setSize(snappedPaddingBoxInfo.m_snappedRect.size());
+        m_overflowControlsContainer->setPosition(snappedBoxInfo.m_snappedRect.location());
+        m_overflowControlsContainer->setSize(snappedBoxInfo.m_snappedRect.size());
     }
 
     if (m_foregroundLayer) {
