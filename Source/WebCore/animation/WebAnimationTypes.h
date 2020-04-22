@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class AnimationEventBase;
 class AnimationList;
 class CSSAnimation;
 class CSSTransition;
@@ -52,6 +53,7 @@ struct WebAnimationsMarkableDoubleTraits {
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
 using AnimationCollection = ListHashSet<RefPtr<WebAnimation>>;
+using AnimationEvents = Vector<Ref<AnimationEventBase>>;
 using PropertyToTransitionMap = HashMap<CSSPropertyID, RefPtr<CSSTransition>>;
 using CSSAnimationCollection = ListHashSet<RefPtr<CSSAnimation>>;
 

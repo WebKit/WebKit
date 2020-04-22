@@ -33,7 +33,6 @@
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimelinesController.h"
-#include "EventLoop.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
@@ -362,36 +361,21 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-void DocumentTimeline::updateCurrentTime(DOMHighResTimeStamp timestamp)
+DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
 {
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
     // it has to match the rAF timestamp.
     if (!m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         cacheCurrentTime(timestamp);
-}
 
-void DocumentTimeline::updateAnimationsAndSendEvents()
-{
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
     // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
-    m_animationResolutionScheduled = false;
+    bool wasAnimationResolutionScheduled = std::exchange(m_animationResolutionScheduled, false);
 
-    if (m_isSuspended)
-        return;
+    if (!wasAnimationResolutionScheduled || m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+        return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 
-    if (!shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        return;
-
-    internalUpdateAnimationsAndSendEvents();
-    applyPendingAcceleratedAnimations();
-
-    if (!m_animationResolutionScheduled)
-        scheduleNextTick();
-}
-
-void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
-{
     m_numberOfAnimationTimelineInvalidationsForTesting++;
 
     // enqueueAnimationEvent() calls scheduleAnimationResolution() to ensure that the "update animations and send events"
@@ -399,77 +383,15 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     // this procedure is running should not schedule animation resolution until the event queue has been cleared.
     m_shouldScheduleAnimationResolutionForNewPendingEvents = false;
 
-    // https://drafts.csswg.org/web-animations/#update-animations-and-send-events
+    return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+}
 
-    // 1. Update the current time of all timelines associated with doc passing now as the timestamp.
+void DocumentTimeline::documentDidUpdateAnimationsAndSendEvents()
+{
+    applyPendingAcceleratedAnimations();
 
-    Vector<RefPtr<WebAnimation>> animationsToRemove;
-    Vector<RefPtr<CSSTransition>> completedTransitions;
-
-    for (auto& animation : m_animations) {
-        if (animation->timeline() != this) {
-            ASSERT(!animation->timeline());
-            animationsToRemove.append(animation);
-            continue;
-        }
-
-        // This will notify the animation that timing has changed and will call automatically
-        // schedule invalidation if required for this animation.
-        animation->tick();
-
-        if (!animation->isRelevant() && !animation->needsTick())
-            animationsToRemove.append(animation);
-
-        if (!animation->needsTick() && is<CSSTransition>(animation) && animation->playState() == WebAnimation::PlayState::Finished) {
-            auto* transition = downcast<CSSTransition>(animation.get());
-            if (transition->owningElement())
-                completedTransitions.append(transition);
-        }
-    }
-
-    // 2. Remove replaced animations for doc.
-    removeReplacedAnimations();
-
-    // 3. Perform a microtask checkpoint.
-    if (auto document = makeRefPtr(this->document()))
-        document->eventLoop().performMicrotaskCheckpoint();
-
-    // 4. Let events to dispatch be a copy of doc's pending animation event queue.
-    // 5. Clear doc's pending animation event queue.
-    auto pendingAnimationEvents = WTFMove(m_pendingAnimationEvents);
-    m_shouldScheduleAnimationResolutionForNewPendingEvents = true;
-
-    // 6. Perform a stable sort of the animation events in events to dispatch as follows.
-    std::stable_sort(pendingAnimationEvents.begin(), pendingAnimationEvents.end(), [] (const Ref<AnimationEventBase>& lhs, const Ref<AnimationEventBase>& rhs) {
-        // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
-        // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
-        // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: We don't do this.
-        if (lhs->timelineTime() && !rhs->timelineTime())
-            return false;
-        if (!lhs->timelineTime() && rhs->timelineTime())
-            return true;
-        if (!lhs->timelineTime() && !rhs->timelineTime())
-            return true;
-        return lhs->timelineTime().value() < rhs->timelineTime().value();
-    });
-
-    // 7. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
-    for (auto& pendingAnimationEvent : pendingAnimationEvents)
-        pendingAnimationEvent->target()->dispatchEvent(pendingAnimationEvent);
-
-    // This will cancel any scheduled invalidation if we end up removing all animations.
-    for (auto& animation : animationsToRemove) {
-        // An animation that was initially marked as irrelevant may have changed while we were sending events, so we run the same
-        // check that we ran to add it to animationsToRemove in the first place.
-        if (!animation->isRelevant() && !animation->needsTick())
-            removeAnimation(*animation);
-    }
-
-    // Now that animations that needed removal have been removed, let's update the list of completed transitions.
-    // This needs to happen after dealing with the list of animations to remove as the animation may have been
-    // removed from the list of completed transitions otherwise.
-    for (auto& completedTransition : completedTransitions)
-        transitionDidComplete(completedTransition);
+    if (!m_animationResolutionScheduled)
+        scheduleNextTick();
 }
 
 bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
@@ -733,6 +655,12 @@ void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
     m_pendingAnimationEvents.append(event);
     if (m_shouldScheduleAnimationResolutionForNewPendingEvents)
         scheduleAnimationResolution();
+}
+
+AnimationEvents DocumentTimeline::prepareForPendingAnimationEventsDispatch()
+{
+    m_shouldScheduleAnimationResolutionForNewPendingEvents = true;
+    return std::exchange(m_pendingAnimationEvents, { });
 }
 
 Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const

@@ -58,6 +58,7 @@ public:
     void removeAnimation(WebAnimation&) override;
     void animationWasAddedToElement(WebAnimation&, Element&) final;
     void animationWasRemovedFromElement(WebAnimation&, Element&) final;
+    void transitionDidComplete(RefPtr<CSSTransition>);
 
     // If possible, compute the visual extent of any transform animation on the given renderer
     // using the given rect, returning the result in the rect. Return false if there is some
@@ -72,9 +73,11 @@ public:
 
     void enqueueAnimationEvent(AnimationEventBase&);
     
-    bool scheduledUpdate() const { return m_animationResolutionScheduled; }
-    void updateCurrentTime(DOMHighResTimeStamp timestamp);
-    void updateAnimationsAndSendEvents();
+    enum class ShouldUpdateAnimationsAndSendEvents : uint8_t { Yes, No };
+    ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents(DOMHighResTimeStamp);
+    void removeReplacedAnimations();
+    AnimationEvents prepareForPendingAnimationEventsDispatch();
+    void documentDidUpdateAnimationsAndSendEvents();
 
     void updateThrottlingState();
     WEBCORE_EXPORT Seconds animationInterval() const;
@@ -98,9 +101,7 @@ private:
     void clearTickScheduleTimer();
     void internalUpdateAnimationsAndSendEvents();
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
-    void transitionDidComplete(RefPtr<CSSTransition>);
     void scheduleNextTick();
-    void removeReplacedAnimations();
     bool animationCanBeRemoved(WebAnimation&);
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
 
@@ -108,7 +109,7 @@ private:
     GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
-    Vector<Ref<AnimationEventBase>> m_pendingAnimationEvents;
+    AnimationEvents m_pendingAnimationEvents;
     WeakPtr<Document> m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     Seconds m_originTime;

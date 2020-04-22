@@ -1,3 +1,51 @@
+2020-04-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Coordinate "update animations and send events" procedure across multiple timelines
+        https://bugs.webkit.org/show_bug.cgi?id=202109
+        <rdar://problem/59470821>
+
+        Reviewed by Dean Jackson.
+
+        So far, although we did manage multiple animation timelines per document, we mostly operated
+        under the assumption that there really was a single timeline. In this patch we make the
+        "update animations and send events" procedure, which is central to the lifecycle of animations,
+        work with multiple timelines such that a single microtask checkpoint is performed even with multiple
+        timelines, whereas we would perform one per timeline before. To do this, we move much of the logic
+        DocumentTimeline::updateAnimationsAndSendEvents() to DocumentTimelinesController where each step is
+        run across each timeline, rather than running all steps for each timeline one after the other,
+        respecting the single microtask checkpoint in the middle of the process.
+
+        To minimize code churn at this stage, we still keep a fair bit of logic in DocumentTimeline and,
+        while we remove updateAnimationsAndSendEvents(), internalUpdateAnimationsAndSendEvents() and
+        updateCurrentTime(), we expose three methods that allow to run the pre-flight sequence in
+        documentWillUpdateAnimationsAndSendEvents(), collect pending events in
+        prepareForPendingAnimationEventsDispatch() and run the post-flight sequence
+        in documentDidUpdateAnimationsAndSendEvents().
+
+        None of the logic changes, this is just moving code around. In the future, more patches will move
+        code from DocumentTimeline up to DocumentTimelinesController such that events are enqueued there,
+        and animation scheduling as well. But this already lets us pass a new test that used to flakily
+        reject promises in the WPT test web-animations/timing-model/timelines/update-and-send-events.html.
+
+        * animation/AnimationTimeline.h:
+        (WebCore::AnimationTimeline::relevantAnimations const):
+        (WebCore::AnimationTimeline::allAnimations const):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::documentWillUpdateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::documentDidUpdateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::prepareForPendingAnimationEventsDispatch):
+        (WebCore::DocumentTimeline::updateCurrentTime): Deleted.
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents): Deleted.
+        (WebCore::DocumentTimeline::internalUpdateAnimationsAndSendEvents): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * animation/DocumentTimelinesController.h:
+        * animation/WebAnimationTypes.h:
+        * dom/Document.cpp:
+        (WebCore::Document::ensureTimelinesController):
+
 2020-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Add a quirk to keep gizmodo videos visible when playing in fullscreen.

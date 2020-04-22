@@ -30,12 +30,15 @@
 
 namespace WebCore {
 
+class CSSTransition;
+class Document;
 class DocumentTimeline;
+class WebAnimation;
 
 class DocumentTimelinesController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DocumentTimelinesController();
+    explicit DocumentTimelinesController(Document&);
     ~DocumentTimelinesController();
 
     void addTimeline(DocumentTimeline&);
@@ -44,8 +47,13 @@ public:
     void updateAnimationsAndSendEvents(DOMHighResTimeStamp);
 
 private:
+    struct AnimationsToProcess {
+        Vector<RefPtr<WebAnimation>> animationsToRemove;
+        Vector<RefPtr<CSSTransition>> completedTransitions;
+    };
+
     WeakHashSet<DocumentTimeline> m_timelines;
+    Document& m_document;
 };
 
 } // namespace WebCore
-

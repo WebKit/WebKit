@@ -50,6 +50,9 @@ class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWe
 public:
     virtual bool isDocumentTimeline() const { return false; }
 
+    AnimationCollection relevantAnimations() const { return m_animations; }
+    Vector<WeakPtr<WebAnimation>> allAnimations() const { return m_allAnimations; }
+
     void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);

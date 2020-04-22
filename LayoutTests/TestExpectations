@@ -4064,8 +4064,6 @@ webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/202109 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html [ Pass Failure ]
-
 # WebXR is being implemented
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
 

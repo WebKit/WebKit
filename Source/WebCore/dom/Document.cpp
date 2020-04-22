@@ -8080,7 +8080,7 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 DocumentTimelinesController& Document::ensureTimelinesController()
 {
     if (!m_timelinesController)
-        m_timelinesController = makeUnique<DocumentTimelinesController>();
+        m_timelinesController = makeUnique<DocumentTimelinesController>(*this);
     return *m_timelinesController.get();
 }
 

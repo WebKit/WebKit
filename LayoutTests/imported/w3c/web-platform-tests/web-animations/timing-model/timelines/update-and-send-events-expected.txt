@@ -6,5 +6,5 @@ FAIL Sorts cancel events by composite order assert_array_equals: cancel events s
 PASS Queues a cancel event in transitionstart event callback 
 PASS Sorts events for the same transition 
 PASS Playback events with the same timeline retain the order in which they arequeued 
-FAIL All timelines are updated before running microtasks promise_test: Unhandled rejection with value: object "AbortError: The operation was aborted."
+PASS All timelines are updated before running microtasks 
 

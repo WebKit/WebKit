@@ -1,3 +1,15 @@
+2020-04-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Coordinate "update animations and send events" procedure across multiple timelines
+        https://bugs.webkit.org/show_bug.cgi?id=202109
+        <rdar://problem/59470821>
+
+        Reviewed by Dean Jackson.
+
+        Mark a new test as PASS which shows that we correctly perform a single microstask checkpoint when updating multiple timelines.
+
+        * web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-expected.txt:
+
 2020-04-21  Sergio Villar Senin  <svillar@igalia.com>
 
         Import latest changes from web-platform-test/webxr/resources to enable testing in WebKit
