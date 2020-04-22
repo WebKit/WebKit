@@ -272,7 +272,9 @@ private:
 
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionCreateHeapBigInt(JSGlobalObject*, CallFrame*);
+#if USE(BIGINT32)
 static EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject*, CallFrame*);
+#endif
 
 static EncodedJSValue JSC_HOST_CALL functionPrintStdOut(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionPrintStdErr(JSGlobalObject*, CallFrame*);
