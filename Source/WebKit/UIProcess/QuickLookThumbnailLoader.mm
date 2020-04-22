@@ -33,12 +33,18 @@
 
 @implementation WKQLThumbnailQueueManager 
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self)
-        _qlThumbnailGenerationQueue = [[NSOperationQueue alloc] init];
+        _queue = [[NSOperationQueue alloc] init];
     return self;
+}
+
+- (void)dealloc
+{
+    [_queue release];
+    [super dealloc];
 }
 
 + (WKQLThumbnailQueueManager *)sharedInstance
@@ -49,19 +55,20 @@
 
 @end
 
+@interface WKQLThumbnailLoadOperation ()
+@property (atomic, readwrite, getter=isExecuting) BOOL executing;
+@property (atomic, readwrite, getter=isFinished) BOOL finished;
+@end
+
 @implementation WKQLThumbnailLoadOperation {
     RetainPtr<NSURL> _filePath;
-    RetainPtr<NSMutableString> _identifier;
+    RetainPtr<NSString> _identifier;
     RetainPtr<NSFileWrapper> _fileWrapper;
-#if PLATFORM(MAC)
-    RetainPtr<NSImage> _thumbnail;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<UIImage> _thumbnail;
-#endif
+    RetainPtr<CocoaImage> _thumbnail;
+    BOOL _shouldWrite;
 }
 
-- (id)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier
+- (instancetype)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier
 {
     if (self = [super init]) {
         _fileWrapper = fileWrapper;
@@ -71,7 +78,7 @@
     return self;
 }
 
-- (id)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier
+- (instancetype)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier
 {
     if (self = [super init]) {
         _identifier = adoptNS([identifier copy]);
@@ -83,14 +90,14 @@
 - (void)start
 {
     self.executing = YES;
-    
+
     if (_shouldWrite) {
         NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"QLTempFileData");
-    
+
         NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:[_fileWrapper preferredFilename]];
         NSFileWrapperWritingOptions options = 0;
         NSError *error = nil;
-        
+
         auto fileURLPath = adoptNS([NSURL fileURLWithPath:filePath]);
 
         [_fileWrapper writeToURL:fileURLPath.get() options:options originalContentsURL:nil error:&error];
@@ -99,18 +106,17 @@
             return;
     }
 
-    QLThumbnailGenerationRequest *req = [[QLThumbnailGenerationRequest alloc] initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeAll];
-    req.iconMode = YES;
-    
-    [[QLThumbnailGenerator sharedGenerator] generateBestRepresentationForRequest:req completionHandler:^(QLThumbnailRepresentation *thumbnail, NSError *error) {
+    RetainPtr<QLThumbnailGenerationRequest> request = adoptNS([[QLThumbnailGenerationRequest alloc] initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeAll]);
+    request.get().iconMode = YES;
+
+    [[QLThumbnailGenerator sharedGenerator] generateBestRepresentationForRequest:request.get() completionHandler:^(QLThumbnailRepresentation *thumbnail, NSError *error) {
         if (error)
             return;
         if (_thumbnail)
             return;
-#if PLATFORM(MAC)
+#if USE(APPKIT)
         _thumbnail = thumbnail.NSImage;
-#endif
-#if PLATFORM(IOS_FAMILY)
+#else
         _thumbnail = thumbnail.UIImage;
 #endif
         if (_shouldWrite)
@@ -121,19 +127,10 @@
     }];
 }
 
-#if PLATFORM(IOS_FAMILY)
-- (UIImage *)thumbnail
+- (CocoaImage *)thumbnail
 {
     return _thumbnail.get();
 }
-#endif
-
-#if PLATFORM(MAC)
-- (NSImage *)thumbnail
-{
-    return _thumbnail.get();
-}
-#endif
 
 - (NSString *)identifier
 {
@@ -187,4 +184,4 @@
 
 @end
 
-#endif
+#endif // HAVE(QUICKLOOK_THUMBNAILING)

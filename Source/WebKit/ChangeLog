@@ -1,5 +1,57 @@
 2020-04-21  David Kilzer  <ddkilzer@apple.com>
 
+        Clean up QuickLookThumbnailLoader
+        <https://webkit.org/b/210814>
+
+        Reviewed by Darin Adler.
+
+        The following items are cleaned up:
+        - Extract `using PlatformImage` into QuickLookThumbnailLoader.h,
+          rename to `CocoaImage` and use to get rid of duplicate
+          code.
+        - Change `id` to `instancetype` for -init methods.
+        - Add `atomic` keyword to @property definitions that were using
+          it as the default.  (Use of atomic properties is rare in
+          WebKit, so being explicit avoids a scenario where it looks
+          like `nonatomic` was left off by accident.)
+        - Change @property definitions to `readonly` that are never
+          written to outside of QuickLookThumbnailLoader.mm.
+        - Delete unused @property definitions.
+        - Change method declarations into read-only @property
+          definitions.
+        - Re-declare atomic read-only @property definitions in
+          QuickLookThumbnailLoader.h as read-write definitions in
+          QuickLookThumbnailLoader.mm if they are written to.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        * UIProcess/QuickLookThumbnailLoader.h:
+        - Rename qlThumbnailGenerationQueue @property to just `queue`.
+        - Remove `contentType` @property.  It is not used anywhere.
+          This also fixes a theoretical leak found by the clang static
+          analyzer.
+        - Remove `shouldWrite` @property.  It is only used within
+          QuickLookThumbnailLoader.mm.
+        - Change `identifier` and `thumbnail` to @property declarations.
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        - Change WKQLThumbnailLoadOperation._identifier type from
+          NSMutableString to NSString.  There was no reason for it to
+          be mutable.
+        (-[WKQLThumbnailQueueManager init]):
+        (-[WKQLThumbnailQueueManager dealloc]):
+        - Release `_queue` to fix theoretical leak found by the clang
+          static analyzer.
+        (-[WKQLThumbnailLoadOperation initWithAttachment:identifier:]):
+        (-[WKQLThumbnailLoadOperation initWithURL:identifier:]):
+        (-[WKQLThumbnailLoadOperation start]):
+        - Rename `req` to `request` and use RetainPtr<>.
+        - Change separate #if macros to #if/#else since only one version
+          of this code can be used at a time.
+        (-[WKQLThumbnailLoadOperation thumbnail]):
+        - Use CocoaImage to use one copy of the method.
+
+2020-04-21  David Kilzer  <ddkilzer@apple.com>
+
         Fix extra/missing #undef statements
         <https://webkit.org/b/210818>
         <rdar://problem/61973329>
