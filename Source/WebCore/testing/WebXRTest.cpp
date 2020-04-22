@@ -23,29 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebXRTest.h"
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
+void WebXRTest::simulateDeviceConnection(FakeXRDeviceInit, WebFakeXRDevicePromise&&) const
+{
+}
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+void WebXRTest::simulateUserActivation(XRSimulateUserActivationFunction&)
+{
+}
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
-};
+void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&&)
+{
+}
 
 } // namespace WebCore
 

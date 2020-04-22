@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+    ImplementationLacksVTable,
+    InterfaceName=FakeXRInputController,
+    NoInterfaceObject
+] interface WebFakeXRInputController {
+    // Indicates that the handedness of the device has changed.
+    void setHandedness(XRHandedness handedness);
+
+    // Indicates that the target ray mode of the device has changed.
+    void setTargetRayMode(XRTargetRayMode targetRayMode);
+
+    // Indicates that the list of profiles representing the device has changed.
+    void setProfiles(sequence<DOMString> profiles);
+
+    // Sets or clears the position of the controller.  If not set, the controller is assumed to
+    // not be tracked.
+    void setGripOrigin(FakeXRRigidTransformInit gripOrigin, optional boolean emulatedPosition = false);
+    void clearGripOrigin();
+
+    // Sets the pointer origin for the controller.
+    void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, optional boolean emulatedPosition = false);
+
+    // Temporarily disconnect the input device
+    void disconnect();
+
+    // Reconnect a disconnected input device
+    void reconnect();
+
+    // Start a selection for the current frame with the primary input
+    // If a gamepad is supported, should update the state of the primary button accordingly.
+    void startSelection();
+
+    // End selection for the current frame with the primary input
+    // If a gamepad is supported, should update the state of the primary button accordingly.
+    void endSelection();
+
+    // Simulates a start/endSelection for the current frame with the primary input
+    // If a gamepad is supported, should update the state of the primary button accordingly.
+    void simulateSelect();
+
+    // Updates the set of supported buttons, including any initial state.
+    // Note that this method should not be generally used to update the state of the
+    // buttons, as the UA may treat this as re-creating the Gamepad.
+    // Note that if any FakeXRButtonType is repeated the behavior is undefined.
+    void setSupportedButtons(sequence<FakeXRButtonStateInit> supportedButtons);
+
+    // Used to update the state of a button currently supported by the input source
+    // Will not add support for that button if it is not currently supported.
+    void updateButtonState(FakeXRButtonStateInit buttonState);
+};

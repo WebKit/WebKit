@@ -75,6 +75,8 @@ namespace WebCore {
     macro(EnterPictureInPictureEvent) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
+    macro(FakeXRDevice) \
+    macro(FakeXRInputController) \
     macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
@@ -251,6 +253,7 @@ namespace WebCore {
     macro(XRSession) \
     macro(XRSessionEvent) \
     macro(XRSpace) \
+    macro(XRTest) \
     macro(XRView) \
     macro(XRViewerPose) \
     macro(XRViewport) \

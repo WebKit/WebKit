@@ -1022,7 +1022,8 @@ imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.
 # Passing since r257562.
 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ Pass ]
 
-imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Pass ]
+# WebXR
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING

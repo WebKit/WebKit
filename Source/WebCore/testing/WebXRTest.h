@@ -27,24 +27,51 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "JSDOMPromiseDeferred.h"
+#include "WebFakeXRDevice.h"
+#include "XRSessionMode.h"
+#include "XRSimulateUserActivationFunction.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
 class WebXRSystem;
 
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebXRTest final : public RefCounted<WebXRTest> {
 public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+    struct FakeXRDeviceInit {
+        bool supportsImmersive { false };
+        Optional<Vector<XRSessionMode>> supportedModes;
+        Vector<FakeXRViewInit> views;
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+        Optional<Vector<JSC::JSValue>> supportedFeatures;
+
+        Optional<Vector<FakeXRBoundsPoint>> boundsCoordinates;
+
+        Optional<FakeXRRigidTransformInit> floorOrigin;
+        Optional<FakeXRRigidTransformInit> viewerOrigin;
+    };
+
+    static Ref<WebXRTest> create(WeakPtr<WebXRSystem>&& system) { return adoptRef(*new WebXRTest(WTFMove(system))); }
+
+    using WebFakeXRDevicePromise = DOMPromiseDeferred<IDLInterface<WebFakeXRDevice>>;
+    void simulateDeviceConnection(FakeXRDeviceInit, WebFakeXRDevicePromise&&) const;
+
+    // Simulates a user activation (aka user gesture) for the current scope.
+    // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
+    // Device API methods.
+    void simulateUserActivation(XRSimulateUserActivationFunction&);
+
+    // Disconnect all fake devices
+    void disconnectAllDevices(DOMPromiseDeferred<void>&&);
 
 private:
-    RefPtr<WebXRSystem> m_xr;
+    WebXRTest(WeakPtr<WebXRSystem>&& system)
+        : m_context(WTFMove(system)) { }
+
+    WeakPtr<WebXRSystem> m_context;
 };
 
 } // namespace WebCore

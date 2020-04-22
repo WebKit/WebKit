@@ -117,6 +117,10 @@ class TextTrackCueGeneric;
 class ServiceWorker;
 #endif
 
+#if ENABLE(WEBXR)
+class WebXRTest;
+#endif
+
 template<typename IDLType> class DOMPromiseDeferred;
 
 struct MockWebAuthenticationConfiguration;
@@ -1002,6 +1006,10 @@ public:
     unsigned createSleepDisabler(const String& reason, bool display);
     bool destroySleepDisabler(unsigned identifier);
 
+#if ENABLE(WEBXR)
+    ExceptionOr<RefPtr<WebXRTest>> xrTest();
+#endif
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
@@ -1026,6 +1034,10 @@ private:
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
 
     HashMap<unsigned, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
+
+#if ENABLE(WEBXR)
+    RefPtr<WebXRTest> m_xrTest;
+#endif
 };
 
 } // namespace WebCore

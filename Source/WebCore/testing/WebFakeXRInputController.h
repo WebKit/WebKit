@@ -27,24 +27,42 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "FakeXRButtonStateInit.h"
+#include "FakeXRRigidTransformInit.h"
+#include "XRHandedness.h"
+#include "XRTargetRayMode.h"
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
-
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebFakeXRInputController final : public RefCounted<WebFakeXRInputController> {
 public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+    void setHandedness(XRHandedness);
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+    void setTargetRayMode(XRTargetRayMode);
 
-private:
-    RefPtr<WebXRSystem> m_xr;
+    void setProfiles(Vector<String>);
+
+    void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
+
+    void clearGripOrigin();
+
+    void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);
+
+    void disconnect();
+
+    void reconnect();
+
+    void startSelection();
+
+    void endSelection();
+
+    void simulateSelect();
+
+    void setSupportedButtons(Vector<FakeXRButtonStateInit>);
+
+    void updateButtonState(FakeXRButtonStateInit);
 };
 
 } // namespace WebCore

@@ -23,30 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEBXR)
-
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
-
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+// Because the primary button is always guaranteed to be present, and other buttons
+// should fulfill the role of validating any state from FakeXRButtonStateInit
+// the primary button is not present in this enum.
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] enum FakeXRButtonType {
+    "grip",
+    "touchpad",
+    "thumbstick",
+    // Represents a button whose position is not specified by the xr-standard mapping.
+    // Should appear at one past the last reserved button index.
+    "optional-button",
+    // Represents a thumbstick whose position is not specified by the xr-standard mapping.
+    // Should appear at two past the last reserved button index.
+    "optional-thumbstick"
 };
 
-} // namespace WebCore
-
-#endif // ENABLE(WEBXR)
+// Used to update the state of optionally supported buttons.
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRButtonStateInit {
+    required FakeXRButtonType buttonType;
+    required boolean pressed;
+    required boolean touched;
+    required float pressedValue;
+    // x and y value are ignored if the FakeXRButtonType is not touchpad, thumbstick, or optional-thumbstick
+    float xValue = 0.0;
+    float yValue = 0.0;
+};

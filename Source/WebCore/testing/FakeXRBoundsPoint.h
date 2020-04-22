@@ -27,24 +27,11 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
-
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+struct FakeXRBoundsPoint {
+    double x;
+    double z;
 };
 
 } // namespace WebCore

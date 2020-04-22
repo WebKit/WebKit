@@ -23,30 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(WEBXR)
-
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
-
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
-
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
-
-private:
-    RefPtr<WebXRSystem> m_xr;
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRInputSourceInit {
+    required XRHandedness handedness;
+    required XRTargetRayMode targetRayMode;
+    required FakeXRRigidTransformInit pointerOrigin;
+    required sequence<DOMString> profiles;
+    // was the primary action pressed when this was connected?
+    boolean selectionStarted = false;
+    // should this input source send a select immediately upon connection?
+    boolean selectionClicked = false;
+    // Initial button state for any buttons beyond the primary that are supported.
+    // If empty, only the primary button is supported.
+    // Note that if any FakeXRButtonType is repeated the behavior is undefined.
+    sequence<FakeXRButtonStateInit> supportedButtons;
+    // If not set the controller is assumed to not be tracked.
+    FakeXRRigidTransformInit gripOrigin;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBXR)

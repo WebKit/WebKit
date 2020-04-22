@@ -27,24 +27,38 @@
 
 #if ENABLE(WEBXR)
 
-#include "Supplementable.h"
-#include <wtf/RefPtr.h>
+#include "FakeXRBoundsPoint.h"
+#include "FakeXRInputSourceInit.h"
+#include "FakeXRViewInit.h"
+#include "JSDOMPromiseDeferred.h"
+#include "WebFakeXRInputController.h"
+#include "XRVisibilityState.h"
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Navigator;
-class ScriptExecutionContext;
-class WebXRSystem;
-
-class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {
 public:
-    WEBCORE_EXPORT static WebXRSystem& xr(ScriptExecutionContext&, Navigator&);
+    void setViews(Vector<FakeXRViewInit>);
 
-    WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
+    void disconnect(DOMPromiseDeferred<void>&&);
 
-private:
-    RefPtr<WebXRSystem> m_xr;
+    void setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition = false);
+
+    void clearViewerOrigin();
+
+    void simulateVisibilityChange(XRVisibilityState);
+
+    void setBoundsGeometry(Vector<FakeXRBoundsPoint> boundsCoordinates);
+
+    void setFloorOrigin(FakeXRRigidTransformInit);
+
+    void clearFloorOrigin();
+
+    void simulateResetPose();
+
+    WebFakeXRInputController simulateInputSourceConnection(FakeXRInputSourceInit);
 };
 
 } // namespace WebCore
