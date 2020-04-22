@@ -130,6 +130,10 @@
         "The name of the flag on RuntimeEnabledFeatures (e.g. \"cssLogical\")",
         "that conditionally enables the property.",
         "",
+        "* settings-flag:",
+        "The name of the flag on Settings (e.g. \"CSSOMViewSmoothScrolling\")",
+        "that conditionally enables the property.",
+        "",
         "2. Lesser known capabilities of this file format",
         "",
         "Conditional CSS keyword value:",
@@ -3572,16 +3576,6 @@
                 "url": "https://www.w3.org/TR/SVG/shapes.html"
             }
         },
-        "scroll-behavior": {
-            "values": [
-                "auto",
-                "smooth"
-            ],
-            "specification": {
-                "category": "cssom-view",
-                "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
-            }
-        },
         "shape-rendering": {
             "inherited": true,
             "values": [
@@ -6515,6 +6509,7 @@
                 "smooth"
             ],
             "codegen-properties": {
+                "settings-flag": "CSSOMViewSmoothScrolling",
                 "converter": "SmoothScrolling",
                 "name-for-methods": "UseSmoothScrolling"
             },

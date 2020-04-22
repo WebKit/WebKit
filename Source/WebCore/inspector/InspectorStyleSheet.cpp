@@ -604,6 +604,7 @@ Vector<InspectorStyleProperty> InspectorStyle::collectProperties(bool includeAll
     if (includeAll) {
         for (auto i = firstCSSProperty; i < lastCSSProperty; ++i) {
             auto id = convertToCSSPropertyID(i);
+            // FIXME: Should take account for flags in settings().
             if (isInternalCSSProperty(id) || !isEnabledCSSProperty(id))
                 continue;
 

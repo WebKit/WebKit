@@ -780,6 +780,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
     auto properties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID propertyID = convertToCSSPropertyID(i);
+        // FIXME: Should take account for flags in settings().
         if (isInternalCSSProperty(propertyID) || !isEnabledCSSProperty(propertyID))
             continue;
 

@@ -803,6 +803,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setAspectRatioOfImgFromWidthAndHeightEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC
+    prefsPrivate->setCSSOMViewSmoothScrollingEnabled(TRUE);
 }
 
 static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
@@ -921,6 +922,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setAllowTopNavigationToDataURLs(options.allowTopNavigationToDataURLs);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
     preferences->setUsesPageCache(options.enableBackForwardCache);
+    prefsPrivate->setCSSOMViewSmoothScrollingEnabled(options.enableCSSOMViewSmoothScrolling);
 }
 
 static String applicationId()

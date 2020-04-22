@@ -290,6 +290,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'related-property': self.validate_string,
             'runtime-flag': self.validate_string,
             'setter': self.validate_string,
+            'settings-flag': self.validate_string,
             'skip-builder': self.validate_boolean,
             'skip-codegen': self.validate_boolean,
             'svg': self.validate_boolean,

@@ -29,8 +29,11 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "DeprecatedGlobalSettings.h"
+#include "Document.h"
 #include "HashTools.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
+#include "StyledElement.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
@@ -149,7 +152,7 @@ struct CSSPropertyInfo {
     bool hadPixelOrPosPrefix;
 };
 
-static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& propertyName)
+static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& propertyName, const Settings* settingsPtr)
 {
     using CSSPropertyInfoMap = HashMap<String, CSSPropertyInfo>;
     static NeverDestroyed<CSSPropertyInfoMap> propertyInfoCache;
@@ -247,7 +250,7 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
     auto* hashTableEntry = findProperty(name, outputLength);
     if (auto propertyID = hashTableEntry ? hashTableEntry->id : 0) {
         auto id = static_cast<CSSPropertyID>(propertyID);
-        if (isEnabledCSSProperty(id)) {
+        if (isEnabledCSSProperty(id) && isCSSPropertyEnabledBySettings(id, settingsPtr)) {
             propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
             propertyInfo.propertyID = id;
             propertyInfoCache.get().add(propertyNameString, propertyInfo);
@@ -260,12 +263,13 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomString& property
 
 CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomString& propertyName)
 {
-    return parseJavaScriptCSSPropertyName(propertyName).propertyID;
+    return parseJavaScriptCSSPropertyName(propertyName, nullptr).propertyID;
 }
 
 Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomString& propertyName)
 {
-    auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
+    auto* settingsPtr = parentElement() ? &parentElement()->document().settings() : nullptr;
+    auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName, settingsPtr);
     if (!propertyInfo.propertyID)
         return WTF::nullopt;
 
@@ -287,7 +291,8 @@ Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomStrin
 
 ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyName, String value, bool& propertySupported)
 {
-    auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
+    auto* settingsPtr = parentElement() ? &parentElement()->document().settings() : nullptr;
+    auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName, settingsPtr);
     if (!propertyInfo.propertyID) {
         propertySupported = false;
         return { };
@@ -321,6 +326,7 @@ Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
         String names[numCSSProperties];
         for (int i = 0; i < numCSSProperties; ++i) {
             CSSPropertyID id = static_cast<CSSPropertyID>(firstCSSProperty + i);
+            // FIXME: Should take account for flags in settings().
             if (isEnabledCSSProperty(id))
                 names[numNames++] = getJSPropertyName(id);
         }

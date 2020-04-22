@@ -143,6 +143,7 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     const Property* hashTableEntry = findProperty(name, length);
     if (hashTableEntry) {
         auto propertyID = static_cast<CSSPropertyID>(hashTableEntry->id);
+        // FIXME: Should take account for flags in settings().
         if (isEnabledCSSProperty(propertyID))
             return propertyID;
     }

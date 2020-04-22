@@ -63,6 +63,7 @@ my %defines = map { $_ => 1 } split(/ /, $defines);
 my @names;
 my @internalProprerties;
 my %runtimeFlags;
+my %settingsFlags;
 my $numPredefinedProperties = 2;
 my %nameIsInherited;
 my %nameIsHighPriority;
@@ -251,6 +252,8 @@ sub addProperty($$)
                     push @internalProprerties, $name
                 } elsif ($codegenOptionName eq "runtime-flag") {
                     $runtimeFlags{$name} = $codegenProperties->{"runtime-flag"};
+                } elsif ($codegenOptionName eq "settings-flag") {
+                    $settingsFlags{$name} = $codegenProperties->{"settings-flag"};
                 } else {
                     die "Unrecognized codegen property \"$codegenOptionName\" for $name property.";
                 }
@@ -296,6 +299,7 @@ print GPERF << "EOF";
 #include \"CSSPropertyNames.h\"
 #include \"HashTools.h\"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
@@ -387,6 +391,26 @@ print GPERF << "EOF";
     default:
         return true;
     }
+}
+
+bool isCSSPropertyEnabledBySettings(const CSSPropertyID id, const Settings* settings)
+{
+    if (!settings)
+        return true;
+
+    switch (id) {
+EOF
+
+foreach my $name (keys %settingsFlags) {
+  print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+  print GPERF "        return settings->" . $settingsFlags{$name} . "Enabled();\n";
+}
+
+print GPERF << "EOF";
+    default:
+        return true;
+    }
+    return true;
 }
 
 const char* getPropertyName(CSSPropertyID id)
@@ -522,6 +546,8 @@ print HEADER << "EOF";
 
 namespace WebCore {
 
+class Settings;
+
 enum CSSPropertyID : uint16_t {
     CSSPropertyInvalid = 0,
     CSSPropertyCustom = 1,
@@ -576,6 +602,7 @@ print HEADER << "EOF";
 
 bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
+bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
 const char* getPropertyName(CSSPropertyID);
 const WTF::AtomString& getPropertyNameAtomString(CSSPropertyID id);
 WTF::String getPropertyNameString(CSSPropertyID id);
