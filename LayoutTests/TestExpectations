@@ -434,6 +434,9 @@ imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-elemen
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
 
+# Cross-Origin Opener Policy is not supported.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
+
 # Sometimes prints weird output at the beginning of the tests.
 imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas [ Failure Pass ]
 
