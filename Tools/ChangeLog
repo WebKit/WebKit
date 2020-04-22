@@ -1,3 +1,13 @@
+2020-04-22  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulation.CompleteTextManipulationAvoidCrashingWhenContentIsRemoved does not wait for result
+        https://bugs.webkit.org/show_bug.cgi?id=210871
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Add unit test for resuming downloads

@@ -872,6 +872,7 @@ TEST(TextManipulation, CompleteTextManipulationAvoidCrashingWhenContentIsRemoved
         "paragraph.textContent = 'Hello world';"
         "document.body.appendChild(paragraph);"
         "setTimeout(() => { paragraph.remove(); webkit.messageHandlers.testHandler.postMessage('DoneRemovingParagraph') })"];
+    TestWebKitAPI::Util::run(&done);
 
     done = false;
     [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
@@ -880,6 +881,7 @@ TEST(TextManipulation, CompleteTextManipulationAvoidCrashingWhenContentIsRemoved
         EXPECT_EQ(errors, nil);
         done = true;
     }];
+    TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ("Simple HTML file!", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
