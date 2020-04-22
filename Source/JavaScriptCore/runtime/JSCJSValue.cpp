@@ -312,7 +312,7 @@ void JSValue::dumpInContextAssumingStructure(
         else if (structure->classInfo()->isSubClassOf(Structure::info()))
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else if (isHeapBigInt())
-            out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()));
+            out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", jsCast<JSBigInt*>(asCell())->length(), ", sign=", jsCast<JSBigInt*>(asCell())->sign());
         else if (structure->classInfo()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
             out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()));

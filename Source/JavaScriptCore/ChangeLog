@@ -1,3 +1,18 @@
+2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSBigInt inc operation does not produce right HeapBigInt zero
+        https://bugs.webkit.org/show_bug.cgi?id=210860
+
+        Reviewed by Mark Lam.
+
+        JSBigInt::inc can produce signed HeapBigInt zero, which is not meeting the invariant of JSBigInt.
+        This patch fixes it by checking zero status before setting `setSign(true)`.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::inc):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+
 2020-04-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: Step Over should only step through comma expressions if they are comma statements

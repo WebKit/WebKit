@@ -446,6 +446,8 @@ JSBigInt* JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
     if (!x->sign())
         return absoluteAddOne(globalObject, x, SignOption::Unsigned);
     JSBigInt* result = absoluteSubOne(globalObject, x, x->length());
+    if (result->isZero())
+        return result;
     result->setSign(true);
     return result;
 }
