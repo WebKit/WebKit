@@ -266,12 +266,12 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
 
 void SWServerWorker::whenActivated(CompletionHandler<void(bool)>&& handler)
 {
-    if (state() == ServiceWorkerState::Activated) {
-        handler(true);
+    if (state() == ServiceWorkerState::Activating) {
+        m_whenActivatedHandlers.append(WTFMove(handler));
         return;
     }
-    ASSERT(state() == ServiceWorkerState::Activating);
-    m_whenActivatedHandlers.append(WTFMove(handler));
+    ASSERT(state() == ServiceWorkerState::Activated);
+    handler(state() == ServiceWorkerState::Activated);
 }
 
 void SWServerWorker::setState(ServiceWorkerState state)

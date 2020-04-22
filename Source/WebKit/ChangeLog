@@ -1,3 +1,17 @@
+2020-04-22  Youenn Fablet  <youenn@apple.com>
+
+        Simplify SWServerWorker::whenActivated logic
+        https://bugs.webkit.org/show_bug.cgi?id=210795
+
+        Reviewed by Alex Christensen.
+
+        Improve logging and update code according whenActivated implementation.
+        Add an early check for timeouts so that we return earlier in that case.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+        (WebKit::WebSWServerConnection::startFetch):
+
 2020-04-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r260478.

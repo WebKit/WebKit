@@ -179,7 +179,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
 
     auto* worker = server().activeWorkerFromRegistrationID(*serviceWorkerRegistrationIdentifier);
     if (!worker) {
-        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: DidNotHandle because no active worker %s", serviceWorkerRegistrationIdentifier->loggingString().utf8().data());
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: DidNotHandle because no active worker for registration %llu", serviceWorkerRegistrationIdentifier->toUInt64());
         return nullptr;
     }
 
@@ -188,6 +188,11 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
     if (worker->shouldSkipFetchEvent()) {
         if (shouldSoftUpdate)
             registration->scheduleSoftUpdate();
+        return nullptr;
+    }
+
+    if (worker->hasTimedOutAnyFetchTasks()) {
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: DidNotHandle because worker %llu has some timeouts", worker->identifier().toUInt64());
         return nullptr;
     }
 
@@ -208,7 +213,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
         }
 
         if (!success) {
-            SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because worker did not become activated", task->fetchIdentifier().loggingString().utf8().data());
+            SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %llu DidNotHandle because worker did not become activated", task->fetchIdentifier().toUInt64());
             task->cannotHandle();
             return;
         }
@@ -237,18 +242,12 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
                 task->cannotHandle();
                 return;
             }
-            SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %s via service worker %s", task->fetchIdentifier().loggingString().utf8().data(), task->serviceWorkerIdentifier().loggingString().utf8().data());
+            SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %llu via service worker %llu", task->fetchIdentifier().toUInt64(), task->serviceWorkerIdentifier().toUInt64());
             static_cast<WebSWServerToContextConnection&>(*contextConnection).startFetch(*task);
         });
     };
-    
-    if (worker.state() == ServiceWorkerState::Activating) {
-        worker.whenActivated(WTFMove(runServerWorkerAndStartFetch));
-        return;
-    }
 
-    ASSERT(worker.state() == ServiceWorkerState::Activated);
-    runServerWorkerAndStartFetch(true);
+    worker.whenActivated(WTFMove(runServerWorkerAndStartFetch));
 }
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)

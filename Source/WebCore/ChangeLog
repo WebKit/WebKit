@@ -1,3 +1,20 @@
+2020-04-22  Youenn Fablet  <youenn@apple.com>
+
+        Simplify SWServerWorker::whenActivated logic
+        https://bugs.webkit.org/show_bug.cgi?id=210795
+
+        Reviewed by Alex Christensen.
+
+        Improve logging and ensure whenActivated can be called whatever the worker state is.
+        No change of behavior.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::didFinishInstall):
+        (WebCore::SWServer::fireInstallEvent):
+        (WebCore::SWServer::fireActivateEvent):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::whenActivated):
+
 2020-04-22  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] Youtube 'live stream'/H264 URLs fail to play, VP8/9 URLs play OK

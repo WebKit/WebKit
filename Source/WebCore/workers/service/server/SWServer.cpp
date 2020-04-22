@@ -521,13 +521,10 @@ void SWServer::terminatePreinstallationWorker(SWServerWorker& worker)
 
 void SWServer::didFinishInstall(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, bool wasSuccessful)
 {
+    RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishInstall: Finished install for service worker %llu, success is %d", this, worker.identifier().toUInt64(), wasSuccessful);
+
     if (!jobDataIdentifier)
         return;
-
-    if (wasSuccessful)
-        RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishInstall: Successfuly finished SW install for job %s", this, jobDataIdentifier->loggingString().utf8().data());
-    else
-        RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::didFinishInstall: Failed SW install for job %s", this, jobDataIdentifier->loggingString().utf8().data());
 
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
         jobQueue->didFinishInstall(*jobDataIdentifier, worker, wasSuccessful);
@@ -793,10 +790,11 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
 {
     auto* contextConnection = worker.contextConnection();
     if (!contextConnection) {
-        LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
+        RELEASE_LOG_ERROR(ServiceWorker, "Request to fire install event on a worker whose context connection does not exist");
         return;
     }
 
+    RELEASE_LOG(ServiceWorker, "%p - SWServer::fireInstallEvent on worker %llu", this, worker.identifier().toUInt64());
     contextConnection->fireInstallEvent(worker.identifier());
 }
 
@@ -804,10 +802,11 @@ void SWServer::fireActivateEvent(SWServerWorker& worker)
 {
     auto* contextConnection = worker.contextConnection();
     if (!contextConnection) {
-        LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
+        RELEASE_LOG_ERROR(ServiceWorker, "Request to fire activate event on a worker whose context connection does not exist");
         return;
     }
 
+    RELEASE_LOG(ServiceWorker, "%p - SWServer::fireActivateEvent on worker %llu", this, worker.identifier().toUInt64());
     contextConnection->fireActivateEvent(worker.identifier());
 }
 
