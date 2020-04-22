@@ -1,3 +1,18 @@
+2020-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update dom/events/Event-dispatch-redispatch.html from upstream WPT
+        https://bugs.webkit.org/show_bug.cgi?id=210842
+        <rdar://problem/61948094>
+
+        Reviewed by Jon Lee.
+
+        Pull in https://github.com/web-platform-tests/wpt/commit/e30e282ed7b1fb77f6d953fb05ef74a34985f472
+        to our local repo.
+
+        * platform/gtk/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt:
+
 2020-04-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip imported/w3c/web-platform-tests/html/cross-origin-opener-policy since we do not support this feature.

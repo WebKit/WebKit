@@ -3,5 +3,5 @@ click me!
 PASS Redispatching DOMContentLoaded event after being dispatched 
 FAIL Redispatching mouseup event whose default action dispatches a click event assert_true: mouseup and click events should've been fired expected true got false
 PASS Redispatching event which is being dispatched 
-PASS Synthesizing click on button... (button width / height: 66.78125 / 20) 
+PASS Synthesizing click on button... 
 
