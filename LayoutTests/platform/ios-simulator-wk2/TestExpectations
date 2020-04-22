@@ -89,8 +89,6 @@ webkit.org/b/207515 http/wpt/service-workers/service-worker-spinning-fetch.https
 
 webkit.org/b/208036 http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Pass Failure ]
 
-webkit.org/b/208837 [ Release ] fast/css-custom-paint/constructor.html [ Pass Timeout ]
-
 webkit.org/b/208840 editing/selection/selection-change-in-mutation-event-by-remove-children.html [ Pass Timeout ]
 
 webkit.org/b/209234 [ Release ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ]
