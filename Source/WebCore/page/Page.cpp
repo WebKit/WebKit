@@ -1340,7 +1340,8 @@ void Page::updateRendering()
         if (!document.domWindow())
             return;
         DOMHighResTimeStamp timestamp = document.domWindow()->nowTimestamp();
-        document.updateAnimationsAndSendEvents(timestamp);
+        if (auto* timelinesController = document.timelinesController())
+            timelinesController->updateAnimationsAndSendEvents(timestamp);
         // FIXME: Run the fullscreen steps.
         document.serviceRequestAnimationFrameCallbacks(timestamp);
     });

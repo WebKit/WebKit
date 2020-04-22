@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AnimationEventBase;
+class DocumentTimelinesController;
 class RenderElement;
 
 class DocumentTimeline final : public AnimationTimeline
@@ -87,6 +88,7 @@ public:
 private:
     DocumentTimeline(Document&, Seconds);
 
+    DocumentTimelinesController* controller() const;
     DOMHighResTimeStamp liveCurrentTime() const;
     void applyPendingAcceleratedAnimations();
     void cacheCurrentTime(DOMHighResTimeStamp);

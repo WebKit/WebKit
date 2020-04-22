@@ -32,6 +32,7 @@
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
 #include "DocumentIdentifier.h"
+#include "DocumentTimelinesController.h"
 #include "DocumentTiming.h"
 #include "ElementIdentifier.h"
 #include "FocusDirection.h"
@@ -1079,7 +1080,6 @@ public:
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
 
-    void updateAnimationsAndSendEvents(DOMHighResTimeStamp);
     void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp);
 
     void windowScreenDidChange(PlatformDisplayID);
@@ -1487,12 +1487,12 @@ public:
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
-    void addTimeline(DocumentTimeline&);
-    void removeTimeline(DocumentTimeline&);
     WEBCORE_EXPORT DocumentTimeline& timeline();
     DocumentTimeline* existingTimeline() const { return m_timeline.get(); }
     Vector<RefPtr<WebAnimation>> getAnimations();
     Vector<RefPtr<WebAnimation>> matchingAnimations(const WTF::Function<bool(Element&)>&);
+    DocumentTimelinesController* timelinesController() const { return m_timelinesController.get(); }
+    DocumentTimelinesController& ensureTimelinesController();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&);
@@ -2071,7 +2071,7 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 
     RefPtr<DocumentTimeline> m_timeline;
-    WeakHashSet<DocumentTimeline> m_timelines;
+    std::unique_ptr<DocumentTimelinesController> m_timelinesController;
 
     DocumentIdentifier m_identifier;
 

@@ -180,6 +180,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     animation/CSSPropertyBlendingClient.h
     animation/CompositeOperation.h
+    animation/DocumentTimelinesController.h
     animation/EffectTiming.h
     animation/FillMode.h
     animation/GetAnimationsOptions.h

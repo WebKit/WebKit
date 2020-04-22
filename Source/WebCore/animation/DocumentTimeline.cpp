@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "DocumentTimelinesController.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
@@ -67,7 +68,8 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     , m_document(makeWeakPtr(document))
     , m_originTime(originTime)
 {
-    document.addTimeline(*this);
+    if (auto* controller = this->controller())
+        controller->addTimeline(*this);
     if (auto* page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
             suspendAnimations();
@@ -76,15 +78,22 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
 
 DocumentTimeline::~DocumentTimeline()
 {
+    if (auto* controller = this->controller())
+        controller->removeTimeline(*this);
+}
+
+DocumentTimelinesController* DocumentTimeline::controller() const
+{
     if (m_document)
-        m_document->removeTimeline(*this);
+        return &m_document->ensureTimelinesController();
+    return nullptr;
 }
 
 void DocumentTimeline::detachFromDocument()
 {
     Ref<DocumentTimeline> protectedThis(*this);
-    if (m_document)
-        m_document->removeTimeline(*this);
+    if (auto* controller = this->controller())
+        controller->removeTimeline(*this);
 
     m_pendingAnimationEvents.clear();
     m_currentTimeClearingTaskQueue.close();

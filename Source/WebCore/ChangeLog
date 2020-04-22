@@ -1,3 +1,44 @@
+2020-04-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add a supporting object for Document to manage timelines
+        https://bugs.webkit.org/show_bug.cgi?id=210817
+
+        Reviewed by Dean Jackson.
+
+        Add a new DocumentTimelinesController object owned by Document to manage DocumentTimelines created for it. This simple piece of refactoring is the first
+        step towards a coordinated "update animations and send events" procedure where all timelines are updated at once with a single microtask checkpoint instead
+        of each timeline running one.
+
+        No change in behavior, so no new tests.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::~DocumentTimeline):
+        (WebCore::DocumentTimeline::controller const):
+        (WebCore::DocumentTimeline::detachFromDocument):
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimelinesController.cpp: Added.
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::~DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::addTimeline):
+        (WebCore::DocumentTimelinesController::removeTimeline):
+        (WebCore::DocumentTimelinesController::detachFromDocument):
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * animation/DocumentTimelinesController.h: Added.
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        (WebCore::Document::ensureTimelinesController):
+        (WebCore::Document::updateAnimationsAndSendEvents): Deleted.
+        (WebCore::Document::addTimeline): Deleted.
+        (WebCore::Document::removeTimeline): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::timelinesController const):
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+
 2020-04-21  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION (r254790): No longer get smooth scrolling on music.apple.com

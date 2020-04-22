@@ -62,6 +62,7 @@
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
+#include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "DragEvent.h"
 #include "Editing.h"
@@ -799,8 +800,9 @@ void Document::commonTeardown()
 
     m_pendingScrollEventTargetList = nullptr;
 
-    while (!m_timelines.computesEmpty())
-        m_timelines.begin()->detachFromDocument();
+    if (m_timelinesController)
+        m_timelinesController->detachFromDocument();
+
     m_timeline = nullptr;
 }
 
@@ -6369,26 +6371,6 @@ void Document::resumeScriptedAnimationControllerCallbacks()
         m_scriptedAnimationController->resume();
 }
 
-void Document::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
-{
-    ASSERT(!m_timelines.hasNullReferences());
-
-    // We need to copy m_timelines before iterating over its members since calling updateAnimationsAndSendEvents() may mutate m_timelines.
-    Vector<RefPtr<DocumentTimeline>> timelines;
-    bool shouldUpdateAnimations = false;
-    for (auto& timeline : m_timelines) {
-        if (!shouldUpdateAnimations && timeline.scheduledUpdate())
-            shouldUpdateAnimations = true;
-        timelines.append(&timeline);
-    }
-
-    for (auto& timeline : timelines) {
-        timeline->updateCurrentTime(timestamp);
-        if (shouldUpdateAnimations)
-            timeline->updateAnimationsAndSendEvents();
-    }
-}
-
 void Document::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
 {
     if (m_scriptedAnimationController)
@@ -8095,14 +8077,11 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     m_consoleMessageListener = listener;
 }
 
-void Document::addTimeline(DocumentTimeline& timeline)
+DocumentTimelinesController& Document::ensureTimelinesController()
 {
-    m_timelines.add(timeline);
-}
-
-void Document::removeTimeline(DocumentTimeline& timeline)
-{
-    m_timelines.remove(timeline);
+    if (!m_timelinesController)
+        m_timelinesController = makeUnique<DocumentTimelinesController>();
+    return *m_timelinesController.get();
 }
 
 DocumentTimeline& Document::timeline()

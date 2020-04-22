@@ -480,6 +480,7 @@ animation/CSSAnimation.cpp
 animation/CSSTransition.cpp
 animation/DeclarativeAnimation.cpp
 animation/DocumentTimeline.cpp
+animation/DocumentTimelinesController.cpp
 animation/ElementAnimationRareData.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
