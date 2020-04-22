@@ -30,6 +30,7 @@
 
 #include "FloatPoint.h"
 #include "GtkUtilities.h"
+#include "GtkVersioning.h"
 #include "PlatformKeyboardEvent.h"
 #include "Scrollbar.h"
 #include <gdk/gdk.h>
@@ -47,11 +48,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_type = PlatformEvent::Wheel;
     m_timestamp = wallTimeForEvent(event);
 
-#if USE(GTK4)
-    state = gdk_event_get_modifier_state(reinterpret_cast<GdkEvent*>(event));
-#else
     gdk_event_get_state(reinterpret_cast<GdkEvent*>(event), &state);
-#endif
 
     if (state & GDK_SHIFT_MASK)
         m_modifiers.add(Modifier::ShiftKey);
@@ -68,15 +65,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_deltaY = 0;
     GdkScrollDirection direction;
 
-#if USE(GTK4)
-    direction = gdk_scroll_event_get_direction(reinterpret_cast<GdkEvent*>(event));
-    if (direction == GDK_SCROLL_SMOOTH) {
-        double deltaX, deltaY;
-        gdk_scroll_event_get_deltas(reinterpret_cast<GdkEvent*>(event), &deltaX, &deltaY);
-        m_deltaX = -deltaX;
-        m_deltaY = -deltaY;
-    }
-#else
     if (!gdk_event_get_scroll_direction(reinterpret_cast<GdkEvent*>(event), &direction)) {
         direction = GDK_SCROLL_SMOOTH;
         gdouble deltaX, deltaY;
@@ -85,7 +73,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
             m_deltaY = -deltaY;
         }
     }
-#endif
 
     // Docs say an upwards scroll (away from the user) has a positive delta
     if (!m_deltaX && !m_deltaY) {
@@ -112,26 +99,13 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksY = m_deltaY;
 
 #if ENABLE(KINETIC_SCROLLING)
-#if USE(GTK4)
-    const auto isStopEvent = gdk_scroll_event_is_stop(reinterpret_cast<GdkEvent*>(event));
-#else
     const auto isStopEvent = gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event));
-#endif
     m_phase = isStopEvent ?  PlatformWheelEventPhaseEnded : PlatformWheelEventPhaseChanged;
 #endif // ENABLE(KINETIC_SCROLLING)
 
     gdouble x, y, rootX, rootY;
-#if USE(GTK4)
-    gdk_event_get_position(reinterpret_cast<GdkEvent*>(event), &x, &y);
-    // GTK4 does not provide a way of obtaining screen-relative event coordinates, and even
-    // on Wayland GTK3 cannot know where a surface is and will return the surface-relative
-    // coordinates anyway, so do the same here.
-    rootX = x;
-    rootY = y;
-#else
     gdk_event_get_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);
     gdk_event_get_root_coords(reinterpret_cast<GdkEvent*>(event), &rootX, &rootY);
-#endif
 
     m_position = IntPoint(static_cast<int>(x), static_cast<int>(y));
     m_globalPosition = IntPoint(static_cast<int>(rootX), static_cast<int>(rootY));

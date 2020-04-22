@@ -1,3 +1,12 @@
+2020-04-22  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Several fixes to GdkEvent APIs for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=210856
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/glib/GTypedefs.h: In GTK4 GdkEvent is a struct.
+
 2020-04-21  Peng Liu  <peng.liu6@apple.com>
 
         Fix MACCATALYST build failures

@@ -1342,13 +1342,21 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
+#if USE(GTK4)
+    return gdk_device_get_caps_lock_state(gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_display_get_default())));
+#else
     return gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()));
+#endif
 }
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
 {
     GdkModifierType state;
+#if USE(GTK4)
+    state = static_cast<GdkModifierType>(0);
+#else
     gtk_get_current_event_state(&state);
+#endif
 
     shiftKey = state & GDK_SHIFT_MASK;
     ctrlKey = state & GDK_CONTROL_MASK;
@@ -1370,7 +1378,11 @@ bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
     if (!initialized) {
         GUniqueOutPtr<GdkKeymapKey> keys;
         int entriesCount;
+#if USE(GTK4)
+        lockMaskIsCapsLock = gdk_display_map_keyval(gdk_display_get_default(), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
+#else
         lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(gdk_display_get_default()), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
+#endif
     }
     return lockMaskIsCapsLock;
 }

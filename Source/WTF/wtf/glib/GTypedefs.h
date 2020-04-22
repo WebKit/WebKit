@@ -63,7 +63,11 @@ typedef struct _GVariant GVariant;
 typedef struct _GVariantBuilder GVariantBuilder;
 typedef struct _GVariantIter GVariantIter;
 typedef struct _GVariantType GVariantType;
+#if USE(GTK4)
+typedef struct _GdkEvent GdkEvent;
+#else
 typedef union _GdkEvent GdkEvent;
+#endif
 typedef struct _GTimer GTimer;
 typedef struct _GKeyFile GKeyFile;
 typedef struct _GPtrArray GPtrArray;

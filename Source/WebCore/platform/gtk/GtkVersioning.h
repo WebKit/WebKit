@@ -57,10 +57,59 @@ gtk_init_check(int*, char***)
     return gtk_init_check();
 }
 
-static inline GdkKeymap*
-gdk_keymap_get_for_display(GdkDisplay *display)
+#define GDK_MOD1_MASK GDK_ALT_MASK
+
+static inline gboolean
+gdk_event_get_state(GdkEvent *event, GdkModifierType *state)
 {
-    return gdk_display_get_keymap(display);
+    *state = gdk_event_get_modifier_state(event);
+    // The GTK3 method returns TRUE if there is a state, otherwise
+    // FALSE.
+    return !!*state;
 }
 
+static inline gboolean
+gdk_event_get_coords(GdkEvent *event, double *x, double *y)
+{
+    return gdk_event_get_position(event, x, y);
+}
+
+static inline gboolean
+gdk_event_get_root_coords(GdkEvent *event, double *x, double *y)
+{
+    // GTK4 does not provide a way of obtaining screen-relative event coordinates, and even
+    // on Wayland GTK3 cannot know where a surface is and will return the surface-relative
+    // coordinates anyway, so do the same here.
+    return gdk_event_get_position(event, x, y);
+}
+
+static inline gboolean
+gdk_event_is_scroll_stop_event(GdkEvent* event)
+{
+    return gdk_scroll_event_is_stop(event);
+}
+
+static inline gboolean
+gdk_event_get_scroll_direction(GdkEvent* event, GdkScrollDirection* direction)
+{
+    *direction = gdk_scroll_event_get_direction(event);
+    // The GTK3 method returns TRUE if the scroll direction is not
+    // GDK_SCROLL_SMOOTH, so do the same here.
+    return *direction != GDK_SCROLL_SMOOTH;
+}
+
+static inline gboolean
+gdk_event_get_scroll_deltas(GdkEvent* event, gdouble *x, gdouble *y)
+{
+    gdk_scroll_event_get_deltas(event, x, y);
+    // The GTK3 method returns TRUE if the event is a smooth scroll
+    // event, so do the same here.
+    return gdk_scroll_event_get_direction(event) == GDK_SCROLL_SMOOTH;
+}
+
+static inline gboolean
+gdk_event_get_button(GdkEvent* event)
+{
+    return gdk_button_event_get_button(event);
+}
 #endif // USE(GTK4)
