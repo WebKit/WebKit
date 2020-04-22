@@ -64,6 +64,7 @@ function finishTest() {
 }
 
 function onVisibilityChange() {
+    shouldBeTrue("event.bubbles");
     if (numVisibilityChanges == 1) {
         checkIsPageHidden();
         numVisibilityChanges++;

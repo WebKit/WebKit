@@ -1,3 +1,21 @@
+2020-04-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        The visibilitychange event should bubble
+        https://bugs.webkit.org/show_bug.cgi?id=210829
+
+        Reviewed by Darin Adler.
+
+        This change makes `visibilitychange` event bubble as per spec [1], aligning WebKit
+        with Blink and Gecko. Also fixes broken spec link to `visibilityState` attribute.
+
+        [1] https://w3c.github.io/page-visibility/#dfn-now-visible-algorithm (step 2)
+
+        Test: fast/events/page-visibility-transition-test.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::visibilityState const):
+
 2020-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Composited layers are misplaced inside RTL overflow scroller with visible scrollbar

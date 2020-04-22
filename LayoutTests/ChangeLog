@@ -1,3 +1,13 @@
+2020-04-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        The visibilitychange event should bubble
+        https://bugs.webkit.org/show_bug.cgi?id=210829
+
+        Reviewed by Darin Adler.
+
+        * fast/events/page-visibility-transition-test-expected.txt:
+        * fast/events/page-visibility-transition-test.html:
+
 2020-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Composited layers are misplaced inside RTL overflow scroller with visible scrollbar

@@ -6,12 +6,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS document.visibilityState is "visible"
 PASS document.hidden is false
 PASS internals.scriptedAnimationsAreSuspended is false
+PASS event.bubbles is true
 PASS document.visibilityState is "hidden"
 PASS document.hidden is true
 PASS internals.scriptedAnimationsAreSuspended is true
 PASS document.visibilityState is "hidden"
 PASS document.hidden is true
 PASS internals.scriptedAnimationsAreSuspended is true
+PASS event.bubbles is true
 PASS document.visibilityState is "visible"
 PASS document.hidden is false
 PASS internals.scriptedAnimationsAreSuspended is false
