@@ -1,25 +1,26 @@
-set(WEBKIT_TESTRUNNER_DIR "${TOOLS_DIR}/WebKitTestRunner")
-set(WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR "${TOOLS_DIR}/WebKitTestRunner/InjectedBundle")
-set(WEBKIT_TESTRUNNER_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
-set(WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR "${WEBKIT_TESTRUNNER_SHARED_DIR}/UIScriptContext")
-set(WEBKIT_TESTRUNNER_BINDINGS_DIR "${WEBKIT_TESTRUNNER_SHARED_DIR}/Bindings")
+set(WebKitTestRunner_DIR "${TOOLS_DIR}/WebKitTestRunner")
+set(WebKitTestRunner_SHARED_DIR "${TOOLS_DIR}/TestRunnerShared/")
+set(WebKitTestRunner_UISCRIPTCONTEXT_DIR "${WebKitTestRunner_SHARED_DIR}/UIScriptContext")
+set(WebKitTestRunner_BINDINGS_DIR "${WebKitTestRunner_SHARED_DIR}/Bindings")
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/InjectedBundle)
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/UIScriptContext)
+file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle)
+file(MAKE_DIRECTORY ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext)
 
 set(WebKitTestRunner_SOURCES
-    ${WEBKIT_TESTRUNNER_DIR}/CyclicRedundancyCheck.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/GeolocationProviderMock.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/Options.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/PixelDumpSupport.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/TestController.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/TestInvocation.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/TestOptions.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/WebNotificationProvider.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/WorkQueueManager.cpp
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
+    ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
+
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+
+    CyclicRedundancyCheck.cpp
+    GeolocationProviderMock.cpp
+    Options.cpp
+    PixelDumpSupport.cpp
+    TestController.cpp
+    TestInvocation.cpp
+    TestOptions.cpp
+    WebNotificationProvider.cpp
+    WorkQueueManager.cpp
 )
 
 set(WebKitTestRunner_LIBRARIES
@@ -29,100 +30,103 @@ set(WebKitTestRunner_LIBRARIES
 )
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
-    ${WEBKIT_TESTRUNNER_DIR}
-    ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle
-    ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/Bindings
-    ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/atk
-    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}
-    ${WEBCORE_DIR}/testing/js
-    ${WEBKIT_DIR}/Platform/IPC
-    ${WEBKIT_DIR}/Shared
-    ${WEBKIT_DIR}/Shared/API/c
-    ${WEBKIT_DIR}/Shared/Plugins
-    ${WEBKIT_DIR}/UIProcess
-    ${WEBKIT_DIR}/UIProcess/API/C/soup
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c
-    ${DERIVED_SOURCES_DIR}/InjectedBundle
-    ${DERIVED_SOURCES_DIR}/UIScriptContext
-    ${CMAKE_SOURCE_DIR}/Source
+    ${CMAKE_BINARY_DIR}
+    ${WebKitTestRunner_BINDINGS_DIR}
+    ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
+    ${WebKitTestRunner_DIR}
+    ${WebKitTestRunner_UISCRIPTCONTEXT_DIR}
 )
 
-set(WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
-    ${LIBSOUP_INCLUDE_DIRS}
+list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
+    ${WEBCORE_DIR}/testing/js
+)
+
+list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
+    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 set(WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/AccessibilityController.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/AccessibilityTextMarker.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/AccessibilityTextMarkerRange.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/AccessibilityUIElement.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/EventSendingController.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/GCController.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/InjectedBundle.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/InjectedBundleMain.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/InjectedBundlePage.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/TestRunner.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/TextInputController.cpp
+    ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp
 
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
+    InjectedBundle/AccessibilityController.cpp
+    InjectedBundle/AccessibilityTextMarker.cpp
+    InjectedBundle/AccessibilityTextMarkerRange.cpp
+    InjectedBundle/AccessibilityUIElement.cpp
+    InjectedBundle/EventSendingController.cpp
+    InjectedBundle/GCController.cpp
+    InjectedBundle/InjectedBundle.cpp
+    InjectedBundle/InjectedBundleMain.cpp
+    InjectedBundle/InjectedBundlePage.cpp
+    InjectedBundle/TestRunner.cpp
+    InjectedBundle/TextInputController.cpp
+)
+
+set(WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${WebKitTestRunner_BINDINGS_DIR}
+    ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
+    ${WebKitTestRunner_DIR}
+    ${WebKitTestRunner_DIR}/InjectedBundle
+)
+
+list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+)
+
+set(WebKitTestRunnerInjectedBundle_LIBRARIES
+    WebKit::WebCoreTestSupport
+    WebKit::WebKit
 )
 
 set(WebKitTestRunnerInjectedBundle_IDL_FILES
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/AccessibilityController.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/AccessibilityTextMarker.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/AccessibilityTextMarkerRange.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/AccessibilityUIElement.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/EventSendingController.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/GCController.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/TestRunner.idl"
-    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/TextInputController.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityController.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityTextMarker.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityTextMarkerRange.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityUIElement.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/EventSendingController.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/GCController.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/TestRunner.idl"
+    "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/TextInputController.idl"
 )
 
 set(WebKitTestRunner_IDL_FILES
-    "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
+    "${WebKitTestRunner_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
+)
+
+set(WebKitTestRunner_DEPENDENCIES
+    TestRunnerInjectedBundle
+    WebKitTestRunnerBindings
 )
 
 GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
     OUTPUT_SOURCE WebKitTestRunnerInjectedBundle_SOURCES
     INPUT_FILES ${WebKitTestRunnerInjectedBundle_IDL_FILES}
-    BASE_DIR ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
-    IDL_INCLUDES ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
+    BASE_DIR ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
+    IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
-    DESTINATION ${DERIVED_SOURCES_DIR}/InjectedBundle
+    DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     GENERATOR TestRunner)
 
 GENERATE_BINDINGS(WebKitTestRunnerBindings
     OUTPUT_SOURCE WebKitTestRunner_SOURCES
     INPUT_FILES ${WebKitTestRunner_IDL_FILES}
-    BASE_DIR ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
-    IDL_INCLUDES ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
+    BASE_DIR ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
+    IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
-    DESTINATION ${DERIVED_SOURCES_DIR}/UIScriptContext
+    DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
     GENERATOR TestRunner)
 
+WEBKIT_EXECUTABLE_DECLARE(WebKitTestRunner)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-include_directories(${WebKitTestRunner_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES})
-
 add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
-target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunnerInjectedBundle_LIBRARIES})
+target_include_directories(TestRunnerInjectedBundle PRIVATE ${WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES})
+target_link_libraries(TestRunnerInjectedBundle PRIVATE ${WebKitTestRunnerInjectedBundle_LIBRARIES})
 add_dependencies(TestRunnerInjectedBundle WebKitTestRunnerInjectedBundleBindings)
 
-add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
-target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
-add_dependencies(WebKitTestRunner WebKitTestRunnerBindings)
+WEBKIT_EXECUTABLE(WebKitTestRunner)
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestRunnerInjectedBundle -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitTestRunner -Wno-unused-parameter)
-endif ()
-
-if (WIN32)
-    add_dependencies(WebKitTestRunnerLib WebKitTestRunnerBindings)
-    add_dependencies(WebKitTestRunner WebKitTestRunnerLib)
-elseif (NOT APPLE)
-    add_dependencies(WebKit ${ForwardingHeadersForWebKitTestRunner_NAME})
 endif ()

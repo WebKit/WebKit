@@ -1,74 +1,46 @@
-set(WebKitTestRunnerLib_SOURCES
-    ${WebKitTestRunner_SOURCES}
-    ${WEBKIT_TESTRUNNER_DIR}/win/TestInvocationDirect2D.cpp
+list(APPEND WebKitTestRunner_SOURCES
     win/EventSenderProxyWin.cpp
     win/PlatformWebViewWin.cpp
     win/TestControllerWin.cpp
+    win/TestInvocationDirect2D.cpp
+    win/UIScriptControllerWin.cpp
     win/main.cpp
 )
 
-set(WebKitTestRunner_SOURCES
-    ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+set(wrapper_DEFINITIONS
+    USE_CONSOLE_ENTRY_POINT
+    WIN_CAIRO
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/ActivateFontsWin.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/InjectedBundleWin.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/TestRunnerWin.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/AccessibilityControllerWin.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win/AccessibilityUIElementWin.cpp
+    InjectedBundle/win/AccessibilityControllerWin.cpp
+    InjectedBundle/win/AccessibilityUIElementWin.cpp
+    InjectedBundle/win/ActivateFontsWin.cpp
+    InjectedBundle/win/InjectedBundleWin.cpp
+    InjectedBundle/win/TestRunnerWin.cpp
 )
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
-    win
-    ${FORWARDING_HEADERS_DIR}
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/win
+    ${WebKitTestRunner_DIR}/InjectedBundle/win
 )
 
-set(WebKitTestRunnerLib_LIBRARIES
-    ${WebKitTestRunner_LIBRARIES}
+list(APPEND WebKitTestRunner_LIBRARIES
     Comsuppw
     Oleacc
 )
 
-list(APPEND WebKitTestRunner_LIBRARIES
-    WebKit
-)
-
-set(WebKitTestRunnerInjectedBundle_LIBRARIES
-    WebCoreTestSupport
-    WebKit
-)
-
-list(REMOVE_ITEM
-    WebKitTestRunnerLib_SOURCES
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
-)
-list(REMOVE_ITEM
-    WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
-)
-
-WEBKIT_ADD_PRECOMPILED_HEADER(WebKitTestRunnerPrefix.h
-    ${WEBKIT_TESTRUNNER_DIR}/win/WebKitTestRunnerPrefix.cpp
-    WebKitTestRunnerLib_SOURCES
-)
-
-list(APPEND
-    WebKitTestRunnerLib_SOURCES
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
-)
-list(APPEND
-    WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_BINDINGS_DIR}/JSWrapper.cpp
-)
-
+# Add precompiled header
+# JSWrapper.cpp is shared between the test runner and injected bundle so it can't be
+# present in the list of sources when the macro is invoked. Remove it, create the precompiled
+# header, and add it back to work around this.
+list(REMOVE_ITEM WebKitTestRunner_SOURCES ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp)
+WEBKIT_ADD_PRECOMPILED_HEADER("WebKitTestRunnerPrefix.h" "win/WebKitTestRunnerPrefix.cpp" WebKitTestRunner_SOURCES)
+list(APPEND WebKitTestRunner_SOURCES ${WebKitTestRunner_BINDINGS_DIR}/JSWrapper.cpp)
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
-add_library(WebKitTestRunnerLib SHARED ${WebKitTestRunnerLib_SOURCES})
-target_link_libraries(WebKitTestRunnerLib ${WebKitTestRunnerLib_LIBRARIES})
 
-add_definitions(
-    -DUSE_CONSOLE_ENTRY_POINT
-    -D_UNICODE
+WEBKIT_WRAP_EXECUTABLE(WebKitTestRunner
+    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    LIBRARIES shlwapi
 )
+target_compile_definitions(WebKitTestRunner PRIVATE ${wrapper_DEFINITIONS})

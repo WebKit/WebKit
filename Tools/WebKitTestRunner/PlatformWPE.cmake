@@ -1,21 +1,19 @@
 add_custom_target(WebKitTestRunner-forwarding-headers
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_TESTRUNNER_DIR} --output ${FORWARDING_HEADERS_DIR} --platform wpe
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WebKitTestRunner_DIR} --output ${FORWARDING_HEADERS_DIR} --platform wpe
 )
-
-set(ForwardingHeadersForWebKitTestRunner_NAME WebKitTestRunner-forwarding-headers)
+list(APPEND WebKitTestRunner_DEPENDENCIES WebKitTestRunner-forwarding-headers)
 
 list(APPEND WebKitTestRunner_SOURCES
-    ${WEBKIT_TESTRUNNER_DIR}/cairo/TestInvocationCairo.cpp
+    cairo/TestInvocationCairo.cpp
 
-    ${WEBKIT_TESTRUNNER_DIR}/wpe/EventSenderProxyWPE.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/wpe/PlatformWebViewWPE.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/wpe/TestControllerWPE.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/wpe/UIScriptControllerWPE.cpp
-    ${WEBKIT_TESTRUNNER_DIR}/wpe/main.cpp
+    wpe/EventSenderProxyWPE.cpp
+    wpe/PlatformWebViewWPE.cpp
+    wpe/TestControllerWPE.cpp
+    wpe/UIScriptControllerWPE.cpp
+    wpe/main.cpp
 )
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
-    ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/wpe
     ${FORWARDING_HEADERS_DIR}
     ${TOOLS_DIR}/wpe/backends
 )
@@ -28,27 +26,34 @@ list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
-    Cairo::Cairo
     ${GLIB_LIBRARIES}
     ${LIBXKBCOMMON_LIBRARIES}
     ${WPEBACKEND_FDO_LIBRARIES}
+    Cairo::Cairo
     WPEToolingBackends
 )
 
-set(WebKitTestRunnerInjectedBundle_LIBRARIES
-    Cairo::Cairo
+list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
+    ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
-    WebCoreTestSupport
-    WebKit
+    Cairo::Cairo
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityControllerAtk.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityNotificationHandlerAtk.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityUIElementAtk.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/wpe/ActivateFontsWPE.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/wpe/InjectedBundleWPE.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/wpe/TestRunnerWPE.cpp
+    InjectedBundle/atk/AccessibilityControllerAtk.cpp
+    InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp
+    InjectedBundle/atk/AccessibilityUIElementAtk.cpp
+
+    InjectedBundle/wpe/ActivateFontsWPE.cpp
+    InjectedBundle/wpe/InjectedBundleWPE.cpp
+    InjectedBundle/wpe/TestRunnerWPE.cpp
+)
+
+list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+    ${ATK_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
+    ${WebKitTestRunner_DIR}/InjectedBundle/atk
+    ${WebKitTestRunner_DIR}/InjectedBundle/wpe
 )
 
 add_definitions(
