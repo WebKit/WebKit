@@ -543,7 +543,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // FIXME: this use of binaryUseKind means that we cannot specialize to (for example) a HeapBigInt left-operand and a BigInt32 right-operand.
         if (node->binaryUseKind() == BigInt32Use) {
 #if USE(BIGINT32)
-            setTypeForNode(node, SpecBigInt32);
+            // FIXME: We should have inlined implementation that always returns BigInt32.
+            // https://bugs.webkit.org/show_bug.cgi?id=210847
+            setTypeForNode(node, SpecBigInt);
 #else
             RELEASE_ASSERT_NOT_REACHED();
 #endif

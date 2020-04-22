@@ -3416,6 +3416,7 @@ private:
             // FIXME: do something smarter here
             // Things are a bit tricky because a right-shift by a negative number is a left-shift for BigInts.
             // So even a right shift can overflow.
+            // https://bugs.webkit.org/show_bug.cgi?id=210847
 
             LValue left = lowJSValue(m_node->child1(), ManualOperandSpeculation);
             LValue right = lowJSValue(m_node->child2(), ManualOperandSpeculation);
@@ -7551,7 +7552,7 @@ private:
             // notNumber case.
             LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
 #if USE(BIGINT32)
-            m_out.branch(isBigInt32(value, provenType(m_node->child1())), unsure(continuation), unsure(notBigInt32));
+            m_out.branch(isBigInt32KnownNotNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notBigInt32));
             m_out.appendTo(notBigInt32);
 #endif
             m_out.branch(isCell(value, provenType(m_node->child1())), unsure(isCellPath), unsure(slowPath));
@@ -8716,19 +8717,22 @@ private:
             LBasicBlock rightIsNotBigInt32 = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
+            FTL_TYPE_CHECK(jsValueValue(left), m_node->child1(), ~SpecFullNumber, isNumber(left));
+            FTL_TYPE_CHECK(jsValueValue(right), m_node->child2(), ~SpecFullNumber, isNumber(right));
+
             // Inserts a check that a value is a HeapBigInt, assuming only that we know it is not a BigInt32
             auto checkIsHeapBigInt = [&](LValue lowValue, Edge highValue) {
                 if (m_interpreter.needsTypeCheck(highValue, SpecHeapBigInt)) {
                     ASSERT(mayHaveTypeCheck(highValue.useKind()));
-                    LValue checkFailed = isNotHeapBigIntUnknownWhetherCell(lowValue, ~SpecBigInt32);
+                    LValue checkFailed = isNotHeapBigIntUnknownWhetherCell(lowValue, provenType(highValue) & ~SpecBigInt32);
                     appendOSRExit(BadType, jsValueValue(lowValue), highValue.node(), checkFailed, m_origin);
                 }
             };
 
-            m_out.branch(isBigInt32(left, provenType(m_node->child1())), unsure(leftIsBigInt32), unsure(leftIsNotBigInt32));
+            m_out.branch(isBigInt32KnownNotNumber(left, provenType(m_node->child1())), unsure(leftIsBigInt32), unsure(leftIsNotBigInt32));
 
             LBasicBlock lastNext = m_out.appendTo(leftIsBigInt32, bothAreBigInt32);
-            m_out.branch(isBigInt32(right, provenType(m_node->child2())), unsure(bothAreBigInt32), unsure(onlyLeftIsBigInt32));
+            m_out.branch(isBigInt32KnownNotNumber(right, provenType(m_node->child2())), unsure(bothAreBigInt32), unsure(onlyLeftIsBigInt32));
 
             m_out.appendTo(bothAreBigInt32, onlyLeftIsBigInt32);
             ValueFromBlock resultBothAreBigInt32 = m_out.anchor(m_out.equal(left, right));
@@ -8749,7 +8753,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(leftIsHeapBigInt, rightIsBigInt32);
-            m_out.branch(isBigInt32(right, provenType(m_node->child2())), unsure(rightIsBigInt32), unsure(rightIsNotBigInt32));
+            m_out.branch(isBigInt32KnownNotNumber(right, provenType(m_node->child2())), unsure(rightIsBigInt32), unsure(rightIsNotBigInt32));
 
             m_out.appendTo(rightIsBigInt32, rightIsNotBigInt32);
             LValue unboxedRight = unboxBigInt32(right);
@@ -10922,7 +10926,7 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(isNotCellCase, isCellCase);
         // FIXME: we should filter the provenType to include the fact that we know we are not dealing with a cell
-        ValueFromBlock notCellResult = m_out.anchor(isBigInt32(value, provenType(m_node->child1())));
+        ValueFromBlock notCellResult = m_out.anchor(isBigInt32KnownNotCell(value, provenType(m_node->child1())));
         m_out.jump(continuation);
 
         m_out.appendTo(isCellCase, continuation);
@@ -15465,7 +15469,7 @@ private:
 #if USE(BIGINT32)
             m_out.appendTo(notDoubleCase, bigInt32Case);
             m_out.branch(
-                isBigInt32(value, provenType(edge) & ~SpecCell),
+                isBigInt32KnownNotNumber(value, provenType(edge) & ~SpecCell),
                 unsure(bigInt32Case), unsure(notBigInt32Case));
 
             m_out.appendTo(bigInt32Case, notBigInt32Case);
@@ -16191,7 +16195,7 @@ private:
 
 #if USE(BIGINT32)
         m_out.appendTo(notNumberCase, notBigInt32Case);
-        m_out.branch(isBigInt32(value, provenType(child) & ~SpecCell), unsure(bigIntCase), unsure(notBigInt32Case));
+        m_out.branch(isBigInt32KnownNotNumber(value, provenType(child) & ~SpecCell), unsure(bigIntCase), unsure(notBigInt32Case));
 
         m_out.appendTo(notBigInt32Case, notNullCase);
 #else
@@ -16911,7 +16915,8 @@ private:
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
         if (isValid(value)) {
             LValue result = value.value();
-            FTL_TYPE_CHECK(jsValueValue(result), edge, SpecBigInt32, isNotBigInt32(result));
+            FTL_TYPE_CHECK(jsValueValue(result), edge, ~SpecFullNumber, isNumber(result));
+            FTL_TYPE_CHECK(jsValueValue(result), edge, SpecBigInt32, isNotBigInt32KnownNotNumber(result));
             return result;
         }
 
@@ -17108,21 +17113,23 @@ private:
     }
 
 #if USE(BIGINT32)
-    LValue isBigInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
+    LValue isBigInt32KnownNotCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, SpecBigInt32))
             return proven;
-        return m_out.equal(
-            m_out.bitAnd(jsValue, m_out.constInt64(JSValue::BigInt32Mask)),
-            m_out.constInt64(JSValue::BigInt32Tag));
+        return m_out.equal(m_out.bitAnd(jsValue, m_out.constInt64(JSValue::BigInt32Mask)), m_out.constInt64(JSValue::BigInt32Tag));
     }
-    LValue isNotBigInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
+    LValue isBigInt32KnownNotNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type, SpecBigInt32))
+            return proven;
+        return m_out.equal(m_out.bitAnd(jsValue, m_out.constInt64(JSValue::BigInt32Tag)), m_out.constInt64(JSValue::BigInt32Tag));
+    }
+    LValue isNotBigInt32KnownNotNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~SpecBigInt32))
             return proven;
-        return m_out.notEqual(
-            m_out.bitAnd(jsValue, m_out.constInt64(JSValue::BigInt32Mask)),
-            m_out.constInt64(JSValue::BigInt32Tag));
+        return m_out.notEqual(m_out.bitAnd(jsValue, m_out.constInt64(JSValue::BigInt32Tag)), m_out.constInt64(JSValue::BigInt32Tag));
     }
     LValue unboxBigInt32(LValue jsValue)
     {
@@ -17134,7 +17141,7 @@ private:
             m_out.shl(m_out.zeroExt(int32Value, B3::Int64), m_out.constInt64(16)),
             m_out.constInt64(JSValue::BigInt32Tag));
     }
-    LValue isNotAnyBigInt(LValue jsValue, SpeculatedType type = SpecFullTop)
+    LValue isNotAnyBigIntKnownNotNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, ~SpecBigInt))
             return proven;
@@ -17150,7 +17157,7 @@ private:
         LBasicBlock isCellCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isBigInt32(jsValue, type), unsure(isBigInt32Case), unsure(isNotBigInt32Case));
+        m_out.branch(isBigInt32KnownNotNumber(jsValue, type), unsure(isBigInt32Case), unsure(isNotBigInt32Case));
 
         LBasicBlock lastNext = m_out.appendTo(isBigInt32Case, isNotBigInt32Case);
         ValueFromBlock returnFalse = m_out.anchor(m_out.booleanFalse);
@@ -17687,15 +17694,15 @@ private:
         LBasicBlock isCellCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        ValueFromBlock defaultToFalse = m_out.anchor(m_out.booleanFalse);
+        ValueFromBlock defaultToTrue = m_out.anchor(m_out.booleanTrue);
         m_out.branch(isCell(value, type), unsure(isCellCase), unsure(continuation));
 
         LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock returnForCell = m_out.anchor(isHeapBigInt(value, type));
+        ValueFromBlock returnForCell = m_out.anchor(isNotHeapBigInt(value, type));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        LValue result = m_out.phi(Int32, defaultToFalse, returnForCell);
+        LValue result = m_out.phi(Int32, defaultToTrue, returnForCell);
         return result;
     }
 
@@ -18181,13 +18188,15 @@ private:
     void speculateBigInt32(Edge edge)
     {
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
-        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBigInt32, isNotBigInt32(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullNumber, isNumber(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBigInt32, isNotBigInt32KnownNotNumber(value));
     }
 
     void speculateAnyBigInt(Edge edge)
     {
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
-        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBigInt, isNotAnyBigInt(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullNumber, isNumber(value));
+        FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBigInt, isNotAnyBigIntKnownNotNumber(value));
     }
 #endif
 

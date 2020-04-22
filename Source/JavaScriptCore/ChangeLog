@@ -1,3 +1,39 @@
+2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI results of BigInt32 Bitwise shift operation does not match to runtime results
+        https://bugs.webkit.org/show_bug.cgi?id=210839
+
+        Reviewed by Saam Barati.
+
+        While runtime function of bitwise ops with BigInt32 sometimes returns HeapBigInt, DFG AI is setting SpecBigInt32
+        as a result value. This leads to miscompilation particularly in FTL since FTL uses this information to remove
+        a lot of branches.
+
+        And we found that FTL BigInt32 predicate is not correctly checking state. This patch fixes it too.
+
+        Added test case found this (v8-bigint32-sar.js).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumeric):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32KnownNotCell):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32KnownNotNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt32KnownNotNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotAnyBigIntKnownNotNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotHeapBigIntUnknownWhetherCell):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateAnyBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt32): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isNotAnyBigInt): Deleted.
+
 2020-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for watchOS
