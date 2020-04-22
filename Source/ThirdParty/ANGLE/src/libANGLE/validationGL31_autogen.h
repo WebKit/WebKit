@@ -17,13 +17,13 @@ namespace gl
 {
 class Context;
 
-bool ValidateGetActiveUniformName(const Context *context,
+bool ValidateGetActiveUniformName(Context *context,
                                   ShaderProgramID programPacked,
                                   GLuint uniformIndex,
                                   GLsizei bufSize,
-                                  const GLsizei *length,
-                                  const GLchar *uniformName);
-bool ValidatePrimitiveRestartIndex(const Context *context, GLuint index);
+                                  GLsizei *length,
+                                  GLchar *uniformName);
+bool ValidatePrimitiveRestartIndex(Context *context, GLuint index);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_GL31_AUTOGEN_H_

@@ -13,7 +13,6 @@
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
-#include "common/utilities.h"
 #include "third_party/perf/perf_test.h"
 #include "third_party/trace_event/trace_event.h"
 #include "util/shader_utils.h"
@@ -116,7 +115,10 @@ void UpdateTraceEventDuration(angle::PlatformMethods *platform,
 
 double MonotonicallyIncreasingTime(angle::PlatformMethods *platform)
 {
-    return GetHostTimeSeconds();
+    // Move the time origin to the first call to this function, to avoid generating unnecessarily
+    // large timestamps.
+    static double origin = angle::GetCurrentTime();
+    return angle::GetCurrentTime() - origin;
 }
 
 void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
@@ -138,8 +140,8 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
         value["cat"]  = traceEvent.categoryName;
         value["ph"]   = phaseName.str();
         value["ts"]   = microseconds;
-        value["pid"]  = strcmp(traceEvent.categoryName, "gpu.angle.gpu") == 0 ? "GPU" : "ANGLE";
-        value["tid"]  = 1;
+        value["pid"]  = "ANGLE";
+        value["tid"]  = strcmp(traceEvent.categoryName, "gpu.angle.gpu") == 0 ? "GPU" : "CPU";
 
         eventsValue.append(value);
     }
@@ -155,31 +157,7 @@ void DumpTraceEventsToJSONFile(const std::vector<TraceEvent> &traceEvents,
 
     outFile.close();
 }
-
-ANGLE_MAYBE_UNUSED void KHRONOS_APIENTRY DebugMessageCallback(GLenum source,
-                                                              GLenum type,
-                                                              GLuint id,
-                                                              GLenum severity,
-                                                              GLsizei length,
-                                                              const GLchar *message,
-                                                              const void *userParam)
-{
-    std::string sourceText   = gl::GetDebugMessageSourceString(source);
-    std::string typeText     = gl::GetDebugMessageTypeString(type);
-    std::string severityText = gl::GetDebugMessageSeverityString(severity);
-    std::cerr << sourceText << ", " << typeText << ", " << severityText << ": " << message << "\n";
-}
 }  // anonymous namespace
-
-TraceEvent::TraceEvent(char phaseIn,
-                       const char *categoryNameIn,
-                       const char *nameIn,
-                       double timestampIn)
-    : phase(phaseIn), categoryName(categoryNameIn), name{}, timestamp(timestampIn), tid(1)
-{
-    ASSERT(strlen(nameIn) < kMaxNameLen);
-    strcpy(name, nameIn);
-}
 
 ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
                              const std::string &backend,
@@ -219,13 +197,13 @@ void ANGLEPerfTest::run()
     }
 
     // Calibrate to a fixed number of steps during an initial set time.
-    if (gStepsToRunOverride <= 0)
+    if (!gStepsToRunOverride.valid())
     {
         doRunLoop(kCalibrationRunTimeSeconds);
 
         // Scale steps down according to the time that exeeded one second.
         double scale = kCalibrationRunTimeSeconds / mTimer.getElapsedTime();
-        mStepsToRun  = static_cast<unsigned int>(static_cast<double>(mNumStepsPerformed) * scale);
+        mStepsToRun  = static_cast<size_t>(static_cast<double>(mNumStepsPerformed) * scale);
 
         // Calibration allows the perf test runner script to save some time.
         if (gCalibration)
@@ -236,7 +214,7 @@ void ANGLEPerfTest::run()
     }
     else
     {
-        mStepsToRun = gStepsToRunOverride;
+        mStepsToRun = gStepsToRunOverride.value();
     }
 
     // Do another warmup run. Seems to consistently improve results.
@@ -343,11 +321,9 @@ std::string RenderTestParams::backend() const
         case angle::GLESDriverType::AngleEGL:
             break;
         case angle::GLESDriverType::SystemEGL:
-            strstr << "_native";
-            break;
+            return "_native";
         case angle::GLESDriverType::SystemWGL:
-            strstr << "_wgl";
-            break;
+            return "_wgl";
         default:
             assert(0);
             return "_unk";
@@ -355,8 +331,6 @@ std::string RenderTestParams::backend() const
 
     switch (getRenderer())
     {
-        case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
-            break;
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
             strstr << "_d3d11";
             break;
@@ -368,6 +342,9 @@ std::string RenderTestParams::backend() const
             break;
         case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
             strstr << "_gles";
+            break;
+        case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
+            strstr << "_default";
             break;
         case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
             strstr << "_vulkan";
@@ -401,9 +378,9 @@ ANGLERenderTest::ANGLERenderTest(const std::string &name, const RenderTestParams
                     testParams.story(),
                     OneFrame() ? 1 : testParams.iterationsPerStep),
       mTestParams(testParams),
-      mIsTimestampQueryAvailable(false),
       mGLWindow(nullptr),
-      mOSWindow(nullptr)
+      mOSWindow(nullptr),
+      mIsTimestampQueryAvailable(false)
 {
     // Force fast tests to make sure our slowest bots don't time out.
     if (OneFrame())
@@ -521,28 +498,6 @@ void ANGLERenderTest::SetUp()
         return;
     }
 
-#if defined(ANGLE_ENABLE_ASSERTS)
-    if (IsGLExtensionEnabled("GL_KHR_debug"))
-    {
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        // Enable medium and high priority messages.
-        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr,
-                                 GL_TRUE);
-        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, nullptr,
-                                 GL_TRUE);
-        // Disable low and notification priority messages.
-        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr,
-                                 GL_FALSE);
-        glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0,
-                                 nullptr, GL_FALSE);
-        // Disable medium priority performance messages to reduce spam.
-        glDebugMessageControlKHR(GL_DONT_CARE, GL_DEBUG_TYPE_PERFORMANCE, GL_DEBUG_SEVERITY_MEDIUM,
-                                 0, nullptr, GL_FALSE);
-        glDebugMessageCallbackKHR(DebugMessageCallback, this);
-    }
-#endif
-
     initializeBenchmark();
 
     if (mTestParams.iterationsPerStep == 0)
@@ -599,24 +554,6 @@ void ANGLERenderTest::endInternalTraceEvent(const char *name)
     }
 }
 
-void ANGLERenderTest::beginGLTraceEvent(const char *name, double hostTimeSec)
-{
-    if (gEnableTrace)
-    {
-        mTraceEventBuffer.emplace_back(TRACE_EVENT_PHASE_BEGIN, gTraceCategories[1].name, name,
-                                       hostTimeSec);
-    }
-}
-
-void ANGLERenderTest::endGLTraceEvent(const char *name, double hostTimeSec)
-{
-    if (gEnableTrace)
-    {
-        mTraceEventBuffer.emplace_back(TRACE_EVENT_PHASE_END, gTraceCategories[1].name, name,
-                                       hostTimeSec);
-    }
-}
-
 void ANGLERenderTest::step()
 {
     beginInternalTraceEvent("step");
@@ -646,10 +583,6 @@ void ANGLERenderTest::step()
         // command queues.
         mGLWindow->swap();
         mOSWindow->messageLoop();
-
-#if defined(ANGLE_ENABLE_ASSERTS)
-        EXPECT_EQ(static_cast<GLenum>(GL_NO_ERROR), glGetError());
-#endif  // defined(ANGLE_ENABLE_ASSERTS)
     }
 
     endInternalTraceEvent("step");
@@ -739,14 +672,3 @@ std::vector<TraceEvent> &ANGLERenderTest::getTraceEventBuffer()
 {
     return mTraceEventBuffer;
 }
-
-namespace angle
-{
-double GetHostTimeSeconds()
-{
-    // Move the time origin to the first call to this function, to avoid generating unnecessarily
-    // large timestamps.
-    static double origin = angle::GetCurrentTime();
-    return angle::GetCurrentTime() - origin;
-}
-}  // namespace angle

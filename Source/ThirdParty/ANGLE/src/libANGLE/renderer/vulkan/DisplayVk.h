@@ -95,15 +95,11 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     void populateFeatureList(angle::FeatureList *features) override;
 
-  protected:
-    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
-
   private:
     virtual SurfaceImpl *createWindowSurfaceVk(const egl::SurfaceState &state,
                                                EGLNativeWindowType window) = 0;
+    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;
-
-    virtual angle::Result waitNativeImpl();
 
     mutable angle::ScratchBuffer mScratchBuffer;
 

@@ -233,17 +233,6 @@ TEST_P(EGLSyncTest, BasicOperations)
     EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync));
 }
 
-// Test eglWaitNative api
-TEST_P(EGLSyncTest, WaitNative)
-{
-    // Clear to red color
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    EXPECT_EGL_TRUE(eglWaitNative(EGL_CORE_NATIVE_ENGINE));
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
-}
-
 ANGLE_INSTANTIATE_TEST(EGLSyncTest,
                        ES2_D3D9(),
                        ES2_D3D11(),

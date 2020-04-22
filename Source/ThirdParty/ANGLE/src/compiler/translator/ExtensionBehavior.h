@@ -29,7 +29,6 @@ enum class TExtension
     EXT_shader_framebuffer_fetch,
     EXT_shader_texture_lod,
     EXT_YUV_target,
-    EXT_shader_non_constant_global_initializers,
     NV_EGL_stream_consumer_external,
     NV_shader_framebuffer_fetch,
     OES_EGL_image_external,

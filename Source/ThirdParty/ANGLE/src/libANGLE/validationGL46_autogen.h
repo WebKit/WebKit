@@ -17,24 +17,21 @@ namespace gl
 {
 class Context;
 
-bool ValidateMultiDrawArraysIndirectCount(const Context *context,
+bool ValidateMultiDrawArraysIndirectCount(Context *context,
                                           GLenum mode,
                                           const void *indirect,
                                           GLintptr drawcount,
                                           GLsizei maxdrawcount,
                                           GLsizei stride);
-bool ValidateMultiDrawElementsIndirectCount(const Context *context,
+bool ValidateMultiDrawElementsIndirectCount(Context *context,
                                             GLenum mode,
                                             GLenum type,
                                             const void *indirect,
                                             GLintptr drawcount,
                                             GLsizei maxdrawcount,
                                             GLsizei stride);
-bool ValidatePolygonOffsetClamp(const Context *context,
-                                GLfloat factor,
-                                GLfloat units,
-                                GLfloat clamp);
-bool ValidateSpecializeShader(const Context *context,
+bool ValidatePolygonOffsetClamp(Context *context, GLfloat factor, GLfloat units, GLfloat clamp);
+bool ValidateSpecializeShader(Context *context,
                               GLuint shader,
                               const GLchar *pEntryPoint,
                               GLuint numSpecializationConstants,

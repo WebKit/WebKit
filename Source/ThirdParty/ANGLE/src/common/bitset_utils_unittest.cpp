@@ -15,20 +15,14 @@ using namespace angle;
 
 namespace
 {
-template <typename T>
 class BitSetTest : public testing::Test
 {
   protected:
-    T mBits;
-    typedef T BitSet;
+    BitSet<12> mBits;
 };
 
-using BitSetTypes = ::testing::Types<BitSet<12>, BitSet32<12>, BitSet64<12>>;
-TYPED_TEST_SUITE(BitSetTest, BitSetTypes);
-
-TYPED_TEST(BitSetTest, Basic)
+TEST_F(BitSetTest, Basic)
 {
-    TypeParam mBits = this->mBits;
     EXPECT_FALSE(mBits.all());
     EXPECT_FALSE(mBits.any());
     EXPECT_TRUE(mBits.none());
@@ -102,9 +96,8 @@ TYPED_TEST(BitSetTest, Basic)
     EXPECT_EQ(mBits.flip(13).bits() & ~kMask, 0u);
 }
 
-TYPED_TEST(BitSetTest, BitwiseOperators)
+TEST_F(BitSetTest, BitwiseOperators)
 {
-    TypeParam mBits = this->mBits;
     // Use a value that has a 1 in the 12th and 13th bits, to make sure masking to exactly 12 bits
     // does not have an off-by-one error.
     constexpr uint32_t kSelfValue  = 0xF9E4;
@@ -119,10 +112,10 @@ TYPED_TEST(BitSetTest, BitwiseOperators)
     constexpr uint32_t kSelfShiftedRight = kSelfMaskedValue >> kShift & kMask;
 
     mBits |= kSelfValue;
-    typename TestFixture::BitSet other(kOtherValue);
-    typename TestFixture::BitSet anded(kSelfMaskedValue & kOtherMaskedValue);
-    typename TestFixture::BitSet ored(kSelfMaskedValue | kOtherMaskedValue);
-    typename TestFixture::BitSet xored(kSelfMaskedValue ^ kOtherMaskedValue);
+    BitSet<12> other(kOtherValue);
+    BitSet<12> anded(kSelfMaskedValue & kOtherMaskedValue);
+    BitSet<12> ored(kSelfMaskedValue | kOtherMaskedValue);
+    BitSet<12> xored(kSelfMaskedValue ^ kOtherMaskedValue);
 
     EXPECT_EQ(mBits.bits(), kSelfMaskedValue);
     EXPECT_EQ(other.bits(), kOtherMaskedValue);
@@ -144,18 +137,18 @@ TYPED_TEST(BitSetTest, BitwiseOperators)
 
     mBits ^= other;
     mBits ^= anded;
-    EXPECT_EQ(mBits, typename TestFixture::BitSet(kSelfValue));
+    EXPECT_EQ(mBits, BitSet<12>(kSelfValue));
 
-    EXPECT_EQ(mBits << kShift, typename TestFixture::BitSet(kSelfShiftedLeft));
-    EXPECT_EQ(mBits >> kShift, typename TestFixture::BitSet(kSelfShiftedRight));
+    EXPECT_EQ(mBits << kShift, BitSet<12>(kSelfShiftedLeft));
+    EXPECT_EQ(mBits >> kShift, BitSet<12>(kSelfShiftedRight));
 
     mBits <<= kShift;
-    EXPECT_EQ(mBits, typename TestFixture::BitSet(kSelfShiftedLeft));
+    EXPECT_EQ(mBits, BitSet<12>(kSelfShiftedLeft));
     EXPECT_EQ(mBits.bits() & ~kMask, 0u);
 
-    mBits = typename TestFixture::BitSet(kSelfValue);
+    mBits = BitSet<12>(kSelfValue);
     mBits >>= kShift;
-    EXPECT_EQ(mBits, typename TestFixture::BitSet(kSelfShiftedRight));
+    EXPECT_EQ(mBits, BitSet<12>(kSelfShiftedRight));
     EXPECT_EQ(mBits.bits() & ~kMask, 0u);
 
     mBits |= kSelfMaskedValue;
@@ -164,21 +157,15 @@ TYPED_TEST(BitSetTest, BitwiseOperators)
     EXPECT_EQ(mBits.bits() & ~kMask, 0u);
 }
 
-template <typename T>
 class BitSetIteratorTest : public testing::Test
 {
   protected:
-    T mStateBits;
-    typedef T BitSet;
+    BitSet<40> mStateBits;
 };
 
-using BitSetIteratorTypes = ::testing::Types<BitSet<40>, BitSet64<40>>;
-TYPED_TEST_SUITE(BitSetIteratorTest, BitSetIteratorTypes);
-
 // Simple iterator test.
-TYPED_TEST(BitSetIteratorTest, Iterator)
+TEST_F(BitSetIteratorTest, Iterator)
 {
-    TypeParam mStateBits = this->mStateBits;
     std::set<size_t> originalValues;
     originalValues.insert(2);
     originalValues.insert(6);
@@ -202,9 +189,8 @@ TYPED_TEST(BitSetIteratorTest, Iterator)
 }
 
 // Test an empty iterator.
-TYPED_TEST(BitSetIteratorTest, EmptySet)
+TEST_F(BitSetIteratorTest, EmptySet)
 {
-    TypeParam mStateBits = this->mStateBits;
     // We don't use the FAIL gtest macro here since it returns immediately,
     // causing an unreachable code warning in MSVS
     bool sawBit = false;
@@ -217,10 +203,9 @@ TYPED_TEST(BitSetIteratorTest, EmptySet)
 }
 
 // Test iterating a result of combining two bitsets.
-TYPED_TEST(BitSetIteratorTest, NonLValueBitset)
+TEST_F(BitSetIteratorTest, NonLValueBitset)
 {
-    TypeParam mStateBits = this->mStateBits;
-    typename TestFixture::BitSet otherBits;
+    BitSet<40> otherBits;
 
     mStateBits.set(1);
     mStateBits.set(2);
@@ -234,7 +219,7 @@ TYPED_TEST(BitSetIteratorTest, NonLValueBitset)
 
     std::set<size_t> seenBits;
 
-    typename TestFixture::BitSet maskedBits = (mStateBits & otherBits);
+    angle::BitSet<40> maskedBits = (mStateBits & otherBits);
     for (size_t bit : maskedBits)
     {
         EXPECT_EQ(0u, seenBits.count(bit));
@@ -247,9 +232,8 @@ TYPED_TEST(BitSetIteratorTest, NonLValueBitset)
 }
 
 // Test bit assignments.
-TYPED_TEST(BitSetIteratorTest, BitAssignment)
+TEST_F(BitSetIteratorTest, BitAssignment)
 {
-    TypeParam mStateBits = this->mStateBits;
     std::set<size_t> originalValues;
     originalValues.insert(2);
     originalValues.insert(6);
@@ -268,9 +252,8 @@ TYPED_TEST(BitSetIteratorTest, BitAssignment)
 }
 
 // Tests adding bits to the iterator during iteration.
-TYPED_TEST(BitSetIteratorTest, SetLaterBit)
+TEST_F(BitSetIteratorTest, SetLaterBit)
 {
-    TypeParam mStateBits            = this->mStateBits;
     std::set<size_t> expectedValues = {1, 3, 5, 7, 9};
     mStateBits.set(1);
 
@@ -293,9 +276,8 @@ TYPED_TEST(BitSetIteratorTest, SetLaterBit)
 }
 
 // Tests removing bits from the iterator during iteration.
-TYPED_TEST(BitSetIteratorTest, ResetLaterBit)
+TEST_F(BitSetIteratorTest, ResetLaterBit)
 {
-    TypeParam mStateBits            = this->mStateBits;
     std::set<size_t> expectedValues = {1, 3, 5, 7, 9};
 
     for (size_t index = 1; index <= 9; ++index)

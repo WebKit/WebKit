@@ -25,10 +25,6 @@ class SemaphoreVk : public SemaphoreImpl
 
     angle::Result importFd(gl::Context *context, gl::HandleType handleType, GLint fd) override;
 
-    angle::Result importZirconHandle(gl::Context *context,
-                                     gl::HandleType handleType,
-                                     GLuint handle) override;
-
     angle::Result wait(gl::Context *context,
                        const gl::BufferBarrierVector &bufferBarriers,
                        const gl::TextureBarrierVector &textureBarriers) override;
@@ -38,8 +34,7 @@ class SemaphoreVk : public SemaphoreImpl
                          const gl::TextureBarrierVector &textureBarriers) override;
 
   private:
-    angle::Result importOpaqueFd(ContextVk *contextVk, GLint fd);
-    angle::Result importZirconEvent(ContextVk *contextVk, GLuint handle);
+    angle::Result importOpaqueFd(gl::Context *context, GLint fd);
 
     vk::Semaphore mSemaphore;
 };

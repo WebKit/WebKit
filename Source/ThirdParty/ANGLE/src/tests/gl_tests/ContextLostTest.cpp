@@ -129,19 +129,19 @@ TEST_P(ContextLostSkipValidationTest, LostNoErrorGetProgram)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(ContextLostTest,
-                       WithRobustness(ES2_NULL()),
-                       WithRobustness(ES2_D3D9()),
-                       WithRobustness(ES2_D3D11()),
-                       WithRobustness(ES3_D3D11()),
-                       WithRobustness(ES2_VULKAN()),
-                       WithRobustness(ES3_VULKAN()));
+                       ES2_NULL(),
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES3_D3D11(),
+                       ES2_VULKAN(),
+                       ES3_VULKAN());
 
 ANGLE_INSTANTIATE_TEST(ContextLostSkipValidationTest,
-                       WithRobustness(ES2_NULL()),
-                       WithRobustness(ES2_D3D9()),
-                       WithRobustness(ES2_D3D11()),
-                       WithRobustness(ES3_D3D11()),
-                       WithRobustness(ES2_VULKAN()),
-                       WithRobustness(ES3_VULKAN()));
+                       ES2_NULL(),
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES3_D3D11(),
+                       ES2_VULKAN(),
+                       ES3_VULKAN());
 
 }  // namespace angle

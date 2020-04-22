@@ -114,23 +114,11 @@ struct FeaturesVk : FeatureSetBase
         "supports_external_memory_fd", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_KHR_external_memory_fd extension", &members};
 
-    // Whether the VkDevice supports the VK_FUCHSIA_external_memory
-    // extension, on which the GL_ANGLE_memory_object_fuchsia extension can be layered.
-    angle::Feature supportsExternalMemoryFuchsia = {
-        "supports_external_memory_fuchsia", FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_FUCHSIA_external_memory extension", &members};
-
     // Whether the VkDevice supports the VK_KHR_external_semaphore_fd extension, on which the
     // GL_EXT_semaphore_fd extension can be layered.
     Feature supportsExternalSemaphoreFd = {
         "supports_external_semaphore_fd", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_KHR_external_semaphore_fd extension", &members};
-
-    // Whether the VkDevice supports the VK_FUCHSIA_external_semaphore
-    // extension, on which the GL_ANGLE_semaphore_fuchsia extension can be layered.
-    angle::Feature supportsExternalSemaphoreFuchsia = {
-        "supports_external_semaphore_fuchsia", FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_FUCHSIA_external_semaphore extension", &members};
 
     // Whether the VkDevice supports the VK_EXT_shader_stencil_export extension, which is used to
     // perform multisampled resolve of stencil buffer.  A multi-step workaround is used instead if
@@ -152,12 +140,6 @@ struct FeaturesVk : FeatureSetBase
         "supports_transform_feedback_extension", FeatureCategory::VulkanFeatures,
         "Transform feedback uses the VK_EXT_transform_feedback extension.", &members,
         "http://anglebug.com/3206"};
-
-    // Whether the VkDevice supports the VK_EXT_index_type_uint8 extension
-    // http://anglebug.com/4405
-    Feature supportsIndexTypeUint8 = {"supports_index_type_uint8", FeatureCategory::VulkanFeatures,
-                                      "VkDevice supports the VK_EXT_index_type_uint8 extension",
-                                      &members, "http://anglebug.com/4405"};
 
     // VK_PRESENT_MODE_FIFO_KHR causes random timeouts on Linux Intel. http://anglebug.com/3153
     Feature disableFifoPresentMode = {
@@ -214,22 +196,24 @@ struct FeaturesVk : FeatureSetBase
         "RewriteStructSamplers behavior, which produces fewer.",
         &members, "http://anglebug.com/2703"};
 
-    // Vulkan considers vertex attribute accesses to count up to the last multiple of the stride.
-    // This additional access supports AMD's robust buffer access implementation.
-    // AMDVLK in particular will return incorrect values when the vertex access extends into the
-    // range that would be the stride padding and the buffer is too small.
-    // This workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a reasonable value and pads out
-    // every buffer allocation size to be large enough to support a maximum vertex stride.
-    // http://anglebug.com/4428
-    Feature padBuffersToMaxVertexAttribStride = {
-        "pad_buffers_to_max_vertex_attrib_stride", FeatureCategory::VulkanWorkarounds,
-        "Vulkan considers vertex attribute accesses to count up to the last multiple of the "
-        "stride. This additional access supports AMD's robust buffer access implementation. "
-        "AMDVLK in particular will return incorrect values when the vertex access extends into "
-        "the range that would be the stride padding and the buffer is too small. "
-        "This workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a maximum value and "
-        "pads up every buffer allocation size to be a multiple of the maximum stride.",
-        &members, "http://anglebug.com/4428"};
+    // If the robustBufferAccess feature is enabled, Vulkan considers vertex attribute accesses only
+    // valid up to the last multiple of stride.  If a vertex's attribute range is such that it falls
+    // within the range of the buffer, but beyond the last multiple of stride, the driver is allowed
+    // to either read that range from the buffer anyway, or to return (0, 0, 0, 1).  Most drivers
+    // implement the former, while amdvlk on Linux and AMD's windows driver implement the latter.
+    // For the latter, this workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a reasonable value, and
+    // rounds up every buffer allocation size to be a multiple of that.
+    // http://anglebug.com/2514
+    Feature roundUpBuffersToMaxVertexAttribStride = {
+        "round_up_buffers_to_max_vertex_attrib_stride", FeatureCategory::VulkanWorkarounds,
+        "If the robustBufferAccess feature is enabled, Vulkan considers vertex attribute accesses "
+        "only valid up to the last multiple of stride. If a vertex's attribute range is such that "
+        "it falls within the range of the buffer, but beyond the last multiple of stride, the "
+        "driver is allowed to either read that range from the buffer anyway, or to return "
+        "(0, 0, 0, 1). Most drivers implement the former, while some drivers the latter. For the "
+        "latter, this workaround limits GL_MAX_VERTEX_ATTRIB_STRIDE to a reasonable value, and "
+        "rounds up every buffer allocation size to be a multiple of that.",
+        &members, "http://anglebug.com/2848"};
 
     // Whether the VkDevice supports the VK_EXT_swapchain_colorspace extension
     // http://anglebug.com/2514
@@ -238,42 +222,13 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports the VK_EXT_swapchain_colorspace extension", &members,
         "http://anglebug.com/2514"};
 
-    // Whether the VkDevice supports the VK_EXT_external_memory_host extension, on which the
-    // ANGLE_iosurface_client_buffer extension can be layered.
-    Feature supportsExternalMemoryHost = {
-        "supports_external_memory_host", FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_EXT_external_memory_host extension", &members};
-
-    // Whether to fill new buffers and textures with nonzero data to sanitize robust resource
-    // initialization and flush out assumptions about zero init.
-    Feature allocateNonZeroMemory = {
-        "allocate_non_zero_memory", FeatureCategory::VulkanFeatures,
-        "Fill new allocations with non-zero values to flush out errors.", &members,
-        "http://anglebug.com/4384"};
-
-    // Android needs to pre-rotate surfaces that are not oriented per the native device's
-    // orientation (e.g. a landscape application on a Pixel phone).  This feature works for
-    // full-screen applications. http://anglebug.com/3502
-    Feature enablePreRotateSurfaces = {"enable_pre_rotation_surfaces",
-                                       FeatureCategory::VulkanFeatures,
-                                       "Enable Android pre-rotation for landscape applications",
-                                       &members, "http://anglebug.com/3502"};
-
-    // Cache FramebufferVk objects. Currently hitting a bug on Apple: http://anglebug.com/4442
-    Feature enableFramebufferVkCache = {
-        "enable_framebuffer_vk_cache", FeatureCategory::VulkanFeatures,
-        "Enable FramebufferVk objects to be cached", &members, "http://anglebug.com/4442"};
-
-    // Enable precision qualifiers for shaders generated by Vulkan backend http://anglebug.com/3078
-    Feature enablePrecisionQualifiers = {
-        "enable_precision_qualifiers", FeatureCategory::VulkanFeatures,
-        "Enable precision qualifiers in shaders", &members, "http://anglebug.com/3078"};
-
-    // Support Depth/Stencil rendering feedback loops by masking out the depth/stencil buffer.
-    // Manhattan uses this feature in a few draw calls.
-    Feature supportDepthStencilRenderingFeedbackLoops = {
-        "support_depth_stencil_rendering_feedback_loops", FeatureCategory::VulkanFeatures,
-        "Suport depth/stencil rendering feedback loops", &members, "http://anglebug.com/4490"};
+    // Whether to use ANGLE's deferred command graph. http://anglebug.com/4029
+    Feature commandGraph = {
+        "command_graph",
+        FeatureCategory::VulkanFeatures,
+        "Use ANGLE's Vulkan deferred command graph.",
+        &members,
+    };
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

@@ -81,9 +81,6 @@ bool ReplaceSubstring(std::string *str,
                       const std::string &substring,
                       const std::string &replacement);
 
-// Split up a string parsed from an environment variable.
-std::vector<std::string> GetStringsFromEnvironmentVar(const char *varName, const char *separator);
-
 }  // namespace angle
 
 #endif  // LIBANGLE_STRING_UTILS_H_

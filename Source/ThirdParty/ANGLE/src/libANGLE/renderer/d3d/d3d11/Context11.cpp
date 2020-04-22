@@ -229,6 +229,11 @@ ProgramPipelineImpl *Context11::createProgramPipeline(const gl::ProgramPipelineS
     return new ProgramPipeline11(data);
 }
 
+std::vector<PathImpl *> Context11::createPaths(GLsizei)
+{
+    return std::vector<PathImpl *>();
+}
+
 MemoryObjectImpl *Context11::createMemoryObject()
 {
     UNREACHABLE();
@@ -485,20 +490,18 @@ std::string Context11::getRendererDescription() const
     return mRenderer->getRendererDescription();
 }
 
-angle::Result Context11::insertEventMarker(GLsizei length, const char *marker)
+void Context11::insertEventMarker(GLsizei length, const char *marker)
 {
     mRenderer->getAnnotator()->setMarker(marker);
-    return angle::Result::Continue;
 }
 
-angle::Result Context11::pushGroupMarker(GLsizei length, const char *marker)
+void Context11::pushGroupMarker(GLsizei length, const char *marker)
 {
     mRenderer->getAnnotator()->beginEvent(marker, marker);
     mMarkerStack.push(std::string(marker));
-    return angle::Result::Continue;
 }
 
-angle::Result Context11::popGroupMarker()
+void Context11::popGroupMarker()
 {
     const char *marker = nullptr;
     if (!mMarkerStack.empty())
@@ -507,22 +510,18 @@ angle::Result Context11::popGroupMarker()
         mMarkerStack.pop();
         mRenderer->getAnnotator()->endEvent(marker);
     }
-    return angle::Result::Continue;
 }
 
-angle::Result Context11::pushDebugGroup(const gl::Context *context,
-                                        GLenum source,
-                                        GLuint id,
-                                        const std::string &message)
+void Context11::pushDebugGroup(GLenum source, GLuint id, const std::string &message)
 {
     // Fall through to the EXT_debug_marker functions
-    return pushGroupMarker(static_cast<GLsizei>(message.size()), message.c_str());
+    pushGroupMarker(static_cast<GLsizei>(message.size()), message.c_str());
 }
 
-angle::Result Context11::popDebugGroup(const gl::Context *context)
+void Context11::popDebugGroup()
 {
     // Fall through to the EXT_debug_marker functions
-    return popGroupMarker();
+    popGroupMarker();
 }
 
 angle::Result Context11::syncState(const gl::Context *context,

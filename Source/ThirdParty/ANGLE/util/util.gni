@@ -1,0 +1,72 @@
+# Copyright 2014 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+util_sources = [
+  "util/com_utils.h",
+  "util/keyboard.h",
+  "util/geometry_utils.cpp",
+  "util/geometry_utils.h",
+  "util/mouse.h",
+  "util/random_utils.cpp",
+  "util/random_utils.h",
+  "util/shader_utils.cpp",
+  "util/shader_utils.h",
+  "util/util_export.h",
+  "util/util_gl.h",
+  "util/Event.h",
+  "util/EGLPlatformParameters.h",
+  "util/EGLWindow.cpp",
+  "util/EGLWindow.h",
+  "util/Matrix.cpp",
+  "util/Matrix.h",
+  "util/OSPixmap.h",
+  "util/OSWindow.cpp",
+  "util/OSWindow.h",
+]
+
+if (is_win) {
+  util_sources += [ "util/windows/WGLWindow.h" ]
+
+  if (target_os != "winuwp") {
+    util_sources += [
+      "util/windows/win32/Win32Pixmap.cpp",
+      "util/windows/win32/Win32Pixmap.h",
+      "util/windows/win32/Win32Window.cpp",
+      "util/windows/win32/Win32Window.h",
+    ]
+  }
+}
+
+util_x11_sources = [
+  "util/x11/X11Pixmap.cpp",
+  "util/x11/X11Pixmap.h",
+  "util/x11/X11Window.cpp",
+  "util/x11/X11Window.h",
+]
+
+util_fuchsia_sources = [
+  "util/fuchsia/ScenicWindow.cpp",
+  "util/fuchsia/ScenicWindow.h",
+]
+
+util_ozone_sources = [
+  "util/ozone/OzonePixmap.cpp",
+  "util/ozone/OzoneWindow.cpp",
+  "util/ozone/OzoneWindow.h",
+]
+
+util_osx_sources = [
+  "util/osx/OSXPixmap.mm",
+  "util/osx/OSXPixmap.h",
+  "util/osx/OSXWindow.mm",
+  "util/osx/OSXWindow.h",
+]
+
+util_android_sources = [
+  "util/android/AndroidPixmap.cpp",
+  "util/android/AndroidWindow.cpp",
+  "util/android/AndroidWindow.h",
+  "util/android/third_party/android_native_app_glue.c",
+  "util/android/third_party/android_native_app_glue.h",
+]

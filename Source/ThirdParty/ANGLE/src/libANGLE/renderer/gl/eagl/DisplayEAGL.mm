@@ -205,12 +205,6 @@ egl::ConfigSet DisplayEAGL::generateConfigs()
     config.bindToTextureRGB  = EGL_FALSE;
     config.bindToTextureRGBA = EGL_FALSE;
 
-#    if !ANGLE_PLATFORM_MACCATALYST
-    config.bindToTextureTarget = EGL_TEXTURE_2D;
-#    else
-    config.bindToTextureTarget = EGL_TEXTURE_RECTANGLE_ANGLE;
-#    endif
-
     config.surfaceType = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;
 
     config.minSwapInterval = 1;

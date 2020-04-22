@@ -35,15 +35,15 @@ struct ClearParameters
     ClearParameters();
     ClearParameters(const ClearParameters &other);
 
-    gl::DrawBufferMask clearColor;
+    bool clearColor[gl::IMPLEMENTATION_MAX_DRAW_BUFFERS];
     gl::ColorF colorF;
     gl::ColorI colorI;
     gl::ColorUI colorUI;
     GLenum colorType;
-    gl::DrawBufferMask colorMaskRed;
-    gl::DrawBufferMask colorMaskGreen;
-    gl::DrawBufferMask colorMaskBlue;
-    gl::DrawBufferMask colorMaskAlpha;
+    bool colorMaskRed;
+    bool colorMaskGreen;
+    bool colorMaskBlue;
+    bool colorMaskAlpha;
 
     bool clearDepth;
     float depthValue;
@@ -102,11 +102,6 @@ class FramebufferD3D : public FramebufferImpl
 
     const gl::AttachmentList &getColorAttachmentsForRender(const gl::Context *context);
 
-    const gl::DrawBufferMask getLastColorAttachmentsForRenderMask() const
-    {
-        return mColorAttachmentsForRenderMask;
-    }
-
     void destroy(const gl::Context *context) override;
 
   private:
@@ -136,7 +131,6 @@ class FramebufferD3D : public FramebufferImpl
     RendererD3D *mRenderer;
     Optional<gl::AttachmentList> mColorAttachmentsForRender;
     gl::DrawBufferMask mCurrentActiveProgramOutputs;
-    gl::DrawBufferMask mColorAttachmentsForRenderMask;
 
     gl::FramebufferAttachment mDummyAttachment;
 };

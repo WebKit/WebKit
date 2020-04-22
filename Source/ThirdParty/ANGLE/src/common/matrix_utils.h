@@ -134,7 +134,6 @@ class Matrix
 
     std::vector<T> elements() const { return mElements; }
     T *data() { return mElements.data(); }
-    const T *constData() const { return mElements.data(); }
 
     Matrix<T> compMult(const Matrix<T> &mat1) const
     {

@@ -1305,18 +1305,17 @@ CallCapture CaptureGetUniformLocation(const State &glState,
 CallCapture CaptureGetUniformfv(const State &glState,
                                 bool isCallValid,
                                 ShaderProgramID programPacked,
-                                UniformLocation locationPacked,
+                                GLint location,
                                 GLfloat *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
 
     ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
     InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-    CaptureGetUniformfv_params(glState, isCallValid, programPacked, locationPacked, params,
-                               &paramsParam);
+    CaptureGetUniformfv_params(glState, isCallValid, programPacked, location, params, &paramsParam);
     paramBuffer.addParam(std::move(paramsParam));
 
     return CallCapture(gl::EntryPoint::GetUniformfv, std::move(paramBuffer));
@@ -1325,18 +1324,17 @@ CallCapture CaptureGetUniformfv(const State &glState,
 CallCapture CaptureGetUniformiv(const State &glState,
                                 bool isCallValid,
                                 ShaderProgramID programPacked,
-                                UniformLocation locationPacked,
+                                GLint location,
                                 GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetUniformiv_params(glState, isCallValid, programPacked, locationPacked, params,
-                               &paramsParam);
+    CaptureGetUniformiv_params(glState, isCallValid, programPacked, location, params, &paramsParam);
     paramBuffer.addParam(std::move(paramsParam));
 
     return CallCapture(gl::EntryPoint::GetUniformiv, std::move(paramBuffer));
@@ -1926,14 +1924,11 @@ CallCapture CaptureTexSubImage2D(const State &glState,
     return CallCapture(gl::EntryPoint::TexSubImage2D, std::move(paramBuffer));
 }
 
-CallCapture CaptureUniform1f(const State &glState,
-                             bool isCallValid,
-                             UniformLocation locationPacked,
-                             GLfloat v0)
+CallCapture CaptureUniform1f(const State &glState, bool isCallValid, GLint location, GLfloat v0)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLfloat, v0);
 
     return CallCapture(gl::EntryPoint::Uniform1f, std::move(paramBuffer));
@@ -1941,31 +1936,28 @@ CallCapture CaptureUniform1f(const State &glState,
 
 CallCapture CaptureUniform1fv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform1fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform1fv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform1fv, std::move(paramBuffer));
 }
 
-CallCapture CaptureUniform1i(const State &glState,
-                             bool isCallValid,
-                             UniformLocation locationPacked,
-                             GLint v0)
+CallCapture CaptureUniform1i(const State &glState, bool isCallValid, GLint location, GLint v0)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLint, v0);
 
     return CallCapture(gl::EntryPoint::Uniform1i, std::move(paramBuffer));
@@ -1973,18 +1965,18 @@ CallCapture CaptureUniform1i(const State &glState,
 
 CallCapture CaptureUniform1iv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLint *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLintConstPointer);
     InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform1iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform1iv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform1iv, std::move(paramBuffer));
@@ -1992,13 +1984,13 @@ CallCapture CaptureUniform1iv(const State &glState,
 
 CallCapture CaptureUniform2f(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLfloat v0,
                              GLfloat v1)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLfloat, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLfloat, v1);
 
@@ -2007,18 +1999,18 @@ CallCapture CaptureUniform2f(const State &glState,
 
 CallCapture CaptureUniform2fv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform2fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform2fv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform2fv, std::move(paramBuffer));
@@ -2026,13 +2018,13 @@ CallCapture CaptureUniform2fv(const State &glState,
 
 CallCapture CaptureUniform2i(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLint v0,
                              GLint v1)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLint, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLint, v1);
 
@@ -2041,18 +2033,18 @@ CallCapture CaptureUniform2i(const State &glState,
 
 CallCapture CaptureUniform2iv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLint *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLintConstPointer);
     InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform2iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform2iv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform2iv, std::move(paramBuffer));
@@ -2060,14 +2052,14 @@ CallCapture CaptureUniform2iv(const State &glState,
 
 CallCapture CaptureUniform3f(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLfloat v0,
                              GLfloat v1,
                              GLfloat v2)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLfloat, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLfloat, v1);
     paramBuffer.addValueParam("v2", ParamType::TGLfloat, v2);
@@ -2077,18 +2069,18 @@ CallCapture CaptureUniform3f(const State &glState,
 
 CallCapture CaptureUniform3fv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform3fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform3fv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform3fv, std::move(paramBuffer));
@@ -2096,14 +2088,14 @@ CallCapture CaptureUniform3fv(const State &glState,
 
 CallCapture CaptureUniform3i(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLint v0,
                              GLint v1,
                              GLint v2)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLint, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLint, v1);
     paramBuffer.addValueParam("v2", ParamType::TGLint, v2);
@@ -2113,18 +2105,18 @@ CallCapture CaptureUniform3i(const State &glState,
 
 CallCapture CaptureUniform3iv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLint *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLintConstPointer);
     InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform3iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform3iv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform3iv, std::move(paramBuffer));
@@ -2132,7 +2124,7 @@ CallCapture CaptureUniform3iv(const State &glState,
 
 CallCapture CaptureUniform4f(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLfloat v0,
                              GLfloat v1,
                              GLfloat v2,
@@ -2140,7 +2132,7 @@ CallCapture CaptureUniform4f(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLfloat, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLfloat, v1);
     paramBuffer.addValueParam("v2", ParamType::TGLfloat, v2);
@@ -2151,18 +2143,18 @@ CallCapture CaptureUniform4f(const State &glState,
 
 CallCapture CaptureUniform4fv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniform4fv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform4fv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform4fv, std::move(paramBuffer));
@@ -2170,7 +2162,7 @@ CallCapture CaptureUniform4fv(const State &glState,
 
 CallCapture CaptureUniform4i(const State &glState,
                              bool isCallValid,
-                             UniformLocation locationPacked,
+                             GLint location,
                              GLint v0,
                              GLint v1,
                              GLint v2,
@@ -2178,7 +2170,7 @@ CallCapture CaptureUniform4i(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("v0", ParamType::TGLint, v0);
     paramBuffer.addValueParam("v1", ParamType::TGLint, v1);
     paramBuffer.addValueParam("v2", ParamType::TGLint, v2);
@@ -2189,18 +2181,18 @@ CallCapture CaptureUniform4i(const State &glState,
 
 CallCapture CaptureUniform4iv(const State &glState,
                               bool isCallValid,
-                              UniformLocation locationPacked,
+                              GLint location,
                               GLsizei count,
                               const GLint *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     ParamCapture valueParam("value", ParamType::TGLintConstPointer);
     InitParamValue(ParamType::TGLintConstPointer, value, &valueParam.value);
-    CaptureUniform4iv_value(glState, isCallValid, locationPacked, count, value, &valueParam);
+    CaptureUniform4iv_value(glState, isCallValid, location, count, value, &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
     return CallCapture(gl::EntryPoint::Uniform4iv, std::move(paramBuffer));
@@ -2208,20 +2200,20 @@ CallCapture CaptureUniform4iv(const State &glState,
 
 CallCapture CaptureUniformMatrix2fv(const State &glState,
                                     bool isCallValid,
-                                    UniformLocation locationPacked,
+                                    GLint location,
                                     GLsizei count,
                                     GLboolean transpose,
                                     const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix2fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+    CaptureUniformMatrix2fv_value(glState, isCallValid, location, count, transpose, value,
                                   &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
@@ -2230,20 +2222,20 @@ CallCapture CaptureUniformMatrix2fv(const State &glState,
 
 CallCapture CaptureUniformMatrix3fv(const State &glState,
                                     bool isCallValid,
-                                    UniformLocation locationPacked,
+                                    GLint location,
                                     GLsizei count,
                                     GLboolean transpose,
                                     const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix3fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+    CaptureUniformMatrix3fv_value(glState, isCallValid, location, count, transpose, value,
                                   &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 
@@ -2252,20 +2244,20 @@ CallCapture CaptureUniformMatrix3fv(const State &glState,
 
 CallCapture CaptureUniformMatrix4fv(const State &glState,
                                     bool isCallValid,
-                                    UniformLocation locationPacked,
+                                    GLint location,
                                     GLsizei count,
                                     GLboolean transpose,
                                     const GLfloat *value)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
+    paramBuffer.addValueParam("location", ParamType::TGLint, location);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
     paramBuffer.addValueParam("transpose", ParamType::TGLboolean, transpose);
 
     ParamCapture valueParam("value", ParamType::TGLfloatConstPointer);
     InitParamValue(ParamType::TGLfloatConstPointer, value, &valueParam.value);
-    CaptureUniformMatrix4fv_value(glState, isCallValid, locationPacked, count, transpose, value,
+    CaptureUniformMatrix4fv_value(glState, isCallValid, location, count, transpose, value,
                                   &valueParam);
     paramBuffer.addParam(std::move(valueParam));
 

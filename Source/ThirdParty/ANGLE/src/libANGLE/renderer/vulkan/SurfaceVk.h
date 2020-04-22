@@ -75,7 +75,7 @@ class OffscreenSurfaceVk : public SurfaceVk
 
     vk::ImageHelper *getColorAttachmentImage();
 
-  protected:
+  private:
     struct AttachmentImage final : angle::NonCopyable
     {
         AttachmentImage();
@@ -86,21 +86,13 @@ class OffscreenSurfaceVk : public SurfaceVk
                                  EGLint height,
                                  const vk::Format &vkFormat,
                                  GLint samples);
-
-        angle::Result initializeWithExternalMemory(DisplayVk *displayVk,
-                                                   EGLint width,
-                                                   EGLint height,
-                                                   const vk::Format &vkFormat,
-                                                   GLint samples,
-                                                   void *buffer);
-
         void destroy(const egl::Display *display);
 
         vk::ImageHelper image;
         vk::ImageViewHelper imageViews;
     };
 
-    virtual angle::Result initializeImpl(DisplayVk *displayVk);
+    angle::Result initializeImpl(DisplayVk *displayVk);
 
     EGLint mWidth;
     EGLint mHeight;
@@ -223,8 +215,6 @@ class WindowSurfaceVk : public SurfaceVk
                                         vk::Framebuffer **framebufferOut);
 
     vk::Semaphore getAcquireImageSemaphore();
-
-    VkSurfaceTransformFlagBitsKHR getPreTransform() { return mPreTransform; }
 
   protected:
     angle::Result swapImpl(const gl::Context *context,

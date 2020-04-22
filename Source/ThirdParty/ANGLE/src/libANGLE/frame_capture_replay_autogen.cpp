@@ -1609,24 +1609,21 @@ void FrameCapture::ReplayCall(gl::Context *context,
         case gl::EntryPoint::GetUniformfv:
             context->getUniformfv(params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                                       .value.ShaderProgramIDVal,
-                                  params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                                      .value.UniformLocationVal,
+                                  params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                                   replayContext->getReadBufferPointer<GLfloat *>(
                                       params.getParam("params", ParamType::TGLfloatPointer, 2)));
             break;
         case gl::EntryPoint::GetUniformiv:
             context->getUniformiv(params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                                       .value.ShaderProgramIDVal,
-                                  params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                                      .value.UniformLocationVal,
+                                  params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                                   replayContext->getReadBufferPointer<GLint *>(
                                       params.getParam("params", ParamType::TGLintPointer, 2)));
             break;
         case gl::EntryPoint::GetUniformuiv:
             context->getUniformuiv(params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                                        .value.ShaderProgramIDVal,
-                                   params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                                       .value.UniformLocationVal,
+                                   params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                                    replayContext->getReadBufferPointer<GLuint *>(
                                        params.getParam("params", ParamType::TGLuintPointer, 2)));
             break;
@@ -1669,8 +1666,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->getnUniformfv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("bufSize", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getReadBufferPointer<GLfloat *>(
                     params.getParam("params", ParamType::TGLfloatPointer, 3)));
@@ -1679,8 +1675,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->getnUniformiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("bufSize", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getReadBufferPointer<GLint *>(
                     params.getParam("params", ParamType::TGLintPointer, 3)));
@@ -1689,8 +1684,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->getnUniformuiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("bufSize", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getReadBufferPointer<GLuint *>(
                     params.getParam("params", ParamType::TGLuintPointer, 3)));
@@ -2100,16 +2094,14 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform1f(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLfloat, 2).value.GLfloatVal);
             break;
         case gl::EntryPoint::ProgramUniform1fv:
             context->programUniform1fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
                     params.getParam("value", ParamType::TGLfloatConstPointer, 3)));
@@ -2118,16 +2110,14 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform1i(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLint, 2).value.GLintVal);
             break;
         case gl::EntryPoint::ProgramUniform1iv:
             context->programUniform1iv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLint *>(
                     params.getParam("value", ParamType::TGLintConstPointer, 3)));
@@ -2136,16 +2126,14 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform1ui(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLuint, 2).value.GLuintVal);
             break;
         case gl::EntryPoint::ProgramUniform1uiv:
             context->programUniform1uiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLuint *>(
                     params.getParam("value", ParamType::TGLuintConstPointer, 3)));
@@ -2154,8 +2142,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2f(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLfloat, 2).value.GLfloatVal,
                 params.getParam("v1", ParamType::TGLfloat, 3).value.GLfloatVal);
             break;
@@ -2163,8 +2150,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
                     params.getParam("value", ParamType::TGLfloatConstPointer, 3)));
@@ -2173,8 +2159,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2i(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLint, 2).value.GLintVal,
                 params.getParam("v1", ParamType::TGLint, 3).value.GLintVal);
             break;
@@ -2182,8 +2167,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2iv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLint *>(
                     params.getParam("value", ParamType::TGLintConstPointer, 3)));
@@ -2192,8 +2176,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2ui(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLuint, 2).value.GLuintVal,
                 params.getParam("v1", ParamType::TGLuint, 3).value.GLuintVal);
             break;
@@ -2201,8 +2184,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform2uiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLuint *>(
                     params.getParam("value", ParamType::TGLuintConstPointer, 3)));
@@ -2211,8 +2193,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3f(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLfloat, 2).value.GLfloatVal,
                 params.getParam("v1", ParamType::TGLfloat, 3).value.GLfloatVal,
                 params.getParam("v2", ParamType::TGLfloat, 4).value.GLfloatVal);
@@ -2221,8 +2202,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
                     params.getParam("value", ParamType::TGLfloatConstPointer, 3)));
@@ -2231,8 +2211,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3i(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLint, 2).value.GLintVal,
                 params.getParam("v1", ParamType::TGLint, 3).value.GLintVal,
                 params.getParam("v2", ParamType::TGLint, 4).value.GLintVal);
@@ -2241,8 +2220,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3iv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLint *>(
                     params.getParam("value", ParamType::TGLintConstPointer, 3)));
@@ -2251,8 +2229,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3ui(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLuint, 2).value.GLuintVal,
                 params.getParam("v1", ParamType::TGLuint, 3).value.GLuintVal,
                 params.getParam("v2", ParamType::TGLuint, 4).value.GLuintVal);
@@ -2261,8 +2238,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform3uiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLuint *>(
                     params.getParam("value", ParamType::TGLuintConstPointer, 3)));
@@ -2271,8 +2247,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4f(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLfloat, 2).value.GLfloatVal,
                 params.getParam("v1", ParamType::TGLfloat, 3).value.GLfloatVal,
                 params.getParam("v2", ParamType::TGLfloat, 4).value.GLfloatVal,
@@ -2282,8 +2257,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
                     params.getParam("value", ParamType::TGLfloatConstPointer, 3)));
@@ -2292,8 +2266,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4i(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLint, 2).value.GLintVal,
                 params.getParam("v1", ParamType::TGLint, 3).value.GLintVal,
                 params.getParam("v2", ParamType::TGLint, 4).value.GLintVal,
@@ -2303,8 +2276,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4iv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLint *>(
                     params.getParam("value", ParamType::TGLintConstPointer, 3)));
@@ -2313,8 +2285,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4ui(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("v0", ParamType::TGLuint, 2).value.GLuintVal,
                 params.getParam("v1", ParamType::TGLuint, 3).value.GLuintVal,
                 params.getParam("v2", ParamType::TGLuint, 4).value.GLuintVal,
@@ -2324,8 +2295,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniform4uiv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 replayContext->getAsConstPointer<const GLuint *>(
                     params.getParam("value", ParamType::TGLuintConstPointer, 3)));
@@ -2334,8 +2304,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix2fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2345,8 +2314,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix2x3fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2356,8 +2324,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix2x4fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2367,8 +2334,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix3fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2378,8 +2344,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix3x2fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2389,8 +2354,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix3x4fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2400,8 +2364,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix4fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2411,8 +2374,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix4x2fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2422,8 +2384,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             context->programUniformMatrix4x3fv(
                 params.getParam("programPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal,
-                params.getParam("locationPacked", ParamType::TUniformLocation, 1)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 1).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 2).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 3).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -2911,163 +2872,139 @@ void FrameCapture::ReplayCall(gl::Context *context,
                                 params.getParam("z", ParamType::TGLfixed, 2).value.GLfixedVal);
             break;
         case gl::EntryPoint::Uniform1f:
-            context->uniform1f(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform1f(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLfloat, 1).value.GLfloatVal);
             break;
         case gl::EntryPoint::Uniform1fv:
-            context->uniform1fv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform1fv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLfloat *>(
                                     params.getParam("value", ParamType::TGLfloatConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform1i:
-            context->uniform1i(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform1i(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLint, 1).value.GLintVal);
             break;
         case gl::EntryPoint::Uniform1iv:
-            context->uniform1iv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform1iv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLint *>(
                                     params.getParam("value", ParamType::TGLintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform1ui:
-            context->uniform1ui(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform1ui(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("v0", ParamType::TGLuint, 1).value.GLuintVal);
             break;
         case gl::EntryPoint::Uniform1uiv:
-            context->uniform1uiv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                     .value.UniformLocationVal,
+            context->uniform1uiv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                  params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                  replayContext->getAsConstPointer<const GLuint *>(
                                      params.getParam("value", ParamType::TGLuintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform2f:
-            context->uniform2f(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform2f(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLfloat, 1).value.GLfloatVal,
                                params.getParam("v1", ParamType::TGLfloat, 2).value.GLfloatVal);
             break;
         case gl::EntryPoint::Uniform2fv:
-            context->uniform2fv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform2fv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLfloat *>(
                                     params.getParam("value", ParamType::TGLfloatConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform2i:
-            context->uniform2i(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform2i(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLint, 1).value.GLintVal,
                                params.getParam("v1", ParamType::TGLint, 2).value.GLintVal);
             break;
         case gl::EntryPoint::Uniform2iv:
-            context->uniform2iv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform2iv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLint *>(
                                     params.getParam("value", ParamType::TGLintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform2ui:
-            context->uniform2ui(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform2ui(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("v0", ParamType::TGLuint, 1).value.GLuintVal,
                                 params.getParam("v1", ParamType::TGLuint, 2).value.GLuintVal);
             break;
         case gl::EntryPoint::Uniform2uiv:
-            context->uniform2uiv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                     .value.UniformLocationVal,
+            context->uniform2uiv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                  params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                  replayContext->getAsConstPointer<const GLuint *>(
                                      params.getParam("value", ParamType::TGLuintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform3f:
-            context->uniform3f(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform3f(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLfloat, 1).value.GLfloatVal,
                                params.getParam("v1", ParamType::TGLfloat, 2).value.GLfloatVal,
                                params.getParam("v2", ParamType::TGLfloat, 3).value.GLfloatVal);
             break;
         case gl::EntryPoint::Uniform3fv:
-            context->uniform3fv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform3fv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLfloat *>(
                                     params.getParam("value", ParamType::TGLfloatConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform3i:
-            context->uniform3i(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform3i(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLint, 1).value.GLintVal,
                                params.getParam("v1", ParamType::TGLint, 2).value.GLintVal,
                                params.getParam("v2", ParamType::TGLint, 3).value.GLintVal);
             break;
         case gl::EntryPoint::Uniform3iv:
-            context->uniform3iv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform3iv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLint *>(
                                     params.getParam("value", ParamType::TGLintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform3ui:
-            context->uniform3ui(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform3ui(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("v0", ParamType::TGLuint, 1).value.GLuintVal,
                                 params.getParam("v1", ParamType::TGLuint, 2).value.GLuintVal,
                                 params.getParam("v2", ParamType::TGLuint, 3).value.GLuintVal);
             break;
         case gl::EntryPoint::Uniform3uiv:
-            context->uniform3uiv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                     .value.UniformLocationVal,
+            context->uniform3uiv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                  params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                  replayContext->getAsConstPointer<const GLuint *>(
                                      params.getParam("value", ParamType::TGLuintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform4f:
-            context->uniform4f(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform4f(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLfloat, 1).value.GLfloatVal,
                                params.getParam("v1", ParamType::TGLfloat, 2).value.GLfloatVal,
                                params.getParam("v2", ParamType::TGLfloat, 3).value.GLfloatVal,
                                params.getParam("v3", ParamType::TGLfloat, 4).value.GLfloatVal);
             break;
         case gl::EntryPoint::Uniform4fv:
-            context->uniform4fv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform4fv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLfloat *>(
                                     params.getParam("value", ParamType::TGLfloatConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform4i:
-            context->uniform4i(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                   .value.UniformLocationVal,
+            context->uniform4i(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                params.getParam("v0", ParamType::TGLint, 1).value.GLintVal,
                                params.getParam("v1", ParamType::TGLint, 2).value.GLintVal,
                                params.getParam("v2", ParamType::TGLint, 3).value.GLintVal,
                                params.getParam("v3", ParamType::TGLint, 4).value.GLintVal);
             break;
         case gl::EntryPoint::Uniform4iv:
-            context->uniform4iv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform4iv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                 replayContext->getAsConstPointer<const GLint *>(
                                     params.getParam("value", ParamType::TGLintConstPointer, 2)));
             break;
         case gl::EntryPoint::Uniform4ui:
-            context->uniform4ui(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                    .value.UniformLocationVal,
+            context->uniform4ui(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                 params.getParam("v0", ParamType::TGLuint, 1).value.GLuintVal,
                                 params.getParam("v1", ParamType::TGLuint, 2).value.GLuintVal,
                                 params.getParam("v2", ParamType::TGLuint, 3).value.GLuintVal,
                                 params.getParam("v3", ParamType::TGLuint, 4).value.GLuintVal);
             break;
         case gl::EntryPoint::Uniform4uiv:
-            context->uniform4uiv(params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                                     .value.UniformLocationVal,
+            context->uniform4uiv(params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                                  params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                                  replayContext->getAsConstPointer<const GLuint *>(
                                      params.getParam("value", ParamType::TGLuintConstPointer, 2)));
@@ -3081,8 +3018,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix2fv:
             context->uniformMatrix2fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3090,8 +3026,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix2x3fv:
             context->uniformMatrix2x3fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3099,8 +3034,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix2x4fv:
             context->uniformMatrix2x4fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3108,8 +3042,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix3fv:
             context->uniformMatrix3fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3117,8 +3050,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix3x2fv:
             context->uniformMatrix3x2fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3126,8 +3058,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix3x4fv:
             context->uniformMatrix3x4fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3135,8 +3066,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix4fv:
             context->uniformMatrix4fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3144,8 +3074,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix4x2fv:
             context->uniformMatrix4x2fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(
@@ -3153,8 +3082,7 @@ void FrameCapture::ReplayCall(gl::Context *context,
             break;
         case gl::EntryPoint::UniformMatrix4x3fv:
             context->uniformMatrix4x3fv(
-                params.getParam("locationPacked", ParamType::TUniformLocation, 0)
-                    .value.UniformLocationVal,
+                params.getParam("location", ParamType::TGLint, 0).value.GLintVal,
                 params.getParam("count", ParamType::TGLsizei, 1).value.GLsizeiVal,
                 params.getParam("transpose", ParamType::TGLboolean, 2).value.GLbooleanVal,
                 replayContext->getAsConstPointer<const GLfloat *>(

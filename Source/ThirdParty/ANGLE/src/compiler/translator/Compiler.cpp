@@ -557,21 +557,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    // We need to generate globals early if we have non constant initializers enabled
-    bool initializeLocalsAndGlobals =
-        (compileOptions & SH_INITIALIZE_UNINITIALIZED_LOCALS) && !IsOutputHLSL(getOutputType());
-    bool canUseLoopsToInitialize = !(compileOptions & SH_DONT_USE_LOOPS_TO_INITIALIZE_VARIABLES);
-    bool highPrecisionSupported  = mShaderVersion > 100 || mShaderType != GL_FRAGMENT_SHADER ||
-                                  mResources.FragmentPrecisionHigh == 1;
-    bool enableNonConstantInitializers = IsExtensionEnabled(
-        mExtensionBehavior, TExtension::EXT_shader_non_constant_global_initializers);
-    if (enableNonConstantInitializers &&
-        !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
-                                 highPrecisionSupported, &mSymbolTable))
-    {
-        return false;
-    }
-
     // Create the function DAG and check there is no recursion
     if (!initCallDag(root))
     {
@@ -780,6 +765,8 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     GetGlobalPoolAllocator()->unlock();
     mBuiltInFunctionEmulator.markBuiltInFunctionsForEmulation(root);
 
+    bool highPrecisionSupported = mShaderVersion > 100 || mShaderType != GL_FRAGMENT_SHADER ||
+                                  mResources.FragmentPrecisionHigh == 1;
     if (compileOptions & SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS)
     {
         if (!ScalarizeVecAndMatConstructorArgs(this, root, mShaderType, highPrecisionSupported,
@@ -852,11 +839,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // statements from expressions. But it's fine to run DeferGlobalInitializers after the above
     // SplitSequenceOperator and RemoveArrayLengthMethod since they only have an effect on the AST
     // on ESSL >= 3.00, and the initializers that need to be deferred can only exist in ESSL < 3.00.
-    // Exception: if EXT_shader_non_constant_global_initializers is enabled, we must generate global
-    // initializers before we generate the DAG, since initializers may call functions which must not
-    // be optimized out
-    if (!enableNonConstantInitializers &&
-        !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
+    bool initializeLocalsAndGlobals =
+        (compileOptions & SH_INITIALIZE_UNINITIALIZED_LOCALS) && !IsOutputHLSL(getOutputType());
+    bool canUseLoopsToInitialize = !(compileOptions & SH_DONT_USE_LOOPS_TO_INITIALIZE_VARIABLES);
+    if (!DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
                                  highPrecisionSupported, &mSymbolTable))
     {
         return false;
@@ -1127,26 +1113,6 @@ void TCompiler::collectInterfaceBlocks()
     mInterfaceBlocks.insert(mInterfaceBlocks.end(), mShaderStorageBlocks.begin(),
                             mShaderStorageBlocks.end());
     mInterfaceBlocks.insert(mInterfaceBlocks.end(), mInBlocks.begin(), mInBlocks.end());
-}
-
-bool TCompiler::emulatePrecisionIfNeeded(TIntermBlock *root,
-                                         TInfoSinkBase &sink,
-                                         bool *isNeeded,
-                                         const ShShaderOutput outputLanguage)
-{
-    *isNeeded = getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
-
-    if (*isNeeded)
-    {
-        EmulatePrecision emulatePrecision(&getSymbolTable());
-        root->traverse(&emulatePrecision);
-        if (!emulatePrecision.updateTree(this, root))
-        {
-            return false;
-        }
-        emulatePrecision.writeEmulationHelpers(sink, getShaderVersion(), outputLanguage);
-    }
-    return true;
 }
 
 void TCompiler::clearResults()

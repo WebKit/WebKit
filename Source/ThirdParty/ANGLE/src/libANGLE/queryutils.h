@@ -63,10 +63,6 @@ void QueryTexParameterfv(const Context *context,
                          const Texture *texture,
                          GLenum pname,
                          GLfloat *params);
-void QueryTexParameterxv(const Context *context,
-                         const Texture *texture,
-                         GLenum pname,
-                         GLfixed *params);
 void QueryTexParameteriv(const Context *context,
                          const Texture *texture,
                          GLenum pname,
@@ -134,8 +130,6 @@ void SetTexParameteri(Context *context, Texture *texture, GLenum pname, GLint pa
 void SetTexParameteriv(Context *context, Texture *texture, GLenum pname, const GLint *params);
 void SetTexParameterIiv(Context *context, Texture *texture, GLenum pname, const GLint *params);
 void SetTexParameterIuiv(Context *context, Texture *texture, GLenum pname, const GLuint *params);
-void SetTexParameterx(Context *context, Texture *texture, GLenum pname, GLfixed param);
-void SetTexParameterxv(Context *context, Texture *texture, GLenum pname, const GLfixed *params);
 
 void SetSamplerParameterf(Context *context, Sampler *sampler, GLenum pname, GLfloat param);
 void SetSamplerParameterfv(Context *context, Sampler *sampler, GLenum pname, const GLfloat *params);
@@ -183,13 +177,6 @@ void QueryProgramInterfaceiv(const Program *program,
                              GLenum programInterface,
                              GLenum pname,
                              GLint *params);
-
-angle::Result SetMemoryObjectParameteriv(const Context *context,
-                                         MemoryObject *memoryObject,
-                                         GLenum pname,
-                                         const GLint *params);
-void QueryMemoryObjectParameteriv(const MemoryObject *memoryObject, GLenum pname, GLint *params);
-
 // GLES1 emulation
 
 ClientVertexArrayType ParamToVertexArrayType(GLenum param);
@@ -248,7 +235,7 @@ void SetPointParameter(GLES1State *state, PointParameter pname, const GLfloat *p
 void GetPointParameter(const GLES1State *state, PointParameter pname, GLfloat *params);
 
 void SetPointSize(GLES1State *state, GLfloat size);
-void GetPointSize(const GLES1State *state, GLfloat *sizeOut);
+void GetPointSize(GLES1State *state, GLfloat *sizeOut);
 
 unsigned int GetTexParameterCount(GLenum pname);
 

@@ -11,7 +11,6 @@
 
 #include "libANGLE/Context.h"
 #include "libANGLE/Query.h"
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
@@ -53,7 +52,9 @@ angle::Result TransformFeedbackVk::begin(const gl::Context *context,
         mRebindTransformFeedbackBuffer = true;
     }
 
-    return onTransformFeedbackStateChanged(contextVk);
+    onTransformFeedbackStateChanged(context);
+
+    return angle::Result::Continue;
 }
 
 angle::Result TransformFeedbackVk::end(const gl::Context *context)
@@ -68,10 +69,11 @@ angle::Result TransformFeedbackVk::end(const gl::Context *context)
         vk::GetImpl(transformFeedbackQuery)->onTransformFeedbackEnd(context);
     }
 
-    ContextVk *contextVk = vk::GetImpl(context);
-    contextVk->onTransformFeedbackStateChanged();
+    vk::GetImpl(context)->onTransformFeedbackStateChanged();
 
-    return onTransformFeedbackStateChanged(contextVk);
+    onTransformFeedbackStateChanged(context);
+
+    return angle::Result::Continue;
 }
 
 angle::Result TransformFeedbackVk::pause(const gl::Context *context)
@@ -82,9 +84,9 @@ angle::Result TransformFeedbackVk::pause(const gl::Context *context)
 
     if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        // We need to end the RenderPass to perform transform feedback pause/resume
-        // becasue vkCmdBegin/EndTransformFeedback can be placed once per RenderPass.
-        ANGLE_TRY(onTransformFeedbackStateChanged(contextVk));
+        // We need to create new commandGraphNode to perform transform feedback pause/resume
+        // becasue vkCmdBegin/EndTransformFeedback can be placed once per commandGraphNode.
+        onTransformFeedbackStateChanged(context);
     }
 
     return angle::Result::Continue;
@@ -98,9 +100,9 @@ angle::Result TransformFeedbackVk::resume(const gl::Context *context)
 
     if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
     {
-        // We need to end the RenderPass to perform transform feedback pause/resume
-        // becasue vkCmdBegin/EndTransformFeedback can be placed once per RenderPass.
-        ANGLE_TRY(onTransformFeedbackStateChanged(contextVk));
+        // We need to create new commandGraphNode to perform transform feedback pause/resume
+        // becasue vkCmdBegin/EndTransformFeedback can be placed once per commandGraphNode.
+        onTransformFeedbackStateChanged(context);
     }
 
     return angle::Result::Continue;
@@ -162,20 +164,51 @@ angle::Result TransformFeedbackVk::bindIndexedBuffer(
 
 void TransformFeedbackVk::updateDescriptorSetLayout(
     ContextVk *contextVk,
-    ShaderInterfaceVariableInfoMap &vsVariableInfoMap,
-    size_t xfbBufferCount,
+    const gl::ProgramState &programState,
     vk::DescriptorSetLayoutDesc *descSetLayoutOut) const
 {
     if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
         return;
 
+    size_t xfbBufferCount = programState.getTransformFeedbackBufferCount();
+
     for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
-        const std::string bufferName            = GetXfbBufferName(bufferIndex);
-        const ShaderInterfaceVariableInfo &info = vsVariableInfoMap[bufferName];
+        descSetLayoutOut->update(kXfbBindingIndexStart + bufferIndex,
+                                 VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);
+    }
+}
 
-        descSetLayoutOut->update(info.binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1,
-                                 VK_SHADER_STAGE_VERTEX_BIT);
+void TransformFeedbackVk::addFramebufferDependency(ContextVk *contextVk,
+                                                   const gl::ProgramState &programState,
+                                                   vk::FramebufferHelper *framebuffer) const
+{
+    const std::vector<gl::OffsetBindingPointer<gl::Buffer>> &xfbBuffers =
+        mState.getIndexedBuffers();
+    size_t xfbBufferCount = programState.getTransformFeedbackBufferCount();
+
+    ASSERT(xfbBufferCount > 0);
+    ASSERT(programState.getTransformFeedbackBufferMode() != GL_INTERLEAVED_ATTRIBS ||
+           xfbBufferCount == 1);
+
+    VkAccessFlags writeAccessType = VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT;
+    if (!contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
+    {
+        writeAccessType = VK_ACCESS_SHADER_WRITE_BIT;
+    }
+
+    // Set framebuffer dependent to the transform feedback buffers.  This is especially done
+    // separately from |updateDescriptorSet|, to avoid introducing unnecessary buffer barriers
+    // every time the descriptor set is updated (which, as the set is shared with default uniforms,
+    // could get updated frequently).
+    for (size_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
+    {
+        const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = xfbBuffers[bufferIndex];
+        gl::Buffer *buffer                                        = bufferBinding.get();
+        ASSERT(buffer != nullptr);
+
+        vk::BufferHelper &bufferHelper = vk::GetImpl(buffer)->getBuffer();
+        bufferHelper.onWrite(contextVk, framebuffer, writeAccessType);
     }
 }
 
@@ -210,9 +243,7 @@ void TransformFeedbackVk::updateDescriptorSet(ContextVk *contextVk,
 
     const std::vector<gl::OffsetBindingPointer<gl::Buffer>> &xfbBuffers =
         mState.getIndexedBuffers();
-    const gl::ProgramExecutable *executable = contextVk->getState().getProgramExecutable();
-    ASSERT(executable);
-    size_t xfbBufferCount = executable->getTransformFeedbackBufferCount(contextVk->getState());
+    size_t xfbBufferCount = programState.getTransformFeedbackBufferCount();
 
     ASSERT(xfbBufferCount > 0);
     ASSERT(programState.getTransformFeedbackBufferMode() != GL_INTERLEAVED_ATTRIBS ||
@@ -244,6 +275,7 @@ void TransformFeedbackVk::updateDescriptorSet(ContextVk *contextVk,
 }
 
 void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
+                                           const gl::ProgramState &programState,
                                            GLint drawCallFirstVertex,
                                            int32_t *offsetsOut,
                                            size_t offsetsSize) const
@@ -254,9 +286,7 @@ void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
     GLsizeiptr verticesDrawn = mState.getVerticesDrawn();
     const std::vector<GLsizei> &bufferStrides =
         mState.getBoundProgram()->getTransformFeedbackStrides();
-    const gl::ProgramExecutable *executable = contextVk->getState().getProgramExecutable();
-    ASSERT(executable);
-    size_t xfbBufferCount = executable->getTransformFeedbackBufferCount(contextVk->getState());
+    size_t xfbBufferCount = programState.getTransformFeedbackBufferCount();
 
     ASSERT(xfbBufferCount > 0);
 
@@ -282,7 +312,7 @@ void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
     }
 }
 
-angle::Result TransformFeedbackVk::onTransformFeedbackStateChanged(ContextVk *contextVk)
+void TransformFeedbackVk::onTransformFeedbackStateChanged(const gl::Context *context)
 {
     // Currently, we don't handle resources switching from read-only to writable and back correctly.
     // In the case of transform feedback, the attached buffers can switch between being written by
@@ -292,8 +322,15 @@ angle::Result TransformFeedbackVk::onTransformFeedbackStateChanged(ContextVk *co
     // TODO(syoussefi): detect changes to buffer usage (e.g. as transform feedback output, vertex
     // or index data etc) in the front end and notify the backend.  A new node should be created
     // only on such changes.  http://anglebug.com/3205
-    ANGLE_TRY(contextVk->endRenderPass());
-    return angle::Result::Continue;
+    ContextVk *contextVk               = vk::GetImpl(context);
+    FramebufferVk *framebufferVk       = vk::GetImpl(context->getState().getDrawFramebuffer());
+    vk::FramebufferHelper *framebuffer = framebufferVk->getFramebuffer();
+
+    framebuffer->updateCurrentAccessNodes();
+    if (framebuffer->hasStartedRenderPass())
+    {
+        framebuffer->finishCurrentCommands(contextVk);
+    }
 }
 
 void TransformFeedbackVk::writeDescriptorSet(ContextVk *contextVk,
@@ -301,17 +338,12 @@ void TransformFeedbackVk::writeDescriptorSet(ContextVk *contextVk,
                                              VkDescriptorBufferInfo *pBufferInfo,
                                              VkDescriptorSet descSet) const
 {
-    VkDevice device                   = contextVk->getDevice();
-    ProgramExecutableVk *executableVk = contextVk->getExecutable();
-    ShaderMapInterfaceVariableInfoMap variableInfoMap =
-        executableVk->getShaderInterfaceVariableInfoMap();
-    const std::string bufferName      = GetXfbBufferName(0);
-    ShaderInterfaceVariableInfo &info = variableInfoMap[gl::ShaderType::Vertex][bufferName];
+    VkDevice device = contextVk->getDevice();
 
     VkWriteDescriptorSet writeDescriptorInfo = {};
     writeDescriptorInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeDescriptorInfo.dstSet               = descSet;
-    writeDescriptorInfo.dstBinding           = info.binding;
+    writeDescriptorInfo.dstBinding           = kXfbBindingIndexStart;
     writeDescriptorInfo.dstArrayElement      = 0;
     writeDescriptorInfo.descriptorCount      = static_cast<uint32_t>(xfbBufferCount);
     writeDescriptorInfo.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;

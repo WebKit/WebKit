@@ -62,15 +62,13 @@ class ResourceMap final : angle::NonCopyable
         friend class ResourceMap;
         Iterator(const ResourceMap &origin,
                  GLuint flatIndex,
-                 typename HashMap::const_iterator hashIndex,
-                 bool skipNulls);
+                 typename HashMap::const_iterator hashIndex);
         void updateValue();
 
         const ResourceMap &mOrigin;
         GLuint mFlatIndex;
         typename HashMap::const_iterator mHashIndex;
         IndexAndResource mValue;
-        bool mSkipNulls;
     };
 
     // null values represent reserved handles.
@@ -78,16 +76,13 @@ class ResourceMap final : angle::NonCopyable
     Iterator end() const;
     Iterator find(IDType handle) const;
 
-    Iterator beginWithNull() const;
-    Iterator endWithNull() const;
-
     // Not a constant-time operation, should only be used for verification.
     bool empty() const;
 
   private:
     friend class Iterator;
 
-    GLuint nextResource(size_t flatIndex, bool skipNulls) const;
+    GLuint nextNonNullResource(size_t flatIndex) const;
 
     // constexpr methods cannot contain reinterpret_cast, so we need a static method.
     static ResourceType *InvalidPointer();
@@ -199,27 +194,13 @@ template <typename ResourceType, typename IDType>
 typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::begin()
     const
 {
-    return Iterator(*this, nextResource(0, true), mHashedResources.begin(), true);
+    return Iterator(*this, nextNonNullResource(0), mHashedResources.begin());
 }
 
 template <typename ResourceType, typename IDType>
 typename ResourceMap<ResourceType, IDType>::Iterator ResourceMap<ResourceType, IDType>::end() const
 {
-    return Iterator(*this, static_cast<GLuint>(mFlatResourcesSize), mHashedResources.end(), true);
-}
-
-template <typename ResourceType, typename IDType>
-typename ResourceMap<ResourceType, IDType>::Iterator
-ResourceMap<ResourceType, IDType>::beginWithNull() const
-{
-    return Iterator(*this, nextResource(0, false), mHashedResources.begin(), false);
-}
-
-template <typename ResourceType, typename IDType>
-typename ResourceMap<ResourceType, IDType>::Iterator
-ResourceMap<ResourceType, IDType>::endWithNull() const
-{
-    return Iterator(*this, static_cast<GLuint>(mFlatResourcesSize), mHashedResources.end(), false);
+    return Iterator(*this, static_cast<GLuint>(mFlatResourcesSize), mHashedResources.end());
 }
 
 template <typename ResourceType, typename IDType>
@@ -253,12 +234,11 @@ void ResourceMap<ResourceType, IDType>::clear()
 }
 
 template <typename ResourceType, typename IDType>
-GLuint ResourceMap<ResourceType, IDType>::nextResource(size_t flatIndex, bool skipNulls) const
+GLuint ResourceMap<ResourceType, IDType>::nextNonNullResource(size_t flatIndex) const
 {
     for (size_t index = flatIndex; index < mFlatResourcesSize; index++)
     {
-        if ((mFlatResources[index] != nullptr || !skipNulls) &&
-            mFlatResources[index] != InvalidPointer())
+        if (mFlatResources[index] != nullptr && mFlatResources[index] != InvalidPointer())
         {
             return static_cast<GLuint>(index);
         }
@@ -277,9 +257,8 @@ template <typename ResourceType, typename IDType>
 ResourceMap<ResourceType, IDType>::Iterator::Iterator(
     const ResourceMap &origin,
     GLuint flatIndex,
-    typename ResourceMap<ResourceType, IDType>::HashMap::const_iterator hashIndex,
-    bool skipNulls)
-    : mOrigin(origin), mFlatIndex(flatIndex), mHashIndex(hashIndex), mSkipNulls(skipNulls)
+    typename ResourceMap<ResourceType, IDType>::HashMap::const_iterator hashIndex)
+    : mOrigin(origin), mFlatIndex(flatIndex), mHashIndex(hashIndex)
 {
     updateValue();
 }
@@ -302,7 +281,7 @@ operator++()
 {
     if (mFlatIndex < static_cast<GLuint>(mOrigin.mFlatResourcesSize))
     {
-        mFlatIndex = mOrigin.nextResource(mFlatIndex + 1, mSkipNulls);
+        mFlatIndex = mOrigin.nextNonNullResource(mFlatIndex + 1);
     }
     else
     {

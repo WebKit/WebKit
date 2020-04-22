@@ -11,55 +11,45 @@ import sys
 import os
 
 usage = """\
-Usage: commit_id.py check                - check if git is present
-       commit_id.py gen <file_to_write>  - generate commit.h"""
+Usage: commit_id.py check <angle_dir>                - check if git is present
+       commit_id.py gen <angle_dir> <file_to_write>  - generate commit.h"""
 
 
 def grab_output(command, cwd):
     return sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip()
 
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     sys.exit(usage)
 
 operation = sys.argv[1]
-
-# Set the root of ANGLE's repo as the working directory
-cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
-
-git_dir_exists = os.path.exists(os.path.join(cwd, '.git', 'HEAD'))
+cwd = sys.argv[2]
 
 if operation == 'check':
-    if git_dir_exists:
+    index_path = os.path.join(cwd, '.git', 'index')
+    if os.path.exists(index_path):
         print("1")
     else:
         print("0")
     sys.exit(0)
 
-if len(sys.argv) < 3 or operation != 'gen':
+if len(sys.argv) < 4 or operation != 'gen':
     sys.exit(usage)
 
-output_file = sys.argv[2]
+output_file = sys.argv[3]
 commit_id_size = 12
-commit_id = 'unknown hash'
-commit_date = 'unknown date'
-enable_binary_loading = False
 
-if git_dir_exists:
-    try:
-        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
-        commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
-        enable_binary_loading = True
-    except:
-        pass
+try:
+    commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
+    commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
+except:
+    commit_id = 'invalid-hash'
+    commit_date = 'invalid-date'
 
 hfile = open(output_file, 'w')
 
 hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
 hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
-
-if not enable_binary_loading:
-    hfile.write('#define ANGLE_DISABLE_PROGRAM_BINARY_LOAD\n')
 
 hfile.close()

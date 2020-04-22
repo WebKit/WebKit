@@ -25,104 +25,47 @@ namespace gl
 {
 using namespace err;
 
-bool ValidateBlendBarrier(const Context *context)
+bool ValidateBlendBarrier(Context *context)
 {
     return true;
 }
 
-bool ValidateBlendEquationSeparatei(const Context *context,
-                                    GLuint buf,
-                                    GLenum modeRGB,
-                                    GLenum modeAlpha)
+bool ValidateBlendEquationSeparatei(Context *context, GLuint buf, GLenum modeRGB, GLenum modeAlpha)
 {
-    if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-    {
-        context->validationError(GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
-        return false;
-    }
-
-    if (!ValidateBlendEquationSeparate(context, modeRGB, modeAlpha))
-    {
-        // error already generated
-        return false;
-    }
-
     return true;
 }
 
-bool ValidateBlendEquationi(const Context *context, GLuint buf, GLenum mode)
+bool ValidateBlendEquationi(Context *context, GLuint buf, GLenum mode)
 {
-    if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-    {
-        context->validationError(GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
-        return false;
-    }
-
-    if (!ValidateBlendEquation(context, mode))
-    {
-        // error already generated
-        return false;
-    }
-
     return true;
 }
 
-bool ValidateBlendFuncSeparatei(const Context *context,
+bool ValidateBlendFuncSeparatei(Context *context,
                                 GLuint buf,
                                 GLenum srcRGB,
                                 GLenum dstRGB,
                                 GLenum srcAlpha,
                                 GLenum dstAlpha)
 {
-    if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-    {
-        context->validationError(GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
-        return false;
-    }
-
-    if (!ValidateBlendFuncSeparate(context, srcRGB, dstRGB, srcAlpha, dstAlpha))
-    {
-        // error already generated
-        return false;
-    }
-
     return true;
 }
 
-bool ValidateBlendFunci(const Context *context, GLuint buf, GLenum src, GLenum dst)
+bool ValidateBlendFunci(Context *context, GLuint buf, GLenum src, GLenum dst)
 {
-    if (buf >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-    {
-        context->validationError(GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
-        return false;
-    }
-
-    if (!ValidateBlendFunc(context, src, dst))
-    {
-        // error already generated
-        return false;
-    }
-
     return true;
 }
 
-bool ValidateColorMaski(const Context *context,
+bool ValidateColorMaski(Context *context,
                         GLuint index,
                         GLboolean r,
                         GLboolean g,
                         GLboolean b,
                         GLboolean a)
 {
-    if (index >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-    {
-        context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
-        return false;
-    }
-
     return true;
 }
 
-bool ValidateCopyImageSubData(const Context *context,
+bool ValidateCopyImageSubData(Context *context,
                               GLuint srcName,
                               GLenum srcTarget,
                               GLint srcLevel,
@@ -142,14 +85,12 @@ bool ValidateCopyImageSubData(const Context *context,
     return true;
 }
 
-bool ValidateDebugMessageCallback(const Context *context,
-                                  GLDEBUGPROC callback,
-                                  const void *userParam)
+bool ValidateDebugMessageCallback(Context *context, GLDEBUGPROC callback, const void *userParam)
 {
     return true;
 }
 
-bool ValidateDebugMessageControl(const Context *context,
+bool ValidateDebugMessageControl(Context *context,
                                  GLenum source,
                                  GLenum type,
                                  GLenum severity,
@@ -160,7 +101,7 @@ bool ValidateDebugMessageControl(const Context *context,
     return true;
 }
 
-bool ValidateDebugMessageInsert(const Context *context,
+bool ValidateDebugMessageInsert(Context *context,
                                 GLenum source,
                                 GLenum type,
                                 GLuint id,
@@ -171,25 +112,12 @@ bool ValidateDebugMessageInsert(const Context *context,
     return true;
 }
 
-bool ValidateDisablei(const Context *context, GLenum target, GLuint index)
+bool ValidateDisablei(Context *context, GLenum target, GLuint index)
 {
-    switch (target)
-    {
-        case GL_BLEND:
-            if (index >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-            {
-                context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
-                return false;
-            }
-            break;
-        default:
-            context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-            return false;
-    }
     return true;
 }
 
-bool ValidateDrawElementsBaseVertex(const Context *context,
+bool ValidateDrawElementsBaseVertex(Context *context,
                                     PrimitiveMode mode,
                                     GLsizei count,
                                     DrawElementsType type,
@@ -205,7 +133,7 @@ bool ValidateDrawElementsBaseVertex(const Context *context,
     return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
 }
 
-bool ValidateDrawElementsInstancedBaseVertex(const Context *context,
+bool ValidateDrawElementsInstancedBaseVertex(Context *context,
                                              PrimitiveMode mode,
                                              GLsizei count,
                                              DrawElementsType type,
@@ -222,7 +150,7 @@ bool ValidateDrawElementsInstancedBaseVertex(const Context *context,
     return ValidateDrawElementsInstancedBase(context, mode, count, type, indices, instancecount);
 }
 
-bool ValidateDrawRangeElementsBaseVertex(const Context *context,
+bool ValidateDrawRangeElementsBaseVertex(Context *context,
                                          PrimitiveMode mode,
                                          GLuint start,
                                          GLuint end,
@@ -254,28 +182,26 @@ bool ValidateDrawRangeElementsBaseVertex(const Context *context,
         return true;
     }
 
-    return true;
-}
+    // Note that resolving the index range is a bit slow. We should probably optimize this.
+    IndexRange indexRange;
+    ANGLE_VALIDATION_TRY(context->getState().getVertexArray()->getIndexRange(context, type, count,
+                                                                             indices, &indexRange));
 
-bool ValidateEnablei(const Context *context, GLenum target, GLuint index)
-{
-    switch (target)
+    if (indexRange.end > end || indexRange.start < start)
     {
-        case GL_BLEND:
-            if (index >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-            {
-                context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
-                return false;
-            }
-            break;
-        default:
-            context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-            return false;
+        // GL spec says that behavior in this case is undefined - generating an error is fine.
+        context->validationError(GL_INVALID_OPERATION, kExceedsElementRange);
+        return false;
     }
     return true;
 }
 
-bool ValidateFramebufferTexture(const Context *context,
+bool ValidateEnablei(Context *context, GLenum target, GLuint index)
+{
+    return true;
+}
+
+bool ValidateFramebufferTexture(Context *context,
                                 GLenum target,
                                 GLenum attachment,
                                 TextureID texture,
@@ -284,44 +210,44 @@ bool ValidateFramebufferTexture(const Context *context,
     return true;
 }
 
-bool ValidateGetDebugMessageLog(const Context *context,
+bool ValidateGetDebugMessageLog(Context *context,
                                 GLuint count,
                                 GLsizei bufSize,
-                                const GLenum *sources,
-                                const GLenum *types,
-                                const GLuint *ids,
-                                const GLenum *severities,
-                                const GLsizei *lengths,
-                                const GLchar *messageLog)
+                                GLenum *sources,
+                                GLenum *types,
+                                GLuint *ids,
+                                GLenum *severities,
+                                GLsizei *lengths,
+                                GLchar *messageLog)
 {
     return true;
 }
 
-bool ValidateGetGraphicsResetStatus(const Context *context)
+bool ValidateGetGraphicsResetStatus(Context *context)
 {
     return true;
 }
 
-bool ValidateGetObjectLabel(const Context *context,
+bool ValidateGetObjectLabel(Context *context,
                             GLenum identifier,
                             GLuint name,
                             GLsizei bufSize,
-                            const GLsizei *length,
-                            const GLchar *label)
+                            GLsizei *length,
+                            GLchar *label)
 {
     return true;
 }
 
-bool ValidateGetObjectPtrLabel(const Context *context,
+bool ValidateGetObjectPtrLabel(Context *context,
                                const void *ptr,
                                GLsizei bufSize,
-                               const GLsizei *length,
-                               const GLchar *label)
+                               GLsizei *length,
+                               GLchar *label)
 {
     return true;
 }
 
-bool ValidateGetPointerv(const Context *context, GLenum pname, void *const *params)
+bool ValidateGetPointerv(Context *context, GLenum pname, void **params)
 {
     Version clientVersion = context->getClientVersion();
 
@@ -359,89 +285,76 @@ bool ValidateGetPointerv(const Context *context, GLenum pname, void *const *para
     }
 }
 
-bool ValidateGetSamplerParameterIiv(const Context *context,
+bool ValidateGetSamplerParameterIiv(Context *context,
                                     SamplerID sampler,
                                     GLenum pname,
-                                    const GLint *params)
+                                    GLint *params)
 {
     return true;
 }
 
-bool ValidateGetSamplerParameterIuiv(const Context *context,
+bool ValidateGetSamplerParameterIuiv(Context *context,
                                      SamplerID sampler,
                                      GLenum pname,
-                                     const GLuint *params)
+                                     GLuint *params)
 {
     return true;
 }
 
-bool ValidateGetTexParameterIiv(const Context *context,
+bool ValidateGetTexParameterIiv(Context *context,
                                 TextureType targetPacked,
                                 GLenum pname,
-                                const GLint *params)
+                                GLint *params)
 {
     return true;
 }
 
-bool ValidateGetTexParameterIuiv(const Context *context,
+bool ValidateGetTexParameterIuiv(Context *context,
                                  TextureType targetPacked,
                                  GLenum pname,
-                                 const GLuint *params)
+                                 GLuint *params)
 {
     return true;
 }
 
-bool ValidateGetnUniformfv(const Context *context,
+bool ValidateGetnUniformfv(Context *context,
                            ShaderProgramID program,
-                           UniformLocation location,
+                           GLint location,
                            GLsizei bufSize,
-                           const GLfloat *params)
+                           GLfloat *params)
 {
     return true;
 }
 
-bool ValidateGetnUniformiv(const Context *context,
+bool ValidateGetnUniformiv(Context *context,
                            ShaderProgramID program,
-                           UniformLocation location,
+                           GLint location,
                            GLsizei bufSize,
-                           const GLint *params)
+                           GLint *params)
 {
     return true;
 }
 
-bool ValidateGetnUniformuiv(const Context *context,
+bool ValidateGetnUniformuiv(Context *context,
                             ShaderProgramID program,
-                            UniformLocation location,
+                            GLint location,
                             GLsizei bufSize,
-                            const GLuint *params)
+                            GLuint *params)
 {
     return true;
 }
 
-bool ValidateIsEnabledi(const Context *context, GLenum target, GLuint index)
-{
-    switch (target)
-    {
-        case GL_BLEND:
-            if (index >= static_cast<GLuint>(context->getCaps().maxDrawBuffers))
-            {
-                context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
-                return false;
-            }
-            break;
-        default:
-            context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-            return false;
-    }
-    return true;
-}
-
-bool ValidateMinSampleShading(const Context *context, GLfloat value)
+bool ValidateIsEnabledi(Context *context, GLenum target, GLuint index)
 {
     return true;
 }
 
-bool ValidateObjectLabel(const Context *context,
+bool ValidateMinSampleShading(Context *context, GLfloat value)
+{
+    return true;
+}
+
+bool ValidateObjectLabel(Context *context,
                          GLenum identifier,
                          GLuint name,
                          GLsizei length,
@@ -450,25 +363,22 @@ bool ValidateObjectLabel(const Context *context,
     return true;
 }
 
-bool ValidateObjectPtrLabel(const Context *context,
-                            const void *ptr,
-                            GLsizei length,
-                            const GLchar *label)
+bool ValidateObjectPtrLabel(Context *context, const void *ptr, GLsizei length, const GLchar *label)
 {
     return true;
 }
 
-bool ValidatePatchParameteri(const Context *context, GLenum pname, GLint value)
+bool ValidatePatchParameteri(Context *context, GLenum pname, GLint value)
 {
     return true;
 }
 
-bool ValidatePopDebugGroup(const Context *context)
+bool ValidatePopDebugGroup(Context *context)
 {
     return true;
 }
 
-bool ValidatePrimitiveBoundingBox(const Context *context,
+bool ValidatePrimitiveBoundingBox(Context *context,
                                   GLfloat minX,
                                   GLfloat minY,
                                   GLfloat minZ,
@@ -481,7 +391,7 @@ bool ValidatePrimitiveBoundingBox(const Context *context,
     return true;
 }
 
-bool ValidatePushDebugGroup(const Context *context,
+bool ValidatePushDebugGroup(Context *context,
                             GLenum source,
                             GLuint id,
                             GLsizei length,
@@ -490,7 +400,7 @@ bool ValidatePushDebugGroup(const Context *context,
     return true;
 }
 
-bool ValidateReadnPixels(const Context *context,
+bool ValidateReadnPixels(Context *context,
                          GLint x,
                          GLint y,
                          GLsizei width,
@@ -498,12 +408,12 @@ bool ValidateReadnPixels(const Context *context,
                          GLenum format,
                          GLenum type,
                          GLsizei bufSize,
-                         const void *data)
+                         void *data)
 {
     return true;
 }
 
-bool ValidateSamplerParameterIiv(const Context *context,
+bool ValidateSamplerParameterIiv(Context *context,
                                  SamplerID sampler,
                                  GLenum pname,
                                  const GLint *param)
@@ -511,7 +421,7 @@ bool ValidateSamplerParameterIiv(const Context *context,
     return true;
 }
 
-bool ValidateSamplerParameterIuiv(const Context *context,
+bool ValidateSamplerParameterIuiv(Context *context,
                                   SamplerID sampler,
                                   GLenum pname,
                                   const GLuint *param)
@@ -519,15 +429,12 @@ bool ValidateSamplerParameterIuiv(const Context *context,
     return true;
 }
 
-bool ValidateTexBuffer(const Context *context,
-                       GLenum target,
-                       GLenum internalformat,
-                       BufferID buffer)
+bool ValidateTexBuffer(Context *context, GLenum target, GLenum internalformat, BufferID buffer)
 {
     return true;
 }
 
-bool ValidateTexBufferRange(const Context *context,
+bool ValidateTexBufferRange(Context *context,
                             GLenum target,
                             GLenum internalformat,
                             BufferID buffer,
@@ -537,7 +444,7 @@ bool ValidateTexBufferRange(const Context *context,
     return true;
 }
 
-bool ValidateTexParameterIiv(const Context *context,
+bool ValidateTexParameterIiv(Context *context,
                              TextureType targetPacked,
                              GLenum pname,
                              const GLint *params)
@@ -545,7 +452,7 @@ bool ValidateTexParameterIiv(const Context *context,
     return true;
 }
 
-bool ValidateTexParameterIuiv(const Context *context,
+bool ValidateTexParameterIuiv(Context *context,
                               TextureType targetPacked,
                               GLenum pname,
                               const GLuint *params)
@@ -553,7 +460,7 @@ bool ValidateTexParameterIuiv(const Context *context,
     return true;
 }
 
-bool ValidateTexStorage3DMultisample(const Context *context,
+bool ValidateTexStorage3DMultisample(Context *context,
                                      TextureType targetPacked,
                                      GLsizei samples,
                                      GLenum internalformat,

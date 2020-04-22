@@ -8,7 +8,7 @@
 
 #include "common/tls.h"
 
-#include "common/debug.h"
+#include <assert.h>
 
 #ifdef ANGLE_ENABLE_WINDOWS_UWP
 #    include <map>
@@ -62,14 +62,14 @@ TLSIndex CreateTLSIndex()
     }
 #endif
 
-    ASSERT(index != TLS_INVALID_INDEX &&
+    assert(index != TLS_INVALID_INDEX &&
            "CreateTLSIndex(): Unable to allocate Thread Local Storage");
     return index;
 }
 
 bool DestroyTLSIndex(TLSIndex index)
 {
-    ASSERT(index != TLS_INVALID_INDEX && "DestroyTLSIndex(): Invalid TLS Index");
+    assert(index != TLS_INVALID_INDEX && "DestroyTLSIndex(): Invalid TLS Index");
     if (index == TLS_INVALID_INDEX)
     {
         return false;
@@ -77,8 +77,8 @@ bool DestroyTLSIndex(TLSIndex index)
 
 #ifdef ANGLE_PLATFORM_WINDOWS
 #    ifdef ANGLE_ENABLE_WINDOWS_UWP
-    ASSERT(index < nextTlsIndex);
-    ASSERT(find(freeTlsIndices.begin(), freeTlsIndices.end(), index) == freeTlsIndices.end());
+    assert(index < nextTlsIndex);
+    assert(find(freeTlsIndices.begin(), freeTlsIndices.end(), index) == freeTlsIndices.end());
 
     freeTlsIndices.push_back(index);
     for (auto threadData : allThreadData)
@@ -99,7 +99,7 @@ bool DestroyTLSIndex(TLSIndex index)
 
 bool SetTLSValue(TLSIndex index, void *value)
 {
-    ASSERT(index != TLS_INVALID_INDEX && "SetTLSValue(): Invalid TLS Index");
+    assert(index != TLS_INVALID_INDEX && "SetTLSValue(): Invalid TLS Index");
     if (index == TLS_INVALID_INDEX)
     {
         return false;
@@ -131,7 +131,7 @@ bool SetTLSValue(TLSIndex index, void *value)
 
 void *GetTLSValue(TLSIndex index)
 {
-    ASSERT(index != TLS_INVALID_INDEX && "GetTLSValue(): Invalid TLS Index");
+    assert(index != TLS_INVALID_INDEX && "GetTLSValue(): Invalid TLS Index");
     if (index == TLS_INVALID_INDEX)
     {
         return nullptr;

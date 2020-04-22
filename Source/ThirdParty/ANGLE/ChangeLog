@@ -1,3 +1,7 @@
+2020-04-21  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r259589. rdar://problem/62141646
+
 2020-04-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r259708.

@@ -541,7 +541,7 @@ void GLES1State::setHint(GLenum target, GLenum mode)
     }
 }
 
-GLenum GLES1State::getHint(GLenum target) const
+GLenum GLES1State::getHint(GLenum target)
 {
     switch (target)
     {

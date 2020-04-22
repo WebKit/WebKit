@@ -140,11 +140,6 @@ bool IsQualcomm(VendorID vendorId)
     return vendorId == kVendorID_Qualcomm;
 }
 
-bool IsGoogle(VendorID vendorId)
-{
-    return vendorId == kVendorID_GOOGLE;
-}
-
 bool IsVeriSilicon(VendorID vendorId)
 {
     return vendorId == kVendorID_VeriSilicon;
