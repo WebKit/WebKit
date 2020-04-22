@@ -1,3 +1,16 @@
+2020-04-21  Jer Noble  <jer.noble@apple.com>
+
+        PiP buttons shows up in element fullscreen when PiP is disabled in WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=210813
+
+        Reviewed by Eric Carlson.
+
+        Not currently testable; entering fullscreen never completes in the iOS TestWebKitAPI app
+        because that process is not a UI Application.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+
 2020-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Don't bother compiling UpdateInfo since it's not used
