@@ -1,3 +1,13 @@
+2020-04-21  Matt Lewis  <jlewis3@apple.com>
+
+        Bindings-test should not depend on current working directory.
+        https://bugs.webkit.org/show_bug.cgi?id=210831
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.main):
+
 2020-04-21  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the build after r260449
