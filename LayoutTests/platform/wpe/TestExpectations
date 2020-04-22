@@ -1444,6 +1444,8 @@ webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-st
 
 webkit.org/b/210413 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2361,6 +2363,8 @@ webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Failure ]
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
+
+webkit.org/b/210843 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

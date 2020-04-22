@@ -1,3 +1,12 @@
+2020-04-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Test gardening.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-21  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION (r254790): No longer get smooth scrolling on music.apple.com

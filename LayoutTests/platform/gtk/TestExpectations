@@ -262,6 +262,8 @@ webkit.org/b/210498 fast/mediastream/delayed-permission-denied.html [ Pass Crash
 webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
+webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Crash ]
+
 # There is an oggdemux bug that deadlocks WebKit: https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/639
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Failure Crash ]
 
@@ -2646,7 +2648,7 @@ webkit.org/b/202749 http/tests/dom/document-attributes-null-handling.html [ Pass
 
 webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass ]
 
-webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
+webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
 
 
 # Console log lines may appear in a different order so we silence them.
@@ -4650,6 +4652,8 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+
+webkit.org/b/210843 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
