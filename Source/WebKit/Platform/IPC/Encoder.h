@@ -89,13 +89,14 @@ public:
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
-    void reserve(size_t);
 
     static const bool isIPCEncoder = true;
 
     void encode(uint64_t);
 
 private:
+    void reserve(size_t);
+
     uint8_t* grow(unsigned alignment, size_t);
 
     void encode(bool);

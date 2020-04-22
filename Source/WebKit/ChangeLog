@@ -1,3 +1,15 @@
+2020-04-21  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Encoder::reserve() can be private
+        <https://webkit.org/b/210833>
+        <rdar://problem/62124193>
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/Encoder.h:
+        (IPC::Encoder::reserve):
+        - Move from public to private.
+
 2020-04-21  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Fix GPU Process build for VIDEO_PRESENTATION_MODE changes
