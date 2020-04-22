@@ -576,6 +576,33 @@ TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementChangesZoom
     EXPECT_LT([webView scrollView].zoomScale, 2);
 }
 
+TEST(RequestTextInputContext, TextInteraction_FocusElementInDetachedDocument)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webViewLoadHTMLStringAndWaitForAllFramesToPaint(webView.get(), applyIframe(@"<input type='text' id='input' style='width: 100px; height: 50px;'>"));
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
+    [webView scrollView].zoomScale = 2;
+
+    // Save a reference to the framed document (to prevent its destruction when its frame is removed)
+    // and remove the frame.
+    [webView stringByEvaluatingJavaScript:@"g_framedDocument = document.querySelector('iframe').contentDocument; document.querySelector('iframe').remove()"];
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+    }
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"g_framedDocument.activeElement.tagName"]);
+    EXPECT_EQ(2, [webView scrollView].zoomScale);
+}
+
 TEST(RequestTextInputContext, TextInteraction_FocusingElementChangesZoomScale)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
