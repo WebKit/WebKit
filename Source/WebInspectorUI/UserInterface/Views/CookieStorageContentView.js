@@ -32,8 +32,14 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this.element.classList.add("cookie-storage");
 
         this._cookies = [];
+        this._filteredCookies = [];
         this._sortComparator = null;
         this._table = null;
+
+        this._emptyFilterResultsMessageElement = null;
+
+        this._filterBarNavigationItem = new WI.FilterBarNavigationItem;
+        this._filterBarNavigationItem.filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._handleFilterBarFilterDidChange, this);
 
         if (InspectorBackend.hasCommand("Page.setCookie")) {
             this._setCookieButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-set-cookie", WI.UIString("Add Cookie"), "Images/Plus15.svg", 15, 15);
@@ -53,6 +59,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     get navigationItems()
     {
         let navigationItems = [];
+        navigationItems.push(this._filterBarNavigationItem);
+        navigationItems.push(new WI.DividerNavigationItem);
         if (this._setCookieButtonNavigationItem)
             navigationItems.push(this._setCookieButtonNavigationItem);
         navigationItems.push(this._refreshButtonNavigationItem);
@@ -73,6 +81,16 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         return [this._table.scrollContainer];
     }
 
+    get canFocusFilterBar()
+    {
+        return true;
+    }
+
+    focusFilterBar()
+    {
+        this._filterBarNavigationItem.filterBar.focus();
+    }
+
     handleCopyEvent(event)
     {
         if (!this._table || !this._table.selectedRows.length)
@@ -91,20 +109,20 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     tableIndexForRepresentedObject(table, object)
     {
-        let index = this._cookies.indexOf(object);
+        let index = this._filteredCookies.indexOf(object);
         console.assert(index >= 0);
         return index;
     }
 
     tableRepresentedObjectForIndex(table, index)
     {
-        console.assert(index >= 0 && index < this._cookies.length);
-        return this._cookies[index];
+        console.assert(index >= 0 && index < this._filteredCookies.length);
+        return this._filteredCookies[index];
     }
 
     tableNumberOfRows(table)
     {
-        return this._cookies.length;
+        return this._filteredCookies.length;
     }
 
     tableSortChanged(table)
@@ -115,6 +133,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return;
 
         this._updateSort();
+        this._updateFilteredCookies();
+        this._updateEmptyFilterResultsMessage();
         this._table.reloadData();
     }
 
@@ -129,7 +149,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         if (InspectorBackend.hasCommand("Page.setCookie")) {
             contextMenu.appendItem(WI.UIString("Edit"), () => {
                 console.assert(!this._editingCookie);
-                this._editingCookie = this._cookies[rowIndex];
+                this._editingCookie = this._filteredCookies[rowIndex];
 
                 let popover = new WI.CookiePopover(this);
                 popover.show(this._editingCookie, this._table.cellForRowAndColumn(rowIndex, this._table.columns[0]), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X]);
@@ -164,12 +184,13 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
         for (let i = rowIndexes.length - 1; i >= 0; --i) {
             let rowIndex = rowIndexes[i];
-            let cookie = this._cookies[rowIndex];
+            let cookie = this._filteredCookies[rowIndex];
             console.assert(cookie, "Missing cookie for row " + rowIndex);
             if (!cookie)
                 continue;
 
-            this._cookies.splice(rowIndex, 1);
+            this._filteredCookies.splice(rowIndex, 1);
+            this._cookies.remove(cookie);
 
             let target = WI.assumingMainTarget();
             target.PageAgent.deleteCookie(cookie.name, cookie.url);
@@ -178,7 +199,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     tablePopulateCell(table, cell, column, rowIndex)
     {
-        let cookie = this._cookies[rowIndex];
+        let cookie = this._filteredCookies[rowIndex];
         cell.textContent = this._formatCookiePropertyForColumn(cookie, column);
         return cell;
     }
@@ -286,11 +307,11 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     // Private
 
-    _filterCookies(cookies)
+    _getCookiesForHost(cookies, host)
     {
         let resourceMatchesStorageDomain = (resource) => {
             let urlComponents = resource.urlComponents;
-            return urlComponents && urlComponents.host && urlComponents.host === this.representedObject.host;
+            return urlComponents && urlComponents.host && urlComponents.host === host;
         };
 
         let allResources = [];
@@ -381,9 +402,16 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         promises.push(this._reloadCookies());
         await Promise.all(promises);
 
-        let index = this._cookies.findIndex((existingCookie) => cookieToSet.equals(existingCookie));
+        let index = this._filteredCookies.findIndex((existingCookie) => cookieToSet.equals(existingCookie));
         if (index >= 0)
             this._table.selectRow(index);
+    }
+
+    _handleFilterBarFilterDidChange(event)
+    {
+        this._updateFilteredCookies();
+        this._updateEmptyFilterResultsMessage();
+        this._table.reloadData();
     }
 
     _handleSetCookieButtonClick(event)
@@ -400,18 +428,20 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _handleClearNavigationItemClicked(event)
     {
         let target = WI.assumingMainTarget();
-        for (let cookie of this._cookies.splice(0))
+        for (let cookie of this._cookies)
             target.PageAgent.deleteCookie(cookie.name, cookie.url);
 
-        this._table.reloadData();
+        this._reloadCookies();
     }
 
     _reloadCookies()
     {
         let target = WI.assumingMainTarget();
         return target.PageAgent.getCookies().then((payload) => {
-            this._cookies = this._filterCookies(payload.cookies.map(WI.Cookie.fromPayload));
+            this._cookies = this._getCookiesForHost(payload.cookies.map(WI.Cookie.fromPayload), this.representedObject.host);
             this._updateSort();
+            this._updateFilteredCookies();
+            this._updateEmptyFilterResultsMessage();
             this._table.reloadData();
         }).catch((error) => {
             console.error("Could not fetch cookies: ", error);
@@ -426,6 +456,45 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._cookies.sort(this._sortComparator);
     }
 
+    _updateFilteredCookies()
+    {
+        let filterText = this._filterBarNavigationItem.filterBar.filters.text;
+        if (filterText) {
+            let regex = WI.SearchUtilities.filterRegExpForString(filterText, WI.SearchUtilities.defaultSettings);
+            this._filteredCookies = this._cookies.filter((cookie) => {
+                for (let column of this._table.columns) {
+                    let text = this._formatCookiePropertyForColumn(cookie, column);
+                    if (text && regex.test(text))
+                        return true;
+                }
+                return false;
+            });
+        } else
+            this._filteredCookies = this._cookies;
+    }
+
+    _updateEmptyFilterResultsMessage()
+    {
+        if (this._filteredCookies.length || !this._filterBarNavigationItem.filterBar.filters.text) {
+            if (this._emptyFilterResultsMessageElement)
+                this._emptyFilterResultsMessageElement.remove();
+            this._emptyFilterResultsMessageElement = null;
+        } else {
+            if (!this._emptyFilterResultsMessageElement) {
+                let buttonElement = document.createElement("button");
+                buttonElement.textContent = WI.UIString("Clear Filters");
+                buttonElement.addEventListener("click", (event) => {
+                    this._filterBarNavigationItem.filterBar.clear();
+                });
+
+                this._emptyFilterResultsMessageElement = WI.createMessageTextView(WI.UIString("No Filter Results"));
+                this._emptyFilterResultsMessageElement.appendChild(buttonElement);
+            }
+
+            this.element.appendChild(this._emptyFilterResultsMessageElement);
+        }
+    }
+
     _handleTableKeyDown(event)
     {
         if (event.keyCode === WI.KeyboardShortcut.Key.Backspace.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Delete.keyCode)
@@ -434,9 +503,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _cookiesAtIndexes(indexes)
     {
-        if (!this._cookies.length)
+        if (!this._filteredCookies.length)
             return [];
-        return indexes.map((index) => this._cookies[index]);
+        return indexes.map((index) => this._filteredCookies[index]);
     }
 
     _formatCookiesAsText(cookies)

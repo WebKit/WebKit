@@ -1,3 +1,50 @@
+2020-04-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: unable to filter cookies
+        https://bugs.webkit.org/show_bug.cgi?id=210837
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.get navigationItems):
+        (WI.CookieStorageContentView.prototype.get canFocusFilterBar): Added.
+        (WI.CookieStorageContentView.prototype.focusFilterBar): Added.
+        (WI.CookieStorageContentView.prototype.tableIndexForRepresentedObject):
+        (WI.CookieStorageContentView.prototype.tableRepresentedObjectForIndex):
+        (WI.CookieStorageContentView.prototype.tableNumberOfRows):
+        (WI.CookieStorageContentView.prototype.tableSortChanged):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        (WI.CookieStorageContentView.prototype.tableDidRemoveRows):
+        (WI.CookieStorageContentView.prototype.tablePopulateCell):
+        (WI.CookieStorageContentView.prototype._getCookiesForHost): Renamed from `_filterCookies`.
+        (WI.CookieStorageContentView.prototype.async _willDismissCookiePopover):
+        (WI.CookieStorageContentView.prototype._handleFilterBarFilterDidChange): Added.
+        (WI.CookieStorageContentView.prototype._handleClearNavigationItemClicked):
+        (WI.CookieStorageContentView.prototype._reloadCookies):
+        (WI.CookieStorageContentView.prototype._updateFilteredCookies): Added.
+        (WI.CookieStorageContentView.prototype._updateEmptyFilterResultsMessage): Added.
+        (WI.CookieStorageContentView.prototype._cookiesAtIndexes):
+        (WI.CookieStorageContentView.prototype._filterCookies): Deleted.
+        * UserInterface/Views/CookieStorageContentView.css:
+        (.content-view.cookie-storage > .message-text-view): Added.
+        (.content-view.cookie-storage > .message-text-view > .message): Added.
+        (.content-view.cookie-storage > .data-grid): Deleted.
+        Add a filter bar to the navigation bar that checks the regex-ified filter text against the
+        formatted text of each cell for each cookie. Also hook it up to the global find shortcut.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._showEmptyFilterResultsMessage):
+        (WI.NetworkTableContentView.prototype._tableNameColumnDidChangeWidth):
+        (WI.NetworkTableContentView.prototype._positionEmptyFilterMessage): Deleted.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .message-text-view): Added.
+        Drive-by: instead of having the "No Filter Results" view only cover the "Name" column, it
+                  should cover the entire table so as to be as noticable as possible (not to mention
+                  the table will be empty anyways, so it's not like anything is being hidden).
+        Drive-by: ensure that the "No Filter Results" view doesn't cover the statistics.
+
 2020-04-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r255396): Graphics: viewing a shader program hides the navigation sidebar

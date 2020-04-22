@@ -1284,7 +1284,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateWaterfallTimelineRuler();
         this._processPendingEntries();
         this._positionDetailView();
-        this._positionEmptyFilterMessage();
         this._updateExportButton();
     }
 
@@ -1603,7 +1602,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this.element.appendChild(this._emptyFilterResultsMessageElement);
-        this._positionEmptyFilterMessage();
     }
 
     _hideEmptyFilterResultsMessage()
@@ -1612,15 +1610,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
 
         this._emptyFilterResultsMessageElement.remove();
-    }
-
-    _positionEmptyFilterMessage()
-    {
-        if (!this._emptyFilterResultsMessageElement)
-            return;
-
-        let width = this._nameColumn.width - 1; // For the 1px border.
-        this._emptyFilterResultsMessageElement.style.width = width + "px";
     }
 
     _clearNetworkOnNavigateSettingChanged()
@@ -2494,7 +2483,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._nameColumnWidthSetting.value = event.target.width;
 
         this._positionDetailView();
-        this._positionEmptyFilterMessage();
     }
 
     _tableWaterfallColumnDidChangeWidth(event)
