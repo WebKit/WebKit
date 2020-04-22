@@ -1,5 +1,12 @@
 2020-04-22  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, commit updated xcfilelist files.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
+2020-04-22  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r259116.
 
         Broke login flow on some apple-internal sites

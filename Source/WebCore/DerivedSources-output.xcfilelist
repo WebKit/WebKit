@@ -548,6 +548,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableMessageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableMessageEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRButtonStateInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRButtonStateInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRInputSourceInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRInputSourceInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRRigidTransformInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRRigidTransformInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRViewInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRViewInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchBody.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchEvent.cpp
@@ -1912,6 +1922,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRInputController.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRInputController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGL2RenderingContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGL2RenderingContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.cpp
@@ -2088,6 +2102,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSpace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSystem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRSystem.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRTest.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRTest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRView.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRViewerPose.cpp
@@ -2172,6 +2188,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSessionInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSessionInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSessionMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSessionMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSimulateUserActivationFunction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRSimulateUserActivationFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRTargetRayMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRTargetRayMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRVisibilityState.cpp

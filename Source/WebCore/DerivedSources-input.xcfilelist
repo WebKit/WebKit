@@ -1113,6 +1113,11 @@ $(PROJECT_DIR)/svg/SVGZoomEvent.idl
 $(PROJECT_DIR)/svg/svgattrs.in
 $(PROJECT_DIR)/svg/svgtags.in
 $(PROJECT_DIR)/svg/xlinkattrs.in
+$(PROJECT_DIR)/testing/FakeXRBoundsPoint.idl
+$(PROJECT_DIR)/testing/FakeXRButtonStateInit.idl
+$(PROJECT_DIR)/testing/FakeXRInputSourceInit.idl
+$(PROJECT_DIR)/testing/FakeXRRigidTransformInit.idl
+$(PROJECT_DIR)/testing/FakeXRViewInit.idl
 $(PROJECT_DIR)/testing/GCObservation.idl
 $(PROJECT_DIR)/testing/InternalSettings.idl
 $(PROJECT_DIR)/testing/Internals.idl
@@ -1130,6 +1135,10 @@ $(PROJECT_DIR)/testing/MockPaymentError.idl
 $(PROJECT_DIR)/testing/MockWebAuthenticationConfiguration.idl
 $(PROJECT_DIR)/testing/ServiceWorkerInternals.idl
 $(PROJECT_DIR)/testing/TypeConversions.idl
+$(PROJECT_DIR)/testing/WebFakeXRDevice.idl
+$(PROJECT_DIR)/testing/WebFakeXRInputController.idl
+$(PROJECT_DIR)/testing/WebXRTest.idl
+$(PROJECT_DIR)/testing/XRSimulateUserActivationFunction.idl
 $(PROJECT_DIR)/workers/AbstractWorker.idl
 $(PROJECT_DIR)/workers/DedicatedWorkerGlobalScope.idl
 $(PROJECT_DIR)/workers/Worker.idl
