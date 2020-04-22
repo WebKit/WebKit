@@ -189,6 +189,8 @@ private:
     void clientDataBufferingTimerFired();
     void updateClientDataBuffering();
 
+    void addedMediaUsageManagerSessionIfNecessary();
+
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
 
@@ -215,6 +217,10 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;
+#endif
+
+#if ENABLE(MEDIA_USAGE)
+    bool m_haveAddedMediaUsageManagerSession { false };
 #endif
 };
 

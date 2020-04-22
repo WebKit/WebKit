@@ -1,3 +1,24 @@
+2020-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        fast/events/event-handler-detached-document-dispatchEvent.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=210859
+        <rdar://problem/62072269>
+
+        Reviewed by Jer Noble.
+
+        A media session may not have a Page when it is created, so register with the MediaUsageManager
+        in inActiveDocumentChanged if necessary.
+
+        No new tests, fixes an existing test.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::MediaElementSession):
+        (WebCore::MediaElementSession::~MediaElementSession):
+        (WebCore::MediaElementSession::addedMediaUsageManagerSessionIfNecessary):
+        (WebCore::MediaElementSession::inActiveDocumentChanged):
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged):
+        * html/MediaElementSession.h:
+
 2020-04-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r249160): Deleting newline after pasting text ending in a newline results in a discontinuity
