@@ -1,3 +1,13 @@
+2020-04-22  Antoine Quint  <graouts@apple.com>
+
+        [ Mojave wk1 Release ] animations/transition-and-animation-1.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210051
+        <rdar://problem/61345177>
+
+        Unreviewed test gardening, forgot to rebaseline this test.
+
+        * animations/transition-and-animation-1-expected.txt:
+
 2020-04-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: Step Over should only step through comma expressions if they are comma statements
