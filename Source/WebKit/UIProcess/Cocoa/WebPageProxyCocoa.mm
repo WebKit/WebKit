@@ -389,8 +389,13 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 #endif
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
+#if PLATFORM(MAC)
+using PlatformImage = NSImage*;
+#elif PLATFORM(IOS_FAMILY)
+using PlatformImage = UIImage*;
+#endif
 
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& size)
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(PlatformImage image, const WebCore::IntSize& size)
 {
     WebKit::ShareableBitmap::Configuration bitmapConfiguration;
     auto bitmap = WebKit::ShareableBitmap::createShareable(size, bitmapConfiguration);
@@ -427,7 +432,7 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
         });
     }];
         
-    [[WKQLThumbnailQueueManager sharedInstance].queue addOperation:operation];
+    [[WKQLThumbnailQueueManager sharedInstance].qlThumbnailGenerationQueue addOperation:operation];
 }
 
 
@@ -444,8 +449,7 @@ void WebPageProxy::requestThumbnailWithPath(const String& identifier, const Stri
     
 }
 
-#endif // HAVE(QUICKLOOK_THUMBNAILING)
-
+#endif
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION
