@@ -535,6 +535,14 @@ inline void* Options::addressOfOptionDefault(Options::ID id)
     return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
 }
 
+#if OS(WINDOWS)
+// FIXME: Use equalLettersIgnoringASCIICase.
+inline bool strncasecmp(const char* str1, const char* str2, size_t n)
+{
+    return _strnimp(str1, str2, n);
+}
+#endif
+
 void Options::initialize()
 {
     static std::once_flag initializeOptionsOnceFlag;
