@@ -1,3 +1,16 @@
+2020-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r259116.
+
+        Broke login flow on some apple-internal sites
+        (rdar://problem/61905262)
+
+        Reverted changeset:
+
+        "Move applyUserAgentIfNeeded calls to a more central place"
+        https://bugs.webkit.org/show_bug.cgi?id=209587
+        https://trac.webkit.org/changeset/259116
+
 2020-04-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce TableFormattingContext::computeAndDistributeExtraVerticalSpace

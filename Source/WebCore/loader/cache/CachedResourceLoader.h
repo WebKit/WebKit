@@ -175,7 +175,7 @@ private:
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, PAL::SessionID, CachedResourceRequest&&, const CookieJar&);
 
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
-    void updateHTTPRequestHeaders(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
+    void updateHTTPRequestHeaders(CachedResource::Type, CachedResourceRequest&);
 
     bool canRequest(CachedResource::Type, const URL&, const CachedResourceRequest&, ForPreload);
 
