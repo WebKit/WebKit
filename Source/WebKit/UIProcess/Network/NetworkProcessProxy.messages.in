@@ -23,7 +23,6 @@
 messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
     DidReceiveAuthenticationChallenge(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, Optional<WebCore::SecurityOriginData> topOrigin, WebCore::AuthenticationChallenge challenge, bool negotiatedLegacyTLS, uint64_t challengeID)
     NegotiatedLegacyTLS(WebKit::WebPageProxyIdentifier pageID)
-    DidNegotiateModernTLS(WebKit::WebPageProxyIdentifier pageID, WebCore::AuthenticationChallenge challenge)
 
     DidFetchWebsiteData(WebKit::CallbackID callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(WebKit::CallbackID callbackID)

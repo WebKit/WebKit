@@ -53,7 +53,6 @@ public:
 
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend);
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
-    void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&);
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
     void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
     void didReceiveData(Ref<WebCore::SharedBuffer>&&);

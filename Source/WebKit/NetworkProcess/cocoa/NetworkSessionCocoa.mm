@@ -674,10 +674,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
         if (sessionCocoa->fastServerTrustEvaluationEnabled() && negotiatedLegacyTLS == NegotiatedLegacyTLS::No) {
-            auto* networkDataTask = [self existingTask:task];
-            if (networkDataTask)
-                networkDataTask->didNegotiateModernTLS(challenge);
 #if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+            auto* networkDataTask = [self existingTask:task];
             auto decisionHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKNetworkSessionDelegate>(self), sessionCocoa = makeWeakPtr(sessionCocoa), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = makeRefPtr(networkDataTask), negotiatedLegacyTLS](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf)

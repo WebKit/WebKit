@@ -102,7 +102,6 @@ public:
 
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling); }
     virtual void shouldAllowLegacyTLS(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
-    virtual void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&) { }
     virtual bool shouldBypassContentModeSafeguards() const { return false; }
 
     // FIXME: These function should not be part of this client.

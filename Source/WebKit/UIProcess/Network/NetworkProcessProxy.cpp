@@ -344,12 +344,6 @@ void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
         page->negotiatedLegacyTLS();
 }
 
-void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, const WebCore::AuthenticationChallenge& challenge)
-{
-    if (auto* page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
-        page->didNegotiateModernTLS(challenge);
-}
-
 void NetworkProcessProxy::didFetchWebsiteData(CallbackID callbackID, const WebsiteData& websiteData)
 {
     MESSAGE_CHECK(m_pendingFetchWebsiteDataCallbacks.isValidKey(callbackID));

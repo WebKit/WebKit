@@ -7940,11 +7940,6 @@ void WebPageProxy::negotiatedLegacyTLS()
     m_pageLoadState.negotiatedLegacyTLS(transaction);
 }
 
-void WebPageProxy::didNegotiateModernTLS(const WebCore::AuthenticationChallenge& challenge)
-{
-    m_navigationClient->didNegotiateModernTLS(challenge);
-}
-
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
 {
     requestStorageSpace(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [reply = WTFMove(reply)](auto quota) mutable {
