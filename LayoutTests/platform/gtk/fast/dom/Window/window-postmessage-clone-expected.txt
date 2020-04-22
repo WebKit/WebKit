@@ -10,6 +10,7 @@ PASS: eventData is 1 of type number
 PASS: eventData is true of type boolean
 PASS: eventData is 1 of type string
 PASS: eventData is 0 of type bigint
+PASS: eventData is 0 of type bigint
 PASS: eventData is -20 of type bigint
 PASS: eventData is 4294967295 of type bigint
 PASS: eventData is -4294967295 of type bigint

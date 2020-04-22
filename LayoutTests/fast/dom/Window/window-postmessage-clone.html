@@ -8,12 +8,14 @@
 <script>
 document.getElementById("description").innerHTML = "Tests that we clone object hierarchies";
 
+globalThis.heapZero = 100000000000000000000000000000000000000000n - 100000000000000000000000000000000000000000n;
 tryPostMessage('null');
 tryPostMessage('undefined');
 tryPostMessage('1');
 tryPostMessage('true');
 tryPostMessage('"1"');
 tryPostMessage('0n');
+tryPostMessage('globalThis.heapZero');
 tryPostMessage('-20n');
 tryPostMessage('4294967295n');
 tryPostMessage('-4294967295n');

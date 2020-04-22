@@ -835,6 +835,10 @@ private:
     {
         static_assert(sizeof(uint64_t) == sizeof(unsigned long long));
         write(static_cast<uint8_t>(integer < 0));
+        if (!integer) {
+            write(static_cast<uint32_t>(0)); // Length-in-uint64_t
+            return;
+        }
         write(static_cast<uint32_t>(1)); // Length-in-uint64_t
         int64_t value = static_cast<int64_t>(integer);
         if (value < 0)
@@ -2998,6 +3002,17 @@ private:
         uint32_t lengthInUint64 = 0;
         if (!read(lengthInUint64))
             return JSValue();
+
+        if (!lengthInUint64) {
+#if USE(BIGINT32)
+            return JSValue(JSValue::JSBigInt32, 0);
+#else
+            JSBigInt* bigInt = JSBigInt::createZero(m_lexicalGlobalObject->vm());
+            m_gcBuffer.appendWithCrashOnOverflow(bigInt);
+            return bigInt;
+#endif
+        }
+
 #if USE(BIGINT32)
         static_assert(sizeof(JSBigInt::Digit) == sizeof(uint64_t));
         if (lengthInUint64 == 1) {
@@ -3020,6 +3035,7 @@ private:
             }
             bigInt->setDigit(0, digit64);
             bigInt->setSign(sign);
+            bigInt = bigInt->rightTrim(m_lexicalGlobalObject->vm());
             m_gcBuffer.appendWithCrashOnOverflow(bigInt);
             return bigInt;
         }
@@ -3055,6 +3071,7 @@ private:
             }
         }
         bigInt->setSign(sign);
+        bigInt = bigInt->rightTrim(m_lexicalGlobalObject->vm());
         m_gcBuffer.appendWithCrashOnOverflow(bigInt);
         return bigInt;
     }

@@ -59,7 +59,7 @@ public:
     static size_t estimatedSize(JSCell*, VM&);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    static JSBigInt* createZero(VM&);
+    JS_EXPORT_PRIVATE static JSBigInt* createZero(VM&);
     JS_EXPORT_PRIVATE static JSBigInt* tryCreateWithLength(JSGlobalObject*, unsigned length);
     static JSBigInt* createWithLengthUnchecked(VM&, unsigned length);
 
@@ -156,6 +156,7 @@ public:
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
+    JS_EXPORT_PRIVATE JSBigInt* rightTrim(VM&);
 
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
@@ -244,7 +245,6 @@ private:
     static JSBigInt* allocateFor(JSGlobalObject*, VM&, unsigned radix, unsigned charcount);
 
     static JSBigInt* copy(VM&, JSBigInt* x);
-    JSBigInt* rightTrim(VM&);
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
     static JSBigInt* absoluteAdd(JSGlobalObject*, JSBigInt* x, JSBigInt* y, bool resultSign);
