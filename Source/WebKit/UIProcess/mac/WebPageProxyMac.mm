@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -673,5 +673,6 @@ void WebPageProxy::willPerformPasteCommand()
 
 #endif // PLATFORM(MAC)
 
-#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef MESSAGE_CHECK_URL
+#undef MESSAGE_CHECK

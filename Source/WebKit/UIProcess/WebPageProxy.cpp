@@ -10180,7 +10180,8 @@ void WebPageProxy::willPerformPasteCommand()
 
 } // namespace WebKit
 
-#undef MERGE_WHEEL_EVENTS
-#undef MESSAGE_CHECK
-#undef MESSAGE_CHECK_URL
 #undef RELEASE_LOG_IF_ALLOWED
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK_URL
+#undef MESSAGE_CHECK
+#undef MERGE_WHEEL_EVENTS

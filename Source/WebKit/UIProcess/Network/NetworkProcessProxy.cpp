@@ -1490,4 +1490,3 @@ void NetworkProcessProxy::getAppBoundDomains(PAL::SessionID sessionID, Completio
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
-#undef MESSAGE_CHECK_URL

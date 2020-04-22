@@ -1,3 +1,20 @@
+2020-04-21  David Kilzer  <ddkilzer@apple.com>
+
+        Fix extra/missing #undef statements
+        <https://webkit.org/b/210818>
+        <rdar://problem/61973329>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        - Remove #undef MESSAGE_CHECK_URL.  It is no longer used.
+        * UIProcess/WebPageProxy.cpp:
+        - Add missing #undef MESSAGE_CHECK_COMPLETION.
+        - Sort #undef in reverse order of #define.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        - Add missing #undef MESSAGE_CHECK_WITH_RETURN_VALUE.
+        - Sort #undef in reverse order of #define.
+
 2020-04-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r260410) Frequent Network process crashes
