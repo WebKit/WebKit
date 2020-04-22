@@ -3301,7 +3301,9 @@ private:
             return;
         }
 
-        LValue operand = lowJSValue(m_node->child1());
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse || m_node->child1().useKind() == AnyBigIntUse);
+        LValue operand = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+        speculate(m_node, m_node->child1());
         LValue result = vmCall(Int64, operationValueBitNot, weakPointer(globalObject), operand);
         setJSValue(result);
     }

@@ -1,3 +1,14 @@
+2020-04-22  Saam Barati  <sbarati@apple.com>
+
+        ValueBitNot is wrong in FTL with AnyBigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=210846
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-value-bit-not-spec-any-big-int.js: Added.
+        (assert):
+        (foo):
+
 2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI results of BigInt32 Bitwise shift operation does not match to runtime results
