@@ -175,6 +175,9 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Share
         return false;
 
     auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return false;
+
     buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
 #endif
 

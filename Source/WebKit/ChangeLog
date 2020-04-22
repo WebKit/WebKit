@@ -1,3 +1,15 @@
+2020-04-22  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::decodeSharedBuffer() should check the return value of SharedMemory::map()
+        <https://webkit.org/b/210844>
+        <rdar://problem/60773120>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer):
+        - Add nullptr check and early return.
+
 2020-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         Switch from debug ASSERT to RELEASE_ASSERT in toNPJSObject
