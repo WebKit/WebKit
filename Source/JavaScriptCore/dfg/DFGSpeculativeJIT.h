@@ -746,8 +746,8 @@ public:
     void nonSpeculativeNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node*, Node* branchNode, bool invert = false);
-    void nonSpeculativeNonPeepholeStrictEq(Node*, bool invert = false);
-    bool nonSpeculativeStrictEq(Node*, bool invert = false);
+    void genericJSValueNonPeepholeStrictEq(Node*, bool invert = false);
+    bool genericJSValueStrictEq(Node*, bool invert = false);
     
     void compileInstanceOfForCells(Node*, JSValueRegs valueGPR, JSValueRegs prototypeGPR, GPRReg resultGPT, GPRReg scratchGPR, GPRReg scratch2GPR, JITCompiler::Jump slowCase = JITCompiler::Jump());
     void compileInstanceOf(Node*);

@@ -1184,7 +1184,7 @@ void SpeculativeJIT::compilePushWithScope(Node* node)
     cellResult(resultGPR, node);
 }
 
-bool SpeculativeJIT::nonSpeculativeStrictEq(Node* node, bool invert)
+bool SpeculativeJIT::genericJSValueStrictEq(Node* node, bool invert)
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
@@ -1200,7 +1200,7 @@ bool SpeculativeJIT::nonSpeculativeStrictEq(Node* node, bool invert)
         return true;
     }
     
-    nonSpeculativeNonPeepholeStrictEq(node, invert);
+    genericJSValueNonPeepholeStrictEq(node, invert);
     
     return false;
 }
@@ -6522,7 +6522,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     }
 
     ASSERT(node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse));
-    return nonSpeculativeStrictEq(node);
+    return genericJSValueStrictEq(node);
 }
 
 void SpeculativeJIT::compileBooleanCompare(Node* node, MacroAssembler::RelationalCondition condition)

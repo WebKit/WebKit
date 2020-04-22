@@ -63,7 +63,7 @@ public:
     JS_EXPORT_PRIVATE static JSBigInt* tryCreateWithLength(JSGlobalObject*, unsigned length);
     static JSBigInt* createWithLengthUnchecked(VM&, unsigned length);
 
-    static JSBigInt* createFrom(VM&, int32_t value);
+    JS_EXPORT_PRIVATE static JSBigInt* createFrom(VM&, int32_t value);
     static JSBigInt* createFrom(VM&, uint32_t value);
     static JSBigInt* createFrom(VM&, int64_t value);
     static JSBigInt* createFrom(VM&, bool value);

@@ -75,31 +75,33 @@ void BigIntConstructor::finishCreation(VM& vm, BigIntPrototype* bigIntPrototype)
 
 // ------------------------------ Functions ---------------------------
 
-static EncodedJSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
+JSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
 {
     ASSERT(argument.isPrimitive());
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (argument.isBigInt())
-        return JSValue::encode(argument);
+        return argument;
 
     if (argument.isBoolean()) {
 #if USE(BIGINT32)
-        return JSValue::encode(JSValue(JSValue::JSBigInt32, argument.asBoolean()));
+        return JSValue(JSValue::JSBigInt32, argument.asBoolean());
 #else
-        return JSValue::encode(JSBigInt::createFrom(vm, argument.asBoolean()));
+        return JSBigInt::createFrom(vm, argument.asBoolean());
 #endif
     }
 
     if (argument.isString()) {
+        scope.release();
         return toStringView(globalObject, argument, [&] (StringView view) {
-            return JSValue::encode(JSBigInt::parseInt(globalObject, view));
+            return JSBigInt::parseInt(globalObject, view);
         });
     }
 
     ASSERT(argument.isUndefinedOrNull() || argument.isNumber() || argument.isSymbol());
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
+    throwTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
+    return jsUndefined();
 }
 
 static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -129,9 +131,7 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
         return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(vm, static_cast<int64_t>(primitive.asDouble())));
     }
 
-    EncodedJSValue result = toBigInt(globalObject, primitive);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return result;
+    RELEASE_AND_RETURN(scope, JSValue::encode(toBigInt(globalObject, primitive)));
 }
 
 EncodedJSValue JSC_HOST_CALL bigIntConstructorFuncAsUintN(JSGlobalObject*, CallFrame*)

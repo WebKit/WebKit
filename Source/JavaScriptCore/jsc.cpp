@@ -24,6 +24,7 @@
 
 #include "ArrayBuffer.h"
 #include "ArrayPrototype.h"
+#include "BigIntConstructor.h"
 #include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "BytecodeCacheError.h"
@@ -270,6 +271,8 @@ private:
 
 
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionCreateHeapBigInt(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject*, CallFrame*);
 
 static EncodedJSValue JSC_HOST_CALL functionPrintStdOut(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionPrintStdErr(JSGlobalObject*, CallFrame*);
@@ -541,6 +544,10 @@ private:
         addFunction(vm, "hasCustomProperties", functionHasCustomProperties, 0);
 
         addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
+        addFunction(vm, "createHeapBigInt", functionCreateHeapBigInt, 1);
+#if USE(BIGINT32)
+        addFunction(vm, "createBigInt32", functionCreateBigInt32, 1);
+#endif
 
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
 
@@ -2243,6 +2250,53 @@ EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     return JSValue::encode(GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>()));
 }
+
+EncodedJSValue JSC_HOST_CALL functionCreateHeapBigInt(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue argument = callFrame->argument(0);
+    JSValue bigInt = toBigInt(globalObject, argument);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+#if USE(BIGINT32)
+    if (bigInt.isHeapBigInt())
+        return JSValue::encode(bigInt);
+    ASSERT(bigInt.isBigInt32());
+    int32_t value = bigInt.bigInt32AsInt32();
+    return JSValue::encode(JSBigInt::createFrom(vm, value));
+#else
+    return JSValue::encode(bigInt);
+#endif
+}
+
+#if USE(BIGINT32)
+EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue argument = callFrame->argument(0);
+    JSValue bigIntValue = toBigInt(globalObject, argument);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (bigIntValue.isBigInt32())
+        return JSValue::encode(bigIntValue);
+    ASSERT(bigIntValue.isHeapBigInt());
+    JSBigInt* bigInt = jsCast<JSBigInt*>(bigIntValue);
+    if (!bigInt->length())
+        return JSValue::encode(JSValue(JSValue::JSBigInt32, 0));
+    if (bigInt->length() == 1) {
+        JSBigInt::Digit digit = bigInt->digit(0);
+        if (bigInt->sign()) {
+            if (digit <= static_cast<uint64_t>(-static_cast<int64_t>(INT32_MIN)))
+                return JSValue::encode(JSValue(JSValue::JSBigInt32, static_cast<int32_t>(-static_cast<int64_t>(digit))));
+        } else {
+            if (digit <= INT32_MAX)
+                return JSValue::encode(JSValue(JSValue::JSBigInt32, static_cast<int32_t>(digit)));
+        }
+    }
+    throwTypeError(globalObject, scope, "Out of range of BigInt32"_s);
+    return { };
+}
+#endif
 
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(JSGlobalObject* globalObject, CallFrame* callFrame)
 {

@@ -1,3 +1,15 @@
+2020-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq should expect AnyBigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=210832
+
+        Reviewed by Mark Lam.
+
+        * stress/heap-and-32-bigint-eq.js: Added.
+        (shouldBe):
+        * stress/heap-and-32-bigint-stricteq.js: Added.
+        (shouldBe):
+
 2020-04-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         constructObjectFromPropertyDescriptor() is incorrect with partial descriptors
