@@ -1,3 +1,13 @@
+2020-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Add layout test to validate the User-Agent HTTP header of XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=210863
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/xmlhttprequest/xhr-user-agent-expected.txt: Added.
+        * http/tests/xmlhttprequest/xhr-user-agent.html: Added.
+
 2020-04-22  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Coordinate "update animations and send events" procedure across multiple timelines
