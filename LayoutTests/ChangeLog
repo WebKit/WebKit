@@ -1,3 +1,23 @@
+2020-04-22  Antoine Quint  <graouts@apple.com>
+
+        [ Mojave wk1 Release ] animations/transition-and-animation-1.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210051
+        <rdar://problem/61345177>
+
+        Reviewed by Simon Fraser.
+
+        The purpose of this test is to check that running an animation does not trigger a transition for the animated
+        property. The way this test was written is that it would use `setTimeout()` to set a timer at a time computed to
+        be 500ms after the completion of the animation. However, using a timer like this is flaky by design as the animation
+        could technically be still in flight if the system is under heavy load.
+
+        We rewrite this test to use an "animationend" event to determine the animation has really completed and then wait
+        another frame, using `requestAnimationFrame()` to check that the computed style is as expected.
+
+        * animations/transition-and-animation-1.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForEvent):
+
 2020-04-22  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iPadOS wk2 Release ] fast/css-custom-paint/constructor.html is flaky timing out.

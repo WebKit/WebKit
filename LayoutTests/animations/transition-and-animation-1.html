@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -12,28 +12,37 @@
         height: 100px;
         width: 100px;
         background-color: blue;
-        -webkit-animation-duration: 0.5s;
-        -webkit-animation-timing-function: linear;
-        -webkit-animation-name: "anim";
-        -webkit-transition-property: -webkit-transform;
-        -webkit-transition-duration: 10s;
+        animation-duration: 0.5s;
+        animation-timing-function: linear;
+        animation-name: "anim";
+        transition-property: transform;
+        transition-duration: 10s;
     }
     @-webkit-keyframes "anim" {
-        from { -webkit-transform: translateX(200px); }
-        to   { -webkit-transform: translateX(300px); }
+        from { transform: translateX(200px); }
+        to   { transform: translateX(300px); }
     }
     </style>
-    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-    
+    <script src="../resources/ui-helper.js"></script>
+    <script src="resources/animation-test-helpers.js"></script>
+    <script type="text/javascript">
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      [null, 0.55, "box", "webkitTransform", "none", null],
+      [null, 0.55, "box", "transform", "none", null],
     ];
-    
-    runAnimationTest(expectedValues);
-    
-  </script>
+
+    window.addEventListener("DOMContentLoaded", async event => {
+        await UIHelper.waitForEvent(document.getElementById("box"), "animationend");
+        await UIHelper.animationFrame();
+        checkExpectedValue(expectedValues, 0);
+        endTest();
+    });
+
+    </script>
 </head>
 <body>
 This test has a transition and animation on the same property (-webkit-transform). But the transition is never triggered,

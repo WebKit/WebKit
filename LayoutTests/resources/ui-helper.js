@@ -1042,6 +1042,11 @@ window.UIHelper = class UIHelper {
             await this.activateAt(menuRect.left + menuRect.width / 2, menuRect.top + menuRect.height / 2);
     }
 
+    static waitForEvent(target, eventName)
+    {
+        return new Promise(resolve => target.addEventListener(eventName, resolve, { once: true }));
+    }
+
     static callFunctionAndWaitForEvent(functionToCall, target, eventName)
     {
         return new Promise((resolve) => {
