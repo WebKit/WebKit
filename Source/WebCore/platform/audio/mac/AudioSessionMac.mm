@@ -96,6 +96,10 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
         return;
     }
 
+    m_private->category = category;
+    if (m_private->category == None)
+        return;
+
     if (!m_routingArbitrationClient)
         return;
 
@@ -104,13 +108,10 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
         m_routingArbitrationClient->leaveRoutingAbritration();
     }
 
-    m_private->category = category;
-    if (m_private->category == None)
-        return;
-
     using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;
     using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
 
+    m_private->setupArbitrationOngoing = true;
     m_routingArbitrationClient->beginRoutingArbitrationWithCategory(m_private->category, [this] (RoutingArbitrationError error, DefaultRouteChanged defaultRouteChanged) {
         m_private->setupArbitrationOngoing = false;
         if (error != RoutingArbitrationError::None) {
