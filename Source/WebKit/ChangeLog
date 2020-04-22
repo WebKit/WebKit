@@ -1,3 +1,34 @@
+2020-04-22  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62083319
+
+    2020-04-22  Alex Christensen  <achristensen@webkit.org>
+
+            NetworkSessionCocoa should request client certificate only once per host/port
+            https://bugs.webkit.org/show_bug.cgi?id=210626
+            <rdar://problem/60340449>
+
+            Reviewed by Geoffrey Garen.
+
+            NSURLSession creates more than one TCP connection to a server when using HTTP 1.1.
+            Each TCP connection with TLS generates a didReceiveChallenge to do the server trust evaluation of the certificate chain.
+            If the server requests a client certificate in the TLS handshake, it also generates a didReceiveChallenge to request client
+            certificates as well.  This is an implementation detail of our networking.  We should not actually ask the WKNavigationDelegate
+            for client certificates more than once per host/port.  We should remember the credential and give it to NSURLSession immediately
+            if we have used this credential in the past for a task that has received bytes (either a response or a redirect).  If the TLS
+            handshake fails, we should not reuse that same certificate automatically.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+            (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+            (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+            (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+            (WebKit::NetworkSessionCocoa::clientCertificateSuggestedForHost):
+            (WebKit::NetworkSessionCocoa::taskReceivedBytes):
+            (WebKit::NetworkSessionCocoa::taskFailed):
+            (WebKit::NetworkSessionCocoa::successfulClientCertificateForHost const):
+
 2020-04-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259814. rdar://problem/61888315
