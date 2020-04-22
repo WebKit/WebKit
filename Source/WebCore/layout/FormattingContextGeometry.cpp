@@ -1049,13 +1049,12 @@ Edges FormattingContext::Geometry::computedBorder(const Box& layoutBox) const
     };
 }
 
-Optional<Edges> FormattingContext::Geometry::computedPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
+Optional<Edges> FormattingContext::Geometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
 {
     if (!layoutBox.isPaddingApplicable())
         return WTF::nullopt;
 
     auto& style = layoutBox.style();
-    auto containingBlockWidth = horizontalConstraints.logicalWidth;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return Edges {
         { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },

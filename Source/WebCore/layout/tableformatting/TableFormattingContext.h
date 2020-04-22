@@ -60,7 +60,7 @@ private:
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void layoutCell(const TableGrid::Cell&, InvalidationState&, const HorizontalConstraints&);
+    void layoutCell(const TableGrid::Cell&, InvalidationState&, LayoutUnit availableHorizontalSpace);
     void positionTableCells();
     void setComputedGeometryForRows();
     void setComputedGeometryForSections();
@@ -68,6 +68,7 @@ private:
     void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace);
+    void computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
     void initializeDisplayBoxToBlank(Display::Box&) const;
 

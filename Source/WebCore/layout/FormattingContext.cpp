@@ -130,7 +130,7 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const Hori
 {
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setBorder(geometry().computedBorder(layoutBox));
-    displayBox.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint));
+    displayBox.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
 void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const OutOfFlowHorizontalConstraints& rootHorizontalConstraints, const VerticalConstraints& rootVerticalConstraints)

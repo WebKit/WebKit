@@ -61,55 +61,53 @@ TableFormattingContext::TableFormattingContext(const ContainerBox& formattingCon
 {
 }
 
-void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints&)
+void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
 {
     auto& grid = formattingState().tableGrid();
-    auto& columns = grid.columns();
-
+    auto& columnList = grid.columns().list();
+    auto& rowList = grid.rows().list();
+    // 1. Compute width and height for the grid.
     computeAndDistributeExtraHorizontalSpace(horizontalConstraints.logicalWidth);
-    // 1. Position each column.
-    // FIXME: This should also deal with collapsing borders etc.
+    computeAndDistributeExtraVerticalSpace(horizontalConstraints.logicalWidth, verticalConstraints.logicalHeight);
+    // 2. Position columns.
     auto horizontalSpacing = grid.horizontalSpacing();
     auto columnLogicalLeft = horizontalSpacing;
-    for (auto& column : columns.list()) {
+    for (auto& column : columnList) {
         column.setLogicalLeft(columnLogicalLeft);
-        columnLogicalLeft += (column.logicalWidth() + horizontalSpacing);
+        columnLogicalLeft += column.logicalWidth() + horizontalSpacing;
     }
-
-    // 2. Layout each table cell (and compute row height as well).
+    // 3. Position rows.
+    auto verticalSpacing = grid.verticalSpacing();
+    auto rowLogicalTop = verticalSpacing;
+    for (auto& row : rowList) {
+        row.setLogicalTop(rowLogicalTop);
+        rowLogicalTop += row.logicalHeight() + verticalSpacing;
+    }
+    // 4. Position cells.
+    for (auto& cell : grid.cells()) {
+        auto& cellDisplayBox = formattingState().displayBox(cell->box());
+        cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop());
+        cellDisplayBox.setLeft(columnList[cell->startColumn()].logicalLeft());
+    }
+    // 5. Final table cell layout. At this point all percentage values can be resolved.
     auto& cellList = grid.cells();
     ASSERT(!cellList.isEmpty());
-    for (auto& cell : cellList) {
-        auto& cellBox = cell->box();
-        layoutCell(*cell, invalidationState, horizontalConstraints);
-        // FIXME: Add support for column and row spanning and this requires a 2 pass layout.
-        auto& row = grid.rows().list().at(cell->startRow());
-        row.setLogicalHeight(std::max(row.logicalHeight(), geometryForBox(cellBox).marginBoxHeight()));
-    }
-    // This is after the second pass when cell heights are fully computed.
-    auto rowLogicalTop = grid.verticalSpacing();
-    for (auto& row : grid.rows().list()) {
-        row.setLogicalTop(rowLogicalTop);
-        rowLogicalTop += (row.logicalHeight() + grid.verticalSpacing());
-    }
-
+    for (auto& cell : cellList)
+        layoutCell(*cell, invalidationState, horizontalConstraints.logicalWidth);
     // 3. Finalize size and position.
-    positionTableCells();
     setComputedGeometryForSections();
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, InvalidationState& invalidationState, const HorizontalConstraints& horizontalConstraints)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, InvalidationState& invalidationState, LayoutUnit availableHorizontalSpace)
 {
     auto& cellBox = cell.box();
-    computeBorderAndPadding(cellBox, horizontalConstraints);
+    computeBorderAndPadding(cellBox, HorizontalConstraints { { }, availableHorizontalSpace });
     // Margins do not apply to internal table elements.
     auto& cellDisplayBox = formattingState().displayBox(cellBox);
     cellDisplayBox.setHorizontalMargin({ });
     cellDisplayBox.setHorizontalComputedMargin({ });
-    // Don't know the actual position yet.
-    cellDisplayBox.setTopLeft({ });
-    auto contentWidth = [&] {
+    auto availableSpaceForContent = [&] {
         auto& grid = formattingState().tableGrid();
         auto& columnList = grid.columns().list();
         auto logicalWidth = LayoutUnit { };
@@ -119,7 +117,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, Invalidatio
         logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
         return logicalWidth - cellDisplayBox.horizontalMarginBorderAndPadding();
     }();
-    cellDisplayBox.setContentBoxWidth(contentWidth);
+    cellDisplayBox.setContentBoxWidth(availableSpaceForContent);
 
     ASSERT(cellBox.establishesBlockFormattingContext());
     if (cellBox.hasInFlowOrFloatingChild()) {
@@ -131,46 +129,6 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, Invalidatio
     cellDisplayBox.setVerticalMargin({ { }, { } });
     cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellBox).contentHeight);
     // FIXME: Check what to do with out-of-flow content.
-}
-
-void TableFormattingContext::positionTableCells()
-{
-    auto& grid = formattingState().tableGrid();
-    auto& rowList = grid.rows().list();
-    auto& columnList = grid.columns().list();
-    for (auto& cell : grid.cells()) {
-        auto& cellDisplayBox = formattingState().displayBox(cell->box());
-        cellDisplayBox.setTop(rowList.at(cell->startRow()).logicalTop());
-        cellDisplayBox.setLeft(columnList.at(cell->startColumn()).logicalLeft());
-    }
-}
-
-void TableFormattingContext::setComputedGeometryForRows()
-{
-    auto& grid = formattingState().tableGrid();
-    auto rowWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
-
-    for (auto& row : grid.rows().list()) {
-        auto& rowDisplayBox = formattingState().displayBox(row.box());
-        initializeDisplayBoxToBlank(rowDisplayBox);
-        rowDisplayBox.setContentBoxHeight(row.logicalHeight());
-        rowDisplayBox.setContentBoxWidth(rowWidth);
-        rowDisplayBox.setTop(row.logicalTop());
-    }
-}
-
-void TableFormattingContext::setComputedGeometryForSections()
-{
-    auto& grid = formattingState().tableGrid();
-    auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
-
-    for (auto& section : childrenOfType<Box>(root())) {
-        auto& sectionDisplayBox = formattingState().displayBox(section);
-        initializeDisplayBoxToBlank(sectionDisplayBox);
-        // FIXME: Size table sections properly.
-        sectionDisplayBox.setContentBoxWidth(sectionWidth);
-        sectionDisplayBox.setContentBoxHeight(grid.rows().list().last().logicalBottom() + grid.verticalSpacing());
-    }
 }
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
@@ -477,6 +435,62 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     auto horizontalSpaceToDistribute = availableHorizontalSpace - tableWidthConstraints.minimum;
     ASSERT(horizontalSpaceToDistribute > 0);
     computeColumnWidths(ColumnWidthBalancingBase::MinimumWidth, horizontalSpaceToDistribute);
+}
+
+void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit>)
+{
+    auto& grid = formattingState().tableGrid();
+    auto& columns = grid.columns().list();
+    auto& rows = grid.rows();
+
+    Vector<float> rownHeights;
+    // 1. Collect initial row heights.
+    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+        float maximumColumnHeight = 0;
+        for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+            auto& slot = *grid.slot({ columnIndex, rowIndex });
+            if (slot.isColumnSpanned())
+                continue;
+            auto invalidationState = InvalidationState { };
+            layoutCell(slot.cell(), invalidationState, availableHorizontalSpace);
+            maximumColumnHeight = std::max<float>(maximumColumnHeight, geometryForBox(slot.cell().box()).height());
+        }
+        // <tr style="height: 10px"> is considered as min height.
+        auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }).valueOr(LayoutUnit { });
+        // FIXME: add support for baseline syncing.
+        rownHeights.append(std::max(maximumColumnHeight, computedRowHeight.toFloat()));
+    }
+
+    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex)
+        grid.rows().list()[rowIndex].setLogicalHeight(LayoutUnit { rownHeights[rowIndex] });
+}
+
+void TableFormattingContext::setComputedGeometryForRows()
+{
+    auto& grid = formattingState().tableGrid();
+    auto rowWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
+
+    for (auto& row : grid.rows().list()) {
+        auto& rowDisplayBox = formattingState().displayBox(row.box());
+        initializeDisplayBoxToBlank(rowDisplayBox);
+        rowDisplayBox.setContentBoxHeight(row.logicalHeight());
+        rowDisplayBox.setContentBoxWidth(rowWidth);
+        rowDisplayBox.setTop(row.logicalTop());
+    }
+}
+
+void TableFormattingContext::setComputedGeometryForSections()
+{
+    auto& grid = formattingState().tableGrid();
+    auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
+
+    for (auto& section : childrenOfType<Box>(root())) {
+        auto& sectionDisplayBox = formattingState().displayBox(section);
+        initializeDisplayBoxToBlank(sectionDisplayBox);
+        // FIXME: Size table sections properly.
+        sectionDisplayBox.setContentBoxWidth(sectionWidth);
+        sectionDisplayBox.setContentBoxHeight(grid.rows().list().last().logicalBottom() + grid.verticalSpacing());
+    }
 }
 
 }

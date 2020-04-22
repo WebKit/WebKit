@@ -1,3 +1,27 @@
+2020-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Introduce TableFormattingContext::computeAndDistributeExtraVerticalSpace
+        https://bugs.webkit.org/show_bug.cgi?id=210830
+
+        Reviewed by Antti Koivisto.
+
+        Add a dedicated function to compute preferred heights for the table rows.
+        This is in preparation for the 2 pass layout required to finalize row height. 
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding const):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::positionTableCells): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+
 2020-04-22  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Several fixes to GdkEvent APIs for GTK4

@@ -128,7 +128,7 @@ protected:
         LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth);
 
         Edges computedBorder(const Box&) const;
-        Optional<Edges> computedPadding(const Box&, const HorizontalConstraints&) const;
+        Optional<Edges> computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
 
         ComputedHorizontalMargin computedHorizontalMargin(const Box&, const HorizontalConstraints&) const;
         ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;
