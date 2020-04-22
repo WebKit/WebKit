@@ -177,25 +177,25 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 
 - (BOOL)_isShowingVideoPictureInPicture
 {
-#if !HAVE(AVKIT)
-    return false;
-#else
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     if (!_page || !_page->videoFullscreenManager())
         return false;
 
     return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+#else
+    return false;
 #endif
 }
 
 - (BOOL)_mayAutomaticallyShowVideoPictureInPicture
 {
-#if !HAVE(AVKIT)
-    return false;
-#else
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     if (!_page || !_page->videoFullscreenManager())
         return false;
 
     return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
+#else
+    return false;
 #endif
 }
 
