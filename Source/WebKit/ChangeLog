@@ -1,3 +1,17 @@
+2020-04-23  John Frankish  <john.frankish@outlook.com>
+
+        [GTK] Crash in cairo_surface_mark_dirty_rectangle() in accelerated compositing mode under X11
+        https://bugs.webkit.org/show_bug.cgi?id=210636
+
+        Reviewed by Carlos Garcia Campos.
+
+        When cairo is configured to use xcb instead of xlib, it might use an image surface attached to the xlib one as
+        snapshot. In that case a flush is needed to detach that snapshot after we have drawn the surface in the
+        context.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::paint): Call cairo_surface_flush() after drawing.
+
 2020-04-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r260133.
