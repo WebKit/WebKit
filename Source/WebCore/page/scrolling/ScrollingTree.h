@@ -186,6 +186,8 @@ private:
     void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&);
     virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) { }
 
+    void applyLayerPositionsInternal();
+
     void applyLayerPositionsRecursive(ScrollingTreeNode&);
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
     void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&);

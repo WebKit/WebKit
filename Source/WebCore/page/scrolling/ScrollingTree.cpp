@@ -98,48 +98,55 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     m_latchingController.receivedWheelEvent(wheelEvent);
 
-    if (!asyncFrameOrOverflowScrollingEnabled()) {
-        if (m_rootNode)
-            return m_rootNode->handleWheelEvent(wheelEvent);
+    auto result = [&] {
+        if (!asyncFrameOrOverflowScrollingEnabled()) {
+            if (m_rootNode)
+                return m_rootNode->handleWheelEvent(wheelEvent);
 
+            return ScrollingEventResult::DidNotHandleEvent;
+        }
+
+        if (auto latchedNodeID = m_latchingController.latchedNodeForEvent(wheelEvent)) {
+            LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeID);
+            auto* node = nodeForID(latchedNodeID.value());
+            if (is<ScrollingTreeScrollingNode>(node))
+                return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
+        }
+        
+        FloatPoint position = wheelEvent.position();
+        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+        auto node = scrollingNodeForPoint(position);
+
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
+
+        while (node) {
+            if (is<ScrollingTreeScrollingNode>(*node)) {
+                auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
+                auto result = scrollingNode.handleWheelEvent(wheelEvent);
+
+                if (result == ScrollingEventResult::DidHandleEvent)
+                    m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
+
+                if (result != ScrollingEventResult::DidNotHandleEvent)
+                    return result;
+            }
+
+            if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
+                if (auto relatedNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*node).overflowScrollingNodeID())) {
+                    node = relatedNode;
+                    continue;
+                }
+            }
+
+            node = node->parent();
+        }
         return ScrollingEventResult::DidNotHandleEvent;
-    }
+    }();
 
-    if (auto latchedNodeID = m_latchingController.latchedNodeForEvent(wheelEvent)) {
-        LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeID);
-        auto* node = nodeForID(latchedNodeID.value());
-        if (is<ScrollingTreeScrollingNode>(node))
-            return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
-    }
-
-    FloatPoint position = wheelEvent.position();
-    position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
-    auto node = scrollingNodeForPoint(position);
-
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
-
-    while (node) {
-        if (is<ScrollingTreeScrollingNode>(*node)) {
-            auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-            auto result = scrollingNode.handleWheelEvent(wheelEvent);
-            if (result == ScrollingEventResult::DidHandleEvent) {
-                m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
-                return ScrollingEventResult::DidHandleEvent;
-            }
-            if (result == ScrollingEventResult::SendToMainThread)
-                return ScrollingEventResult::SendToMainThread;
-        }
-
-        if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
-            if (auto relatedNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*node).overflowScrollingNodeID())) {
-                node = relatedNode;
-                continue;
-            }
-        }
-
-        node = node->parent();
-    }
-    return ScrollingEventResult::DidNotHandleEvent;
+    if (result == ScrollingEventResult::DidHandleEvent)
+        applyLayerPositionsInternal();
+    
+    return result;
 }
 
 RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
@@ -322,14 +329,16 @@ void ScrollingTree::applyLayerPositions()
     ASSERT(isMainThread());
     LockHolder locker(m_treeMutex);
 
+    applyLayerPositionsInternal();
+}
+
+void ScrollingTree::applyLayerPositionsInternal()
+{
     if (!m_rootNode)
         return;
 
-    LOG(Scrolling, "\nScrollingTree %p applyLayerPositions", this);
-
+    LOG(Scrolling, "\nScrollingTree %p applyLayerPositions (main thread %d)", this, isMainThread());
     applyLayerPositionsRecursive(*m_rootNode);
-
-    LOG(Scrolling, "ScrollingTree %p applyLayerPositions - done\n", this);
 }
 
 void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& node)

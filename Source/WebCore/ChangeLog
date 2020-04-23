@@ -1,3 +1,32 @@
+2020-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        In the scrolling tree, separate wheel event handling from layer updating
+        https://bugs.webkit.org/show_bug.cgi?id=210899
+
+        Reviewed by Antti Koivisto.
+
+        Working towards webkit.org/b/210884, it needs to be possible to have the scrolling
+        tree handle a wheelEvent and update its internal state about scroll positions, but not
+        immediately map those scroll positions onto CALayers.
+
+        To achieve this, have ScrollingTreeScrollingNode::currentScrollPositionChanged()
+        not call applyLayerPositions(), or notifyRelatedNodesAfterScrollPositionChange() which
+        just applies layer positions on related nodes.
+
+        Instead, at the end of wheel event handling, do a full scrolling tree traversal and update
+        all the layer positions there.
+
+        Delegated scrolling (iOS) still needs notifyRelatedNodesAfterScrollPositionChange() so it
+        can't be removed.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::applyLayerPositions):
+        (WebCore::ScrollingTree::applyLayerPositionsInternal):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::currentScrollPositionChanged):
+
 2020-04-23  Charlie Turner  <cturner@igalia.com>
 
         [EME][CDMProxy] Sort key status array lexicographically by key IDs
