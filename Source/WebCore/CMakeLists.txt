@@ -1261,6 +1261,7 @@ set(WebCoreTestSupport_LIBRARIES
     WebKit::JavaScriptCore
     WebKit::PAL
 )
+set(WebCoreTestSupport_DEPENDENCIES WebCoreTestSupportBindings)
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
@@ -2064,6 +2065,7 @@ if (WebCore_LIBRARY_TYPE STREQUAL SHARED)
 else ()
     list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
     list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
+    list(APPEND WebCoreTestSupport_DEPENDENCIES WebCore)
 endif ()
 
 WEBKIT_FRAMEWORK(WebCoreTestSupport)
