@@ -1,5 +1,24 @@
 2020-04-23  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Elements: Styles: color functions are missing swatches
+        https://bugs.webkit.org/show_bug.cgi?id=210930
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._replaceSpecialTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addTimingFunctionTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addBoxShadowTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+        Only attempt to `WI.Color.fromString` when at a ")" that is not part of another function.
+        Drive-by: add variable tokens after variable text is resolved, as otherwise the variable is
+                  replaced with a `WI.InlineSwatch`, which replaces the original text, preventing it
+                  from being used for looking up the variable name.
+
+2020-04-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: SyntaxError: Invalid regular expression: missing )
         https://bugs.webkit.org/show_bug.cgi?id=210890
 
