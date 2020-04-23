@@ -286,9 +286,12 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 - (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", error, self);
+
+    __weak WKRBSAssertionDelegate *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (_invalidationCallback)
-            _invalidationCallback();
+        WKRBSAssertionDelegate *strongSelf = weakSelf;
+        if (strongSelf && strongSelf.invalidationCallback)
+            strongSelf.invalidationCallback();
     });
 }
 @end
@@ -419,6 +422,9 @@ ProcessAssertion::~ProcessAssertion()
     RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion for process with PID %d", this, m_pid);
 
     if (m_rbsAssertion) {
+        m_delegate.get().invalidationCallback = nil;
+        m_delegate = nil;
+
         [m_rbsAssertion removeObserver:m_delegate.get()];
         [m_rbsAssertion invalidate];
     } else {
