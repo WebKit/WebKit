@@ -1,3 +1,9 @@
+2020-04-23  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Unreviewed, add my bugzilla / slack nick to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-04-23  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Add mock release/debug options to the update script
