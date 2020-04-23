@@ -2962,8 +2962,6 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResour
     if (m_overrideResourceLoadPriorityForTesting)
         request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
 
-    applyUserAgentIfNeeded(request);
-
     // Only set fallback array if it's still empty (later attempts may be incorrect, see bug 117818).
     if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
@@ -3065,6 +3063,8 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     initialRequest.setFirstPartyForCookies(m_frame.mainFrame().loader().documentLoader()->request().url());
     
     addExtraFieldsToRequest(initialRequest, IsMainResource::No);
+
+    applyUserAgentIfNeeded(initialRequest);
 
     unsigned long identifier = 0;    
     ResourceRequest newRequest(initialRequest);

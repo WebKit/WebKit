@@ -1,3 +1,28 @@
+2020-04-23  Rob Buis  <rbuis@igalia.com>
+
+        Move applyUserAgentIfNeeded calls to a more central place
+        https://bugs.webkit.org/show_bug.cgi?id=209587
+
+        Reviewed by Darin Adler.
+
+        Make main resource loads stop calling applyUserAgentIfNeeded
+        and instead do it in the CachedResourceLoader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createRequest):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateReferrerAndOriginHeaders):
+        (WebCore::CachedResourceRequest::updateUserAgentHeader):
+        (WebCore::CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+
 2020-04-23  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Update texture packing code for software uploads from DOM
