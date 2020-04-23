@@ -1,3 +1,13 @@
+2020-04-23  Peng Liu  <peng.liu6@apple.com>
+
+        Remove the WebKit.plist for Feature Flags
+        https://bugs.webkit.org/show_bug.cgi?id=210534
+
+        Reviewed by Simon Fraser.
+
+        * FeatureFlags/WebKit.plist: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-04-23  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Crash on RunningBoard process assertion invalidation

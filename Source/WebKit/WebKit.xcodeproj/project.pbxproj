@@ -12209,17 +12209,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/FeatureFlags/WebKit.plist",
+				"${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}/WebKit/WebKit.plist",
 			);
 			name = "Copy Feature Flags Plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(INSTALL_ROOT)/$(SYSTEM_LIBRARY_DIR)/FeatureFlags/Domain/WebKit.plist",
+				"${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain/WebKit.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\"\nfi\n\nditto \"${SRCROOT}/FeatureFlags/WebKit.plist\" \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain/WebKit.plist\"\n";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nSOURCE_DIR=\"${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}/WebKit\"\nDEST_DIR=${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\n\nif [[ ! -d \"${DEST_DIR}\" ]]; then\n    mkdir -p \"${DEST_DIR}\"\nfi\n\nditto \"${SOURCE_DIR}/WebKit.plist\" \"${DEST_DIR}/WebKit.plist\"\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
