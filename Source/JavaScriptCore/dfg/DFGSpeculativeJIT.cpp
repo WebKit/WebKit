@@ -3619,7 +3619,7 @@ void SpeculativeJIT::emitUntypedOrAnyBigIntBitOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    ASSERT(leftChild.useKind() == UntypedUse || leftChild.useKind() == AnyBigIntUse || rightChild.useKind() == UntypedUse || rightChild.useKind() == AnyBigIntUse);
+    DFG_ASSERT(m_jit.graph(), node, node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(HeapBigIntUse) || node->isBinaryUseKind(BigInt32Use));
 
     if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
         JSValueOperand left(this, leftChild, ManualOperandSpeculation);

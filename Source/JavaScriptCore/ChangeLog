@@ -1,3 +1,18 @@
+2020-04-22  Saam Barati  <sbarati@apple.com>
+
+        Edge use kind asserts are wrong for BigInt32 on ValueBitLShift
+        https://bugs.webkit.org/show_bug.cgi?id=210872
+
+        Reviewed by Yusuke Suzuki, Mark Lam, and Robin Morisset.
+
+        This is already covered by the v8 tests Yusuke checked in.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitUntypedOrAnyBigIntBitOp):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+
 2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSBigInt inc operation does not produce right HeapBigInt zero
