@@ -55,8 +55,8 @@ namespace TestWebKitAPI {
 TEST(Fullscreen, LayoutConstraints)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [configuration preferences]._fullScreenEnabled = YES;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<FullscreenStateChangeMessageHandler> handler = adoptNS([[FullscreenStateChangeMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenStateChangeHandler"];
 

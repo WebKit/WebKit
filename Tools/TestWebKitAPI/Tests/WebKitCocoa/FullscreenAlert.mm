@@ -41,8 +41,8 @@ static bool isOutOfFullscreen = false;
 TEST(Fullscreen, Alert)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [configuration preferences]._fullScreenEnabled = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
 
     auto checkFullscreen = [&] {
         isInFullscreen = [webView _isInFullscreen];

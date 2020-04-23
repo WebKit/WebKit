@@ -112,11 +112,12 @@ namespace TestWebKitAPI {
 TEST(PictureInPicture, WKUIDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 640, 480) configuration:configuration.get()]);
     [configuration preferences]._fullScreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 640, 480) configuration:configuration.get()]);
+
     [webView setUIDelegate:handler.get()];
 
 #if HAVE(TOUCH_BAR)
