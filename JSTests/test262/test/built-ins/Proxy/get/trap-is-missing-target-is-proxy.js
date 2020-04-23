@@ -29,4 +29,3 @@ var functionTarget = new Proxy(function(_arg) {}, {});
 var functionProxy = new Proxy(functionTarget, {});
 
 assert.sameValue(Object.create(functionProxy).length, 1);
-assert.sameValue(functionProxy.__proto__, Function.prototype);

@@ -39,7 +39,8 @@ function testWithIntlConstructors(f) {
   var constructors = ["Collator", "NumberFormat", "DateTimeFormat"];
 
   // Optionally supported Intl constructors.
-  ["PluralRules"].forEach(function(constructor) {
+  // NB: Intl.Locale isn't an Intl service constructor!
+  ["PluralRules", "RelativeTimeFormat", "ListFormat", "DisplayNames"].forEach(function(constructor) {
     if (typeof Intl[constructor] === "function") {
       constructors[constructors.length] = constructor;
     }
@@ -271,10 +272,10 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    *
    * Spec: https://unicode.org/reports/tr35/#Unicode_locale_identifier
    */
-  var alpha = "[a-z]",
+  var alpha = "[A-Za-z]",
     digit = "[0-9]",
-    alphanum = "(" + alpha + "|" + digit + ")",
-    variant = "(" + alphanum + "{5,8}|(" + digit + alphanum + "{3}))",
+    alphanum = "[A-Za-z0-9]",
+    variant = "(" + alphanum + "{5,8}|(?:" + digit + alphanum + "{3}))",
     region = "(" + alpha + "{2}|" + digit + "{3})",
     script = "(" + alpha + "{4})",
     language = "(" + alpha + "{2,3}|" + alpha + "{5,8})",
@@ -291,13 +292,14 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     extension = "(" + unicode_locale_extensions + "|" + transformed_extensions + "|" + other_extensions + ")",
     locale_id = language + "(-" + script + ")?(-" + region + ")?(-" + variant + ")*(-" + extension + ")*(-" + privateuse + ")?",
     languageTag = "^(" + locale_id + ")$",
-    languageTagRE = new RegExp(languageTag, "i");
+    languageTagRE = new RegExp(languageTag);
 
   var duplicateSingleton = "-" + singleton + "-(.*-)?\\1(?!" + alphanum + ")",
-    duplicateSingletonRE = new RegExp(duplicateSingleton, "i"),
-    duplicateVariant = "(" + alphanum + "{2,8}-)+" + variant + "-(" + alphanum + "{2,8}-)*\\3(?!" + alphanum + ")",
-    duplicateVariantRE = new RegExp(duplicateVariant, "i");
+    duplicateSingletonRE = new RegExp(duplicateSingleton),
+    duplicateVariant = "(" + alphanum + "{2,8}-)+" + variant + "-(" + alphanum + "{2,8}-)*\\2(?!" + alphanum + ")",
+    duplicateVariantRE = new RegExp(duplicateVariant);
 
+  var transformKeyRE = new RegExp("^" + alpha + digit + "$");
 
   /**
    * Verifies that the given string is a well-formed Unicode BCP 47 Locale Identifier
@@ -318,7 +320,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    * Mappings from complete tags to preferred values.
    *
    * Spec: http://unicode.org/reports/tr35/#Identifiers
-   * Version: CLDR, version 35
+   * Version: CLDR, version 36.1
    */
   var __tagMappings = {
     // property names must be in lower case; values in canonical form
@@ -335,7 +337,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    * Mappings from language subtags to preferred values.
    *
    * Spec: http://unicode.org/reports/tr35/#Identifiers
-   * Version: CLDR, version 35
+   * Version: CLDR, version 36.1
    */
   var __languageMappings = {
     // property names and values must be in canonical case
@@ -354,6 +356,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "arb": "ar",
     "arg": "an",
     "arm": "hy",
+    "asd": "snz",
     "asm": "as",
     "aue": "ktz",
     "ava": "av",
@@ -409,6 +412,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "dhd": "mwr",
     "dik": "din",
     "diq": "zza",
+    "dit": "dif",
     "div": "dv",
     "drh": "mn",
     "dut": "nl",
@@ -524,6 +528,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "lim": "li",
     "lin": "ln",
     "lit": "lt",
+    "llo": "ngt",
     "lmm": "rmx",
     "ltz": "lb",
     "lub": "lu",
@@ -550,6 +555,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "mup": "raj",
     "mwj": "vaj",
     "mya": "my",
+    "myd": "aog",
     "myt": "mry",
     "nad": "xny",
     "nau": "na",
@@ -561,6 +567,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "nep": "ne",
     "nld": "nl",
     "nno": "nn",
+    "nns": "nbr",
     "nnx": "ngv",
     "no": "nb",
     "nob": "nb",
@@ -689,14 +696,14 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "zsm": "ms",
     "zul": "zu",
     "zyb": "za",
-  }
+  };
 
 
   /**
    * Mappings from region subtags to preferred values.
    *
    * Spec: http://unicode.org/reports/tr35/#Identifiers
-   * Version: CLDR, version 35
+   * Version: CLDR, version 36.1
    */
   var __regionMappings = {
     // property names and values must be in canonical case
@@ -1028,6 +1035,552 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
 
 
   /**
+   * Complex mappings from language subtags to preferred values.
+   *
+   * Spec: http://unicode.org/reports/tr35/#Identifiers
+   * Version: CLDR, version 36.1
+   */
+  var __complexLanguageMappings = {
+    // property names and values must be in canonical case
+
+    "cnr": {language: "sr", region: "ME"},
+    "drw": {language: "fa", region: "AF"},
+    "hbs": {language: "sr", script: "Latn"},
+    "prs": {language: "fa", region: "AF"},
+    "sh": {language: "sr", script: "Latn"},
+    "swc": {language: "sw", region: "CD"},
+    "tnf": {language: "fa", region: "AF"},
+  };
+
+
+  /**
+   * Complex mappings from region subtags to preferred values.
+   *
+   * Spec: http://unicode.org/reports/tr35/#Identifiers
+   * Version: CLDR, version 36.1
+   */
+  var __complexRegionMappings = {
+    // property names and values must be in canonical case
+
+    "172": {
+      default: "RU",
+      "ab": "GE",
+      "az": "AZ",
+      "be": "BY",
+      "crh": "UA",
+      "gag": "MD",
+      "got": "UA",
+      "hy": "AM",
+      "ji": "UA",
+      "ka": "GE",
+      "kaa": "UZ",
+      "kk": "KZ",
+      "ku-Yezi": "GE",
+      "ky": "KG",
+      "os": "GE",
+      "rue": "UA",
+      "sog": "UZ",
+      "tg": "TJ",
+      "tk": "TM",
+      "tkr": "AZ",
+      "tly": "AZ",
+      "ttt": "AZ",
+      "ug-Cyrl": "KZ",
+      "uk": "UA",
+      "und-Armn": "AM",
+      "und-Chrs": "UZ",
+      "und-Geor": "GE",
+      "und-Goth": "UA",
+      "und-Sogd": "UZ",
+      "und-Sogo": "UZ",
+      "und-Yezi": "GE",
+      "uz": "UZ",
+      "xco": "UZ",
+      "xmf": "GE",
+    },
+    "200": {
+      default: "CZ",
+      "sk": "SK",
+    },
+    "530": {
+      default: "CW",
+      "vic": "SX",
+    },
+    "532": {
+      default: "CW",
+      "vic": "SX",
+    },
+    "536": {
+      default: "SA",
+      "akk": "IQ",
+      "ckb": "IQ",
+      "ku-Arab": "IQ",
+      "mis": "IQ",
+      "syr": "IQ",
+      "und-Hatr": "IQ",
+      "und-Syrc": "IQ",
+      "und-Xsux": "IQ",
+    },
+    "582": {
+      default: "FM",
+      "mh": "MH",
+      "pau": "PW",
+    },
+    "810": {
+      default: "RU",
+      "ab": "GE",
+      "az": "AZ",
+      "be": "BY",
+      "crh": "UA",
+      "et": "EE",
+      "gag": "MD",
+      "got": "UA",
+      "hy": "AM",
+      "ji": "UA",
+      "ka": "GE",
+      "kaa": "UZ",
+      "kk": "KZ",
+      "ku-Yezi": "GE",
+      "ky": "KG",
+      "lt": "LT",
+      "ltg": "LV",
+      "lv": "LV",
+      "os": "GE",
+      "rue": "UA",
+      "sgs": "LT",
+      "sog": "UZ",
+      "tg": "TJ",
+      "tk": "TM",
+      "tkr": "AZ",
+      "tly": "AZ",
+      "ttt": "AZ",
+      "ug-Cyrl": "KZ",
+      "uk": "UA",
+      "und-Armn": "AM",
+      "und-Chrs": "UZ",
+      "und-Geor": "GE",
+      "und-Goth": "UA",
+      "und-Sogd": "UZ",
+      "und-Sogo": "UZ",
+      "und-Yezi": "GE",
+      "uz": "UZ",
+      "vro": "EE",
+      "xco": "UZ",
+      "xmf": "GE",
+    },
+    "890": {
+      default: "RS",
+      "bs": "BA",
+      "hr": "HR",
+      "mk": "MK",
+      "sl": "SI",
+    },
+    "AN": {
+      default: "CW",
+      "vic": "SX",
+    },
+    "NT": {
+      default: "SA",
+      "akk": "IQ",
+      "ckb": "IQ",
+      "ku-Arab": "IQ",
+      "mis": "IQ",
+      "syr": "IQ",
+      "und-Hatr": "IQ",
+      "und-Syrc": "IQ",
+      "und-Xsux": "IQ",
+    },
+    "PC": {
+      default: "FM",
+      "mh": "MH",
+      "pau": "PW",
+    },
+    "SU": {
+      default: "RU",
+      "ab": "GE",
+      "az": "AZ",
+      "be": "BY",
+      "crh": "UA",
+      "et": "EE",
+      "gag": "MD",
+      "got": "UA",
+      "hy": "AM",
+      "ji": "UA",
+      "ka": "GE",
+      "kaa": "UZ",
+      "kk": "KZ",
+      "ku-Yezi": "GE",
+      "ky": "KG",
+      "lt": "LT",
+      "ltg": "LV",
+      "lv": "LV",
+      "os": "GE",
+      "rue": "UA",
+      "sgs": "LT",
+      "sog": "UZ",
+      "tg": "TJ",
+      "tk": "TM",
+      "tkr": "AZ",
+      "tly": "AZ",
+      "ttt": "AZ",
+      "ug-Cyrl": "KZ",
+      "uk": "UA",
+      "und-Armn": "AM",
+      "und-Chrs": "UZ",
+      "und-Geor": "GE",
+      "und-Goth": "UA",
+      "und-Sogd": "UZ",
+      "und-Sogo": "UZ",
+      "und-Yezi": "GE",
+      "uz": "UZ",
+      "vro": "EE",
+      "xco": "UZ",
+      "xmf": "GE",
+    },
+  };
+
+
+  /**
+   * Mappings from variant subtags to preferred values.
+   *
+   * Spec: http://unicode.org/reports/tr35/#Identifiers
+   * Version: CLDR, version 36.1
+   */
+  var __variantMappings = {
+    // property names and values must be in canonical case
+
+    "aaland": {type: "region", replacement: "AX"},
+    "arevela": {type: "language", replacement: "hy"},
+    "arevmda": {type: "language", replacement: "hyw"},
+    "heploc": {type: "variant", replacement: "alalc97"},
+    "polytoni": {type: "variant", replacement: "polyton"},
+  };
+
+
+  /**
+   * Mappings from Unicode extension subtags to preferred values.
+   *
+   * Spec: http://unicode.org/reports/tr35/#Identifiers
+   * Version: CLDR, version 36.1
+   */
+  var __unicodeMappings = {
+    // property names and values must be in canonical case
+
+    "ca": {
+      "ethiopic-amete-alem": "ethioaa",
+      "islamicc": "islamic-civil",
+    },
+    "kb": {
+      "yes": "true",
+    },
+    "kc": {
+      "yes": "true",
+    },
+    "kh": {
+      "yes": "true",
+    },
+    "kk": {
+      "yes": "true",
+    },
+    "kn": {
+      "yes": "true",
+    },
+    "ks": {
+      "primary": "level1",
+      "tertiary": "level3",
+    },
+    "ms": {
+      "imperial": "uksystem",
+    },
+    "rg": {
+      "cn11": "cnbj",
+      "cn12": "cntj",
+      "cn13": "cnhe",
+      "cn14": "cnsx",
+      "cn15": "cnmn",
+      "cn21": "cnln",
+      "cn22": "cnjl",
+      "cn23": "cnhl",
+      "cn31": "cnsh",
+      "cn32": "cnjs",
+      "cn33": "cnzj",
+      "cn34": "cnah",
+      "cn35": "cnfj",
+      "cn36": "cnjx",
+      "cn37": "cnsd",
+      "cn41": "cnha",
+      "cn42": "cnhb",
+      "cn43": "cnhn",
+      "cn44": "cngd",
+      "cn45": "cngx",
+      "cn46": "cnhi",
+      "cn50": "cncq",
+      "cn51": "cnsc",
+      "cn52": "cngz",
+      "cn53": "cnyn",
+      "cn54": "cnxz",
+      "cn61": "cnsn",
+      "cn62": "cngs",
+      "cn63": "cnqh",
+      "cn64": "cnnx",
+      "cn65": "cnxj",
+      "cz10a": "cz110",
+      "cz10b": "cz111",
+      "cz10c": "cz112",
+      "cz10d": "cz113",
+      "cz10e": "cz114",
+      "cz10f": "cz115",
+      "cz611": "cz663",
+      "cz612": "cz632",
+      "cz613": "cz633",
+      "cz614": "cz634",
+      "cz615": "cz635",
+      "cz621": "cz641",
+      "cz622": "cz642",
+      "cz623": "cz643",
+      "cz624": "cz644",
+      "cz626": "cz646",
+      "cz627": "cz647",
+      "czjc": "cz31",
+      "czjm": "cz64",
+      "czka": "cz41",
+      "czkr": "cz52",
+      "czli": "cz51",
+      "czmo": "cz80",
+      "czol": "cz71",
+      "czpa": "cz53",
+      "czpl": "cz32",
+      "czpr": "cz10",
+      "czst": "cz20",
+      "czus": "cz42",
+      "czvy": "cz63",
+      "czzl": "cz72",
+      "fra": "frges",
+      "frb": "frnaq",
+      "frc": "frara",
+      "frd": "frbfc",
+      "fre": "frbre",
+      "frf": "frcvl",
+      "frg": "frges",
+      "frh": "frcor",
+      "fri": "frbfc",
+      "frj": "fridf",
+      "frk": "frocc",
+      "frl": "frnaq",
+      "frm": "frges",
+      "frn": "frocc",
+      "fro": "frhdf",
+      "frp": "frnor",
+      "frq": "frnor",
+      "frr": "frpdl",
+      "frs": "frhdf",
+      "frt": "frnaq",
+      "fru": "frpac",
+      "frv": "frara",
+      "laxn": "laxs",
+      "lud": "lucl",
+      "lug": "luec",
+      "lul": "luca",
+      "mrnkc": "mr13",
+      "no23": "no50",
+      "nzn": "nzauk",
+      "nzs": "nzcan",
+      "omba": "ombj",
+      "omsh": "omsj",
+      "plds": "pl02",
+      "plkp": "pl04",
+      "pllb": "pl08",
+      "plld": "pl10",
+      "pllu": "pl06",
+      "plma": "pl12",
+      "plmz": "pl14",
+      "plop": "pl16",
+      "plpd": "pl20",
+      "plpk": "pl18",
+      "plpm": "pl22",
+      "plsk": "pl26",
+      "plsl": "pl24",
+      "plwn": "pl28",
+      "plwp": "pl30",
+      "plzp": "pl32",
+      "tteto": "tttob",
+      "ttrcm": "ttmrc",
+      "ttwto": "tttob",
+      "twkhq": "twkhh",
+      "twtnq": "twtnn",
+      "twtpq": "twnwt",
+      "twtxq": "twtxg",
+    },
+    "sd": {
+      "cn11": "cnbj",
+      "cn12": "cntj",
+      "cn13": "cnhe",
+      "cn14": "cnsx",
+      "cn15": "cnmn",
+      "cn21": "cnln",
+      "cn22": "cnjl",
+      "cn23": "cnhl",
+      "cn31": "cnsh",
+      "cn32": "cnjs",
+      "cn33": "cnzj",
+      "cn34": "cnah",
+      "cn35": "cnfj",
+      "cn36": "cnjx",
+      "cn37": "cnsd",
+      "cn41": "cnha",
+      "cn42": "cnhb",
+      "cn43": "cnhn",
+      "cn44": "cngd",
+      "cn45": "cngx",
+      "cn46": "cnhi",
+      "cn50": "cncq",
+      "cn51": "cnsc",
+      "cn52": "cngz",
+      "cn53": "cnyn",
+      "cn54": "cnxz",
+      "cn61": "cnsn",
+      "cn62": "cngs",
+      "cn63": "cnqh",
+      "cn64": "cnnx",
+      "cn65": "cnxj",
+      "cz10a": "cz110",
+      "cz10b": "cz111",
+      "cz10c": "cz112",
+      "cz10d": "cz113",
+      "cz10e": "cz114",
+      "cz10f": "cz115",
+      "cz611": "cz663",
+      "cz612": "cz632",
+      "cz613": "cz633",
+      "cz614": "cz634",
+      "cz615": "cz635",
+      "cz621": "cz641",
+      "cz622": "cz642",
+      "cz623": "cz643",
+      "cz624": "cz644",
+      "cz626": "cz646",
+      "cz627": "cz647",
+      "czjc": "cz31",
+      "czjm": "cz64",
+      "czka": "cz41",
+      "czkr": "cz52",
+      "czli": "cz51",
+      "czmo": "cz80",
+      "czol": "cz71",
+      "czpa": "cz53",
+      "czpl": "cz32",
+      "czpr": "cz10",
+      "czst": "cz20",
+      "czus": "cz42",
+      "czvy": "cz63",
+      "czzl": "cz72",
+      "fra": "frges",
+      "frb": "frnaq",
+      "frc": "frara",
+      "frd": "frbfc",
+      "fre": "frbre",
+      "frf": "frcvl",
+      "frg": "frges",
+      "frh": "frcor",
+      "fri": "frbfc",
+      "frj": "fridf",
+      "frk": "frocc",
+      "frl": "frnaq",
+      "frm": "frges",
+      "frn": "frocc",
+      "fro": "frhdf",
+      "frp": "frnor",
+      "frq": "frnor",
+      "frr": "frpdl",
+      "frs": "frhdf",
+      "frt": "frnaq",
+      "fru": "frpac",
+      "frv": "frara",
+      "laxn": "laxs",
+      "lud": "lucl",
+      "lug": "luec",
+      "lul": "luca",
+      "mrnkc": "mr13",
+      "no23": "no50",
+      "nzn": "nzauk",
+      "nzs": "nzcan",
+      "omba": "ombj",
+      "omsh": "omsj",
+      "plds": "pl02",
+      "plkp": "pl04",
+      "pllb": "pl08",
+      "plld": "pl10",
+      "pllu": "pl06",
+      "plma": "pl12",
+      "plmz": "pl14",
+      "plop": "pl16",
+      "plpd": "pl20",
+      "plpk": "pl18",
+      "plpm": "pl22",
+      "plsk": "pl26",
+      "plsl": "pl24",
+      "plwn": "pl28",
+      "plwp": "pl30",
+      "plzp": "pl32",
+      "tteto": "tttob",
+      "ttrcm": "ttmrc",
+      "ttwto": "tttob",
+      "twkhq": "twkhh",
+      "twtnq": "twtnn",
+      "twtpq": "twnwt",
+      "twtxq": "twtxg",
+    },
+    "tz": {
+      "aqams": "nzakl",
+      "cnckg": "cnsha",
+      "cnhrb": "cnsha",
+      "cnkhg": "cnurc",
+      "cuba": "cuhav",
+      "egypt": "egcai",
+      "eire": "iedub",
+      "est": "utcw05",
+      "gmt0": "gmt",
+      "hongkong": "hkhkg",
+      "hst": "utcw10",
+      "iceland": "isrey",
+      "iran": "irthr",
+      "israel": "jeruslm",
+      "jamaica": "jmkin",
+      "japan": "jptyo",
+      "libya": "lytip",
+      "mst": "utcw07",
+      "navajo": "usden",
+      "poland": "plwaw",
+      "portugal": "ptlis",
+      "prc": "cnsha",
+      "roc": "twtpe",
+      "rok": "krsel",
+      "turkey": "trist",
+      "uct": "utc",
+      "usnavajo": "usden",
+      "zulu": "utc",
+    },
+  };
+
+
+  /**
+   * Mappings from Unicode extension subtags to preferred values.
+   *
+   * Spec: http://unicode.org/reports/tr35/#Identifiers
+   * Version: CLDR, version 36.1
+   */
+  var __transformMappings = {
+    // property names and values must be in canonical case
+
+    "d0": {
+      "name": "charname",
+    },
+    "m0": {
+      "names": "prprname",
+    },
+  };
+
+  /**
    * Canonicalizes the given well-formed BCP 47 language tag, including regularized case of subtags.
    *
    * Spec: ECMAScript Internationalization API Specification, draft, 6.2.3.
@@ -1066,195 +1619,33 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
 
     if (__languageMappings.hasOwnProperty(language)) {
       language = __languageMappings[language];
-    } else {
-      // Language subtags with complex mappings, CLDR 35.
-      switch (language) {
-      case "cnr":
-        language = "sr";
-        if (region === undefined) {
-          region = "ME";
-        }
-        break;
-      case "drw":
-      case "prs":
-      case "tnf":
-        language = "fa";
-        if (region === undefined) {
-          region = "AF";
-        }
-        break;
-      case "hbs":
-      case "sh":
-        language = "sr";
-        if (script === undefined) {
-          script = "Latn";
-        }
-        break;
-      case "swc":
-        language = "sw";
-        if (region === undefined) {
-          region = "CD";
-        }
-        break;
+    } else if (__complexLanguageMappings.hasOwnProperty(language)) {
+      var mapping = __complexLanguageMappings[language];
+
+      language = mapping.language;
+      if (script === undefined && mapping.hasOwnProperty("script")) {
+        script = mapping.script;
+      }
+      if (region === undefined && mapping.hasOwnProperty("region")) {
+        region = mapping.region;
       }
     }
 
     if (region !== undefined) {
       if (__regionMappings.hasOwnProperty(region)) {
         region = __regionMappings[region];
-      } else {
-        // Region subtags with complex mappings, CLDR 35.
-        switch (region) {
-        case "172":
-          if (language === "ab" || language === "ka" || language === "os" ||
-              (language === "und" && script === "Geor") || language === "xmf") {
-            region = "GE";
-          }
-          else if (language === "az" || language === "tkr" || language === "tly" || language === "ttt") {
-            region = "AZ";
-          }
-          else if (language === "be") {
-            region = "BY";
-          }
-          else if (language === "crh" || language === "got" || language === "ji" || language === "rue" ||
-                   language === "uk" || (language === "und" && script === "Goth")) {
-            region = "UA";
-          }
-          else if (language === "gag") {
-            region = "MD";
-          }
-          else if (language === "hy" || (language === "und" && script === "Armn")) {
-            region = "AM";
-          }
-          else if (language === "kaa" || language === "sog" || (language === "und" && script === "Sogd") ||
-                   (language === "und" && script === "Sogo") || language === "uz") {
-            region = "UZ";
-          }
-          else if (language === "kk" || (language === "ug" && script === "Cyrl")) {
-            region = "KZ";
-          }
-          else if (language === "ky") {
-            region = "KG";
-          }
-          else if (language === "tg") {
-            region = "TJ";
-          }
-          else if (language === "tk") {
-            region = "TM";
-          }
-          else {
-            region = "RU";
-          }
-          break;
-        case "200":
-          if (language === "sk") {
-            region = "SK";
-          }
-          else {
-            region = "CZ";
-          }
-          break;
-        case "530":
-        case "532":
-        case "AN":
-          if (language === "vic") {
-            region = "SX";
-          }
-          else {
-            region = "CW";
-          }
-          break;
-        case "536":
-        case "NT":
-          if (language === "akk" || language === "ckb" || (language === "ku" && script === "Arab") ||
-              language === "mis" || language === "syr" || (language === "und" && script === "Xsux") ||
-              (language === "und" && script === "Hatr") || (language === "und" && script === "Syrc")) {
-            region = "IQ";
-          }
-          else {
-            region = "SA";
-          }
-          break;
-        case "582":
-        case "PC":
-          if (language === "mh") {
-            region = "MH";
-          }
-          else if (language === "pau") {
-            region = "PW";
-          }
-          else {
-            region = "FM";
-          }
-          break;
-        case "810":
-        case "SU":
-          if (language === "ab" || language === "ka" || language === "os" || language === "xmf" ||
-              (language === "und" && script === "Geor")) {
-            region = "GE";
-          }
-          else if (language === "az" || language === "tkr" || language === "tly" || language === "ttt") {
-            region = "AZ";
-          }
-          else if (language === "be") {
-            region = "BY";
-          }
-          else if (language === "crh" || language === "got" || language === "ji" || language === "rue" ||
-                   language === "uk" || (language === "und" && script === "Goth")) {
-            region = "UA";
-          }
-          else if (language === "et" || language === "vro") {
-            region = "EE";
-          }
-          else if (language === "gag") {
-            region = "MD";
-          }
-          else if (language === "hy" || (language === "und" && script === "Armn")) {
-            region = "AM";
-          }
-          else if (language === "kaa" || language === "sog" || (language === "und" && script === "Sogd") ||
-                   (language === "und" && script === "Sogo") || language === "uz") {
-            region = "UZ";
-          }
-          else if (language === "kk" || (language === "ug" && script === "Cyrl")) {
-            region = "KZ";
-          }
-          else if (language === "ky") {
-            region = "KG";
-          }
-          else if (language === "lt" || language === "sgs") {
-            region = "LT";
-          }
-          else if (language === "ltg" || language === "lv") {
-            region = "LV";
-          }
-          else if (language === "tg") {
-            region = "TJ";
-          }
-          else if (language === "tk") {
-            region = "TM";
-          }
-          else {
-            region = "RU";
-          }
-          break;
-        case "890":
-          if (language === "bs") {
-            region = "BA";
-          }
-          else if (language === "hr") {
-            region = "HR";
-          }
-          else if (language === "mk") {
-            region = "MK";
-          }
-          else if (language === "sl") {
-            region = "SI";
-          }
-          else {
-            region = "RS";
-          }
-          break;
+      } else if (__complexRegionMappings.hasOwnProperty(region)) {
+        var mapping = __complexRegionMappings[region];
+
+        var mappingKey = language;
+        if (script !== undefined) {
+          mappingKey += "-" + script;
+        }
+
+        if (mapping.hasOwnProperty(mappingKey)) {
+          region = mapping[mappingKey];
+        } else {
+          region = mapping.default;
         }
       }
     }
@@ -1262,8 +1653,31 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     // handle variants
     var variants = [];
     while (i < subtags.length && subtags[i].length > 1) {
-        variants.push(subtags[i]);
-        i += 1;
+      var variant = subtags[i];
+
+      if (__variantMappings.hasOwnProperty(variant)) {
+        var mapping = __variantMappings[variant];
+        switch (mapping.type) {
+          case "language":
+            language = mapping.replacement;
+            break;
+
+          case "region":
+            region = mapping.replacement;
+            break;
+
+          case "variant":
+            variants.push(mapping.replacement);
+            break;
+
+          default:
+            throw new Error("illegal variant mapping type");
+        }
+      } else {
+        variants.push(variant);
+      }
+
+      i += 1;
     }
     variants.sort();
 
@@ -1275,7 +1689,80 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
       while (i < subtags.length && subtags[i].length > 1) {
         i++;
       }
-      var extension = subtags.slice(extensionStart, i).join("-");
+
+      var extension;
+      var extensionKey = subtags[extensionStart];
+      if (extensionKey === "u") {
+        var j = extensionStart + 1;
+
+        // skip over leading attributes
+        while (j < i && subtags[j].length > 2) {
+          j++;
+        }
+
+        extension = subtags.slice(extensionStart, j).join("-");
+
+        while (j < i) {
+          var keyStart = j;
+          j++;
+
+          while (j < i && subtags[j].length > 2) {
+            j++;
+          }
+
+          var key = subtags[keyStart];
+          var value = subtags.slice(keyStart + 1, j).join("-");
+
+          if (__unicodeMappings.hasOwnProperty(key)) {
+            var mapping = __unicodeMappings[key];
+            if (mapping.hasOwnProperty(value)) {
+              value = mapping[value];
+            }
+          }
+
+          extension += "-" + key;
+          if (value !== "" && value !== "true") {
+            extension += "-" + value;
+          }
+        }
+      } else if (extensionKey === "t") {
+        var j = extensionStart + 1;
+
+        while (j < i && !transformKeyRE.test(subtags[j])) {
+          j++;
+        }
+
+        extension = "t";
+
+        var transformLanguage = subtags.slice(extensionStart + 1, j).join("-");
+        if (transformLanguage !== "") {
+          extension += "-" + canonicalizeLanguageTag(transformLanguage).toLowerCase();
+        }
+
+        while (j < i) {
+          var keyStart = j;
+          j++;
+
+          while (j < i && subtags[j].length > 2) {
+            j++;
+          }
+
+          var key = subtags[keyStart];
+          var value = subtags.slice(keyStart + 1, j).join("-");
+
+          if (__transformMappings.hasOwnProperty(key)) {
+            var mapping = __transformMappings[key];
+            if (mapping.hasOwnProperty(value)) {
+              value = mapping[value];
+            }
+          }
+
+          extension += "-" + key + "-" + value;
+        }
+      } else {
+        extension = subtags.slice(extensionStart, i).join("-");
+      }
+
       extensions.push(extension);
     }
     extensions.sort();
@@ -1549,7 +2036,7 @@ function testForUnwantedRegExpChanges(testFunc) {
 
 function isValidNumberingSystem(name) {
 
-  // source: CLDR file common/bcp47/number.xml; version CLDR 32.
+  // source: CLDR file common/bcp47/number.xml; version CLDR 36.1.
   var numberingSystems = [
     "adlm",
     "ahom",
@@ -1565,10 +2052,12 @@ function isValidNumberingSystem(name) {
     "cham",
     "cyrl",
     "deva",
+    "diak",
     "ethi",
     "finance",
     "fullwide",
     "geor",
+    "gong",
     "gonm",
     "grek",
     "greklow",
@@ -1582,9 +2071,11 @@ function isValidNumberingSystem(name) {
     "hantfin",
     "hebr",
     "hmng",
+    "hmnp",
     "java",
     "jpan",
     "jpanfin",
+    "jpanyear",
     "kali",
     "khmr",
     "knda",
@@ -1613,6 +2104,7 @@ function isValidNumberingSystem(name) {
     "olck",
     "orya",
     "osma",
+    "rohg",
     "roman",
     "romanlow",
     "saur",
@@ -1632,6 +2124,7 @@ function isValidNumberingSystem(name) {
     "traditio",
     "vaii",
     "wara",
+    "wcho",
   ];
 
   var excluded = [

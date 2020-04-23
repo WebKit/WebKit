@@ -14,7 +14,7 @@ info: |
 features: [regexp-lookbehind]
 ---*/
 
-var oob_subject = "abcdefghijklmnabcdefghijklmn".substr(14);
+var oob_subject = "abcdefghijklmnabcdefghijklmn".slice(14);
 assert.sameValue(oob_subject.match(/(?=(abcdefghijklmn))(?<=\1)a/i), null, "");
 assert.sameValue(oob_subject.match(/(?=(abcdefghijklmn))(?<=\1)a/), null, "");
-assert.sameValue("abcdefgabcdefg".substr(1).match(/(?=(abcdefg))(?<=\1)/), null, "");
+assert.sameValue("abcdefgabcdefg".slice(1).match(/(?=(abcdefg))(?<=\1)/), null, "");

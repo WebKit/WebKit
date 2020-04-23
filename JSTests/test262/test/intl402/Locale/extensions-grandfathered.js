@@ -22,6 +22,18 @@ features: [Intl.Locale]
 ---*/
 
 const testData = [
+    // Regular grandfathered without modern replacement.
+    {
+        tag: "cel-gaulish",
+        options: {
+            language: "fr",
+            script: "Cyrl",
+            region: "FR",
+            numberingSystem: "latn",
+        },
+        canonical: "fr-Cyrl-FR-u-nu-latn-x-cel-gaulish",
+    },
+
     // Regular grandfathered with modern replacement.
     {
         tag: "art-lojban",

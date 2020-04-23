@@ -24,7 +24,7 @@ const i64a = new BigInt64Array(
 );
 
 $262.agent.start(`
-  $262.agent.receiveBroadcast(function(sab, id) {
+  $262.agent.receiveBroadcast(function(sab) {
     const i64a = new BigInt64Array(sab);
     Atomics.add(i64a, ${RUNNING}, 1n);
 

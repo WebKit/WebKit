@@ -50,10 +50,10 @@ const tests = [
   [
     "exceptZero",
     [{"type":"literal","value":"("},{"type":"currency","value":"$"},{"type":"integer","value":"987"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"},{"type":"literal","value":")"}],
-    [{"type":"literal","value":"("},{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"},{"type":"literal","value":")"}],
-    [{"type":"literal","value":"("},{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"},{"type":"literal","value":")"}],
     [{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
-    [{"type":"plusSign","value":"+"},{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
+    [{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
+    [{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
+    [{"type":"currency","value":"$"},{"type":"integer","value":"0"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
     [{"type":"plusSign","value":"+"},{"type":"currency","value":"$"},{"type":"integer","value":"987"},{"type":"decimal","value":"."},{"type":"fraction","value":"00"}],
   ],
 ];

@@ -12,4 +12,4 @@ features: [regexp-named-groups]
 
 $DONOTEVALUATE();
 
-/(?<$𐒤>a)/;
+/(?<$❞>a)/;

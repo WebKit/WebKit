@@ -3,7 +3,7 @@
 
 /*---
 description: The groups object of indices is created with CreateDataProperty
-includes: [compareArray.js, propertyHelper.js]
+includes: [propertyHelper.js]
 esid: sec-makeindicesarray
 features: [regexp-named-groups, regexp-match-indices]
 info: |
@@ -32,9 +32,3 @@ verifyProperty(indices, 'groups', {
     enumerable: true,
     configurable: true
 });
-
-// The `__proto__` property on the groups object is not special,
-// and does not affect the [[Prototype]] of the resulting groups object.
-let {groups} = /(?<__proto__>.)/.exec("a").indices;
-assert.compareArray([0, 1], groups.__proto__);
-assert.sameValue(null, Object.getPrototypeOf(groups));

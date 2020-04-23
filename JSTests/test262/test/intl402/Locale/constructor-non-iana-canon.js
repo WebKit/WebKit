@@ -79,18 +79,13 @@ var testData = [
         maximized: "cs-Latn-CZ",
     },
     {
-        // ECMA-402 currently requires that variant subtags are not canonicalized.
-        // https://github.com/tc39/ecma402/issues/330
         tag: "hy-arevela",
-        canonical: "hy-arevela",
-        maximized: "hy-Armn-AM-arevela",
+        canonical: "hy",
+        maximized: "hy-Armn-AM",
     },
     {
-        // ECMA-402 currently requires that variant subtags are not canonicalized.
-        // https://github.com/tc39/ecma402/issues/330
         tag: "hy-arevmda",
-        canonical: "hy-arevmda",
-        maximized: "hy-Armn-AM-arevmda",
+        canonical: "hyw",
     },
 ];
 

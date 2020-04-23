@@ -32,12 +32,10 @@ var syncIterator = {
   },
 };
 
-var asyncIterator = (async function* () {
-  yield* syncIterator;
-})();
+(async function () {
+  for await (let _ of syncIterator) {
+    break;
+  }
 
-asyncIterator.next().then(function() {
-  return asyncIterator.return();
-}).then(function() {
   assert.sameValue(returnArgumentsLength, 0);
-}).then($DONE, $DONE);
+})().then($DONE, $DONE);

@@ -12,7 +12,7 @@ features: [Atomics, SharedArrayBuffer, TypedArray]
 const RUNNING = 1;
 
 $262.agent.start(`
-  $262.agent.receiveBroadcast(function(sab, id) {
+  $262.agent.receiveBroadcast(function(sab) {
     var i32a = new Int32Array(sab);
     Atomics.add(i32a, ${RUNNING}, 1);
 

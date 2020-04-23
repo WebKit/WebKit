@@ -67,6 +67,10 @@ const regularGrandfathered = [
         maximized: "jbo-Latn-001",
     },
     {
+        tag: "cel-gaulish",
+        canonical: "xtg-x-cel-gaulish",
+    },
+    {
         tag: "zh-guoyu",
         canonical: "zh",
         maximized: "zh-Hans-CN",

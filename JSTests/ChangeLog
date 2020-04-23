@@ -1,3 +1,17 @@
+2020-04-23 Alexey Shvayka <shvaikalesh@gmail.com>
+
+        Update test262 to commit 31dabb5618e2
+        https://bugs.webkit.org/show_bug.cgi?id=210921
+
+        Reviewed by Ross Kirsling.
+
+        * test262/config.yaml: Skip "Atomics.waitAsync" feature.
+        * test262/expectations.yaml:
+        * test262/harness/*: Updated.
+        * test262/latest-changes-summary.txt:
+        * test262/test/*: Updated.
+        * test262/test262-Revision.txt:
+
 2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Reduce iteration count and change how it invokes GC to reduce execution time of JSTests/stress/delete-property-dfg-inline.js

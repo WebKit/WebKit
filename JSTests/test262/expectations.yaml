@@ -298,9 +298,18 @@ test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-earl
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-switch-dflt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
+test/annexB/language/expressions/assignment/dstr/array-pattern-emulates-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+test/annexB/language/expressions/assignment/dstr/object-pattern-emulates-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
 test/annexB/language/expressions/yield/star-iterable-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/annexB/language/expressions/yield/star-iterable-throw-emulates-undefined-throws-when-called.js:
+  default: "TypeError: Delegated generator does not have a 'throw' method."
+  strict mode: "TypeError: Delegated generator does not have a 'throw' method."
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
 test/annexB/language/function-code/block-decl-func-skip-early-err-block.js:
@@ -609,12 +618,21 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/annexB/language/statements/const/dstr/array-pattern-emulates-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+test/annexB/language/statements/const/dstr/object-pattern-emulates-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
 test/annexB/language/statements/for-await-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: "Test262:AsyncTestFailure:Test262Error: Test262Error: expected TypeError because `iter[Symbol.asyncIterator]() returned a non-object: Test262Error: shouldn't touch Symbol.iterator Expected SameValue(«function Test262Error(message) {"
   strict mode: "Test262:AsyncTestFailure:Test262Error: Test262Error: expected TypeError because `iter[Symbol.asyncIterator]() returned a non-object: Test262Error: shouldn't touch Symbol.iterator Expected SameValue(«function Test262Error(message) {"
 test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
 test/built-ins/Array/proto-from-ctor-realm-one.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
@@ -729,9 +747,6 @@ test/built-ins/AsyncFromSyncIteratorPrototype/next/absent-value-not-passed.js:
 test/built-ins/AsyncFromSyncIteratorPrototype/return/absent-value-not-passed.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/absent-value-not-passed.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected, got: undefined'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected, got: undefined'
 test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncFunction]», «[object AsyncFunction]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncFunction]», «[object AsyncFunction]») to be true'
@@ -801,9 +816,6 @@ test/built-ins/BigInt/asUintN/bits-toindex.js:
 test/built-ins/BigInt/asUintN/order-of-steps.js:
   default: 'Test262Error: Expected SameValue(«0», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
-test/built-ins/BigInt/constructor-integer.js:
-  default: 'RangeError: Not safe integer'
-  strict mode: 'RangeError: Not safe integer'
 test/built-ins/Boolean/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«false», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«false», «false») to be true'
@@ -954,6 +966,12 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
 test/built-ins/Function/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«function () {'
   strict mode: 'Test262Error: Expected SameValue(«function () {'
+test/built-ins/Function/prototype/bind/get-fn-realm-recursive.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/built-ins/Function/prototype/bind/get-fn-realm.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/Function/prototype/bind/length-exceeds-int32.js:
   default: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
@@ -1243,9 +1261,27 @@ test/built-ins/Proxy/create-target-is-revoked-function-proxy.js:
 test/built-ins/Proxy/create-target-is-revoked-proxy.js:
   default: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
   strict mode: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+test/built-ins/Proxy/get-fn-realm-recursive.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/built-ins/Proxy/get-fn-realm.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
+test/built-ins/Proxy/revocable/builtin.js:
+  default: 'Test262Error: Expected SameValue(«true», «false») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
+test/built-ins/Proxy/revocable/handler-is-revoked-proxy.js:
+  default: "TypeError: A Proxy's 'handler' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'handler' shouldn't be a revoked Proxy"
+test/built-ins/Proxy/revocable/target-is-revoked-function-proxy.js:
+  default: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+test/built-ins/Proxy/revocable/target-is-revoked-proxy.js:
+  default: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
+  strict mode: "TypeError: A Proxy's 'target' shouldn't be a revoked Proxy"
 test/built-ins/Reflect/ownKeys/order-after-define-property.js:
   default: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
   strict mode: 'Test262Error: Expected [Symbol(b), Symbol(a)] and [Symbol(a), Symbol(b)] to have the same contents. '
@@ -1687,6 +1723,15 @@ test/built-ins/Set/proto-from-ctor-realm.js:
 test/built-ins/String/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(«», «») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «») to be true'
+test/built-ins/String/prototype/replace/cstm-replace-is-null.js:
+  default: 'TypeError: null is not a function'
+  strict mode: 'TypeError: null is not a function'
+test/built-ins/String/prototype/replaceAll/searchValue-replacer-is-null.js:
+  default: 'TypeError: null is not a function'
+  strict mode: 'TypeError: null is not a function'
+test/built-ins/Symbol/is-constructor.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
@@ -1908,12 +1953,18 @@ test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
+test/intl402/Intl/getCanonicalLocales/complex-language-subtag-replacement.js:
+  default: 'Test262Error: Expected SameValue(«sh», «sr-Latn») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«sh», «sr-Latn») to be true'
+test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js:
+  default: 'Test262Error: Expected SameValue(«ru-SU», «ru-RU») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«ru-SU», «ru-RU») to be true'
 test/intl402/Intl/getCanonicalLocales/grandfathered.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
 test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
-  default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
-  strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
+  default: 'Test262Error: Language tag: no-nyn Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Language tag: no-nyn Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«aar-x-private», «aa-x-private») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«aar-x-private», «aa-x-private») to be true'
@@ -1921,8 +1972,38 @@ test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg-x-cel-gaulish») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cel-gaulish», «xtg-x-cel-gaulish») to be true'
 test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
-  default: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-hepburn-heploc») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-hepburn-heploc») to be true'
+  default: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-alalc97-hepburn») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-alalc97-hepburn») to be true'
+test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
+  default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
+test/intl402/Intl/getCanonicalLocales/transformed-ext-invalid.js:
+  default: 'Test262Error: en-t-root Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: en-t-root Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-calendar.js:
+  default: 'Test262Error: Expected SameValue(«und-u-ca-ethiopic-amete-alem», «und-u-ca-ethioaa») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-ca-ethiopic-amete-alem», «und-u-ca-ethioaa») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-col-strength.js:
+  default: 'Test262Error: Expected SameValue(«und-u-ks-primary», «und-u-ks-level1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-ks-primary», «und-u-ks-level1») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-measurement-system.js:
+  default: 'Test262Error: Expected SameValue(«und-u-ms-imperial», «und-u-ms-uksystem») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-ms-imperial», «und-u-ms-uksystem») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
+  default: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
+  default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-timezone.js:
+  default: 'Test262Error: Expected SameValue(«und-u-tz-cnckg», «und-u-tz-cnsha») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-tz-cnckg», «und-u-tz-cnsha») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js:
+  default: 'Test262Error: Expected SameValue(«und-u-kb-yes», «und-u-kb») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«und-u-kb-yes», «und-u-kb») to be true'
+test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
+  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
@@ -1935,27 +2016,45 @@ test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
 test/intl402/RelativeTimeFormat/constructor/constructor/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
+test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-always.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
+test/intl402/RelativeTimeFormat/prototype/format/en-us-style-short.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js:
-  default: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-narrow.js:
-  default: 'Test262Error: Expected SameValue(«za 1000 s», «za 1 000 s») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«za 1000 s», «za 1 000 s») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-short.js:
-  default: 'Test262Error: Expected SameValue(«za 1000 sek.», «za 1 000 sek.») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«za 1000 sek.», «za 1 000 sek.») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
+test/intl402/RelativeTimeFormat/prototype/format/unit-plural.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
+test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-always.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
+test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-style-short.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-long.js:
-  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
-  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-narrow.js:
-  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
-  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-short.js:
-  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
-  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
+test/intl402/RelativeTimeFormat/prototype/formatToParts/unit-plural.js:
+  default: 'TypeError: failed to format relative time'
+  strict mode: 'TypeError: failed to format relative time'
 test/intl402/language-tags-invalid.js:
-  default: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
-  strict mode: 'Test262Error: Test data "de-gregory-gregory" is a canonicalized and structurally valid language tag.'
+  default: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
+  strict mode: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:
@@ -3212,21 +3311,6 @@ test/language/identifiers/start-unicode-13.0.0-escaped.js:
 test/language/identifiers/start-unicode-13.0.0.js:
   default: "SyntaxError: Invalid character '\\u08be'"
   strict mode: "SyntaxError: Invalid character '\\u08be'"
-test/language/literals/regexp/named-groups/invalid-non-id-continue-groupspecifier.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-non-id-start-groupspecifier-3.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-non-id-start-groupspecifier-6.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-u-escape-in-groupspecifier-2.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/named-groups/invalid-u-escape-in-groupspecifier.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -3248,8 +3332,6 @@ test/language/module-code/namespace/internals/get-nested-namespace-dflt-skip.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/namespace/internals/get-nested-namespace-props-nrml.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
-test/language/module-code/namespace/internals/set.js:
-  module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(«false», «true») to be true'
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:

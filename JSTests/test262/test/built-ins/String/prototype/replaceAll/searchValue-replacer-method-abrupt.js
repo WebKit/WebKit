@@ -4,7 +4,7 @@
 /*---
 esid: sec-string.prototype.replaceall
 description: >
-  Return abrupt completion from GetMethod(searchValeu @@replace)
+  Return abrupt completion from GetMethod(searchValue.@@replace)
 info: |
   String.prototype.replaceAll ( searchValue, replaceValue )
 

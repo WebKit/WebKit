@@ -36,12 +36,10 @@ info: |
 includes: [testIntl.js]
 ---*/
 
-// Generated from http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
-// File-Date: 2017-08-15
+// Generated from https://github.com/unicode-org/cldr/blob/master/common/supplemental/supplementalMetadata.xml
+// File-Date: 2020-03-30
 var canonicalizedTags = {
-  // ECMA-402 currently requires that variant subtags are not canonicalized.
-  // https://github.com/tc39/ecma402/issues/330
-  "ja-latn-hepburn-heploc": "ja-Latn-hepburn-heploc",
+  "ja-latn-hepburn-heploc": "ja-Latn-alalc97-hepburn",
 };
 
 // make sure the data above is correct

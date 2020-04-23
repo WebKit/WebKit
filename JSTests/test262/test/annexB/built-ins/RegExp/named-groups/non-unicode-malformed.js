@@ -6,7 +6,7 @@ description: >
   Named groups in Unicode RegExps have some syntax errors and some
   compatibility escape fallback behavior.
 esid: prod-GroupSpecifier
-features: [regexp-named-groups, regexp-lookbehind]
+features: [regexp-named-groups]
 includes: [compareArray.js]
 ---*/
 
@@ -17,11 +17,9 @@ assert(/\k/.test("k"));
 
 assert(/(?<a>\a)/.test("a"));
 
-assert(compareArray(["k<a>"], "xxxk<a>xxx".match(/\k<a>/)));
-assert(compareArray(["k<a"], "xxxk<a>xxx".match(/\k<a/)));
+assert.compareArray(["k<a>"], "xxxk<a>xxx".match(/\k<a>/));
+assert.compareArray(["k<a"], "xxxk<a>xxx".match(/\k<a/));
 
-// A couple of corner cases around '\k' as named back-references vs. identity
-// escapes.
-assert(/\k<a>(?<=>)a/.test("k<a>a"));
-assert(/\k<a>(?<!a)a/.test("k<a>a"));
 assert(/\k<a>(<a>x)/.test("k<a><a>x"));
+assert(/\k<a>\1/.test("k<a>\x01"));
+assert(/\1(b)\k<a>/.test("bk<a>"));
