@@ -47,6 +47,8 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._element.appendChild(this._filtersNavigationBar.element);
 
         this._lastFilterValue = this.filters;
+
+        this._invalid = false;
     }
 
     // Public
@@ -79,6 +81,17 @@ WI.FilterBar = class FilterBar extends WI.Object
     set incremental(incremental)
     {
         this._inputField.incremental = incremental;
+    }
+
+    get invalid()
+    {
+        return this._invalid;
+    }
+
+    set invalid(invalid)
+    {
+        this._invalid = !!invalid;
+        this._element.classList.toggle("invalid", this._invalid);
     }
 
     get filters()
@@ -118,6 +131,8 @@ WI.FilterBar = class FilterBar extends WI.Object
         }
 
         this._inputField.value = null; // Get the placeholder to show again.
+
+        this.invalid = false;
     }
 
     addFilterNavigationItem(navigationItem)

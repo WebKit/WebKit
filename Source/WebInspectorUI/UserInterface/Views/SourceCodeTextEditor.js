@@ -208,6 +208,13 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     customPerformSearch(query)
     {
+        let queryRegex = WI.SearchUtilities.searchRegExpForString(query, WI.SearchUtilities.defaultSettings);
+        if (!queryRegex) {
+            this.searchCleared();
+            this.dispatchEventToListeners(WI.TextEditor.Event.NumberOfSearchResultsDidChange);
+            return true;
+        }
+
         function searchResultCallback(error, matches)
         {
             // Bail if the query changed since we started.
@@ -220,7 +227,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 return;
             }
 
-            let queryRegex = WI.SearchUtilities.searchRegExpForString(query, WI.SearchUtilities.defaultSettings);
             var searchResults = [];
 
             for (var i = 0; i < matches.length; ++i) {

@@ -99,8 +99,13 @@ WI.SearchUtilities = class SearchUtilities {
 
         console.assert((typeof query === "string" && query) || query instanceof RegExp);
 
-        if (!checkSetting(settings.regularExpression))
-            query = simpleGlobStringToRegExp(String(query));
+        if (!checkSetting(settings.regularExpression)) {
+            try {
+                query = simpleGlobStringToRegExp(String(query));
+            } catch {
+                return null;
+            }
+        }
 
         console.assert((typeof query === "string" && query) || query instanceof RegExp);
 
@@ -110,6 +115,10 @@ WI.SearchUtilities = class SearchUtilities {
         if (!checkSetting(settings.caseSensitive))
             flags += "i";
 
-        return new RegExp(query, flags);
+        try {
+            return new RegExp(query, flags);
+        } catch {
+            return null;
+        }
     }
 };

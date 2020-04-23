@@ -313,8 +313,14 @@ WI.TextEditor = class TextEditor extends WI.View
                 return;
         }
 
-        // Go down the slow patch for all other text content.
         let queryRegex = WI.SearchUtilities.searchRegExpForString(query, WI.SearchUtilities.defaultSettings);
+        if (!queryRegex) {
+            this.searchCleared();
+            this.dispatchEventToListeners(WI.TextEditor.Event.NumberOfSearchResultsDidChange);
+            return;
+        }
+
+        // Go down the slow patch for all other text content.
         var searchCursor = this._codeMirror.getSearchCursor(queryRegex, {line: 0, ch: 0}, false);
         var boundBatchSearch = batchSearch.bind(this);
         var numberOfSearchResultsDidChangeTimeout = null;

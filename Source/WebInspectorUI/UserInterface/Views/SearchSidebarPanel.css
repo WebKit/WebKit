@@ -41,6 +41,8 @@
 
 .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
     width: 100%;
+    margin: 1px 6px;
+    /* Many styles shared with `WI.FilterBar` */
 }
 
 .sidebar > .panel.navigation.search > .search-bar > .search-settings {

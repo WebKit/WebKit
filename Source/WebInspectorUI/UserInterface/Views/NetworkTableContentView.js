@@ -2278,15 +2278,19 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _urlFilterDidChange(event)
     {
-        let searchQuery = this._urlFilterNavigationItem.filterBar.filters.text;
+        let filterBar = this._urlFilterNavigationItem.filterBar;
+        let searchQuery = filterBar.filters.text;
         if (searchQuery === this._urlFilterSearchText)
             return;
 
         // Even if the selected resource would still be visible, lets close the detail view if a filter changes.
         this._hideDetailView();
 
+        this._urlFilterSearchRegex = searchQuery ? WI.SearchUtilities.filterRegExpForString(searchQuery, WI.SearchUtilities.defaultSettings) : null;
+        filterBar.invalid = searchQuery && !this._urlFilterSearchRegex
+
         // Search cleared.
-        if (!searchQuery) {
+        if (!this._urlFilterSearchRegex) {
             this._urlFilterSearchText = null;
             this._urlFilterSearchRegex = null;
             this._urlFilterIsActive = false;
@@ -2299,7 +2303,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._urlFilterIsActive = true;
         this._urlFilterSearchText = searchQuery;
-        this._urlFilterSearchRegex = WI.SearchUtilities.filterRegExpForString(searchQuery, WI.SearchUtilities.defaultSettings);
 
         this._updateActiveFilterResources();
         this._updateFilteredEntries();

@@ -136,11 +136,18 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
 
     dataGridMatchNodeAgainstCustomFilters(node)
     {
-        let filterText = this._filterBarNavigationItem.filterBar.filters.text;
+        let filterBar = this._filterBarNavigationItem.filterBar;
+        filterBar.invalid = false;
+
+        let filterText = filterBar.filters.text;
         if (!filterText)
             return true;
 
         let regex = WI.SearchUtilities.filterRegExpForString(filterText, WI.SearchUtilities.defaultSettings);
+        if (!regex) {
+            filterBar.invalid = true;
+            return true;
+        }
 
         // Iterate over each cell.
         for (let child of node.element.children) {

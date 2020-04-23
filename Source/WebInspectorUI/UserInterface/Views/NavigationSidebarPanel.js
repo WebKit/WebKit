@@ -321,6 +321,8 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._filtersSetting.value = filters;
         this._filterFunctions = filters.functions;
 
+        this._filterBar.invalid = filters.text && !this._textFilterRegex;
+
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
         let dontPopulate = !this._filterBar.hasActiveFilters() && !this.shouldFilterPopulate();

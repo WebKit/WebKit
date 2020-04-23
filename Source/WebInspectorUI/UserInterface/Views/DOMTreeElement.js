@@ -1809,9 +1809,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
         }
 
-        var text = this.title.textContent;
         let searchRegex = WI.SearchUtilities.searchRegExpForString(this._searchQuery, WI.SearchUtilities.defaultSettings);
+        if (!searchRegex) {
+            this.hideSearchHighlights();
+            this.dispatchEventToListeners(WI.TextEditor.Event.NumberOfSearchResultsDidChange);
+            return;
+        }
 
+        var text = this.title.textContent;
         var match = searchRegex.exec(text);
         var matchRanges = [];
         while (match) {

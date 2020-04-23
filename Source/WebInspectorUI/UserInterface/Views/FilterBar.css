@@ -112,3 +112,7 @@
 :matches(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
     -webkit-margin-end: 4px;
 }
+
+:matches(.filter-bar, .search-bar).invalid > input[type="search"] {
+    border-color: var(--error-text-color);
+}

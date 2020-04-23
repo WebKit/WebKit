@@ -1097,9 +1097,16 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             return;
         }
 
+        let searchRegex = WI.SearchUtilities.searchRegExpForString(this._currentSearchQuery, WI.SearchUtilities.defaultSettings);
+        if (!searchRegex) {
+            this._findBanner.numberOfResults = 0;
+            this.element.classList.remove(WI.LogContentView.SearchInProgressStyleClassName);
+            this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+            return;
+        }
+
         this.element.classList.add(WI.LogContentView.SearchInProgressStyleClassName);
 
-        let searchRegex = WI.SearchUtilities.searchRegExpForString(this._currentSearchQuery, WI.SearchUtilities.defaultSettings);
         this._unfilteredMessageElements().forEach(function(message) {
             let matchRanges = [];
             let text = message.textContent;

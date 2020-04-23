@@ -458,19 +458,29 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _updateFilteredCookies()
     {
-        let filterText = this._filterBarNavigationItem.filterBar.filters.text;
-        if (filterText) {
-            let regex = WI.SearchUtilities.filterRegExpForString(filterText, WI.SearchUtilities.defaultSettings);
-            this._filteredCookies = this._cookies.filter((cookie) => {
-                for (let column of this._table.columns) {
-                    let text = this._formatCookiePropertyForColumn(cookie, column);
-                    if (text && regex.test(text))
-                        return true;
-                }
-                return false;
-            });
-        } else
-            this._filteredCookies = this._cookies;
+        this._filteredCookies = this._cookies;
+
+        let filterBar = this._filterBarNavigationItem.filterBar;
+        filterBar.invalid = false;
+
+        let filterText = filterBar.filters.text;
+        if (!filterText)
+            return;
+
+        let regex = WI.SearchUtilities.filterRegExpForString(filterText, WI.SearchUtilities.defaultSettings);
+        if (!regex) {
+            filterBar.invalid = true;
+            return;
+        }
+
+        this._filteredCookies = this._filteredCookies.filter((cookie) => {
+            for (let column of this._table.columns) {
+                let text = this._formatCookiePropertyForColumn(cookie, column);
+                if (text && regex.test(text))
+                    return true;
+            }
+            return false;
+        });
     }
 
     _updateEmptyFilterResultsMessage()

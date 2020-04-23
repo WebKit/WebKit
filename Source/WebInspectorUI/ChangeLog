@@ -1,3 +1,57 @@
+2020-04-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: SyntaxError: Invalid regular expression: missing )
+        https://bugs.webkit.org/show_bug.cgi?id=210890
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/SearchUtilities.js:
+        (WI.SearchUtilities.prototype._regExpForString):
+        Catch any exceptions from `new RegExp` and return `null` in that case.
+
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar):
+        (WI.FilterBar.prototype.get invalid): Added.
+        (WI.FilterBar.prototype.set invalid): Added.
+        (WI.FilterBar.prototype.clear):
+        * UserInterface/Views/FilterBar.css:
+        (:matches(.filter-bar, .search-bar).invalid > input[type="search"]): Added.
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype._updateFilteredCookies):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WI.IndexedDatabaseObjectStoreContentView.prototype.dataGridMatchNodeAgainstCustomFilters):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.updateFilter):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel):
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        (WI.SearchSidebarPanel.prototype.performSearch.forEachMatch):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]): Added.
+        Mark the `WI.FilterBar` as invalid if the `filterRegExpForString` is invalid.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._highlightSearchResults):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.performSearch):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch):
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch.searchResultCallback):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.performSearch):
+        Ensure that the `WI.FindBanner` shows 0 results if the `searchRegExpForString` is invalid.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/SearchBar.js: Removed.
+        * UserInterface/Views/SearchBar.css: Removed.
+        Removed unused `WI.SearchBar`.
+
 2020-04-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: unable to filter cookies

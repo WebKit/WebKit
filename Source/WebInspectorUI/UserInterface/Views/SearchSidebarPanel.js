@@ -35,11 +35,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             },
         });
 
-        var searchElement = document.createElement("div");
-        searchElement.classList.add("search-bar");
-        this.element.appendChild(searchElement);
+        this._inputContainer = this.element.appendChild(document.createElement("div"));
+        this._inputContainer.classList.add("search-bar");
 
-        this._inputElement = document.createElement("input");
+        this._inputElement = this._inputContainer.appendChild(document.createElement("input"));
         this._inputElement.type = "search";
         this._inputElement.spellcheck = false;
         this._inputElement.addEventListener("search", this._searchFieldChanged.bind(this));
@@ -47,9 +46,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement.setAttribute("results", 5);
         this._inputElement.setAttribute("autosave", "inspector-search-autosave");
         this._inputElement.setAttribute("placeholder", WI.UIString("Search Resource Content"));
-        searchElement.appendChild(this._inputElement);
 
-        searchElement.appendChild(WI.SearchUtilities.createSettingsButton(this._searchInputSettings));
+        this._inputContainer.appendChild(WI.SearchUtilities.createSettingsButton(this._searchInputSettings));
 
         this._searchQuerySetting = new WI.Setting("search-sidebar-query", "");
         this._inputElement.value = this._searchQuerySetting.value;
@@ -100,23 +98,35 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
     performSearch(searchQuery)
     {
-        // Before performing a new search, clear the old search.
-        this.contentTreeOutline.removeChildren();
-        this.contentBrowser.contentViewContainer.closeAllContentViews();
-
         this._inputElement.value = searchQuery;
         this._searchQuerySetting.value = searchQuery;
-
-        this.hideEmptyContentPlaceholder();
 
         this.element.classList.remove("changed");
         if (this._changedBanner)
             this._changedBanner.remove();
 
         if (!searchQuery.length) {
+            this._inputContainer.classList.remove("invalid");
+            this.hideEmptyContentPlaceholder();
             this.showDefaultContentView();
             return;
         }
+
+        let isCaseSensitive = !!this._searchInputSettings.caseSensitive.value;
+        let isRegex = !!this._searchInputSettings.regularExpression.value;
+        let searchRegex = WI.SearchUtilities.searchRegExpForString(searchQuery, {
+            caseSensitive: isCaseSensitive,
+            regularExpression: isRegex,
+        });
+        this._inputContainer.classList.toggle("invalid", !searchRegex);
+        if (!searchRegex)
+            return;
+
+        this.hideEmptyContentPlaceholder();
+
+        // Before performing a new search, clear the old search.
+        this.contentTreeOutline.removeChildren();
+        this.contentBrowser.contentViewContainer.closeAllContentViews();
 
         let createSearchingPlaceholder = () => {
             let searchingPlaceholder = WI.createMessageTextView("");
@@ -159,9 +169,6 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             }
         };
 
-        let isCaseSensitive = !!this._searchInputSettings.caseSensitive.value;
-        let isRegex = !!this._searchInputSettings.regularExpression.value;
-
         function createTreeElementForMatchObject(matchObject, parentTreeElement)
         {
             let matchTreeElement = new WI.SearchResultTreeElement(matchObject);
@@ -173,13 +180,9 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                 matchTreeElement.revealAndSelect(false, true);
         }
 
-        function forEachMatch(searchQuery, lineContent, callback)
+        function forEachMatch(lineContent, callback)
         {
             var lineMatch;
-            let searchRegex = WI.SearchUtilities.searchRegExpForString(searchQuery, {
-                caseSensitive: isCaseSensitive,
-                regularExpression: isRegex,
-            });
             while ((searchRegex.lastIndex < lineContent.length) && (lineMatch = searchRegex.exec(lineContent)))
                 callback(lineMatch, searchRegex.lastIndex);
         }
@@ -200,7 +203,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
             for (var i = 0; i < result.length; ++i) {
                 var match = result[i];
-                forEachMatch(searchQuery, match.lineContent, (lineMatch, lastIndex) => {
+                forEachMatch(match.lineContent, (lineMatch, lastIndex) => {
                     var matchObject = new WI.SourceCodeSearchMatchObject(resource, match.lineContent, searchQuery, new WI.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
                     createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                 });
@@ -243,7 +246,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             var scriptTreeElement = this._searchTreeElementForScript(script);
 
             for (let match of result) {
-                forEachMatch(searchQuery, match.lineContent, (lineMatch, lastIndex) => {
+                forEachMatch(match.lineContent, (lineMatch, lastIndex) => {
                     var matchObject = new WI.SourceCodeSearchMatchObject(script, match.lineContent, searchQuery, new WI.TextRange(match.lineNumber, lineMatch.index, match.lineNumber, lastIndex));
                     createTreeElementForMatchObject.call(this, matchObject, scriptTreeElement);
                 });
@@ -293,7 +296,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
                     // Textual matches.
                     var didFindTextualMatch = false;
-                    forEachMatch(searchQuery, domNodeTitle, (lineMatch, lastIndex) => {
+                    forEachMatch(domNodeTitle, (lineMatch, lastIndex) => {
                         var matchObject = new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, searchQuery, new WI.TextRange(0, lineMatch.index, 0, lastIndex));
                         createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                         didFindTextualMatch = true;
