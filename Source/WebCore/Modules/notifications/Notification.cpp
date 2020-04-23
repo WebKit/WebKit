@@ -53,6 +53,7 @@ Ref<Notification> Notification::create(Document& context, const String& title, c
 {
     auto notification = adoptRef(*new Notification(context, title, options));
     notification->suspendIfNeeded();
+    notification->showSoon();
     return notification;
 }
 
@@ -64,19 +65,23 @@ Notification::Notification(Document& document, const String& title, const Option
     , m_body(options.body)
     , m_tag(options.tag)
     , m_state(Idle)
-    , m_showNotificationTimer(&document, *this, &Notification::show)
 {
     if (!options.icon.isEmpty()) {
         auto iconURL = document.completeURL(options.icon);
         if (iconURL.isValid())
             m_icon = iconURL;
     }
-
-    m_showNotificationTimer.startOneShot(0_s);
-    m_showNotificationTimer.suspendIfNeeded();
 }
 
 Notification::~Notification() = default;
+
+
+void Notification::showSoon()
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
+        show();
+    });
+}
 
 void Notification::show()
 {
@@ -94,10 +99,8 @@ void Notification::show()
         dispatchErrorEvent();
         return;
     }
-    if (client.show(this)) {
+    if (client.show(this))
         m_state = Showing;
-        setPendingActivity(*this);
-    }
 }
 
 void Notification::close()
@@ -143,28 +146,16 @@ void Notification::finalize()
     if (m_state == Closed)
         return;
     m_state = Closed;
-    unsetPendingActivity(*this);
-}
-
-void Notification::queueTask(Function<void()>&& task)
-{
-    auto* document = this->document();
-    if (!document)
-        return;
-
-    document->eventLoop().queueTask(TaskSource::UserInteraction, WTFMove(task));
 }
 
 void Notification::dispatchShowEvent()
 {
-    queueTask([this, pendingActivity = makePendingActivity(*this)] {
-        dispatchEvent(Event::create(eventNames().showEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    });
+    queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().showEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void Notification::dispatchClickEvent()
 {
-    queueTask([this, pendingActivity = makePendingActivity(*this)] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
         WindowFocusAllowedIndicator windowFocusAllowed;
         dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
@@ -172,17 +163,13 @@ void Notification::dispatchClickEvent()
 
 void Notification::dispatchCloseEvent()
 {
-    queueTask([this, pendingActivity = makePendingActivity(*this)] {
-        dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    });
+    queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     finalize();
 }
 
 void Notification::dispatchErrorEvent()
 {
-    queueTask([this, pendingActivity = makePendingActivity(*this)] {
-        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    });
+    queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 auto Notification::permission(Document& document) -> Permission
@@ -213,6 +200,22 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
     }
 
     NotificationController::from(page)->client().requestPermission(&document, WTFMove(callback));
+}
+
+void Notification::eventListenersDidChange()
+{
+    m_hasRelevantEventListener = hasEventListeners(eventNames().clickEvent)
+        || hasEventListeners(eventNames().closeEvent)
+        || hasEventListeners(eventNames().errorEvent)
+        || hasEventListeners(eventNames().showEvent);
+}
+
+// A Notification object must not be garbage collected while the list of notifications contains its corresponding
+// notification and it has an event listener whose type is click, show, close, or error.
+// See https://notifications.spec.whatwg.org/#garbage-collection
+bool Notification::virtualHasPendingActivity() const
+{
+    return m_state == Showing && m_hasRelevantEventListener;
 }
 
 } // namespace WebCore

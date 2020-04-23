@@ -37,7 +37,6 @@
 #include "EventTarget.h"
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
-#include "SuspendableTimer.h"
 #include <wtf/URL.h>
 #include "WritingMode.h"
 
@@ -96,15 +95,18 @@ private:
     Document* document() const;
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
 
-    void queueTask(Function<void()>&&);
+    void showSoon();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension);
     void stop() final;
+    bool virtualHasPendingActivity() const final;
 
+    // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    void eventListenersDidChange() final;
 
     String m_title;
     Direction m_direction;
@@ -115,8 +117,7 @@ private:
 
     enum State { Idle, Showing, Closed };
     State m_state { Idle };
-
-    SuspendableTimer m_showNotificationTimer;
+    bool m_hasRelevantEventListener { false };
 };
 
 } // namespace WebCore
