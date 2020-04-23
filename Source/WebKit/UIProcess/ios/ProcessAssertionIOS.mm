@@ -435,9 +435,8 @@ ProcessAssertion::~ProcessAssertion()
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;
-        m_delegate = nil;
-
         [m_rbsAssertion removeObserver:m_delegate.get()];
+        m_delegate = nil;
         [m_rbsAssertion invalidate];
     }
 
