@@ -1,3 +1,14 @@
+2020-04-23  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulationController should set range of paragraph using token's positions
+        https://bugs.webkit.org/show_bug.cgi?id=210866
+        <rdar://problem/60646283>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-23  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Unreviewed, add my bugzilla / slack nick to contributors.json

@@ -1,3 +1,34 @@
+2020-04-23  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulationController should set range of paragraph using token's positions
+        https://bugs.webkit.org/show_bug.cgi?id=210866
+        <rdar://problem/60646283>
+
+        Reviewed by Wenson Hsieh.
+
+        Set the range of paragraph using positions of first token and last token in the paragraph because:
+        1. Accurate range makes token matching in TextManipulationController::replace() easier, as TextIterator could 
+        visit different positions with different ranges or different conditions. For example, in our previous 
+        implementation, start of a paragraph can be set as the first visible position of document, while position of 
+        first token is after that. Then in replace(), TextManipulationController may extract a word before the position 
+        of first token and return error. See added test TextManipulation.CompleteTextManipulationCorrectParagraphRange.
+        2. TextManipulationController can handle fewer content and this is less error-prone. For example, svg elements 
+        before/after the paragraph text will not be identified as tokens [] in a paragraph now. See updated API tests 
+        for example.
+
+        New test: TextManipulation.CompleteTextManipulationCorrectParagraphRange
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::moveCurrentNodeForward): m_currentNodeForFindingInvisibleContent should not 
+        be advanced if it is already at the end.
+        (WebCore::containsOnlyHTMLSpaces):
+        (WebCore::TextManipulationController::observeParagraphs):Set the paragraph start as the position of the first 
+        token and end as the position of last token. If the paragraph is split with <br>, the end will be extended to 
+        position of <br> so that we can add this node back later; otherwise, <br> can be removed after original 
+        text of paragraph is removed in TextManipulationController::replace(). Also, stop identifying spaces as tokens 
+        because non-text Node can emit spaces.
+        (WebCore::TextManipulationController::replace): Only identify tokens from content with meaningful text.
+
 2020-04-23  Chris Dumez  <cdumez@apple.com>
 
         [ Mac wk2 ] imported/w3c/web-platform-tests/notifications/event-onclose.html is flaky failing.
