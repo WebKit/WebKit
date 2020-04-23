@@ -61,6 +61,7 @@ public:
         } };
     }
 
+    static constexpr int64_t doneIndex = -1;
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 

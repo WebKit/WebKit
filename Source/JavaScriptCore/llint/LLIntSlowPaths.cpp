@@ -845,6 +845,9 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
     JSValue iterator = getOperand(callFrame, bytecode.m_iterator);
     Register& nextRegister = callFrame->uncheckedR(bytecode.m_next);
 
+    if (!iterator.isObject())
+        LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
+
     JSValue result = performLLIntGetByID(pc, codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
     LLINT_CHECK_EXCEPTION();
     nextRegister = result;
@@ -2089,8 +2092,12 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
     auto& valueRegister = callFrame->uncheckedR(bytecode.m_value);
     auto iteratorResultObject = sideState.tmps[OpIteratorNext::nextResult];
     auto next = callFrame->uncheckedR(bytecode.m_next).jsValue();    
-
     RELEASE_ASSERT_WITH_MESSAGE(next, "We should not OSR exit to a checkpoint for fast cases.");
+
+    if (!iteratorResultObject.isObject()) {
+        throwVMTypeError(globalObject, scope, "Iterator result interface is not an object."_s);
+        return;
+    }
 
     auto& doneRegister = callFrame->uncheckedR(bytecode.m_done);
     if (checkpointIndex == OpIteratorNext::getDone) {

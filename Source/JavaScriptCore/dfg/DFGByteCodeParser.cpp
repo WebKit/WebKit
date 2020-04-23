@@ -177,11 +177,11 @@ private:
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     enum Terminality { Terminal, NonTerminal };
     Terminality handleCall(
-        Operand result, NodeType op, InlineCallFrame::Kind, unsigned instructionSize,
+        Operand result, NodeType op, InlineCallFrame::Kind, BytecodeIndex osrExitIndex,
         Node* callTarget, int argumentCountIncludingThis, int registerOffset, CallLinkStatus,
         SpeculatedType prediction);
     template<typename CallOp>
-    Terminality handleCall(const Instruction* pc, NodeType op, CallMode);
+    Terminality handleCall(const Instruction* pc, NodeType op, CallMode, BytecodeIndex osrExitIndex);
     template<typename CallOp>
     Terminality handleVarargsCall(const Instruction* pc, NodeType op, CallMode);
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
@@ -194,8 +194,8 @@ private:
     bool handleVarargsInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
     unsigned getInliningBalance(const CallLinkStatus&, CodeSpecializationKind);
     enum class CallOptimizationResult { OptimizedToJump, Inlined, DidNothing };
-    CallOptimizationResult handleCallVariant(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
-    CallOptimizationResult handleInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
+    CallOptimizationResult handleCallVariant(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
+    CallOptimizationResult handleInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
     template<typename ChecksFunctor>
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -215,7 +215,7 @@ private:
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
 
     template<typename Bytecode>
-    void handlePutByVal(Bytecode, unsigned instructionSize);
+    void handlePutByVal(Bytecode, BytecodeIndex osrExitIndex);
     template <typename Bytecode>
     void handlePutAccessorById(NodeType, Bytecode);
     template <typename Bytecode>
@@ -247,12 +247,12 @@ private:
     template<typename Op>
     void parseGetById(const Instruction*);
     void handleGetById(
-        VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, unsigned instructionSize);
+        VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, BytecodeIndex osrExitIndex);
     void emitPutById(
         Node* base, CacheableIdentifier, Node* value,  const PutByIdStatus&, bool isDirect, ECMAMode);
     void handlePutById(
         Node* base, CacheableIdentifier, unsigned identifierNumber, Node* value, const PutByIdStatus&,
-        bool isDirect, unsigned intructionSize, ECMAMode);
+        bool isDirect, BytecodeIndex osrExitIndex, ECMAMode);
 
     void handleDeleteById(
         VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
@@ -292,9 +292,12 @@ private:
     void linkBlock(BasicBlock*, Vector<BasicBlock*>& possibleTargets);
     void linkBlocks(Vector<BasicBlock*>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets);
     
+    BytecodeIndex nextOpcodeIndex() const { return BytecodeIndex(m_currentIndex.offset() + m_currentInstruction->size()); }
+    BytecodeIndex nextCheckpoint() const { return m_currentIndex.withCheckpoint(m_currentIndex.checkpoint() + 1); }
+
     void progressToNextCheckpoint()
     {
-        m_currentIndex = BytecodeIndex(m_currentIndex.offset(), m_currentIndex.checkpoint() + 1);
+        m_currentIndex = nextCheckpoint();
         // At this point, it's again OK to OSR exit.
         m_exitOK = true;
         processSetLocalQueue();
@@ -1305,7 +1308,7 @@ void ByteCodeParser::addJumpTo(unsigned bytecodeIndex)
 }
 
 template<typename CallOp>
-ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, NodeType op, CallMode callMode)
+ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, NodeType op, CallMode callMode, BytecodeIndex osrExitIndex)
 {
     auto bytecode = pc->as<CallOp>();
     Node* callTarget = get(calleeFor(bytecode, m_currentIndex.checkpoint()));
@@ -1316,8 +1319,9 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, No
         m_inlineStackTop->m_baselineMap, m_icContextStack);
 
     InlineCallFrame::Kind kind = InlineCallFrame::kindFor(callMode);
+    ASSERT(osrExitIndex);
 
-    return handleCall(destinationFor(bytecode, m_currentIndex.checkpoint(), JITType::DFGJIT), op, kind, pc->size(), callTarget,
+    return handleCall(destinationFor(bytecode, m_currentIndex.checkpoint(), JITType::DFGJIT), op, kind, osrExitIndex, callTarget,
         argumentCountIncludingThisFor(bytecode, m_currentIndex.checkpoint()), registerOffset, callLinkStatus, getPrediction());
 }
 
@@ -1328,7 +1332,7 @@ void ByteCodeParser::refineStatically(CallLinkStatus& callLinkStatus, Node* call
 }
 
 ByteCodeParser::Terminality ByteCodeParser::handleCall(
-    Operand result, NodeType op, InlineCallFrame::Kind kind, unsigned instructionSize,
+    Operand result, NodeType op, InlineCallFrame::Kind kind, BytecodeIndex osrExitIndex,
     Node* callTarget, int argumentCountIncludingThis, int registerOffset,
     CallLinkStatus callLinkStatus, SpeculatedType prediction)
 {
@@ -1345,7 +1349,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
 
         VirtualRegister thisArgument = virtualRegisterForArgumentIncludingThis(0, registerOffset);
         auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
-            argumentCountIncludingThis, BytecodeIndex(m_currentIndex.offset() + instructionSize), op, kind, prediction);
+            argumentCountIncludingThis, osrExitIndex, op, kind, prediction);
         if (optimizationResult == CallOptimizationResult::OptimizedToJump)
             return Terminal;
         if (optimizationResult == CallOptimizationResult::Inlined) {
@@ -1830,7 +1834,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     m_currentInstruction = savedCurrentInstruction;
 }
 
-ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* callTargetNode, Operand result, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee)
+ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* callTargetNode, Operand result, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee)
 {
     VERBOSE_LOG("    Considering callee ", callee, "\n");
 
@@ -1858,7 +1862,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
         emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
         inliningBalance--;
         if (continuationBlock) {
-            m_currentIndex = nextIndex;
+            m_currentIndex = osrExitIndex;
             m_exitOK = true;
             processSetLocalQueue();
             addJumpTo(continuationBlock);
@@ -2054,7 +2058,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     Node* callTargetNode, Operand result, const CallLinkStatus& callLinkStatus,
     int registerOffset, VirtualRegister thisArgument,
     int argumentCountIncludingThis,
-    BytecodeIndex nextIndex, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
+    BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
 {
     VERBOSE_LOG("Handling inlining...\nStack: ", currentCodeOrigin(), "\n");
     
@@ -2067,7 +2071,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     if (!callLinkStatus.couldTakeSlowPath() && callLinkStatus.size() == 1) {
         return handleCallVariant(
             callTargetNode, result, callLinkStatus[0], registerOffset, thisArgument,
-            argumentCountIncludingThis, nextIndex, kind, prediction, inliningBalance, nullptr, true);
+            argumentCountIncludingThis, osrExitIndex, kind, prediction, inliningBalance, nullptr, true);
     }
 
     // We need to create some kind of switch over callee. For now we only do this if we believe that
@@ -2157,7 +2161,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         
         auto inliningResult = handleCallVariant(
             myCallTargetNode, result, callLinkStatus[i], registerOffset,
-            thisArgument, argumentCountIncludingThis, nextIndex, kind, prediction,
+            thisArgument, argumentCountIncludingThis, osrExitIndex, kind, prediction,
             inliningBalance, continuationBlock, false);
         
         if (inliningResult == CallOptimizationResult::DidNothing) {
@@ -2206,7 +2210,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         VERBOSE_LOG("couldTakeSlowPath was false\n");
     }
 
-    m_currentIndex = nextIndex;
+    m_currentIndex = osrExitIndex;
     m_exitOK = true; // Origin changed, so it's fine to exit again.
     processSetLocalQueue();
 
@@ -4487,7 +4491,7 @@ Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVarian
 
 void ByteCodeParser::handleGetById(
     VirtualRegister destination, SpeculatedType prediction, Node* base, CacheableIdentifier identifier, unsigned identifierNumber,
-    GetByStatus getByStatus, AccessType type, unsigned instructionSize)
+    GetByStatus getByStatus, AccessType type, BytecodeIndex osrExitIndex)
 {
     // Attempt to reduce the set of things in the GetByStatus.
     if (base->op() == NewObject) {
@@ -4667,7 +4671,7 @@ void ByteCodeParser::handleGetById(
     addToGraph(ExitOK);
     
     handleCall(
-        destination, Call, InlineCallFrame::GetterCall, instructionSize,
+        destination, Call, InlineCallFrame::GetterCall, osrExitIndex,
         getter, numberOfParameters - 1, registerOffset, *variant.callLinkStatus(), prediction);
 }
 
@@ -4780,7 +4784,7 @@ void ByteCodeParser::emitPutById(
 
 void ByteCodeParser::handlePutById(
     Node* base, CacheableIdentifier identifier, unsigned identifierNumber, Node* value,
-    const PutByIdStatus& putByIdStatus, bool isDirect, unsigned instructionSize, ECMAMode ecmaMode)
+    const PutByIdStatus& putByIdStatus, bool isDirect, BytecodeIndex osrExitIndex, ECMAMode ecmaMode)
 {
     if (!putByIdStatus.isSimple() || !putByIdStatus.numVariants() || !Options::useAccessInlining()) {
         if (!putByIdStatus.isSet())
@@ -4950,7 +4954,7 @@ void ByteCodeParser::handlePutById(
     
         handleCall(
             VirtualRegister(), Call, InlineCallFrame::SetterCall,
-            instructionSize, setter, numberOfParameters - 1, registerOffset,
+            osrExitIndex, setter, numberOfParameters - 1, registerOffset,
             *variant.callLinkStatus(), SpecOther);
         return;
     }
@@ -4983,7 +4987,6 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
     
     AccessType type = AccessType::GetById;
-    unsigned opcodeLength = currentInstruction->size();
     if (Op::opcodeID == op_try_get_by_id)
         type = AccessType::TryGetById;
     else if (Op::opcodeID == op_get_by_id_direct)
@@ -4994,7 +4997,7 @@ void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
         m_inlineStackTop->m_baselineMap, m_icContextStack,
         currentCodeOrigin());
 
-    handleGetById(bytecode.m_dst, prediction, base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, getByStatus, type, opcodeLength);
+    handleGetById(bytecode.m_dst, prediction, base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, getByStatus, type, nextOpcodeIndex());
 }
 
 static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutInfo)
@@ -5942,7 +5945,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (shouldCompileAsGetById)
-                handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, currentInstruction->size());
+                handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, nextOpcodeIndex());
             else {
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
@@ -5975,11 +5978,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_by_val_direct:
-            handlePutByVal(currentInstruction->as<OpPutByValDirect>(), currentInstruction->size());
+            handlePutByVal(currentInstruction->as<OpPutByValDirect>(), nextOpcodeIndex());
             NEXT_OPCODE(op_put_by_val_direct);
 
         case op_put_by_val: {
-            handlePutByVal(currentInstruction->as<OpPutByVal>(), currentInstruction->size());
+            handlePutByVal(currentInstruction->as<OpPutByVal>(), nextOpcodeIndex());
             NEXT_OPCODE(op_put_by_val);
         }
 
@@ -6071,7 +6074,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), m_graph.identifiers()[identifierNumber]);
             
-            handlePutById(base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, value, putByIdStatus, direct, currentInstruction->size(), bytecode.m_flags.ecmaMode());
+            handlePutById(base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), identifierNumber, value, putByIdStatus, direct, nextOpcodeIndex(), bytecode.m_flags.ecmaMode());
             NEXT_OPCODE(op_put_by_id);
         }
 
@@ -6614,13 +6617,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_call:
-            handleCall<OpCall>(currentInstruction, Call, CallMode::Regular);
+            handleCall<OpCall>(currentInstruction, Call, CallMode::Regular, nextOpcodeIndex());
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_call);
 
         case op_tail_call: {
             flushForReturn();
-            Terminality terminality = handleCall<OpTailCall>(currentInstruction, TailCall, CallMode::Tail);
+            Terminality terminality = handleCall<OpTailCall>(currentInstruction, TailCall, CallMode::Tail, nextOpcodeIndex());
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
             // If the call is not terminal, however, then we want the subsequent op_ret/op_jmp to update metadata and clean
@@ -6633,7 +6636,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_construct:
-            handleCall<OpConstruct>(currentInstruction, Construct, CallMode::Construct);
+            handleCall<OpConstruct>(currentInstruction, Construct, CallMode::Construct, nextOpcodeIndex());
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_construct);
             
@@ -6747,7 +6750,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 set(bytecode.m_next, next);
 
                 // Do our set locals. We don't want to exit backwards so move our exit to the next bytecode.
-                m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
+                m_currentIndex = nextOpcodeIndex();
                 m_exitOK = true;
                 processSetLocalQueue();
 
@@ -6766,7 +6769,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 } else
                     ASSERT(!generatedCase);
 
-                Terminality terminality = handleCall<OpIteratorOpen>(currentInstruction, Call, CallMode::Regular);
+                Terminality terminality = handleCall<OpIteratorOpen>(currentInstruction, Call, CallMode::Regular, nextCheckpoint());
                 ASSERT_UNUSED(terminality, terminality == NonTerminal);
                 progressToNextCheckpoint();
 
@@ -6798,7 +6801,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     unsigned identifierNumber = m_graph.identifiers().ensure(nextImpl);
 
                     AccessType type = AccessType::GetById;
-                    unsigned opcodeLength = currentInstruction->size();
 
                     GetByStatus getByStatus = GetByStatus::computeFor(
                         m_inlineStackTop->m_profiledBlock,
@@ -6806,10 +6808,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         currentCodeOrigin());
 
 
-                    handleGetById(bytecode.m_next, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(nextImpl), identifierNumber, getByStatus, type, opcodeLength);
+                    handleGetById(bytecode.m_next, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(nextImpl), identifierNumber, getByStatus, type, nextOpcodeIndex());
 
                     // Do our set locals. We don't want to run our get_by_id again so we move to the next bytecode.
-                    m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
+                    m_currentIndex = nextOpcodeIndex();
                     m_exitOK = true;
                     processSetLocalQueue();
 
@@ -6824,7 +6826,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 set(bytecode.m_iterator, result);
                 set(bytecode.m_next, result);
 
-                m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
+                m_currentIndex = nextOpcodeIndex();
                 m_exitOK = true;
                 processSetLocalQueue();
 
@@ -6876,33 +6878,25 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(globalObject->arrayIteratorStructure())), iterator);
 
                 BasicBlock* isDoneBlock = allocateUntargetableBlock();
-                BasicBlock* notDoneBlock = allocateUntargetableBlock();
                 BasicBlock* doLoadBlock = allocateUntargetableBlock();
-
-                {
-                    Node* doneIndex = jsConstant(jsNumber(-1));
-                    Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
-                    Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
-
-                    BranchData* isDoneBranchData = m_graph.m_branchData.add();
-                    isDoneBranchData->taken = BranchTarget(isDoneBlock);
-                    isDoneBranchData->notTaken = BranchTarget(notDoneBlock);
-                    addToGraph(Branch, OpInfo(isDoneBranchData), isDone);
-                }
 
                 ArrayMode arrayMode = getArrayMode(metadata.m_iterableProfile, Array::Read);
                 auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
                 {
-                    m_currentBlock = notDoneBlock;
-                    clearCaches();
+                    // FIXME: doneIndex is -1 so it seems like we should be able to do CompareBelow(index, length). See: https://bugs.webkit.org/show_bug.cgi?id=210927
+                    Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
+                    Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
+                    Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
-                    Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), get(bytecode.m_iterator));
                     Node* iterable = get(bytecode.m_iterable);
                     Node* butterfly = addToGraph(GetButterfly, iterable);
                     Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), iterable, butterfly);
-                    Node* isDone = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
-                    m_exitOK = true; // The above compare doesn't produce effects since we know index and length are int32s.
+                    Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
+
+                    isDone = addToGraph(ArithBitOr, isDone, isOutOfBounds);
+                    // The above compare doesn't produce effects since we know the values are booleans. We don't set UseKinds because Fixup likes to add edges.
+                    m_exitOK = true;
                     addToGraph(ExitOK);
 
                     BranchData* branchData = m_graph.m_branchData.add();
@@ -6932,7 +6926,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(bytecode.m_iterator), newIndex);
 
                     // Do our set locals. We don't want to run our getByVal again so we move to the next bytecode.
-                    m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
+                    m_currentIndex = nextOpcodeIndex();
                     m_exitOK = true;
                     processSetLocalQueue();
 
@@ -6954,7 +6948,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(bytecode.m_iterator), doneIndex);
 
                     // Do our set locals. We don't want to run this again so we have to move the exit origin forward.
-                    m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
+                    m_currentIndex = nextOpcodeIndex();
                     m_exitOK = true;
                     processSetLocalQueue();
 
@@ -6973,7 +6967,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 } else
                     ASSERT(!generatedCase);
 
-                Terminality terminality = handleCall<OpIteratorNext>(currentInstruction, Call, CallMode::Regular);
+                Terminality terminality = handleCall<OpIteratorNext>(currentInstruction, Call, CallMode::Regular, nextCheckpoint());
                 ASSERT_UNUSED(terminality, terminality == NonTerminal);
                 progressToNextCheckpoint();
 
@@ -7000,7 +6994,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     flushForTerminal();
                 }
 
-                auto valuePredicition = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
+                auto valuePredicition = getPredictionWithoutOSRExit(m_currentIndex.withCheckpoint(OpIteratorNext::getValue));
 
                 {
                     m_exitOK = true;
@@ -7014,14 +7008,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     unsigned identifierNumber = m_graph.identifiers().ensure(doneImpl);
 
                     AccessType type = AccessType::GetById;
-                    unsigned opcodeLength = currentInstruction->size();
 
                     GetByStatus getByStatus = GetByStatus::computeFor(
                         m_inlineStackTop->m_profiledBlock,
                         m_inlineStackTop->m_baselineMap, m_icContextStack,
                         currentCodeOrigin());
 
-                    handleGetById(bytecode.m_done, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(doneImpl), identifierNumber, getByStatus, type, opcodeLength);
+                    handleGetById(bytecode.m_done, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(doneImpl), identifierNumber, getByStatus, type, nextCheckpoint());
                     // Set a value for m_value so we don't exit on it differing from what we expected.
                     set(bytecode.m_value, bottomValue);
                     progressToNextCheckpoint();
@@ -7041,15 +7034,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     unsigned identifierNumber = m_graph.identifiers().ensure(valueImpl);
 
                     AccessType type = AccessType::GetById;
-                    unsigned opcodeLength = currentInstruction->size();
 
                     GetByStatus getByStatus = GetByStatus::computeFor(
                         m_inlineStackTop->m_profiledBlock,
                         m_inlineStackTop->m_baselineMap, m_icContextStack,
                         currentCodeOrigin());
 
-                    handleGetById(bytecode.m_value, valuePredicition, base, CacheableIdentifier::createFromImmortalIdentifier(valueImpl), identifierNumber, getByStatus, type, opcodeLength);
-                    progressToNextCheckpoint();
+                    handleGetById(bytecode.m_value, valuePredicition, base, CacheableIdentifier::createFromImmortalIdentifier(valueImpl), identifierNumber, getByStatus, type, nextOpcodeIndex());
+
+                    // We're done, exit forwards.
+                    m_currentIndex = nextOpcodeIndex();
+                    m_exitOK = true;
+                    processSetLocalQueue();
 
                     addToGraph(Jump, OpInfo(continuation));
                 }
@@ -8141,7 +8137,7 @@ void ByteCodeParser::parseCodeBlock()
 }
 
 template <typename Bytecode>
-void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
+void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitIndex)
 {
     Node* base = get(bytecode.m_base);
     Node* property = get(bytecode.m_property);
@@ -8186,7 +8182,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
         }
 
         if (compiledAsPutById)
-            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, instructionSize, bytecode.m_ecmaMode);
+            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, osrExitIndex, bytecode.m_ecmaMode);
     }
 
     if (!compiledAsPutById) {

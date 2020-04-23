@@ -428,6 +428,12 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
 
 
     linkAllSlowCases(iter);
+
+    GPRReg iteratorGPR = regT0;
+    JumpList notObject;
+    notObject.append(branchIfNotCell(iteratorGPR));
+    notObject.append(branchIfNotObject(iteratorGPR));
+
     auto bytecode = instruction->as<OpIteratorOpen>();
     VirtualRegister nextVReg = bytecode.m_next;
     UniquedStringImpl* ident = vm().propertyNames->next.impl();
@@ -436,9 +442,14 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     
     Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
-
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, nextVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), iteratorGPR, CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits());
     gen.reportSlowPathCall(coldPathBegin, call);
+    auto done = jump();
+
+    notObject.link(this);
+    callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_codeBlock->globalObject()));
+
+    done.link(this);
 }
 
 void JIT::emit_op_iterator_next(const Instruction* instruction)

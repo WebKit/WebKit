@@ -1,3 +1,44 @@
+2020-04-22  Keith Miller  <keith_miller@apple.com>
+
+        Fix OSR exiting/iterator object checks in for-of bytecodes
+        https://bugs.webkit.org/show_bug.cgi?id=210882
+
+        Reviewed by Saam Barati.
+
+        This patch fixes some bugs in the DFGBytecodeParser where we would
+        set the exit origin for the SetLocal following the iterator_open/next
+        first call to the next bytecode. This meant that if out-of-line
+        Symbol.iterator or next functions returned an unexpected non-cell
+        we would OSR past the rest of the next bytecode rather than to the
+        first checkpoint.
+
+        This patch also makes sure we properly throw for non-objects returned
+        from either of the above functions in all tiers (and adds tests).
+
+        Finally, this patch makes a small optimization where we just ArithBitOr the
+        iterator's closed state (index == -1) and index is out of bounds. We can't
+        do a CompareBelow check because the index is effectively an int33_t.
+
+        * bytecode/BytecodeIndex.h:
+        (JSC::BytecodeIndex::withCheckpoint const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::nextOpcodeIndex const):
+        (JSC::DFG::ByteCodeParser::nextCheckpoint const):
+        (JSC::DFG::ByteCodeParser::progressToNextCheckpoint):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleCallVariant):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitSlow_op_iterator_open):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleIteratorNextCheckpoint):
+
 2020-04-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK

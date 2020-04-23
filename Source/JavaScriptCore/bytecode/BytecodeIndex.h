@@ -62,6 +62,7 @@ public:
     bool isHashTableDeletedValue() const { return *this == deletedValue(); }
 
     static BytecodeIndex fromBits(uint32_t bits);
+    BytecodeIndex withCheckpoint(unsigned checkpoint) const { return BytecodeIndex(offset(), checkpoint); }
 
     // Comparison operators.
     explicit operator bool() const { return m_packedBits != invalidOffset && m_packedBits != deletedValue().offset(); }

@@ -936,7 +936,7 @@ SlowPathReturnType SLOW_PATH iterator_next_try_fast(CallFrame* callFrame, const 
             ASSERT(0 <= index && index <= maxSafeInteger());
 
             JSValue value;
-            bool done = index == -1 || index >= array->length();
+            bool done = index == JSArrayIterator::doneIndex || index >= array->length();
             GET(bytecode.m_done) = jsBoolean(done);
             if (!done) {
                 // No need for a barrier here because we know this is a primitive.
