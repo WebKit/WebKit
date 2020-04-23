@@ -1,3 +1,16 @@
+2020-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r260133.
+
+        We can use RunningBoard foreground assertion again now that
+        <rdar://problem/61830390> has been fixed
+
+        Reverted changeset:
+
+        "REGRESSION (r259610): WebGL does not work at all on iOS (was:
+        Google Maps tiles turn black after initial load)"
+        https://trac.webkit.org/changeset/260133
+
 2020-04-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r260553.
