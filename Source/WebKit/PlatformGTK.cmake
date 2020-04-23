@@ -583,6 +583,7 @@ target_link_libraries(webkit2gtkinjectedbundle WebKit)
 
 target_include_directories(webkit2gtkinjectedbundle PRIVATE
     ${WebKit_INCLUDE_DIRECTORIES}
+    ${WebKit_PRIVATE_INCLUDE_DIRECTORIES}
     "${DERIVED_SOURCES_DIR}/InjectedBundle"
     "${FORWARDING_HEADERS_DIR}"
     "${FORWARDING_HEADERS_WEBKIT2GTK_DIR}"

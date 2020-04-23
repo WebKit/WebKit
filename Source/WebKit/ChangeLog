@@ -1,3 +1,15 @@
+2020-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] CMAKE_BINARY_DIR should always be a PRIVATE include directory
+        https://bugs.webkit.org/show_bug.cgi?id=196717
+
+        Reviewed by Michael Catanzaro.
+
+        Include CMAKE_BINARY_DIR either directly or through WebKit_PRIVATE_INCLUDE_DIRECTORIES.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2020-04-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         Regression after r260359 ([GTK][WPE] lowWatermarkPages() in MemoryPressureMonitor.cpp only searches the "low" value inside the first "Node" section)

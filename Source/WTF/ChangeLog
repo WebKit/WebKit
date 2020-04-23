@@ -1,3 +1,14 @@
+2020-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] CMAKE_BINARY_DIR should always be a PRIVATE include directory
+        https://bugs.webkit.org/show_bug.cgi?id=196717
+
+        Reviewed by Michael Catanzaro.
+
+        Remove public includes in WTF.
+
+        * wtf/CMakeLists.txt:
+
 2020-04-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK

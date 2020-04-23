@@ -1,3 +1,15 @@
+2020-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] CMAKE_BINARY_DIR should always be a PRIVATE include directory
+        https://bugs.webkit.org/show_bug.cgi?id=196717
+
+        Reviewed by Michael Catanzaro.
+
+        Include CMAKE_BINARY_DIR.
+
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * TestWebKitAPI/glib/CMakeLists.txt:
+
 2020-04-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r260552.
