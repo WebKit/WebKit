@@ -2016,42 +2016,24 @@ test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
 test/intl402/RelativeTimeFormat/constructor/constructor/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
-test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-always.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
-test/intl402/RelativeTimeFormat/prototype/format/en-us-style-short.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-narrow.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: Expected SameValue(«za 1000 s», «za 1 000 s») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«za 1000 s», «za 1 000 s») to be true'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-short.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
-test/intl402/RelativeTimeFormat/prototype/format/unit-plural.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
-test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-always.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
-test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-style-short.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: Expected SameValue(«za 1000 sek.», «za 1 000 sek.») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«za 1000 sek.», «za 1 000 sek.») to be true'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-long.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-narrow.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
 test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-short.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
-test/intl402/RelativeTimeFormat/prototype/formatToParts/unit-plural.js:
-  default: 'TypeError: failed to format relative time'
-  strict mode: 'TypeError: failed to format relative time'
+  default: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
+  strict mode: 'Test262Error: formatToParts(1000, second): length Expected SameValue(«3», «5») to be true'
 test/intl402/language-tags-invalid.js:
   default: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
   strict mode: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
