@@ -1,3 +1,16 @@
+2020-04-23  Alex Christensen  <achristensen@webkit.org>
+
+        Jesus Calling app needs more WebSQL
+        https://bugs.webkit.org/show_bug.cgi?id=210889
+        <rdar://problem/61795507>
+
+        Reviewed by Chris Dumez.
+
+        Manually verified this fixes the issue in the radar.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowInstanceFunctionOpenDatabaseBody):
+
 2020-04-23  Rob Buis  <rbuis@igalia.com>
 
         Move applyUserAgentIfNeeded calls to a more central place

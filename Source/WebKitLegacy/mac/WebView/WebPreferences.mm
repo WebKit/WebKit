@@ -50,6 +50,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 using namespace WebCore;
 
@@ -389,11 +390,13 @@ public:
     JSC::initializeThreading();
     RunLoop::initializeMainRunLoop();
     bool attachmentElementEnabled = MacApplication::isAppleMail();
+    bool webSQLEnabled = false;
 #else
     bool allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     bool allowsInlineMediaPlaybackAfterFullscreen = WebCore::deviceClass() != MGDeviceClassiPad;
     bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
     bool attachmentElementEnabled = IOSApplication::isMobileMail();
+    bool webSQLEnabled = IOSApplication::isJesusCalling() && applicationSDKVersion() <= DYLD_IOS_VERSION_12_2;
 #endif
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -711,7 +714,7 @@ public:
         @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
-        @NO, WebKitWebSQLEnabledPreferenceKey,
+        @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
         @YES, WebKitDebugNeedsInAppBrowserPrivacyQuirksPreferenceKey,
         nil];
 
