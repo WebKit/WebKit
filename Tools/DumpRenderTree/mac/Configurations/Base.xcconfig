@@ -102,6 +102,7 @@ WEBCORE_PRIVATE_HEADERS_DIR_Production = $(PRODUCTION_FRAMEWORKS_DIR)/WebCore.fr
 WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
 
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
+CODE_SIGN_IDENTITY = -;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 
