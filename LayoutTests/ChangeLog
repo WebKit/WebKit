@@ -1,3 +1,15 @@
+2020-04-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update expectations after r260561
+        https://bugs.webkit.org/show_bug.cgi?id=210928
+
+        Unreviewed gardening.
+
+        Mark several new mediastream tests as Crash.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for basic baseline align inside a table row

@@ -1573,6 +1573,11 @@ webkit.org/b/209533 http/tests/contentextensions/video-element-resource-type.htm
 webkit.org/b/209533 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Crash Pass ]
 webkit.org/b/209533 media/track/track-automatic-subtitles.html [ Crash Pass ]
 
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints.html [ Crash ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Crash ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Crash ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
