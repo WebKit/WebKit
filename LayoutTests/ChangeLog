@@ -1,3 +1,47 @@
+2020-04-23  Antoine Quint  <graouts@apple.com>
+
+        [ Mac iOS ] animations/animation-direction-normal.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210156
+        <rdar://problem/61411725>
+
+        Reviewed by Simon Fraser.
+
+        The tests animations/animation-direction-normal.html and animations/animation-direction-reverse.html were both written
+        similarly to test that an element targeted by a CSS Animation would have styles animated while the animation is running
+        and that those styles would no longer be animated once the CSS Animation was paused using the "animation-play-state"
+        CSS property.
+
+        The way those assertions were made were to use setTimeout() to check the computed style at a given time and compared it
+        to an expected value give or take an error margin. This design was flaky, as a system under load could easily not run the
+        timeout until a much larger delta than the one expected would elapse.
+
+        We use a new JS helper to write these tests in a non-flaky manner. The technique used now is to record the computed style
+        while the animation is running without providing expected times and values, but rather specifying delays between which we
+        want to record the computed style. Once all values have been recorded, a method can be used to check those recorded values
+        by using the Web Animations API to pause and seek the animation at recorded times and query the computed style, which allows
+        us to test values without an error margin.
+
+        Finally, the new JS helper also allows to check the computed style using a timeout when the animation play state is not relevant,
+        allowing those tests to pause the animation using the "animation-play-state" property and check after incremental timeouts
+        that the computed style did not change.
+
+        We also made the tests use the WPT harness for assertions and reporting.
+
+        * animations/animation-direction-normal-expected.txt:
+        * animations/animation-direction-normal.html:
+        * animations/animation-direction-reverse-expected.txt:
+        * animations/animation-direction-reverse.html:
+        * animations/resources/animation-test.js: Added.
+        (AnimationTest):
+        (AnimationTest.prototype.get animation):
+        (AnimationTest.prototype.get value):
+        (AnimationTest.prototype.async valueAfterWaitingFor):
+        (AnimationTest.prototype.async recordValueAfterRunningFor):
+        (AnimationTest.prototype.checkRecordedValues):
+        (AnimationTest.prototype._tickUntil):
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2020-04-23  Chris Dumez  <cdumez@apple.com>
 
         [ Mac wk2 ] imported/w3c/web-platform-tests/notifications/event-onclose.html is flaky failing.

@@ -1137,7 +1137,6 @@ http/tests/multipart/multipart-async-image.html
 animations/animation-direction-reverse-hardware-opacity.html [ Failure Pass ]
 animations/animation-direction-reverse-hardware.html [ Failure Pass ]
 animations/animation-direction-reverse-timing-functions-hardware.html [ Failure Pass ]
-animations/animation-direction-reverse.html [ Failure Pass ]
 animations/animation-hit-test-transform.html [ Failure Pass ]
 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure Pass ]
 compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure Pass ]
