@@ -1,3 +1,23 @@
+2020-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] White-list more GStreamer environment variables in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=210854
+
+        Reviewed by Adrian Perez de Castro.
+
+        Extra variables need to be white-listed when the webkitpy tooling
+        runs inside a gst-build environment, those variables are needed so
+        that uninstalled GStreamer plugins are correctly picked up.
+
+        Additionally we now correctly white-list the
+        WEBKIT_GST_USE_PLAYBIN3 env var. USE_PLAYBIN3 shouldn't be used
+        anymore.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
 2020-04-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK] Install dependencies step needs configuration as argument
