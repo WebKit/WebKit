@@ -1,10 +1,10 @@
-//@ slow!
-
 function assert(condition) {
     if (!condition)
         throw new Error("assertion failed")
 }
 noInline(assert)
+
+let iterationCount = 10000;
 
 function assert_throws(f) {
     try {
@@ -32,7 +32,7 @@ function testSingleStructure() {
     }
     noInline(doAlloc1)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc1()
     }
 }
@@ -63,7 +63,7 @@ function testInlineSingleStructure() {
         doAlloc2()
     }
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc2()
     }
 }
@@ -75,7 +75,7 @@ function testExit() {
     }
     noInline(doDelete3)
 
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete3({ i, a: 4 })
     }
 
@@ -88,7 +88,7 @@ function testExit() {
         doDelete3({ i, a: 4 })
     }
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete3({ i, a: 4 })
     }
 }
@@ -105,7 +105,7 @@ function testSingleStructureMiss() {
     }
     noInline(doAlloc4)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc4()
     }
 }
@@ -127,7 +127,7 @@ function testSingleStructureMissStrict() {
     }
     noInline(doAlloc5)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc5()
     }
 }
@@ -147,7 +147,7 @@ function testSingleStructureMissNonConfigurable() {
     }
     noInline(doAlloc6)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc6()
     }
 }
@@ -169,7 +169,7 @@ function testSingleStructureEmpty() {
     }
     noInline(doAlloc7)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doAlloc7()
     }
 }
@@ -186,7 +186,7 @@ function testPolymorphic() {
         doDelete8({ i, a: 4 })
     }
 
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete8({ i, f: 4 })
         assert(doDelete8({ i, e: 4, y: 10 }).y === undefined)
         doDelete8({ i, d: 4 })
@@ -195,7 +195,7 @@ function testPolymorphic() {
         assert(doDelete8({ i, a: 4, y: 10 }).y === undefined)
     }
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete8({ i, a: 4 })
     }
 }
@@ -216,7 +216,7 @@ function testPolyvariant() {
         polyvariant({ i, a: 4 })
     }
 
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete9({ i, f: 4 })
         assert(doDelete9({ i, e: 4, y: 10 }).y === undefined)
         doDelete9({ i, d: 4 })
@@ -225,7 +225,7 @@ function testPolyvariant() {
         assert(doDelete9({ i, a: 4, y: 10 }).y === undefined)
     }
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         polyvariant({ i, a: 4 })
     }
 }
@@ -242,7 +242,7 @@ function testConstantFolding() {
     }
     noInline(doDelete10)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         assert(doDelete10({ i, a: 4, y: 10 }).y === undefined)
         doDelete10({ i, f: 4 })
         assert(doDelete10({ i, e: 4, y: 10 }).y === undefined)
@@ -271,7 +271,7 @@ function testObjectSinking() {
     }
     noInline(doAlloc11)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         assert(doAlloc11(i % 3) == 2)
     }
     assert(doAlloc11(4) == 2)
@@ -303,10 +303,10 @@ function testProxy() {
     noInline(doDelete12)
 
     let foo = doAlloc12()
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete12(foo)
     }
-    assert(foo.count = 1000000)
+    assert(foo.count = iterationCount)
 }
 noInline(testProxy)
 
@@ -317,7 +317,7 @@ function testTypedArray() {
     }
     noInline(doDelete12)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         doDelete12(new Uint8Array())
     }
 
@@ -334,7 +334,7 @@ function testMissMixed() {
     }
     noInline(doDelete13)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         assert(doDelete13({ y: 4 }))
         let foo = {}
         Object.defineProperty(foo, "x", {
@@ -352,7 +352,7 @@ function testMissNonMixed() {
     }
     noInline(doDelete14)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < iterationCount; ++i) {
         let foo = {}
         Object.defineProperty(foo, "x", {
             configurable: false,
@@ -376,7 +376,7 @@ function testByVal() {
     }
     noInline(doDelete15)
 
-    for (let i = 0; i < 10000; ++i) {
+    function test() {
         assert(doDelete15({ y: 4 }))
         let foo = {}
         Object.defineProperty(foo, "x", {
@@ -388,7 +388,17 @@ function testByVal() {
         foo = { x: 4 }
         assert(doDelete15(foo))
         assert(foo.x == undefined)
+    }
+
+    for (let i = 0; i < 10; ++i) {
+        test();
         gc()
+    }
+    for (let i = 0; i < iterationCount; ++i)
+        test();
+    for (let i = 0; i < 5; ++i) {
+        test();
+        gc();
     }
 }
 noInline(testByVal)

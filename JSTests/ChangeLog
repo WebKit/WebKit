@@ -1,3 +1,38 @@
+2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce iteration count and change how it invokes GC to reduce execution time of JSTests/stress/delete-property-dfg-inline.js
+        https://bugs.webkit.org/show_bug.cgi?id=210933
+
+        Reviewed by Keith Miller.
+
+        This test takes 7~ seconds in Release build with default run. And it takes 1 mins in several variants of JSC tests, which is too long.
+        By analyzing this, we found that this takes very long time,
+
+            1. due to so frequent synchronous GC run
+            2. due to large iteration count while function can get FTL with less counts
+
+        While ensuring all functions gets FTL, we reduce iteration count and GC invocations to reduce the execution time, the default run gets 200ms.
+
+        * stress/delete-property-dfg-inline.js:
+        (noInline.blackbox.testSingleStructure):
+        (noInline.testSingleStructure.testInlineSingleStructure):
+        (noInline.testInlineSingleStructure.testExit):
+        (noInline.testExit.testSingleStructureMiss):
+        (noInline.testSingleStructureMiss.testSingleStructureMissStrict):
+        (noInline.testSingleStructureMissStrict.testSingleStructureMissNonConfigurable):
+        (noInline.testSingleStructureMissNonConfigurable.testSingleStructureEmpty):
+        (noInline.testSingleStructureEmpty.testPolymorphic):
+        (noInline.testPolymorphic.testPolyvariant):
+        (noInline.testPolyvariant.testConstantFolding):
+        (noInline.testConstantFolding.testObjectSinking):
+        (noInline.testObjectSinking.testProxy):
+        (noInline.testProxy.testTypedArray):
+        (noInline.testTypedArray.testMissMixed):
+        (noInline.testMissMixed.testMissNonMixed):
+        (noInline.testMissNonMixed.testByVal.noInline.test):
+        (noInline.testMissNonMixed.testByVal):
+        (noInline.assert.assert_throws): Deleted.
+
 2020-04-22  Keith Miller  <keith_miller@apple.com>
 
         Fix OSR exiting/iterator object checks in for-of bytecodes
