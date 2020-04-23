@@ -730,7 +730,9 @@ function shouldRejectWithErrorName(_a, _name, _message)
     return _av.then(function(result) {
         testFailed((_message ? _message : _a) + " should reject promise. Resolved with " + result + ".");
     }, function(error) {
-        if (_name === undefined || error['name'] === _name) {
+        if (_name === undefined) {
+            testPassed((_message ? _message : _a) + " rejected promise.");
+        } else if (error['name'] === _name) {
             // FIXME: Remove the extra space and '.' (DOMException descriptions already end with periods) then rebase tests.
             testPassed((_message ? _message : _a) + " rejected promise  with " + error + ".");
         } else

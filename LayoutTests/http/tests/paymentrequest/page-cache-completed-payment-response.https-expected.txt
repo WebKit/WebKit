@@ -9,8 +9,8 @@ pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the back/forward cache
 Testing that PaymentResponse remains in the Completed state.
-PASS response.complete() rejected promise  with InvalidStateError: The object is in an invalid state..
-PASS response.retry() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS response.complete() rejected promise.
+PASS response.retry() rejected promise.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,16 @@
+2020-04-23  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/paymentrequest/page-cache-completed-payment-response.https.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207385
+        <rdar://problem/59260167>
+
+        Unreviewed, follow-up to r258373 to silence the error name when using shouldReject() and
+        actually fix the flakiness.
+
+        * http/tests/paymentrequest/page-cache-completed-payment-response.https-expected.txt:
+        * resources/js-test.js:
+        (shouldRejectWithErrorName):
+
 2020-04-23  Antoine Quint  <graouts@apple.com>
 
         [ Mac iOS ] animations/animation-direction-normal.html is a flaky failure
