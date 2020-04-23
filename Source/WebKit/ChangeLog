@@ -1,5 +1,21 @@
 2020-04-22  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] Expose -_webView:willGoToBackForwardListItem:inPageCache:
+        https://bugs.webkit.org/show_bug.cgi?id=210878
+        <rdar://problem/62202276>
+
+        Reviewed by Alex Christensen.
+
+        Expose -_webView:willGoToBackForwardListItem:inPageCache: on iOS.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::willGoToBackForwardListItem):
+
+2020-04-22  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Crash on RunningBoard process assertion invalidation
         https://bugs.webkit.org/show_bug.cgi?id=210873
         <rdar://problem/62194917>

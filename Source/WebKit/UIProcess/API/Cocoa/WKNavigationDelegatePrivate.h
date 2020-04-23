@@ -117,13 +117,13 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 #else
 - (void)_webView:(WKWebView *)webView webGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macos(10.13.4));
-- (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webView:(WKWebView *)webView didBlockInsecurePluginVersionWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macos(10.14));
 - (void)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info completionHandler:(void (^)(_WKPluginModuleLoadPolicy policy, NSString * unavailabilityDescription))completionHandler WK_API_AVAILABLE(macos(10.14.4));
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved WK_API_AVAILABLE(macos(10.13.4));
 #endif
 
+- (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end

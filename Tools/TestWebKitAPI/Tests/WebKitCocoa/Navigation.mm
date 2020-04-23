@@ -580,8 +580,6 @@ TEST(WKNavigation, NavigationActionSPI)
     EXPECT_TRUE([delegate spiCalled]);
 }
 
-#if PLATFORM(MAC)
-
 static bool navigationComplete;
 
 @interface BackForwardDelegate : NSObject<WKNavigationDelegatePrivate>
@@ -615,6 +613,8 @@ TEST(WKNavigation, WillGoToBackForwardListItem)
     [webView goBack];
     TestWebKitAPI::Util::run(&isDone);
 }
+
+#if PLATFORM(MAC)
 
 RetainPtr<WKBackForwardListItem> firstItem;
 RetainPtr<WKBackForwardListItem> secondItem;

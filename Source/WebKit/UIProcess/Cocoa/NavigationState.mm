@@ -200,12 +200,12 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
 #if PLATFORM(MAC)
     m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:webGLLoadPolicyForURL:decisionHandler:)];
     m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
-    m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInBackForwardCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
     m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo = [delegate respondsToSelector:@selector(_webView:didFailToInitializePlugInWithInfo:)];
     m_navigationDelegateMethods.webViewDidBlockInsecurePluginVersionWithInfo = [delegate respondsToSelector:@selector(_webView:didBlockInsecurePluginVersionWithInfo:)];
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
     m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:completionHandler:)];
 #endif
+    m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInBackForwardCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
 #if HAVE(APP_SSO)
     m_navigationDelegateMethods.webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForSOAuthorizationLoadWithCurrentPolicy:forExtension:completionHandler:)];
 #endif
@@ -469,6 +469,7 @@ bool NavigationState::NavigationClient::didChangeBackForwardList(WebPageProxy&, 
     [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView backForwardListItemAdded:wrapper(added) removed:removedItems.get()];
     return true;
 }
+#endif
 
 bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem& item, bool inBackForwardCache)
 {
@@ -482,7 +483,6 @@ bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy
     [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView willGoToBackForwardListItem:wrapper(item) inPageCache:inBackForwardCache];
     return true;
 }
-#endif
 
 static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Function<void(bool)>&& completionHandler)
 {
