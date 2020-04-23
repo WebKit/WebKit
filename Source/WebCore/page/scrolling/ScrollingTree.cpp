@@ -148,6 +148,32 @@ RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
     return m_rootNode;
 }
 
+void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
+{
+    LockHolder locker(m_treeMutex);
+    if (!m_rootNode)
+        return;
+
+    auto function = WTFMove(visitorFunction);
+    traverseScrollingTreeRecursive(*m_rootNode, function);
+}
+
+void ScrollingTree::traverseScrollingTreeRecursive(ScrollingTreeNode& node, const VisitorFunction& visitorFunction)
+{
+    Optional<FloatPoint> scrollPosition;
+    if (is<ScrollingTreeScrollingNode>(node))
+        scrollPosition = downcast<ScrollingTreeScrollingNode>(node).currentScrollPosition();
+
+    Optional<FloatPoint> layoutViewportOrigin;
+    if (is<ScrollingTreeFrameScrollingNode>(node))
+        layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
+
+    visitorFunction(node.scrollingNodeID(), node.nodeType(), scrollPosition, layoutViewportOrigin);
+
+    for (auto& child : node.children())
+        traverseScrollingTreeRecursive(child.get(), visitorFunction);
+}
+
 void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);

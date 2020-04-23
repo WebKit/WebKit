@@ -245,8 +245,7 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
 
 void ScrollingTreeScrollingNode::currentScrollPositionChanged()
 {
-    repositionScrollingLayers();
-    repositionRelatedLayers();
+    applyLayerPositions();
 
     scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
     scrollingTree().scrollingTreeNodeDidScroll(*this);

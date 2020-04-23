@@ -87,6 +87,9 @@ public:
     
     WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
+    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin)>;
+    void traverseScrollingTree(VisitorFunction&&);
+
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.
     virtual void scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync) = 0;
@@ -184,8 +187,8 @@ private:
     virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) { }
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&);
-
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
+    void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&);
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }

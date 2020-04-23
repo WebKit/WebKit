@@ -1,3 +1,34 @@
+2020-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to eagerly apply scrolling tree state from the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=210883
+
+        Reviewed by Tim Horton.
+
+        Work towards fixing webkit.org/b/210884: at the beginning of Page::updateRendering(),
+        we are going to need to pull the current state of the scrolling tree back to the
+        main thread, so that JS-exposed scroll offsets match scrolling tree state.
+
+        To this end, expose a scrolling tree traversal function from ScrollingTree, which
+        takes the lock and then calls a visitor function for each node. For scrolling nodes,
+        the visitor gets the scroll position and optional layout viewport origin. These
+        match the data passed back currently via AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll().
+
+        The new code is not called yet.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::synchronizeStateFromScrollingTree):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::synchronizeStateFromScrollingTree):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::traverseScrollingTree):
+        (WebCore::ScrollingTree::traverseScrollingTreeRecursive):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::currentScrollPositionChanged): applyLayerPositions() calls these two
+        functions, so just call it instead.
+
 2020-04-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260535.

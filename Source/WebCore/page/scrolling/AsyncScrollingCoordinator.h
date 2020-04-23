@@ -100,6 +100,7 @@ private:
     WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&, ScrollType, ScrollClamping) override;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
+    WEBCORE_EXPORT void synchronizeStateFromScrollingTree() override;
 
     WEBCORE_EXPORT ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) override;
     WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
