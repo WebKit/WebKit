@@ -122,6 +122,16 @@ bool KeyStore::add(RefPtr<Key>&& key)
         didStoreChange = true;
     }
 
+    if (didStoreChange) {
+        // Sort the keys lexicographically.
+        // NOTE: This is not as pathological as it may seem, for all
+        // practical purposes the store has a maximum of 2 keys.
+        std::sort(m_keys.begin(), m_keys.end(),
+            [](const RefPtr<Key>& a, const RefPtr<Key>& b) {
+                return *a < *b;
+            });
+    }
+
     key->addSessionReference();
     return didStoreChange;
 }

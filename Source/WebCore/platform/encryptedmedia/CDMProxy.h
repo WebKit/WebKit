@@ -61,6 +61,21 @@ public:
     friend bool operator==(const Key &k1, const Key &k2) { return k1.m_id == k2.m_id; }
     friend bool operator==(const Key &k, const Vector<uint8_t>& keyID) { return k.m_id == keyID; }
     friend bool operator==(const Vector<uint8_t>& keyID, const Key &k) { return k == keyID; }
+    friend bool operator<(const Key& k1, const Key& k2)
+    {
+        // Key IDs are compared as follows: For key IDs A of length m and
+        // B of length n, assigned such that m <= n, let A < B if and only
+        // if the m octets of A are less in lexicographical order than the
+        // first m octets of B or those octets are equal and m < n.
+        // 6.1 https://www.w3.org/TR/encrypted-media/
+        int isDifference = memcmp(k1.m_id.data(), k2.m_id.data(), std::min(k1.m_id.size(), k2.m_id.size()));
+        if (isDifference)
+            return isDifference < 0;
+        // The keys are equal to the shared length, the shorter string
+        // is therefore less than the longer one in a lexicographical
+        // ordering.
+        return k1.m_id.size() < k2.m_id.size();
+    }
 
 private:
     void addSessionReference() { ASSERT(isMainThread()); m_numSessionReferences++; }

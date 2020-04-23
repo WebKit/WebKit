@@ -1,3 +1,29 @@
+2020-04-23  Charlie Turner  <cturner@igalia.com>
+
+        [EME][CDMProxy] Sort key status array lexicographically by key IDs
+        https://bugs.webkit.org/show_bug.cgi?id=210659
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is required by section 6.1 of
+        https://www.w3.org/TR/encrypted-media/.
+
+        Test: encrypted-media/clearkey-keystatuses.https.html
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::KeyStore::add): We could use a set here and keep it
+        sorted by design, but this is more complexity than needed. The
+        store has for practical purposes an upper limit of 2
+        items. Sorting such a vector lowers to either a noop or a swap. So
+        the simple approach here wins over using some kind of self-sorting
+        set structure. I also considered only sorting on-demand, since it
+        only has to appear sorted from the perspective of JS, we could
+        sort the array in convertToJSKeyStatusVector. However, that is
+        semantically a const method, so sorting here felt too surprising.
+        * platform/encryptedmedia/CDMProxy.h:
+        (WebCore::Key::operator<): Add a lexicographic comparator to
+        Key.
+
 2020-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] excessive wakeups/polling due to gdk_frame_clock_begin_updating
