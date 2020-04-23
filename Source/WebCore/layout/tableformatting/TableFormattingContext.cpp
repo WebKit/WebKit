@@ -83,7 +83,7 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += row.logicalHeight() + verticalSpacing;
     }
-    // 4. Position cells.
+    // 4. Position and size cells.
     for (auto& cell : grid.cells()) {
         auto& cellDisplayBox = formattingState().displayBox(cell->box());
         cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop());
@@ -93,13 +93,13 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     auto& cellList = grid.cells();
     ASSERT(!cellList.isEmpty());
     for (auto& cell : cellList)
-        layoutCell(*cell, invalidationState, horizontalConstraints.logicalWidth);
+        layoutCell(*cell, invalidationState, horizontalConstraints.logicalWidth, grid.rows().list()[cell->startRow()].logicalHeight());
     // 3. Finalize size and position.
     setComputedGeometryForSections();
     setComputedGeometryForRows();
 }
 
-void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, InvalidationState& invalidationState, LayoutUnit availableHorizontalSpace)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, InvalidationState& invalidationState, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight)
 {
     auto& cellBox = cell.box();
     computeBorderAndPadding(cellBox, HorizontalConstraints { { }, availableHorizontalSpace });
@@ -123,11 +123,19 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, Invalidatio
     if (cellBox.hasInFlowOrFloatingChild()) {
         auto formattingContextForCellContent = LayoutContext::createFormattingContext(cellBox, layoutState());
         auto horizontalConstraintsForCellContent = Geometry::horizontalConstraintsForInFlow(cellDisplayBox);
-        auto verticalConstraintsForCellContent = Geometry::verticalConstraintsForInFlow(cellDisplayBox);
+        auto verticalConstraintsForCellContent = VerticalConstraints { cellDisplayBox.contentBoxTop(), usedCellHeight };
         formattingContextForCellContent->layoutInFlowContent(invalidationState, horizontalConstraintsForCellContent, verticalConstraintsForCellContent);
     }
     cellDisplayBox.setVerticalMargin({ { }, { } });
-    cellDisplayBox.setContentBoxHeight(geometry().tableCellHeightAndMargin(cellBox).contentHeight);
+    auto contentHeight = geometry().tableCellHeightAndMargin(cellBox).contentHeight;
+    if (usedCellHeight) {
+        // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
+        // use some kind of intrinsic padding similar to RenderTableCell.
+        auto verticalBorder = cellDisplayBox.verticalBorder();
+        auto intrinsicVerticalPadding = std::max(0_lu, *usedCellHeight - verticalBorder - contentHeight);
+        cellDisplayBox.setVerticalPadding({ intrinsicVerticalPadding / 2, intrinsicVerticalPadding / 2 });
+    }
+    cellDisplayBox.setContentBoxHeight(contentHeight);
     // FIXME: Check what to do with out-of-flow content.
 }
 
@@ -446,19 +454,34 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     Vector<float> rownHeights;
     // 1. Collect initial row heights.
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
-        float maximumColumnHeight = 0;
+        float maximumColumnAscent = 0;
+        float maximumColumnDescent = 0;
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
             if (slot.isColumnSpanned())
                 continue;
             auto invalidationState = InvalidationState { };
             layoutCell(slot.cell(), invalidationState, availableHorizontalSpace);
-            maximumColumnHeight = std::max<float>(maximumColumnHeight, geometryForBox(slot.cell().box()).height());
+            // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
+            // linebox containing the cells originating in the row.
+            auto& cellBox = slot.cell().box();
+            auto& cellDisplayBox = geometryForBox(cellBox);
+            auto cellBaselineOffset = InlineLayoutUnit { };
+            if (cellBox.establishesInlineFormattingContext()) {
+                // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
+                // or the first in-flow table-row in the cell, whichever comes first
+                auto& firstLineBox = layoutState().establishedInlineFormattingState(cellBox).displayInlineContent()->lineBoxes[0];
+                cellBaselineOffset = firstLineBox.baselineOffset();
+            } else {
+                // If there is no such line box, the baseline is the bottom of content edge of the cell box.
+                cellBaselineOffset = cellDisplayBox.contentBoxBottom();
+            }
+            maximumColumnAscent = std::max<float>(maximumColumnAscent, cellBaselineOffset);
+            maximumColumnDescent = std::max<float>(maximumColumnDescent, cellDisplayBox.height() - cellBaselineOffset);
         }
         // <tr style="height: 10px"> is considered as min height.
         auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }).valueOr(LayoutUnit { });
-        // FIXME: add support for baseline syncing.
-        rownHeights.append(std::max(maximumColumnHeight, computedRowHeight.toFloat()));
+        rownHeights.append(std::max(computedRowHeight.toFloat(), maximumColumnAscent + maximumColumnDescent));
     }
 
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex)

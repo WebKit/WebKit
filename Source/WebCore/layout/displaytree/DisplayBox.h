@@ -103,6 +103,7 @@ public:
     LayoutUnit marginBoxHeight() const { return marginBefore() + borderBoxHeight() + marginAfter(); }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
+    LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().valueOr(0) + marginAfter(); }
     LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().valueOr(0) + marginEnd(); }
 
     Rect marginBox() const;
@@ -133,6 +134,8 @@ public:
     void setHasClearance() { m_hasClearance = true; }
 
     void setBorder(Layout::Edges);
+
+    void setVerticalPadding(Layout::VerticalEdges);
     void setPadding(Optional<Layout::Edges>);
 
 private:
@@ -303,6 +306,14 @@ inline void Box::setPadding(Optional<Layout::Edges> padding)
     setHasValidPadding();
 #endif
     m_padding = padding;
+}
+
+inline void Box::setVerticalPadding(Layout::VerticalEdges verticalPadding)
+{
+#if ASSERT_ENABLED
+    setHasValidPadding();
+#endif
+    m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding };
 }
 
 inline Rect Box::rectWithMargin() const
