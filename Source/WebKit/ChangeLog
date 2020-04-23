@@ -1,3 +1,15 @@
+2020-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r260553.
+
+        Broke iOS and Catalina builds.
+
+        Reverted changeset:
+
+        "Soft link QuickLookThumbnailing framework"
+        https://bugs.webkit.org/show_bug.cgi?id=210894
+        https://trac.webkit.org/changeset/260553
+
 2020-04-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK

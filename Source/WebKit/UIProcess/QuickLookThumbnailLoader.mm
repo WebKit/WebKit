@@ -28,8 +28,7 @@
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-#import "QuickLookThumbnailingSoftLink.h"
-
+#import <QuickLookThumbnailing/QLThumbnailGenerator.h>
 #import <wtf/FileSystem.h>
 
 @implementation WKQLThumbnailQueueManager 
@@ -92,7 +91,7 @@
         NSFileWrapperWritingOptions options = 0;
         NSError *error = nil;
         
-        auto fileURLPath = [NSURL fileURLWithPath:filePath];
+        auto fileURLPath = adoptNS([NSURL fileURLWithPath:filePath]);
 
         [_fileWrapper writeToURL:fileURLPath.get() options:options originalContentsURL:nil error:&error];
         _filePath = WTFMove(fileURLPath);
@@ -100,10 +99,10 @@
             return;
     }
 
-    auto req = adoptNS([WebKit::allocQLThumbnailGenerationRequestInstance() initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeAll]);
-    [req setIconMode:YES];
+    QLThumbnailGenerationRequest *req = [[QLThumbnailGenerationRequest alloc] initWithFileAtURL:_filePath.get() size:CGSizeMake(400, 400) scale:1 representationTypes:QLThumbnailGenerationRequestRepresentationTypeAll];
+    req.iconMode = YES;
     
-    [[WebKit::getQLThumbnailGeneratorClass() sharedGenerator] generateBestRepresentationForRequest:req.get() completionHandler:^(QLThumbnailRepresentation *thumbnail, NSError *error) {
+    [[QLThumbnailGenerator sharedGenerator] generateBestRepresentationForRequest:req completionHandler:^(QLThumbnailRepresentation *thumbnail, NSError *error) {
         if (error)
             return;
         if (_thumbnail)
