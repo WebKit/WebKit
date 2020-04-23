@@ -1,3 +1,23 @@
+2020-04-23  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Soft link QuickLookThumbnailing framework
+        https://bugs.webkit.org/show_bug.cgi?id=210894
+
+        Reviewed by Megan Gardner.
+
+        Soft link QuickLookThumbnailing framework to solve build error.
+
+        No new tests. Unnecessary.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        (-[WKQLThumbnailLoadOperation initWithURL:identifier:]):
+        (-[WKQLThumbnailLoadOperation start]):
+        * UIProcess/QuickLookThumbnailingSPI.h: Added.
+        * UIProcess/QuickLookThumbnailingSoftLink.h: Added.
+        * UIProcess/QuickLookThumbnailingSoftLink.mm: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-04-23  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Port MediaPlayback process assertion to RunningBoard
