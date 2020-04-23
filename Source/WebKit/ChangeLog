@@ -1,3 +1,18 @@
+2020-04-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Long pressing attachments in Notes does not activate Context Menu.
+        https://bugs.webkit.org/show_bug.cgi?id=210936
+        <rdar://problem/61171576>
+
+        Reviewed by Tim Horton.
+
+        Not having the ID available for notes makes their code to create the context
+        menu and its items fail. We should probably be passing this information on
+        for any element if we have it.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+
 2020-04-23  Brent Fulgham  <bfulgham@apple.com>
 
         Allow "kern.osversion" sysctl read

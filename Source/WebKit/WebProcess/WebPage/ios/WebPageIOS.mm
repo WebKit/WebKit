@@ -2788,6 +2788,12 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 
     RenderObject* renderer = hitNode->renderer();
     info.bounds = renderer->absoluteBoundingBoxRect(true);
+    
+    if (is<Element>(*hitNode)) {
+        Element& element = downcast<Element>(*hitNode);
+        info.idAttribute = element.getIdAttribute();
+    }
+    
     if (is<HTMLAttachmentElement>(*hitNode)) {
         info.isAttachment = true;
         HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(*hitNode);
