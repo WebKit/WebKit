@@ -297,6 +297,29 @@ MemoryPressureMonitor& MemoryPressureMonitor::singleton()
     return memoryMonitor;
 }
 
+struct FileHandleDeleter {
+    void operator()(FILE* f) { fclose(f); }
+};
+
+using FileHandle = std::unique_ptr<FILE, FileHandleDeleter>;
+
+static bool tryOpeningForUnbufferedReading(FileHandle& handle, const char* filePath)
+{
+    // Check whether the file handle is already valid.
+    if (handle)
+        return true;
+
+    // Else, try opening it and disable buffering after opening.
+    if (auto* f = fopen(filePath, "r")) {
+        setbuf(f, nullptr);
+        handle.reset(f);
+        return true;
+    }
+
+    // Could not produce a valid handle.
+    return false;
+}
+
 void MemoryPressureMonitor::start()
 {
     if (m_started)
@@ -305,31 +328,27 @@ void MemoryPressureMonitor::start()
     m_started = true;
 
     Thread::create("MemoryPressureMonitor", [] {
-        FILE* memInfoFile;
-        FILE* zoneInfoFile;
-        FILE* cgroupControllerFile;
+        FileHandle memInfoFile, zoneInfoFile, cgroupControllerFile;
         CGroupMemoryController memoryController = CGroupMemoryController();
         Seconds pollInterval = s_maxPollingInterval;
         while (true) {
             sleep(pollInterval);
 
-            memInfoFile = fopen(s_procMeminfo, "r");
-            zoneInfoFile = fopen(s_procZoneinfo, "r");
-            if (!memInfoFile || !zoneInfoFile)
+            // Cannot operate without this one, retry opening on the next iteration after sleeping.
+            if (!tryOpeningForUnbufferedReading(memInfoFile, s_procMeminfo))
                 continue;
-            setbuf(memInfoFile, nullptr);
-            setbuf(zoneInfoFile, nullptr);
 
-            cgroupControllerFile = fopen(s_procSelfCgroup, "r");
-            if (cgroupControllerFile)
-                setbuf(cgroupControllerFile, nullptr);
+            // The monitor can work without these two, but it will be more precise if thy are eventually opened: keep trying.
+            tryOpeningForUnbufferedReading(zoneInfoFile, s_procZoneinfo);
+            tryOpeningForUnbufferedReading(cgroupControllerFile, s_procSelfCgroup);
 
-            CString cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile, "memory");
+            CString cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile.get(), "memory");
             memoryController.setMemoryControllerPath(cgroupMemoryControllerPath);
-            int usedPercentage = systemMemoryUsedAsPercentage(memInfoFile, zoneInfoFile, &memoryController);
+            int usedPercentage = systemMemoryUsedAsPercentage(memInfoFile.get(), zoneInfoFile.get(), &memoryController);
             if (usedPercentage == -1) {
                 WTFLogAlways("Failed to get the memory usage");
-                break;
+                pollInterval = s_maxPollingInterval;
+                continue;
             }
 
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
@@ -339,12 +358,6 @@ void MemoryPressureMonitor::start()
             }
             pollInterval = pollIntervalForUsedMemoryPercentage(usedPercentage);
         }
-        if (memInfoFile)
-            fclose(memInfoFile);
-        if (zoneInfoFile)
-            fclose(zoneInfoFile);
-        if (cgroupControllerFile)
-            fclose(cgroupControllerFile);
     })->detach();
 }
 

@@ -1,3 +1,27 @@
+2020-04-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Regression after r260359 ([GTK][WPE] lowWatermarkPages() in MemoryPressureMonitor.cpp only searches the "low" value inside the first "Node" section)
+        https://bugs.webkit.org/show_bug.cgi?id=210916
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Switch over to using a FileHandle type based on std::unique_ptr with a custom deleter and an
+        utility function for opening files. This makes easier to follow the logic inside the polling
+        loop for opening files and retrying when needed. This also fixes exiting the thread when the
+        systemMemoryUsedAsPercentage() function would return -1, to loop restart instead to keep
+        trying.
+
+        Thanks to Pablo Saavedra for his help in making this patch.
+
+        No new tests needed.
+
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::FileHandleDeleter::operator()): Add deleter to use with std::unique_ptr<>.
+        (WebKit::tryOpeningForUnbufferedReading): Add utility function to open a file handle if
+        needed and configuring its buffering upon opening.
+        (WebKit::MemoryPressureMonitor::start): Use FileHandle to ensure that handles are always
+        closed properly, and fix logic retry opening files on failure.
+
 2020-04-23  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Soft link QuickLookThumbnailing framework
