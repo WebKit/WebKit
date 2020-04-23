@@ -787,6 +787,7 @@
         "kern.osproductversion"
         "kern.osrelease"
         "kern.osvariant_status"
+        "kern.osversion"
         "kern.secure_kernel"
         "kern.version"
         "vm.footprint_suspend"))

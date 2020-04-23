@@ -179,6 +179,7 @@
         "kern.memorystatus_level"
         "kern.osproductversion" ;; <rdar://problem/51756739>
         "kern.ostype"
+        "kern.osversion"
         "kern.safeboot"
         "kern.version"
         "machdep.cpu.brand_string"

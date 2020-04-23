@@ -782,6 +782,7 @@
         "kern.osrelease"
         "kern.ostype"
         "kern.osvariant_status"
+        "kern.osversion"
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.version"
         "sysctl.name2oid"
