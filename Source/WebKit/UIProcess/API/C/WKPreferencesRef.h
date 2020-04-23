@@ -46,7 +46,9 @@ typedef enum WKStorageBlockingPolicy WKStorageBlockingPolicy;
 
 enum WKDebugOverlayRegionFlags {
     kWKNonFastScrollableRegion = 1 << 0,
-    kWKWheelEventHandlerRegion = 1 << 1
+    kWKWheelEventHandlerRegion = 1 << 1,
+    kWKTouchActionRegion = 1 << 2,
+    kWKEditableElementRegion = 1 << 3,
 };
 typedef unsigned WKDebugOverlayRegions;
 

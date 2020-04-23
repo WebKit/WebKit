@@ -3109,7 +3109,8 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 
 void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, GraphicsContext& context)
 {
-    if (graphicsLayer->eventRegion().isEmpty())
+    auto& eventRegion = graphicsLayer->eventRegion();
+    if (eventRegion.isEmpty())
         return;
 
     GraphicsContextStateSaver stateSaver(context);
@@ -3118,41 +3119,46 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
     context.translate(-contentOffset);
 
+    auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
+
     // The interactive part.
     // Paint rects for touch action.
-    auto& eventRegion = graphicsLayer->eventRegion();
-    Color regionColor(0, 0, 255, 50);
-    context.setFillColor(regionColor);
-    for (auto rect : eventRegion.region().rects())
-        context.fillRect(rect);
-
-    const TouchAction touchActionList[] = {
-        TouchAction::None,
-        TouchAction::Manipulation,
-        TouchAction::PanX,
-        TouchAction::PanY,
-        TouchAction::PinchZoom,
-    };
-
-    for (auto action : touchActionList) {
-        auto* actionRegion = graphicsLayer->eventRegion().regionForTouchAction(action);
-        if (!actionRegion)
-            continue;
-
-        auto fillPattern = patternForTouchAction(action, contentOffsetInCompositingLayer(), context);
-        if (!fillPattern)
-            continue;
-
-        context.setFillPattern(fillPattern.releaseNonNull());
-        for (auto rect : actionRegion->rects())
+    if (visibleDebugOverlayRegions & TouchActionRegion) {
+        Color regionColor(0, 0, 255, 50);
+        context.setFillColor(regionColor);
+        for (auto rect : eventRegion.region().rects())
             context.fillRect(rect);
+
+        const TouchAction touchActionList[] = {
+            TouchAction::None,
+            TouchAction::Manipulation,
+            TouchAction::PanX,
+            TouchAction::PanY,
+            TouchAction::PinchZoom,
+        };
+
+        for (auto action : touchActionList) {
+            auto* actionRegion = graphicsLayer->eventRegion().regionForTouchAction(action);
+            if (!actionRegion)
+                continue;
+
+            auto fillPattern = patternForTouchAction(action, contentOffsetInCompositingLayer(), context);
+            if (!fillPattern)
+                continue;
+
+            context.setFillPattern(fillPattern.releaseNonNull());
+            for (auto rect : actionRegion->rects())
+                context.fillRect(rect);
+        }
     }
 
 #if ENABLE(EDITABLE_REGION)
     // Paint rects for editable elements.
-    context.setFillColor({ 128, 0, 128, 50 });
-    for (auto rect : eventRegion.rectsForEditableElements())
-        context.fillRect(rect);
+    if (visibleDebugOverlayRegions & EditableElementRegion) {
+        context.setFillColor({ 128, 0, 128, 50 });
+        for (auto rect : eventRegion.rectsForEditableElements())
+            context.fillRect(rect);
+    }
 #endif
 }
 
@@ -3195,7 +3201,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
-        if (renderer().settings().visibleDebugOverlayRegions() & NonFastScrollableRegion) // Piggy-back off the setting that shows touch handler regions.
+        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion))
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {

@@ -69,6 +69,8 @@ enum TextDirectionSubmenuInclusionBehavior {
 enum DebugOverlayRegionFlags {
     NonFastScrollableRegion = 1 << 0,
     WheelEventHandlerRegion = 1 << 1,
+    TouchActionRegion = 1 << 2,
+    EditableElementRegion = 1 << 3,
 };
 
 enum class UserInterfaceDirectionPolicy {

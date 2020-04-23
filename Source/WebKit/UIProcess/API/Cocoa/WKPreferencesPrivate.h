@@ -34,7 +34,9 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 
 typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKNonFastScrollableRegion = 1 << 0,
-    _WKWheelEventHandlerRegion = 1 << 1
+    _WKWheelEventHandlerRegion = 1 << 1,
+    _WKTouchActionRegion = 1 << 2,
+    _WKEditableElementRegion = 1 << 3,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {

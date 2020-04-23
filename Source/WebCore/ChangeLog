@@ -1,3 +1,25 @@
+2020-04-22  Daniel Bates  <dabates@apple.com>
+
+        Support toggling debug overlay for touch action region and editable element region independent from non-fast scrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=210774
+
+        Reviewed by Dean Jackson.
+
+        Break out the touch action region and editable element region debug overlays into their own
+        flags that can be passed to Settings::setVisibleDebugOverlayRegions() to toggle these overlays,
+        respectively. Currently both of these overlays piggyback on whether the engine will paint the
+        non-fast scrollable region.
+
+        * page/SettingsBase.h: Add two more enumerators.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::invalidateEventRegion const): Update the code to be more precise now that
+        we can target the update paint overlay hack to when we are painting touch-action or editable
+        element regions.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintDebugOverlays): Condition the painting of touch action region
+        on one enumerator and the painting of editable element region on another.
+        (WebCore::RenderLayerBacking::paintContents): Update the code to be more precise.
+
 2020-04-22  Chris Dumez  <cdumez@apple.com>
 
         [ Mac wk2 ] imported/w3c/web-platform-tests/notifications/event-onclose.html is flaky failing.
