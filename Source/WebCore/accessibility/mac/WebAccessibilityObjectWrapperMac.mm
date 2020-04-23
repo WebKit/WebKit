@@ -31,6 +31,7 @@
 
 #if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
+#import "AXLogger.h"
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityLabel.h"
@@ -1944,12 +1945,9 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 {
     // The rect for primary screen should not change in normal use. So cache it
     // here to avoid hitting the main thread repeatedly.
-    static FloatRect screenRect;
-    if (screenRect.isEmpty()) {
-        screenRect = Accessibility::retrieveValueFromMainThread<FloatRect>([] () -> FloatRect {
-            return screenRectForPrimaryScreen();
-        });
-    }
+    static FloatRect screenRect = Accessibility::retrieveValueFromMainThread<FloatRect>([] () -> FloatRect {
+        return screenRectForPrimaryScreen();
+    });
     return [NSNumber numberWithFloat:screenRect.height()];
 }
 
@@ -2288,12 +2286,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attributeName
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
+    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityAttributeValue:") + String(attributeName));
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
+    if (!backingObject) {
+        AXLOG("No backingObject!!!");
         return nil;
+    }
+    AXLOG(*backingObject);
 
-    if (backingObject->isDetachedFromParent())
+    if (backingObject->isDetachedFromParent()) {
+        AXLOG("backingObject is detached from parent!!!");
         return nil;
+    }
 
     if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
         return [self role];
@@ -3865,6 +3869,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
+    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityAttributeValue:") + String(attribute));
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
@@ -4469,6 +4474,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {
+    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:") + String(attribute));
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
