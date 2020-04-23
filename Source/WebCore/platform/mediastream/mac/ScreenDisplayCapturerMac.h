@@ -39,35 +39,33 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class ScreenDisplayCaptureSourceMac : public DisplayCaptureSourceCocoa {
+class ScreenDisplayCapturerMac final : public DisplayCaptureSourceCocoa::Capturer, public CanMakeWeakPtr<ScreenDisplayCapturerMac> {
 public:
-    static CaptureSourceOrError create(String&&, const MediaConstraints*);
+    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const String&);
+
+    explicit ScreenDisplayCapturerMac(uint32_t);
+    ~ScreenDisplayCapturerMac();
 
     static Optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static void screenCaptureDevices(Vector<CaptureDevice>&);
 
 private:
-    ScreenDisplayCaptureSourceMac(uint32_t, String&&);
-    virtual ~ScreenDisplayCaptureSourceMac();
-
     static void displayReconfigurationCallBack(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
 
-    void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
-
+    // DisplayCaptureSourceCocoa::Capturer
+    bool start(float frameRate) final;
+    void stop() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
-
-    void startProducingData() final;
-    void stopProducingData() final;
-    void commitConfiguration() final;
+    void commitConfiguration(float frameRate) final;
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
-
-    bool createDisplayStream();
-    void startDisplayStream();
-
 #if !RELEASE_LOG_DISABLED
-    const char* logClassName() const override { return "ScreenDisplayCaptureSourceMac"; }
+    const char* logClassName() const final { return "ScreenDisplayCapturerMac"; }
 #endif
+
+    void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
+    bool createDisplayStream(float frameRate);
+    bool startDisplayStream(float frameRate);
 
     class DisplaySurface {
     public:

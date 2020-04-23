@@ -38,20 +38,27 @@ namespace WebCore {
 
 class PixelBufferConformerCV;
 
-class WindowDisplayCaptureSourceMac : public DisplayCaptureSourceCocoa {
+class WindowDisplayCapturerMac final : public DisplayCaptureSourceCocoa::Capturer {
 public:
-    static CaptureSourceOrError create(String&&, const MediaConstraints*);
+    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const String&);
+
+    explicit WindowDisplayCapturerMac(uint32_t);
+    virtual ~WindowDisplayCapturerMac() = default;
 
     static Optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
     static void windowCaptureDevices(Vector<CaptureDevice>&);
 
 private:
-    WindowDisplayCaptureSourceMac(uint32_t, String&&);
-    virtual ~WindowDisplayCaptureSourceMac() = default;
-
+    // DisplayCaptureSourceCocoa::Capturer
+    bool start(float) final { return true; }
+    void stop() final { }
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Window; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Window; }
+    void commitConfiguration(float) final { }
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "WindowDisplayCapturerMac"; }
+#endif
 
     RetainPtr<CGImageRef> windowImage();
 

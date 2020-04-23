@@ -43,6 +43,8 @@
 
 #if PLATFORM(COCOA)
 #include "CoreAudioCaptureSource.h"
+#include "DisplayCaptureSourceCocoa.h"
+#include "MockRealtimeVideoSourceMac.h"
 #endif
 
 namespace WebCore {
@@ -110,17 +112,59 @@ private:
     CaptureDeviceManager& videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
 };
 
+#if PLATFORM(MAC)
+class MockDisplayCapturer final : public DisplayCaptureSourceCocoa::Capturer {
+public:
+    explicit MockDisplayCapturer(const CaptureDevice&);
+
+private:
+    bool start(float) final;
+    void stop() final  { m_source->stop(); }
+    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
+    RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
+    void commitConfiguration(float) final { }
+    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "MockDisplayCapturer"; }
+#endif
+    
+    Ref<MockRealtimeVideoSource> m_source;
+};
+
+MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device)
+    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, String { device.label() }, String { }))
+{
+}
+
+bool MockDisplayCapturer::start(float)
+{
+    m_source->start();
+    return true;
+}
+
+DisplayCaptureSourceCocoa::DisplayFrameType MockDisplayCapturer::generateFrame()
+{
+    if (auto* imageBuffer = m_source->imageBuffer())
+        return imageBuffer->copyNativeImage();
+    return { };
+}
+#endif
+
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return { "Unable to find mock  display device with given persistentID"_s };
+            return { "Unable to find mock display device with given persistentID"_s };
 
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
+#if PLATFORM(MAC)
+            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
+#else
             return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, String { }, constraints);
+#endif
             break;
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Camera:

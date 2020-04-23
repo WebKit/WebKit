@@ -5,22 +5,11 @@
         <title>video track width and height should be set correctly when only one constraint is passed to getDisplayMedia</title>
         <script src="../../resources/testharness.js"></script>
         <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
     </head>
     <body>
 
         <script>
-            if (window.internals)
-                window.internals.settings.setScreenCaptureEnabled(true);
-
-            function callGetDisplayMedia(options)
-            {
-                let promise;
-                window.internals.withUserGesture(() => {
-                    promise = navigator.mediaDevices.getDisplayMedia(options);
-                });
-                return promise;
-            }
-
             let defaultWidth;
             let defaultHeight;
             promise_test(async () => {

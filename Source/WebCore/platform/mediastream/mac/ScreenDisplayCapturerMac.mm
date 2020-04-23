@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ScreenDisplayCaptureSourceMac.h"
+#include "config.h"
+#include "ScreenDisplayCapturerMac.h"
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
@@ -53,19 +53,19 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
     if (err) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get display count", static_cast<int>(err));
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get display count", static_cast<int>(err));
         return WTF::nullopt;
     }
 
     if (!displayCount) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned a display count of 0");
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned a display count of 0");
         return WTF::nullopt;
     }
 
     Vector<CGDirectDisplayID> activeDisplays(displayCount);
     err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
     if (err) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", static_cast<int>(err));
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", static_cast<int>(err));
         return WTF::nullopt;
     }
 
@@ -78,33 +78,26 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
     return WTF::nullopt;
 }
 
-CaptureSourceOrError ScreenDisplayCaptureSourceMac::create(String&& deviceID, const MediaConstraints* constraints)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenDisplayCapturerMac::create(const String& deviceID)
 {
     bool ok;
     auto displayID = deviceID.toUIntStrict(&ok);
-    if (!ok) {
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::create: Display ID does not convert to 32-bit integer");
-        return { };
-    }
+    if (!ok)
+        return makeUnexpected("Invalid display device ID"_s);
 
     auto actualDisplayID = updateDisplayID(displayID);
     if (!actualDisplayID)
-        return { };
+        return makeUnexpected("Invalid display ID"_s);
 
-    auto source = adoptRef(*new ScreenDisplayCaptureSourceMac(actualDisplayID.value(), "Screen"_s)); // FIXME: figure out what title to use
-    if (constraints && source->applyConstraints(*constraints))
-        return { };
-
-    return CaptureSourceOrError(WTFMove(source));
+    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenDisplayCapturerMac>(actualDisplayID.value()));
 }
 
-ScreenDisplayCaptureSourceMac::ScreenDisplayCaptureSourceMac(uint32_t displayID, String&& title)
-    : DisplayCaptureSourceCocoa(WTFMove(title))
-    , m_displayID(displayID)
+ScreenDisplayCapturerMac::ScreenDisplayCapturerMac(uint32_t displayID)
+    : m_displayID(displayID)
 {
 }
 
-ScreenDisplayCaptureSourceMac::~ScreenDisplayCaptureSourceMac()
+ScreenDisplayCapturerMac::~ScreenDisplayCapturerMac()
 {
     if (m_observingDisplayChanges)
         CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallBack, this);
@@ -112,7 +105,7 @@ ScreenDisplayCaptureSourceMac::~ScreenDisplayCaptureSourceMac()
     m_currentFrame = nullptr;
 }
 
-bool ScreenDisplayCaptureSourceMac::createDisplayStream()
+bool ScreenDisplayCapturerMac::createDisplayStream(float frameRate)
 {
     static const int screenQueueMaximumLength = 6;
 
@@ -121,7 +114,6 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
     auto actualDisplayID = updateDisplayID(m_displayID);
     if (!actualDisplayID) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "invalid display ID: ", m_displayID);
-        captureFailed();
         return false;
     }
 
@@ -137,16 +129,14 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
         if (!screenWidth || !screenHeight) {
             ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to get screen width/height");
-            captureFailed();
             return false;
         }
-        setIntrinsicSize(IntSize(screenWidth, screenHeight));
 
         if (!m_captureQueue)
-            m_captureQueue = adoptOSObject(dispatch_queue_create("ScreenDisplayCaptureSourceMac Capture Queue", DISPATCH_QUEUE_SERIAL));
+            m_captureQueue = adoptOSObject(dispatch_queue_create("ScreenDisplayCapturerMac Capture Queue", DISPATCH_QUEUE_SERIAL));
 
         NSDictionary* streamOptions = @{
-            (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
+            (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate),
             (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
             (__bridge NSString *)kCGDisplayStreamColorSpace : (__bridge id)sRGBColorSpaceRef(),
             (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
@@ -173,7 +163,6 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, m_captureQueue.get(), frameAvailableBlock));
         if (!m_displayStream) {
             ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "CGDisplayStreamCreate failed");
-            captureFailed();
             return false;
         }
     }
@@ -186,21 +175,19 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
     return true;
 }
 
-void ScreenDisplayCaptureSourceMac::startProducingData()
+bool ScreenDisplayCapturerMac::start(float frameRate)
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-    DisplayCaptureSourceCocoa::startProducingData();
 
     if (m_isRunning)
-        return;
+        return true;
 
-    startDisplayStream();
+    return startDisplayStream(frameRate);
 }
 
-void ScreenDisplayCaptureSourceMac::stopProducingData()
+void ScreenDisplayCapturerMac::stop()
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-    DisplayCaptureSourceCocoa::stopProducingData();
 
     if (!m_isRunning)
         return;
@@ -211,53 +198,53 @@ void ScreenDisplayCaptureSourceMac::stopProducingData()
     m_isRunning = false;
 }
 
-DisplayCaptureSourceCocoa::DisplayFrameType ScreenDisplayCaptureSourceMac::generateFrame()
+DisplayCaptureSourceCocoa::DisplayFrameType ScreenDisplayCapturerMac::generateFrame()
 {
     return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<IOSurfaceRef> { m_currentFrame.ioSurface() } };
 }
 
-void ScreenDisplayCaptureSourceMac::startDisplayStream()
+bool ScreenDisplayCapturerMac::startDisplayStream(float frameRate)
 {
     auto actualDisplayID = updateDisplayID(m_displayID);
     if (!actualDisplayID)
-        return;
+        return false;
 
     if (m_displayID != actualDisplayID.value()) {
         m_displayID = actualDisplayID.value();
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "display ID changed to ", static_cast<int>(m_displayID));
     }
 
-    if (!m_displayStream && !createDisplayStream())
-        return;
+    if (!m_displayStream && !createDisplayStream(frameRate))
+        return false;
 
     auto err = CGDisplayStreamStart(m_displayStream.get());
     if (err) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "CGDisplayStreamStart failed with error ", static_cast<int>(err));
-        captureFailed();
-        return;
+        return false;
     }
 
     m_isRunning = true;
+    return true;
 }
 
-void ScreenDisplayCaptureSourceMac::commitConfiguration()
+void ScreenDisplayCapturerMac::commitConfiguration(float frameRate)
 {
     if (m_isRunning && !m_displayStream)
-        startDisplayStream();
+        startDisplayStream(frameRate);
 }
 
-void ScreenDisplayCaptureSourceMac::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags)
+void ScreenDisplayCapturerMac::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags)
 {
     // FIXME: implement!
 }
 
-void ScreenDisplayCaptureSourceMac::displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
+void ScreenDisplayCapturerMac::displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
     if (userInfo)
-        reinterpret_cast<ScreenDisplayCaptureSourceMac *>(userInfo)->displayWasReconfigured(display, flags);
+        reinterpret_cast<ScreenDisplayCapturerMac *>(userInfo)->displayWasReconfigured(display, flags);
 }
 
-void ScreenDisplayCaptureSourceMac::newFrame(CGDisplayStreamFrameStatus status, DisplaySurface&& newFrame)
+void ScreenDisplayCapturerMac::newFrame(CGDisplayStreamFrameStatus status, DisplaySurface&& newFrame)
 {
     switch (status) {
     case kCGDisplayStreamFrameStatusFrameComplete:
@@ -267,23 +254,23 @@ void ScreenDisplayCaptureSourceMac::newFrame(CGDisplayStreamFrameStatus status, 
         break;
 
     case kCGDisplayStreamFrameStatusFrameBlank:
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::frameAvailable: kCGDisplayStreamFrameStatusFrameBlank");
+        RELEASE_LOG(WebRTC, "ScreenDisplayCapturerMac::frameAvailable: kCGDisplayStreamFrameStatusFrameBlank");
         break;
 
     case kCGDisplayStreamFrameStatusStopped:
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::frameAvailable: kCGDisplayStreamFrameStatusStopped");
+        RELEASE_LOG(WebRTC, "ScreenDisplayCapturerMac::frameAvailable: kCGDisplayStreamFrameStatusStopped");
         break;
     }
 
     m_currentFrame = WTFMove(newFrame);
 }
 
-Optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
+Optional<CaptureDevice> ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
     bool ok;
     auto displayID = deviceID.toUIntStrict(&ok);
     if (!ok) {
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
+        RELEASE_LOG(WebRTC, "ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
         return WTF::nullopt;
     }
 
@@ -297,7 +284,7 @@ Optional<CaptureDevice> ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPe
     return device;
 }
 
-void ScreenDisplayCaptureSourceMac::screenCaptureDevices(Vector<CaptureDevice>& displays)
+void ScreenDisplayCapturerMac::screenCaptureDevices(Vector<CaptureDevice>& displays)
 {
     auto screenID = displayID([NSScreen mainScreen]);
     if (CGDisplayIDToOpenGLDisplayMask(screenID)) {
@@ -310,19 +297,19 @@ void ScreenDisplayCaptureSourceMac::screenCaptureDevices(Vector<CaptureDevice>& 
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
     if (err) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get display count", (int)err);
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get display count", (int)err);
         return;
     }
 
     if (!displayCount) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned a display count of 0");
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned a display count of 0");
         return;
     }
 
     Vector<CGDirectDisplayID> activeDisplays(displayCount);
     err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
     if (err) {
-        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
+        RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
         return;
     }
 

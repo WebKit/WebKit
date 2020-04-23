@@ -33,8 +33,8 @@
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(MAC)
-#include "ScreenDisplayCaptureSourceMac.h"
-#include "WindowDisplayCaptureSourceMac.h"
+#include "ScreenDisplayCapturerMac.h"
+#include "WindowDisplayCapturerMac.h"
 #include <CoreGraphics/CGDirectDisplay.h>
 #endif
 
@@ -61,21 +61,21 @@ const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
 void DisplayCaptureManagerCocoa::updateDisplayCaptureDevices()
 {
 #if PLATFORM(MAC)
-    ScreenDisplayCaptureSourceMac::screenCaptureDevices(m_devices);
+    ScreenDisplayCapturerMac::screenCaptureDevices(m_devices);
 #endif
 }
 
 void DisplayCaptureManagerCocoa::updateWindowCaptureDevices()
 {
 #if PLATFORM(MAC)
-    WindowDisplayCaptureSourceMac::windowCaptureDevices(m_devices);
+    WindowDisplayCapturerMac::windowCaptureDevices(m_devices);
 #endif
 }
 
 Optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
 #if PLATFORM(MAC)
-    return ScreenDisplayCaptureSourceMac::screenCaptureDeviceWithPersistentID(deviceID);
+    return ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
     return WTF::nullopt;
@@ -85,7 +85,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersi
 Optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(const String& deviceID)
 {
 #if PLATFORM(MAC)
-    return WindowDisplayCaptureSourceMac::windowCaptureDeviceWithPersistentID(deviceID);
+    return WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
     return WTF::nullopt;

@@ -53,8 +53,45 @@
 namespace WebCore {
 using namespace PAL;
 
-DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(String&& name)
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& device, const MediaConstraints* constraints)
+{
+#if PLATFORM(MAC)
+    switch (device.type()) {
+    case CaptureDevice::DeviceType::Screen:
+        return create(ScreenDisplayCapturerMac::create(device.persistentId()), device, constraints);
+    case CaptureDevice::DeviceType::Window:
+        return create(WindowDisplayCapturerMac::create(device.persistentId()), device, constraints);
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+#else
+    UNUSED_PARAM(device);
+    UNUSED_PARAM(constraints);
+#endif
+    return { };
+}
+
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, String>&& capturer, const CaptureDevice& device, const MediaConstraints* constraints)
+{
+    if (!capturer.has_value())
+        return CaptureSourceOrError { WTFMove(capturer.error()) };
+
+    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), String { device.label() }));
+    if (constraints) {
+        auto result = source->applyConstraints(*constraints);
+        if (result)
+            return WTFMove(result.value().badConstraint);
+    }
+
+    return CaptureSourceOrError(WTFMove(source));
+}
+
+DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, String&& name)
     : RealtimeMediaSource(Type::Video, WTFMove(name))
+    , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
 {
 }
@@ -62,7 +99,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(String&& name)
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().displayCaptureFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -72,8 +109,8 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceCocoa::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         // FIXME: what should these be?
-        capabilities.setWidth(CapabilityValueOrRange(72, 2880));
-        capabilities.setHeight(CapabilityValueOrRange(45, 1800));
+        capabilities.setWidth(CapabilityValueOrRange(1, 3840));
+        capabilities.setHeight(CapabilityValueOrRange(1, 2160));
         capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
 
         m_capabilities = WTFMove(capabilities);
@@ -91,7 +128,7 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
         settings.setWidth(size.width());
         settings.setHeight(size.height());
 
-        settings.setDisplaySurface(surfaceType());
+        settings.setDisplaySurface(m_capturer->surfaceType());
         settings.setLogicalSurface(false);
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
@@ -122,11 +159,14 @@ void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceS
 void DisplayCaptureSourceCocoa::startProducingData()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().displayCaptureFactory().setActiveSource(*this);
 #endif
 
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_s / frameRate());
+
+    if (!m_capturer->start(frameRate()))
+        captureFailed();
 }
 
 void DisplayCaptureSourceCocoa::stopProducingData()
@@ -134,6 +174,8 @@ void DisplayCaptureSourceCocoa::stopProducingData()
     m_timer.stop();
     m_elapsedTime += MonotonicTime::now() - m_startTime;
     m_startTime = MonotonicTime::nan();
+
+    m_capturer->stop();
 }
 
 Seconds DisplayCaptureSourceCocoa::elapsedTime()
@@ -144,13 +186,32 @@ Seconds DisplayCaptureSourceCocoa::elapsedTime()
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
 }
 
-IntSize DisplayCaptureSourceCocoa::frameSize() const
+// We keep the aspect ratio of the intrinsic size for the frame size as getDisplayMedia allows max constraints only.
+void DisplayCaptureSourceCocoa::updateFrameSize()
 {
-    IntSize frameSize = size();
-    if (frameSize.isEmpty())
-        return intrinsicSize();
+    auto intrinsicSize = this->intrinsicSize();
 
-    return frameSize;
+    auto frameSize = size();
+    if (!frameSize.height())
+        frameSize.setHeight(intrinsicSize.height());
+    if (!frameSize.width())
+        frameSize.setWidth(intrinsicSize.width());
+
+    auto maxHeight = std::min(frameSize.height(), intrinsicSize.height());
+    auto maxWidth = std::min(frameSize.width(), intrinsicSize.width());
+
+    auto heightForMaxWidth = maxWidth * intrinsicSize.height() / intrinsicSize.width();
+    auto widthForMaxHeight = maxHeight * intrinsicSize.width() / intrinsicSize.height();
+
+    if (heightForMaxWidth <= maxHeight) {
+        setSize({ maxWidth, heightForMaxWidth });
+        return;
+    }
+    if (widthForMaxHeight <= maxWidth) {
+        setSize({ widthForMaxHeight, maxHeight });
+        return;
+    }
+    setSize(intrinsicSize);
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()
@@ -164,7 +225,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
 
-    auto frame = generateFrame();
+    auto frame = m_capturer->generateFrame();
     auto imageSize = WTF::switchOn(frame,
         [](RetainPtr<IOSurfaceRef> surface) -> IntSize {
             if (!surface)
@@ -184,22 +245,23 @@ void DisplayCaptureSourceCocoa::emitFrame()
     if (imageSize.isEmpty())
         return;
 
-    setIntrinsicSize(imageSize);
+    if (intrinsicSize() != imageSize) {
+        setIntrinsicSize(imageSize);
+        updateFrameSize();
+    }
 
-    auto mediaSampleSize = frameSize();
-
-    RefPtr<MediaSample> sample = WTF::switchOn(frame,
-        [this, sampleTime, mediaSampleSize](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {
+    auto sample = WTF::switchOn(frame,
+        [this, sampleTime](RetainPtr<IOSurfaceRef> surface) -> RefPtr<MediaSample> {
             if (!surface)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, mediaSampleSize);
+            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, size());
         },
-        [this, sampleTime, mediaSampleSize](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
+        [this, sampleTime](RetainPtr<CGImageRef> image) -> RefPtr<MediaSample> {
             if (!image)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, mediaSampleSize);
+            return m_imageTransferSession->createMediaSample(image.get(), sampleTime, size());
         }
     );
 
@@ -211,6 +273,19 @@ void DisplayCaptureSourceCocoa::emitFrame()
     videoSampleAvailable(*sample.get());
 #endif
 }
+
+#if !RELEASE_LOG_DISABLED
+void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+{
+    m_logger = &newLogger;
+    m_logIdentifier = newLogIdentifier;
+}
+
+WTFLogChannel& DisplayCaptureSourceCocoa::Capturer::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

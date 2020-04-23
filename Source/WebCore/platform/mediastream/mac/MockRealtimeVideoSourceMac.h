@@ -46,7 +46,9 @@ class ImageTransferSessionVT;
 
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource {
 public:
-    virtual ~MockRealtimeVideoSourceMac() = default;
+    static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, String&& name, String&& hashSalt);
+
+    ~MockRealtimeVideoSourceMac() = default;
 
 private:
     friend class MockRealtimeVideoSource;

@@ -38,8 +38,8 @@
 #include "DisplayCaptureManagerCocoa.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
-#include "ScreenDisplayCaptureSourceMac.h"
-#include "WindowDisplayCaptureSourceMac.h"
+#include "ScreenDisplayCapturerMac.h"
+#include "WindowDisplayCapturerMac.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -72,23 +72,11 @@ public:
         UNUSED_PARAM(device);
         UNUSED_PARAM(constraints);
 #endif
-        switch (device.type()) {
-        case CaptureDevice::DeviceType::Screen:
 #if PLATFORM(MAC)
-            return ScreenDisplayCaptureSourceMac::create(String { device.persistentId() }, constraints);
-#endif
-        case CaptureDevice::DeviceType::Window:
-#if PLATFORM(MAC)
-            return WindowDisplayCaptureSourceMac::create(String { device.persistentId() }, constraints);
-#endif
-        case CaptureDevice::DeviceType::Microphone:
-        case CaptureDevice::DeviceType::Camera:
-        case CaptureDevice::DeviceType::Unknown:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
+        return DisplayCaptureSourceCocoa::create(device, constraints);
+#else
         return { };
+#endif
     }
 private:
     CaptureDeviceManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }

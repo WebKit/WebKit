@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct CGImage *CGImageRef;
@@ -49,36 +50,66 @@ class CaptureDeviceInfo;
 class ImageTransferSessionVT;
 class PixelBufferConformerCV;
 
-class DisplayCaptureSourceCocoa : public RealtimeMediaSource {
+class DisplayCaptureSourceCocoa final : public RealtimeMediaSource {
 public:
-
-protected:
-    DisplayCaptureSourceCocoa(String&& name);
-    virtual ~DisplayCaptureSourceCocoa();
-
     using DisplayFrameType = WTF::Variant<RetainPtr<CGImageRef>, RetainPtr<IOSurfaceRef>>;
-    virtual DisplayFrameType generateFrame() = 0;
+    class Capturer
+#if !RELEASE_LOG_DISABLED
+        : public LoggerHelper
+#endif
+    {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        virtual ~Capturer() = default;
 
-    virtual RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const = 0;
+        virtual bool start(float frameRate) = 0;
+        virtual void stop() = 0;
+        virtual DisplayFrameType generateFrame() = 0;
+        virtual CaptureDevice::DeviceType deviceType() const = 0;
+        virtual RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const = 0;
+        virtual void commitConfiguration(float frameRate) = 0;
 
-    void startProducingData() override;
-    void stopProducingData() override;
+#if !RELEASE_LOG_DISABLED
+        virtual void setLogger(const Logger&, const void*);
+        const Logger* loggerPtr() const { return m_logger.get(); }
+        const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+        const void* logIdentifier() const final { return m_logIdentifier; }
+        WTFLogChannel& logChannel() const final;
+#endif
+
+    private:
+#if !RELEASE_LOG_DISABLED
+        RefPtr<const Logger> m_logger;
+        const void* m_logIdentifier;
+#endif
+    };
+
+    static CaptureSourceOrError create(const CaptureDevice&, const MediaConstraints*);
+    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, const MediaConstraints*);
 
     Seconds elapsedTime();
-
-    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
-
-    IntSize frameSize() const;
+    void updateFrameSize();
 
 private:
+    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, String&& name);
+    ~DisplayCaptureSourceCocoa();
 
+    void startProducingData() final;
+    void stopProducingData() final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     bool isCaptureSource() const final { return true; }
-
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
+    CaptureDevice::DeviceType deviceType() const { return m_capturer->deviceType(); }
+    void commitConfiguration() final { return m_capturer->commitConfiguration(frameRate()); }
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "DisplayCaptureSourceCocoa"; }
+#endif
 
     void emitFrame();
 
+    UniqueRef<Capturer> m_capturer;
     Optional<RealtimeMediaSourceCapabilities> m_capabilities;
     Optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

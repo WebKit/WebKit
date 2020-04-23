@@ -1,3 +1,75 @@
+2020-04-23  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia is not respecting aspect ratio with max constraints
+        https://bugs.webkit.org/show_bug.cgi?id=210858
+
+        Reviewed by Eric Carlson.
+
+        Add computation of exact frame size to respect aspect ratio in DisplayCaptureSourceCocoa::updateFrameSize.
+        Refactor code to have one source class DisplayCaptureSourceCocoa and specific capturer for screen and window.
+        This simplifies code and allows reusing DisplayCaptureSourceCocoa with a mock capturer.
+        Update mock code to use DisplayCaptureSourceCocoa.
+
+        Tests: fast/mediastream/getDisplayMedia-max-constraints.html
+               fast/mediastream/getDisplayMedia-max-constraints1.html
+               fast/mediastream/getDisplayMedia-max-constraints2.html
+               fast/mediastream/getDisplayMedia-max-constraints3.html
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::updateDisplayCaptureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::updateWindowCaptureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID):
+        (WebCore::DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::create):
+        (WebCore::DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::capabilities):
+        (WebCore::DisplayCaptureSourceCocoa::settings):
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::stopProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::updateFrameSize):
+        (WebCore::DisplayCaptureSourceCocoa::emitFrame):
+        (WebCore::DisplayCaptureSourceCocoa::Capturer::setLogger):
+        (WebCore::DisplayCaptureSourceCocoa::Capturer::logChannel const):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::createForMockDisplayCapturer):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.h: Added.
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.mm: Added.
+        (WebCore::ScreenDisplayCapturerMac::create):
+        (WebCore::ScreenDisplayCapturerMac::ScreenDisplayCapturerMac):
+        (WebCore::ScreenDisplayCapturerMac::~ScreenDisplayCapturerMac):
+        (WebCore::ScreenDisplayCapturerMac::createDisplayStream):
+        (WebCore::ScreenDisplayCapturerMac::start):
+        (WebCore::ScreenDisplayCapturerMac::stop):
+        (WebCore::ScreenDisplayCapturerMac::generateFrame):
+        (WebCore::ScreenDisplayCapturerMac::startDisplayStream):
+        (WebCore::ScreenDisplayCapturerMac::commitConfiguration):
+        (WebCore::ScreenDisplayCapturerMac::displayWasReconfigured):
+        (WebCore::ScreenDisplayCapturerMac::displayReconfigurationCallBack):
+        (WebCore::ScreenDisplayCapturerMac::newFrame):
+        (WebCore::ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID):
+        (WebCore::ScreenDisplayCapturerMac::screenCaptureDevices):
+        * platform/mediastream/mac/WindowDisplayCapturerMac.h: Added.
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm: ddedAdded.
+        (WebCore::WindowDisplayCapturerMac::create):
+        (WebCore::WindowDisplayCapturerMac::WindowDisplayCapturerMac):
+        (WebCore::WindowDisplayCapturerMac::windowImage):
+        (WebCore::WindowDisplayCapturerMac::generateFrame):
+        (WebCore::WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID):
+        (WebCore::WindowDisplayCapturerMac::windowCaptureDevices):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockDisplayCapturer::MockDisplayCapturer):
+        (WebCore::MockDisplayCapturer::start):
+        (WebCore::MockDisplayCapturer::generateFrame):
+        * platform/mock/MockRealtimeVideoSource.h:
+        (isType):
+
 2020-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to eagerly apply scrolling tree state from the main thread

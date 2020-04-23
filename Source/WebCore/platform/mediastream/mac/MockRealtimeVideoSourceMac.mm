@@ -71,6 +71,11 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
+Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String&& deviceID, String&& name, String&& hashSalt)
+{
+    return adoptRef(*new MockRealtimeVideoSourceMac(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+}
+
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
 {

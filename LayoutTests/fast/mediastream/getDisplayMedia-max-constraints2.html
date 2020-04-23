@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia track support of max constraints</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <script>
+let defaultWidth;
+let defaultHeight;
+promise_test(async () => {
+    stream = await callGetDisplayMedia({ video: true });
+    let settings = stream.getVideoTracks()[0].getSettings();
+    defaultWidth = settings.width;
+    defaultHeight = settings.height;
+}, "setup");
+
+promise_test(async (test) => {
+    const stream = await callGetDisplayMedia({ video: { height: { max: 100 }, width : { max : 500 } } });
+
+    const expectedWidth = Math.floor(100 * (defaultWidth / defaultHeight)) 
+    await waitForWidth(stream.getVideoTracks()[0], expectedWidth);
+
+    const settings = stream.getVideoTracks()[0].getSettings()
+    assert_equals(settings.height, 100);
+}, "Maximize the height if max width is too big");
+        </script>
+    </body>
+</html>

@@ -1,3 +1,25 @@
+2020-04-23  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia is not respecting aspect ratio with max constraints
+        https://bugs.webkit.org/show_bug.cgi?id=210858
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getDisplayMedia-max-constraints-expected.txt: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints.html: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints1-expected.txt: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints1.html: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints2-expected.txt: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints2.html: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints3-expected.txt: Added.
+        * fast/mediastream/getDisplayMedia-max-constraints3.html: Added.
+        * fast/mediastream/resources/getDisplayMedia-utils.js: Added.
+        (async callGetDisplayMedia):
+        (async waitForHeight):
+        (async waitForWidth):
+        * platform/ios/TestExpectations:
+        Skip new tests as getDisplayMedia is not supported on iOS.
+
 2020-04-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update baselines and test expectations

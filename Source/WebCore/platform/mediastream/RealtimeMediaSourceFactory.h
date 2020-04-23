@@ -89,7 +89,11 @@ protected:
     VideoCaptureFactory() = default;
 };
 
-class DisplayCaptureFactory {
+class DisplayCaptureFactory
+#if PLATFORM(IOS_FAMILY)
+    : public SingleSourceFactory
+#endif
+{
 public:
     virtual ~DisplayCaptureFactory() = default;
     virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
