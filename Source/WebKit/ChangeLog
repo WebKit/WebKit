@@ -1,3 +1,20 @@
+2020-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Port MediaPlayback process assertion to RunningBoard
+        https://bugs.webkit.org/show_bug.cgi?id=210212
+        <rdar://problem/61476951>
+
+        Reviewed by Geoff Garen.
+
+        Port MediaPlayback process assertion to RunningBoard instead of the legacy BKSProcessAssertion.
+        We can now #ifdef out the legacy BKSProcessAssertion on recent iOS builds.
+
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::runningBoardNameForAssertionType):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+
 2020-04-23  John Frankish  <john.frankish@outlook.com>
 
         [GTK] Crash in cairo_surface_mark_dirty_rectangle() in accelerated compositing mode under X11

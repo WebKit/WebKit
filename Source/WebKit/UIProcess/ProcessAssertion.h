@@ -39,7 +39,9 @@
 
 OBJC_CLASS RBSAssertion;
 OBJC_CLASS WKRBSAssertionDelegate;
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
 OBJC_CLASS BKSProcessAssertion;
+#endif
 #endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
@@ -85,7 +87,9 @@ private:
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     RetainPtr<BKSProcessAssertion> m_bksAssertion; // Legacy.
+#endif
     Validity m_validity { Validity::Unset };
 #endif
     Client* m_client { nullptr };

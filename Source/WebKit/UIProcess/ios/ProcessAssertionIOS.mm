@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "AssertionServicesSPI.h"
 #import "Logging.h"
 #import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
@@ -37,6 +36,10 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
+
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+#import "AssertionServicesSPI.h"
+#endif
 
 using WebKit::ProcessAndUIAssertion;
 
@@ -313,7 +316,7 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     case ProcessAssertionType::DependentProcessLink:
         return @"DependentProcessLink";
     case ProcessAssertionType::MediaPlayback:
-        return nil; // FIXME: Name to be defined in <rdar://problem/61263147>.
+        return @"MediaPlayback";
     }
 #else
     if (assertionType == ProcessAssertionType::DependentProcessLink)
@@ -321,6 +324,8 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     return nil;
 #endif
 }
+
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
 
 const BKSProcessAssertionFlags suspendedTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionPreventTaskSuspend);
@@ -360,39 +365,17 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
     }
 }
 
+#endif // !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
     , m_pid(pid)
 {
     auto weakThis = makeWeakPtr(*this);
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
-    if (runningBoardAssertionName) {
-        if (!pid) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.utf8().data());
-            return;
-        }
 
-        RBSTarget *target = [RBSTarget targetWithPid:pid];
-        RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:runningBoardAssertionName];
-        m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
-
-        m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
-        [m_rbsAssertion addObserver:m_delegate.get()];
-        m_delegate.get().invalidationCallback = ^{
-            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID %d was invalidated", this, runningBoardAssertionName, pid);
-            processAssertionWasInvalidated();
-        };
-
-        NSError *acquisitionError = nil;
-        if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (weakThis)
-                    processAssertionWasInvalidated();
-            });
-        } else
-            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.utf8().data(), pid);
-    } else {
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+    if (!runningBoardAssertionName) {
         // Legacy code path.
         BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
             if (!acquired) {
@@ -414,7 +397,36 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
                     processAssertionWasInvalidated();
             });
         };
+        return;
     }
+#endif // !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+
+    ASSERT(runningBoardAssertionName);
+    if (!pid) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.utf8().data());
+        return;
+    }
+
+    RBSTarget *target = [RBSTarget targetWithPid:pid];
+    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.webkit" name:runningBoardAssertionName];
+    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:reason target:target attributes:@[domainAttribute]]);
+
+    m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
+    [m_rbsAssertion addObserver:m_delegate.get()];
+    m_delegate.get().invalidationCallback = ^{
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID %d was invalidated", this, runningBoardAssertionName, pid);
+        processAssertionWasInvalidated();
+    };
+
+    NSError *acquisitionError = nil;
+    if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakThis)
+                processAssertionWasInvalidated();
+        });
+    } else
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.utf8().data(), pid);
 }
 
 ProcessAssertion::~ProcessAssertion()
@@ -427,10 +439,14 @@ ProcessAssertion::~ProcessAssertion()
 
         [m_rbsAssertion removeObserver:m_delegate.get()];
         [m_rbsAssertion invalidate];
-    } else {
+    }
+
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+    if (m_bksAssertion) {
         m_bksAssertion.get().invalidationHandler = nil;
         [m_bksAssertion invalidate];
     }
+#endif
 }
 
 void ProcessAssertion::processAssertionWasInvalidated()
