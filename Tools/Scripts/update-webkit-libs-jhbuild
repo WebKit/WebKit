@@ -35,10 +35,14 @@ if (!$platform) {
 
 my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
 my $force = 0;
+my $release = 0;
+my $debug = 0;
 
 GetOptions(
     'wipe-on-change!' => \$wipeOnChange,
-    'force' => \$force
+    'force' => \$force,
+    'release' => \$release,
+    'debug' => \$debug
 );
 
 sub getJhbuildIncludedFilePaths

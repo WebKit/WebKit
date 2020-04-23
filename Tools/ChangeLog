@@ -1,5 +1,17 @@
 2020-04-23  Philippe Normand  <pnormand@igalia.com>
 
+        [JHBuild] Add mock release/debug options to the update script
+
+        Rubber-stamped by Carlos Alberto Lopez Perez.
+
+        These options are now required after r260560. They're not used
+        though because JHBuild itself doesn't have the notion of build
+        configuration, unlike the Flatpak SDK.
+
+        * Scripts/update-webkit-libs-jhbuild:
+
+2020-04-23  Philippe Normand  <pnormand@igalia.com>
+
         [GTK][WPE] White-list more GStreamer environment variables in webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=210854
 
