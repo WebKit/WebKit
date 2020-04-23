@@ -4432,13 +4432,9 @@ webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogu
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
 
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
 webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure ]
 
 webkit.org/b/193491 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Failure ]
 
