@@ -274,9 +274,24 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
     Vector<ManipulationToken> tokensInCurrentParagraph;
     Position startOfCurrentParagraph;
     Position endOfCurrentParagraph;
+    RefPtr<Element> enclosingParagraphElement;
+
+    auto isEnclosingParagraphElement = [](const Element& element) {
+        if (element.hasTagName(liTag)) {
+            auto* renderer = element.renderer();
+            return renderer && renderer->style().display() == DisplayType::Block;
+        }
+        return false;
+    };
+
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         if (content.node) {
+            if (enclosingParagraphElement && !enclosingParagraphElement->contains(content.node.get())) {
+                if (!tokensInCurrentParagraph.isEmpty())
+                    addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
+                enclosingParagraphElement = nullptr;
+            }
             if (RefPtr<Element> currentElementAncestor = is<Element>(*content.node) ? downcast<Element>(content.node.get()) : content.node->parentOrShadowHostElement()) {
                 if (isInManipulatedElement(*currentElementAncestor))
                     return; // We can exit early here because scheduleObservartionUpdate calls this function on each paragraph separately.
@@ -296,6 +311,8 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                         }
                     }
                 }
+                if (isEnclosingParagraphElement(currentElement))
+                    enclosingParagraphElement = &currentElement;
             }
         }
 

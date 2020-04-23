@@ -524,6 +524,64 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
     EXPECT_TRUE(items[0].tokens[2].isExcluded);
 }
 
+TEST(TextManipulation, StartTextManipulationBreaksParagraphInBetweenListItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+        "    <style>"
+        "        li.block { display: block; }"
+        "        li.float-left { float: left; margin: 1em; }"
+        "        li.inline { display: inline; }"
+        "    </style>"
+        "</head>"
+        "<body>"
+        "    <ul><li class='block'>One</li><li class='block'>Two<span>-three</span></li></ul>"
+        "    <div><br></div>"
+        "    <ul><li class='block float-left'>Four</li><li class='block float-left'>Five<span>-six</span></li></ul>"
+        "    <div><br></div>"
+        "    <ol><li class='inline'>Seven</li><li class='inline'>Eight</li></ol>"
+        "    <div><br></div>"
+        "    <ul><li>Nine</li><li>Ten</li></ol>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    NSArray<_WKTextManipulationItem *> *items = [delegate items];
+    EXPECT_EQ(items.count, 7UL);
+
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("One", items[0].tokens[0].content);
+
+    EXPECT_EQ(items[1].tokens.count, 2UL);
+    EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("-three", items[1].tokens[1].content);
+
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Four", items[2].tokens[0].content);
+
+    EXPECT_EQ(items[3].tokens.count, 2UL);
+    EXPECT_WK_STREQ("Five", items[3].tokens[0].content);
+    EXPECT_WK_STREQ("-six", items[3].tokens[1].content);
+
+    EXPECT_EQ(items[4].tokens.count, 2UL);
+    EXPECT_WK_STREQ("Seven", items[4].tokens[0].content);
+    EXPECT_WK_STREQ("Eight", items[4].tokens[1].content);
+
+    EXPECT_EQ(items[5].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Nine", items[5].tokens[0].content);
+
+    EXPECT_EQ(items[6].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Ten", items[6].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

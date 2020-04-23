@@ -1,3 +1,24 @@
+2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a heuristic for text manipulation to treat some list items as paragraph boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=210915
+        <rdar://problem/61907080>
+
+        Reviewed by Megan Gardner.
+
+        Adds a mechanism to allow text manipulation to emit an item containing the current list of text manipulation
+        tokens early, in the case where the paragraph content iterator crosses the boundary of an element that encloses
+        a paragraph. Currently, the only enclosing paragraph element will be list items that have `display: block;`,
+        which we can take as a hint that the text in these list items should be vended as separate items, rather than as
+        tokens in a single item.
+
+        This may be extended in the future to other situations by adjusting logic in `isEnclosingParagraphElement`.
+
+        Test: TextManipulation.StartTextManipulationBreaksParagraphInBetweenListItems
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+
 2020-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for basic baseline align inside a table row

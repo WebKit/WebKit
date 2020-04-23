@@ -1,3 +1,16 @@
+2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a heuristic for text manipulation to treat some list items as paragraph boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=210915
+        <rdar://problem/61907080>
+
+        Reviewed by Megan Gardner.
+
+        Add a new API test to exercise text manipulation over several different cases of lists and list items.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260562.
