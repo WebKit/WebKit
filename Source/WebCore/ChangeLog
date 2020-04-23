@@ -1,3 +1,23 @@
+2020-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] excessive wakeups/polling due to gdk_frame_clock_begin_updating
+        https://bugs.webkit.org/show_bug.cgi?id=210561
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that we are destroying the display refresh monitor from the frame clock update callback, and GTK
+        schedules another update from the callback itself in some cases, which ends up happening forever. We were
+        assuming that destroying the window of immediately destroy the frame clock as well, but the paint source idle
+        keeps a reference of the frame clock. At the end of the source idle callback the source is scheduled again,
+        taking a new reference. We need to call gdk_frame_clock_end_updating() to ensure the idle is not scheduled
+        again.
+
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp:
+        (WebCore::DisplayRefreshMonitorGtk::~DisplayRefreshMonitorGtk): Disconnect the update signal and call
+        gdk_frame_clock_end_updating().
+        (WebCore::DisplayRefreshMonitorGtk::requestRefreshCallback): Toplevel window should always have a frame clock,
+        so remove the early return and add an assert instead.
+
 2020-04-23  Youenn Fablet  <youenn@apple.com>
 
         getDisplayMedia is not respecting aspect ratio with max constraints
