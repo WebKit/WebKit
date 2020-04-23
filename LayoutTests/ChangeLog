@@ -1,3 +1,60 @@
+2020-04-23  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Update texture packing code for software uploads from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=209515
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline WebGL 2.0 conformance tests affected by this patch.
+        Most updates are progressions; failures are largely caused by
+        sub-rectangle uploads not yet being implemented. The tests will
+        pass fully after the higher-level code is feature complete.
+
+        Skip the canvas_sub_rectangle tests, as their results will
+        continue to be wrong until the higher-level code is finished.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-with-different-data-source-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+
 2020-04-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update expectations after r260561

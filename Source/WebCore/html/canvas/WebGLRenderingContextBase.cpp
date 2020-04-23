@@ -503,10 +503,11 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     // WebGL 2.0 is only supported with the ANGLE backend.
 #if USE(ANGLE)
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
-#endif
         return nullptr;
 #else
-    UNUSED_PARAM(type);
+    if (type == "webgl2")
+        return nullptr;
+#endif
 #endif
 
     bool isPendingPolicyResolution = false;
@@ -1742,7 +1743,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
         UniqueArray<unsigned char> zero;
         if (width && height) {
             unsigned size;
-            GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, nullptr);
+            GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, getUnpackPixelStoreParams(), &size, nullptr, nullptr); // NEEDS_PORT
             if (error != GraphicsContextGL::NO_ERROR) {
                 synthesizeGLError(error, "copyTexSubImage2D", "bad dimensions");
                 return;
@@ -3847,7 +3848,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     unsigned totalBytesRequired = 0;
     unsigned padding = 0;
     if (!m_isRobustnessEXTSupported) {
-        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, m_packAlignment, &totalBytesRequired, &padding);
+        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, getPackPixelStoreParams(), &totalBytesRequired, &padding, nullptr); // NEEDS_PORT
         if (error != GraphicsContextGL::NO_ERROR) {
             synthesizeGLError(error, "readPixels", "invalid dimensions");
             return;
@@ -4051,6 +4052,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
             texImage2DImpl(target, level, internalformat, width, height, format, type, image.get(), GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
     }, [&](const RefPtr<ImageData>& pixels) -> ExceptionOr<void> {
+        // FIXME: NEEDS_PORT
         if (!width)
             width = pixels->width();
 
@@ -4066,12 +4068,17 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource2D(GCGLenum target, G
         if (!m_unpackFlipY && !m_unpackPremultiplyAlpha && format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE)
             needConversion = false;
         else {
-            if (!m_context->extractImageData(pixels.get(), format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+            if (type == GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV) {
+                // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
+                type = GraphicsContextGL::FLOAT;
+            }
+            IntRect sourceImageSubRectangle(0, 0, width, height); // NEEDS_PORT
+            if (!m_context->extractImageData(pixels.get(), GraphicsContextGLOpenGL::DataFormat::RGBA8, sourceImageSubRectangle, 1, 0, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
                 return { };
             }
         }
-        if (m_unpackAlignment != 1)
+        if (m_unpackAlignment != 1) // NEEDS_PORT
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
         texImage2DBase(target, level, internalformat, width, height, border, format, type, needConversion ? data.size() : pixels->data()->byteLength(), needConversion ? data.data() : pixels->data()->data());
         if (m_unpackAlignment != 1)
@@ -4242,11 +4249,18 @@ void WebGLRenderingContextBase::texImage2DImpl(GCGLenum target, GCGLint level, G
 
     bool needConversion = true;
     GCGLsizei byteLength = 0;
+    // NEEDS_PORT
     if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY) {
         needConversion = false;
         byteLength = imageExtractor.imageWidth() * imageExtractor.imageHeight() * 4;
     } else {
-        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
+        if (type == GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV) {
+            // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
+            type = GraphicsContextGL::FLOAT;
+        }
+        IntRect sourceImageSubRectangle(0, 0, width, height); // NEEDS_PORT
+        // NEEDS_PORT
+        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), sourceImageSubRectangle, 1, imageExtractor.imageSourceUnpackAlignment(), 0, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "packImage error");
             return;
         }
@@ -4311,28 +4325,42 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
 
 void WebGLRenderingContextBase::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& pixels)
 {
-    if (isContextLostOrPending() || !validateTexFuncData("texImage2D", level, width, height, internalFormat, format, type, pixels.get(), NullAllowed)
-        || !validateTexFunc("texImage2D", TexImage, SourceArrayBufferView, target, level, internalFormat, width, height, border, format, type, 0, 0))
+    // FIXME: NEEDS_PORT
+    if (isContextLostOrPending())
         return;
-    void* data = pixels ? pixels->baseAddress() : 0;
+    if (!validateTextureBinding("texImage2D", target, true))
+        return;
+    if (!validateTexFunc("texImage2D", TexImage, SourceArrayBufferView, target, level, internalFormat, width, height, border, format, type, 0, 0))
+        return;
+    if (!validateTexFuncData("texImage2D", level, width, height, internalFormat, format, type, pixels.get(), NullAllowed))
+        return;
+    uint8_t* data = reinterpret_cast<uint8_t*>(
+        pixels ? pixels->baseAddress() : nullptr); // NEEDS_PORT
     GCGLsizei byteLength = pixels ? pixels->byteLength() : 0;
     Vector<uint8_t> tempData;
-    bool changeUnpackAlignment = false;
-    if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
-        if (!m_context->extractTextureData(width, height, format, type,
-                                           m_unpackAlignment,
-                                           m_unpackFlipY, m_unpackPremultiplyAlpha,
-                                           data,
-                                           tempData))
+    bool changeUnpackParams = false;
+    if (data && width && height
+        && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+        // Only enter here if width or height is non-zero. Otherwise, call to the
+        // underlying driver to generate appropriate GL errors if needed.
+        GraphicsContextGLOpenGL::PixelStoreParams unpackParams;
+        unpackParams.alignment = m_unpackAlignment; // NEEDS_PORT
+        GCGLint dataStoreWidth = unpackParams.rowLength ? unpackParams.rowLength : width;
+        if (unpackParams.skipPixels + width > dataStoreWidth) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texImage2D", "Invalid unpack params combination.");
+            return;
+        }
+        if (!m_context->extractTextureData(width, height, format, type, unpackParams, m_unpackFlipY, m_unpackPremultiplyAlpha, data, tempData))
             return;
         data = tempData.data();
         byteLength = tempData.size();
-        changeUnpackAlignment = true;
+        changeUnpackParams = true;
     }
-    if (changeUnpackAlignment)
+    // NEEDS_PORT
+    if (changeUnpackParams)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
     texImage2DBase(target, level, internalFormat, width, height, border, format, type, byteLength, data);
-    if (changeUnpackAlignment)
+    if (changeUnpackParams)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
@@ -4350,11 +4378,18 @@ void WebGLRenderingContextBase::texSubImage2DImpl(GCGLenum target, GCGLint level
     
     bool needConversion = true;
     GCGLsizei byteLength = 0;
+    // NEEDS_PORT
     if (type == GraphicsContextGL::UNSIGNED_BYTE && sourceDataFormat == GraphicsContextGL::DataFormat::RGBA8 && format == GraphicsContextGL::RGBA && alphaOp == GraphicsContextGL::AlphaOp::DoNothing && !flipY) {
         needConversion = false;
         byteLength = image->width() * image->height() * 4;
     } else {
-        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
+        if (type == GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV) {
+            // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
+            type = GraphicsContextGL::FLOAT;
+        }
+        IntRect sourceImageSubRectangle(0, 0, imageExtractor.imageWidth(), imageExtractor.imageHeight()); // NEEDS_PORT
+        // NEEDS_PORT
+        if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), sourceImageSubRectangle, 1, imageExtractor.imageSourceUnpackAlignment(), 0, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
             return;
         }
@@ -4372,9 +4407,9 @@ void WebGLRenderingContextBase::texSubImage2DImpl(GCGLenum target, GCGLint level
 
 void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& pixels)
 {
+    // FIXME: NEEDS_PORT
     if (isContextLostOrPending())
         return;
-
     auto texture = validateTextureBinding("texSubImage2D", target, true);
     if (!texture)
         return;
@@ -4396,16 +4431,27 @@ void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GC
     if (!validateTexFunc("texSubImage2D", TexSubImage, SourceArrayBufferView, target, level, internalFormat, width, height, 0, format, type, xoffset, yoffset))
         return;
     
-    void* data = pixels->baseAddress();
+    void* data = pixels->baseAddress(); // NEEDS_PORT
     Vector<uint8_t> tempData;
-    bool changeUnpackAlignment = false;
-    if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
-        if (!m_context->extractTextureData(width, height, format, type, m_unpackAlignment, m_unpackFlipY, m_unpackPremultiplyAlpha, data, tempData))
+    bool changeUnpackParams = false;
+    if (data && width && height
+        && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
+        // Only enter here if width or height is non-zero. Otherwise, call to the
+        // underlying driver to generate appropriate GL errors if needed.
+        GraphicsContextGLOpenGL::PixelStoreParams unpackParams;
+        unpackParams.alignment = m_unpackAlignment; // NEEDS_PORT
+        GCGLint dataStoreWidth = unpackParams.rowLength ? unpackParams.rowLength : width;
+        if (unpackParams.skipPixels + width > dataStoreWidth) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texSubImage2D", "Invalid unpack params combination.");
+            return;
+        }
+        if (!m_context->extractTextureData(width, height, format, type, unpackParams, m_unpackFlipY, m_unpackPremultiplyAlpha, data, tempData))
             return;
         data = tempData.data();
-        changeUnpackAlignment = true;
+        changeUnpackParams = true;
     }
-    if (changeUnpackAlignment)
+    // NEEDS_PORT
+    if (changeUnpackParams)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
 
 #if USE(ANGLE)
@@ -4413,7 +4459,7 @@ void WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGLint level, GC
 #else
     texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalFormat, format, type, pixels->byteLength(), data);
 #endif // USE(ANGLE)
-    if (changeUnpackAlignment)
+    if (changeUnpackParams)
         m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
@@ -4477,24 +4523,26 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
         GCGLsizei byteLength;
         // The data from ImageData is always of format RGBA8.
         // No conversion is needed if destination format is RGBA and type is UNSIGNED_BYTE and no Flip or Premultiply operation is required.
-        if (format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE && !m_unpackFlipY && !m_unpackPremultiplyAlpha) {
+        if (!m_unpackFlipY && !m_unpackPremultiplyAlpha && format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE) {
             needConversion = false;
             byteLength = pixels->width() * pixels->height() * 4;
         } else {
-            if (!m_context->extractImageData(pixels.get(), format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+            if (type == GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV) {
+                // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
+                type = GraphicsContextGL::FLOAT;
+            }
+            IntRect sourceImageSubRectangle(0, 0, pixels->width(), pixels->height()); // NEEDS_PORT
+            if (!m_context->extractImageData(pixels.get(), GraphicsContextGLOpenGL::DataFormat::RGBA8, sourceImageSubRectangle, 1, 0, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texSubImage2D", "bad image data");
                 return { };
             }
             byteLength = data.size();
         }
-        if (m_unpackAlignment != 1)
+        if (m_unpackAlignment != 1) // NEEDS_PORT
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, 1);
-
         texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), format, format, type, byteLength, needConversion ? data.data() : pixels->data()->data());
-
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, m_unpackAlignment);
-
         return { };
     } , [&](const RefPtr<HTMLImageElement>& image) -> ExceptionOr<void> {
         if (isContextLostOrPending())
@@ -4649,6 +4697,7 @@ bool WebGLRenderingContextBase::validateArrayBufferType(const char* functionName
 
 bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, GCGLint level, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition)
 {
+    // FIXME: NEEDS_PORT
     if (!pixels) {
         if (disposition == NullAllowed)
             return true;
@@ -4664,7 +4713,7 @@ bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, GC
         return false;
     
     unsigned totalBytesRequired;
-    GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &totalBytesRequired, nullptr);
+    GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, getUnpackPixelStoreParams(), &totalBytesRequired, nullptr, nullptr); // NEEDS_PORT
     if (error != GraphicsContextGL::NO_ERROR) {
         synthesizeGLError(error, functionName, "invalid texture dimensions");
         return false;
@@ -5674,6 +5723,20 @@ RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GCGLenum
         notImplemented();
     }
     return Int32Array::tryCreate(value, length);
+}
+
+GraphicsContextGLOpenGL::PixelStoreParams WebGLRenderingContextBase::getPackPixelStoreParams() const
+{
+    GraphicsContextGLOpenGL::PixelStoreParams params;
+    params.alignment = m_packAlignment;
+    return params;
+}
+
+GraphicsContextGLOpenGL::PixelStoreParams WebGLRenderingContextBase::getUnpackPixelStoreParams() const
+{
+    GraphicsContextGLOpenGL::PixelStoreParams params;
+    params.alignment = m_unpackAlignment;
+    return params;
 }
 
 #if !USE(ANGLE)

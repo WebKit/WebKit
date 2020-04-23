@@ -1,3 +1,65 @@
+2020-04-23  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Update texture packing code for software uploads from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=209515
+
+        Reviewed by Dean Jackson.
+
+        Update the bottommost DOM-to-texture packing code in
+        GraphicsContextGLOpenGL and FormatConverter to full WebGL 2.0
+        capability. Reorganize some code to make side-by-side comparisons
+        easier with other WebGL 2.0 implementations.
+
+        Added NEEDS_PORT comments to areas in the calling code which need
+        particular attention in subsequent patches. Roughly two more
+        patches will be needed on top of this one in order to fully pass
+        the associated conformance tests.
+
+        Fix a bug in the non-ANGLE ENABLE(WEBGL2) code path which
+        accidentally disabled WebGL entirely in this configuration.
+
+        Covered by the WebGL 2.0 conformance tests.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::texImageSource2D):
+        (WebCore::WebGLRenderingContextBase::texImage2DImpl):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::texSubImage2DImpl):
+        (WebCore::WebGLRenderingContextBase::texSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData):
+        (WebCore::WebGLRenderingContextBase::getPackPixelStoreParams const):
+        (WebCore::WebGLRenderingContextBase::getUnpackPixelStoreParams const):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/FormatConverter.cpp:
+        (WebCore::convertFloatToHalfFloat):
+        (WebCore::float>):
+        (WebCore::uint8_t>):
+        (WebCore::uint16_t>):
+        (WebCore::int8_t>):
+        (WebCore::int16_t>):
+        (WebCore::uint32_t>):
+        (WebCore::int32_t>):
+        (WebCore::FormatConverter::convert):
+        * platform/graphics/FormatConverter.h:
+        (WebCore::FormatConverter::FormatConverter):
+        * platform/graphics/GraphicsContextGL.h:
+        (WebCore::GraphicsContextGL::hasAlpha):
+        (WebCore::GraphicsContextGL::hasColor):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::texImage2DResourceSafe):
+        (WebCore::GraphicsContextGLOpenGL::computeFormatAndTypeParameters):
+        (WebCore::GraphicsContextGLOpenGL::computeImageSizeInBytes):
+        (WebCore::GraphicsContextGLOpenGL::PixelStoreParams::PixelStoreParams):
+        (WebCore::GraphicsContextGLOpenGL::packImageData):
+        (WebCore::GraphicsContextGLOpenGL::extractImageData):
+        (WebCore::GraphicsContextGLOpenGL::extractTextureData):
+        (WebCore::TexelBytesForFormat):
+        (WebCore::GraphicsContextGLOpenGL::packPixels):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a heuristic for text manipulation to treat some list items as paragraph boundaries

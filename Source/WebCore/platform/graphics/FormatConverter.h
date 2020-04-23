@@ -30,6 +30,7 @@
 #if ENABLE(GRAPHICS_CONTEXT_GL)
 
 #include "GraphicsContextGLOpenGL.h"
+#include "IntRect.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 
@@ -37,18 +38,28 @@ namespace WebCore {
 
 class FormatConverter {
 public:
-    FormatConverter(unsigned width, unsigned height, const void* srcStart, void* dstStart, int srcStride, int dstStride)
-        : m_width(width)
-        , m_height(height)
-        , m_srcStart(srcStart)
-        , m_dstStart(dstStart)
-        , m_srcStride(srcStride)
-        , m_dstStride(dstStride)
-        , m_success(false)
+    FormatConverter(
+        const IntRect& sourceDataSubRectangle,
+        int depth,
+        int unpackImageHeight,
+        const void* srcStart,
+        void* dstStart,
+        int srcStride,
+        int srcRowOffset,
+        int dstStride)
+            : m_srcSubRectangle(sourceDataSubRectangle)
+            , m_depth(depth)
+            , m_unpackImageHeight(unpackImageHeight)
+            , m_srcStart(srcStart)
+            , m_dstStart(dstStart)
+            , m_srcStride(srcStride)
+            , m_srcRowOffset(srcRowOffset)
+            , m_dstStride(dstStride)
+            , m_success(false)
     {
         const unsigned MaxNumberOfComponents = 4;
         const unsigned MaxBytesPerComponent  = 4;
-        m_unpackedIntermediateSrcData = makeUniqueArray<uint8_t>((Checked<size_t>(m_width) * MaxNumberOfComponents * MaxBytesPerComponent).unsafeGet());
+        m_unpackedIntermediateSrcData = makeUniqueArray<uint8_t>((Checked<size_t>(m_srcSubRectangle.width()) * MaxNumberOfComponents * MaxBytesPerComponent).unsafeGet());
 
         ASSERT(m_unpackedIntermediateSrcData.get());
     }
@@ -66,10 +77,12 @@ private:
     template<GraphicsContextGL::DataFormat SrcFormat, GraphicsContextGL::DataFormat DstFormat, GraphicsContextGL::AlphaOp alphaOp>
     ALWAYS_INLINE void convert();
 
-    const unsigned m_width, m_height;
+    const IntRect& m_srcSubRectangle;
+    const int m_depth;
+    const int m_unpackImageHeight;
     const void* const m_srcStart;
     void* const m_dstStart;
-    const int m_srcStride, m_dstStride;
+    const int m_srcStride, m_srcRowOffset, m_dstStride;
     bool m_success;
     UniqueArray<uint8_t> m_unpackedIntermediateSrcData;
 };

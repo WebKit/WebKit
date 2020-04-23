@@ -648,6 +648,9 @@ protected:
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalformat, GCGLenum format, GCGLenum type, GCGLsizei byteLength, const void* pixels);
     void texSubImage2DImpl(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLenum format, GCGLenum type, Image*, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha);
 
+    GraphicsContextGLOpenGL::PixelStoreParams getPackPixelStoreParams() const;
+    GraphicsContextGLOpenGL::PixelStoreParams getUnpackPixelStoreParams() const;
+
 #if !USE(ANGLE)
     bool checkTextureCompleteness(const char*, bool);
 

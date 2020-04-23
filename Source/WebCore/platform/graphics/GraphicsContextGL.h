@@ -669,46 +669,81 @@ public:
         TEXTURE_RECTANGLE_ARB = 0x84F5
     };
 
+    // Attempt to enumerate all possible native image formats to
+    // reduce the amount of temporary allocations during texture
+    // uploading. This enum must be public because it is accessed
+    // by non-member functions.
+    // "_S" postfix indicates signed type.
     enum class DataFormat : uint8_t {
         RGBA8 = 0,
-        RGBA16Little,
-        RGBA16Big,
+        RGBA8_S,
+        RGBA16,
+        RGBA16_S,
+        RGBA16Little, // CoreGraphics-specific source format.
+        RGBA16Big, // CoreGraphics-specific source format.
+        RGBA32,
+        RGBA32_S,
         RGBA16F,
         RGBA32F,
+        RGBA2_10_10_10,
         RGB8,
-        RGB16Little,
-        RGB16Big,
+        RGB8_S,
+        RGB16,
+        RGB16_S,
+        RGB16Little, // CoreGraphics-specific source format.
+        RGB16Big, // CoreGraphics-specific source format.
+        RGB32,
+        RGB32_S,
         RGB16F,
         RGB32F,
         BGR8,
         BGRA8,
-        BGRA16Little,
-        BGRA16Big,
+        BGRA16Little, // CoreGraphics-specific source format.
+        BGRA16Big, // CoreGraphics-specific source format.
         ARGB8,
-        ARGB16Little,
-        ARGB16Big,
+        ARGB16Little, // CoreGraphics-specific source format.
+        ARGB16Big, // CoreGraphics-specific source format.
         ABGR8,
         RGBA5551,
         RGBA4444,
         RGB565,
+        RGB10F11F11F,
+        RGB5999,
+        RG8,
+        RG8_S,
+        RG16,
+        RG16_S,
+        RG32,
+        RG32_S,
+        RG16F,
+        RG32F,
         R8,
-        R16Little,
-        R16Big,
+        R8_S,
+        R16,
+        R16_S,
+        R16Little, // CoreGraphics-specific source format.
+        R16Big, // CoreGraphics-specific source format.
+        R32,
+        R32_S,
         R16F,
         R32F,
         RA8,
-        RA16Little,
-        RA16Big,
+        RA16Little, // CoreGraphics-specific source format.
+        RA16Big, // CoreGraphics-specific source format.
         RA16F,
         RA32F,
         AR8,
-        AR16Little,
-        AR16Big,
+        AR16Little, // CoreGraphics-specific source format.
+        AR16Big, // CoreGraphics-specific source format.
         A8,
-        A16Little,
-        A16Big,
+        A16Little, // CoreGraphics-specific source format.
+        A16Big, // CoreGraphics-specific source format.
         A16F,
         A32F,
+        D16,
+        D32,
+        D32F,
+        DS24_8,
         NumFormats
     };
 
@@ -782,6 +817,12 @@ public:
         case DataFormat::RGBA32F:
         case DataFormat::RGBA4444:
         case DataFormat::RGBA5551:
+        case DataFormat::RGBA8_S:
+        case DataFormat::RGBA16:
+        case DataFormat::RGBA16_S:
+        case DataFormat::RGBA32:
+        case DataFormat::RGBA32_S:
+        case DataFormat::RGBA2_10_10_10:
             return true;
         default:
             return false;
@@ -811,6 +852,32 @@ public:
         case DataFormat::RA16F:
         case DataFormat::RA32F:
         case DataFormat::AR8:
+        case DataFormat::RGBA8_S:
+        case DataFormat::RGBA16:
+        case DataFormat::RGBA16_S:
+        case DataFormat::RGBA32:
+        case DataFormat::RGBA32_S:
+        case DataFormat::RGBA2_10_10_10:
+        case DataFormat::RGB8_S:
+        case DataFormat::RGB16:
+        case DataFormat::RGB16_S:
+        case DataFormat::RGB32:
+        case DataFormat::RGB32_S:
+        case DataFormat::RGB10F11F11F:
+        case DataFormat::RGB5999:
+        case DataFormat::RG8:
+        case DataFormat::RG8_S:
+        case DataFormat::RG16:
+        case DataFormat::RG16_S:
+        case DataFormat::RG32:
+        case DataFormat::RG32_S:
+        case DataFormat::RG16F:
+        case DataFormat::RG32F:
+        case DataFormat::R8_S:
+        case DataFormat::R16:
+        case DataFormat::R16_S:
+        case DataFormat::R32:
+        case DataFormat::R32_S:
             return true;
         default:
             return false;
