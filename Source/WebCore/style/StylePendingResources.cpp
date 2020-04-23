@@ -43,7 +43,7 @@ namespace WebCore {
 namespace Style {
 
 // <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes>
-enum class LoadPolicy { NoCORS, Anonymous };
+enum class LoadPolicy { CORS, NoCORS, Anonymous };
 static void loadPendingImage(Document& document, const StyleImage* styleImage, const Element* element, LoadPolicy loadPolicy = LoadPolicy::NoCORS)
 {
     if (!styleImage || !styleImage->isPending())
@@ -53,11 +53,19 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = isInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    if (loadPolicy == LoadPolicy::Anonymous && !isInUserAgentShadowTree && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
-        options.mode = FetchOptions::Mode::Cors;
-        options.credentials = FetchOptions::Credentials::SameOrigin;
-        options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
-        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    if (!isInUserAgentShadowTree && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
+        switch (loadPolicy) {
+        case LoadPolicy::Anonymous:
+            options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+            FALLTHROUGH;
+        case LoadPolicy::CORS:
+            options.mode = FetchOptions::Mode::Cors;
+            options.credentials = FetchOptions::Credentials::SameOrigin;
+            options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+            break;
+        case LoadPolicy::NoCORS:
+            break;
+        }
     }
 
     const_cast<StyleImage&>(*styleImage).load(document.cachedResourceLoader(), options);
@@ -91,7 +99,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
     // the image used as the mask. As a means to mitigate such attacks CSS mask images and shape-outside
     // images are retreived in "Anonymous" mode, which uses a potentially CORS-enabled fetch.
     for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
-        loadPendingImage(document, maskLayer->image(), element, LoadPolicy::Anonymous);
+        loadPendingImage(document, maskLayer->image(), element, LoadPolicy::CORS);
 
     if (style.shapeOutside())
         loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::Anonymous);

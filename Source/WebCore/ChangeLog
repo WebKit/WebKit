@@ -1,5 +1,25 @@
 2020-04-23  Alex Christensen  <achristensen@webkit.org>
 
+        Allow credentials for same-origin css mask images
+        https://bugs.webkit.org/show_bug.cgi?id=210895
+        <rdar://problem/60093888>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/security/css-mask-image-credentials.html
+
+        r230006 went a step too far in restricting what is allowed with css mask images.
+        Basic authentication credentials should be allowed with such requests as they are in Chrome and Firefox.
+        This can be seen by doing run-webkit-httpd then opening http://127.0.0.1:8000/security/css-mask-image-credentials.html
+        In Chrome and Firefox you'll see it forward to a page that has a blue square.
+        In Safari before this change you'll see a yellow square and a basic authentication prompt.
+        In Safari after this change you'll see the same blue square you see in Chrome and Firefox.
+
+        * style/StylePendingResources.cpp:
+        (WebCore::Style::loadPendingImage):
+
+2020-04-23  Alex Christensen  <achristensen@webkit.org>
+
         Jesus Calling app needs more WebSQL
         https://bugs.webkit.org/show_bug.cgi?id=210889
         <rdar://problem/61795507>

@@ -1,3 +1,16 @@
+2020-04-23  Alex Christensen  <achristensen@webkit.org>
+
+        Allow credentials for same-origin css mask images
+        https://bugs.webkit.org/show_bug.cgi?id=210895
+        <rdar://problem/60093888>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/css-mask-image-credentials-expected.html: Added.
+        * http/tests/security/css-mask-image-credentials.html: Added.
+        * http/tests/security/resources/css-mask-image-credentials-2.html: Added.
+        * http/tests/security/resources/image-credential-check.php: Added.
+
 2020-04-23  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Update texture packing code for software uploads from DOM
