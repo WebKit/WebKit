@@ -1866,25 +1866,76 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
 #endif
     }
 
-    // The idea is to pick the largest number such that radix ** lengthLimitForBigInt32 <= INT32_MAX
     unsigned lengthLimitForBigInt32;
+#if USE(BIGINT32)
+    static_assert(sizeof(Digit) >= sizeof(uint64_t));
+    // The idea is to pick the limit such that:
+    // radix ** lengthLimitForBigInt32 >= INT32_MAX
+    // radix ** (lengthLimitForBigInt32 - 1) <= INT32_MAX
+#if ASSERT_ENABLED
+    auto limitWorks = [&] {
+        double lengthLimit = lengthLimitForBigInt32;
+        double lowerLimit = pow(static_cast<double>(radix), lengthLimit - 1);
+        double upperLimit = pow(static_cast<double>(radix), lengthLimit);
+        double target = std::numeric_limits<int32_t>::max();
+        return lowerLimit <= target && target <= upperLimit && upperLimit <= std::numeric_limits<int64_t>::max();
+    };
+#endif
     switch (radix) {
     case 2:
-        lengthLimitForBigInt32 = 30;
+        lengthLimitForBigInt32 = 31;
+        ASSERT(limitWorks());
         break;
     case 8:
-        lengthLimitForBigInt32 = 10;
+        lengthLimitForBigInt32 = 11;
+        ASSERT(limitWorks());
         break;
     case 10:
-        lengthLimitForBigInt32 = 9;
+        lengthLimitForBigInt32 = 10;
+        ASSERT(limitWorks());
         break;
     case 16:
-        lengthLimitForBigInt32 = 7;
+        lengthLimitForBigInt32 = 8;
+        ASSERT(limitWorks());
         break;
     default:
         lengthLimitForBigInt32 = 1;
         break;
     }
+#else
+    // The idea is to pick the largest limit such that:
+    // radix ** lengthLimitForBigInt32 <= INT32_MAX
+#if ASSERT_ENABLED
+    auto limitWorks = [&] {
+        double lengthLimit = lengthLimitForBigInt32;
+        double valueLimit = pow(static_cast<double>(radix), lengthLimit);
+        double overValueLimit = pow(static_cast<double>(radix), lengthLimit + 1);
+        double target = std::numeric_limits<int32_t>::max();
+        return valueLimit <= target && target < overValueLimit;
+    };
+#endif
+    switch (radix) {
+    case 2:
+        lengthLimitForBigInt32 = 30;
+        ASSERT(limitWorks());
+        break;
+    case 8:
+        lengthLimitForBigInt32 = 10;
+        ASSERT(limitWorks());
+        break;
+    case 10:
+        lengthLimitForBigInt32 = 9;
+        ASSERT(limitWorks());
+        break;
+    case 16:
+        lengthLimitForBigInt32 = 7;
+        ASSERT(limitWorks());
+        break;
+    default:
+        lengthLimitForBigInt32 = 1;
+        break;
+    }
+#endif // USE(BIGINT32)
 
     JSBigInt* heapResult = nullptr;
 
@@ -1893,17 +1944,17 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
     unsigned limitA = 'A' + (static_cast<int32_t>(radix) - 10);
     unsigned initialLength = length - p;
     while (p < length) {
-        int32_t digit = 0;
-        Checked<int32_t, CrashOnOverflow> multiplier = 1;
-        for (unsigned i = 0; i < lengthLimitForBigInt32 && p < length ; ++i, ++p) {
+        Checked<uint64_t, CrashOnOverflow> digit = 0;
+        Checked<uint64_t, CrashOnOverflow> multiplier = 1;
+        for (unsigned i = 0; i < lengthLimitForBigInt32 && p < length; ++i, ++p) {
             digit *= radix;
             multiplier *= radix;
             if (data[p] >= '0' && data[p] < limit0)
-                digit += data[p] - '0';
+                digit += static_cast<uint64_t>(data[p] - '0');
             else if (data[p] >= 'a' && data[p] < limita)
-                digit += data[p] - 'a' + 10;
+                digit += static_cast<uint64_t>(data[p] - 'a' + 10);
             else if (data[p] >= 'A' && data[p] < limitA)
-                digit += data[p] - 'A' + 10;
+                digit += static_cast<uint64_t>(data[p] - 'A' + 10);
             else {
                 if (errorParseMode == ErrorParseMode::ThrowExceptions) {
                     ASSERT(globalObject);
@@ -1912,17 +1963,22 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
                 return JSValue();
             }
         }
-        ASSERT(digit < multiplier.unsafeGet());
 
         if (!heapResult) {
             if (p == length) {
+                ASSERT(digit.unsafeGet() <= std::numeric_limits<int64_t>::max());
+                int64_t maybeResult = digit.unsafeGet();
+                ASSERT(maybeResult >= 0);
                 if (sign == ParseIntSign::Signed)
-                    digit *= -1;
+                    maybeResult *= -1;
+
+                if (static_cast<int64_t>(static_cast<int32_t>(maybeResult)) == maybeResult) {
 #if USE(BIGINT32)
-                return JSValue(JSValue::JSBigInt32, digit);
+                    return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(maybeResult));
 #else
-                return createFrom(vm, static_cast<int64_t>(digit));
+                    return JSBigInt::createFrom(vm, static_cast<int32_t>(maybeResult));
 #endif
+                }
             }
             heapResult = allocateFor(globalObject, vm, radix, initialLength);
             RETURN_IF_EXCEPTION(scope, JSValue());
@@ -1931,7 +1987,10 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
                 return JSValue();
             heapResult->initialize(InitializationType::WithZero);
         }
-        heapResult->inplaceMultiplyAdd(static_cast<Digit>(multiplier.unsafeGet()), static_cast<Digit>(digit));
+
+        ASSERT(static_cast<uint64_t>(static_cast<Digit>(multiplier.unsafeGet())) == multiplier.unsafeGet());
+        ASSERT(static_cast<uint64_t>(static_cast<Digit>(digit.unsafeGet())) == digit.unsafeGet());
+        heapResult->inplaceMultiplyAdd(static_cast<Digit>(multiplier.unsafeGet()), static_cast<Digit>(digit.unsafeGet()));
     }
 
     heapResult->setSign(sign == ParseIntSign::Signed);

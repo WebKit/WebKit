@@ -275,6 +275,9 @@ static EncodedJSValue JSC_HOST_CALL functionCreateHeapBigInt(JSGlobalObject*, Ca
 #if USE(BIGINT32)
 static EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject*, CallFrame*);
 #endif
+static EncodedJSValue JSC_HOST_CALL functionUseBigInt32(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionIsBigInt32(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionIsHeapBigInt(JSGlobalObject*, CallFrame*);
 
 static EncodedJSValue JSC_HOST_CALL functionPrintStdOut(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL functionPrintStdErr(JSGlobalObject*, CallFrame*);
@@ -550,6 +553,9 @@ private:
 #if USE(BIGINT32)
         addFunction(vm, "createBigInt32", functionCreateBigInt32, 1);
 #endif
+        addFunction(vm, "useBigInt32", functionUseBigInt32, 0);
+        addFunction(vm, "isBigInt32", functionIsBigInt32, 1);
+        addFunction(vm, "isHeapBigInt", functionIsHeapBigInt, 1);
 
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
 
@@ -2299,6 +2305,30 @@ EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject* globalObject
     return { };
 }
 #endif
+
+EncodedJSValue JSC_HOST_CALL functionUseBigInt32(JSGlobalObject*, CallFrame*)
+{
+#if USE(BIGINT32)
+    return JSValue::encode(jsBoolean(true));
+#else
+    return JSValue::encode(jsBoolean(false));
+#endif
+}
+
+EncodedJSValue JSC_HOST_CALL functionIsBigInt32(JSGlobalObject*, CallFrame* callFrame)
+{
+#if USE(BIGINT32)
+    return JSValue::encode(jsBoolean(callFrame->argument(0).isBigInt32()));
+#else
+    UNUSED_PARAM(callFrame);
+    return JSValue::encode(jsBoolean(false));
+#endif
+}
+
+EncodedJSValue JSC_HOST_CALL functionIsHeapBigInt(JSGlobalObject*, CallFrame* callFrame)
+{
+    return JSValue::encode(jsBoolean(callFrame->argument(0).isHeapBigInt()));
+}
 
 EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
