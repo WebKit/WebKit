@@ -1,3 +1,14 @@
+2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] branchIfBigInt32 can use BigInt32Mask and remove branchIfNumber filter
+        https://bugs.webkit.org/show_bug.cgi?id=210870
+
+        Reviewed by Saam Barati.
+
+        * stress/anybigintuse-should-filter-number-correctly.js: Added.
+        (shouldBe):
+        (test):
+
 2020-04-22  Saam Barati  <sbarati@apple.com>
 
         BigInt32 parsing should be precise

@@ -1,3 +1,62 @@
+2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] branchIfBigInt32 can use BigInt32Mask and remove branchIfNumber filter
+        https://bugs.webkit.org/show_bug.cgi?id=210870
+
+        Reviewed by Saam Barati.
+
+        By using BigInt32Mask, we can detect BigInt32 without filtering Numbers. In this patch,
+
+        1. Remove branchIfBigInt32KnownNotNumber and branchIfNotBigInt32KnownNotNumber. And always use branchBigInt32 and branchNotBigInt32 instead.
+        2. Remove branchIfNumber type filtering in DFG.
+        3. Use BigInt32Mask based scheme in FTL.
+        4. Add and64(TrustedImm64, RegisterID) implementations in MacroAssembler.
+        5. Add TagRegistersMode version in branchIfBigInt. We use numberTagRegister to produce really efficient code[1] by avoiding large constant materialization.
+
+        [1]: From
+                mov %rax, %rdx
+                mov $0xfffe000000000012, %r11
+                and %r11, %rdx
+                cmp $0x12, %rdx
+             To
+                lea 0x12(%r14), %rdx
+                and %rax, %rdx
+                cmp $0x12, %rdx
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::and64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and64):
+        * bytecode/ArithProfile.cpp:
+        (JSC::ArithProfile<BitfieldType>::emitObserveResult):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBigInt32):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumeric):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::lowBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotAnyBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateBigInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateAnyBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32KnownNotCell): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isBigInt32KnownNotNumber): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt32KnownNotNumber): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::isNotAnyBigIntKnownNotNumber): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfBigInt32):
+        (JSC::AssemblyHelpers::branchIfNotBigInt32):
+        (JSC::AssemblyHelpers::emitTypeOf):
+        (JSC::AssemblyHelpers::branchIfBigInt32KnownNotNumber): Deleted.
+        (JSC::AssemblyHelpers::branchIfNotBigInt32KnownNotNumber): Deleted.
+
 2020-04-22  Saam Barati  <sbarati@apple.com>
 
         BigInt32 parsing should be precise

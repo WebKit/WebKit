@@ -933,38 +933,37 @@ public:
 #if USE(BIGINT32)
     Jump branchIfBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
     {
-        Jump number = branchIfNumber(gpr, mode);
-        Jump bigInt32 = branchIfBigInt32KnownNotNumber(gpr, tempGPR);
-        number.link(this);
-        return bigInt32;
-    }
-    JumpList branchIfNotBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
-    {
-        JumpList result;
-        result.append(branchIfNumber(gpr, mode));
-        Jump bigInt32 = branchIfBigInt32KnownNotNumber(gpr, tempGPR);
-        result.append(jump());
-        bigInt32.link(this);
-        return result;
-    }
-
-    Jump branchIfBigInt32KnownNotNumber(GPRReg gpr, GPRReg tempGPR)
-    {
         ASSERT(tempGPR != InvalidGPRReg);
+        if (mode == HaveTagRegisters && gpr != tempGPR) {
+            static_assert(JSValue::BigInt32Mask == JSValue::NumberTag + JSValue::BigInt32Tag);
+            add64(TrustedImm32(JSValue::BigInt32Tag), GPRInfo::numberTagRegister, tempGPR);
+            and64(gpr, tempGPR);
+            return branch64(Equal, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
+        }
         move(gpr, tempGPR);
-        and64(TrustedImm32(JSValue::BigInt32Tag), tempGPR);
+        and64(TrustedImm64(JSValue::BigInt32Mask), tempGPR);
         return branch64(Equal, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
     }
-    Jump branchIfNotBigInt32KnownNotNumber(JSValueRegs regs, GPRReg tempGPR)
-    {
-        return branchIfNotBigInt32KnownNotNumber(regs.gpr(), tempGPR);
-    }
-    Jump branchIfNotBigInt32KnownNotNumber(GPRReg gpr, GPRReg tempGPR)
+    Jump branchIfNotBigInt32(GPRReg gpr, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
     {
         ASSERT(tempGPR != InvalidGPRReg);
+        if (mode == HaveTagRegisters && gpr != tempGPR) {
+            static_assert(JSValue::BigInt32Mask == JSValue::NumberTag + JSValue::BigInt32Tag);
+            add64(TrustedImm32(JSValue::BigInt32Tag), GPRInfo::numberTagRegister, tempGPR);
+            and64(gpr, tempGPR);
+            return branch64(NotEqual, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
+        }
         move(gpr, tempGPR);
-        and64(TrustedImm32(JSValue::BigInt32Tag), tempGPR);
+        and64(TrustedImm64(JSValue::BigInt32Mask), tempGPR);
         return branch64(NotEqual, tempGPR, TrustedImm32(JSValue::BigInt32Tag));
+    }
+    Jump branchIfBigInt32(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    {
+        return branchIfBigInt32(regs.gpr(), tempGPR, mode);
+    }
+    Jump branchIfNotBigInt32(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    {
+        return branchIfNotBigInt32(regs.gpr(), tempGPR, mode);
     }
 #endif // USE(BIGINT32)
 
@@ -1833,7 +1832,7 @@ public:
         notBoolean.link(this);
 
 #if USE(BIGINT32)
-        Jump notBigInt32 = branchIfNotBigInt32KnownNotNumber(regs, tempGPR);
+        Jump notBigInt32 = branchIfNotBigInt32(regs, tempGPR);
         functor(TypeofType::BigInt, false);
         notBigInt32.link(this);
 #endif

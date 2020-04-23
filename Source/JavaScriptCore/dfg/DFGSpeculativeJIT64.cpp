@@ -1469,8 +1469,7 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
         if (type & ~SpecBigInt32) {
             CCallHelpers::JumpList failureCases;
             GPRReg tempGPR = allocate();
-            failureCases.append(m_jit.branchIfNumber(gpr));
-            failureCases.append(m_jit.branchIfNotBigInt32KnownNotNumber(gpr, tempGPR));
+            failureCases.append(m_jit.branchIfNotBigInt32(gpr, tempGPR));
             speculationCheck(BadType, JSValueRegs(gpr), edge, failureCases);
             unlock(tempGPR);
         }

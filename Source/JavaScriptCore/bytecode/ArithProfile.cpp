@@ -49,7 +49,7 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueReg
     notDouble.link(&jit);
 
 #if USE(BIGINT32)
-    CCallHelpers::Jump notBigInt32 = jit.branchIfNotBigInt32KnownNotNumber(regs, tempGPR);
+    CCallHelpers::Jump notBigInt32 = jit.branchIfNotBigInt32(regs, tempGPR, mode);
     emitSetBigInt32(jit);
     done.append(jit.jump());
     notBigInt32.link(&jit);

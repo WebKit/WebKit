@@ -755,7 +755,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 
     notDouble.link(this);
 #if USE(BIGINT32)
-    auto isNotBigInt32 = branchIfNotBigInt32KnownNotNumber(value.gpr(), result);
+    auto isNotBigInt32 = branchIfNotBigInt32(value.gpr(), result);
     move(value.gpr(), result);
     urshift64(TrustedImm32(16), result);
     compare32(invert ? Equal : NotEqual, result, TrustedImm32(0), result);
@@ -856,7 +856,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 
     notDouble.link(this);
 #if USE(BIGINT32)
-    auto isNotBigInt32 = branchIfNotBigInt32KnownNotNumber(value.gpr(), scratch);
+    auto isNotBigInt32 = branchIfNotBigInt32(value.gpr(), scratch);
     move(value.gpr(), scratch);
     urshift64(TrustedImm32(16), scratch);
     truthy.append(branchTest32(invert ? Zero : NonZero, scratch));

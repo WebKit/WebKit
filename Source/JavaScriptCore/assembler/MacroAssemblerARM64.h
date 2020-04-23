@@ -417,7 +417,16 @@ public:
 
     void and64(TrustedImmPtr imm, RegisterID dest)
     {
-        LogicalImmediate logicalImm = LogicalImmediate::create64(reinterpret_cast<uint64_t>(imm.m_value));
+        intptr_t value = imm.asIntptr();
+        if constexpr (sizeof(void*) == sizeof(uint64_t))
+            and64(TrustedImm64(value), dest);
+        else
+            and64(TrustedImm32(static_cast<int32_t>(value)), dest);
+    }
+
+    void and64(TrustedImm64 imm, RegisterID dest)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create64(bitwise_cast<uint64_t>(imm.m_value));
 
         if (logicalImm.isValid()) {
             m_assembler.and_<64>(dest, dest, logicalImm);
