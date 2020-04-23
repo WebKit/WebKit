@@ -1404,3 +1404,94 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 
     TestWebKitAPI::Util::run(&doneFlag);
 }
+
+TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
+{
+    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+
+    auto defaultFileManager = [NSFileManager defaultManager];
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
+    NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
+
+    // Load an incorrect database schema with pre-seeded ITP data.
+    // This data should be migrated into the new database.
+    [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"incorrectCreateTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
+    [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool: sharedProcessPool];
+    configuration.get().websiteDataStore = dataStore;
+
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    static bool doneFlag;
+    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&doneFlag);
+    
+    // Check that the pre-seeded data is in the new database after migrating.
+    doneFlag = false;
+    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler: ^(BOOL isRegistered) {
+        EXPECT_TRUE(isRegistered);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+    
+    // To make sure creation of unique indices is maintained, try to insert the same data
+    // again and make sure the timestamp is replaced, and there is only one entry.
+    static bool statisticsUpdated = false;
+    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
+        if (![message isEqualToString:@"Statistics Updated"])
+            return;
+        statisticsUpdated = true;
+    }];
+    
+    doneFlag = false;
+    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] shouldScheduleNotification:NO completionHandler: ^() {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+    
+    statisticsUpdated = false;
+    [webView loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    // Wait for the statistics to be updated in the network process.
+    TestWebKitAPI::Util::run(&statisticsUpdated);
+
+    doneFlag = false;
+    [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
+    {
+        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 1);
+        NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
+
+        // evil3
+        _WKResourceLoadStatisticsThirdParty *thirdParty = [thirdPartyDomains nextObject];
+        EXPECT_WK_STREQ(thirdParty.thirdPartyDomain, @"webkit.org");
+
+        NSEnumerator *enumerator = [thirdParty.underFirstParties objectEnumerator];
+        _WKResourceLoadStatisticsFirstParty *firstParty = [enumerator nextObject];
+
+        EXPECT_WK_STREQ(firstParty.firstPartyDomain, @"apple.com");
+
+        // Check timestamp for first party was updated.
+        NSTimeInterval firstPartyLastUpdated = firstParty.timeLastUpdated;
+        EXPECT_GT(firstPartyLastUpdated, 0);
+
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+}

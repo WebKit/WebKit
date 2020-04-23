@@ -44,6 +44,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
+#include <WebCore/SQLiteTransaction.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
@@ -179,27 +180,27 @@ constexpr auto createTopLevelDomains = "CREATE TABLE TopLevelDomains ("
 constexpr auto createStorageAccessUnderTopFrameDomains = "CREATE TABLE StorageAccessUnderTopFrameDomains ("
     "domainID INTEGER NOT NULL, topLevelDomainID INTEGER NOT NULL ON CONFLICT FAIL, "
     "CONSTRAINT fkDomainID FOREIGN KEY(domainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topLevelDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topLevelDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
     
 constexpr auto createTopFrameUniqueRedirectsTo = "CREATE TABLE TopFrameUniqueRedirectsTo ("
     "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
-    "FOREIGN KEY(sourceDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(sourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE TABLE TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ("
     "sourceDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
-    "FOREIGN KEY(sourceDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(sourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueRedirectsFrom ("
     "targetDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
-    "FOREIGN KEY(targetDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(targetDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameLinkDecorationsFrom = "CREATE TABLE TopFrameLinkDecorationsFrom ("
     "toDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, fromDomainID INTEGER NOT NULL, "
-    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(toDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameLoadedThirdPartyScripts = "CREATE TABLE TopFrameLoadedThirdPartyScripts ("
     "topFrameDomainID INTEGER NOT NULL, subresourceDomainID INTEGER NOT NULL, "
@@ -209,12 +210,12 @@ constexpr auto createTopFrameLoadedThirdPartyScripts = "CREATE TABLE TopFrameLoa
 constexpr auto createSubframeUnderTopFrameDomains = "CREATE TABLE SubframeUnderTopFrameDomains ("
     "subFrameDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topFrameDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
     
 constexpr auto createSubresourceUnderTopFrameDomains = "CREATE TABLE SubresourceUnderTopFrameDomains ("
     "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(topFrameDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "FOREIGN KEY(topFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
     
 constexpr auto createSubresourceUniqueRedirectsTo = "CREATE TABLE SubresourceUniqueRedirectsTo ("
     "subresourceDomainID INTEGER NOT NULL, lastUpdated REAL NOT NULL, toDomainID INTEGER NOT NULL, "
@@ -248,6 +249,11 @@ static const String ObservedDomainsTableSchemaV1()
 static const String ObservedDomainsTableSchemaV1Alternate()
 {
     return "CREATE TABLE \"ObservedDomains\" (domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)";
+}
+
+static bool needsNewCreateTableSchema(const String& schema)
+{
+    return schema.contains("REFERENCES TopLevelDomains");
 }
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
@@ -289,7 +295,8 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     ASSERT(!RunLoop::isMain());
 
     openAndDropOldDatabaseIfNecessary();
-    
+    enableForeignKeys();
+
     // Since we are using a workerQueue, the sequential dispatch blocks may be called by different threads.
     m_database.disableThreadingChecks();
 
@@ -358,6 +365,90 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema()
     return hasAllTables;
 }
 
+void ResourceLoadStatisticsDatabaseStore::enableForeignKeys()
+{
+    SQLiteStatement enableForeignKeys(m_database, "PRAGMA foreign_keys = ON");
+    if (enableForeignKeys.prepare() != SQLITE_OK || enableForeignKeys.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::enableForeignKeys failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
+bool ResourceLoadStatisticsDatabaseStore::isMigrationNecessary()
+{
+    // Check a table for a reference to TopLevelDomains, a sign of the old schema.
+    SQLiteStatement statement(m_database, "SELECT type, sql FROM sqlite_master WHERE type = 'table' AND tbl_name='TopFrameUniqueRedirectsTo'");
+    if (statement.prepare() != SQLITE_OK) {
+        LOG_ERROR("Unable to prepare statement to fetch schema.");
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    // If there is no table at all, or there is an error executing the fetch, delete and reopen the file.
+    if (statement.step() != SQLITE_ROW) {
+        LOG_ERROR("Error executing statement to fetch schema.");
+        m_database.close();
+        FileSystem::deleteFile(m_storageDirectoryPath);
+        openITPDatabase();
+        return false;
+    }
+    
+    auto oldSchema = String(statement.getColumnText(1));
+    return needsNewCreateTableSchema(oldSchema);
+}
+
+void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
+{
+    if (!isMigrationNecessary())
+        return;
+
+    SQLiteTransaction transaction(m_database);
+    transaction.begin();
+
+    for (auto& table : tables) {
+        auto query = makeString("ALTER TABLE ", table, " RENAME TO _", table);
+        SQLiteStatement alterTable(m_database, query);
+        if (alterTable.prepare() != SQLITE_OK || alterTable.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to rename table, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    if (!createSchema()) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to create schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    for (auto& table : tables) {
+        auto query = makeString("INSERT INTO ", table, " SELECT * FROM _", table);
+        SQLiteStatement migrateTableData(m_database, query);
+        if (migrateTableData.prepare() != SQLITE_OK || migrateTableData.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to migrate schema, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        
+        auto dropQuery = makeString("DROP TABLE _", table);
+        SQLiteStatement dropTableQuery(m_database, dropQuery);
+        if (dropTableQuery.prepare() != SQLITE_OK || dropTableQuery.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to drop temporary tables, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    transaction.commit();
+
+    if (!createUniqueIndices()) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to create unique indices, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+}
+
 void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
 {
     openITPDatabase();
@@ -399,7 +490,8 @@ void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
         m_database.close();
         FileSystem::deleteFile(m_storageDirectoryPath);
         openITPDatabase();
-    }
+    } else
+        migrateDataToNewTablesIfNecessary();
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isEmpty() const

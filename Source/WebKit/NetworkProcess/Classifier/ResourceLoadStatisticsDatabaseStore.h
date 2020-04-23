@@ -142,6 +142,9 @@ public:
 private:
     void openITPDatabase();
     bool isCorrectTableSchema();
+    void enableForeignKeys();
+    bool isMigrationNecessary();
+    void migrateDataToNewTablesIfNecessary();
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndDropOldDatabaseIfNecessary();
