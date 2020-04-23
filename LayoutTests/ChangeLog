@@ -1,3 +1,12 @@
+2020-04-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update expectations after r259705
+        https://bugs.webkit.org/show_bug.cgi?id=210904
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-04-23  Youenn Fablet  <youenn@apple.com>
 
         getDisplayMedia is not respecting aspect ratio with max constraints

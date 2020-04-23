@@ -492,10 +492,6 @@ webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 
-webkit.org/b/202234 storage/indexeddb/request-size-estimate.html [ Failure ]
-
-webkit.org/b/202240 http/tests/cookies/private-cookie-storage.html [ Failure ]
-
 webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
 
@@ -629,8 +625,6 @@ webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
-
-webkit.org/b/208180 http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
 
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 
@@ -1317,7 +1311,6 @@ webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-05-t
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-08-t-manual.svg [ Failure Pass ]
 webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-60-t-manual.svg [ Failure Pass ]
 
-webkit.org/b/208753 http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Failure Crash ]
 webkit.org/b/208753 http/tests/adClickAttribution/send-attribution-conversion-request.html [ Failure Crash ]
 webkit.org/b/208753 http/tests/adClickAttribution/expired-attributions-removed.html [ Crash Pass ]
 webkit.org/b/208753 http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html [ Crash Pass ]
@@ -1332,6 +1325,7 @@ webkit.org/b/202736 http/tests/cache-storage/cache-clearing-origin.https.html [ 
 webkit.org/b/202736 http/tests/cache-storage/cache-origins.https.html [ Failure Pass ]
 webkit.org/b/202736 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
 webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
+webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Failure Pass ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]
@@ -1489,9 +1483,6 @@ webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
-
-webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
-webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
@@ -2253,8 +2244,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 
-webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
-
 webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
@@ -2266,9 +2255,6 @@ webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html 
 
 webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/201981 http/tests/workers/service/self_registration.html [ Failure ]
-webkit.org/b/201981 http/tests/workers/service/service-worker-getRegistration.html [ Failure ]
-webkit.org/b/201981 http/wpt/service-workers/extendableEvent.https.html [ Failure ]
 webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 webkit.org/b/201981 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/201981 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
@@ -2298,11 +2284,7 @@ webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.com
 
 webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
 
-webkit.org/b/202736 http/wpt/cache-storage/cache-quota-add.any.html [ Failure ]
 webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
-webkit.org/b/202736 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
-webkit.org/b/202736 http/tests/IndexedDB/storage-limit.https.html [ Failure ]
-webkit.org/b/202736 storage/indexeddb/storage-limit.html [ Failure ]
 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
 
