@@ -1,3 +1,23 @@
+2020-04-22  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Soft link QuickLookThumbnailing framework
+        https://bugs.webkit.org/show_bug.cgi?id=210894
+
+        Reviewed by Tim Horton.
+
+        Soft link QuickLookThumbnailing framework to solve build error.
+
+        No new tests. Unnecessary.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        (-[WKQLThumbnailLoadOperation initWithURL:identifier:]):
+        (-[WKQLThumbnailLoadOperation start]):
+        * UIProcess/QuickLookThumbnailingSPI.h: Added.
+        * UIProcess/QuickLookThumbnailingSoftLink.h: Added.
+        * UIProcess/QuickLookThumbnailingSoftLink.mm: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-04-22  Daniel Bates  <dabates@apple.com>
 
         Support toggling debug overlay for touch action region and editable element region independent from non-fast scrollable region
