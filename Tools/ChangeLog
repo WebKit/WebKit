@@ -1,3 +1,18 @@
+2020-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r260562.
+        https://bugs.webkit.org/show_bug.cgi?id=210924
+
+        It caused 3 new failures and 1 timeout in GTK API tests
+        (Requested by clopez on #webkit).
+
+        Reverted changeset:
+
+        "[GTK][WPE] White-list more GStreamer environment variables in
+        webkitpy"
+        https://bugs.webkit.org/show_bug.cgi?id=210854
+        https://trac.webkit.org/changeset/260562
+
 2020-04-23  Sihui Liu  <sihui_liu@apple.com>
 
         TextManipulationController should set range of paragraph using token's positions
