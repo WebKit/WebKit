@@ -3672,9 +3672,11 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
 
     case WebCore::SubmenuType: {
         auto menu = adoptNS([[NSMenu alloc] init]);
-
-        for (NSMenuItem *menuItem in createMenuItems(hitTestResult, item.subMenuItems()).get())
-            [menu addItem:menuItem];
+        {
+            auto submenuItems = createMenuItems(hitTestResult, item.subMenuItems());
+            for (NSMenuItem *menuItem in submenuItems.get())
+                [menu addItem:menuItem];
+        }
 
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
 
