@@ -1,5 +1,14 @@
 2020-04-22  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=210845
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKitLegacy.xcconfig: Move ICU-configuring macros to Platform.h.
+
+2020-04-22  Darin Adler  <darin@apple.com>
+
         [Cocoa] REGRESSION (r260485): Crash in Legacy WebKit createMenu item function (reproducible under Asan)
         https://bugs.webkit.org/show_bug.cgi?id=210888
 

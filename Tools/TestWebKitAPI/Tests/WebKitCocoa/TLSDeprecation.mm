@@ -310,7 +310,7 @@ TEST(TLSVersion, BackForwardNegotiatedLegacyTLS)
         { "/", { "hello" } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
     HTTPServer mixedContentServer({
-        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='https://127.0.0.1:", static_cast<unsigned>(insecureServer.port()), "/'></img>") } },
+        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='https://127.0.0.1:", insecureServer.port(), "/'></img>") } },
     }, HTTPServer::Protocol::Https);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -344,7 +344,7 @@ TEST(TLSVersion, Subresource)
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernTLSServer({
-        { "/", { makeString("<script>fetch('https://127.0.0.1:", static_cast<unsigned>(legacyTLSServer.port()), "/',{mode:'no-cors'})</script>") } },
+        { "/", { makeString("<script>fetch('https://127.0.0.1:", legacyTLSServer.port(), "/',{mode:'no-cors'})</script>") } },
         { "/pageWithoutSubresource", { "hello" }}
     }, HTTPServer::Protocol::Https);
     
@@ -378,7 +378,7 @@ TEST(TLSVersion, BackForwardHasOnlySecureContent)
         { "/", { "hello" } }
     });
     HTTPServer mixedContentServer({
-        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='http://127.0.0.1:", static_cast<unsigned>(insecureServer.port()), "/'></img>") } },
+        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='http://127.0.0.1:", insecureServer.port(), "/'></img>") } },
     }, HTTPServer::Protocol::Https);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();

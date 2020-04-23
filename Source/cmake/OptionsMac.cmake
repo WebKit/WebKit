@@ -119,5 +119,4 @@ set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(WebCore_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
 
-add_definitions(-DU_DISABLE_RENAMING=1)
 find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)

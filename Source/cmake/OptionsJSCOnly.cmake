@@ -95,7 +95,4 @@ else ()
     SET_AND_EXPOSE_TO_BUILD(WTF_DEFAULT_EVENT_LOOP 0)
 endif ()
 
-if (APPLE)
-    add_definitions(-DU_DISABLE_RENAMING=1)
-endif ()
 find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)

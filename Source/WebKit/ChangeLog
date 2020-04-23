@@ -1,3 +1,27 @@
+2020-04-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=210845
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/BaseTarget.xcconfig: Move ICU-configuring macros to Platform.h.
+
+        * Platform/unix/EnvironmentUtilities.h: Removed unneeded includes.
+        This sidesteps a problem with Apple's internal InstallAPI tool that happens
+        if StringView.h is included and Platform.h is not included first.
+
+        * UIProcess/API/cpp/WKRetainPtr.h: Removed unneeded includes, and used
+        #pragma once.
+
+        * UIProcess/Cocoa/PreferenceObserver.h: Moved most things out of the header,
+        since they don't need to be there.
+        * UIProcess/Cocoa/PreferenceObserver.mm: Moved them here including using a
+        class extension for the data member of WKPreferenceObserver.
+
+        * UIProcess/ios/fullscreen/FullscreenTouchSecheuristicParameters.h:
+        Removed unneeded WTF prefix.
+
 2020-04-22  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Soft link QuickLookThumbnailing framework

@@ -688,7 +688,7 @@ TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:", static_cast<unsigned>(server.port()))]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:", server.port())]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.parentNode.removeChild(theFrame)" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);

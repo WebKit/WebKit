@@ -27,8 +27,7 @@
 #pragma once
 
 #include "WKDeclarationSpecifiers.h"
-#include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebKit {
 

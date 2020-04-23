@@ -28,6 +28,7 @@
 #include "Test.h"
 
 #include <WebKit/EnvironmentUtilities.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 

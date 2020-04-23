@@ -29,6 +29,20 @@
 #import "WebProcessPool.h"
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 
+@interface WKUserDefaults : NSUserDefaults {
+@private
+    NSString *m_suiteName;
+@public
+    WKPreferenceObserver *m_observer;
+}
+@end
+
+@interface WKPreferenceObserver () {
+@private
+    Vector<RetainPtr<WKUserDefaults>> m_userDefaults;
+}
+@end
+
 @implementation WKUserDefaults
 
 - (void)_notifyObserversOfChangeFromValuesForKeys:(NSDictionary<NSString *, id> *)oldValues toValuesForKeys:(NSDictionary<NSString *, id> *)newValues

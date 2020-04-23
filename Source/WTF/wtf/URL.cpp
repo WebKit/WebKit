@@ -149,7 +149,7 @@ Optional<uint16_t> URL::port() const
 String URL::hostAndPort() const
 {
     if (auto port = this->port())
-        return makeString(host(), ':', static_cast<unsigned>(port.value()));
+        return makeString(host(), ':', port.value());
     return host().toString();
 }
 

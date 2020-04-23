@@ -1,3 +1,41 @@
+2020-04-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=210845
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig: Move ICU-configuring macros to Platform.h.
+
+        * wtf/Platform.h: Set macros here. The file says not to put things like this in it,
+        but in practice this is the right place to put something that we need set consistently
+        for all the WebKit projects.
+        - U_HIDE_DEPRECATED_API, to make sure we don't use it by accident.
+        - U_SHOW_CPLUSPLUS_API=0, to make sure we don't use it by accident.
+        - UCHAR_TYPE=char16_t when compiling C++, which is the default on most platforms,
+          but not the default in Apple's internal SDK.
+        - U_DISABLE_RENAMING when building on Apple platforms, important so we can link
+          to an older version of ICU and still load with a newer version.
+
+        * wtf/URL.cpp:
+        (WTF::URL::hostAndPort const): Get rid of an obsolete cast to unsigned to work
+        around uint16_t not being treated as a number by makeString.
+
+        * wtf/URLHelpers.cpp: Rework to not use deprecated USCRIPT_CODE_LIMIT.
+        (WTF::URLHelpers::whiteListIDNScript): Added overloads.
+        (WTF::URLHelpers::initializeDefaultIDNScriptWhiteList): Use an array of
+        UScriptCode instead of an array of strings.
+        (WTF::URLHelpers::allCharactersInIDNScriptWhiteList): Updated for the above.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::decodePercentEscapes): Use createCFString instead of converting to NString
+        and then typecasting.
+        (WTF::URLByTruncatingOneCharacterBeforeComponent): Updated to use a constexpr
+        instead of a macro.
+        (WTF::dataForURLComponentType): Ditto.
+        (WTF::URLByRemovingComponentAndSubsequentCharacter): Ditto.
+        (WTF::originalURLData): Ditto.
+
 2020-04-22  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Several fixes to GdkEvent APIs for GTK4

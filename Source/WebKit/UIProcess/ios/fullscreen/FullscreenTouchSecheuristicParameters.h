@@ -31,8 +31,8 @@
 namespace WebKit {
 
 struct FullscreenTouchSecheuristicParameters {
-    WTF::Seconds rampUpSpeed;
-    WTF::Seconds rampDownSpeed;
+    Seconds rampUpSpeed;
+    Seconds rampDownSpeed;
     double xWeight;
     double yWeight;
     double gamma;

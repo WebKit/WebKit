@@ -107,6 +107,17 @@
 #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
 #endif
 
+/* FIXME: This does not belong in Platform.h and should instead be included in another mechanism (compiler option, prefix header, config.h, etc) */
+/* ICU configuration. Some of these match ICU defaults on some platforms, but we would like them consistently set everywhere we build WebKit. */
+#define U_HIDE_DEPRECATED_API 1
+#define U_SHOW_CPLUSPLUS_API 0
+#ifdef __cplusplus
+#define UCHAR_TYPE char16_t
+#endif
+#if PLATFORM(COCOA)
+#define U_DISABLE_RENAMING 1
+#endif
+
 #if COMPILER(MSVC)
 #undef __STDC_FORMAT_MACROS
 #define __STDC_FORMAT_MACROS

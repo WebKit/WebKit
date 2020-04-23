@@ -36,11 +36,11 @@
 #import <wtf/Vector.h>
 #import <wtf/cf/CFURLExtras.h>
 
-#define URL_BYTES_BUFFER_LENGTH 2048
-
 namespace WTF {
 
 using namespace URLHelpers;
+
+constexpr unsigned urlBytesBufferLength = 2048;
 
 static BOOL readIDNScriptWhiteListFile(NSString *filename)
 {
@@ -94,13 +94,10 @@ void loadIDNScriptWhiteList()
     
 static String decodePercentEscapes(const String& string)
 {
-    NSString *substring = (NSString *)string;
-    substring = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(nullptr, (CFStringRef)substring, CFSTR("")));
-
+    NSString *substring = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(nullptr, string.createCFString().get(), CFSTR("")));
     if (!substring)
         return string;
-
-    return (String)substring;
+    return substring;
 }
 
 NSString *decodeHostName(NSString *string)
@@ -135,7 +132,7 @@ NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFURLComponentType
     if (fragRg.location == kCFNotFound)
         return URL;
 
-    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> urlBytes(URL_BYTES_BUFFER_LENGTH);
+    Vector<UInt8, urlBytesBufferLength> urlBytes(urlBytesBufferLength);
     CFIndex numBytes = CFURLGetBytes((__bridge CFURLRef)URL, urlBytes.data(), urlBytes.size());
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((__bridge CFURLRef)URL, nullptr, 0);
@@ -269,7 +266,7 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
 
 NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 {
-    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> allBytesBuffer(URL_BYTES_BUFFER_LENGTH);
+    Vector<UInt8, urlBytesBufferLength> allBytesBuffer(urlBytesBufferLength);
     CFIndex bytesFilled = CFURLGetBytes((__bridge CFURLRef)URL, allBytesBuffer.data(), allBytesBuffer.size());
     if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((__bridge CFURLRef)URL, nullptr, 0);
@@ -325,7 +322,7 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     // Remove one subsequent character.
     range.length++;
 
-    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> buffer(URL_BYTES_BUFFER_LENGTH);
+    Vector<UInt8, urlBytesBufferLength> buffer(urlBytesBufferLength);
     CFIndex numBytes = CFURLGetBytes((__bridge CFURLRef)URL, buffer.data(), buffer.size());
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((__bridge CFURLRef)URL, nullptr, 0);
@@ -355,8 +352,8 @@ NSURL *URLByRemovingUserInfo(NSURL *URL)
 
 NSData *originalURLData(NSURL *URL)
 {
-    UInt8 *buffer = (UInt8 *)malloc(URL_BYTES_BUFFER_LENGTH);
-    CFIndex bytesFilled = CFURLGetBytes((__bridge CFURLRef)URL, buffer, URL_BYTES_BUFFER_LENGTH);
+    UInt8 *buffer = (UInt8 *)malloc(urlBytesBufferLength);
+    CFIndex bytesFilled = CFURLGetBytes((__bridge CFURLRef)URL, buffer, urlBytesBufferLength);
     if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((__bridge CFURLRef)URL, nullptr, 0);
         buffer = (UInt8 *)realloc(buffer, bytesToAllocate);

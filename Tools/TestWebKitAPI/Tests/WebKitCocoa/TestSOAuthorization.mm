@@ -2551,7 +2551,7 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
-    auto origin = makeString("http://127.0.0.1:", static_cast<unsigned>(server.port()));
+    auto origin = makeString("http://127.0.0.1:", server.port());
     [webView _loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)origin]] shouldOpenExternalURLs:NO];
     [webView waitForMessage:(id)origin];
     [webView waitForMessage:@"SOAuthorizationDidStart"];

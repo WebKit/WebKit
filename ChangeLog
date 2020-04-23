@@ -1,3 +1,14 @@
+2020-04-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=210845
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/OptionsCommon.cmake: Move ICU-configuring macros to Platform.h.
+        * Source/cmake/OptionsJSCOnly.cmake: Ditto.
+        * Source/cmake/OptionsMac.cmake: Ditto.
+
 2020-04-22  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in WebKitTestRunner

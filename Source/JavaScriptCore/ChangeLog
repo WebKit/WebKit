@@ -1,3 +1,12 @@
+2020-04-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=210845
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig: Move ICU-configuring macros to Platform.h.
+
 2020-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] branchIfBigInt32 can use BigInt32Mask and remove branchIfNumber filter
