@@ -25,24 +25,28 @@
 
 #pragma once
 
-#include <wtf/Logger.h>
+#include "AccessibilityObjectInterface.h"
 
 namespace WebCore {
 
 class AXLogger {
 public:
-    AXLogger(const char* methodName);
+    AXLogger() = default;
+    AXLogger(const String& methodName);
     ~AXLogger();
+    void log(const String&);
+    void log(const AXCoreObject&);
 private:
-    RefPtr<Logger> m_logger;
-    WTFLogChannel& m_channel;
     String m_methodName;
 };
 
-#ifndef NDEBUG
-#define AXTRACE(methodName) AXLogger axLogger(methodName)
+#if LOG_DISABLED
+#define AXTRACE(methodName) (void)0
+#define AXLOG(x) (void)0
 #else
-#define AXTRACE(methodName)
-#endif // ifndef NDEBUG
+#define AXTRACE(methodName) AXLogger axLogger(methodName)
+#define AXLOG(x) AXLogger logger; \
+    logger.log(x)
+#endif // LOG_DISABLED
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2020-04-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add logging to core accessibility.
+        https://bugs.webkit.org/show_bug.cgi?id=210564
+        <rdar://problem/61863477>
+
+        Reviewed by Simon Fraser and Chris Fleizach.
+
+        - Use LOG and LOG_WITH_STREAM macros instead of WTF::Logger directly.
+        - Added logging of AXCoreObjects.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::AXLogger):
+        (WebCore::AXLogger::~AXLogger):
+        (WebCore::AXLogger::log):
+        (WebCore::operator<<):
+        * accessibility/AXLogger.h:
+        * accessibility/AccessibilityObjectInterface.h:
+
 2020-04-22  Daniel Bates  <dabates@apple.com>
 
         Support toggling debug overlay for touch action region and editable element region independent from non-fast scrollable region

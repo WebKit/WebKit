@@ -49,6 +49,10 @@ typedef struct _WebKitAccessible AccessibilityObjectWrapper;
 class AccessibilityObjectWrapper;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Node;
@@ -205,14 +209,14 @@ enum class AccessibilityRole {
     Tab,
     Table,
     TableHeaderContainer,
-    TextArea,
-    TextGroup,
     Term,
+    TextArea,
+    TextField,
+    TextGroup,
     Time,
     Tree,
     TreeGrid,
     TreeItem,
-    TextField,
     ToggleButton,
     Toolbar,
     Unknown,
@@ -1291,5 +1295,9 @@ inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const
 {
     return axObject && (this == axObject || axObject->isDescendantOfObject(this));
 }
+
+// Logging helpers.
+WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityRole);
+WTF::TextStream& operator<<(WTF::TextStream&, const AXCoreObject&);
 
 } // namespace WebCore
