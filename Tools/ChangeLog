@@ -1,5 +1,19 @@
 2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        stress/ensure-crash.js shouldn't spew stuff onto my screen
+        https://bugs.webkit.org/show_bug.cgi?id=210931
+
+        Reviewed by Ross Kirsling.
+
+        Set noisyOutputHandler when crash! is specified. We also specify noisyOutputHandler for runComplexTest.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-playstation.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+
+2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Disable useKernTCSM=false for JSC stress tests to make EWS faster
         https://bugs.webkit.org/show_bug.cgi?id=210950
 

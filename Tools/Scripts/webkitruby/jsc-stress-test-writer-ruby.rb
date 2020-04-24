@@ -273,6 +273,9 @@ class Plan
         @errorHandler = errorHandler
         @isSlow = !!$runCommandOptions[:isSlow]
         @shouldCrash = !!$runCommandOptions[:shouldCrash]
+        if @shouldCrash
+            @outputHandler = noisyOutputHandler
+        end
         @additionalEnv = []
     end
     
