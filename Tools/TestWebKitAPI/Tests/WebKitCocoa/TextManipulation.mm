@@ -616,6 +616,46 @@ TEST(TextManipulation, StartTextManipulationIncludesFullyClippedText)
     EXPECT_WK_STREQ("More text", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAsParagraphs)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+        "    <style>"
+        "        a {"
+        "            display: inline-block;"
+        "            border: 1px blue solid;"
+        "            margin-left: 1em;"
+        "        }"
+        "    </style>"
+        "</head>"
+        "<body>"
+        "    <button>One</button><button>Two</button>"
+        "    <div><br></div>"
+        "    <a href='#'>Three</a><a href='#'>Four</a>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    NSArray<_WKTextManipulationItem *> *items = [delegate items];
+    EXPECT_EQ(items.count, 4UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_WK_STREQ("One", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("Three", items[2].tokens[0].content);
+    EXPECT_WK_STREQ("Four", items[3].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
@@ -1778,16 +1818,17 @@ TEST(TextManipulation, CompleteTextManipulationCorrectParagraphRange)
     TestWebKitAPI::Util::run(&done);
 
     auto *items = [delegate items];
-    EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 2UL);
-    EXPECT_STREQ("holle", items[0].tokens[0].content.UTF8String);
-    EXPECT_STREQ("wdrlo", items[0].tokens[1].content.UTF8String);
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("holle", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("wdrlo", items[1].tokens[0].content);
 
     done = false;
-    [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
-        { items[0].tokens[0].identifier, @"hello" },
-        { items[0].tokens[1].identifier, @"world" },
-    })] completion:^(NSArray<NSError *> *errors) {
+    [webView _completeTextManipulationForItems:@[
+        createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"hello" }}).autorelease(),
+        createItem(items[1].identifier, {{ items[1].tokens[0].identifier, @"world" }}).autorelease()
+    ] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors, nil);
         done = true;
     }];

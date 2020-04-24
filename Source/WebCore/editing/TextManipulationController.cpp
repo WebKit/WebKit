@@ -274,24 +274,33 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
     Vector<ManipulationToken> tokensInCurrentParagraph;
     Position startOfCurrentParagraph;
     Position endOfCurrentParagraph;
-    RefPtr<Element> enclosingParagraphElement;
+    RefPtr<Element> enclosingItemBoundaryElement;
 
-    auto isEnclosingParagraphElement = [](const Element& element) {
-        if (element.hasTagName(HTMLNames::liTag)) {
-            auto* renderer = element.renderer();
-            return renderer && renderer->style().display() == DisplayType::Block;
+    auto isEnclosingItemBoundaryElement = [](const Element& element) {
+        auto* renderer = element.renderer();
+        if (!renderer)
+            return false;
+
+        if (element.hasTagName(HTMLNames::buttonTag))
+            return true;
+
+        if (element.hasTagName(HTMLNames::liTag) || element.hasTagName(HTMLNames::aTag)) {
+            auto displayType = renderer->style().display();
+            return displayType == DisplayType::Block || displayType == DisplayType::InlineBlock;
         }
+
         return false;
     };
 
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         if (content.node) {
-            if (enclosingParagraphElement && !enclosingParagraphElement->contains(content.node.get())) {
+            if (enclosingItemBoundaryElement && !enclosingItemBoundaryElement->contains(content.node.get())) {
                 if (!tokensInCurrentParagraph.isEmpty())
                     addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
-                enclosingParagraphElement = nullptr;
+                enclosingItemBoundaryElement = nullptr;
             }
+
             if (RefPtr<Element> currentElementAncestor = is<Element>(*content.node) ? downcast<Element>(content.node.get()) : content.node->parentOrShadowHostElement()) {
                 if (isInManipulatedElement(*currentElementAncestor))
                     return; // We can exit early here because scheduleObservartionUpdate calls this function on each paragraph separately.
@@ -311,8 +320,8 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                         }
                     }
                 }
-                if (isEnclosingParagraphElement(currentElement))
-                    enclosingParagraphElement = &currentElement;
+                if (!enclosingItemBoundaryElement && isEnclosingItemBoundaryElement(currentElement))
+                    enclosingItemBoundaryElement = &currentElement;
             }
         }
 

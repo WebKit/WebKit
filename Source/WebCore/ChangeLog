@@ -1,3 +1,25 @@
+2020-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make some more adjustments to TextManipulationController's paragraph boundary heuristic
+        https://bugs.webkit.org/show_bug.cgi?id=210993
+        <rdar://problem/61571299>
+
+        Reviewed by Tim Horton.
+
+        Adjust the heuristic added in r260583 to account for a few more common scenarios where we currently consider
+        text as a part of the same paragraph. This can lead to many issues during text manipulation where text is moved
+        between these elements, when it should not be.
+
+        The new scenarios include block and inline-block links, as well as button elements.
+
+        Test: TextManipulation.StartTextManipulationTreatsInlineBlockLinksAndButtonsAsParagraphs
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+
+        Additionally rename "paragraph boundary element" to "item boundary element", to avoid colliding with the
+        existing notion of paragraph boundaries in editing code.
+
 2020-04-24  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds

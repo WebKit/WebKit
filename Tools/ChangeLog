@@ -1,3 +1,16 @@
+2020-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make some more adjustments to TextManipulationController's paragraph boundary heuristic
+        https://bugs.webkit.org/show_bug.cgi?id=210993
+        <rdar://problem/61571299>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test with buttons and links styled with `display: inline-block;`. Additionally, rebaseline an
+        existing API test that exercises inline-block list items.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
 2020-04-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Always run WKTR's WKWebViews at foreground priority
