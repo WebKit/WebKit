@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+  Copyright (C) 2015-2020 Apple Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@
             <ul>
                 <li><strong>Multiply</strong>: CSS border radius, transforms, opacity</li>
                 <li><strong>Arcs and Fills</strong>: Canvas path fills and arcs</li>
-                <li><strong>Leaves</strong>: CSS-transformed elements</li>
+                <li><strong>Leaves</strong>: CSS-transformed elements, opacity</li>
                 <li><strong>Paths</strong>: Canvas line, quadratic, and Bezier paths</li>
                 <li><strong>Lines</strong>: Canvas line segments</li>
                 <li><strong>Focus</strong>: CSS blur filter, opacity</li>
@@ -69,6 +69,14 @@
             </ul>
 
             <p>To achieve consistent results on mobile devices, put the device in landscape orientation. On laptops and desktops, use the default display resolution and make the browser window fullscreen. Make sure that screen automatic display sleep is turned off or set to longer than 8 minutes.</p>
+
+            <h3>Version log</h3>
+
+            <ul id="log">
+                <li><strong>1.1.1</strong>: Fix bug in the calculation of timestamps used for animation during warm up phase of tests.</li>
+                <li><a href="https://webkit.org/blog/8434/motionmark-1-1/"><strong>1.1</strong></a>: Update Multiply test to increase max capacity and expand methods for hiding elements. Update Leaves test to use range of sizes and opacity.</li>
+                <li><a href="https://webkit.org/blog/6943/motionmark-a-new-graphics-benchmark/"><strong>1.0</strong></a>: Initial release.</li>
+            </ul>
 
             <center><button onclick="location.href='./'">Return to homepage</button></center>
         </div>

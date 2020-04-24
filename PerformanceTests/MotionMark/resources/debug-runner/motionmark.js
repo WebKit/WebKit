@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -241,7 +241,7 @@ window.optionsManager =
 
         document.body.classList.add("display-" + optionsManager.valueForOption("display"));
     },
-    
+
     updateTiles: function()
     {
         document.body.classList.remove("tiles-big");
@@ -615,7 +615,7 @@ Utilities.extendObject(window.benchmarkController, {
     startBenchmark: function()
     {
         benchmarkController.determineCanvasSize();
-        benchmarkController.options = optionsManager.updateLocalStorageFromUI();
+        benchmarkController.options = Utilities.mergeObjects(this.benchmarkDefaultParameters, optionsManager.updateLocalStorageFromUI());
         benchmarkController.suites = suitesManager.updateLocalStorageFromUI();
         this._startBenchmark(benchmarkController.suites, benchmarkController.options, "running-test");
     },

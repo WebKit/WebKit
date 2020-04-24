@@ -1,3 +1,38 @@
+2020-04-24  Jon Lee  <jonlee@apple.com>
+
+        MotionMark: ensure that timestamps are valid during warm up phase of tests
+        https://bugs.webkit.org/show_bug.cgi?id=210640
+
+        Reviewed by Said Abou-Hallawa.
+
+        Ensure that Benchmark._benchmarkStartTimestamp is set during warm up phase.
+        Otherwise it is NaN, which makes the Benchmark.timestamp invalid, which is
+        used by tests like Multiply to drive the animation. When the warm up phase
+        completes, the start timestamp is reset.
+
+        Update minor version of benchmark with this bug fix, and include
+        version changelog in the about page.
+
+        For testing, add a parameter that allows for adjusting the length of the
+        warm up phase. It remains at its current default, 100 ms.
+
+        * MotionMark/about.html: Add section of version changelog. Includes links
+        to webkit.org blog posts.
+        * MotionMark/developer.html: Add parameter for setting warmup length.
+        Remove the Kalman filter parameters, since they should always be fixed.
+        * MotionMark/resources/runner/motionmark.css: Include styles to show
+        version log.
+        * MotionMark/resources/runner/motionmark.js: Factor out default options to
+        a property on window.benchmarkController. Include the default warmup length
+        of 100 ms.
+        (window.benchmarkController.startBenchmark): Refactor to use benchmarkDefaultParameters.
+        * MotionMark/resources/debug-runner/motionmark.js: Ditto.
+        * MotionMark/resources/strings.js: Update version number.
+        * MotionMark/tests/resources/main.js:
+        (_animateLoop): Set _benchmarkTimestamp during the warmup phase. Check the
+        warmup length. The _benchmarkTimestamp variable remains reset when the test
+        begins.
+
 2020-04-07  Saam Barati  <sbarati@apple.com>
 
         RAMification should have a way of gathering vmmaps for each test at the end of each run

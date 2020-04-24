@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -784,6 +784,7 @@ Benchmark = Utilities.createClass(
     function(stage, options)
     {
         this._animateLoop = this._animateLoop.bind(this);
+        this._warmupLength = options["warmup-length"];
 
         this._stage = stage;
         this._stage.initialize(this, options);
@@ -866,9 +867,10 @@ Benchmark = Utilities.createClass(
         }
 
         if (!this._didWarmUp) {
-            if (!this._previousTimestamp)
+            if (!this._previousTimestamp) {
                 this._previousTimestamp = timestamp;
-            else if (timestamp - this._previousTimestamp >= 100) {
+                this._benchmarkStartTimestamp = timestamp;
+            } else if (timestamp - this._previousTimestamp >= this._warmupLength) {
                 this._didWarmUp = true;
                 this._benchmarkStartTimestamp = timestamp;
                 this._controller.start(timestamp, this._stage);

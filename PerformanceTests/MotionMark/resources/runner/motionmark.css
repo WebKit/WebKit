@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -346,6 +346,18 @@ body.images-loaded #intro {
     margin: 1.5em auto 0;
     min-width: initial;
     transform: skewX(-10deg);
+}
+#about h3 {
+    margin-top: 3em;
+}
+#about #log {
+    font-size: .9em;
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+#about #log li {
+    margin-top: .5em;
 }
 
 @media screen and (min-width: 667px) {

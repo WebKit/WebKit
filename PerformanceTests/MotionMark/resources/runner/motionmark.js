@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -457,6 +457,17 @@ window.sectionsManager =
 };
 
 window.benchmarkController = {
+    benchmarkDefaultParameters: {
+        "test-interval": 30,
+        "display": "minimal",
+        "tiles": "big",
+        "controller": "ramp",
+        "kalman-process-error": 1,
+        "kalman-measurement-error": 4,
+        "time-measurement": "performance",
+        "warmup-length": 100
+    },
+
     initialize: function()
     {
         document.title = Strings.text.title.replace("%s", Strings.version);
@@ -530,15 +541,7 @@ window.benchmarkController = {
 
     startBenchmark: function()
     {
-        var options = {
-            "test-interval": 30,
-            "display": "minimal",
-            "tiles": "big",
-            "controller": "ramp",
-            "kalman-process-error": 1,
-            "kalman-measurement-error": 4,
-            "time-measurement": "performance"
-        };
+        var options = this.benchmarkDefaultParameters;
         this._startBenchmark(Suites, options, "test-container");
     },
 

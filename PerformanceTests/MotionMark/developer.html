@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+  Copyright (C) 2015-2020 Apple Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
@@ -65,6 +65,9 @@
                         <form name="benchmark-options">
                             <ul>
                                 <li>
+                                    <label>Warmup length: <input type="number" id="warmup-length" value="100"> milliseconds</label>
+                                </li>
+                                <li>
                                     <label>Test length: <input type="number" id="test-interval" value="30"> seconds each</label>
                                 </li>
                                 <li>
@@ -91,13 +94,6 @@
                                 </li>
                                 <li>
                                     <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
-                                </li>
-                                <li>
-                                    <h3>Kalman filter estimated error:</h3>
-                                    <ul>
-                                        <li><label>Process error (Q): <input type="number" id="kalman-process-error" value="1"></label></li>
-                                        <li><label>Measurement error (R): <input type="number" id="kalman-measurement-error" value="4"></label></li>
-                                    </ul>
                                 </li>
                                 <li>
                                     <h3>Time measurement method:</h3>
