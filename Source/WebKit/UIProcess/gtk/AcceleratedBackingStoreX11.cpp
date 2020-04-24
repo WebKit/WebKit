@@ -201,6 +201,8 @@ bool AcceleratedBackingStoreX11::paint(cairo_t* cr, const IntRect& clipRect)
 
     cairo_restore(cr);
 
+    cairo_surface_flush(m_surface.get());
+
     return true;
 }
 
