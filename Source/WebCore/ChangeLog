@@ -1,3 +1,24 @@
+2020-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take first in-flow table-row baseline into account when computing cell baseline
+        https://bugs.webkit.org/show_bug.cgi?id=210972
+
+        Reviewed by Antti Koivisto.
+
+        Check if the cell has a nested table and use its first row as the baseline for the cell (unless there's an IFC before).
+
+        Test: fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Row::setBaselineOffset):
+        (WebCore::Layout::TableGrid::Row::baselineOffset const):
+
 2020-04-24  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in objc_msgSend under WebCore::genericFamily

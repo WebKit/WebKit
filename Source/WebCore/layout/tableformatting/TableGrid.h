@@ -116,11 +116,15 @@ public:
         void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalHeight = logicalHeight; }
         LayoutUnit logicalHeight() const { return m_logicalHeight; }
 
+        void setBaselineOffset(InlineLayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
+        InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
+
         const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
+        InlineLayoutUnit m_baselineOffset;
         WeakPtr<const ContainerBox> m_layoutBox;
     };
 

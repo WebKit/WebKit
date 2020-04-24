@@ -50,6 +50,7 @@ private:
         ContentHeightAndMargin tableCellHeightAndMargin(const Box&) const;
         Optional<LayoutUnit> computedColumnWidth(const Box& columnBox) const;
         FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const ContainerBox& cellBox);
+        InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
 
     private:
         friend class TableFormattingContext;

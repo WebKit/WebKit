@@ -30,6 +30,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutContext.h"
+#include "LayoutDescendantIterator.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {
@@ -82,6 +83,21 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
     auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
     intrinsicWidthConstraints.expand(fixedMarginBorderAndPadding());
     return intrinsicWidthConstraints;
+}
+
+
+InlineLayoutUnit TableFormattingContext::Geometry::usedBaselineForCell(const ContainerBox& cellBox)
+{
+    // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
+    // or the first in-flow table-row in the cell, whichever comes first.
+    // If there is no such line box, the baseline is the bottom of content edge of the cell box.
+    for (auto& cellDescendant : descendantsOfType<ContainerBox>(cellBox)) {
+        if (cellDescendant.establishesInlineFormattingContext())
+            return layoutState().establishedInlineFormattingState(cellDescendant).displayInlineContent()->lineBoxes[0].baselineOffset();
+        if (cellDescendant.establishesTableFormattingContext())
+            return layoutState().establishedTableFormattingState(cellDescendant).tableGrid().rows().list()[0].baselineOffset();
+    }
+    return formattingContext().geometryForBox(cellBox).contentBoxBottom();
 }
 
 }

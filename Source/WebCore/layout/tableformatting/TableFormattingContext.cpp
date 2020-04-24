@@ -133,6 +133,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, Invalidatio
         // use some kind of intrinsic padding similar to RenderTableCell.
         auto verticalBorder = cellDisplayBox.verticalBorder();
         auto intrinsicVerticalPadding = std::max(0_lu, *usedCellHeight - verticalBorder - contentHeight);
+        // FIXME: Take vertical-align into account here.
         cellDisplayBox.setVerticalPadding({ intrinsicVerticalPadding / 2, intrinsicVerticalPadding / 2 });
     }
     cellDisplayBox.setContentBoxHeight(contentHeight);
@@ -451,11 +452,12 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     auto& columns = grid.columns().list();
     auto& rows = grid.rows();
 
-    Vector<float> rownHeights;
+    Vector<LayoutUnit> rowsHeight;
+    Vector<InlineLayoutUnit> rowsBaselineOffset;
     // 1. Collect initial row heights.
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
-        float maximumColumnAscent = 0;
-        float maximumColumnDescent = 0;
+        auto maximumColumnAscent = InlineLayoutUnit { };
+        auto maximumColumnDescent = InlineLayoutUnit { };
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
             if (slot.isColumnSpanned())
@@ -465,27 +467,21 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cellBox = slot.cell().box();
-            auto& cellDisplayBox = geometryForBox(cellBox);
-            auto cellBaselineOffset = InlineLayoutUnit { };
-            if (cellBox.establishesInlineFormattingContext()) {
-                // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
-                // or the first in-flow table-row in the cell, whichever comes first
-                auto& firstLineBox = layoutState().establishedInlineFormattingState(cellBox).displayInlineContent()->lineBoxes[0];
-                cellBaselineOffset = firstLineBox.baselineOffset();
-            } else {
-                // If there is no such line box, the baseline is the bottom of content edge of the cell box.
-                cellBaselineOffset = cellDisplayBox.contentBoxBottom();
-            }
-            maximumColumnAscent = std::max<float>(maximumColumnAscent, cellBaselineOffset);
-            maximumColumnDescent = std::max<float>(maximumColumnDescent, cellDisplayBox.height() - cellBaselineOffset);
+            auto cellBaselineOffset = geometry().usedBaselineForCell(cellBox);
+            maximumColumnAscent = std::max(maximumColumnAscent, cellBaselineOffset);
+            maximumColumnDescent = std::max(maximumColumnDescent, geometryForBox(cellBox).height() - cellBaselineOffset);
         }
         // <tr style="height: 10px"> is considered as min height.
         auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }).valueOr(LayoutUnit { });
-        rownHeights.append(std::max(computedRowHeight.toFloat(), maximumColumnAscent + maximumColumnDescent));
+        rowsHeight.append(std::max(computedRowHeight, LayoutUnit { maximumColumnAscent + maximumColumnDescent }));
+        rowsBaselineOffset.append(maximumColumnAscent);
     }
 
-    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex)
-        grid.rows().list()[rowIndex].setLogicalHeight(LayoutUnit { rownHeights[rowIndex] });
+    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+        auto& row = grid.rows().list()[rowIndex];
+        row.setLogicalHeight(rowsHeight[rowIndex]);
+        row.setBaselineOffset(rowsBaselineOffset[rowIndex]);
+    }
 }
 
 void TableFormattingContext::setComputedGeometryForRows()

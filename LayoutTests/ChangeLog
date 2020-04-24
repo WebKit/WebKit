@@ -1,3 +1,13 @@
+2020-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take first in-flow table-row baseline into account when computing cell baseline
+        https://bugs.webkit.org/show_bug.cgi?id=210972
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table-expected.txt: Added.
+        * fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html: Added.
+
 2020-04-24  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, mark fast/css/resize-corner-tracking.html as flaky
