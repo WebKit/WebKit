@@ -1,5 +1,20 @@
 2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Disable useKernTCSM=false for JSC stress tests to make EWS faster
+        https://bugs.webkit.org/show_bug.cgi?id=210950
+
+        Reviewed by Mark Lam.
+
+        This patch removes "JSC_useKernTCSM=false" environment variable in JSC stress tests.
+        Alexey found that this causes EWS JSC stress tests slow down (from roughly 63 mins to 83 mins).
+        This slow down happens in Mac Pro (which is used in JSC EWS right now), and this slow down does
+        not happen in Mac mini (post-commit buildbot) and rather improves Mac Mini execution time by 15%,
+        but keeping EWS faster is more important than making post-commit bots faster.
+
+        * Scripts/run-javascriptcore-tests:
+
+2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Support `--report-execution-time` to report execution time for each JSC stress test
         https://bugs.webkit.org/show_bug.cgi?id=210938
 
