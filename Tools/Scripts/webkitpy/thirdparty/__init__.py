@@ -167,8 +167,8 @@ class AutoinstallImportHook(object):
 
     def _install_mozprocess(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install("https://files.pythonhosted.org/packages/cb/26/144dbc28d1f40e392f8a0cbee771ba624a61017f016c77ad88424d84b230/mozprocess-0.25.tar.gz",
-                              "mozprocess-0.25/mozprocess")
+        self._install("https://files.pythonhosted.org/packages/97/e7/7907f0bf2d0b42b154741f8ff63a199486fc67c90aac88cde5f2d1ad1ea2/mozprocess-1.1.0.tar.gz",
+                              "mozprocess-1.1.0/mozprocess")
 
     def _install_pytest_timeout(self):
         self._install("https://files.pythonhosted.org/packages/cc/b7/b2a61365ea6b6d2e8881360ae7ed8dad0327ad2df89f2f0be4a02304deb2/pytest-timeout-1.2.0.tar.gz",
