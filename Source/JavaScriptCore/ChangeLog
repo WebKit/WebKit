@@ -1,5 +1,19 @@
 2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix DataFormatJSBigInt32 missing part
+        https://bugs.webkit.org/show_bug.cgi?id=210986
+
+        Reviewed by Mark Lam.
+
+        Add missing part of DataFormatJSBigInt32 implementation.
+
+        * bytecode/DataFormat.h:
+        (JSC::dataFormatToString):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+
+2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix in Windows
         https://bugs.webkit.org/show_bug.cgi?id=210892
 
