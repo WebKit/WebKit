@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 
+#import "CocoaImage.h"
 #import "WKSharedAPICast.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/HTMLTextFormControlElement.h>
@@ -54,13 +55,12 @@
     return WebKit::wrapper(_nodeHandle->htmlIFrameElementContentFrame());
 }
 
-#if PLATFORM(IOS_FAMILY)
-- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
+- (CocoaImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
     return [self renderedImageWithOptions:options width:nil];
 }
 
-- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
+- (CocoaImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
 {
     Optional<float> optionalWidth;
     if (width)
@@ -70,29 +70,12 @@
     if (!image)
         return nil;
 
-    return [[[UIImage alloc] initWithCGImage:image->bitmap().makeCGImage().get()] autorelease];
-}
-#endif
-
-#if PLATFORM(MAC)
-- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options
-{
-    return [self renderedImageWithOptions:options width:nil];
-}
-
-- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
-{
-    Optional<float> optionalWidth;
-    if (width)
-        optionalWidth = width.floatValue;
-
-    RefPtr<WebKit::WebImage> image = _nodeHandle->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
-    if (!image)
-        return nil;
-
+#if USE(APPKIT)
     return [[[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:NSZeroSize] autorelease];
-}
+#else
+    return [[[UIImage alloc] initWithCGImage:image->bitmap().makeCGImage().get()] autorelease];
 #endif
+}
 
 - (CGRect)elementBounds
 {

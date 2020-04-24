@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
 #import "AttributedString.h"
+#import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
 #import "DiagnosticLoggingClient.h"
@@ -979,8 +980,7 @@ static bool validateArgument(id argument)
     });
 }
 
-#if PLATFORM(MAC)
-- (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(NSImage *, NSError *))completionHandler
+- (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(CocoaImage *, NSError *))completionHandler
 {
     CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
     CGFloat snapshotWidth;
@@ -990,6 +990,8 @@ static bool validateArgument(id argument)
         snapshotWidth = self.bounds.size.width;
 
     auto handler = makeBlockPtr(completionHandler);
+
+#if USE(APPKIT)
     CGFloat imageScale = snapshotWidth / rectInViewCoordinates.size.width;
     CGFloat imageHeight = imageScale * rectInViewCoordinates.size.height;
 
@@ -1011,35 +1013,23 @@ static bool validateArgument(id argument)
 
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
-        RetainPtr<NSImage> nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
-        handler(nsImage.get(), nil);
+        auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
+        handler(image.get(), nil);
     });
-}
-
-#elif PLATFORM(IOS_FAMILY)
-- (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(UIImage *, NSError *))completionHandler
-{
-    CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
-    CGFloat snapshotWidth;
-    if (snapshotConfiguration)
-        snapshotWidth = snapshotConfiguration.snapshotWidth.doubleValue ?: rectInViewCoordinates.size.width;
-    else
-        snapshotWidth = self.bounds.size.width;
-
-    auto handler = makeBlockPtr(completionHandler);
+#else
     CGFloat deviceScale = _page->deviceScaleFactor();
     RetainPtr<WKWebView> strongSelf = self;
     auto callSnapshotRect = [strongSelf, rectInViewCoordinates, snapshotWidth, deviceScale, handler] {
         [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
             RetainPtr<NSError> error;
-            RetainPtr<UIImage> uiImage;
+            RetainPtr<UIImage> image;
             
             if (!snapshotImage)
                 error = createNSError(WKErrorUnknown);
             else
-                uiImage = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
+                image = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
             
-            handler(uiImage.get(), error.get());
+            handler(image.get(), error.get());
         }];
     };
 
@@ -1055,8 +1045,8 @@ static bool validateArgument(id argument)
         }
         callSnapshotRect();
     });
-}
 #endif
+}
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
 {

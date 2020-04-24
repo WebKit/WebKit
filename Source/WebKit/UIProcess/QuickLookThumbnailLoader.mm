@@ -28,9 +28,9 @@
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-#import "QuickLookThumbnailingSoftLink.h"
-
 #import <wtf/FileSystem.h>
+
+#import "QuickLookThumbnailingSoftLink.h"
 
 @implementation WKQLThumbnailQueueManager 
 

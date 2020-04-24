@@ -26,15 +26,14 @@
 #import "config.h"
 #import "_WKActivatedElementInfoInternal.h"
 
+#import "CocoaImage.h"
 #import "ShareableBitmap.h"
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIImage.h>
-#endif
-
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 #import <AppKit/NSImage.h>
+#else
+#import <UIKit/UIImage.h>
 #endif
 
 @implementation _WKActivatedElementInfo  {
@@ -44,12 +43,9 @@
     WebCore::IntPoint _interactionLocation;
     RetainPtr<NSString> _ID;
     RefPtr<WebKit::ShareableBitmap> _image;
+    RetainPtr<CocoaImage> _cocoaImage;
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<UIImage> _uiImage;
     RetainPtr<NSDictionary> _userInfo;
-#endif
-#if PLATFORM(MAC)
-    RetainPtr<NSImage> _nsImage;
 #endif
     BOOL _animatedImage;
 }
@@ -150,36 +146,24 @@
 {
     return _userInfo.get();
 }
+#endif
 
-- (UIImage *)image
+- (CocoaImage *)image
 {
-    if (_uiImage)
-        return [[_uiImage copy] autorelease];
+    if (_cocoaImage)
+        return [[_cocoaImage copy] autorelease];
 
     if (!_image)
         return nil;
 
-    _uiImage = adoptNS([[UIImage alloc] initWithCGImage:_image->makeCGImageCopy().get()]);
+#if USE(APPKIT)
+    _cocoaImage = adoptNS([[NSImage alloc] initWithCGImage:_image->makeCGImageCopy().get() size:NSSizeFromCGSize(_boundingRect.size)]);
+#else
+    _cocoaImage = adoptNS([[UIImage alloc] initWithCGImage:_image->makeCGImageCopy().get()]);
+#endif
     _image = nullptr;
 
-    return [[_uiImage copy] autorelease];
+    return [[_cocoaImage copy] autorelease];
 }
-#endif
-
-#if PLATFORM(MAC)
-- (NSImage *)image
-{
-    if (_nsImage)
-        return [[_nsImage copy] autorelease];
-
-    if (!_image)
-        return nil;
-
-    _nsImage = adoptNS([[NSImage alloc] initWithCGImage:_image->makeCGImageCopy().get() size:NSSizeFromCGSize(_boundingRect.size)]);
-    _image = nullptr;
-
-    return [[_nsImage copy] autorelease];
-}
-#endif
 
 @end

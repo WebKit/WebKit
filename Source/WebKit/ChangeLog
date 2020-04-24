@@ -1,5 +1,34 @@
 2020-04-24  David Kilzer  <ddkilzer@apple.com>
 
+        Use CocoaImage platform abstraction for NSImage/UIImage
+        <https://webkit.org/b/210974>
+
+        Reviewed by Darin Adler.
+
+        * Platform/cocoa/CocoaImage.h: Add.
+        - Define CocoaImage here for cross-platform use.  Don't use
+          OBJC_CLASS() here because this is an Objective-C header.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        - Combine separate platform-specific methods into one method.
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        - Combine separate platform-specific instance variables into
+          one instance variable.
+        (-[_WKActivatedElementInfo image]):
+        - Combine separate methods into one platform-specific method.
+        * UIProcess/QuickLookThumbnailLoader.h:
+        - Move cross-platform definition to CocoaImge.h.
+        * UIProcess/QuickLookThumbnailLoader.mm:
+        - Drive-by fix of soft-linking header include order.
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add CocoaImage.h to the project.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:]):
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:width:]):
+        - Combine separate platform-specific methods into one method.
+
+2020-04-24  David Kilzer  <ddkilzer@apple.com>
+
         IPC::Decoder should use create() pattern
         <https://webkit.org/b/210949>
         <rdar://problem/62144409>

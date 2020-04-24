@@ -23,31 +23,10 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if HAVE(QUICKLOOK_THUMBNAILING)
-
-#import "CocoaImage.h"
-
-@interface WKQLThumbnailQueueManager : NSObject
-
-@property (nonatomic, readonly, retain) NSOperationQueue *queue;
-
-- (instancetype)init;
-+ (WKQLThumbnailQueueManager *)sharedInstance;
-
-@end
-
-@interface WKQLThumbnailLoadOperation : NSOperation
-
-@property (atomic, readonly, getter=isAsynchronous) BOOL asynchronous;
-@property (atomic, readonly, getter=isExecuting) BOOL executing;
-@property (atomic, readonly, getter=isFinished) BOOL finished;
-
-@property (nonatomic, readonly, copy) NSString *identifier;
-@property (nonatomic, readonly, retain) CocoaImage *thumbnail;
-
-- (instancetype)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier;
-- (instancetype)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier;
-
-@end
-
-#endif // HAVE(QUICKLOOK_THUMBNAILING)
+#if USE(APPKIT)
+@class NSImage;
+using CocoaImage = NSImage;
+#else
+@class UIImage;
+using CocoaImage = UIImage;
+#endif
