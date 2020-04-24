@@ -8402,6 +8402,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (WebCore::IOSApplication::isFeedly())
             return NO;
 
+        // <rdar://problem/62273077> "Pocket City" does not respond to mouse events, only touch events
+        if (WebCore::IOSApplication::isPocketCity())
+            return NO;
+
         return YES;
     }();
 

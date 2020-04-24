@@ -363,6 +363,12 @@ bool IOSApplication::isFeedly()
     return isFeedly;
 }
 
+bool IOSApplication::isPocketCity()
+{
+    static bool isPocketCity = applicationBundleIsEqualTo("com.codebrewgames.pocketcity"_s);
+    return isPocketCity;
+}
+
 #endif
 
 } // namespace WebCore

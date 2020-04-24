@@ -103,6 +103,7 @@ WEBCORE_EXPORT bool isDataActivation();
 WEBCORE_EXPORT bool isNews();
 WEBCORE_EXPORT bool isStocks();
 WEBCORE_EXPORT bool isFeedly();
+WEBCORE_EXPORT bool isPocketCity();
 
 } // IOSApplication
 
