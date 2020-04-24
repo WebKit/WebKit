@@ -1,3 +1,12 @@
+2020-04-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK][WPE][JSCOnly] compile error when -DWTF_CPU_ARM64_CORTEXA53=ON set for arm64
+        https://bugs.webkit.org/show_bug.cgi?id=197192
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2020-04-24  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds
