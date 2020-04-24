@@ -149,6 +149,7 @@ class WebGLStateTracker;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 
+using PlatformDisplayID = uint32_t;
 using SharedStringHash = uint32_t;
 
 enum class CanWrap : bool;
@@ -354,6 +355,9 @@ public:
 
     float initialScaleIgnoringContentSize() const { return m_initialScaleIgnoringContentSize; }
     WEBCORE_EXPORT void setInitialScaleIgnoringContentSize(float);
+
+    void windowScreenDidChange(PlatformDisplayID);
+    PlatformDisplayID displayID() const { return m_displayID; }
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
@@ -824,6 +828,8 @@ private:
     UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
     RTCController m_rtcController;
+
+    PlatformDisplayID m_displayID { 0 };
 
     int m_nestedRunLoopCount { 0 };
     WTF::Function<void()> m_unnestCallback;

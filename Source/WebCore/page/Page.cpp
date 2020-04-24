@@ -1105,6 +1105,25 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 
+void Page::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    if (displayID == m_displayID)
+        return;
+
+    m_displayID = displayID;
+
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (frame->document())
+            frame->document()->windowScreenDidChange(displayID);
+    }
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    renderingUpdateScheduler().windowScreenDidChange(displayID);
+#endif
+
+    setNeedsRecalcStyleInAllFrames();
+}
+
 void Page::setInitialScaleIgnoringContentSize(float scale)
 {
     m_initialScaleIgnoringContentSize = scale;

@@ -192,7 +192,6 @@ private:
 
     Page& m_page;
     ChromeClient& m_client;
-    PlatformDisplayID m_displayID { 0 };
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
 #if PLATFORM(IOS_FAMILY)
     bool m_isDispatchViewportDataDidChangeSuppressed { false };

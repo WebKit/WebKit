@@ -509,25 +509,15 @@ std::unique_ptr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, Re
 
 PlatformDisplayID Chrome::displayID() const
 {
-    return m_displayID;
+    return m_page.displayID();
 }
 
 void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    if (displayID == m_displayID)
+    if (displayID == m_page.displayID())
         return;
 
-    m_displayID = displayID;
-
-    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->windowScreenDidChange(displayID);
-    }
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    m_page.renderingUpdateScheduler().windowScreenDidChange(displayID);
-#endif
-    m_page.setNeedsRecalcStyleInAllFrames();
+    m_page.windowScreenDidChange(displayID);
 
 #if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
     GraphicsContextGLOpenGLManager::sharedManager().screenDidChange(displayID, this);
