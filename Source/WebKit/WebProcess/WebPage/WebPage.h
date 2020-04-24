@@ -48,7 +48,6 @@
 #include "Plugin.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
-#include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
 #include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
@@ -1215,7 +1214,6 @@ public:
 #endif
 
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback);
-    void didCompleteShareSheet(bool wasCompleted, ShareSheetCallbackID contextId);
     
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, Optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
@@ -2071,7 +2069,6 @@ private:
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
 
     HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
-    HashMap<ShareSheetCallbackID, Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
 
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;

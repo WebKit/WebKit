@@ -60,7 +60,6 @@
 #include "RemoteWebInspectorUIMessages.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
-#include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
 #include "SharedBufferDataReference.h"
 #include "UserMediaPermissionRequestManager.h"
@@ -6744,27 +6743,9 @@ void WebPage::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameI
 }
 #endif
     
-static ShareSheetCallbackID nextShareSheetCallbackID()
-{
-    static ShareSheetCallbackID nextCallbackID = 0;
-    return ++nextCallbackID;
-}
-    
 void WebPage::showShareSheet(ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& callback)
 {
-    ShareSheetCallbackID callbackID = nextShareSheetCallbackID();
-    auto addResult = m_shareSheetResponseCallbackMap.add(callbackID, WTFMove(callback));
-    ASSERT(addResult.isNewEntry);
-    if (addResult.iterator->value)
-        send(Messages::WebPageProxy::ShowShareSheet(WTFMove(shareData), callbackID));
-    else
-        callback(false);
-}
-
-void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callbackID)
-{
-    auto callback = m_shareSheetResponseCallbackMap.take(callbackID);
-    callback(wasGranted);
+    sendWithAsyncReply(Messages::WebPageProxy::ShowShareSheet(WTFMove(shareData)), WTFMove(callback));
 }
 
 WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(const String& originIdentifier)

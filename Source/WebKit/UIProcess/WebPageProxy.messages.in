@@ -69,7 +69,7 @@ messages -> WebPageProxy {
     RunBeforeUnloadConfirmPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool shouldClose) Synchronous
     PageDidScroll()
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
-    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData, uint64_t callbackID)
+    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
     PrintFrame(WebCore::FrameIdentifier frameID) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)

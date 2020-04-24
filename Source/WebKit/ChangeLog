@@ -1,3 +1,27 @@
+2020-04-24  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply for ShareSheet related messages
+        https://bugs.webkit.org/show_bug.cgi?id=210828
+        <rdar://problem/61800730>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/IPC/MessageSender.cpp:
+        We need to call addAsyncReplyHandler before sendMessage in case this is the first async message from this process.
+        Otherwise the reply from the first message is dropped sometimes.
+        * Shared/ShareSheetCallbackID.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showShareSheet):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::showShareSheet):
+        (WebKit::nextShareSheetCallbackID): Deleted.
+        (WebKit::WebPage::didCompleteShareSheet): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-24  Youenn Fablet  <youenn@apple.com> and Luming Yin <luming_yin@apple.com>
 
         Call STDynamicActivityAttributionPublisher in the WebProcess

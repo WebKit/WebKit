@@ -85,7 +85,6 @@
 #include "PrintInfo.h"
 #include "ProvisionalPageProxy.h"
 #include "SafeBrowsingWarning.h"
-#include "ShareSheetCallbackID.h"
 #include "SharedBufferDataReference.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
@@ -5903,12 +5902,8 @@ void WebPageProxy::runOpenPanel(FrameIdentifier frameID, FrameInfoData&& frameIn
     }
 }
 
-void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, ShareSheetCallbackID callbackID)
+void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    CompletionHandler<void(bool)> completionHandler = [this, protectedThis = makeRef(*this), callbackID] (bool access) {
-        send(Messages::WebPage::DidCompleteShareSheet(access, callbackID));
-    };
-    
     pageClient().showShareSheet(shareData, WTFMove(completionHandler));
 }
     

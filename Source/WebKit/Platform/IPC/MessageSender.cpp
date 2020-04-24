@@ -28,21 +28,17 @@
 
 namespace IPC {
 
-MessageSender::~MessageSender()
-{
-}
+MessageSender::~MessageSender() = default;
 
 bool MessageSender::sendMessage(std::unique_ptr<Encoder> encoder, OptionSet<SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
 {
     auto* connection = messageSenderConnection();
     ASSERT(connection);
 
-    if (connection->sendMessage(WTFMove(encoder), sendOptions)) {
-        if (asyncReplyInfo)
-            IPC::addAsyncReplyHandler(*connection, asyncReplyInfo->second, WTFMove(asyncReplyInfo->first));
-        return true;
-    }
-    return false;
+    if (asyncReplyInfo)
+        IPC::addAsyncReplyHandler(*connection, asyncReplyInfo->second, WTFMove(asyncReplyInfo->first));
+
+    return connection->sendMessage(WTFMove(encoder), sendOptions);
 }
 
 } // namespace IPC
