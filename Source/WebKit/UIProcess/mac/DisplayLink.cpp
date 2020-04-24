@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
-#include "WebProcessMessages.h"
+#include "EventDispatcherMessages.h"
 #include <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
@@ -124,10 +124,10 @@ CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const
     auto* displayLink = static_cast<DisplayLink*>(data);
     LockHolder locker(displayLink->m_observersLock);
     for (auto& connection : displayLink->m_observers.keys())
-        connection->send(Messages::WebProcess::DisplayWasRefreshed(displayLink->m_displayID), 0);
+        connection->send(Messages::EventDispatcher::DisplayWasRefreshed(displayLink->m_displayID), 0);
     return kCVReturnSuccess;
 }
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

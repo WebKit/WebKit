@@ -28,4 +28,7 @@ messages -> EventDispatcher {
 #if ENABLE(MAC_GESTURE_EVENTS)
     GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    DisplayWasRefreshed(uint32_t displayID)
+#endif
 }

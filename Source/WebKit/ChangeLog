@@ -1,3 +1,24 @@
+2020-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Bounce displayWasRefreshed() via EventDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=208778
+
+        Reviewed by Antti Koivisto.
+
+        Allow the WebContent process to be notified of display refresh off the main thread, so other
+        threads like the scrolling thread can respond without being blocked. Achieve this
+        by having EventDispatcher receive the IPC message, then bounce it to the main thread.
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::displayLinkCallback):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::displayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::displayWasRefreshed):
+
 2020-04-23  David Kilzer  <ddkilzer@apple.com>
 
         Clean up QuickLookThumbnailLoader

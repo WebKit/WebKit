@@ -475,7 +475,6 @@ private:
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
-    void displayWasRefreshed(CGDirectDisplayID);
 #endif
 
 #if PLATFORM(COCOA)

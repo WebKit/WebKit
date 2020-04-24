@@ -875,11 +875,6 @@ void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisp
 {
     GraphicsContextGLOpenGLManager::displayWasReconfigured(displayID, flags, nullptr);
 }
-    
-void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
-{
-    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
-}
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

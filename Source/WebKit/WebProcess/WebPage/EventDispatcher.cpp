@@ -42,6 +42,10 @@
 #include <WebCore/AsyncScrollingCoordinator.h>
 #endif
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#include <WebCore/DisplayRefreshMonitorManager.h>
+#endif
+
 #if ENABLE(SCROLLING_THREAD)
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/ThreadedScrollingTree.h>
@@ -255,6 +259,15 @@ void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestu
 void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type eventType, bool didHandleEvent)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(eventType), didHandleEvent), pageID);
+}
+#endif
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
+{
+    RunLoop::main().dispatch([displayID]() {
+        DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+    });
 }
 #endif
 

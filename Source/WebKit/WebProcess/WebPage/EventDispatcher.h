@@ -43,6 +43,7 @@
 
 namespace WebCore {
 class ThreadedScrollingTree;
+using PlatformDisplayID = uint32_t;
 }
 
 namespace WebKit {
@@ -95,6 +96,10 @@ private:
 
 #if ENABLE(ASYNC_SCROLLING)
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEvent::Type, bool didHandleEvent);
+#endif
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    void displayWasRefreshed(WebCore::PlatformDisplayID);
 #endif
 
     Ref<WorkQueue> m_queue;
