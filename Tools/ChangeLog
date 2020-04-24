@@ -1,3 +1,17 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Always run WKTR's WKWebViews at foreground priority
+        https://bugs.webkit.org/show_bug.cgi?id=210991
+
+        Reviewed by Keith Miller.
+
+        Always run WKTR's WKWebViews at foreground priority. This makes sure that they don't suspend and
+        run at foreground priority on iOS, even if those views are not visible on screen.
+        This is an issue to address flakiness on the bots.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Removing website data for a domain should delete corresponding ITP entry
