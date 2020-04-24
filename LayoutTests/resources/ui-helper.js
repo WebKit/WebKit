@@ -29,6 +29,12 @@ window.UIHelper = class UIHelper {
         eventSender.mouseUp();
     }
 
+    static async moveMouseAndWaitForFrame(x, y)
+    {
+        eventSender.mouseMoveTo(x, y);
+        await UIHelper.animationFrame();
+    }
+
     static async mouseWheelScrollAt(x, y, beginX, beginY, deltaX, deltaY)
     {
         if (beginX === undefined)

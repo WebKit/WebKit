@@ -1542,10 +1542,12 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
             return handCursor();
 
         bool inResizer = false;
-        if (renderer) {
-            if (RenderLayer* layer = renderer->enclosingLayer()) {
-                if (FrameView* view = m_frame.view())
-                    inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint()))); // This coordinate conversion is wrong: webkit.org/b/210778.
+        if (renderer && renderer->hasLayer()) {
+            // FIXME: With right-aligned text in a box, the renderer here is usually a RenderText, which prevents showing the resize cursor: webkit.org/b/210935.
+            if (auto* layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
+                inResizer = layer->isPointInResizeControl(roundedIntPoint(result.localPoint()));
+                if (inResizer)
+                    return layer->shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
             }
         }
 
@@ -1785,12 +1787,12 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     }
 
     if (FrameView* view = m_frame.view()) {
-        RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : 0;
-        IntPoint p = view->windowToContents(platformMouseEvent.position());
-        if (layer && layer->isPointInResizeControl(p)) {
+        RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : nullptr;
+        auto localPoint = roundedIntPoint(mouseEvent.hitTestResult().localPoint());
+        if (layer && layer->isPointInResizeControl(localPoint)) {
             layer->setInResizeMode(true);
             m_resizeLayer = layer;
-            m_offsetFromResizeCorner = layer->offsetFromResizeCorner(p);
+            m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
             invalidateClick();
             return true;
         }

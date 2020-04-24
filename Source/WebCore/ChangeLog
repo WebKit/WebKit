@@ -1,3 +1,32 @@
+2020-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        EventHandler::selectCursor() has broken resize over coordinate conversion code
+        https://bugs.webkit.org/show_bug.cgi?id=210778
+
+        Reviewed by Zalan Bujtas.
+
+        EventHandler::selectCursor() appeared to make a local hit-test point from window
+        to content coordinates, which made no sense, but this happened to work because 
+        RenderLayer::hitTestLayer() set the HitTestResult localPoint to a global point
+        if you hit the resizer.
+
+        Clean up this mess by having all resizer-related geometry queries be in local coordinates.
+
+        As a bonus, actually set the cursor to a resize cursor when over the resizer.
+
+        Test: fast/events/cursors/mouse-cursor-over-resizer.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::offsetFromResizeCorner const):
+        (WebCore::RenderLayer::isPointInResizeControl const):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestResizerInFragments const):
+        * rendering/RenderLayer.h:
+
 2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation does not account for text in fully clipped containers

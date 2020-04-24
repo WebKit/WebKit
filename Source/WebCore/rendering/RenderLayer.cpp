@@ -3077,7 +3077,10 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
 
     float zoomFactor = renderer->style().effectiveZoom();
 
-    LayoutSize newOffset = offsetFromResizeCorner(document.view()->windowToContents(evt.position()));
+    auto absolutePoint = document.view()->windowToContents(evt.position());
+    auto localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
+
+    LayoutSize newOffset = offsetFromResizeCorner(localPoint);
     newOffset.setWidth(newOffset.width() / zoomFactor);
     newOffset.setHeight(newOffset.height() / zoomFactor);
     
@@ -3663,16 +3666,11 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
     return m_hBar->height();
 }
 
-IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
+IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& localPoint) const
 {
-    // Currently the resize corner is either the bottom right corner or the bottom left corner.
-    // FIXME: This assumes the location is 0, 0. Is this guaranteed to always be the case?
-    IntSize elementSize = size();
-    if (shouldPlaceBlockDirectionScrollbarOnLeft())
-        elementSize.setWidth(0);
-    IntPoint resizerPoint = IntPoint(elementSize);
-    IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
-    return localPoint - resizerPoint;
+    auto resizerRect = overflowControlsRects().resizer;
+    auto resizeCorner = shouldPlaceBlockDirectionScrollbarOnLeft() ? resizerRect.minXMaxYCorner() : resizerRect.maxXMaxYCorner();
+    return localPoint - resizeCorner;
 }
 
 bool RenderLayer::hasOverflowControls() const
@@ -4119,15 +4117,12 @@ void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& pain
     }
 }
 
-bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
+bool RenderLayer::isPointInResizeControl(IntPoint localPoint) const
 {
     if (!canResize())
         return false;
 
-    auto rects = overflowControlsRects();
-
-    IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
-    return rects.resizer.contains(localPoint);
+    return overflowControlsRects().resizer.contains(localPoint);
 }
 
 bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint& localPoint)
@@ -5446,8 +5441,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     collectFragments(layerFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers, RootRelativeClipRects, IncludeOverlayScrollbarSize, RespectOverflowClip,
         offsetFromAncestor(rootLayer));
 
-    if (canResize() && hitTestResizerInFragments(layerFragments, hitTestLocation)) {
-        renderer().updateHitTestResult(result, hitTestLocation.point());
+    LayoutPoint localPoint;
+    if (canResize() && hitTestResizerInFragments(layerFragments, hitTestLocation, localPoint)) {
+        renderer().updateHitTestResult(result, localPoint);
         return this;
     }
 
@@ -5521,7 +5517,7 @@ bool RenderLayer::hitTestContentsForFragments(const LayerFragments& layerFragmen
     return false;
 }
 
-bool RenderLayer::hitTestResizerInFragments(const LayerFragments& layerFragments, const HitTestLocation& hitTestLocation) const
+bool RenderLayer::hitTestResizerInFragments(const LayerFragments& layerFragments, const HitTestLocation& hitTestLocation, LayoutPoint& pointInFragment) const
 {
     if (layerFragments.isEmpty())
         return false;
@@ -5541,10 +5537,12 @@ bool RenderLayer::hitTestResizerInFragments(const LayerFragments& layerFragments
     for (int i = layerFragments.size() - 1; i >= 0; --i) {
         const LayerFragment& fragment = layerFragments.at(i);
         auto resizerRectInFragment = cornerRectInFragment(snappedIntRect(fragment.layerBounds), rects.resizer);
-        if (fragment.backgroundRect.intersects(hitTestLocation) && resizerRectInFragment.contains(hitTestLocation.roundedPoint()))
+        if (fragment.backgroundRect.intersects(hitTestLocation) && resizerRectInFragment.contains(hitTestLocation.roundedPoint())) {
+            pointInFragment = toLayoutPoint(hitTestLocation.point() - fragment.layerBounds.location());
             return true;
+        }
     }
-    
+
     return false;
 }
 

@@ -1,0 +1,12 @@
+Tests that the mouse cursor updates over the resize control.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.getCurrentCursorInfo() is "type=Pointer hotSpot=0,0"
+PASS internals.getCurrentCursorInfo() is "type=SouthEastResize hotSpot=0,0"
+PASS internals.getCurrentCursorInfo() is "type=SouthWestResize hotSpot=0,0"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
