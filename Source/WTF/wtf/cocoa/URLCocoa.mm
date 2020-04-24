@@ -91,4 +91,16 @@ bool URL::hostIsIPAddress(StringView host)
     return [host.createNSStringWithoutCopying().get() _web_looksLikeIPAddress];
 }
 
+RetainPtr<id> makeNSArrayElement(const URL& vectorElement)
+{
+    return adoptNS((__bridge_transfer id)vectorElement.createCFURL().leakRef());
+}
+
+Optional<URL> makeVectorElement(const URL*, id arrayElement)
+{
+    if (![arrayElement isKindOfClass:NSURL.class])
+        return WTF::nullopt;
+    return { { arrayElement } };
+}
+
 }

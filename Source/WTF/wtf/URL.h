@@ -287,6 +287,13 @@ WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(const String& url);
 // FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
 WTF_EXPORT_PRIVATE String encodeWithURLEscapeSequences(const String&);
 
+#ifdef __OBJC__
+
+WTF_EXPORT_PRIVATE RetainPtr<id> makeNSArrayElement(const URL&);
+WTF_EXPORT_PRIVATE Optional<URL> makeVectorElement(const URL*, id);
+
+#endif
+
 // Inlines.
 
 inline bool operator==(const URL& a, const URL& b)

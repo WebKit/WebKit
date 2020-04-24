@@ -24,9 +24,11 @@
  */
 
 #import "config.h"
+#import <wtf/URL.h>
 
 #import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -210,6 +212,13 @@ TEST(WTF_URLExtras, URLExtras_Nil)
 
     NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil, nil);
     EXPECT_TRUE(url2 == nil);
+}
+
+TEST(WTF_URLExtras, CreateNSArray)
+{
+    Vector<URL> urls { URL(URL(), "https://webkit.org/") };
+    auto array = createNSArray(urls);
+    EXPECT_TRUE([array.get()[0] isKindOfClass:NSURL.class]);
 }
 
 } // namespace TestWebKitAPI

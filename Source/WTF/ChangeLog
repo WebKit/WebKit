@@ -1,3 +1,20 @@
+2020-04-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(260485) Payment requests don't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=210997
+        <rdar://problem/62275343>
+
+        Reviewed by Darin Adler.
+
+        We were giving the PKPaymentRequest an NSArray<NSString *> instead of NSArray<NSURL *>.
+        This was a problem with all uses of createNSArray with Vector<URL>.
+        Now it's fixed with a test.
+
+        * wtf/URL.h:
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::makeNSArrayElement):
+        (WTF::makeVectorElement):
+
 2020-04-24  Megan Gardner  <megan_gardner@apple.com>
 
         Make LEGACY_PDF_SUPPORT feature flag.
