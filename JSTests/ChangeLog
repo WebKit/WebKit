@@ -1,3 +1,14 @@
+2020-04-24  Paulo Matos  <pmatos@igalia.com>
+
+        Skip on ARM and MIPS stress/for-of-iterator-open* added at r260585
+        https://bugs.webkit.org/show_bug.cgi?id=210961
+
+        Unreviewed Gardening.
+
+        * stress/for-of-iterator-open-osr-at-inlined-return-non-object.js:
+        * stress/for-of-iterator-open-osr-at-iterator-set-local.js:
+        * stress/for-of-iterator-open-return-non-object.js:
+
 2020-04-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove revoked Proxy checks from ProxyCreate
