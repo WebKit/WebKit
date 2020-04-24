@@ -1,3 +1,19 @@
+2020-04-24  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Bundle Inspector Resources in Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=210942
+
+        Reviewed by Fujii Hironori.
+
+        Add ENABLE_WEBINSPECTORUI so the resource copy can be disabled
+        on platforms without inspector frontends.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/PlatformWin.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-04-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build

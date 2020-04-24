@@ -1,3 +1,17 @@
+2020-04-24  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Bundle Inspector Resources in Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=210942
+
+        Reviewed by Fujii Hironori.
+
+        Move CMake logic for the inspector resource copy script to
+        Source/WebInspectorUI so it can be shared with Win and other platforms.
+
+        * InspectorGResources.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+
 2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Removing website data for a domain should delete corresponding ITP entry
