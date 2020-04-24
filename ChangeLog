@@ -1,3 +1,14 @@
+2020-04-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build
+        https://bugs.webkit.org/show_bug.cgi?id=210971
+
+        Reviewed by Brent Fulgham.
+
+        PAL is built as a static library.
+
+        * Source/cmake/target/PAL.cmake:
+
 2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Make JSCOnly work on macOS

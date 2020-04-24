@@ -7,8 +7,7 @@ if (NOT TARGET WebKit::PAL)
     # Just assuming Windows for the moment
     add_library(WebKit::PAL STATIC IMPORTED)
     set_target_properties(WebKit::PAL PROPERTIES
-        IMPORTED_LOCATION ${WEBKIT_LIBRARIES_RUNTIME_DIR}/PAL${DEBUG_SUFFIX}.dll
-        IMPORTED_IMPLIB ${WEBKIT_LIBRARIES_LINK_DIR}/PAL${DEBUG_SUFFIX}.lib
+        IMPORTED_LOCATION ${WEBKIT_LIBRARIES_LINK_DIR}/PAL${DEBUG_SUFFIX}.lib
         # Should add Apple libraries here when https://bugs.webkit.org/show_bug.cgi?id=205085 lands
         INTERFACE_LINK_LIBRARIES "WebKit::WTF"
     )
