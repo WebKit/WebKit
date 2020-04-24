@@ -25,36 +25,35 @@
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(APPKIT)
+@class NSImage;
+using CocoaImage = NSImage;
+#else
 @class UIImage;
+using CocoaImage = UIImage;
 #endif
 
 @interface WKQLThumbnailQueueManager : NSObject
 
-@property (nonatomic, readwrite, retain) NSOperationQueue* qlThumbnailGenerationQueue;
-- (id)init;
+@property (nonatomic, readonly, retain) NSOperationQueue *queue;
+
+- (instancetype)init;
 + (WKQLThumbnailQueueManager *)sharedInstance;
+
 @end
 
 @interface WKQLThumbnailLoadOperation : NSOperation
 
-@property (readonly, getter=isAsynchronous) BOOL asynchronous;
-@property (readonly, getter=isExecuting) BOOL executing;
-@property (readonly, getter=isFinished) BOOL finished;
+@property (atomic, readonly, getter=isAsynchronous) BOOL asynchronous;
+@property (atomic, readonly, getter=isExecuting) BOOL executing;
+@property (atomic, readonly, getter=isFinished) BOOL finished;
 
-@property (nonatomic, copy) NSString *contentType;
-@property (nonatomic) BOOL shouldWrite;
+@property (nonatomic, readonly, copy) NSString *identifier;
+@property (nonatomic, readonly, retain) CocoaImage *thumbnail;
 
-- (id)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier;
-- (id)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier;
-- (NSString *)identifier;
-#if PLATFORM(IOS_FAMILY)
--(UIImage *)thumbnail;
-#endif
-#if PLATFORM(MAC)
--(NSImage *)thumbnail;
-#endif
+- (instancetype)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier;
+- (instancetype)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier;
 
 @end
 
-#endif
+#endif // HAVE(QUICKLOOK_THUMBNAILING)
