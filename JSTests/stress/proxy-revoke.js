@@ -15,7 +15,7 @@ function assert(b) {
             new Proxy.revocable;
         } catch(e) {
             threw = true;
-            assert(e.toString() === "TypeError: Proxy.revocable cannot be constructed. It can only be called");
+            assert(e.toString() === "TypeError: function is not a constructor (evaluating 'new Proxy.revocable')");
         }
         assert(threw);
     }
