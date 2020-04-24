@@ -290,9 +290,6 @@ inline void JSBigInt::setDigit(unsigned n, Digit value)
     dataStorage()[n] = value;
 }
 
-#if !ASSERT_ENABLED
-IGNORE_RETURN_TYPE_WARNINGS_BEGIN
-#endif
 ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::ComparisonResult comparisonResult)
 {
     switch (comparisonResult) {
@@ -300,14 +297,9 @@ ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::Com
         return JSBigInt::ComparisonResult::LessThan;
     case JSBigInt::ComparisonResult::LessThan:
         return JSBigInt::ComparisonResult::GreaterThan;
-    case JSBigInt::ComparisonResult::Equal:
-    case JSBigInt::ComparisonResult::Undefined:
+    default:
         return comparisonResult;
     }
-    ASSERT_NOT_REACHED();
 }
-#if !ASSERT_ENABLED
-IGNORE_RETURN_TYPE_WARNINGS_END
-#endif
 
 } // namespace JSC
