@@ -1,3 +1,15 @@
+2020-04-24  Youenn Fablet  <youenn@apple.com>
+
+        getDisplayMedia is not respecting aspect ratio with max constraints
+        https://bugs.webkit.org/show_bug.cgi?id=210858
+        <rdar://problem/61405434>
+
+        Unreviewed.
+        Remove these tests as it is redundant with getDisplayMedia-max-constraints 1 2 and 3.
+
+        * fast/mediastream/getDisplayMedia-max-constraints-expected.txt: Removed.
+        * fast/mediastream/getDisplayMedia-max-constraints.html: Removed.
+
 2020-04-24  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, expected to fail but passing
