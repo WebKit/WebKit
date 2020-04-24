@@ -53,9 +53,12 @@ public:
 
     virtual bool isKeyframeEffect() const { return false; }
 
+    EffectTiming getBindingsTiming() const;
     EffectTiming getTiming() const;
     BasicEffectTiming getBasicTiming() const;
+    ComputedEffectTiming getBindingsComputedTiming() const;
     ComputedEffectTiming getComputedTiming() const;
+    ExceptionOr<void> bindingsUpdateTiming(Optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Optional<OptionalEffectTiming>);
 
     virtual void apply(RenderStyle&) = 0;

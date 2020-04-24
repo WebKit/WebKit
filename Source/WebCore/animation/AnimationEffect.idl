@@ -28,7 +28,7 @@
     Exposed=Window,
     CustomToJSObject
 ] interface AnimationEffect {
-    EffectTiming getTiming();
-    ComputedEffectTiming getComputedTiming();
-    [MayThrowException] void updateTiming(optional OptionalEffectTiming timing);
+    [ImplementedAs=getBindingsTiming] EffectTiming getTiming();
+    [ImplementedAs=getBindingsComputedTiming] ComputedEffectTiming getComputedTiming();
+    [MayThrowException, ImplementedAs=bindingsUpdateTiming] void updateTiming(optional OptionalEffectTiming timing);
 };

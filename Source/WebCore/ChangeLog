@@ -1,3 +1,74 @@
+2020-04-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure calling Web Animations APIs override future CSS Animations style properties
+        https://bugs.webkit.org/show_bug.cgi?id=210988
+
+        Reviewed by Dean Jackson.
+
+        The CSS Animations Level 2 spec specifies how the Web Animations APIs and the CSS Animations style
+        properties should interact in https://drafts.csswg.org/css-animations-2/#animations. This patch
+        implements the specified behavior and this is reflected by progress on the relevant WPT tests.
+
+        The gist of this change is that once a Web Animations API is called on an animation created using
+        CSS Animations, any changes made to related CSS Animations style properties on the target element
+        will be ignored so that the overrides applied via the Web Animations API remain in effect.
+
+        For instance, calling pause() or play() in a way that changes the playback state of the CSS Animation
+        will mean that future changes to the CSS animation-play-state property are ignored.
+
+        To do this we make more IDL properties and methods use dedicated methods to distinguish between the
+        bindings entry-point and internal usage of the same methods to integrate the behavior only when the
+        API itself is being used.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getBindingsTiming const): Ensure we flush styles when animation.effect.getTiming()
+        is called.
+        (WebCore::AnimationEffect::getBindingsComputedTiming const): Ensure we flush styles when
+        animation.effect.getComputedTiming() is called.
+        (WebCore::AnimationEffect::bindingsUpdateTiming): Notify the associated CSSAnimation object, if any, when
+        animation.effect.updateTiming() is called such that the CSSAnimation may apply the relevant overrides.
+        * animation/AnimationEffect.h:
+        * animation/AnimationEffect.idl:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation): Only apply new values of CSS Animations style
+        properties if there are no overrides for them resulting from calling related Web Animations APIs.
+        (WebCore::CSSAnimation::bindingsPlay): Mark animation-play-state as overridden if play() is called.
+        (WebCore::CSSAnimation::bindingsPause): Mark animation-play-state as overridden if pause() is called.
+        (WebCore::CSSAnimation::setBindingsEffect): Mark all animation style properties, except for animation-name
+        and animation-play-state as overridden if animation.effect is set.
+        (WebCore::CSSAnimation::setBindingsStartTime): Mark animation-play-state as overridden if animation.startTime
+        is set.
+        (WebCore::CSSAnimation::bindingsReverse): Mark animation-play-state as overridden if reverse() is called.
+        (WebCore::CSSAnimation::effectTimingWasUpdatedUsingBindings): Mark each CSS property associated with a key
+        found on the timing object passed to animation.effect.updateTiming() as overridden.
+        (WebCore::CSSAnimation::effectKeyframesWereSetUsingBindings): Mark animation-timing-function as overridden
+        if animation.effect.setKeyframes() is called.
+        * animation/CSSAnimation.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::bindingsStartTime const):
+        (WebCore::DeclarativeAnimation::setBindingsStartTime):
+        (WebCore::DeclarativeAnimation::startTime const): Deleted.
+        (WebCore::DeclarativeAnimation::setStartTime): Deleted.
+        * animation/DeclarativeAnimation.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::getBindingsKeyframes): Ensure we flush styles when animation.effect.getKeyframes()
+        is called.
+        (WebCore::KeyframeEffect::getKeyframes): Only use the CSS-originated animation path if we don't have JS-originated
+        keyframes.
+        (WebCore::KeyframeEffect::setBindingsKeyframes): Notify the associated CSSAnimation object, if any, when
+        animation.effect.setKeyframes() is called such that the CSSAnimation may apply the relevant overrides.
+        (WebCore::KeyframeEffect::processKeyframes): Correctly return early if part of the processing yields an exception.
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setBindingsEffect):
+        (WebCore::WebAnimation::setBindingsStartTime):
+        (WebCore::WebAnimation::bindingsReverse):
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::bindingsEffect const):
+        (WebCore::WebAnimation::bindingsStartTime const):
+        * animation/WebAnimation.idl:
+
 2020-04-24  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: m_wrapper under HTMLMediaElement::setIsPlayingToWirelessTarget

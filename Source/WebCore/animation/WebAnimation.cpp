@@ -145,6 +145,11 @@ void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previous
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 }
 
+void WebAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
+{
+    setEffect(WTFMove(newEffect));
+}
+
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
 {
     // 3.4.3. Setting the target effect of an animation
@@ -295,6 +300,11 @@ Optional<double> WebAnimation::startTime() const
     if (!m_startTime)
         return WTF::nullopt;
     return secondsToWebAnimationsAPITime(m_startTime.value());
+}
+
+void WebAnimation::setBindingsStartTime(Optional<double> startTime)
+{
+    setStartTime(startTime);
 }
 
 void WebAnimation::setStartTime(Optional<double> startTime)
@@ -1095,6 +1105,11 @@ ExceptionOr<void> WebAnimation::pause()
     invalidateEffect();
 
     return { };
+}
+
+ExceptionOr<void> WebAnimation::bindingsReverse()
+{
+    return reverse();
 }
 
 ExceptionOr<void> WebAnimation::reverse()

@@ -66,6 +66,8 @@ public:
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
 
+    AnimationEffect* bindingsEffect() const { return effect(); }
+    virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
@@ -98,12 +100,15 @@ public:
     ExceptionOr<void> play();
     void updatePlaybackRate(double);
     ExceptionOr<void> pause();
+    virtual ExceptionOr<void> bindingsReverse();
     ExceptionOr<void> reverse();
     void persist();
     ExceptionOr<void> commitStyles();
 
-    virtual Optional<double> startTime() const;
-    virtual void setStartTime(Optional<double>);
+    virtual Optional<double> bindingsStartTime() const { return startTime(); }
+    virtual void setBindingsStartTime(Optional<double>);
+    Optional<double> startTime() const;
+    void setStartTime(Optional<double>);
     virtual Optional<double> bindingsCurrentTime() const;
     virtual ExceptionOr<void> setBindingsCurrentTime(Optional<double>);
     virtual PlayState bindingsPlayState() const { return playState(); }

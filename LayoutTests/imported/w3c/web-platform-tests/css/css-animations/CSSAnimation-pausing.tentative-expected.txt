@@ -1,11 +1,11 @@
 
-FAIL play() overrides animation-play-state assert_equals: Should still be running even after flipping the animation-play-state expected "running" but got "paused"
+PASS play() overrides animation-play-state 
 PASS play() does NOT override the animation-play-state if there was an error 
 PASS pause() overrides animation-play-state 
-FAIL reverse() overrides animation-play-state when it starts playing the animation assert_equals: Should still be running even after flipping the animation-play-state expected "running" but got "paused"
+PASS reverse() overrides animation-play-state when it starts playing the animation 
 PASS reverse() does NOT override animation-play-state if the animation is already running 
-FAIL Setting the startTime to null overrides animation-play-state if the animation is already running assert_equals: Should still be paused even after flipping the animation-play-state expected "paused" but got "running"
-FAIL Setting the startTime to non-null overrides animation-play-state if the animation is paused assert_equals: Should still be running even after flipping the animation-play-state expected "running" but got "paused"
+PASS Setting the startTime to null overrides animation-play-state if the animation is already running 
+PASS Setting the startTime to non-null overrides animation-play-state if the animation is paused 
 PASS Setting the startTime to non-null does NOT override the animation-play-state if the animation is already running 
 PASS Setting the current time completes a pending pause 
 

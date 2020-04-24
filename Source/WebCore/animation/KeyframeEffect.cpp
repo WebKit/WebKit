@@ -574,6 +574,13 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setBlendingKeyframes(keyframeList);
 }
 
+Vector<Strong<JSObject>> KeyframeEffect::getBindingsKeyframes(JSGlobalObject& lexicalGlobalObject)
+{
+    if (is<DeclarativeAnimation>(animation()))
+        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
+    return getKeyframes(lexicalGlobalObject);
+}
+
 Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
@@ -589,7 +596,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
     // 2. Let keyframes be the result of applying the procedure to compute missing keyframe offsets to the keyframes for this keyframe effect.
 
     // 3. For each keyframe in keyframes perform the following steps:
-    if (is<DeclarativeAnimation>(animation())) {
+    if (m_parsedKeyframes.isEmpty() && m_blendingKeyframesSource != BlendingKeyframesSource::WebAnimation) {
         auto* target = m_target.get();
         auto* renderer = this->renderer();
 
@@ -683,6 +690,14 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
     return result;
 }
 
+ExceptionOr<void> KeyframeEffect::setBindingsKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
+{
+    auto retVal = setKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
+    if (!retVal.hasException() && is<CSSAnimation>(animation()))
+        downcast<CSSAnimation>(*animation()).effectKeyframesWereSetUsingBindings();
+    return retVal;
+}
+
 ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
     auto processKeyframesResult = processKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
@@ -711,10 +726,15 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
 
     // 5. Perform the steps corresponding to the first matching condition from below,
     Vector<String> unusedEasings;
-    if (!method.isUndefined())
-        processIterableKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
-    else
-        processPropertyIndexedKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
+    if (!method.isUndefined()) {
+        auto retVal = processIterableKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
+        if (retVal.hasException())
+            return retVal.releaseException();
+    } else {
+        auto retVal = processPropertyIndexedKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
+        if (retVal.hasException())
+            return retVal.releaseException();
+    }
 
     // 6. If processed keyframes is not loosely sorted by offset, throw a TypeError and abort these steps.
     // 7. If there exist any keyframe in processed keyframes whose keyframe offset is non-null and less than

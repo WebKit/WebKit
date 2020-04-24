@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DeclarativeAnimation.h"
+#include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -43,8 +44,8 @@ public:
     bool isCSSAnimation() const override { return true; }
     const String& animationName() const { return m_animationName; }
 
-    ExceptionOr<void> bindingsPlay() final;
-    ExceptionOr<void> bindingsPause() final;
+    void effectTimingWasUpdatedUsingBindings(OptionalEffectTiming);
+    void effectKeyframesWereSetUsingBindings();
 
 private:
     CSSAnimation(Element&, const Animation&);
@@ -52,8 +53,25 @@ private:
     void syncPropertiesWithBackingAnimation() final;
     Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) final;
 
+    ExceptionOr<void> bindingsPlay() final;
+    ExceptionOr<void> bindingsPause() final;
+    void setBindingsEffect(RefPtr<AnimationEffect>&&) final;
+    void setBindingsStartTime(Optional<double>) final;
+    ExceptionOr<void> bindingsReverse() final;
+
+    enum class Property : uint8_t {
+        Name = 1 << 0,
+        Duration = 1 << 1,
+        TimingFunction = 1 << 2,
+        IterationCount = 1 << 3,
+        Direction = 1 << 4,
+        PlayState = 1 << 5,
+        Delay = 1 << 6,
+        FillMode = 1 << 7
+    };
+
     String m_animationName;
-    bool m_stickyPaused { false };
+    OptionSet<Property> m_overriddenProperties;
 };
 
 } // namespace WebCore

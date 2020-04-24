@@ -26,8 +26,10 @@
 #include "config.h"
 #include "AnimationEffect.h"
 
+#include "CSSAnimation.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
+#include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
@@ -39,6 +41,13 @@ AnimationEffect::AnimationEffect()
 
 AnimationEffect::~AnimationEffect()
 {
+}
+
+EffectTiming AnimationEffect::getBindingsTiming() const
+{
+    if (is<DeclarativeAnimation>(animation()))
+        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
+    return getTiming();
 }
 
 EffectTiming AnimationEffect::getTiming() const
@@ -149,6 +158,13 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
     }();
 
     return { localTime, activeTime, m_endTime, m_activeDuration, phase };
+}
+
+ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
+{
+    if (is<DeclarativeAnimation>(animation()))
+        downcast<DeclarativeAnimation>(*animation()).flushPendingStyleChanges();
+    return getComputedTiming();
 }
 
 ComputedEffectTiming AnimationEffect::getComputedTiming() const
@@ -334,6 +350,14 @@ ComputedEffectTiming AnimationEffect::getComputedTiming() const
     computedTiming.currentIteration = currentIteration;
     computedTiming.phase = phase;
     return computedTiming;
+}
+
+ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Optional<OptionalEffectTiming> timing)
+{
+    auto retVal = updateTiming(timing);
+    if (!retVal.hasException() && timing && is<CSSAnimation>(animation()))
+        downcast<CSSAnimation>(*animation()).effectTimingWasUpdatedUsingBindings(*timing);
+    return retVal;
 }
 
 ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> timing)

@@ -38,8 +38,8 @@ typedef USVString CSSOMString;
     [MayThrowException] attribute CSSOMString? pseudoElement;
     [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute IterationCompositeOperation iterationComposite;
     [EnabledAtRuntime=WebAnimationsCompositeOperations] attribute CompositeOperation composite;
-    [CallWith=GlobalObject] sequence<object> getKeyframes();
-    [MayThrowException, CallWith=GlobalObject] void setKeyframes(object? keyframes);
+    [CallWith=GlobalObject, ImplementedAs=getBindingsKeyframes] sequence<object> getKeyframes();
+    [MayThrowException, CallWith=GlobalObject, ImplementedAs=setBindingsKeyframes] void setKeyframes(object? keyframes);
 };
 
 dictionary BasePropertyIndexedKeyframe {

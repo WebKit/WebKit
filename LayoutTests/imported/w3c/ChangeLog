@@ -1,3 +1,20 @@
+2020-04-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure calling Web Animations APIs override future CSS Animations style properties
+        https://bugs.webkit.org/show_bug.cgi?id=210988
+
+        Reviewed by Dean Jackson.
+
+        Mark all WPT tests related to Web Animations APIs overrides for CSS Animations as PASS, save for one
+        failing assertion which is caused by AnimationTimeline::updateCSSAnimations() not updating the animation
+        when the underlying @keyframes rule changed. This is due to Animation::animationsMatch() not checking on
+        the actual keyframes, tracked by webkit.org/b/210989.
+
+        * web-platform-tests/css/css-animations/AnimationEffect-updateTiming.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/CSSAnimation-pausing.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/KeyframeEffect-setKeyframes.tentative-expected.txt:
+
 2020-04-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync wpt/WebIDL/ecmascript-binding and wpt/custom-elements/htmlconstructor from upstream

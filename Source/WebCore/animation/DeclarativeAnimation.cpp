@@ -129,13 +129,13 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-Optional<double> DeclarativeAnimation::startTime() const
+Optional<double> DeclarativeAnimation::bindingsStartTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::startTime();
 }
 
-void DeclarativeAnimation::setStartTime(Optional<double> startTime)
+void DeclarativeAnimation::setBindingsStartTime(Optional<double> startTime)
 {
     flushPendingStyleChanges();
     return WebAnimation::setStartTime(startTime);

@@ -50,8 +50,8 @@ public:
     void setBackingAnimation(const Animation&);
     void cancelFromStyle();
 
-    Optional<double> startTime() const final;
-    void setStartTime(Optional<double>) final;
+    Optional<double> bindingsStartTime() const final;
+    void setBindingsStartTime(Optional<double>) override;
     Optional<double> bindingsCurrentTime() const final;
     ExceptionOr<void> setBindingsCurrentTime(Optional<double>) final;
     WebAnimation::PlayState bindingsPlayState() const final;
@@ -69,6 +69,8 @@ public:
 
     bool canHaveGlobalPosition() final;
 
+    void flushPendingStyleChanges() const;
+
 protected:
     DeclarativeAnimation(Element&, const Animation&);
 
@@ -81,7 +83,6 @@ protected:
 
 private:
     void disassociateFromOwningElement();
-    void flushPendingStyleChanges() const;
     AnimationEffectPhase phaseWithoutEffect() const;
     void enqueueDOMEvent(const AtomString&, Seconds);
 
