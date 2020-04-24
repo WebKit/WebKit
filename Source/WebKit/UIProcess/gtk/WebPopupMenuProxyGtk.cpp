@@ -276,15 +276,16 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     gtk_widget_set_size_request(m_popup, width, -1);
     gtk_scrolled_window_set_min_content_height(swindow, itemCount * itemHeight);
 
-    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
 #if GTK_CHECK_VERSION(3, 24, 0)
-    GdkRectangle windowRect = { menuPosition.x(), menuPosition.y(), rect.width(), rect.height() };
+    GdkRectangle windowRect = { rect.x(), rect.y(), rect.width(), rect.height() };
+    gtk_widget_translate_coordinates(m_webView, toplevel, windowRect.x, windowRect.y, &windowRect.x, &windowRect.y);
     gdk_window_move_to_rect(gtk_widget_get_window(m_popup), &windowRect, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST,
         static_cast<GdkAnchorHints>(GDK_ANCHOR_FLIP | GDK_ANCHOR_SLIDE | GDK_ANCHOR_RESIZE), 0, 0);
 #else
     GtkRequisition menuRequisition;
     gtk_widget_get_preferred_size(m_popup, &menuRequisition, nullptr);
 
+    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
     if (menuPosition.x() + menuRequisition.width > area.x + area.width)
         menuPosition.setX(area.x + area.width - menuRequisition.width);
 
