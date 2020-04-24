@@ -86,7 +86,8 @@ WI.Table = class Table extends WI.View
         this._columnWidths = null; // Calculated in _resizeColumnsAndFiller.
         this._fillerHeight = 0; // Calculated in _resizeColumnsAndFiller.
 
-        this._selectionController = new WI.SelectionController(this, (a, b) => this._indexForRepresentedObject(a) - this._indexForRepresentedObject(b));
+        let selectionComparator = WI.SelectionController.createListComparator(this._indexForRepresentedObject.bind(this));
+        this._selectionController = new WI.SelectionController(this, selectionComparator);
 
         this._resizers = [];
         this._currentResizer = null;

@@ -566,18 +566,10 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         if (!this.dataGrid || !this.selectable || this.selected)
             return;
 
-        let oldSelectedNode = this.dataGrid.selectedNode;
-        if (oldSelectedNode)
-            oldSelectedNode.deselect(true);
-
         this._selected = true;
-        this.dataGrid.selectedNode = this;
+        this._element?.classList.add("selected");
 
-        if (this._element)
-            this._element.classList.add("selected");
-
-        if (!suppressSelectedEvent)
-            this.dataGrid.dispatchEventToListeners(WI.DataGrid.Event.SelectedNodeChanged, {oldSelectedNode});
+        this.dataGrid.selectDataGridNodeInternal(this, suppressSelectedEvent);
     }
 
     revealAndSelect(suppressSelectedEvent)
@@ -588,17 +580,13 @@ WI.DataGridNode = class DataGridNode extends WI.Object
 
     deselect(suppressDeselectedEvent)
     {
-        if (!this.dataGrid || this.dataGrid.selectedNode !== this || !this.selected)
+        if (!this.dataGrid || !this.selectable || !this.selected)
             return;
 
         this._selected = false;
-        this.dataGrid.selectedNode = null;
+        this._element?.classList.remove("selected");
 
-        if (this._element)
-            this._element.classList.remove("selected");
-
-        if (!suppressDeselectedEvent)
-            this.dataGrid.dispatchEventToListeners(WI.DataGrid.Event.SelectedNodeChanged, {oldSelectedNode: this});
+        this.dataGrid.deselectDataGridNodeInternal(this, suppressDeselectedEvent);
     }
 
     traverseNextNode(skipHidden, stayWithin, dontPopulate, info)

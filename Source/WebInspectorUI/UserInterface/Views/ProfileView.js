@@ -69,6 +69,8 @@ WI.ProfileView = class ProfileView extends WI.ContentView
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Descending;
         this._dataGrid.createSettings("profile-view");
 
+        this._selectedDataGridNode = null;
+
         // Currently we create a new ProfileView for each CallingContextTree, so
         // to share state between them, use a common shared data object.
         this._sharedData = extraArguments;
@@ -211,18 +213,19 @@ WI.ProfileView = class ProfileView extends WI.ContentView
 
     _dataGridNodeSelected(event)
     {
-        let oldSelectedNode = event.data.oldSelectedNode;
-        if (oldSelectedNode) {
-            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, oldSelectedNode);
-            oldSelectedNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, node));
+        if (this._selectedDataGridNode) {
+            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, this._selectedDataGridNode);
+            this._selectedDataGridNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, node));
         }
 
-        let newSelectedNode = this._dataGrid.selectedNode;
-        if (newSelectedNode) {
-            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, newSelectedNode);
-            newSelectedNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Selected, node, newSelectedNode));
+        this._selectedDataGridNode = this._dataGrid.selectedNode;
 
-            this._sharedData.selectedNodeHash = newSelectedNode.callingContextTreeNode.hash;
+
+        if (this._selectedDataGridNode) {
+            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, this._selectedDataGridNode);
+            this._selectedDataGridNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Selected, node, this._selectedDataGridNode));
+
+            this._sharedData.selectedNodeHash = this._selectedDataGridNode.callingContextTreeNode.hash;
         }
     }
 

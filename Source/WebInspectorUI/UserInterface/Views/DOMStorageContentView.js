@@ -48,6 +48,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         });
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.sortColumnIdentifier = "key";
+        this._dataGrid.allowsMultipleSelection = true;
         this._dataGrid.createSettings("dom-storage-content-view");
         this._dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._sortDataGrid, this);
         this.addSubview(this._dataGrid);
@@ -193,13 +194,14 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         this._dataGrid.sortNodesImmediately(comparator);
     }
 
-    _deleteCallback(node)
+    _deleteCallback()
     {
-        if (!node || node.isPlaceholderNode)
-            return;
-
-        this._dataGrid.removeChild(node);
-        this.representedObject.removeItem(node.data["key"]);
+        for (let dataGridNode of this._dataGrid.selectedDataGridNodes) {
+            if (dataGridNode.isPlaceholderNode)
+                continue;
+            this._dataGrid.removeChild(dataGridNode);
+            this.representedObject.removeItem(dataGridNode.data["key"]);
+        }
     }
 
     _editingCallback(editingNode, columnIdentifier, oldText, newText, moveDirection)

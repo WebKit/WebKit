@@ -44,7 +44,6 @@ WI.DataGrid = class DataGrid extends WI.View
         this._rows = [];
 
         this.children = [];
-        this.selectedNode = null;
         this.expandNodesWhenArrowing = false;
         this.root = true;
         this.hasChildren = false;
@@ -67,6 +66,13 @@ WI.DataGrid = class DataGrid extends WI.View
         this._filterText = "";
         this._filterDelegate = null;
         this._filterDidModifyNodeWhileProcessingItems = false;
+
+        let itemForRepresentedObject = this.dataGridNodeForSelectionItem.bind(this);
+        let selectionComparator = WI.SelectionController.createTreeComparator(itemForRepresentedObject);
+        this._selectionController = new WI.SelectionController(this, selectionComparator);
+
+        this._processingSelectionChange = false;
+        this._suppressNextSelectionDidChangeEvent = false;
 
         this.element.className = "data-grid";
         this.element.tabIndex = 0;
@@ -316,6 +322,45 @@ WI.DataGrid = class DataGrid extends WI.View
         this._element.classList.toggle("variable-height-rows", this._variableHeightRows);
 
         this._updateScrollListeners();
+    }
+
+    get allowsMultipleSelection()
+    {
+        return this._selectionController.allowsMultipleSelection;
+    }
+
+    set allowsMultipleSelection(flag)
+    {
+        this._selectionController.allowsMultipleSelection = flag;
+    }
+
+    get selectedNode()
+    {
+        return this.dataGridNodeForSelectionItem(this._selectionController.lastSelectedItem);
+    }
+
+    set selectedNode(dataGridNode)
+    {
+        if (dataGridNode)
+            this._selectionController.selectItem(this.selectionItemForDataGridNode(dataGridNode));
+        else
+            this._selectionController.deselectAll();
+    }
+
+    get selectedDataGridNodes()
+    {
+        if (this.allowsMultipleSelection) {
+            let selectedDataGridNodes = [];
+            for (let item of this._selectionController.selectedItems)
+                selectedDataGridNodes.push(this.dataGridNodeForSelectionItem(item));
+            return selectedDataGridNodes;
+        }
+
+        let selectedNode = this.selectedNode;
+        if (selectedNode)
+            return [selectedNode];
+
+        return [];
     }
 
     get filterText() { return this._filterText; }
@@ -1366,64 +1411,70 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _keyDown(event)
     {
-        if (!this.selectedNode || event.shiftKey || event.metaKey || event.ctrlKey || this._editing)
+        if (this._editing)
             return;
 
-        let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
+        let isRTL = WI.resolveLayoutDirectionForElement(this.element) === WI.LayoutDirection.RTL;
+        let expandKeyIdentifier = isRTL ? "Left" : "Right";
+        let collapseKeyIdentifier = isRTL ? "Right" : "Left";
 
         var handled = false;
         var nextSelectedNode;
-        if (event.keyIdentifier === "Up" && !event.altKey) {
-            nextSelectedNode = this.selectedNode.traversePreviousNode(true);
-            while (nextSelectedNode && !nextSelectedNode.selectable)
-                nextSelectedNode = nextSelectedNode.traversePreviousNode(true);
-            handled = nextSelectedNode ? true : false;
-        } else if (event.keyIdentifier === "Down" && !event.altKey) {
-            nextSelectedNode = this.selectedNode.traverseNextNode(true);
-            while (nextSelectedNode && !nextSelectedNode.selectable)
-                nextSelectedNode = nextSelectedNode.traverseNextNode(true);
-            handled = nextSelectedNode ? true : false;
-        } else if ((!isRTL && event.keyIdentifier === "Left") || (isRTL && event.keyIdentifier === "Right")) {
-            if (this.selectedNode.expanded) {
-                if (event.altKey)
-                    this.selectedNode.collapseRecursively();
-                else
-                    this.selectedNode.collapse();
-                handled = true;
-            } else if (this.selectedNode.parent && !this.selectedNode.parent.root) {
-                handled = true;
-                if (this.selectedNode.parent.selectable) {
-                    nextSelectedNode = this.selectedNode.parent;
-                    handled = nextSelectedNode ? true : false;
-                } else if (this.selectedNode.parent)
-                    this.selectedNode.parent.collapse();
-            }
-        } else if ((!isRTL && event.keyIdentifier === "Right") || (isRTL && event.keyIdentifier === "Left")) {
-            if (!this.selectedNode.revealed) {
-                this.selectedNode.reveal();
-                handled = true;
-            } else if (this.selectedNode.hasChildren) {
-                handled = true;
+
+        if (this.selectedNode) {
+            if (event.keyIdentifier === collapseKeyIdentifier) {
                 if (this.selectedNode.expanded) {
-                    nextSelectedNode = this.selectedNode.children[0];
-                    handled = nextSelectedNode ? true : false;
-                } else {
                     if (event.altKey)
-                        this.selectedNode.expandRecursively();
+                        this.selectedNode.collapseRecursively();
                     else
-                        this.selectedNode.expand();
+                        this.selectedNode.collapse();
+                    handled = true;
+                } else if (this.selectedNode.parent && !this.selectedNode.parent.root) {
+                    handled = true;
+                    if (this.selectedNode.parent.selectable) {
+                        nextSelectedNode = this.selectedNode.parent;
+                        while (nextSelectedNode && !nextSelectedNode.selectable)
+                            nextSelectedNode = nextSelectedNode.parent;
+                        handled = !!nextSelectedNode;
+                    } else if (this.selectedNode.parent)
+                        this.selectedNode.parent.collapse();
+                }
+            } else if (event.keyIdentifier === expandKeyIdentifier) {
+                if (!this.selectedNode.revealed) {
+                    this.selectedNode.reveal();
+                    handled = true;
+                } else if (this.selectedNode.hasChildren) {
+                    handled = true;
+                    if (this.selectedNode.expanded) {
+                        nextSelectedNode = this.selectedNode.children[0];
+                        while (nextSelectedNode && !nextSelectedNode.selectable)
+                            nextSelectedNode = nextSelectedNode.nextSibling;
+                        handled = !!nextSelectedNode;
+                    } else {
+                        if (event.altKey)
+                            this.selectedNode.expandRecursively();
+                        else
+                            this.selectedNode.expand();
+                    }
+                }
+            } else if (event.keyCode === 8 /* Backspace */ || event.keyCode === 46 /* Delete */) {
+                if (this._deleteCallback) {
+                    handled = true;
+                    this._deleteCallback(this.selectedNode);
+                }
+            } else if (isEnterKey(event)) {
+                if (this._editCallback) {
+                    handled = true;
+                    this._startEditing(this.selectedNode.element.children[0]);
                 }
             }
-        } else if (event.keyCode === 8 || event.keyCode === 46) {
-            if (this._deleteCallback) {
-                handled = true;
-                this._deleteCallback(this.selectedNode);
-            }
-        } else if (isEnterKey(event)) {
-            if (this._editCallback) {
-                handled = true;
-                this._startEditing(this.selectedNode.element.children[0]);
-            }
+        }
+
+        if (!handled) {
+            handled = this._selectionController.handleKeyDown(event);
+
+            if (handled)
+                nextSelectedNode = this.selectedNode;
         }
 
         if (nextSelectedNode) {
@@ -1460,6 +1511,24 @@ WI.DataGrid = class DataGrid extends WI.View
     revealAndSelect()
     {
         // This is the root, do nothing.
+    }
+
+    selectNodes(nodes)
+    {
+        if (!nodes.length)
+            return;
+
+        if (nodes.length === 1) {
+            this.selectedNode = nodes[0];
+            return;
+        }
+
+        console.assert(this.allowsMultipleSelection, "Cannot select multiple DataGridNode with multiple selection disabled.");
+        if (!this.allowsMultipleSelection)
+            return;
+
+        let selectableObjects = nodes.map((node) => this.selectionItemForDataGridNode(node));
+        this._selectionController.selectItems(new Set(selectableObjects));
     }
 
     dataGridNodeFromNode(target)
@@ -1578,23 +1647,16 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _mouseDownInDataTable(event)
     {
-        var gridNode = this.dataGridNodeFromNode(event.target);
-        if (!gridNode) {
-            if (this.selectedNode)
-                this.selectedNode.deselect();
+        let dataGridNode = this.dataGridNodeFromNode(event.target);
+        if (!dataGridNode) {
+            this._selectionController.deselectAll();
             return;
         }
 
-        if (!gridNode.selectable || gridNode.isEventWithinDisclosureTriangle(event))
+        if (!dataGridNode.selectable || dataGridNode.isEventWithinDisclosureTriangle(event))
             return;
 
-        if (event.metaKey) {
-            if (gridNode.selected)
-                gridNode.deselect();
-            else
-                gridNode.select();
-        } else
-            gridNode.select();
+        this._selectionController.handleItemMouseDown(this.selectionItemForDataGridNode(dataGridNode), event);
     }
 
     _contextMenuInHeader(event)
@@ -1666,7 +1728,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         if (gridNode) {
             if (gridNode.selectable && gridNode.copyable && !gridNode.isEventWithinDisclosureTriangle(event)) {
-                contextMenu.appendItem(WI.UIString("Copy Row"), this._copyRow.bind(this, event.target));
+                contextMenu.appendItem(WI.UIString("Copy Row"), this._copyRow.bind(this, gridNode));
                 contextMenu.appendItem(WI.UIString("Copy Table"), this._copyTable.bind(this));
 
                 if (this.dataGrid._editCallback) {
@@ -1746,22 +1808,30 @@ WI.DataGrid = class DataGrid extends WI.View
 
     handleCopyEvent(event)
     {
-        if (!this.selectedNode || !window.getSelection().isCollapsed)
+        if (!window.getSelection().isCollapsed)
             return;
 
-        var copyText = this._copyTextForDataGridNode(this.selectedNode);
-        event.clipboardData.setData("text/plain", copyText);
+        let copyData = [];
+        for (let dataGridNode of this.selectedDataGridNodes) {
+            if (!dataGridNode.copyable || dataGridNode.isPlaceholderNode)
+                continue;
+            copyData.push(this._copyTextForDataGridNode(dataGridNode));
+        }
+
+        if (!copyData.length)
+            return;
+
+        event.clipboardData.setData("text/plain", copyData.join("\n"));
         event.stopPropagation();
         event.preventDefault();
     }
 
-    _copyRow(target)
+    _copyRow(dataGridNode)
     {
-        var gridNode = this.dataGridNodeFromNode(target);
-        if (!gridNode)
+        if (!dataGridNode.copyable || dataGridNode.isPlaceholderNode)
             return;
 
-        var copyText = this._copyTextForDataGridNode(gridNode);
+        let copyText = this._copyTextForDataGridNode(dataGridNode);
         InspectorFrontendHost.copyText(copyText);
     }
 
@@ -1769,19 +1839,28 @@ WI.DataGrid = class DataGrid extends WI.View
     {
         let copyData = [];
         copyData.push(this._copyTextForDataGridHeaders());
-        for (let gridNode of this.children) {
-            if (!gridNode.copyable)
+        for (let dataGridNode of this._rows) {
+            if (!dataGridNode.copyable || dataGridNode.isPlaceholderNode)
                 continue;
-            copyData.push(this._copyTextForDataGridNode(gridNode));
+            copyData.push(this._copyTextForDataGridNode(dataGridNode));
         }
+
+        if (!copyData.length)
+            return;
 
         InspectorFrontendHost.copyText(copyData.join("\n"));
     }
 
     _hasCopyableData()
     {
-        let gridNode = this.children[0];
-        return gridNode && gridNode.selectable && gridNode.copyable;
+        const skipHidden = true;
+        const stayWithin = null;
+        const dontPopulate = true;
+
+        let dataGridNode = this._rows[0];
+        while (dataGridNode && (!dataGridNode.selectable || !dataGridNode.copyable || dataGridNode.isPlaceholderNode))
+            dataGridNode = dataGridNode.traverseNextNode(skipHidden, stayWithin, dontPopulate);
+        return !!dataGridNode;
     }
 
     resizerDragStarted(resizer)
@@ -1904,6 +1983,36 @@ WI.DataGrid = class DataGrid extends WI.View
         this._applyFilterToNodesTask.start();
     }
 
+    selectDataGridNodeInternal(dataGridNode, suppressSelectedEvent)
+    {
+        if (this._processingSelectionChange)
+            return;
+
+        this._suppressNextSelectionDidChangeEvent = suppressSelectedEvent;
+
+        this._selectionController.selectItem(this.selectionItemForDataGridNode(dataGridNode));
+    }
+
+    deselectDataGridNodeInternal(dataGridNode, suppressDeselectedEvent)
+    {
+        if (this._processingSelectionChange)
+            return;
+
+        this._suppressNextSelectionDidChangeEvent = suppressDeselectedEvent;
+
+        this._selectionController.deselectItem(this.selectionItemForDataGridNode(dataGridNode));
+    }
+
+    _dispatchSelectedNodeChangedEvent()
+    {
+        if (this._suppressNextSelectionDidChangeEvent) {
+            this._suppressNextSelectionDidChangeEvent = false;
+            return;
+        }
+
+        this.dispatchEventToListeners(WI.DataGrid.Event.SelectedNodeChanged);
+    }
+
     // YieldableTask delegate
 
     yieldableTaskWillProcessItem(task, node)
@@ -1926,6 +2035,95 @@ WI.DataGrid = class DataGrid extends WI.View
     yieldableTaskDidFinish(task)
     {
         this._applyFilterToNodesTask = null;
+    }
+
+    // SelectionController delegate
+
+    dataGridNodeForSelectionItem(item)
+    {
+        console.assert(!item || item instanceof WI.DataGridNode);
+        return item;
+    }
+
+    selectionItemForDataGridNode(dataGridNode)
+    {
+        console.assert(!dataGridNode || dataGridNode instanceof WI.DataGridNode);
+        return dataGridNode;
+    }
+
+    selectionControllerSelectionDidChange(selectionController, deselectedItems, selectedItems)
+    {
+        this._processingSelectionChange = true;
+
+        for (let item of deselectedItems) {
+            let dataGridNode = this.dataGridNodeForSelectionItem(item);
+            dataGridNode?.deselect();
+        }
+
+        for (let item of selectedItems) {
+            let dataGridNode = this.dataGridNodeForSelectionItem(item);
+            dataGridNode?.select();
+        }
+
+        this._dispatchSelectedNodeChangedEvent();
+
+        this._processingSelectionChange = false;
+    }
+
+    selectionControllerFirstSelectableItem(controller, operation)
+    {
+        let firstChild = this._rows[0];
+        let item = this.selectionItemForDataGridNode(firstChild);
+        if (firstChild.selectable && (!firstChild.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
+            return item;
+        return this.selectionControllerNextSelectableItem(controller, item, operation);
+    }
+
+    selectionControllerLastSelectableItem(controller, operation)
+    {
+        let lastChild = this._rows.lastValue;
+        while (lastChild.expanded && lastChild.children.length)
+            lastChild = lastChild.children.lastValue;
+
+        let item = this.selectionItemForDataGridNode(lastChild);
+        if (lastChild.selectable && (!lastChild.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
+            return item;
+        return this.selectionControllerPreviousSelectableItem(controller, item, operation);
+    }
+
+    selectionControllerPreviousSelectableItem(controller, item, operation)
+    {
+        let dataGridNode = this.dataGridNodeForSelectionItem(item);
+        console.assert(dataGridNode, "Missing DataGridNode for selection item.", item);
+        if (!dataGridNode)
+            return null;
+
+        const skipUnrevealed = true;
+        const dontPopulate = true;
+        while (dataGridNode = dataGridNode.traversePreviousNode(skipUnrevealed, dontPopulate)) {
+            if (dataGridNode.selectable && (!dataGridNode.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
+                return this.selectionItemForDataGridNode(dataGridNode);
+        }
+
+        return null;
+    }
+
+    selectionControllerNextSelectableItem(controller, item, operation)
+    {
+        let dataGridNode = this.dataGridNodeForSelectionItem(item);
+        console.assert(dataGridNode, "Missing DataGridNode for selection item.", item);
+        if (!dataGridNode)
+            return null;
+
+        const skipUnrevealed = true;
+        const stayWithin = null;
+        const dontPopulate = true;
+        while (dataGridNode = dataGridNode.traverseNextNode(skipUnrevealed, stayWithin, dontPopulate)) {
+            if (dataGridNode.selectable && (!dataGridNode.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
+                return this.selectionItemForDataGridNode(dataGridNode);
+        }
+
+        return null;
     }
 };
 

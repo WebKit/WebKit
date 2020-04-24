@@ -1,5 +1,85 @@
 2020-04-23  Devin Rousso  <drousso@apple.com>
 
+        Web Insspector: Storage: cannot select multiple local storage entries
+        https://bugs.webkit.org/show_bug.cgi?id=210876
+
+        Reviewed by Brian Burg.
+
+        Support multiple selection using `WI.DataGrid`.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid):
+        (WI.DataGrid.prototype.get allowsMultipleSelection): Added.
+        (WI.DataGrid.prototype.set allowsMultipleSelection): Added.
+        (WI.DataGrid.prototype.get selectedNode):
+        (WI.DataGrid.prototype.set selectedNode):
+        (WI.DataGrid.prototype.get selectedDataGridNodes): Added.
+        (WI.DataGrid.prototype._keyDown):
+        (WI.DataGrid.prototype.selectNodes):
+        (WI.DataGrid.prototype._mouseDownInDataTable):
+        (WI.DataGrid.prototype._contextMenuInDataTable):
+        (WI.DataGrid.prototype.handleCopyEvent):
+        (WI.DataGrid.prototype._copyRow):
+        (WI.DataGrid.prototype._copyTable):
+        (WI.DataGrid.prototype._hasCopyableData):
+        (WI.DataGrid.prototype.selectDataGridNodeInternal): Added.
+        (WI.DataGrid.prototype.deselectDataGridNodeInternal): Added.
+        (WI.DataGrid.prototype._dispatchSelectedNodeChangedEvent): Added.
+        (WI.DataGrid.prototype.dataGridNodeForSelectionItem): Added.
+        (WI.DataGrid.prototype.selectionItemForDataGridNode): Added.
+        (WI.DataGrid.prototype.selectionControllerSelectionDidChange): Added.
+        (WI.DataGrid.prototype.selectionControllerFirstSelectableItem): Added.
+        (WI.DataGrid.prototype.selectionControllerLastSelectableItem): Added.
+        (WI.DataGrid.prototype.selectionControllerPreviousSelectableItem): Added.
+        (WI.DataGrid.prototype.selectionControllerNextSelectableItem): Added.
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.select):
+        (WI.DataGridNode.prototype.deselect):
+        Replace `selectedNode` with a `WI.SelectionController` that behaves like a `WI.TreeOutline`.
+        Use the `WI.SelectionController.Operation` to ensure that `WI.PlaceholderDataGridNode` are
+        not selected unless directly chosen (i.e. not during shift selection or ⌘A). Add logic such
+        that `WI.PlaceholderDataGridNode` are not copied. Prefer `_rows` instead of `children` as
+        the latter is not sorted/filtered.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.createTreeComparator): Added.
+        (WI.SelectionController.createListComparator): Added.
+        Create `static` helper functions for common comparators.
+
+        (WI.SelectionController.prototype.deselectItem):
+        (WI.SelectionController.prototype.selectAll):
+        (WI.SelectionController.prototype.removeSelectedItems):
+        (WI.SelectionController.prototype.handleItemMouseDown):
+        (WI.SelectionController.prototype._selectItemsFromArrowKey):
+        (WI.SelectionController.prototype._firstSelectableItem):
+        (WI.SelectionController.prototype._lastSelectableItem):
+        (WI.SelectionController.prototype._previousSelectableItem):
+        (WI.SelectionController.prototype._nextSelectableItem):
+        (WI.SelectionController.prototype._addRange):
+        (WI.SelectionController.prototype._deleteRange):
+        Introduce a `WI.SelectionController.Operation` which is used to tell the `_delegate` about
+        why it's being asked for information.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView):
+        (WI.DOMStorageContentView.prototype._deleteCallback):
+        Support multiple selection, including deleting multiple rows at once.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.selectionControllerNumberOfItems): Deleted.
+        Removed unused `selectionControllerNumberOfItems`.
+
+        * UserInterface/Views/ProfileView.js:
+        (WI.ProfileView):
+        (WI.ProfileView.prototype._dataGridNodeSelected):
+        Maintain a `_selectedDataGridNode` so that `oldSelectedNode` doesn't have to be included
+        when dispatching `WI.DataGrid.Event.SelectedNodeChanged`.
+
+2020-04-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: Elements: Styles: color functions are missing swatches
         https://bugs.webkit.org/show_bug.cgi?id=210930
 

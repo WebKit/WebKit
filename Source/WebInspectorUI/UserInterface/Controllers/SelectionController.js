@@ -48,6 +48,64 @@ WI.SelectionController = class SelectionController extends WI.Object
         console.assert(this._delegate.selectionControllerPreviousSelectableItem, "SelectionController delegate must implement selectionControllerPreviousSelectableItem.");
     }
 
+    // Static
+
+    static createTreeComparator(itemForRepresentedObject)
+    {
+        return (a, b) => {
+            a = itemForRepresentedObject(a);
+            b = itemForRepresentedObject(b);
+            if (!a || !b)
+                return 0;
+
+            let getLevel = (item) => {
+                let level = 0;
+                while (item = item.parent)
+                    level++;
+                return level;
+            };
+
+            let compareSiblings = (s, t) => {
+                return s.parent.children.indexOf(s) - s.parent.children.indexOf(t);
+            };
+
+            if (a.parent === b.parent)
+                return compareSiblings(a, b);
+
+            let aLevel = getLevel(a);
+            let bLevel = getLevel(b);
+            while (aLevel > bLevel) {
+                if (a.parent === b)
+                    return 1;
+                a = a.parent;
+                aLevel--;
+            }
+            while (bLevel > aLevel) {
+                if (b.parent === a)
+                    return -1;
+                b = b.parent;
+                bLevel--;
+            }
+
+            while (a.parent !== b.parent) {
+                a = a.parent;
+                b = b.parent;
+            }
+
+            console.assert(a.parent === b.parent, "Missing common ancestor.", a, b);
+            return compareSiblings(a, b);
+        };
+    }
+
+    static createListComparator(indexForRepresentedObject)
+    {
+        console.assert(indexForRepresentedObject);
+
+        return (a, b) => {
+            return indexForRepresentedObject(a) - indexForRepresentedObject(b);
+        };
+    }
+
     // Public
 
     get delegate() { return this._delegate; }
@@ -129,17 +187,21 @@ WI.SelectionController = class SelectionController extends WI.Object
             this._lastSelectedItem = null;
 
             if (newItems.size) {
+                console.assert(this._allowsMultipleSelection);
+
+                const operation = WI.SelectionController.Operation.Extend;
+
                 // Find selected item closest to deselected item.
                 let previous = item;
                 let next = item;
                 while (!this._lastSelectedItem && previous && next) {
-                    previous = this._previousSelectableItem(previous);
+                    previous = this._previousSelectableItem(previous, operation);
                     if (this.hasSelectedItem(previous)) {
                         this._lastSelectedItem = previous;
                         break;
                     }
 
-                    next = this._nextSelectableItem(next);
+                    next = this._nextSelectableItem(next, operation);
                     if (this.hasSelectedItem(next)) {
                         this._lastSelectedItem = next;
                         break;
@@ -159,10 +221,10 @@ WI.SelectionController = class SelectionController extends WI.Object
         if (!this._allowsMultipleSelection)
             return;
 
-        this.reset();
+        const operation = WI.SelectionController.Operation.Extend;
 
         let newItems = new Set;
-        this._addRange(newItems, this._firstSelectableItem(), this._lastSelectableItem());
+        this._addRange(newItems, this._firstSelectableItem(operation), this._lastSelectableItem(operation));
         this.selectItems(newItems);
     }
 
@@ -176,22 +238,24 @@ WI.SelectionController = class SelectionController extends WI.Object
         if (!this._selectedItems.size)
             return;
 
+        let operation = this._allowsMultipleSelection ? WI.SelectionController.Operation.Extend : WI.SelectionController.Operation.Direct;
+
         let orderedSelection = Array.from(this._selectedItems).sort(this._comparator);
 
         // Try selecting the item preceding the selection.
         let firstSelectedItem = orderedSelection[0];
-        let itemToSelect = this._previousSelectableItem(firstSelectedItem);
+        let itemToSelect = this._previousSelectableItem(firstSelectedItem, operation);
         if (!itemToSelect) {
             // If no item exists before the first item in the selection, try selecting
             // a deselected item (hole) within the selection.
             itemToSelect = firstSelectedItem;
             while (itemToSelect && this.hasSelectedItem(itemToSelect))
-                itemToSelect = this._nextSelectableItem(itemToSelect);
+                itemToSelect = this._nextSelectableItem(itemToSelect, operation);
 
             if (!itemToSelect || this.hasSelectedItem(itemToSelect)) {
                 // If the selection contains no holes, try selecting the item
                 // following the selection.
-                itemToSelect = this._nextSelectableItem(orderedSelection.lastValue);
+                itemToSelect = this._nextSelectableItem(orderedSelection.lastValue, operation);
             }
         }
 
@@ -265,7 +329,7 @@ WI.SelectionController = class SelectionController extends WI.Object
         // through the clicked item to be selected.
         if (!newItems.size) {
             this._lastSelectedItem = item;
-            this._shiftAnchorItem = this._firstSelectableItem();
+            this._shiftAnchorItem = this._firstSelectableItem(WI.SelectionController.Operation.Extend);
 
             this._addRange(newItems, this._shiftAnchorItem, this._lastSelectedItem);
             this._updateSelectedItems(newItems);
@@ -320,16 +384,18 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     _selectItemsFromArrowKey(goingUp, shiftKey)
     {
+        let extendSelection = shiftKey && this._allowsMultipleSelection;
+        let operation = extendSelection ? WI.SelectionController.Operation.Extend : WI.SelectionController.Operation.Direct;
+
         if (!this._selectedItems.size) {
-            this.selectItem(goingUp ? this._lastSelectableItem() : this._firstSelectableItem());
+            this.selectItem(goingUp ? this._lastSelectableItem(operation) : this._firstSelectableItem(operation));
             return;
         }
 
-        let item = goingUp ? this._previousSelectableItem(this._lastSelectedItem) : this._nextSelectableItem(this._lastSelectedItem);
+        let item = goingUp ? this._previousSelectableItem(this._lastSelectedItem, operation) : this._nextSelectableItem(this._lastSelectedItem, operation);
         if (!item)
             return;
 
-        let extendSelection = shiftKey && this._allowsMultipleSelection;
         if (!extendSelection || !this.hasSelectedItem(item)) {
             this.selectItem(item, extendSelection);
             return;
@@ -338,7 +404,7 @@ WI.SelectionController = class SelectionController extends WI.Object
         // Since the item in the direction of movement is selected, we are either
         // extending the selection into the item, or deselecting. Determine which
         // by checking whether the item opposite the anchor item is selected.
-        let priorItem = goingUp ? this._nextSelectableItem(this._lastSelectedItem) : this._previousSelectableItem(this._lastSelectedItem);
+        let priorItem = goingUp ? this._nextSelectableItem(this._lastSelectedItem, operation) : this._previousSelectableItem(this._lastSelectedItem, operation);
         if (!priorItem || !this.hasSelectedItem(priorItem)) {
             this.deselectItem(this._lastSelectedItem);
             return;
@@ -354,28 +420,28 @@ WI.SelectionController = class SelectionController extends WI.Object
             }
 
             this._lastSelectedItem = item;
-            item = goingUp ? this._previousSelectableItem(item) : this._nextSelectableItem(item);
+            item = goingUp ? this._previousSelectableItem(item, operation) : this._nextSelectableItem(item, operation);
         }
     }
 
-    _firstSelectableItem()
+    _firstSelectableItem(operation)
     {
-        return this._delegate.selectionControllerFirstSelectableItem(this);
+        return this._delegate.selectionControllerFirstSelectableItem(this, operation);
     }
 
-    _lastSelectableItem()
+    _lastSelectableItem(operation)
     {
-        return this._delegate.selectionControllerLastSelectableItem(this);
+        return this._delegate.selectionControllerLastSelectableItem(this, operation);
     }
 
-    _previousSelectableItem(item)
+    _previousSelectableItem(item, operation)
     {
-        return this._delegate.selectionControllerPreviousSelectableItem(this, item);
+        return this._delegate.selectionControllerPreviousSelectableItem(this, item, operation);
     }
 
-    _nextSelectableItem(item)
+    _nextSelectableItem(item, operation)
     {
-        return this._delegate.selectionControllerNextSelectableItem(this, item);
+        return this._delegate.selectionControllerNextSelectableItem(this, item, operation);
     }
 
     _updateSelectedItems(items)
@@ -394,12 +460,16 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     _addRange(items, firstItem, lastItem)
     {
+        console.assert(this._allowsMultipleSelection);
+
+        const operation = WI.SelectionController.Operation.Extend;
+
         let current = firstItem;
         while (current) {
             items.add(current);
             if (current === lastItem)
                 break;
-            current = this._nextSelectableItem(current);
+            current = this._nextSelectableItem(current, operation);
         }
 
         console.assert(!lastItem || items.has(lastItem), "End of range could not be reached.");
@@ -407,14 +477,23 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     _deleteRange(items, firstItem, lastItem)
     {
+        console.assert(this._allowsMultipleSelection);
+
+        const operation = WI.SelectionController.Operation.Extend;
+
         let current = firstItem;
         while (current) {
             items.delete(current);
             if (current === lastItem)
                 break;
-            current = this._nextSelectableItem(current);
+            current = this._nextSelectableItem(current, operation);
         }
 
         console.assert(!lastItem || !items.has(lastItem), "End of range could not be reached.");
     }
+};
+
+WI.SelectionController.Operation = {
+    Direct: Symbol("selection-operation-direct"),
+    Extend: Symbol("selection-operation-extend"),
 };
