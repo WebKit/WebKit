@@ -1,3 +1,9 @@
+2020-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r223327): Remove merge conflict file
+
+        * web-platform-tests/webrtc/simplecall.html.orig: Remove.
+
 2020-04-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure calling Web Animations APIs override future CSS Animations style properties
