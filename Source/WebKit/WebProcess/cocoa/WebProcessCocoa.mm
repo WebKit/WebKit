@@ -94,6 +94,10 @@
 #import <JavaScriptCore/RemoteInspector.h>
 #endif
 
+#if HAVE(SYSTEM_STATUS_ATTRIBUTION)
+#import <SystemStatus/STDynamicActivityAttributionPublisher.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
@@ -188,6 +192,18 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
             m_uiProcessDependencyProcessAssertion = makeUnique<ProcessAssertion>(remoteProcessID, "WebContent process dependency on UIProcess"_s, ProcessAssertionType::DependentProcessLink);
         else
             RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "Unable to create a process dependency assertion on UIProcess because remoteProcessID is 0");
+
+        bool revoked = extension->revoke();
+        ASSERT_UNUSED(revoked, revoked);
+    }
+#endif
+#if HAVE(SYSTEM_STATUS_ATTRIBUTION)
+    if (parameters.systemStatusActivityAttributionExtensionHandle) {
+        auto extension = SandboxExtension::create(WTFMove(*parameters.systemStatusActivityAttributionExtensionHandle));
+        bool consumed = extension->consume();
+        ASSERT_UNUSED(consumed, consumed);
+
+        [STDynamicActivityAttributionPublisher setCurrentAttributionKey:@"_WKGenericWebsiteName" andApp:nil];
 
         bool revoked = extension->revoke();
         ASSERT_UNUSED(revoked, revoked);

@@ -374,6 +374,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport))
         parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
 
+#if HAVE(SYSTEM_STATUS_ATTRIBUTION)
+    SandboxExtension::Handle systemStatusActivityAttributionExtensionHandle;
+    if (SandboxExtension::createHandleForMachLookup("com.apple.systemstatus.activityattribution", WTF::nullopt, systemStatusActivityAttributionExtensionHandle, SandboxExtension::Flags::NoReport))
+        parameters.systemStatusActivityAttributionExtensionHandle = WTFMove(systemStatusActivityAttributionExtensionHandle);
+#endif
+
     if (WebCore::deviceHasAGXCompilerService()) {
         static const char* const ioKitClasses[] = {
             "AGXCommandQueue",
