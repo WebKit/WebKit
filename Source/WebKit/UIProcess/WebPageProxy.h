@@ -1368,6 +1368,7 @@ public:
 
     void didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChallengeProxy>&&, NegotiatedLegacyTLS);
     void negotiatedLegacyTLS();
+    void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&);
 
     SpellDocumentTag spellDocumentTag();
 

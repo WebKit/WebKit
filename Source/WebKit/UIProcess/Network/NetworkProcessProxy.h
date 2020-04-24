@@ -251,6 +251,7 @@ private:
     void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const Optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, uint64_t challengeID);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
+    void didNegotiateModernTLS(WebPageProxyIdentifier, const WebCore::AuthenticationChallenge&);
     void didFetchWebsiteData(CallbackID, const WebsiteData&);
     void didDeleteWebsiteData(CallbackID);
     void didDeleteWebsiteDataForOrigins(CallbackID);

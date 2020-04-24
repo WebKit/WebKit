@@ -81,6 +81,7 @@ private:
     void wasBlocked() final;
     void cannotShowURL() final;
     void wasBlockedByRestrictions() final;
+    void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&) final;
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
     void throttleDelayCompleted();

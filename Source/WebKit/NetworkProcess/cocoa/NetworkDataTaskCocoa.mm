@@ -318,6 +318,12 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
     }
 }
 
+void NetworkDataTaskCocoa::didNegotiateModernTLS(const WebCore::AuthenticationChallenge& challenge)
+{
+    if (m_client)
+        m_client->didNegotiateModernTLS(challenge);
+}
+
 void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
     if (error.isNull())
