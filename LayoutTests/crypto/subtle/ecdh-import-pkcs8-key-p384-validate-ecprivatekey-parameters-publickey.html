@@ -42,16 +42,16 @@ Promise.resolve().then(function(result) {
     testPassed("Successfully imported a P-384 key.");
 
     debug("ECDH: importing P-384 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...");
-    return shouldReject('importKey(pkcs8P384KeyMismatchedCurveIdentifiers)');
+    return shouldRejectWithErrorName('importKey(pkcs8P384KeyMismatchedCurveIdentifiers)', 'DataError');
 }).then(function(result) {
     debug("ECDH: importing P-384 key that has a public key in PKCS#8 of invalid length ...");
-    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKeyLength)');
+    return shouldRejectWithErrorName('importKey(pkcs8P384KeyInvalidPublicKeyLength)', 'DataError');
 }).then(function(result) {
     debug("ECDH: importing P-384 key that has a public key in PKCS#8 of invalid EC point format ...");
-    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKeyECPointFormat)');
+    return shouldRejectWithErrorName('importKey(pkcs8P384KeyInvalidPublicKeyECPointFormat)', 'DataError');
 }).then(function(result) {
     debug("ECDH: importing P-384 key that has an invalid public key in PKCS#8 ...");
-    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKey)');
+    return shouldRejectWithErrorName('importKey(pkcs8P384KeyInvalidPublicKey)', 'DataError');
 }).then(function(result) {
     finishJSTest();
 });;

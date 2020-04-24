@@ -42,16 +42,16 @@ Promise.resolve().then(function(result) {
     testPassed("Successfully imported a P-256 key.");
 
     debug("ECDSA: importing P-256 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...");
-    return shouldReject('importKey(pkcs8P256KeyMismatchedCurveIdentifiers)');
+    return shouldRejectWithErrorName('importKey(pkcs8P256KeyMismatchedCurveIdentifiers)', 'DataError');
 }).then(function(result) {
     debug("ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid length ...");
-    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKeyLength)');
+    return shouldRejectWithErrorName('importKey(pkcs8P256KeyInvalidPublicKeyLength)', 'DataError');
 }).then(function(result) {
     debug("ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid EC point format ...");
-    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKeyECPointFormat)');
+    return shouldRejectWithErrorName('importKey(pkcs8P256KeyInvalidPublicKeyECPointFormat)', 'DataError');
 }).then(function(result) {
     debug("ECDSA: importing P-256 key that has an invalid public key in PKCS#8 ...");
-    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKey)');
+    return shouldRejectWithErrorName('importKey(pkcs8P256KeyInvalidPublicKey)', 'DataError');
 }).then(function(result) {
     finishJSTest();
 });;

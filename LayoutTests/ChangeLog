@@ -1,3 +1,20 @@
+2020-04-23  Lauro Moura  <lmoura@igalia.com>
+
+        Use shouldRejectWithErrorName after r260579.
+
+        The mentioned revision made shouldRejectWithErrorName (and
+        shouldReject) actually omit the error name when it was not requested.
+
+        So now to catch the desired error we must actually request it
+        instead of just relying on the expectation file messages.
+
+        Unreviewed test gardening.
+
+        * crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html:
+        * crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html:
+        * crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html:
+        * crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html:
+
 2020-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         EventHandler::selectCursor() has broken resize over coordinate conversion code
