@@ -1,4 +1,14 @@
 =================
+WPE WebKit 2.28.2
+=================
+
+What's new in WPE WebKit 2.28.2?
+
+  - Fix playing of Youtube 'live stream'/H264 URLs.
+  - Fix the build in MIPS64.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.28.1
 =================
 
