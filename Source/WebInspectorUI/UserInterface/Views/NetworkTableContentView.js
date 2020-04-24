@@ -791,6 +791,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _populateWaterfallGraph(cell, entry)
     {
+        cell.classList.add("network");
+
         cell.removeChildren();
 
         let container = cell.appendChild(document.createElement("div"));

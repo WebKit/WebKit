@@ -237,13 +237,13 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     font-weight: normal;
 }
 
-/* Styles also used by `WI.ResourceTimingBreakdownView`. */
+/* Styles also used by `WI.ResourceTimingBreakdownView` (also inside a `WI.Popover`). */
 
 .network-table .error {
     color: var(--error-text-color);
 }
 
-.network-table .waterfall .block {
+.waterfall.network .block {
     position: absolute;
     top: 8px;
     min-width: 2px;
@@ -253,77 +253,77 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     --end-radius: 2px;
 }
 
-body[dir=ltr] .network-table .waterfall .block {
+body[dir=ltr] .waterfall.network .block {
     border-top-left-radius: var(--start-radius);
     border-top-right-radius: var(--end-radius);
     border-bottom-left-radius: var(--start-radius);
     border-bottom-right-radius: var(--end-radius);
 }
 
-body[dir=rtl] .network-table .waterfall .block {
+body[dir=rtl] .waterfall.network .block {
     border-top-left-radius: var(--end-radius);
     border-top-right-radius: var(--start-radius);
     border-bottom-left-radius: var(--end-radius);
     border-bottom-right-radius: var(--start-radius);
 }
 
-.network-table .waterfall .block + .block {
+.waterfall.network .block + .block {
     --start-radius: 0;
     --end-radius: 0;
 }
 
-.network-table .waterfall .block:matches(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler),
-.network-table .waterfall .block:not(.request, .response) + :matches(.request, .response) {
+.waterfall.network .block:matches(.mouse-tracking, .filler) + .block:not(.mouse-tracking, .filler),
+.waterfall.network .block:not(.request, .response) + :matches(.request, .response) {
     --start-radius: 2px;
 }
 
-.network-table .waterfall .block:last-child {
+.waterfall.network .block:last-child {
     --end-radius: 2px;
 }
 
-.network-table .waterfall .block.request,
-.network-table .waterfall .block.response {
+.waterfall.network .block.request,
+.waterfall.network .block.response {
     top: 3px;
     height: 14px;
 }
 
-.network-table .waterfall .block.mouse-tracking {
+.waterfall.network .block.mouse-tracking {
     top: 1px;
     z-index: 2;
     height: 18px;
 }
 
-.network-table .waterfall .block.filler {
+.waterfall.network .block.filler {
     top: 9px;
     height: 2px;
     background-color: lightgrey;
 }
 
-.network-table .waterfall .block.redirect {
+.waterfall.network .block.redirect {
     background-color: var(--network-redirect-color);
 }
 
-.network-table .waterfall .block.queue {
+.waterfall.network .block.queue {
     background-color: var(--network-queue-color);
 }
 
-.network-table .waterfall .block.dns {
+.waterfall.network .block.dns {
     background-color: var(--network-dns-color);
 }
 
-.network-table .waterfall .block.connect {
+.waterfall.network .block.connect {
     background-color: var(--network-connect-color);
 }
 
-.network-table .waterfall .block.secure {
+.waterfall.network .block.secure {
     background-color: var(--network-secure-color);
 }
 
-.network-table .waterfall .block.request {
+.waterfall.network .block.request {
     background-color: var(--network-request-color);
 }
 
-.network-table .waterfall .block.response {
+.waterfall.network .block.response {
     background-color: var(--network-response-color);
 }
 

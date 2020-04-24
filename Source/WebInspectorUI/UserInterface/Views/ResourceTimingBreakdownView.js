@@ -141,7 +141,7 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
         let serverTiming = this._resource.serverTiming;
 
         this._tableElement = this.element.appendChild(document.createElement("table"));
-        this._tableElement.className = "waterfall";
+        this._tableElement.className = "waterfall network";
 
         this._graphStartTime = startTime;
         this._graphEndTime = responseEnd;
