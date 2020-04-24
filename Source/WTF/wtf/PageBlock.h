@@ -49,7 +49,7 @@ namespace WTF {
 // Use 64 KiB for any unknown CPUs to be conservative.
 #if OS(DARWIN)
 constexpr size_t CeilingOnPageSize = 16 * KB;
-#elif OS(WINDOWS) || CPU(MIPS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
+#elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
 constexpr size_t CeilingOnPageSize = 4 * KB;
 #elif CPU(UNKNOWN) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE)
 constexpr size_t CeilingOnPageSize = 64 * KB;

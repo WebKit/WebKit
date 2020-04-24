@@ -1,3 +1,12 @@
+2020-04-16  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed, set CeilingOnPageSize for MIPS64
+
+        This fixes a build failure ("Must set CeilingOnPageSize in
+        PageBlock.h").
+
+        * wtf/PageBlock.h:
+
 2020-03-27  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r258857): Broke aarch64 JSCOnly CI
