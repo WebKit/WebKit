@@ -28,6 +28,7 @@
 
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
+#include <wtf/cf/TypeCastsCF.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
@@ -250,7 +251,8 @@ static String genericFamily(const String& locale, HashMap<String, String>& map, 
 {
     return map.ensure(locale, [&] {
         auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, locale.createCFString().get()));
-        return adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
+        auto value = adoptCF(dynamic_cf_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute)));
+        return String { value.get() };
     }).iterator->value;
 }
 
