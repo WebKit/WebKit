@@ -1869,8 +1869,6 @@ webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/207226 http/tests/misc/image-blocked-src-change.html [ Pass Failure ]
 
-webkit.org/b/207230 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.html [ Pass Failure ]
-
 webkit.org/b/206908 imported/w3c/web-platform-tests/hr-time/basic.any.html [ Pass Failure ]
 
 webkit.org/b/207306 inspector/animation/lifecycle-css-animation.html [ Pass Failure ]

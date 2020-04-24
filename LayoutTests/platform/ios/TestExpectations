@@ -3422,8 +3422,6 @@ webkit.org/b/207057 imported/w3c/web-platform-tests/IndexedDB/keypath-special-id
 
 webkit.org/b/207225 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Pass Failure ]
 
-webkit.org/b/207230 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.html [ Pass Failure ]
-
 # Locale-specific shaping is only enabled on certain OSes.
 webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
