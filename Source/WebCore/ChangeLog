@@ -1,3 +1,14 @@
+2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] allThreads registration is racy with allThreads unregistration
+        https://bugs.webkit.org/show_bug.cgi?id=210995
+        <rdar://problem/61609690>
+
+        Reviewed by Keith Miller.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+
 2020-04-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make some more adjustments to TextManipulationController's paragraph boundary heuristic

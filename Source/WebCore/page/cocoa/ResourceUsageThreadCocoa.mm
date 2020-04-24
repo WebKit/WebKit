@@ -156,8 +156,8 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashSet<mach_port_t> knownWebKitThreads;
     {
-        LockHolder lock(Thread::allThreadsMutex());
-        for (auto* thread : Thread::allThreads(lock)) {
+        auto locker = holdLock(Thread::allThreadsMutex());
+        for (auto* thread : Thread::allThreads(locker)) {
             mach_port_t machThread = thread->machThread();
             if (machThread != MACH_PORT_NULL)
                 knownWebKitThreads.add(machThread);
