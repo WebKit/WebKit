@@ -1,3 +1,21 @@
+2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Support `--report-execution-time` to report execution time for each JSC stress test
+        https://bugs.webkit.org/show_bug.cgi?id=210938
+
+        Reviewed by Saam Barati.
+
+        We can run `run-javascriptcore-tests` with `--report-execution-time` option to report execution time for each JSC stress test,
+        to figure out which test is taking a long time. It appends execution-time to the verbose log. To see it stderr, --verbose is also
+        required.
+
+        $ run-javascriptcore-tests .... --verbose --report-execution-time
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+
 2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation does not account for text in fully clipped containers

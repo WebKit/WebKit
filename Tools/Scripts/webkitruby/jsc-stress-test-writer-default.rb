@@ -263,8 +263,12 @@ class Plan
     end
     
     def successCommand
-        if $progressMeter or $verbosity >= 2
-            "rm -f #{failFile} ; echo PASS: #{Shellwords.shellescape(@name)}"
+        executionTimeMessage = ""
+        if $reportExecutionTime
+            executionTimeMessage = " $(($SECONDS - $START_TIME))s"
+        end
+        if $progressMeter or $reportExecutionTime or $verbosity >= 2
+            "rm -f #{failFile} ; echo PASS: #{Shellwords.shellescape(@name)}#{executionTimeMessage}"
         else
             "rm -f #{failFile}"
         end
@@ -277,6 +281,9 @@ class Plan
     def writeRunScript(filename)
         File.open(filename, "w") {
             | outp |
+            if $reportExecutionTime
+                outp.puts "START_TIME=$SECONDS"
+            end
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
             cmd  = "(" + shellCommand + " || (echo $? > #{failFile})) 2>&1 "
             cmd += @outputHandler.call(@name)

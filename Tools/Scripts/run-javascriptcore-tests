@@ -62,6 +62,7 @@ my $makeRunner;
 my $rubyRunner;
 my $testWriter;
 my $memoryLimited;
+my $reportExecutionTime;
 
 my $report;
 my $buildbotMaster;
@@ -272,6 +273,8 @@ Usage: $programName [options] [options to pass to build system]
   --memory-limited              Indicate that we are targeting the test for a memory limited device.
                                 Skip tests tagged with //\@skip if \$memoryLimited
 
+  --report-execution-time       Print execution time for each stress test.
+
   --filter                      Only run tests whose name matches the given regular expression.
   --env-vars                    Pass a list of environment variables to set before running tests.
                                 Each environment variable should be separated by a space.
@@ -334,6 +337,7 @@ GetOptions(
     'ruby-runner' => \$rubyRunner,
     'test-writer=s' => \$testWriter,
     'memory-limited' => \$memoryLimited,
+    'report-execution-time' => \$reportExecutionTime,
     'filter=s' => \$filter,
     'help' => \$showHelp,
     'env-vars=s' => \$envVars,
@@ -785,6 +789,10 @@ sub runJSCStressTests
 
     if ($memoryLimited) {
         push(@jscStressDriverCmd, "--memory-limited");
+    }
+
+    if ($reportExecutionTime) {
+        push(@jscStressDriverCmd, "--report-execution-time");
     }
 
     if ($filter) {

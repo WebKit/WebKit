@@ -121,6 +121,7 @@ $envVars = []
 $mode = "full"
 $buildType = "release"
 $forceCollectContinuously = false
+$reportExecutionTime = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -150,6 +151,7 @@ def usage
     puts "                            \"ruby\" to use ruby scripts for systems without a unix shell."
     puts "--remote                    Specify a remote host on which to run tests from command line argument."
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
+    puts "--report-execution-time     Print execution time for each test."
     puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--filter                    Only run tests whose name matches the given regular expression."
     puts "--help               (-h)   Print this message."
@@ -185,6 +187,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
+               ['--report-execution-time', GetoptLong::NO_ARGUMENT],
                ['--model', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
@@ -236,6 +239,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $remoteHosts << RemoteHost.new("default-#{$remoteHosts.length}", uri.user, uri.host, uri.port)
     when '--remote-config-file'
         $remoteConfigFile = arg
+    when '--report-execution-time'
+        $reportExecutionTime = true
     when '--child-processes'
         $numChildProcesses = arg.to_i
     when '--filter'
