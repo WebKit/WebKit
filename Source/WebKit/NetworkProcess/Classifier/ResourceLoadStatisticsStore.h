@@ -184,6 +184,8 @@ public:
 
     virtual void setLastSeen(const RegistrableDomain& primaryDomain, Seconds) = 0;
 
+    virtual void removeDataForDomain(const RegistrableDomain&) = 0;
+    
     void didCreateNetworkProcess();
 
     const WebResourceLoadStatisticsStore& store() const { return m_store; }

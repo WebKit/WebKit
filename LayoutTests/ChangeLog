@@ -1,3 +1,32 @@
+2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Removing website data for a domain should delete corresponding ITP entry
+        https://bugs.webkit.org/show_bug.cgi?id=210864
+        <rdar://problem/59473193>
+
+        Reviewed by John Wilander.
+
+        Inserts values into the ITP database then tests removing the domain's
+        website data will remove all instances of that domain in the ITP
+        database.
+
+        Database store expectations will reflect the result of the new
+        domainIDExistsInDatabase function. Memory store tests will use the
+        dump output which should not include the deleted information.
+
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-database.html: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-database.html: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries.html: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database.html: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads.html: Added.
+
 2020-04-24  Antoine Quint  <graouts@apple.com>
 
         Update the css/css-animations WPT tests

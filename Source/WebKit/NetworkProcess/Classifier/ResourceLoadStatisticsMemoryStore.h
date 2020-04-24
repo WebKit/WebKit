@@ -112,6 +112,7 @@ public:
     bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
+    void removeDataForDomain(const RegistrableDomain&) override;
 
 private:
     static bool shouldBlockAndKeepCookies(const ResourceLoadStatistics&);

@@ -1,3 +1,64 @@
+2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Removing website data for a domain should delete corresponding ITP entry
+        https://bugs.webkit.org/show_bug.cgi?id=210864
+        <rdar://problem/59473193>
+
+        Reviewed by John Wilander.
+
+        Tests: http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration-database.html
+               http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html
+               http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries-database.html
+               http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries.html
+               http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads-database.html
+               http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads.html
+
+        In the database store: deletes domain from the ObservedDomains table
+        when website data is deleted for that domain. This deletes every
+        instance of the domainID in the database due to cascading deletions.
+
+        In the memory store: deletes every instance of the domain in the
+        statistics map, which will update the plist.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeDataForDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase):
+        Needed a new function to check for the existence of domainID in any
+        table. Existing queries rely on the ObservedDomains entry, which means
+        testing using those could result in a false positive if the domainID
+        was deleted from ObservedDomains but is floating around in another
+        table.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataForDomain):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::domainIDExistsInDatabase):
+        (WebKit::WebResourceLoadStatisticsStore::removeDataForDomain):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::domainIDExistsInDatabase):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        Pass RegistrableDomains vector to deleteWebsiteDataForOrigins,
+        captured based on the WebsiteData display name.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveITPDataForDomain):
+        (WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcessProxy::domainIDExistsInDatabase):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::domainIDExistsInDatabase):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-04-24  David Kilzer  <ddkilzer@apple.com>
 
         Use CocoaImage platform abstraction for NSImage/UIImage

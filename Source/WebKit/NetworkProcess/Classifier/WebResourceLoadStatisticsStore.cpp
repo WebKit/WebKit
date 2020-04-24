@@ -1155,6 +1155,23 @@ void WebResourceLoadStatisticsStore::clearInMemoryEphemeral(CompletionHandler<vo
     completionHandler();
 }
 
+void WebResourceLoadStatisticsStore::domainIDExistsInDatabase(int domainID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, domainID, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+            completionHandler(false);
+            return;
+        }
+        auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
+        bool domainIDExists = databaseStore.domainIDExistsInDatabase(domainID);
+        postTaskReply([domainIDExists, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(domainIDExists);
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1281,6 +1298,17 @@ void WebResourceLoadStatisticsStore::invalidateAndCancel()
 {
     ASSERT(RunLoop::isMain());
     m_networkSession = nullptr;
+}
+
+void WebResourceLoadStatisticsStore::removeDataForDomain(RegistrableDomain domain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    postTask([this, domain = WTFMove(domain), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->removeDataForDomain(domain);
+
+        postTaskReply(WTFMove(completionHandler));
+    });
 }
 
 void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)

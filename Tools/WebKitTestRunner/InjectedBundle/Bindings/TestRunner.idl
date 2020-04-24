@@ -292,6 +292,8 @@ interface TestRunner {
     void disconnectMockGamepad(unsigned long index);
 
     // Resource Load Statistics
+    void clearStatisticsDataForDomain(DOMString domain);
+    boolean doesStatisticsDomainIDExistInDatabase(unsigned long domainID);
     void setStatisticsEnabled(boolean value);
     boolean isStatisticsEphemeral();
     void installStatisticsDidModifyDataRecordsCallback(object callback);

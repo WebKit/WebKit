@@ -1042,6 +1042,23 @@ void ResourceLoadStatisticsMemoryStore::setLastSeen(const RegistrableDomain& dom
     statistics.lastSeen = WallTime::fromRawSeconds(seconds.seconds());
 }
 
+void ResourceLoadStatisticsMemoryStore::removeDataForDomain(const RegistrableDomain& domain)
+{
+    m_resourceStatisticsMap.remove(domain);
+    
+    for (auto& statistic : m_resourceStatisticsMap) {
+        statistic.value.topFrameUniqueRedirectsTo.remove(domain);
+        statistic.value.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement.remove(domain);
+        statistic.value.topFrameUniqueRedirectsFrom.remove(domain);
+        statistic.value.topFrameLinkDecorationsFrom.remove(domain);
+        statistic.value.topFrameLoadedThirdPartyScripts.remove(domain);
+        statistic.value.subframeUnderTopFrameDomains.remove(domain);
+        statistic.value.subresourceUnderTopFrameDomains.remove(domain);
+        statistic.value.subresourceUniqueRedirectsTo.remove(domain);
+        statistic.value.subresourceUniqueRedirectsFrom.remove(domain);
+    }
+}
+
 void ResourceLoadStatisticsMemoryStore::setPrevalentResource(const RegistrableDomain& domain)
 {
     ASSERT(!RunLoop::isMain());

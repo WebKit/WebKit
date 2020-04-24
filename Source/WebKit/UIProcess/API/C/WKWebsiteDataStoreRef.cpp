@@ -66,6 +66,30 @@ WKWebsiteDataStoreRef WKWebsiteDataStoreCreateWithConfiguration(WKWebsiteDataSto
     return WebKit::toAPI(&WebKit::WebsiteDataStore::create(*WebKit::toImpl(configuration), sessionID).leakRef());
 }
 
+void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreRemoveITPDataForDomainFunction callback)
+{
+    WebKit::WebsiteDataRecord dataRecord;
+    dataRecord.types.add(WebKit::WebsiteDataType::ResourceLoadStatistics);
+    dataRecord.displayName = WebKit::toImpl(host)->string();
+    Vector<WebKit::WebsiteDataRecord> dataRecords = { WTFMove(dataRecord) };
+
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ResourceLoadStatistics;
+    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, dataRecords, [context, callback] {
+        callback(context);
+    });
+}
+
+void WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase(WKWebsiteDataStoreRef dataStoreRef, int domainID, void* context, WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabaseFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->domainIDExistsInDatabase(domainID, [context, callback](bool exists) {
+        callback(exists, context);
+    });
+#else
+    callback(false, context);
+#endif
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
 {
     auto* websiteDataStore = WebKit::toImpl(dataStoreRef);

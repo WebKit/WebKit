@@ -218,6 +218,7 @@ struct ThirdPartyData {
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
+    void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier);
@@ -254,6 +255,7 @@ struct ThirdPartyData {
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void clearInMemoryEphemeral(CompletionHandler<void()>&&);
+    void domainIDExistsInDatabase(int domainID, CompletionHandler<void(bool)>&&);
 
     void setTimeToLiveUserInteraction(Seconds, CompletionHandler<void()>&&);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds, CompletionHandler<void()>&&);

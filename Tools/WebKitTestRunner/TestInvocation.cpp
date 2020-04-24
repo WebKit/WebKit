@@ -1288,6 +1288,24 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
         return result;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearStatisticsDataForDomain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef domain = static_cast<WKStringRef>(messageBody);
+
+        TestController::singleton().clearStatisticsDataForDomain(domain);
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DoesStatisticsDomainIDExistInDatabase")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> domainIDKey = adoptWK(WKStringCreateWithUTF8CString("DomainID"));
+        WKUInt64Ref domainID = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, domainIDKey.get()));
+        bool domainIDExists = TestController::singleton().doesStatisticsDomainIDExistInDatabase(WKUInt64GetValue(domainID));
+        WKRetainPtr<WKTypeRef> result = adoptWK(WKBooleanCreate(domainIDExists));
+        return result;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsEnabled")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());

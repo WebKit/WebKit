@@ -1,3 +1,27 @@
+2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Removing website data for a domain should delete corresponding ITP entry
+        https://bugs.webkit.org/show_bug.cgi?id=210864
+        <rdar://problem/59473193>
+
+        Reviewed by John Wilander.
+
+        Created 2 new APIs for testing. One to mimic clearing website data
+        for a domain, and one to check if the domain exists in the database
+        after a deletion was requested.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::doesStatisticsDomainIDExistInDatabase):
+        (WTR::TestRunner::domainIDExistsInDatabase): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::doesStatisticsDomainIDExistInDatabase):
+        (WTR::TestController::domainIDExistsInDatabase): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-04-24  Antoine Quint  <graouts@apple.com>
 
         Update the css/css-animations WPT tests

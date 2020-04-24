@@ -380,6 +380,8 @@ public:
     void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value);
     
     // Resource Load Statistics
+    void clearStatisticsDataForDomain(JSStringRef domain);
+    bool doesStatisticsDomainIDExistInDatabase(unsigned domainID);
     void setStatisticsEnabled(bool value);
     bool isStatisticsEphemeral();
     void installStatisticsDidModifyDataRecordsCallback(JSValueRef callback);

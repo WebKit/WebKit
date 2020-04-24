@@ -3417,6 +3417,22 @@ static void resourceStatisticsBooleanResultCallback(bool result, void* userData)
     context->testController.notifyDone();
 }
 
+void TestController::clearStatisticsDataForDomain(WKStringRef domain)
+{
+    ResourceStatisticsCallbackContext context(*this);
+
+    WKWebsiteDataStoreRemoveITPDataForDomain(TestController::defaultWebsiteDataStore(), domain, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
+bool TestController::doesStatisticsDomainIDExistInDatabase(unsigned domainID)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase(websiteDataStore(), domainID, &context, resourceStatisticsBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
 void TestController::setStatisticsEnabled(bool value)
 {
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), value);

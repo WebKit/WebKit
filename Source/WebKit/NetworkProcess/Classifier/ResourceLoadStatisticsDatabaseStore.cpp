@@ -135,6 +135,17 @@ constexpr auto getAllSubStatisticsUnderDomainQuery = "SELECT topFrameDomainID FR
     "UNION ALL SELECT topFrameDomainID FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"
     "UNION ALL SELECT toDomainID FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
 
+// EXISTS for testing queries
+constexpr auto linkDecorationExistsQuery = "SELECT EXISTS (SELECT * FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? OR fromDomainID = ?)"_s;
+constexpr auto scriptLoadExistsQuery = "SELECT EXISTS (SELECT * FROM TopFrameLoadedThirdPartyScripts WHERE topFrameDomainID = ? OR subresourceDomainID = ?)"_s;
+constexpr auto subFrameExistsQuery = "SELECT EXISTS (SELECT * FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? OR topFrameDomainID = ?)"_s;
+constexpr auto subResourceExistsQuery = "SELECT EXISTS (SELECT * FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ? OR topFrameDomainID = ?)"_s;
+constexpr auto uniqueRedirectExistsQuery = "SELECT EXISTS (SELECT * FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? OR toDomainID = ?)"_s;
+constexpr auto observedDomainsExistsQuery = "SELECT EXISTS (SELECT * FROM ObservedDomains WHERE domainID = ?)"_s;
+
+// DELETE Queries
+constexpr auto removeAllDataQuery = "DELETE FROM ObservedDomains WHERE domainID = ?"_s;
+
 const char* tables[] = {
     "ObservedDomains",
     "TopLevelDomains",
@@ -290,6 +301,13 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_getAllSubStatisticsStatement(m_database, getAllSubStatisticsUnderDomainQuery)
     , m_storageAccessExistsStatement(m_database, storageAccessExistsQuery)
     , m_getMostRecentlyUpdatedTimestampStatement(m_database, getMostRecentlyUpdatedTimestampQuery)
+    , m_linkDecorationExistsStatement(m_database, linkDecorationExistsQuery)
+    , m_scriptLoadExistsStatement(m_database, scriptLoadExistsQuery)
+    , m_subFrameExistsStatement(m_database, subFrameExistsQuery)
+    , m_subResourceExistsStatement(m_database, subResourceExistsQuery)
+    , m_uniqueRedirectExistsStatement(m_database, uniqueRedirectExistsQuery)
+    , m_observedDomainsExistsStatement(m_database, observedDomainsExistsQuery)
+    , m_removeAllDataStatement(m_database, removeAllDataQuery)
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -631,6 +649,13 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_getAllSubStatisticsStatement.prepare() != SQLITE_OK
         || m_storageAccessExistsStatement.prepare() != SQLITE_OK
         || m_getMostRecentlyUpdatedTimestampStatement.prepare() != SQLITE_OK
+        || m_linkDecorationExistsStatement.prepare() != SQLITE_OK
+        || m_scriptLoadExistsStatement.prepare() != SQLITE_OK
+        || m_subFrameExistsStatement.prepare() != SQLITE_OK
+        || m_subResourceExistsStatement.prepare() != SQLITE_OK
+        || m_uniqueRedirectExistsStatement.prepare() != SQLITE_OK
+        || m_observedDomainsExistsStatement.prepare() != SQLITE_OK
+        || m_removeAllDataStatement.prepare() != SQLITE_OK
         ) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -2243,6 +2268,21 @@ void ResourceLoadStatisticsDatabaseStore::clearDatabaseContents()
     }
 }
 
+void ResourceLoadStatisticsDatabaseStore::removeDataForDomain(const RegistrableDomain& domain)
+{
+    auto domainIDToRemove = domainID(domain);
+    if (!domainIDToRemove)
+        return;
+
+    if (m_removeAllDataStatement.bindInt(1, *domainIDToRemove) != SQLITE_OK
+        || m_removeAllDataStatement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::removeDataForDomain failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+    
+    resetStatement(m_removeAllDataStatement);
+}
+
 void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -2887,6 +2927,45 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     builder.append('\n');
 
     resetStatement(m_getResourceDataByDomainNameStatement);
+}
+
+bool ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase(int domainID)
+{
+    if (m_linkDecorationExistsStatement.bindInt(1, domainID) != SQLITE_OK
+        || m_linkDecorationExistsStatement.bindInt(2, domainID) != SQLITE_OK
+        || m_scriptLoadExistsStatement.bindInt(1, domainID) != SQLITE_OK
+        || m_scriptLoadExistsStatement.bindInt(2, domainID) != SQLITE_OK
+        || m_subFrameExistsStatement.bindInt(1, domainID) != SQLITE_OK
+        || m_subFrameExistsStatement.bindInt(2, domainID) != SQLITE_OK
+        || m_subResourceExistsStatement.bindInt(1, domainID) != SQLITE_OK
+        || m_subResourceExistsStatement.bindInt(2, domainID) != SQLITE_OK
+        || m_uniqueRedirectExistsStatement.bindInt(1, domainID) != SQLITE_OK
+        || m_uniqueRedirectExistsStatement.bindInt(2, domainID) != SQLITE_OK
+        || m_observedDomainsExistsStatement.bindInt(1, domainID) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    if (m_linkDecorationExistsStatement.step() != SQLITE_ROW
+        || m_scriptLoadExistsStatement.step() != SQLITE_ROW
+        || m_subFrameExistsStatement.step() != SQLITE_ROW
+        || m_subResourceExistsStatement.step() != SQLITE_ROW
+        || m_uniqueRedirectExistsStatement.step() != SQLITE_ROW
+        || m_observedDomainsExistsStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    
+    resetStatement(m_linkDecorationExistsStatement);
+    resetStatement(m_scriptLoadExistsStatement);
+    resetStatement(m_subFrameExistsStatement);
+    resetStatement(m_subResourceExistsStatement);
+    resetStatement(m_uniqueRedirectExistsStatement);
+    resetStatement(m_observedDomainsExistsStatement);
+
+    return m_linkDecorationExistsStatement.getColumnInt(0) || m_scriptLoadExistsStatement.getColumnInt(0) || m_subFrameExistsStatement.getColumnInt(0) || m_subResourceExistsStatement.getColumnInt(0) || m_uniqueRedirectExistsStatement.getColumnInt(0) || m_observedDomainsExistsStatement.getColumnInt(0);
 }
 
 } // namespace WebKit

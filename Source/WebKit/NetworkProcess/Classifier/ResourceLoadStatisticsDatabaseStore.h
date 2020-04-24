@@ -138,6 +138,8 @@ public:
     Seconds getMostRecentlyUpdatedTimestamp(const RegistrableDomain&, const TopFrameDomain&) const;
     bool isNewResourceLoadStatisticsDatabaseFile() const { return m_isNewResourceLoadStatisticsDatabaseFile; }
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
+    void removeDataForDomain(const RegistrableDomain&) override;
+    bool domainIDExistsInDatabase(int);
 
 private:
     void openITPDatabase();
@@ -263,6 +265,13 @@ private:
     mutable WebCore::SQLiteStatement m_getAllSubStatisticsStatement;
     mutable WebCore::SQLiteStatement m_storageAccessExistsStatement;
     mutable WebCore::SQLiteStatement m_getMostRecentlyUpdatedTimestampStatement;
+    mutable WebCore::SQLiteStatement m_linkDecorationExistsStatement;
+    mutable WebCore::SQLiteStatement m_scriptLoadExistsStatement;
+    mutable WebCore::SQLiteStatement m_subFrameExistsStatement;
+    mutable WebCore::SQLiteStatement m_subResourceExistsStatement;
+    mutable WebCore::SQLiteStatement m_uniqueRedirectExistsStatement;
+    mutable WebCore::SQLiteStatement m_observedDomainsExistsStatement;
+    mutable WebCore::SQLiteStatement m_removeAllDataStatement;
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
 };

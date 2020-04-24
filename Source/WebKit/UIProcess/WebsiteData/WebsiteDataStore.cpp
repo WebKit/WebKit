@@ -990,15 +990,17 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
             Vector<String> cookieHostNames;
             Vector<String> HSTSCacheHostNames;
+            Vector<WebCore::RegistrableDomain> registrableDomains;
             for (const auto& dataRecord : dataRecords) {
                 for (auto& hostName : dataRecord.cookieHostNames)
                     cookieHostNames.append(hostName);
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
+                registrableDomains.append(WebCore::RegistrableDomain::uncheckedCreateFromHost(dataRecord.displayName));
             }
 
             callbackAggregator->addPendingCallback();
-            processPool->networkProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, [callbackAggregator, processPool] {
+            processPool->networkProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, registrableDomains, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -1593,6 +1595,18 @@ void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHa
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
             process->setLastSeen(m_sessionID, WebCore::RegistrableDomain { url }, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
+void WebsiteDataStore::domainIDExistsInDatabase(int domainID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess()) {
+            process->domainIDExistsInDatabase(m_sessionID, domainID, WTFMove(completionHandler));
+            break;
+        }
     }
 }
 

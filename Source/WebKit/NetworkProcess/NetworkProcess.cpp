@@ -990,6 +990,19 @@ void NetworkProcess::setLastSeen(PAL::SessionID sessionID, const RegistrableDoma
     }
 }
 
+void NetworkProcess::domainIDExistsInDatabase(PAL::SessionID sessionID, int domainID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->domainIDExistsInDatabase(domainID, WTFMove(completionHandler));
+        else
+            completionHandler(false);
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
+}
+
 void NetworkProcess::mergeStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, const RegistrableDomain& topFrameDomain1, const RegistrableDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
@@ -1604,7 +1617,7 @@ static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<Secur
     });
 }
 
-void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, CallbackID callbackID)
+void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, const Vector<RegistrableDomain>& registrableDomains, CallbackID callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = storageSession(sessionID))
@@ -1678,6 +1691,17 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         }
         WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originDatas);
     }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
+        if (auto* networkSession = this->networkSession(sessionID)) {
+            for (auto& domain : registrableDomains) {
+                if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+                    resourceLoadStatistics->removeDataForDomain(domain, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+            }
+        }
+    }
+#endif
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

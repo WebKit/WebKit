@@ -214,6 +214,8 @@ public:
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
     void setShouldAllowDeviceOrientationAndMotionAccess(bool value) { m_shouldAllowDeviceOrientationAndMotionAccess = value; }
 
+    void clearStatisticsDataForDomain(WKStringRef domain);
+    bool doesStatisticsDomainIDExistInDatabase(unsigned domainID);
     void setStatisticsEnabled(bool value);
     bool isStatisticsEphemeral();
     void setStatisticsDebugMode(bool value);
