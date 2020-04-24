@@ -140,8 +140,8 @@ public:
         virtual void willDetachGlobalObjectFromFrame() { }
     };
 
-    void registerObserver(Observer&);
-    void unregisterObserver(Observer&);
+    WEBCORE_EXPORT void registerObserver(Observer&);
+    WEBCORE_EXPORT void unregisterObserver(Observer&);
 
     void resetUnlessSuspendedForDocumentSuspension();
     void suspendForBackForwardCache();

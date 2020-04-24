@@ -1392,6 +1392,7 @@
 		990D28B11C65208D00986977 /* _WKAutomationSessionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D28AF1C65203900986977 /* _WKAutomationSessionInternal.h */; };
 		990D28BB1C6539D300986977 /* AutomationSessionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D28B71C6539A000986977 /* AutomationSessionClient.h */; };
 		990D28C01C6553F100986977 /* APIAutomationSessionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D28B31C6526D400986977 /* APIAutomationSessionClient.h */; };
+		990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 990D39F3243BE64700199388 /* WebAutomationDOMWindowObserver.h */; };
 		990E1E092384AA57004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 990E1E082384A88B004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		991F492F23A812C60054642B /* _WKInspectorDebuggableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 991F492D23A812C50054642B /* _WKInspectorDebuggableInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99249AD31F1F1E3300B62FBB /* AutomationFrontendDispatchers.cpp */; };
@@ -4441,6 +4442,8 @@
 		990D28B31C6526D400986977 /* APIAutomationSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationSessionClient.h; sourceTree = "<group>"; };
 		990D28B71C6539A000986977 /* AutomationSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationSessionClient.h; sourceTree = "<group>"; };
 		990D28B81C6539A000986977 /* AutomationSessionClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationSessionClient.mm; sourceTree = "<group>"; };
+		990D39F2243BE64700199388 /* WebAutomationDOMWindowObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationDOMWindowObserver.cpp; sourceTree = "<group>"; };
+		990D39F3243BE64700199388 /* WebAutomationDOMWindowObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationDOMWindowObserver.h; sourceTree = "<group>"; };
 		990E1E082384A88B004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteWebInspectorViewControllerPrivate.h; sourceTree = "<group>"; };
 		991F492D23A812C50054642B /* _WKInspectorDebuggableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorDebuggableInfo.h; sourceTree = "<group>"; };
 		991F492E23A812C60054642B /* _WKInspectorDebuggableInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorDebuggableInfo.mm; sourceTree = "<group>"; };
@@ -6459,6 +6462,8 @@
 		1C0A19431C8FF1A800FE0EBB /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				990D39F2243BE64700199388 /* WebAutomationDOMWindowObserver.cpp */,
+				990D39F3243BE64700199388 /* WebAutomationDOMWindowObserver.h */,
 				1C0A19441C8FF1A800FE0EBB /* WebAutomationSessionProxy.cpp */,
 				1C0A19451C8FF1A800FE0EBB /* WebAutomationSessionProxy.h */,
 				1C0A195A1C91669500FE0EBB /* WebAutomationSessionProxy.js */,
@@ -11167,6 +11172,7 @@
 				57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */,
 				57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */,
 				F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */,
+				990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,
 				99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */,
 				1C0A19581C90068F00FE0EBB /* WebAutomationSessionMessages.h in Headers */,

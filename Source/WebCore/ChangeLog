@@ -1,3 +1,13 @@
+2020-04-24  Brian Burg  <bburg@apple.com>
+
+        Web Automation: timeout underneath Automation.evaluateJavaScriptFunction in Selenium test frame_switching_tests.py::testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs[Safari]
+        https://bugs.webkit.org/show_bug.cgi?id=210162
+        <rdar://problem/60561009>
+
+        Reviewed by Devin Rousso.
+
+        * page/DOMWindow.h: Expose DOMWindow::{register, unregister}Observer.
+
 2020-04-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Take first in-flow table-row baseline into account when computing cell baseline

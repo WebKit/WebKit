@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 #if HAVE(IOSURFACE)
 
+#include <WebCore/GraphicsContextCG.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

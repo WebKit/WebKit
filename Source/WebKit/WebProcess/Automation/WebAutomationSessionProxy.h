@@ -43,6 +43,7 @@ namespace WebKit {
 
 class WebFrame;
 class WebPage;
+class WebAutomationDOMWindowObserver;
 
 class WebAutomationSessionProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -53,6 +54,7 @@ public:
     String sessionIdentifier() const { return m_sessionIdentifier; }
 
     void didClearWindowObjectForFrame(WebFrame&);
+    void willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier);
 
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, uint64_t callbackID, const String& result, const String& errorType);
 
@@ -61,6 +63,8 @@ private:
     void setScriptObject(JSGlobalContextRef, JSObjectRef);
     JSObjectRef scriptObjectForFrame(WebFrame&);
     WebCore::Element* elementForNodeHandle(WebFrame&, const String&);
+
+    void ensureObserverForFrame(WebFrame&);
 
     // Implemented in generated WebAutomationSessionProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -84,6 +88,7 @@ private:
     JSC::PrivateName m_scriptObjectIdentifier;
 
     HashMap<WebCore::FrameIdentifier, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
+    HashMap<WebCore::FrameIdentifier, RefPtr<WebAutomationDOMWindowObserver>> m_frameObservers;
 };
 
 } // namespace WebKit

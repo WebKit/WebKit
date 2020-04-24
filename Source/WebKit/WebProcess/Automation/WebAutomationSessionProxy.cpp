@@ -28,6 +28,7 @@
 
 #include "AutomationProtocolObjects.h"
 #include "CoordinateSystem.h"
+#include "WebAutomationDOMWindowObserver.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebAutomationSessionProxyScriptSource.h"
@@ -63,6 +64,8 @@
 #if ENABLE(DATALIST_ELEMENT)
 #include <WebCore/HTMLDataListElement.h>
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -116,6 +119,8 @@ WebAutomationSessionProxy::WebAutomationSessionProxy(const String& sessionIdenti
 
 WebAutomationSessionProxy::~WebAutomationSessionProxy()
 {
+    m_frameObservers.clear();
+
     WebProcess::singleton().removeMessageReceiver(Messages::WebAutomationSessionProxy::messageReceiverName());
 }
 
@@ -298,12 +303,37 @@ WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& fram
     return &elementWrapper->wrapped();
 }
 
+void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
+{
+    // If the frame and DOMWindow have become disconnected, then frame is already being destroyed
+    // and there is no way to get access to the frame from the observer's DOMWindow reference.
+    if (!frame.coreFrame()->window() || !frame.coreFrame()->window()->frame())
+        return;
+
+    if (m_frameObservers.contains(frame.frameID()))
+        return;
+
+    auto frameID = frame.frameID();
+    m_frameObservers.set(frameID, WebAutomationDOMWindowObserver::create(*frame.coreFrame()->window(), [this, frameID] (WebAutomationDOMWindowObserver&) {
+        willDestroyGlobalObjectForFrame(frameID);
+    }));
+}
+
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
-    String errorMessage = "Callback was not called before the unload event."_s;
-    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+    willDestroyGlobalObjectForFrame(frame.frameID());
+}
 
-    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frame.frameID());
+void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)
+{
+    // The observer is no longer needed, let it become GC'd and unregister itself from DOMWindow.
+    if (m_frameObservers.contains(frameID))
+        m_frameObservers.remove(frameID);
+
+    String errorMessage = "Callback was not called before the unload event."_s;
+    String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+
+    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (uint64_t callbackID : pendingFrameCallbacks)
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }
@@ -317,11 +347,15 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         return;
     }
     auto* frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
-    if (!frame) {
+    if (!frame || !frame->coreFrame()->window() || !frame->coreFrame()->window()->frame()) {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
             Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound)), 0);
         return;
     }
+
+    // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
+    if (!frame->coreFrame()->isMainFrame())
+        ensureObserverForFrame(*frame);
 
     JSObjectRef scriptObject = scriptObjectForFrame(*frame);
     ASSERT(scriptObject);
@@ -735,8 +769,8 @@ void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier page
     }
 
     if (!isValidNodeHandle(nodeHandle)) {
-        String invalidNodeIdentifierrrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
-        completionHandler(invalidNodeIdentifierrrorType);
+        String invalidNodeIdentifierErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
+        completionHandler(invalidNodeIdentifierErrorType);
         return;
     }
 

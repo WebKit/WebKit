@@ -1,3 +1,51 @@
+2020-04-24  Brian Burg  <bburg@apple.com>
+
+        Web Automation: timeout underneath Automation.evaluateJavaScriptFunction in Selenium test frame_switching_tests.py::testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs[Safari]
+        https://bugs.webkit.org/show_bug.cgi?id=210162
+        <rdar://problem/60561009>
+
+        Reviewed by Devin Rousso.
+
+        When an iframe is detached from the DOM, it is no longer exposed as a browsing context
+        and it's not possible to Evaluate JavaScript or perform other commands with it. This
+        patch adds frame lifecycle monitoring so that pending script evaluations are cancelled
+        with FrameNotFound as soon as the iframe is detached from the DOM. This change also avoids
+        running more commands with the frame if it's detached from its DOMWindow and ready to be GC'd.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Automation/WebAutomationDOMWindowObserver.h: Added.
+        * WebProcess/Automation/WebAutomationDOMWindowObserver.cpp: Added.
+        (WebKit::WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver):
+        (WebKit::WebAutomationDOMWindowObserver::~WebAutomationDOMWindowObserver):
+        (WebKit::WebAutomationDOMWindowObserver::frame const):
+        (WebKit::WebAutomationDOMWindowObserver::willDestroyGlobalObjectInCachedFrame):
+        (WebKit::WebAutomationDOMWindowObserver::willDestroyGlobalObjectInFrame):
+        (WebKit::WebAutomationDOMWindowObserver::willDetachGlobalObjectFromFrame):
+        This class is a stripped-down copy of DOMWindowExtension, which is the only other
+        client of DOMWindow::Observer interface. When a frame is detached, destroyed, or
+        navigates (global object detached), then call the callback and unregister.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::~WebAutomationSessionProxy):
+        (WebKit::WebAutomationSessionProxy::didClearWindowObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::willDestroyGlobalObjectForFrame):
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+        (WebKit::WebAutomationSessionProxy::ensureObserverForFrame): For non-main frames,
+        ensure we add a frame observer if we are about to evaluate JavaScript upon the frame.
+        This acts as a watchdog in case the frame becomes detached while waiting for pending
+        JS evaluations. When a frame is detached, the JS evaluation may or may not complete.
+
+        (WebKit::WebAutomationSessionProxy::selectOptionElement): Fix hilarious typo.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        * WebProcess/GPU/media/WebMediaStrategy.cpp:
+        (WebKit::WebMediaStrategy::clearNowPlayingInfo):
+        (WebKit::WebMediaStrategy::setNowPlayingInfo):
+        Adding a new file seems to have exposed a few missing includes and namespace qualifiers.
+        This is due to unified sources chunking.
+
 2020-04-24  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply for ShareSheet related messages

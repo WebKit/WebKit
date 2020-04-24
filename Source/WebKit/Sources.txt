@@ -485,6 +485,7 @@ WebProcess/WebSleepDisablerClient.cpp
 
 // FIXME(206266): AutomationProtocolObjects.h's "namespace Protocol" conflicts with objc/runtime.h's "typedef struct objc_object Protocol"
 WebProcess/Automation/WebAutomationSessionProxy.cpp @no-unify
+WebProcess/Automation/WebAutomationDOMWindowObserver.cpp
 
 WebProcess/Cache/WebCacheStorageConnection.cpp
 WebProcess/Cache/WebCacheStorageProvider.cpp

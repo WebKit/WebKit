@@ -66,7 +66,7 @@ void WebMediaStrategy::clearNowPlayingInfo()
         return;
     }
 #endif
-    MediaSessionManagerCocoa::clearNowPlayingInfo();
+    WebCore::MediaSessionManagerCocoa::clearNowPlayingInfo();
 }
 
 void WebMediaStrategy::setNowPlayingInfo(bool setAsNowPlayingApplication, const WebCore::NowPlayingInfo& nowPlayingInfo)
@@ -78,7 +78,7 @@ void WebMediaStrategy::setNowPlayingInfo(bool setAsNowPlayingApplication, const 
         return;
     }
 #endif
-    MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
+    WebCore::MediaSessionManagerCocoa::setNowPlayingInfo(setAsNowPlayingApplication, nowPlayingInfo);
 }
 #endif
 
