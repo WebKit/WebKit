@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.28.2
+================
+
+What's new in WebKitGTK 2.28.2?
+
+  - Fix excessive CPU usage due to GdkFrameClock not being stopped.
+  - Fix UI process crash when EGL_WL_bind_wayland_display extension is not available.
+  - Fix position of select popup menus in X11.
+  - Fix playing of Youtube 'live stream'/H264 URLs.
+  - Fix a crash under X11 when cairo uses xcb.
+  - Fix the build in MIPS64.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.28.1
 ================
 
