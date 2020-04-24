@@ -49,4 +49,24 @@ struct OpenSSLCryptoPtrDeleter<EVP_CIPHER_CTX> {
 
 using EvpCipherCtxPtr = OpenSSLCryptoPtr<EVP_CIPHER_CTX>;
 
+template <>
+struct OpenSSLCryptoPtrDeleter<EVP_MD_CTX> {
+    void operator()(EVP_MD_CTX* ptr) const
+    {
+        EVP_MD_CTX_free(ptr);
+    }
+};
+
+using EvpDigestCtxPtr = OpenSSLCryptoPtr<EVP_MD_CTX>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<EVP_PKEY> {
+    void operator()(EVP_PKEY* ptr) const
+    {
+        EVP_PKEY_free(ptr);
+    }
+};
+
+using EvpPKeyPtr = OpenSSLCryptoPtr<EVP_PKEY>;
+
 } // namespace WebCore

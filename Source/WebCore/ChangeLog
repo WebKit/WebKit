@@ -1,3 +1,24 @@
+2020-04-24  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [OpenSSL] Implement WebCrypto APIs for HMAC
+        https://bugs.webkit.org/show_bug.cgi?id=210902
+
+        Reviewed by Don Olmstead.
+
+        Support WebCrypto HMAC sign/verify with OpenSSL.
+        The design and some functions are inherited from the other ports.
+
+        * crypto/openssl/CryptoAlgorithmHMACOpenSSL.cpp:
+        (WebCore::HMACAlgorithm): Added. Helper function to map CryptoAlgorithmIdentifier to OpenSSL EVP_MD type.
+        (WebCore::calculateSignature): Added. Helper function to calculate the signature for sign/verify.
+        (WebCore::CryptoAlgorithmHMAC::platformSign): Implemented, mostly same as the other ports.
+        (WebCore::CryptoAlgorithmHMAC::platformVerify): Implemented, mostly same as the other ports.
+        * crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Added CryptoAlgorithmHMAC support.
+        * crypto/openssl/OpenSSLCryptoUniquePtr.h: Added specialized unique_ptrs for EVP_MD_CTX and EVP_PKEY.
+        (WebCore::OpenSSLCryptoPtrDeleter<EVP_MD_CTX>::operator() const):
+        (WebCore::OpenSSLCryptoPtrDeleter<EVP_PKEY>::operator() const):
+
 2020-04-24  Brian Burg  <bburg@apple.com>
 
         Web Automation: timeout underneath Automation.evaluateJavaScriptFunction in Selenium test frame_switching_tests.py::testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs[Safari]
