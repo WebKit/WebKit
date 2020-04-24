@@ -1,3 +1,21 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_wrapper under HTMLMediaElement::setIsPlayingToWirelessTarget
+        https://bugs.webkit.org/show_bug.cgi?id=210983
+        <rdar://problem/61611994>
+
+        Reviewed by Eric Carlson.
+
+        The issue was that we were trying to fire a JS event as a result of ActiveDOMObject::stop()
+        getting called, which is not allowed. To address the issue, we avoid firing the event if
+        the context is already stopped.
+
+        No new tests, already covered by:
+        media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setIsPlayingToWirelessTarget):
+
 2020-04-24  Tim Horton  <timothy_horton@apple.com>
 
         iPad: "Pocket City" interaction does not work with trackpad
