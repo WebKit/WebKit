@@ -1,3 +1,12 @@
+2020-04-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, expected to fail but passing
+        https://bugs.webkit.org/show_bug.cgi?id=210960
+
+        Unreviewed gardening.
+
+        * platform/wpe/TestExpectations:
+
 2020-04-24  Rob Buis  <rbuis@igalia.com>
 
         Import fetch/stale-while-revalidate/fetch.html
