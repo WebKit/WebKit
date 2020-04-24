@@ -262,7 +262,7 @@ enum {
 #if PLATFORM(IOS_FAMILY)
 #define WebPDFView ([WebView _getPDFViewClass])
 #endif
-#if !PLATFORM(MACCATALYST)
+#if HAVE(LEGACY_PDF_SUPPORT)
             addTypesFromClass(viewTypes, [WebPDFView class], [WebPDFView supportedMIMETypes]);
 #endif
 #if PLATFORM(IOS_FAMILY)
