@@ -2760,8 +2760,6 @@ webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failur
 webkit.org/b/202736 storage/indexeddb/modern/handle-user-delete.html [ Timeout ]
 webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Timeout ]
 
-webkit.org/b/206873 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
-
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
