@@ -1,5 +1,13 @@
 2020-04-24  Jon Lee  <jonlee@apple.com>
 
+        MotionMark: add link to bug in about page
+
+        Unreviewed.
+
+        * MotionMark/about.html:
+
+2020-04-24  Jon Lee  <jonlee@apple.com>
+
         MotionMark: ensure that timestamps are valid during warm up phase of tests
         https://bugs.webkit.org/show_bug.cgi?id=210640
 
@@ -803,7 +811,7 @@
 
         Reviewed by Ryosuke Niwa.
 
-        r240358 sets default IDB quota as 50 MB for single test, we need to increase that for big tests. 
+        r240358 sets default IDB quota as 50 MB for single test, we need to increase that for big tests.
 
         * IndexedDB/large-binary-keys.html:
         * IndexedDB/large-string-keys.html:
@@ -1138,7 +1146,7 @@
         - Web Tooling Benchmark
         - WasmBench
         - RexBench
-        
+
         JetStream 2 also adds some new benchmarks:
         - Two tests emphasizing web worker performance.
         - One test emphasizing Promise, async iteration, and DataView performance.
