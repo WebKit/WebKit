@@ -277,7 +277,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
     RefPtr<Element> enclosingParagraphElement;
 
     auto isEnclosingParagraphElement = [](const Element& element) {
-        if (element.hasTagName(liTag)) {
+        if (element.hasTagName(HTMLNames::liTag)) {
             auto* renderer = element.renderer();
             return renderer && renderer->style().display() == DisplayType::Block;
         }
