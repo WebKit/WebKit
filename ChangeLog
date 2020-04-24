@@ -1,3 +1,14 @@
+2020-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Make JSCOnly work on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=210953
+
+        Reviewed by Ross Kirsling.
+
+        In JSCOnly port on macOS, we should disable ICU API renaming because OS shipped ICU does not have version suffix.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2020-04-22  Darin Adler  <darin@apple.com>
 
         [Cocoa] Build with UChar as char16_t even in builds that use Apple's internal SDK
