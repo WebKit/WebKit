@@ -657,7 +657,10 @@
     (global-name "com.apple.lsd.open")
     (global-name "com.apple.lsd.mapdb"))
 
+
 ;; <rdar://problem/12413942>
+(allow mach-lookup
+    (global-name "com.apple.mobilegestalt.xpc"))
 (allow file-read*
        (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
 (allow iokit-get-properties

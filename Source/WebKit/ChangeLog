@@ -1,3 +1,18 @@
+2020-04-23  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62272256
+
+    2020-04-23  Per Arne Vollan  <pvollan@apple.com>
+
+            Only hearing audio with black screen when playing video
+            <rdar://problem/59464464> [contentsScale = 0] PUBLIC SEED ☂: Only hearing audio with black screen when playing video
+
+            Reviewed by Brent Fulgham.
+
+            Add mach-lookup access to MobileGestalt service.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-22 Russell Epstein <repstein@apple.com>
 
         Cherry-pick r260474. rdar://problem/62083321.
