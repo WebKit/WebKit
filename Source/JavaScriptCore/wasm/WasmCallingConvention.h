@@ -46,7 +46,7 @@
 
 namespace JSC { namespace Wasm {
 
-constexpr unsigned numberOfLLIntCalleeSaveRegisters = 4;
+constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
 
 using ArgumentLocation = B3::ValueRep;
 enum class CallRole : uint8_t {
