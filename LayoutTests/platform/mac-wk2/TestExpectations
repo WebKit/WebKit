@@ -1046,3 +1046,5 @@ webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Sl
 webkit.org/b/210165 [ Catalina ] webrtc/peer-connection-audio-mute2.html [ Pass Timeout Failure ]
 
 webkit.org/b/210433 swipe/basic-cached-back-swipe.html [ Pass Crash Timeout ]
+
+webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
