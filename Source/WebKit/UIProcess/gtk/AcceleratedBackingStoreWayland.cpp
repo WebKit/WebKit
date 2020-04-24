@@ -92,7 +92,12 @@ bool AcceleratedBackingStoreWayland::checkRequirements()
 {
 #if USE(WPE_RENDERER)
     if (!glImageTargetTexture2D) {
-        if (!wpe_fdo_initialize_for_egl_display(PlatformDisplay::sharedDisplay().eglDisplay()))
+        auto* eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
+        const char* extensions = eglQueryString(eglDisplay, EGL_EXTENSIONS);
+        if (!GLContext::isExtensionSupported(extensions, "EGL_WL_bind_wayland_display"))
+            return false;
+
+        if (!wpe_fdo_initialize_for_egl_display(eglDisplay))
             return false;
 
         std::unique_ptr<WebCore::GLContext> eglContext = GLContext::createOffscreenContext();
