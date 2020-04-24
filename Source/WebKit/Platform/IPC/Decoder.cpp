@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "MessageFlags.h"
 #include <stdio.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
@@ -44,6 +45,12 @@ static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
     return bufferCopy;
 }
 
+std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
+{
+    auto decoder = makeUnique<Decoder>(buffer, bufferSize, bufferDeallocator, WTFMove(attachments));
+    return decoder->isInvalid() ? nullptr : WTFMove(decoder);
+}
+
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
     : m_buffer { bufferDeallocator ? buffer : copyBuffer(buffer, bufferSize) }
     , m_bufferPos { m_buffer }
@@ -51,7 +58,10 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDealloca
     , m_bufferDeallocator { bufferDeallocator }
     , m_attachments { WTFMove(attachments) }
 {
-    ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)));
+    if (reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)) {
+        markInvalid();
+        return;
+    }
 
     if (!decode(m_messageFlags))
         return;
@@ -123,7 +133,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return makeUnique<Decoder>(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
+    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
 }
 
 static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned alignment)
