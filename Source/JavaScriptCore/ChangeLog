@@ -1,3 +1,15 @@
+2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG AI for some bitops + BigInt32 should be precise
+        https://bugs.webkit.org/show_bug.cgi?id=210956
+
+        Reviewed by Keith Miller.
+
+        Use SpecBigInt32 for ValueBitXor, ValueBitAnd, and ValueBitOr since they are always producing BigInt32 and they have inlined implementations in DFG / FTL.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-04-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove revoked Proxy checks from ProxyCreate

@@ -541,13 +541,27 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
 
         // FIXME: this use of binaryUseKind means that we cannot specialize to (for example) a HeapBigInt left-operand and a BigInt32 right-operand.
+        // https://bugs.webkit.org/show_bug.cgi?id=210977
         if (node->binaryUseKind() == BigInt32Use) {
 #if USE(BIGINT32)
+            switch (node->op()) {
+            case ValueBitXor:
+            case ValueBitAnd:
+            case ValueBitOr:
+                setTypeForNode(node, SpecBigInt32);
+                break;
+
             // FIXME: We should have inlined implementation that always returns BigInt32.
             // https://bugs.webkit.org/show_bug.cgi?id=210847
-            setTypeForNode(node, SpecBigInt);
+            case ValueBitRShift:
+            case ValueBitLShift:
+                setTypeForNode(node, SpecBigInt);
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Incorrect DFG op");
+            }
 #else
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_graph, node, "No BigInt32 support");
 #endif
         } else if (node->binaryUseKind() == HeapBigIntUse)
             setTypeForNode(node, SpecHeapBigInt);
