@@ -1,0 +1,10 @@
+
+FAIL @@toStringTag exists on the prototype with the appropriate descriptor assert_own_property: expected property symbol "Symbol(Symbol.toStringTag)" missing
+PASS @@toStringTag must not exist on the instance 
+FAIL Object.prototype.toString applied to the prototype assert_equals: expected "[object Blob]" but got "[object BlobPrototype]"
+PASS Object.prototype.toString applied to an instance 
+FAIL Object.prototype.toString applied after modifying the prototype's @@toStringTag assert_own_property: Precondition for this test: @@toStringTag on the prototype expected property symbol "Symbol(Symbol.toStringTag)" missing
+PASS Object.prototype.toString applied to the instance after modifying the instance's @@toStringTag 
+FAIL Object.prototype.toString applied to a null-prototype instance assert_equals: expected "[object Object]" but got "[object Blob]"
+FAIL Object.prototype.toString applied after deleting @@toStringTag assert_equals: prototype expected "[object Object]" but got "[object BlobPrototype]"
+

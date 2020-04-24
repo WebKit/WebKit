@@ -1,3 +1,15 @@
+2020-04-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Re-sync wpt/WebIDL/ecmascript-binding and wpt/custom-elements/htmlconstructor from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=210984
+
+        Reviewed by Darin Adler.
+
+        web-platform-tests revision: 39e9c51041a1
+
+        * web-platform-tests/WebIDL/ecmascript-binding/*: Updated.
+        * web-platform-tests/custom-elements/htmlconstructor/*: Updated.
+
 2020-04-24  Antoine Quint  <graouts@apple.com>
 
         Update the css/css-animations WPT tests
