@@ -516,7 +516,7 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
     }
 
     Vector<IntRect> rects;
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
         rects.appendVector(scrollingCoordinator->absoluteEventTrackingRegions().asynchronousDispatchRegion.rects());
 
     Vector<FloatQuad> quads(rects.size());
@@ -1418,6 +1418,26 @@ void Page::doAfterUpdateRendering()
     for (Frame* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
         auto* frameView = child->view();
         ASSERT(!frameView || !frameView->needsLayout());
+    }
+#endif
+}
+
+void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
+{
+    auto* view = mainFrame().view();
+    if (!view)
+        return;
+
+    if (flags.contains(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes))
+        view->invalidateImagesWithAsyncDecodes();
+
+    view->flushCompositingStateIncludingSubframes();
+
+#if ENABLE(ASYNC_SCROLLING)
+    if (auto* scrollingCoordinator = this->scrollingCoordinator()) {
+        scrollingCoordinator->commitTreeStateIfNeeded();
+        if (flags.contains(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions))
+            scrollingCoordinator->applyScrollingTreeLayerPositions();
     }
 #endif
 }

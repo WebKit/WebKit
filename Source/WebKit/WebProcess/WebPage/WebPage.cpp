@@ -3812,6 +3812,11 @@ void WebPage::updateRendering()
     m_page->updateRendering();
 }
 
+void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
+{
+    m_page->finalizeRenderingUpdate(flags);
+}
+
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
 {
     if (m_isClosed)

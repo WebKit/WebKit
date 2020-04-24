@@ -351,6 +351,7 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
+    void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 

@@ -475,16 +475,12 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
             m_viewOverlayRootLayer->flushCompositingState(visibleRect);
 
         addCommitHandlers();
-        
-        bool didFlushAllFrames = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 
-#if ENABLE(ASYNC_SCROLLING)
-        if (auto* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator()) {
-            scrollingCoordinator->commitTreeStateIfNeeded();
-            if (flushType == UpdateRenderingType::Normal)
-                scrollingCoordinator->applyScrollingTreeLayerPositions();
-        }
-#endif
+        OptionSet<FinalizeRenderingUpdateFlags> flags;
+        if (flushType == UpdateRenderingType::Normal)
+            flags.add(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions);
+
+        m_webPage.finalizeRenderingUpdate(flags);
 
         // If we have an active transient zoom, we want the zoom to win over any changes
         // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
@@ -496,10 +492,8 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
             m_pendingCallbackIDs.clear();
         }
 
-        if (didFlushAllFrames) {
-            sendDidFirstLayerFlushIfNeeded();
-            invalidateRenderingUpdateRunLoopObserver();
-        }
+        sendDidFirstLayerFlushIfNeeded();
+        invalidateRenderingUpdateRunLoopObserver();
     }
 }
 

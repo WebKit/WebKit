@@ -338,10 +338,11 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     addCommitHandlers();
 
+    OptionSet<FinalizeRenderingUpdateFlags> flags;
     if (m_nextRenderingUpdateRequiresSynchronousImageDecoding)
-        m_webPage.mainFrameView()->invalidateImagesWithAsyncDecodes();
+        flags.add(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes);
 
-    m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
+    m_webPage.finalizeRenderingUpdate(flags);
 
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)

@@ -164,6 +164,11 @@ enum class CompositingPolicy : bool {
     Conservative, // Used in low memory situations.
 };
 
+enum class FinalizeRenderingUpdateFlags : uint8_t {
+    ApplyScrollingTreeLayerPositions    = 1 << 0,
+    InvalidateImagesWithAsyncDecodes    = 1 << 1,
+};
+
 class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
@@ -480,6 +485,8 @@ public:
 
     WEBCORE_EXPORT void layoutIfNeeded();
     WEBCORE_EXPORT void updateRendering();
+    
+    WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
     
     WEBCORE_EXPORT void scheduleRenderingUpdate();
     void scheduleTimedRenderingUpdate();
