@@ -1,3 +1,26 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Stop using legacy BKSApplicationStateMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=210945
+
+        Reviewed by Tim Horton.
+
+        Stop using legacy BKSApplicationStateMonitor and use RunningBoard API instead.
+
+        * Configurations/WebKit.xcconfig:
+        Stop linking against ApplicationServices when using iOS 14 SDK now that we are
+        fully transitioned to RunningBoard.
+
+        * Platform/spi/ios/RunningBoardServicesSPI.h:
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::isApplicationForeground):
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        (WebKit::isBackgroundState): Deleted.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isApplicationVisible):
+
 2020-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Bounce displayWasRefreshed() via EventDispatcher

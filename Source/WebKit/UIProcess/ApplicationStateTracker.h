@@ -62,8 +62,6 @@ private:
 
     bool m_isInBackground;
 
-    RetainPtr<BKSApplicationStateMonitor> m_applicationStateMonitor;
-
     id m_didEnterBackgroundObserver;
     id m_didFinishSnapshottingAfterEnteringBackgroundObserver;
     id m_willEnterForegroundObserver;
@@ -80,6 +78,7 @@ enum class ApplicationType {
 };
 
 ApplicationType applicationType(UIWindow *);
+bool isApplicationForeground(pid_t);
 
 }
 

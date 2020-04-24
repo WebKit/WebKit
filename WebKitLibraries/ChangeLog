@@ -1,3 +1,12 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Stop using legacy BKSApplicationStateMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=210945
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/13/RunningBoardServices.framework/RunningBoardServices.tbd:
+
 2020-03-16  Keith Rollin  <krollin@apple.com>
 
         Remove support for WebKitSystemInterface
