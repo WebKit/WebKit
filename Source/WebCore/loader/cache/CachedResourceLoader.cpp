@@ -205,7 +205,7 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
             if (Document* document = frame->document())
                 request.upgradeInsecureRequestIfNeeded(*document);
             URL requestURL = request.resourceRequest().url();
-            if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request, ForPreload::No))
+            if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request.options(), ForPreload::No))
                 PingLoader::loadImage(*frame, requestURL);
             return CachedResourceHandle<CachedImage> { };
         }
@@ -497,11 +497,9 @@ static inline bool isSameOriginDataURL(const URL& url, const ResourceLoaderOptio
     return url.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
 }
 
-// Security checks defined in https://fetch.spec.whatwg.org/#main-fetch step 2 and 5.
-bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const CachedResourceRequest& request, ForPreload forPreload)
+// Security checks defined in https://fetch.spec.whatwg.org/#main-fetch step 2 and 4.
+bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ForPreload forPreload)
 {
-    auto& options = request.options();
-
     if (document() && !document()->securityOrigin().canDisplay(url)) {
         if (forPreload == ForPreload::No)
             FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
@@ -715,10 +713,8 @@ static inline void logMemoryCacheResourceRequest(Frame* frame, const String& key
 
 void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing step 1 to 7 of https://fetch.spec.whatwg.org/#fetching
-    auto* document = this->document();
-
-    if (document) {
+    // Implementing step 1.1 to 1.6 of https://fetch.spec.whatwg.org/#concept-fetch.
+    if (auto* document = this->document()) {
         if (!request.origin())
             request.setOrigin(document->securityOrigin());
 #if ENABLE(SERVICE_WORKER)
@@ -805,12 +801,19 @@ static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, ImageLoading imageLoading)
 {
+    URL url = request.resourceRequest().url();
     if (!frame() || !frame()->page()) {
         RELEASE_LOG_IF_ALLOWED("requestResource: failed because no frame or page");
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, request.resourceRequest().url(), "Invalid loader state"_s });
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Invalid loader state"_s });
     }
+
     auto& frame = *this->frame();
-    auto& page = *frame.page();
+    if (!url.isValid()) {
+        RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: URL is invalid", frame);
+        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
+    }
+
+    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
 
     request.setDestinationIfNotSet(destinationForType(type));
 
@@ -822,35 +825,31 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         originalRequest->clearHTTPOrigin();
     }
 
-    if (Document* document = this->document())
-        request.upgradeInsecureRequestIfNeeded(*document);
+    prepareFetch(type, request);
 
-    if (InspectorInstrumentation::willInterceptRequest(&frame, request.resourceRequest()))
-        request.setCachingPolicy(CachingPolicy::DisallowCaching);
-
-    URL url = request.resourceRequest().url();
     if (request.options().destination == FetchOptions::Destination::Document) {
         // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
         if (!url.protocolIs("https"))
             request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_s);
     }
 
-    request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
-
-    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
-
-    if (!url.isValid()) {
-        RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: URL is invalid", frame);
-        return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
+    if (Document* document = this->document()) {
+        request.upgradeInsecureRequestIfNeeded(*document);
+        url = request.resourceRequest().url();
     }
 
-    prepareFetch(type, request);
-
     // We are passing url as well as request, as request url may contain a fragment identifier.
-    if (!canRequest(type, url, request, forPreload)) {
+    if (!canRequest(type, url, request.options(), forPreload)) {
         RELEASE_LOG_IF_ALLOWED_WITH_FRAME("requestResource: Not allowed to request resource", frame);
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }
+
+    request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
+
+    if (InspectorInstrumentation::willInterceptRequest(&frame, request.resourceRequest()))
+        request.setCachingPolicy(CachingPolicy::DisallowCaching);
+
+    auto& page = *frame.page();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (m_documentLoader) {
