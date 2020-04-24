@@ -1448,6 +1448,9 @@ webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ 
 
 webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mapping.html [ Failure ]
 
+# Failing in test bots. Started failing since r260615.
+webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

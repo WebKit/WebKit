@@ -1,3 +1,15 @@
+2020-04-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, mark fast/css/resize-corner-tracking.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=210969
+
+        Unreviewed gardening.
+
+        Apparently the test is only failing in GTK and WPE test bots.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-24  Youenn Fablet  <youenn@apple.com>
 
         getDisplayMedia is not respecting aspect ratio with max constraints
