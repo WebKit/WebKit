@@ -799,6 +799,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsCompositeOperationsEnabled(TRUE);
     prefsPrivate->setWebAnimationsMutableTimelinesEnabled(TRUE);
+    prefsPrivate->setCSSCustomPropertiesAndValuesEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     prefsPrivate->setAspectRatioOfImgFromWidthAndHeightEnabled(TRUE);
     // FIXME: WebGL2

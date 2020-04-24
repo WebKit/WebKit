@@ -866,6 +866,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebAnimationsCompositeOperationsEnabled:YES];
     [preferences setWebAnimationsMutableTimelinesEnabled:YES];
+    [preferences setCSSCustomPropertiesAndValuesEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     // FIXME: AsyncFrameScrollingEnabled
     [preferences setCacheAPIEnabled:NO];

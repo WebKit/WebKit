@@ -586,6 +586,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebAnimationsMutableTimelinesEnabled:(BOOL)flag;
 - (BOOL)webAnimationsMutableTimelinesEnabled;
 
+- (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag;
+- (BOOL)CSSCustomPropertiesAndValuesEnabled;
+
 - (void)setSyntheticEditingCommandsEnabled:(BOOL)flag;
 - (BOOL)syntheticEditingCommandsEnabled;
 

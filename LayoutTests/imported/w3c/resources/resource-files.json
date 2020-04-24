@@ -13,6 +13,7 @@
         "web-platform-tests/css/css-writing-modes/test-plan"
     ],
     "files": [
+        "css/css-animations/keyframes-remove-documentElement-crash.html",
         "css/css-color/t32-opacity-basic-0.6-a.xht",
         "css/css-color/t32-opacity-zorder-c.xht",
         "css/css-color/t421-rgb-hex3-expand-b.xht",

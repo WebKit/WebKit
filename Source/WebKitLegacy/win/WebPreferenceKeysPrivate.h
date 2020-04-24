@@ -195,6 +195,8 @@
 
 #define WebKitWebAnimationsCSSIntegrationEnabledPreferenceKey "WebKitWebAnimationsCSSIntegrationEnabled"
 
+#define WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey "WebKitCSSCustomPropertiesAndValuesEnabled"
+
 #define WebKitUserTimingEnabledPreferenceKey "WebKitUserTimingEnabled"
 
 #define WebKitResourceTimingEnabledPreferenceKey "WebKitResourceTimingEnabled"

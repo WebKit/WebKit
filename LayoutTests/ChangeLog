@@ -1,3 +1,13 @@
+2020-04-24  Antoine Quint  <graouts@apple.com>
+
+        Update the css/css-animations WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=210964
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001-expected.txt: Added.
+
 2020-04-24  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ Mac wk2 ] http/tests/IndexedDB/storage-limit.https.html is flaky failing.

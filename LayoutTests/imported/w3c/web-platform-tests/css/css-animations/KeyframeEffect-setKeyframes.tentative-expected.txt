@@ -1,0 +1,5 @@
+
+FAIL KeyframeEffect.setKeyframes() causes subsequent changes to @keyframes rules to be ignored undefined is not an object (evaluating 'Object.keys(actual)')
+FAIL KeyframeEffect.setKeyframes() causes subsequent changes to animation-timing-function to be ignored undefined is not an object (evaluating 'animation.effect.getKeyframes()[0].easing')
+FAIL KeyframeEffect.setKeyframes() should NOT cause subsequent changes to @keyframes rules to be ignored if it threw undefined is not an object (evaluating 'Object.keys(actual)')
+

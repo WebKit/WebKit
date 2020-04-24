@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/AnimationEffect-getComputedTiming.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/AnimationEffect-updateTiming.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/CSSAnimation-animationName.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/CSSAnimation-canceling.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/CSSAnimation-compositeOrder.tentative.html
@@ -30,8 +31,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/KeyframeEffect-setKeyframes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/KeyframeEffect-target.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-before-initial-box-construction-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-008.html
@@ -41,6 +47,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-calc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html

@@ -295,6 +295,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsCompositeOperationsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webAnimationsMutableTimelinesEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setWebAnimationsMutableTimelinesEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE CSSCustomPropertiesAndValuesEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setCSSCustomPropertiesAndValuesEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE aspectRatioOfImgFromWidthAndHeightEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAspectRatioOfImgFromWidthAndHeightEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE webSQLEnabled(_Out_ BOOL*);

@@ -1,3 +1,50 @@
+2020-04-24  Antoine Quint  <graouts@apple.com>
+
+        Update the css/css-animations WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=210964
+
+        Reviewed by Dean Jackson.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-animations/AnimationEffect-updateTiming.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/AnimationEffect-updateTiming.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-compositeOrder.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/CSSAnimation-compositeOrder.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-finished.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-pausing.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/CSSAnimation-pausing.tentative.html:
+        * web-platform-tests/css/css-animations/CSSAnimation-ready.tentative.html:
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative.html:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+        * web-platform-tests/css/css-animations/KeyframeEffect-setKeyframes.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/KeyframeEffect-setKeyframes.tentative.html: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-001-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-001.html: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-002-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-002.html: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-003-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-003.html: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-004-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-base-response-004.html: Added.
+        * web-platform-tests/css/css-animations/animation-important-001-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animation-important-001.html: Added.
+        * web-platform-tests/css/css-animations/animation-important-002-expected.html: Added.
+        * web-platform-tests/css/css-animations/animation-important-002.html: Added.
+        * web-platform-tests/css/css-animations/event-dispatch.tentative.html:
+        * web-platform-tests/css/css-animations/event-order.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/event-order.tentative.html:
+        * web-platform-tests/css/css-animations/historical.html:
+        * web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash-expected.txt: Removed.
+        * web-platform-tests/css/css-animations/support/testcommon.js:
+        (assert_frames_equal):
+        (assert_frame_lists_equal):
+        * web-platform-tests/css/css-animations/w3c-import.log:
+
 2020-04-24  Rob Buis  <rbuis@igalia.com>
 
         Import fetch/stale-while-revalidate/fetch.html

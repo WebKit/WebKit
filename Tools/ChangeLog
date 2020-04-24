@@ -1,3 +1,17 @@
+2020-04-24  Antoine Quint  <graouts@apple.com>
+
+        Update the css/css-animations WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=210964
+
+        Reviewed by Dean Jackson.
+
+        Turn on the CSSCustomPropertiesAndValues experimental feature which a new test relies on.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2020-04-24  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style should recognize *Internal.h and *Private.h as primary headers
