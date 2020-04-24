@@ -1753,21 +1753,16 @@ void SpeculativeJIT::compileBigInt32Compare(Node* node, MacroAssembler::Relation
 
     if (condition == MacroAssembler::Equal || condition == MacroAssembler::NotEqual) {
         // No need to unbox the operands, since the tag bits are identical
-        m_jit.compare64(condition, op1.gpr(), op2.gpr(), result.gpr());
+        m_jit.compare64(condition, op1GPR, op2GPR, resultGPR);
     } else {
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
 
-        m_jit.move(op1GPR, tempGPR);
-        m_jit.unboxBigInt32(tempGPR);
-        m_jit.move(op2GPR, resultGPR);
-        m_jit.unboxBigInt32(resultGPR);
-        m_jit.compare64(condition, tempGPR, resultGPR, resultGPR);
+        m_jit.unboxBigInt32(op1GPR, tempGPR);
+        m_jit.unboxBigInt32(op2GPR, resultGPR);
+        m_jit.compare32(condition, tempGPR, resultGPR, resultGPR);
     }
-
-    // If we add a DataFormatBool, we should use it here.
-    m_jit.or32(TrustedImm32(JSValue::ValueFalse), result.gpr());
-    jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+    unblessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compilePeepHoleBigInt32Branch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)

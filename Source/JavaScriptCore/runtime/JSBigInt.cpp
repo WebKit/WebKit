@@ -2020,6 +2020,36 @@ bool JSBigInt::equalsToInt32(int32_t value)
     return (this->length() == 1) && (this->sign() == (value < 0)) && (this->digit(0) == static_cast<Digit>(std::abs(static_cast<int64_t>(value))));
 }
 
+JSBigInt::ComparisonResult JSBigInt::compareToInt32(int32_t value)
+{
+    bool xSign = sign();
+    bool ySign = value < 0;
+
+    if (xSign != ySign)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+    if (isZero()) {
+        ASSERT(!xSign);
+        ASSERT(!ySign);
+        if (value == 0)
+            return ComparisonResult::Equal;
+        return ComparisonResult::LessThan;
+    }
+
+    if (length() != 1)
+        return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+
+    uint64_t value64 = 0;
+    if (xSign)
+        value64 = static_cast<uint64_t>(-static_cast<int64_t>(value));
+    else
+        value64 = value;
+    if (digit(0) == value64)
+        return ComparisonResult::Equal;
+    if (digit(0) < value64)
+        return xSign ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+    return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
+}
+
 JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
 {
     // This algorithm expect that the double format is IEEE 754

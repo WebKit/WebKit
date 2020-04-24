@@ -238,6 +238,32 @@ ALWAYS_INLINE JSValue jsStringFromRegisterArray(JSGlobalObject* globalObject, Re
     return ropeBuilder.release();
 }
 
+ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt(JSValue left, JSValue right)
+{
+    ASSERT(left.isBigInt());
+    ASSERT(right.isBigInt());
+#if USE(BIGINT32)
+    if (left.isBigInt32()) {
+        if (right.isBigInt32()) {
+            int32_t leftInt32 = left.bigInt32AsInt32();
+            int32_t rightInt32 = right.bigInt32AsInt32();
+            if (leftInt32 == rightInt32)
+                return JSBigInt::ComparisonResult::Equal;
+            if (leftInt32 < rightInt32)
+                return JSBigInt::ComparisonResult::LessThan;
+            return JSBigInt::ComparisonResult::GreaterThan;
+        }
+        ASSERT(right.isHeapBigInt());
+        return invertBigIntCompareResult(right.asHeapBigInt()->compareToInt32(left.bigInt32AsInt32()));
+    }
+    if (right.isBigInt32()) {
+        ASSERT(left.isHeapBigInt());
+        return left.asHeapBigInt()->compareToInt32(right.bigInt32AsInt32());
+    }
+#endif
+    return JSBigInt::compare(left.asHeapBigInt(), right.asHeapBigInt());
+}
+
 ALWAYS_INLINE JSBigInt::ComparisonResult compareBigIntToOtherPrimitive(JSGlobalObject* globalObject, JSBigInt* v1, JSValue primValue)
 {
     VM& vm = globalObject->vm();
@@ -267,6 +293,46 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigIntToOtherPrimitive(JSGlobalO
     return JSBigInt::compareToDouble(v1, numberValue);
 }
 
+ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt32ToOtherPrimitive(JSGlobalObject* globalObject, int32_t v1, JSValue primValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(primValue.isPrimitive());
+    ASSERT(!primValue.isBigInt());
+
+    auto compare = [&] (auto v1, auto v2) {
+        static_assert(std::is_same_v<decltype(v1), decltype(v2)>);
+        if (v1 == v2)
+            return JSBigInt::ComparisonResult::Equal;
+        if (v1 < v2)
+            return JSBigInt::ComparisonResult::LessThan;
+        return JSBigInt::ComparisonResult::GreaterThan;
+    };
+
+    if (primValue.isString()) {
+        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, asString(primValue)->value(globalObject));
+        RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
+        if (!bigIntValue)
+            return JSBigInt::ComparisonResult::Undefined;
+
+        if (bigIntValue.isHeapBigInt())
+            return invertBigIntCompareResult(bigIntValue.asHeapBigInt()->compareToInt32(v1));
+
+        ASSERT(bigIntValue.isBigInt32());
+#if USE(BIGINT32)
+        return compare(v1, bigIntValue.bigInt32AsInt32());
+#endif
+    }
+
+    // Note that 0n <=> -0.0 is handling -0.0 as +0.
+    double numberValue = primValue.toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
+    if (std::isnan(numberValue))
+        return JSBigInt::ComparisonResult::Undefined;
+    return compare(static_cast<double>(v1), numberValue);
+}
+
 ALWAYS_INLINE bool bigIntCompareResult(JSBigInt::ComparisonResult comparisonResult, JSBigInt::ComparisonMode comparisonMode)
 {
     if (comparisonMode == JSBigInt::ComparisonMode::LessThan)
@@ -284,47 +350,38 @@ ALWAYS_INLINE bool bigIntCompare(JSGlobalObject* globalObject, JSValue v1, JSVal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (v1.isBigInt() && v2.isBigInt())
+        return bigIntCompareResult(compareBigInt(v1, v2), comparisonMode);
+
 #if USE(BIGINT32)
-    if (v1.isBigInt32() && v2.isBigInt32()) {
-        if (comparisonMode == JSBigInt::ComparisonMode::LessThan)
-            return v1.bigInt32AsInt32() < v2.bigInt32AsInt32();
-        ASSERT(comparisonMode == JSBigInt::ComparisonMode::LessThanOrEqual);
-        return v1.bigInt32AsInt32() <= v2.bigInt32AsInt32();
+    if (v1.isBigInt32()) {
+        ASSERT(!v2.isBigInt());
+        auto comparisonResult = compareBigInt32ToOtherPrimitive(globalObject, v1.bigInt32AsInt32(), v2);
+        RETURN_IF_EXCEPTION(scope, false);
+        return bigIntCompareResult(comparisonResult, comparisonMode);
     }
+    if (v2.isBigInt32()) {
+        ASSERT(!v1.isBigInt());
+        auto comparisonResult = compareBigInt32ToOtherPrimitive(globalObject, v2.bigInt32AsInt32(), v1);
+        RETURN_IF_EXCEPTION(scope, false);
+        return bigIntCompareResult(invertBigIntCompareResult(comparisonResult), comparisonMode);
+    }
+    ASSERT(!v1.isBigInt32() && !v2.isBigInt32());
 #endif
 
-    JSBigInt* v1HeapBigInt = nullptr;
-    JSBigInt* v2HeapBigInt = nullptr;
-    // FIXME: have some fast-ish path for a comparison between a small and a large big-int
-    if (v1.isHeapBigInt())
-        v1HeapBigInt = v1.asHeapBigInt();
-#if USE(BIGINT32)
-    else if (v1.isBigInt32())
-        v1HeapBigInt = JSBigInt::createFrom(vm, v1.bigInt32AsInt32());
-#endif
-
-    if (v2.isHeapBigInt())
-        v2HeapBigInt = v2.asHeapBigInt();
-#if USE(BIGINT32)
-    else if (v2.isBigInt32())
-        v2HeapBigInt = JSBigInt::createFrom(vm, v2.bigInt32AsInt32());
-#endif
-
-    if (v1HeapBigInt && v2HeapBigInt)
-        return bigIntCompareResult(JSBigInt::compare(v1HeapBigInt, v2HeapBigInt), comparisonMode);
-
-    if (v1HeapBigInt) {
-        auto comparisonResult = compareBigIntToOtherPrimitive(globalObject, v1HeapBigInt, v2);
+    if (v1.isHeapBigInt()) {
+        ASSERT(!v2.isBigInt());
+        auto comparisonResult = compareBigIntToOtherPrimitive(globalObject, v1.asHeapBigInt(), v2);
         RETURN_IF_EXCEPTION(scope, false);
         return bigIntCompareResult(comparisonResult, comparisonMode);
     }
 
-    auto comparisonResult = compareBigIntToOtherPrimitive(globalObject, v2HeapBigInt, v1);
-    RETURN_IF_EXCEPTION(scope, false);
     // Here we check inverted because BigInt is the v2
-    if (comparisonMode == JSBigInt::ComparisonMode::LessThan)
-        return comparisonResult == JSBigInt::ComparisonResult::GreaterThan;
-    return comparisonResult == JSBigInt::ComparisonResult::GreaterThan || comparisonResult == JSBigInt::ComparisonResult::Equal;
+    ASSERT(!v1.isBigInt());
+    ASSERT(v2.isHeapBigInt());
+    auto comparisonResult = compareBigIntToOtherPrimitive(globalObject, v2.asHeapBigInt(), v1);
+    RETURN_IF_EXCEPTION(scope, false);
+    return bigIntCompareResult(invertBigIntCompareResult(comparisonResult), comparisonMode);
 }
 
 ALWAYS_INLINE bool toPrimitiveNumeric(JSGlobalObject* globalObject, JSValue v, JSValue& p, double& n)

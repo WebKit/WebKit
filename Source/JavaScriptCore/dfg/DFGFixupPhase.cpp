@@ -872,6 +872,26 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+            if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
+                fixEdge<HeapBigIntUse>(node->child1());
+                fixEdge<HeapBigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+#if USE(BIGINT32)
+            if (Node::shouldSpeculateBigInt32(node->child1().node(), node->child2().node())) {
+                fixEdge<BigInt32Use>(node->child1());
+                fixEdge<BigInt32Use>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+            if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+                fixEdge<AnyBigIntUse>(node->child1());
+                fixEdge<AnyBigIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                return;
+            }
+#endif
             if (Node::shouldSpeculateNumberOrBoolean(node->child1().node(), node->child2().node())) {
                 fixDoubleOrBooleanEdge(node->child1());
                 fixDoubleOrBooleanEdge(node->child2());

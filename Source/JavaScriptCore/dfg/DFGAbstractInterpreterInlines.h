@@ -1855,23 +1855,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue rightConst = forNode(node->child2()).value();
         if (leftConst && rightConst) {
             if (leftConst.isNumber() && rightConst.isNumber()) {
+                auto compareNumber = [&](double a, double b) {
+                    switch (node->op()) {
+                    case CompareLess:
+                        return jsBoolean(a < b);
+                    case CompareLessEq:
+                        return jsBoolean(a <= b);
+                    case CompareGreater:
+                        return jsBoolean(a > b);
+                    case CompareGreaterEq:
+                        return jsBoolean(a >= b);
+                    case CompareEq:
+                        return jsBoolean(a == b);
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
+                };
                 double a = leftConst.asNumber();
                 double b = rightConst.asNumber();
+                setConstant(node, compareNumber(a, b));
+                break;
+            }
+
+            if (leftConst.isBigInt() && rightConst.isBigInt()) {
                 switch (node->op()) {
                 case CompareLess:
-                    setConstant(node, jsBoolean(a < b));
+                    setConstant(node, jsBoolean(bigIntCompareResult(compareBigInt(leftConst, rightConst), JSBigInt::ComparisonMode::LessThan)));
                     break;
                 case CompareLessEq:
-                    setConstant(node, jsBoolean(a <= b));
+                    setConstant(node, jsBoolean(bigIntCompareResult(compareBigInt(leftConst, rightConst), JSBigInt::ComparisonMode::LessThanOrEqual)));
                     break;
                 case CompareGreater:
-                    setConstant(node, jsBoolean(a > b));
+                    setConstant(node, jsBoolean(bigIntCompareResult(compareBigInt(rightConst, leftConst), JSBigInt::ComparisonMode::LessThan)));
                     break;
                 case CompareGreaterEq:
-                    setConstant(node, jsBoolean(a >= b));
+                    setConstant(node, jsBoolean(bigIntCompareResult(compareBigInt(rightConst, leftConst), JSBigInt::ComparisonMode::LessThanOrEqual)));
                     break;
                 case CompareEq:
-                    setConstant(node, jsBoolean(a == b));
+                    setConstant(node, jsBoolean(compareBigInt(leftConst, rightConst) == JSBigInt::ComparisonResult::Equal));
                     break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
@@ -1947,6 +1969,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1() == node->child2()) {
             if (node->isBinaryUseKind(Int32Use) ||
                 node->isBinaryUseKind(Int52RepUse) ||
+                node->isBinaryUseKind(BigInt32Use) ||
+                node->isBinaryUseKind(HeapBigIntUse) ||
+                node->isBinaryUseKind(AnyBigIntUse) ||
                 node->isBinaryUseKind(StringUse) ||
                 node->isBinaryUseKind(BooleanUse) ||
                 node->isBinaryUseKind(SymbolUse) ||

@@ -1,3 +1,47 @@
+2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG compare should speculate BigInt well
+        https://bugs.webkit.org/show_bug.cgi?id=210892
+
+        Reviewed by Saam Barati.
+
+        Compare operations in DFG does not support BigInt related speculations. As a result, DFG fixup phase emits DoubleRep for operands, and
+        causes OSR exit. This patch adds BigInt32, HeapBigInt, and AnyBigIntUse support to DFG compare operations to avoid OSR exits.
+        We also introduce JSBigInt::compareToInt32 to avoid allocating JSBigInt only for comparison, and optimize C++ runtime for JSBigInt comparison.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::genericJSValueNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigInt32Compare):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        (JSC::FTL::DFG::LowerDFGToB3::genericJSValueCompare):
+        (JSC::FTL::DFG::LowerDFGToB3::nonSpeculativeCompare): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::unboxBigInt32):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::compareToInt32):
+        * runtime/JSBigInt.h:
+        (JSC::swapBigIntCompareResult):
+        * runtime/Operations.h:
+        (JSC::compareBigInt):
+        (JSC::compareBigInt32ToOtherPrimitive):
+        (JSC::bigIntCompare):
+
 2020-04-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Proxy.revocable should not have [[Construct]] slot

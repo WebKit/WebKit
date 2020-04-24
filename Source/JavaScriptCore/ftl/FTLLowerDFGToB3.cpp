@@ -8661,7 +8661,7 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
-        nonSpeculativeCompare(
+        genericJSValueCompare(
             [&] (LValue left, LValue right) {
                 return m_out.equal(left, right);
             },
@@ -8949,7 +8949,7 @@ private:
 
         // FIXME: we can do something much smarter here, see the DFGSpeculativeJIT approach in e.g. SpeculativeJIT::nonSpeculativePeepholeStrictEq
         DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
-        nonSpeculativeCompare(
+        genericJSValueCompare(
             [&] (LValue left, LValue right) {
                 return m_out.equal(left, right);
             },
@@ -13556,6 +13556,13 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt32Use)) {
+            LValue left = lowBigInt32(m_node->child1());
+            LValue right = lowBigInt32(m_node->child2());
+            setBoolean(intFunctor(unboxBigInt32(left), unboxBigInt32(right)));
+            return;
+        }
+
         if (m_node->isBinaryUseKind(StringIdentUse)) {
             LValue left = lowStringIdent(m_node->child1());
             LValue right = lowStringIdent(m_node->child2());
@@ -13576,8 +13583,8 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
-        nonSpeculativeCompare(intFunctor, fallbackFunction);
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse) || m_node->isBinaryUseKind(HeapBigIntUse) || m_node->isBinaryUseKind(AnyBigIntUse), m_node->child1().useKind(), m_node->child2().useKind());
+        genericJSValueCompare(intFunctor, fallbackFunction);
     }
 
     void compileStringSlice()
@@ -14547,11 +14554,13 @@ private:
     }
 
     template<typename IntFunctor>
-    void nonSpeculativeCompare(const IntFunctor& intFunctor, S_JITOperation_GJJ helperFunction)
+    void genericJSValueCompare(const IntFunctor& intFunctor, S_JITOperation_GJJ helperFunction)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        LValue left = lowJSValue(m_node->child1());
-        LValue right = lowJSValue(m_node->child2());
+        LValue left = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+        LValue right = lowJSValue(m_node->child2(), ManualOperandSpeculation);
+        speculate(m_node->child1());
+        speculate(m_node->child2());
         
         LBasicBlock leftIsInt = m_out.newBlock();
         LBasicBlock fastPath = m_out.newBlock();

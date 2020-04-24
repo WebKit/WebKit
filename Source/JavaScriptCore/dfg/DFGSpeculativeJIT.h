@@ -743,7 +743,7 @@ public:
     void nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, Node* branchNode);
     
     void nonSpeculativePeepholeBranch(Node*, Node* branchNode, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
-    void nonSpeculativeNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
+    void genericJSValueNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node*, Node* branchNode, bool invert = false);
     void genericJSValueNonPeepholeStrictEq(Node*, bool invert = false);

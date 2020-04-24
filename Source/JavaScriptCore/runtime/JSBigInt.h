@@ -124,6 +124,9 @@ public:
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
     bool equalsToNumber(JSValue);
     JS_EXPORT_PRIVATE bool equalsToInt32(int32_t);
+    JS_EXPORT_PRIVATE ComparisonResult compareToInt32(int32_t);
+    JS_EXPORT_PRIVATE bool lessThanInt32(int32_t);
+    JS_EXPORT_PRIVATE bool lessThanEqualInt32(int32_t);
     static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
 
     bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue& result) const;
@@ -286,5 +289,25 @@ inline void JSBigInt::setDigit(unsigned n, Digit value)
     ASSERT(n < length());
     dataStorage()[n] = value;
 }
+
+#if !ASSERT_ENABLED
+IGNORE_RETURN_TYPE_WARNINGS_BEGIN
+#endif
+ALWAYS_INLINE JSBigInt::ComparisonResult invertBigIntCompareResult(JSBigInt::ComparisonResult comparisonResult)
+{
+    switch (comparisonResult) {
+    case JSBigInt::ComparisonResult::GreaterThan:
+        return JSBigInt::ComparisonResult::LessThan;
+    case JSBigInt::ComparisonResult::LessThan:
+        return JSBigInt::ComparisonResult::GreaterThan;
+    case JSBigInt::ComparisonResult::Equal:
+    case JSBigInt::ComparisonResult::Undefined:
+        return comparisonResult;
+    }
+    ASSERT_NOT_REACHED();
+}
+#if !ASSERT_ENABLED
+IGNORE_RETURN_TYPE_WARNINGS_END
+#endif
 
 } // namespace JSC

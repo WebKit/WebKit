@@ -4028,18 +4028,16 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     if (node->isBinaryUseKind(BigInt32Use)) {
         SpeculateBigInt32Operand left(this, leftChild);
         SpeculateBigInt32Operand right(this, rightChild);
-
-        // FIXME: do we really need this extra register, or can we mutate left/right ?
-        // FIXME: also, look into Reuse and other tricks for a more efficient generated code.
         GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
         GPRTemporary temp(this);
+
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+        GPRReg resultGPR = result.gpr();
         GPRReg tempGPR = temp.gpr();
 
-        m_jit.move(left.gpr(), resultGPR);
-        m_jit.unboxBigInt32(resultGPR);
-        m_jit.move(right.gpr(), tempGPR);
-        m_jit.unboxBigInt32(tempGPR);
+        m_jit.unboxBigInt32(leftGPR, resultGPR);
+        m_jit.unboxBigInt32(rightGPR, tempGPR);
 
         // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
@@ -4134,18 +4132,16 @@ void SpeculativeJIT::compileValueSub(Node* node)
     if (node->binaryUseKind() == BigInt32Use) {
         SpeculateBigInt32Operand left(this, node->child1());
         SpeculateBigInt32Operand right(this, node->child2());
-
-        // FIXME: do we really need this extra register, or can we mutate left/right ?
-        // FIXME: also, look into Reuse and other tricks for a more efficient generated code.
         GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
         GPRTemporary temp(this);
+
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+        GPRReg resultGPR = result.gpr();
         GPRReg tempGPR = temp.gpr();
 
-        m_jit.move(left.gpr(), resultGPR);
-        m_jit.unboxBigInt32(resultGPR);
-        m_jit.move(right.gpr(), tempGPR);
-        m_jit.unboxBigInt32(tempGPR);
+        m_jit.unboxBigInt32(leftGPR, resultGPR);
+        m_jit.unboxBigInt32(rightGPR, tempGPR);
 
         // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchSub32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
@@ -4984,18 +4980,16 @@ void SpeculativeJIT::compileValueMul(Node* node)
         // FIXME: the code between compileValueAdd, compileValueSub and compileValueMul for BigInt32 is nearly identical, so try to get rid of the duplication.
         SpeculateBigInt32Operand left(this, node->child1());
         SpeculateBigInt32Operand right(this, node->child2());
-
-        // FIXME: do we really need this extra register, or can we mutate left/right ?
-        // FIXME: also, look into Reuse and other tricks for a more efficient generated code.
         GPRTemporary result(this);
-        GPRReg resultGPR = result.gpr();
         GPRTemporary temp(this);
+
+        GPRReg leftGPR = left.gpr();
+        GPRReg rightGPR = right.gpr();
+        GPRReg resultGPR = result.gpr();
         GPRReg tempGPR = temp.gpr();
 
-        m_jit.move(left.gpr(), resultGPR);
-        m_jit.unboxBigInt32(resultGPR);
-        m_jit.move(right.gpr(), tempGPR);
-        m_jit.unboxBigInt32(tempGPR);
+        m_jit.unboxBigInt32(leftGPR, resultGPR);
+        m_jit.unboxBigInt32(rightGPR, tempGPR);
 
         // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchMul32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
@@ -6252,6 +6246,7 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
         return false;
     }
 #endif
+
 #if USE(JSVALUE64)
     if (node->isBinaryUseKind(Int52RepUse)) {
         compileInt52Compare(node, condition);
@@ -6320,7 +6315,7 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
         }
     }
 
-    nonSpeculativeNonPeepholeCompare(node, condition, operation);
+    genericJSValueNonPeepholeCompare(node, condition, operation);
     return false;
 }
 
@@ -14115,11 +14110,13 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     addSlowPathGenerator(WTFMove(slowPath));
 }
 
-void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler::RelationalCondition cond, S_JITOperation_GJJ helperFunction)
+void SpeculativeJIT::genericJSValueNonPeepholeCompare(Node* node, MacroAssembler::RelationalCondition cond, S_JITOperation_GJJ helperFunction)
 {
-    ASSERT(node->isBinaryUseKind(UntypedUse));
-    JSValueOperand arg1(this, node->child1());
-    JSValueOperand arg2(this, node->child2());
+    ASSERT(node->isBinaryUseKind(UntypedUse) || node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(HeapBigIntUse));
+    JSValueOperand arg1(this, node->child1(), ManualOperandSpeculation);
+    JSValueOperand arg2(this, node->child2(), ManualOperandSpeculation);
+    speculate(node, node->child1());
+    speculate(node, node->child2());
 
     JSValueRegs arg1Regs = arg1.jsValueRegs();
     JSValueRegs arg2Regs = arg2.jsValueRegs();

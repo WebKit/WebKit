@@ -1398,9 +1398,14 @@ public:
 #endif // USE(JSVALUE64)
 
 #if USE(BIGINT32)
-    void unboxBigInt32(GPRReg gpr)
+    void unboxBigInt32(GPRReg src, GPRReg dest)
     {
-        urshift64(trustedImm32ForShift(Imm32(16)), gpr);
+#if CPU(ARM64)
+        urshift64(src, trustedImm32ForShift(Imm32(16)), dest);
+#else
+        move(src, dest);
+        urshift64(trustedImm32ForShift(Imm32(16)), dest);
+#endif
     }
 
     void boxBigInt32(GPRReg gpr)
