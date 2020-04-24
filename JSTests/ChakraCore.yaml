@@ -1692,8 +1692,7 @@
 - path: ChakraCore/test/es6/ReflectApiTests.js
   cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/proxyTrapConsumeNewTarget.js
-  # Different behavior.
-  cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
+  cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/CrossContextSpreadfunctionCall.js
   # LoadScriptFile polyfill doesn't return an object.
   cmd: runChakra :skip, "NoException", "", ["CrossContextSpreadFunction.js", "CrossContextSpreadArguments.js"]
@@ -1743,8 +1742,7 @@
 - path: ChakraCore/test/es6/proxyenumbug.js
   cmd: runChakra :skipDueToOutdatedOrBadTest, "NoException", "", []
 - path: ChakraCore/test/es6/proxy-issue884.js
-  # Different behavior.
-  cmd: runChakra :skip, "NoException", "proxy-issue884.baseline", []
+  cmd: runChakra :pass, "NoException", "proxy-issue884.baseline", []
 - path: ChakraCore/test/es6/nullPropertyDescriptor.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/es6/object-is.js
@@ -1848,13 +1846,11 @@
 - path: ChakraCore/test/es6/ProxySetPrototypeOf.js
   cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/arraywithproxy.js
-  # Different behavior, cannot convert Symbol to string. Could be bad test.
-  cmd: runChakra :skip, "NoException", "arraywithproxy.baseline", []
+  cmd: runChakra :skipDueToOutdatedOrBadTest, "NoException", "", []
 - path: ChakraCore/test/es6/proxytest8.js
   cmd: runChakra :baseline, "NoException", "proxytest8.baseline", []
 - path: ChakraCore/test/es6/proxytest9.js
-  # Different behavior.
-  cmd: runChakra :skip, "NoException", "proxytest9.baseline", []
+  cmd: runChakra :skipDueToOutdatedOrBadTest, "NoException", "", []
 - path: ChakraCore/test/es6/ES6Function_bugs.js
   cmd: runChakra :pass, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
 - path: ChakraCore/test/es6/OS_2700778.js

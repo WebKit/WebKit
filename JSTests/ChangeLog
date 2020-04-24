@@ -1,3 +1,18 @@
+2020-04-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove revoked Proxy checks from ProxyCreate
+        https://bugs.webkit.org/show_bug.cgi?id=210862
+
+        Reviewed by Ross Kirsling.
+
+        Removes expectations for 2 invalid ChakraCore tests.
+
+        * ChakraCore.yaml: Mark 2 test cases as passing.
+        * ChakraCore/test/es6/arraywithproxy.baseline: Removed.
+        * ChakraCore/test/es6/proxytest9.baseline: Removed.
+        * stress/proxy-revoke.js: Adjust test.
+        * test262/expectations.yaml: Mark 12 test cases as passing.
+
 2020-04-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed test262 gardening following r260591.

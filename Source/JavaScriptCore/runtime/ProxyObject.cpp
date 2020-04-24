@@ -71,14 +71,8 @@ String ProxyObject::toStringName(const JSObject* object, JSGlobalObject* globalO
 
 Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
 {
-    if (!target.isObject())
-        return globalObject->proxyObjectStructure();
-
-    JSObject* targetAsObject = jsCast<JSObject*>(target);
-    CallData ignoredCallData;
     VM& vm = globalObject->vm();
-    bool isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallType::None;
-    return isCallable ? globalObject->callableProxyObjectStructure() : globalObject->proxyObjectStructure();
+    return target.isFunction(vm) ? globalObject->callableProxyObjectStructure() : globalObject->proxyObjectStructure();
 }
 
 void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue target, JSValue handler)
@@ -90,33 +84,20 @@ void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue t
         throwTypeError(globalObject, scope, "A Proxy's 'target' should be an Object"_s);
         return;
     }
-    if (ProxyObject* targetAsProxy = jsDynamicCast<ProxyObject*>(vm, target)) {
-        if (targetAsProxy->isRevoked()) {
-            throwTypeError(globalObject, scope, "A Proxy's 'target' shouldn't be a revoked Proxy"_s);
-            return;
-        }
-    }
     if (!handler.isObject()) {
         throwTypeError(globalObject, scope, "A Proxy's 'handler' should be an Object"_s);
         return;
     }
-    if (ProxyObject* handlerAsProxy = jsDynamicCast<ProxyObject*>(vm, handler)) {
-        if (handlerAsProxy->isRevoked()) {
-            throwTypeError(globalObject, scope, "A Proxy's 'handler' shouldn't be a revoked Proxy"_s);
-            return;
-        }
-    }
 
     JSObject* targetAsObject = jsCast<JSObject*>(target);
 
-    CallData ignoredCallData;
-    m_isCallable = targetAsObject->methodTable(vm)->getCallData(targetAsObject, ignoredCallData) != CallType::None;
+    m_isCallable = targetAsObject->isFunction(vm);
     if (m_isCallable) {
         TypeInfo info = structure(vm)->typeInfo();
         RELEASE_ASSERT(info.implementsHasInstance() && info.implementsDefaultHasInstance());
     }
 
-    m_isConstructible = jsCast<JSObject*>(target)->isConstructor(vm);
+    m_isConstructible = targetAsObject->isConstructor(vm);
 
     m_target.set(vm, this, targetAsObject);
     m_handler.set(vm, this, handler);

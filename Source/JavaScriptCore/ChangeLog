@@ -1,3 +1,21 @@
+2020-04-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove revoked Proxy checks from ProxyCreate
+        https://bugs.webkit.org/show_bug.cgi?id=210862
+
+        Reviewed by Ross Kirsling.
+
+        This change removes revoked Proxy checks from ProxyCreate [1], implementing
+        https://github.com/tc39/ecma262/pull/1814 and aligning JSC with SpiderMonkey.
+        Also cleans up ProxyObject creation by using isFunction() instead of
+        isCallable(), which are identical.
+
+        [1]: https://tc39.es/ecma262/#sec-proxycreate (steps 2, 4)
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::structureForTarget):
+        (JSC::ProxyObject::finishCreation):
+
 2020-04-22  Keith Miller  <keith_miller@apple.com>
 
         Fix OSR exiting/iterator object checks in for-of bytecodes
