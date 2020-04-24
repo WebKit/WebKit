@@ -582,6 +582,40 @@ TEST(TextManipulation, StartTextManipulationBreaksParagraphInBetweenListItems)
     EXPECT_WK_STREQ("Ten", items[6].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationIncludesFullyClippedText)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+        "    <style>"
+        "        div { overflow: hidden; width: 200px; height: 0; }"
+        "        p { visibility: hidden; }"
+        "    </style>"
+        "</head>"
+        "<body>"
+        "    <div><span>Hello</span> world</div>"
+        "    <br>"
+        "    <p>More text</p>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    NSArray<_WKTextManipulationItem *> *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_WK_STREQ("Hello", items[0].tokens[0].content);
+    EXPECT_WK_STREQ(" world", items[0].tokens[1].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("More text", items[1].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

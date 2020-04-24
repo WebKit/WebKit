@@ -1,3 +1,16 @@
+2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation does not account for text in fully clipped containers
+        https://bugs.webkit.org/show_bug.cgi?id=210940
+        <rdar://problem/61137648>
+
+        Reviewed by Tim Horton.
+
+        Add a new text manipulation API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-04-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r260278): TestWebKitAPI.Fullscreen.Delegate is timing out on macOS bots

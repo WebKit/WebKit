@@ -1,3 +1,32 @@
+2020-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation does not account for text in fully clipped containers
+        https://bugs.webkit.org/show_bug.cgi?id=210940
+        <rdar://problem/61137648>
+
+        Reviewed by Tim Horton.
+
+        Allow text manipulation to find both text in `visibility: hidden;` containers, as well as text in fully clipped
+        overflow containers. In both cases, renderers exist for these nodes, but TextIterator ignores them by default.
+        If these containers become visible in the future, we don't want to skip out on performing text manipulation on
+        them.
+
+        An alternative would be to detect when any element that has not undergone text manipulation has become visible
+        (i.e. no longer clipped by an ancestor), but this is likely more complicated (and possibly less performant) than
+        just eagerly extracting text from hidden containers, once they gain renderers.
+
+        TextManipulation.StartTextManipulationIncludesFullyClippedText
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::ParagraphContentIterator):
+        (WebCore::TextManipulationController::didCreateRendererForElement):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::scheduleObservartionUpdate): Deleted.
+
+        While I'm here, also rename scheduleObservartionUpdate to scheduleObservationUpdate.
+
+        * editing/TextManipulationController.h:
+
 2020-04-23  Alex Christensen  <achristensen@webkit.org>
 
         Allow credentials for same-origin css mask images

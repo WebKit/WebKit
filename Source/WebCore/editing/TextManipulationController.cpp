@@ -143,7 +143,7 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
-        : m_iterator({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) })
+        : m_iterator({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) }, TextIteratorIgnoresStyleVisibility)
         , m_iteratorNode(m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode())
         , m_currentNodeForFindingInvisibleContent(start.firstNode())
         , m_pastEndNode(end.firstNode())
@@ -379,7 +379,7 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
         return;
 
     if (m_elementsWithNewRenderer.computesEmpty())
-        scheduleObservartionUpdate();
+        scheduleObservationUpdate();
 
     if (is<PseudoElement>(element)) {
         if (auto* host = downcast<PseudoElement>(element).hostElement())
@@ -399,7 +399,7 @@ static const std::pair<PositionTuple, PositionTuple> makeHashablePositionRange(c
     return { makePositionTuple(start.deepEquivalent()), makePositionTuple(end.deepEquivalent()) };
 }
 
-void TextManipulationController::scheduleObservartionUpdate()
+void TextManipulationController::scheduleObservationUpdate()
 {
     if (!m_document)
         return;

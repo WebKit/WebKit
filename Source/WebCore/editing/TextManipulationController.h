@@ -128,7 +128,7 @@ public:
 private:
     bool isInManipulatedElement(Element&);
     void observeParagraphs(const Position& start, const Position& end);
-    void scheduleObservartionUpdate();
+    void scheduleObservationUpdate();
 
     struct ManipulationItemData {
         Position start;
