@@ -1,3 +1,18 @@
+2020-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should recognize *Internal.h and *Private.h as primary headers
+        <https://webkit.org/b/210979>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_classify_include): If a header has an "Internal.h" or a
+        "Private.h" suffix with the same base name as the source file,
+        consider it a primary header--the header that comes after
+        "config.h".
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_classify_include): Add tests.
+
 2020-04-24  Alex Christensen  <achristensen@webkit.org>
 
         SPI clients using fastServerTrustEvaluationEnabled need SPI to inform them of modern TLS negotiation

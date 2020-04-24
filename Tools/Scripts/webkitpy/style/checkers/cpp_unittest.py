@@ -3557,6 +3557,15 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '\n'
                                          '#include "ResourceHandleWin.h"\n',
                                          '')
+        # Internal.h and Private.h headers are primary headers.
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
+                         classify_include('WKWebProcessPlugInNodeHandle.mm',
+                                          'WKWebProcessPlugInNodeHandleInternal.h',
+                                          False, include_state))
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
+                         classify_include('WKWebProcessPlugInNodeHandle.mm',
+                                          'WKWebProcessPlugInNodeHandlePrivate.h',
+                                          False, include_state))
 
     def test_try_drop_common_suffixes(self):
         self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo-inl.h'))

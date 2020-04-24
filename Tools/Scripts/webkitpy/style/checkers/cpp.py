@@ -3225,6 +3225,8 @@ def _classify_include(filename, include, is_system, include_state):
     if not include_state.visited_primary_section():
         if target_base.find(include_base) != -1:
             return _PRIMARY_HEADER
+        if include_base in ['{}Internal'.format(target_base), '{}Private'.format(target_base)]:
+            return _PRIMARY_HEADER
 
     # If we already encountered a primary header, perform a strict comparison.
     # In case the two filename bases are the same then the above lenient check
