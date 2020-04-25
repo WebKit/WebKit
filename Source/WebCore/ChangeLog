@@ -1,3 +1,46 @@
+2020-04-24  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r260450. rdar://problem/62350884
+
+    [Async overflow scroll] Overflow that's hidden on one axis is scrollable on that axis
+    https://bugs.webkit.org/show_bug.cgi?id=210771
+    <rdar://problem/62080331>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    eventCanScrollContents() should check the presence of enabled scrollbars, like
+    ScrollAnimator::handleWheelEvent() does.
+    
+    Test: fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html
+    
+    * page/scrolling/ScrollingTreeScrollingNode.cpp:
+    (WebCore::ScrollingTreeScrollingNode::eventCanScrollContents const):
+    
+    LayoutTests:
+    
+    * fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis-expected.txt: Added.
+    * fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260450 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+            [Async overflow scroll] Overflow that's hidden on one axis is scrollable on that axis
+            https://bugs.webkit.org/show_bug.cgi?id=210771
+            <rdar://problem/62080331>
+
+            Reviewed by Tim Horton.
+
+            eventCanScrollContents() should check the presence of enabled scrollbars, like
+            ScrollAnimator::handleWheelEvent() does.
+
+            Test: fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html
+
+            * page/scrolling/ScrollingTreeScrollingNode.cpp:
+            (WebCore::ScrollingTreeScrollingNode::eventCanScrollContents const):
+
 2020-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Content disappears on CSS parallax example

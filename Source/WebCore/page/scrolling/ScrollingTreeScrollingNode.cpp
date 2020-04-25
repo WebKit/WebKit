@@ -169,8 +169,16 @@ bool ScrollingTreeScrollingNode::eventCanScrollContents(const PlatformWheelEvent
     if (wheelEvent.delta().isZero())
         return false;
 
-    FloatPoint oldScrollPosition = currentScrollPosition();
-    FloatPoint newScrollPosition = oldScrollPosition + FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY());
+    auto wheelDelta = wheelEvent.delta();
+
+    if (!m_scrollableAreaParameters.hasEnabledHorizontalScrollbar)
+        wheelDelta.setWidth(0);
+
+    if (!m_scrollableAreaParameters.hasEnabledVerticalScrollbar)
+        wheelDelta.setHeight(0);
+
+    auto oldScrollPosition = currentScrollPosition();
+    auto newScrollPosition = oldScrollPosition - wheelDelta;
     newScrollPosition = newScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     return newScrollPosition != oldScrollPosition;
 }

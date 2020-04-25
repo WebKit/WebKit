@@ -1,0 +1,24 @@
+
+Test horizontal scroll in horizontal scroller
+PASS horizontalScrollerEventCount > 0 is true
+PASS verticalScrollerEventCount is 0
+PASS windowScrollEventCount is 0
+
+Test horizontal scroll in horizontal scroller
+PASS horizontalScrollerEventCount is 0
+PASS verticalScrollerEventCount is 0
+PASS windowScrollEventCount > 0 is true
+
+Test horizontal scroll in vertical scroller
+PASS horizontalScrollerEventCount is 0
+PASS verticalScrollerEventCount is 0
+PASS windowScrollEventCount > 0 is true
+
+Test vertical scroll in vertical scroller
+PASS horizontalScrollerEventCount is 0
+PASS verticalScrollerEventCount > 0 is true
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
