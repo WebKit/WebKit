@@ -1,3 +1,16 @@
+2020-04-24  David Kilzer  <ddkilzer@apple.com>
+
+        WebPasteboardProxy::getPasteboardStringsForType() and WebPasteboardProxy::readURLFromPasteboard() should check return value of SharedMemory::createHandle()
+        <https://webkit.org/b/211002>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        - Check result of SharedMemory::createHandle() and return early
+          on failure.
+
 2020-04-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Unable to sign up on twitter.com
