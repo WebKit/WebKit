@@ -1,3 +1,17 @@
+2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, emit baselines after r260690
+        https://bugs.webkit.org/show_bug.cgi?id=211022
+
+        Unreviewed gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001-expected.txt:
+        Added after r260690.
+        * platform/gtk/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt:
+        Added after r260690.
+        * platform/gtk/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt:
+        Added after r260662.
+
 2020-04-25  Antoine Quint  <graouts@apple.com>
 
         Skip legacy media controls tests on macOS and iOS
