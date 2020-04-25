@@ -1962,3 +1962,7 @@ webkit.org/b/210351 scrollingcoordinator/mac/latching/horizontal-overflow-back-s
 
 # Certain versions of macOS use different text security characters.
 webkit.org/b/209692 [ Mojave Catalina ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ ImageOnlyFailure ]
+
+# These media controls tests are not relevant on macOS and iOS.
+media/media-document-audio-repaint.html [ Skip ]
+media/controls-styling.html [ Skip ]
