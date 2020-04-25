@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-caching.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/exports.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instance/toString.any.js

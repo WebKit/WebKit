@@ -6,4 +6,5 @@ PASS Return type
 PASS Empty module 
 PASS Empty module: array caching 
 PASS imports 
+PASS Stray argument 
 

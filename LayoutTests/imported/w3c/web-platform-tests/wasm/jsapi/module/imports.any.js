@@ -1,5 +1,4 @@
 // META: global=jsshell
-// META: script=/wasm/jsapi/wasm-constants.js
 // META: script=/wasm/jsapi/wasm-module-builder.js
 
 function assert_ModuleImportDescriptor(import_, expected) {
@@ -42,7 +41,7 @@ setup(() => {
 });
 
 test(() => {
-  assert_throws(new TypeError(), () => WebAssembly.Module.imports());
+  assert_throws_js(TypeError, () => WebAssembly.Module.imports());
 }, "Missing arguments");
 
 test(() => {
@@ -58,8 +57,8 @@ test(() => {
     WebAssembly.Module.prototype,
   ];
   for (const argument of invalidArguments) {
-    assert_throws(new TypeError(), () => WebAssembly.Module.imports(argument),
-                  `imports(${format_value(argument)})`);
+    assert_throws_js(TypeError, () => WebAssembly.Module.imports(argument),
+                     `imports(${format_value(argument)})`);
   }
 }, "Non-Module arguments");
 
@@ -118,3 +117,9 @@ test(() => {
   ];
   assert_imports(imports, expected);
 }, "imports");
+
+test(() => {
+  const module = new WebAssembly.Module(emptyModuleBinary);
+  const imports = WebAssembly.Module.imports(module, {});
+  assert_imports(imports, []);
+}, "Stray argument");

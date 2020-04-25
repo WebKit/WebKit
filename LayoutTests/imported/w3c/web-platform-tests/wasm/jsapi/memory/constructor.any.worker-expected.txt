@@ -17,8 +17,13 @@ PASS Out-of-range initial value in descriptor: 4294967296
 PASS Out-of-range maximum value in descriptor: 4294967296 
 PASS Out-of-range initial value in descriptor: 68719476736 
 PASS Out-of-range maximum value in descriptor: 68719476736 
+PASS Initial value exceeds maximum 
+FAIL Shared memory without maximum assert_throws_js: function "() => new WebAssembly.Memory({ "initial": 10, "shared": true })" did not throw
 PASS Proxy descriptor 
 PASS Order of evaluation for descriptor 
+FAIL Order of evaluation for descriptor (with shared) assert_array_equals: lengths differ, expected 5 got 4
 PASS Zero initial 
 PASS Non-zero initial 
+FAIL Stray argument WebAssembly.Memory expects exactly one argument
+FAIL Shared memory undefined is not an object (evaluating 'bufferType.prototype')
 

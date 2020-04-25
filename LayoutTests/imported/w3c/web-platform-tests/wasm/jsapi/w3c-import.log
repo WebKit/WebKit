@@ -16,6 +16,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/assertions.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/bad-imports.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/error-interfaces-no-symbol-tostringtag.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/instanceTestFactory.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/interface.any.js
-/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/wasm-constants.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/proto-from-ctor-realm.html
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/wasm-module-builder.js

@@ -29,5 +29,5 @@ import * as assert from '../assert.js'
         exception = "" + e;
     }
 
-    assert.eq(exception, "Error: WebAssembly.Module doesn't parse at byte 100002: Function's number of locals is too big 50001 maximum 50000, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
+    assert.eq(exception, "CompileError: WebAssembly.Module doesn't parse at byte 100002: Function's number of locals is too big 50001 maximum 50000, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
 }

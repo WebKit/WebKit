@@ -14,4 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/constructor/compile.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/constructor/multi-value.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/constructor/validate.any.js

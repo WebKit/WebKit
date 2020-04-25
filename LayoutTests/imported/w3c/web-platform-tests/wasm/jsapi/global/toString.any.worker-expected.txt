@@ -1,3 +1,4 @@
 
 PASS Object.prototype.toString on an Global 
+FAIL @@toStringTag exists on the prototype with the appropriate descriptor assert_own_property: expected property symbol "Symbol(Symbol.toStringTag)" missing
 

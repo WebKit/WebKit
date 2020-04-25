@@ -37,6 +37,7 @@ PASS WebAssembly.instantiate(module): Importing a global with an incorrectly-typ
 PASS WebAssembly.instantiate(module): Importing a global with an incorrectly-typed value: WebAssembly.Global 
 PASS WebAssembly.instantiate(module): Importing a global with an incorrectly-typed value: WebAssembly.Global.prototype 
 PASS WebAssembly.instantiate(module): Importing a global with an incorrectly-typed value: Object.create(WebAssembly.Global.prototype) 
+PASS WebAssembly.instantiate(module): Importing a global with an incorrectly-typed value: WebAssembly.Global object (wrong value type) 
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: undefined 
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: null 
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: true 
@@ -49,6 +50,7 @@ PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory 
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory.prototype 
 PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: Object.create(WebAssembly.Memory.prototype) 
+PASS WebAssembly.instantiate(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory object (too large) 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: undefined 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: null 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: true 
@@ -61,6 +63,7 @@ PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: WebAssembly.Table 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: WebAssembly.Table.prototype 
 PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: Object.create(WebAssembly.Table.prototype) 
+PASS WebAssembly.instantiate(module): Importing table with an incorrectly-typed value: WebAssembly.Table object (too large) 
 PASS WebAssembly.instantiate(buffer): Non-object imports argument: null 
 PASS WebAssembly.instantiate(buffer): Non-object imports argument: true 
 PASS WebAssembly.instantiate(buffer): Non-object imports argument: "" 
@@ -99,6 +102,7 @@ PASS WebAssembly.instantiate(buffer): Importing a global with an incorrectly-typ
 PASS WebAssembly.instantiate(buffer): Importing a global with an incorrectly-typed value: WebAssembly.Global 
 PASS WebAssembly.instantiate(buffer): Importing a global with an incorrectly-typed value: WebAssembly.Global.prototype 
 PASS WebAssembly.instantiate(buffer): Importing a global with an incorrectly-typed value: Object.create(WebAssembly.Global.prototype) 
+PASS WebAssembly.instantiate(buffer): Importing a global with an incorrectly-typed value: WebAssembly.Global object (wrong value type) 
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: undefined 
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: null 
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: true 
@@ -111,6 +115,7 @@ PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: WebAssembly.Memory 
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: WebAssembly.Memory.prototype 
 PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: Object.create(WebAssembly.Memory.prototype) 
+PASS WebAssembly.instantiate(buffer): Importing memory with an incorrectly-typed value: WebAssembly.Memory object (too large) 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: undefined 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: null 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: true 
@@ -123,4 +128,5 @@ PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: WebAssembly.Table 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: WebAssembly.Table.prototype 
 PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: Object.create(WebAssembly.Table.prototype) 
+PASS WebAssembly.instantiate(buffer): Importing table with an incorrectly-typed value: WebAssembly.Table object (too large) 
 

@@ -1,5 +1,4 @@
 // META: global=jsshell
-// META: script=/wasm/jsapi/wasm-constants.js
 // META: script=/wasm/jsapi/wasm-module-builder.js
 
 let emptyModuleBinary;
@@ -36,7 +35,7 @@ function assert_exports(exports, expected) {
 }
 
 test(() => {
-  assert_throws(new TypeError(), () => WebAssembly.Module.exports());
+  assert_throws_js(TypeError, () => WebAssembly.Module.exports());
 }, "Missing arguments");
 
 test(() => {
@@ -52,8 +51,8 @@ test(() => {
     WebAssembly.Module.prototype,
   ];
   for (const argument of invalidArguments) {
-    assert_throws(new TypeError(), () => WebAssembly.Module.exports(argument),
-                  `exports(${format_value(argument)})`);
+    assert_throws_js(TypeError, () => WebAssembly.Module.exports(argument),
+                     `exports(${format_value(argument)})`);
   }
 }, "Non-Module arguments");
 
@@ -92,18 +91,14 @@ test(() => {
 
   builder
     .addFunction("fn", kSig_v_v)
-    .addBody([
-        kExprEnd
-    ])
+    .addBody([])
     .exportFunc();
   builder
     .addFunction("fn2", kSig_v_v)
-    .addBody([
-        kExprEnd
-    ])
+    .addBody([])
     .exportFunc();
 
-  builder.setFunctionTableLength(1);
+  builder.setTableBounds(1);
   builder.addExportOfKind("table", kExternalTable, 0);
 
   builder.addGlobal(kWasmI32, true)
@@ -128,3 +123,9 @@ test(() => {
   ];
   assert_exports(exports, expected);
 }, "exports");
+
+test(() => {
+  const module = new WebAssembly.Module(emptyModuleBinary);
+  const exports = WebAssembly.Module.exports(module, {});
+  assert_exports(exports, []);
+}, "Stray argument");

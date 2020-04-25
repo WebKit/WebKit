@@ -6,5 +6,6 @@ PASS Empty module
 PASS Empty module: array caching 
 PASS Custom sections 
 PASS Custom sections with surrogate pairs 
-FAIL Custom sections with U+FFFD assert_equals: expected 1 but got 0
+PASS Custom sections with U+FFFD 
+PASS Stray argument 
 

@@ -1,0 +1,7 @@
+
+FAIL Grow with exported-function argument assert_equals: expected (function) function "function fn() {
+    [native code]
+}" but got (object) null
+FAIL Grow with non-function argument assert_throws_js: function "() => table.grow(2, {})" did not throw
+FAIL Grow with JS-function argument assert_throws_js: function "() => table.grow(2, () => true)" did not throw
+

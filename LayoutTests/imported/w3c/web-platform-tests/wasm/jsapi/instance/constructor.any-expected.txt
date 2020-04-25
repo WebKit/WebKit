@@ -3,10 +3,13 @@ PASS name
 PASS length 
 PASS No arguments 
 PASS Non-Module arguments 
-PASS Non-object imports 
 PASS Calling 
-PASS Empty module 
-PASS getter order for imports object 
+PASS Empty module without imports argument 
+PASS Empty module with undefined imports argument 
+PASS Empty module with empty imports argument 
+FAIL getter order for imports object assert_array_equals: property 1, expected "global1 getter" but got "memory getter"
 PASS imports 
-FAIL exports assert_false: fn: writable expected false got true
+FAIL No imports assert_array_equals: matching export keys property 2, expected "table" but got "global"
+FAIL exports and imports assert_false: fn: writable expected false got true
+PASS stray argument 
 

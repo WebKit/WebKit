@@ -37,6 +37,7 @@ PASS new WebAssembly.Instance(module): Importing a global with an incorrectly-ty
 PASS new WebAssembly.Instance(module): Importing a global with an incorrectly-typed value: WebAssembly.Global 
 PASS new WebAssembly.Instance(module): Importing a global with an incorrectly-typed value: WebAssembly.Global.prototype 
 PASS new WebAssembly.Instance(module): Importing a global with an incorrectly-typed value: Object.create(WebAssembly.Global.prototype) 
+PASS new WebAssembly.Instance(module): Importing a global with an incorrectly-typed value: WebAssembly.Global object (wrong value type) 
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: undefined 
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: null 
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: true 
@@ -49,6 +50,7 @@ PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-type
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory 
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory.prototype 
 PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: Object.create(WebAssembly.Memory.prototype) 
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory object (too large) 
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: undefined 
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: null 
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: true 
@@ -61,4 +63,5 @@ PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table 
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table.prototype 
 PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: Object.create(WebAssembly.Table.prototype) 
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table object (too large) 
 

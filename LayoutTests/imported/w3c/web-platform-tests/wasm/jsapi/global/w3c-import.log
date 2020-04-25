@@ -16,5 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.js
-/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/value-get-set.any.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/global/valueOf.any.js

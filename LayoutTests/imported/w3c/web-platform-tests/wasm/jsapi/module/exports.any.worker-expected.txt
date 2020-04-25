@@ -5,4 +5,5 @@ PASS Branding
 PASS Empty module 
 PASS Empty module: array caching 
 PASS exports 
+PASS Stray argument 
 

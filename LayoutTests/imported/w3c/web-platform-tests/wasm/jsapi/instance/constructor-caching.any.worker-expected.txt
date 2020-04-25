@@ -1,0 +1,3 @@
+
+FAIL constructor-caching assert_equals: expected object "[object WebAssembly.Global]" but got object "[object WebAssembly.Global]"
+

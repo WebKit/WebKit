@@ -1,0 +1,5 @@
+
+PASS multiple return values from wasm to js 
+PASS multiple return values inside wasm 
+FAIL multiple return values from js to wasm assert_array_equals: property 6, expected "next call 2" but got "valueOf get 1"
+
