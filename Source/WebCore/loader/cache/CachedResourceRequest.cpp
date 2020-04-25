@@ -55,7 +55,7 @@ String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequ
     if (!MemoryCache::shouldRemoveFragmentIdentifier(request.url()))
         return { };
     URL url = request.url();
-    String fragmentIdentifier = url.fragmentIdentifier();
+    auto fragmentIdentifier = url.fragmentIdentifier().toString();
     url.removeFragmentIdentifier();
     request.setURL(url);
     return fragmentIdentifier;

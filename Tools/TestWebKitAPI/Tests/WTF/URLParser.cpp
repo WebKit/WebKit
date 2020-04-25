@@ -92,7 +92,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
     EXPECT_TRUE(eq(parts.host, url.host()));
     EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
@@ -119,7 +119,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
     EXPECT_TRUE(eq(parts.host, url.host()));
     EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
@@ -148,7 +148,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.pass()));
+    EXPECT_TRUE(eq(partsNew.password, url.password()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
     EXPECT_EQ(partsNew.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(partsNew.path, url.path()));
@@ -177,7 +177,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
-    EXPECT_TRUE(eq(partsNew.password, url.pass()));
+    EXPECT_TRUE(eq(partsNew.password, url.password()));
     EXPECT_TRUE(eq(partsNew.host, url.host()));
     EXPECT_EQ(partsNew.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(partsNew.path, url.path()));
@@ -462,19 +462,19 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
-static void testUserPass(const String& value, const String& decoded, const String& encoded)
+static void testUserPassword(const String& value, const String& decoded, const String& encoded)
 {
     URL userURL(URL(), makeString("http://", value, "@example.com/"));
     URL passURL(URL(), makeString("http://user:", value, "@example.com/"));
     EXPECT_EQ(encoded, userURL.encodedUser());
-    EXPECT_EQ(encoded, passURL.encodedPass());
+    EXPECT_EQ(encoded, passURL.encodedPassword());
     EXPECT_EQ(decoded, userURL.user());
-    EXPECT_EQ(decoded, passURL.pass());
+    EXPECT_EQ(decoded, passURL.password());
 }
 
-static void testUserPass(const String& value, const String& encoded)
+static void testUserPassword(const String& value, const String& encoded)
 {
-    testUserPass(value, value, encoded);
+    testUserPassword(value, value, encoded);
 }
 
 TEST_F(WTF_URLParser, Credentials)
@@ -483,20 +483,20 @@ TEST_F(WTF_URLParser, Credentials)
     auto invalidSurrogate = utf16String<3>({0xD800, 'A', '\0'});
     auto replacementA = utf16String<3>({0xFFFD, 'A', '\0'});
 
-    testUserPass("a", "a");
-    testUserPass("%", "%");
-    testUserPass("%25", "%", "%25");
-    testUserPass("%2525", "%25", "%2525");
-    testUserPass("%FX", "%FX");
-    testUserPass("%00", String::fromUTF8("\0", 1), "%00");
-    testUserPass("%F%25", "%F%", "%F%25");
-    testUserPass("%X%25", "%X%", "%X%25");
-    testUserPass("%%25", "%%", "%%25");
-    testUserPass("💩", "%C3%B0%C2%9F%C2%92%C2%A9");
-    testUserPass("%💩", "%%C3%B0%C2%9F%C2%92%C2%A9");
-    testUserPass(validSurrogate, "%F0%90%85%95");
-    testUserPass(replacementA, "%EF%BF%BDA");
-    testUserPass(invalidSurrogate, replacementA, "%EF%BF%BDA");
+    testUserPassword("a", "a");
+    testUserPassword("%", "%");
+    testUserPassword("%25", "%", "%25");
+    testUserPassword("%2525", "%25", "%2525");
+    testUserPassword("%FX", "%FX");
+    testUserPassword("%00", String::fromUTF8("\0", 1), "%00");
+    testUserPassword("%F%25", "%F%", "%F%25");
+    testUserPassword("%X%25", "%X%", "%X%25");
+    testUserPassword("%%25", "%%", "%%25");
+    testUserPassword("💩", "%C3%B0%C2%9F%C2%92%C2%A9");
+    testUserPassword("%💩", "%%C3%B0%C2%9F%C2%92%C2%A9");
+    testUserPassword(validSurrogate, "%F0%90%85%95");
+    testUserPassword(replacementA, "%EF%BF%BDA");
+    testUserPassword(invalidSurrogate, replacementA, "%EF%BF%BDA");
 }
 
 TEST_F(WTF_URLParser, ParseRelative)

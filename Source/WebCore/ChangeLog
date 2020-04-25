@@ -1,3 +1,201 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::matchURLs): Removed unneeded calls to hasQuery.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith): Use hasCredentials.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::redirect): Use hasCredentials.
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::isValidURLBasedPaymentMethodIdentifier): Use hasCredentials.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::createYouTubeURL): Take StringView.
+        (WebCore::queryKeysAndValues): Take StringView.
+        (WebCore::processAndCreateYouTubeURL): Use auto since URL pieces are
+        now returned as StringView.
+        (WebCore::YouTubePluginReplacement::youTubeURLFromAbsoluteURL):
+        Use StringView and makeString rather than StringBuilder.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::resourceName): Use queryWithLeadingQuestionMark.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement const):
+        Use StringView.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setURL): Use setHostAndPort.
+
+        * dom/Element.cpp:
+        (WebCore::Element::findAnchorElementForLink): Update since
+        fragmentIdentifier returns StringView.
+
+        * dom/TreeScope.cpp: Added a comment.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments): Update since
+        lastPathComponent returns a StringView. Also got rid of some strange
+        use of AtomString that was not necessary and used WTFMove more.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard): Update since
+        lastPathComponent returns a StringView.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::attachmentTitleForDisplay const):
+        Use makeString instead of StringBuilder, and StringView instead of
+        String for name and extension values.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::pluginReplacementForType): Update since lastPathComponent
+        returns a StringView.
+
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments): Update since
+        fragmentIdentifier returns a StringView.
+
+        * html/URLUtils.h: Changed many functions to take a StringView, changed
+        various other functions to call toString, since the underlying URL
+        function now returns a StringView. Updated names since "pass" is now
+        "password".
+        (WebCore::countASCIIDigits): Added. Replaces unusual function
+        named parsePortFromStringPosition because we can use StringView now
+        and so don't need such an unusual function.
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::parseConversionRequest): Use hasCredentials.
+        Also removed unnecessary use of ASCIILiteral that hurts performance
+        a tiny bit.
+        (WebCore::AdClickAttribution::urlForTesting const): Use makeString
+        instead of StringBuilder.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validateCrossOriginRedirectionURL): Use hasCredentials.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest): Use hasCredentials.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::appendMailtoPostFormDataToURL): Update since query returns
+        StringView.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument): Use equalRespectingNullity on
+        fragment identifiers to preserve behavior, since at this time
+        StringView == StringView does not respect nullity, but String == String does.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::createFileURL): Use fileURLWithFileSystemPath.
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::manifestPath): Return a StringView.
+        (WebCore::parseManifest): Use StringView.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::calculateItemInCollection const): Update since
+        fragmentIdentifer returns a StringView.
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::splitFragmentIdentifierFromRequestURL): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragment): Ditto.
+        (WebCore::FrameView::scrollToFragmentInternal): Updated log message.
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded): Updated for URL::password name change
+        and to use the new stringWithoutQueryOrFragmentIdentifier rather than the
+        old equalIgnoringQueryAndFragment.
+
+        * page/Location.cpp:
+        (WebCore::Location::href const): Use removeCredentials.
+        (WebCore::Location::port const): Streamlined.
+        (WebCore::Location::pathname const): Use an ASCIILiteral.
+        (WebCore::Location::search const): Use queryWithLeadingQuestionMark.
+        (WebCore::Location::hash const): Use fragmentIdentifierWithLeadingNumberSign.
+        (WebCore::Location::setPort): Use parseUInt16.
+
+        * page/UserContentURLPattern.cpp: Coding style tweaks.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::appendFileExtensionIfNecessary):
+        Use contains instead of reverseFind to check for a period in the filename.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Updated since lastPathComponent is a StringView.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::convertToInternalProtocol): Updated to use makeString since
+        setProtocol takes a StringView.
+
+        * platform/network/ResourceHandleInternal.h: Renamed m_pass to m_password
+        and call password instead of pass.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::removeCredentials): Use removeCredentials.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection): Updated for m_password
+        name change.
+        (WebCore::ResourceHandle::willSendRequest): Updated for m_password and
+        password name changes.
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication): Ditto.
+
+        * platform/network/curl/CurlProxySettings.cpp:
+        (WebCore::CurlProxySettings::setUserPass): Updated for setPassword name change.
+        (WebCore::createProxyUrl): Use hasCredentials, updated for password name change.
+        * platform/network/curl/CurlProxySettings.h:
+        (WebCore::CurlProxySettings::password const): Updated for password name change.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Updated for
+        m_password name change.
+        (WebCore::ResourceHandle::getCredential): Ditto.
+        (WebCore::ResourceHandle::willSendRequest): Updated for m_password and
+        password name changes.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection): Updated for m_password
+        and setPassword name changes.
+        (WebCore::ResourceHandle::willSendRequest): Ditto.
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication): Ditto.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::createSoupURI const): Updated for password name change.
+        * platform/network/soup/URLSoup.cpp:
+        (WebCore::soupURIToURL): Updated for setPassword name change.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::writeURL): Updated since lastPathComponent returns a StringView.
+        (WebCore::filesystemPathFromUrlOrTitle): Ditto.
+        (WebCore::Pasteboard::write): Ditto.
+
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::createFilterOperations): Updated since
+        fragmentIdentifier returns a StringView.
+
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::port const): Streamlined.
+        (WebCore::WorkerLocation::pathname const): Use an ASCIILiteral.
+        (WebCore::WorkerLocation::search const): Use queryWithLeadingQuestionMark.
+        (WebCore::WorkerLocation::hash const): Use fragmentIdentifierWithLeadingNumberSign.
+
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey):
+        Updated for hasFragmentIdentifier name change.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::topOriginURL): Simplified code to set port.
+        * workers/service/server/SWServer.cpp:
+        (WebCore::originURL): Ditto.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Updated for setPassword name change.
+
 2020-04-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Improve tracking of Element* pointers in AXObjectCache with WeakHashSet

@@ -790,16 +790,10 @@ String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 
 String MIMETypeRegistry::appendFileExtensionIfNecessary(const String& filename, const String& mimeType)
 {
-    if (filename.isEmpty())
-        return emptyString();
-
-    if (equalIgnoringASCIICase(mimeType, defaultMIMEType()))
+    if (filename.isEmpty() || filename.contains('.') || equalIgnoringASCIICase(mimeType, defaultMIMEType()))
         return filename;
 
-    if (filename.reverseFind('.') != notFound)
-        return filename;
-
-    String preferredExtension = getPreferredExtensionForMIMEType(mimeType);
+    auto preferredExtension = getPreferredExtensionForMIMEType(mimeType);
     if (preferredExtension.isEmpty())
         return filename;
 

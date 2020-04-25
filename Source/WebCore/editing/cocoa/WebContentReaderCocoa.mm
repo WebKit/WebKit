@@ -328,13 +328,13 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (resource == urlToResourceMap.end())
             continue;
 
-        auto name = image.attributeWithoutSynchronization(HTMLNames::altAttr);
+        String name = image.attributeWithoutSynchronization(HTMLNames::altAttr);
         if (name.isEmpty())
-            name = URL({ }, resourceURLString).lastPathComponent();
+            name = URL({ }, resourceURLString).lastPathComponent().toString();
         if (name.isEmpty())
-            name = AtomString("media");
+            name = "media"_s;
 
-        attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), image });
+        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data(), image });
     }
 
     for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
@@ -348,11 +348,11 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (resource == urlToResourceMap.end())
             continue;
 
-        auto name = URL({ }, resourceURLString).lastPathComponent();
+        String name = URL({ }, resourceURLString).lastPathComponent().toString();
         if (name.isEmpty())
-            name = AtomString("file");
+            name = "file"_s;
 
-        attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), object });
+        attachmentInsertionInfo.append({ WTFMove(name), resource->value->mimeType(), resource->value->data(), object });
     }
 
     for (auto& info : attachmentInsertionInfo) {

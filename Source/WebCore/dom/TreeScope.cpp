@@ -440,6 +440,8 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(const FloatPoint& p)
     return elementsFromPoint(p.x(), p.y());
 }
 
+// FIXME: Would be nice to change this to take a StringView, since that's what callers have
+// and there is no particular advantage to already having a String.
 Element* TreeScope::findAnchor(const String& name)
 {
     if (name.isEmpty())

@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WTF {
@@ -72,6 +73,11 @@ bool StringView::startsWith(const StringView& prefix) const
 bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
 {
     return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
+}
+
+bool StringView::endsWith(UChar character) const
+{
+    return m_length && (*this)[m_length - 1] == character;
 }
 
 bool StringView::endsWith(const StringView& suffix) const
@@ -304,6 +310,35 @@ String normalizedNFC(const String& string)
     if (result.underlyingString.isNull())
         return string;
     return result.underlyingString;
+}
+
+// FIXME: Should this be named parseNumber<uint16_t> instead?
+// FIXME: Should we replace the toInt family of functions with this style?
+Optional<uint16_t> parseUInt16(StringView string)
+{
+    bool ok = false;
+    auto number = toIntegralType<uint16_t>(string, &ok);
+    if (!ok)
+        return WTF::nullopt;
+    return number;
+}
+
+bool equalRespectingNullity(StringView a, StringView b)
+{
+    if (a.m_characters == b.m_characters) {
+        ASSERT(a.is8Bit() == b.is8Bit());
+        return a.length() == b.length();
+    }
+
+    if (a.isEmpty() && b.isEmpty())
+        return a.isNull() == b.isNull();
+
+    return equalCommon(a, b);
+}
+
+bool StringView::contains(const char* string) const
+{
+    return find(string) != notFound;
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

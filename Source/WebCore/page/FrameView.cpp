@@ -2179,8 +2179,8 @@ void FrameView::restoreScrollbar()
 
 bool FrameView::scrollToFragment(const URL& url)
 {
-    String fragmentIdentifier = url.fragmentIdentifier();
-    if (scrollToFragmentInternal(fragmentIdentifier))
+    auto fragmentIdentifier = url.fragmentIdentifier();
+    if (scrollToFragmentInternal(fragmentIdentifier.toString()))
         return true;
 
     // Try again after decoding the ref, based on the document's encoding.
@@ -2195,7 +2195,7 @@ bool FrameView::scrollToFragment(const URL& url)
 
 bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
 {
-    LOG(Scrolling, "FrameView::scrollToAnchor %s", fragmentIdentifier.utf8().data());
+    LOG(Scrolling, "FrameView::scrollToFragmentInternal %s", fragmentIdentifier.utf8().data());
 
     // If our URL has no ref, then we have no place we need to jump to.
     if (fragmentIdentifier.isNull())

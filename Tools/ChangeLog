@@ -1,3 +1,23 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/URL.cpp: Removed the test for
+        equalIgnoringQueryAndFragment since we removed that function.
+        Updated for rename of URL::password from URL::pass.
+        Updated arguments to isMatchingDomain to pass literals that can be converted
+        to StringView rather than ASCIILiteral, which StringView doesn't yet support.
+
+        * TestWebKitAPI/Tests/WebCore/URLParserTextEncoding.cpp:
+        (TestWebKitAPI::checkURL): Updated for rename of URL::password from URL::pass.
+        (TestWebKitAPI::checkRelativeURL): Ditto.
+        (TestWebKitAPI::checkURLDifferences): Ditto.
+        (TestWebKitAPI::checkRelativeURLDifferences): Ditto.
+        (TestWebKitAPI::testUserPassword): Ditto.
+
 2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [Flatpak SDK][EWS] Install dependencies step needs configuration as argument

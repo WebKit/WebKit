@@ -53,7 +53,7 @@ bool AdClickAttribution::isValid() const
 
 Expected<AdClickAttribution::Conversion, String> AdClickAttribution::parseConversionRequest(const URL& redirectURL)
 {
-    if (!redirectURL.protocolIs("https"_s) || redirectURL.hasUsername() || redirectURL.hasPassword() || redirectURL.hasQuery() || redirectURL.hasFragment()) {
+    if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier()) {
         if (UNLIKELY(debugModeEnabled())) {
             RELEASE_LOG_INFO(AdClickAttribution, "Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment.");
             return makeUnexpected("[Ad Click Attribution] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
@@ -189,17 +189,12 @@ URL AdClickAttribution::urlForTesting(const URL& baseURL) const
     auto host = m_source.registrableDomain.string();
     if (host != "localhost" && host != "127.0.0.1")
         return URL();
-
-    StringBuilder builder;
-    builder.appendLiteral("?conversion=");
-    builder.appendNumber(m_conversion.value().data);
-    builder.appendLiteral("&campaign=");
-    builder.appendNumber(m_campaign.id);
-    if (baseURL.hasQuery()) {
-        builder.append('&');
-        builder.append(baseURL.query());
-    }
-    return URL(baseURL, builder.toString());
+    String relativeURL;
+    if (!baseURL.hasQuery())
+        relativeURL = makeString("?conversion=", m_conversion.value().data, "&campaign=", m_campaign.id);
+    else
+        relativeURL = makeString("?conversion=", m_conversion.value().data, "&campaign=", m_campaign.id, '&', baseURL.query());
+    return URL(baseURL, relativeURL);
 }
 
 void AdClickAttribution::markConversionAsSent()

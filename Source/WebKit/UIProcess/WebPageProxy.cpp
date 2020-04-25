@@ -1255,7 +1255,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 #endif
 
     // We failed to issue an universal file read access sandbox, fall back to issuing one for the base URL instead.
-    auto baseURL = URL(URL(), url.baseAsString());
+    auto baseURL = url.truncatedForUseAsBase();
     auto basePath = baseURL.fileSystemPath();
     if (basePath.isNull())
         return;
@@ -5246,7 +5246,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
         bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision
             && destinationFrameInfo->isMainFrame()
-            && (m_mainFrame ? !hostsAreEqual(m_mainFrame->url(), request.url()) : false)
+            && (m_mainFrame && m_mainFrame->url().host() != request.url().host())
             && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
 
         auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), WTF::nullopt, WTFMove(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
@@ -5372,7 +5372,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
             sourceFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), this);
 
         auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-        bool shouldOpenAppLinks = m_mainFrame ? !hostsAreEqual(m_mainFrame->url(), request.url()) : false;
+        bool shouldOpenAppLinks = m_mainFrame && m_mainFrame->url().host() != request.url().host();
         auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), nullptr, frameName, WTFMove(request), URL { }, shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
@@ -5570,7 +5570,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, Optio
 
         reply(newPage->webPageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 
-        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL({ }, mainFrameURL), request.url());
+        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = URL({ }, mainFrameURL).host() == request.url().host();
 
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
@@ -5578,7 +5578,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, Optio
     };
 
     auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-    bool shouldOpenAppLinks = !hostsAreEqual(originatingFrameInfo->request().url(), request.url());
+    bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, WTF::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
     trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = makeRef(*this), windowFeatures = WTFMove(windowFeatures)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {

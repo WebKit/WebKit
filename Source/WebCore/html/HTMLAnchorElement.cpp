@@ -51,7 +51,6 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
-#include "URLUtils.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>

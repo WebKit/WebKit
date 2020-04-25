@@ -2286,14 +2286,10 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMDocumentFragment *)_documentFragmentForImageData:(NSData *)data withRelativeURLPart:(NSString *)relativeURLPart andMIMEType:(NSString *)mimeType
 {
-    WebResource *resource = [[WebResource alloc] initWithData:data
-                                                          URL:URL::fakeURLWithRelativePart(relativeURLPart)
-                                                     MIMEType:mimeType
-                                             textEncodingName:nil
-                                                    frameName:nil];
-    DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-    [resource release];
-    return fragment;
+    auto resource = adoptNS([[WebResource alloc] initWithData:data
+        URL:URL::fakeURLWithRelativePart(String { relativeURLPart })
+        MIMEType:mimeType textEncodingName:nil frameName:nil]);
+    return [[self _dataSource] _documentFragmentWithImageResource:resource.get()];
 }
 
 - (BOOL)focusedNodeHasContent

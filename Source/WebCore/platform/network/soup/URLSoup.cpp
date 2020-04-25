@@ -44,7 +44,7 @@ URL soupURIToURL(SoupURI* soupURI)
         // built. Fixing soup_uri_to_string is a no-no as the maintainer does
         // not want to break compatibility with previous implementations
         if (soupURI->password)
-            url.setPass(String::fromUTF8(soupURI->password));
+            url.setPassword(String::fromUTF8(soupURI->password));
     }
 
     return url;

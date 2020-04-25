@@ -114,15 +114,9 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
 
         FileSystem::makeAllDirectories(m_deviceIdHashSaltStorageDirectory);
 
-        auto originPaths = FileSystem::listDirectory(m_deviceIdHashSaltStorageDirectory, "*");
-
         HashMap<String, std::unique_ptr<HashSaltForOrigin>> deviceIdHashSaltForOrigins;
-        for (const auto& originPath : originPaths) {
-            URL url;
-            url.setProtocol("file"_s);
-            url.setPath(originPath);
-
-            String deviceIdHashSalt = url.lastPathComponent();
+        for (auto& originPath : FileSystem::listDirectory(m_deviceIdHashSaltStorageDirectory, "*")) {
+            auto deviceIdHashSalt = URL::fileURLWithFileSystemPath(originPath).lastPathComponent().toString();
 
             if (hashSaltSize != deviceIdHashSalt.length()) {
                 RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The length of the hash salt (%d) is different to the length of the hash salts defined in WebKit (%d)", deviceIdHashSalt.length(), hashSaltSize);

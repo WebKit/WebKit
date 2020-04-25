@@ -94,7 +94,7 @@ static void checkURL(const String& urlString, const TextEncoding* encoding, cons
     auto url = URL({ }, urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
     EXPECT_TRUE(eq(parts.host, url.host()));
     EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));
@@ -118,7 +118,7 @@ static void checkURL(const String& urlString, const String& baseURLString, const
     auto url = URL(URL({ }, baseURLString), urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
+    EXPECT_TRUE(eq(parts.password, url.password()));
     EXPECT_TRUE(eq(parts.host, url.host()));
     EXPECT_EQ(parts.port, url.port().valueOr(0));
     EXPECT_TRUE(eq(parts.path, url.path()));

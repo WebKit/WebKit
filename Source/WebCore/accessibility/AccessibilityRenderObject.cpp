@@ -944,26 +944,27 @@ IntPoint AccessibilityRenderObject::clickPoint()
     
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
 {
-    Element* element = anchorElement();
+    auto element = anchorElement();
+
     // Right now, we do not support ARIA links as internal link elements
     if (!is<HTMLAnchorElement>(element))
         return nullptr;
-    HTMLAnchorElement& anchor = downcast<HTMLAnchorElement>(*element);
-    
-    URL linkURL = anchor.href();
-    String fragmentIdentifier = linkURL.fragmentIdentifier();
+    auto& anchor = downcast<HTMLAnchorElement>(*element);
+
+    auto linkURL = anchor.href();
+    auto fragmentIdentifier = linkURL.fragmentIdentifier();
     if (fragmentIdentifier.isEmpty())
         return nullptr;
-    
+
     // check if URL is the same as current URL
-    URL documentURL = m_renderer->document().url();
+    auto documentURL = m_renderer->document().url();
     if (!equalIgnoringFragmentIdentifier(documentURL, linkURL))
         return nullptr;
-    
-    Node* linkedNode = m_renderer->document().findAnchor(fragmentIdentifier);
+
+    auto linkedNode = m_renderer->document().findAnchor(fragmentIdentifier.toStringWithoutCopying());
     if (!linkedNode)
         return nullptr;
-    
+
     // The element we find may not be accessible, so find the first accessible object.
     return firstAccessibleObjectFromNode(linkedNode);
 }

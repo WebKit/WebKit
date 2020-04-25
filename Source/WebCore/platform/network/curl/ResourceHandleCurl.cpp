@@ -214,8 +214,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 
     String partition = firstRequest().cachePartition();
 
-    if (!d->m_user.isNull() && !d->m_pass.isNull()) {
-        Credential credential(d->m_user, d->m_pass, CredentialPersistenceNone);
+    if (!d->m_user.isNull() && !d->m_password.isNull()) {
+        Credential credential(d->m_user, d->m_password, CredentialPersistenceNone);
 
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
@@ -225,7 +225,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         restartRequestWithCredential(challenge.protectionSpace(), credential);
 
         d->m_user = String();
-        d->m_pass = String();
+        d->m_password = String();
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
         return;
     }
@@ -327,7 +327,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
 Optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
 {
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
-    Credential credential { d->m_user, d->m_pass, CredentialPersistenceNone };
+    Credential credential { d->m_user, d->m_password, CredentialPersistenceNone };
 
     if (shouldUseCredentialStorage()) {
         String partition = request.cachePartition();
@@ -476,7 +476,7 @@ void ResourceHandle::willSendRequest()
         newRequest.clearHTTPReferrer();
 
     d->m_user = newURL.user();
-    d->m_pass = newURL.pass();
+    d->m_password = newURL.password();
     newRequest.removeCredentials();
 
     if (crossOrigin) {

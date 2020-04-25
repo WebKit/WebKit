@@ -1,3 +1,152 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/URL.cpp: Remove unused CharBuffer type. Remove UCharBuffer
+        type and write the type explicitly in the 3 places it's used.
+        Removed the invalidPortNumber constant, since we use Optional
+        instead of a special port number now.
+        (WTF::copyASCII): Remove unnecessary special case for empty string.
+        Tweaked coding style and comment a bit.
+        (WTF::URL::URL): Streamlined by getting rid of a local variable.
+        (WTF::shouldTrimFromURL): Tweaked coding style.
+        (WTF::URL::lastPathComponent const): Return a StringView.
+        Also, use the pathStart function for clarity.
+        (WTF::URL::port const): Use a StringView to call parseUInt16.
+        (WTF::URL::protocolHostAndPort const): Optimized to always allocate
+        the string in the right size rather than removing characters from it
+        after creating it.
+        (WTF::decodeEscapeSequence): Added. Factored out from the function
+        below to make it a little more readable.
+        (WTF::decodeEscapeSequencesFromParsedURL): Convert a null StringView
+        to a null String rather than an empty String, use a stack buffer and
+        the helper function above, and added some FIXME comments about
+        encoding handling.
+        (WTF::URL::user const): Simplified by calling encodedUser.
+        (WTF::URL::password const): Simplified by calling encodedPassword.
+        (WTF::URL::encodedUser const): Return a StringView.
+        (WTF::URL::encodedPassword const): Ditto. Also renamed from encodedPass.
+        (WTF::URL::fragmentIdentifier const): Ditto.
+        (WTF::URL::hasFragmentIdentifier const): Moved to header so it can
+        be inlined.
+        (WTF::URL::truncatedForUseAsBase const): Renamed from baseAsString.
+        This function is currently only used with local file URLs and it's
+        not perfectly clear to me precisely what it is for, hence the name
+        is not so great.
+        (WTF::URL::fileSystemPath const): Removed unneeded check for validity
+        since isLocalFile does that check. Removed unneeded typecast now that
+        path returns a StringView.
+        (WTF::defaultPortForProtocolMapForTesting): Deleted.
+        (WTF::ensureDefaultPortForProtocolMapForTesting): Deleted.
+        (WTF::registerDefaultPortForProtocolForTesting): Deleted.
+        (WTF::clearDefaultPortForProtocolMapForTesting): Deleted.
+        (WTF::defaultPortForProtocol): Deleted.
+        (WTF::isDefaultPortForProtocol): Deleted.
+        (WTF::protocolIsInternal): Rewrote to take a StringView. Before it
+        was written as a template that looked like it supported classes other
+        than String, but actually would crash if called on a StringView.
+        (WTF::URL::protocolIs const): Removed unneeded explicit cast to StringView.
+        (WTF::URL::query const): Return a StringView.
+        (WTF::URL::path const): Return a StringView, use the pathStart
+        function for clarity.
+        (WTF::URL::setProtocol): Use a toStringWithoutCopying to save some
+        work when making the protocol canonical. Call parse instead of
+        creating a URLParser here.
+        (WTF::URL::credentialsEnd const): Added. Helper for various functions
+        that manipulate the credentials section.
+        (WTF::URL::setHost): Take StringView. Streamlined the code by using
+        StringView::contains, by using makeString rather than StringBuilder,
+        and by calling parse instead of creating a URLParser here.
+        (WTF::URL::removePort): Deleted, since setPort takes an Optional now.
+        (WTF::URL::setPort): Take Optional<uint16_t>. Call parse instead of
+        creating a URLParser here.
+        (WTF::URL::removeHostAndPort): Deleted. Callers can pass a null
+        StringView to setHostAndPort instead.
+        (WTF::URL::setHostAndPort): Take StringView. Don't remove the old
+        host and port in the nomral case where we end up overwriting the entire
+        URL at the end of the function anyway. Use parseUInt16 instead of
+        toIntStrict to check port number for validity, which makes sure we will
+        reject port numbers larger than 65535. Use makeString instead of
+        StringBuilder and call parse rather than creating a URLParser here.
+        (WTF::parse): Added. Helper function for when we create a new string
+        and want to parse it as the new contents of the URL. Used in almost
+        every setter function.
+        (WTF::URL::remove): Added. Helper function for efficiently removing
+        a piece of the URL string and re-parsing. Used in many setter functions.
+        (WTF::URL::setUser): Take StringView. Use makeString instead of
+        StringBuilder, and parse and remove instead of creating a URLParser here.
+        (WTF::URL::setPassword): Renamed from setPass. Take StringView.
+        Use makeString instead of StringBuilder, and parse and remove instead of
+        creating a URLParser here.
+        (WTF::URL::removeCredientials): Added. Efficiently removes both the
+        user name and password if either is present.
+        (WTF::URL::setFragmentIdentifier): Use parse instead of creating
+        a URL parser here.
+        (WTF::URL::removeFragmentIdentifier): Removed unnecessary checks for
+        things already optimized by String::left. Could later consider merging
+        this in with setFragmentIdentifier, using a null vs. empty distinction,
+        but not doing that for now.
+        (WTF::URL::setQuery): Take StringView.
+        (WTF::URL::setPath): Take StringView.
+        (WTF::stringWithoutQueryOrFragmentIdentifier): Added.
+        (WTF::stringWithoutFragmentIdentifier): Added.
+        (WTF::equalIgnoringFragmentIdentifier): Simplified implementation by
+        using stringWithoutFragmentIdentifier.
+        (WTF::equalIgnoringQueryAndFragment): Deleted.
+        (WTF::hostsAreEqual): Deleted.
+        (WTF::URL::isMatchingDomain const): Take StringView.
+        (WTF::protocolIs): Take StringView.
+        (WTF::URL::protocolIs): Moved to inline in the header.
+        (WTF::URL::strippedForUseAsReferrer const): Rewrite for efficiency.
+        (WTF::protocolIsJavaScript): Moved to inline in the header.
+        (WTF::protocolIsInHTTPFamily): Take StringView.
+        (WTF::aboutBlankURL): Use ASCIILiteral.
+        (WTF::aboutSrcDocURL): Use ASCIILiteral.
+        (WTF::portAllowed): Removed 65535 as a blocked port; wasn't needed.
+        (WTF::mimeTypeFromDataURL): Take StringView.
+        (WTF::URL::stringCenterEllipsizedToLength const): Tweaked style.
+        (WTF::URL::fakeURLWithRelativePart): Take StringView.
+        (WTF::URL::fileURLWithFileSystemPath): Take StringView..
+        (WTF::URL::queryWithLeadingQuestionMark const): Added.
+        (WTF::URL::fragmentIdentifierWithLeadingNumberSign const): Added.
+        (WTF::URL::hostIsIPAddress): Tweak coding style.
+
+        * wtf/URL.h: Made URLTextEncoding destructor protected. Removed
+        unused forward declaration of URLHash structure. Use WTF_EXPORT_PRIVATE
+        on functions from URL rather than on the whole class, since the style
+        checker told me to do that. Moved some inline function bodies out of
+        the class definition for clarity and to keep the style checker happy.
+        Updated many arguemnts from String to StringView and return values for
+        substrings of the URL to StringView. Removed some unused functions and
+        some obsolete comments.
+
+        * wtf/cf/CFURLExtras.cpp:
+        (WTF::isCFURLSameOrigin): Use hasCredentials.
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::endsWith const): Added.
+        (WTF::parseUInt16): Added.
+        (WTF::equalRespectingNullity): Added.
+        (WTF::StringView::contains const): Added overload that takes a
+        const char* so the call site doesn't have to convert it to a StringView.
+
+        * wtf/text/StringView.h: Updated for the additions above.
+        Also added a default start of 0 to the find function.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::charactersToIntStrict): Removed unneeded explicit template argument.
+        (WTF::charactersToUIntStrict): Ditto.
+        (WTF::charactersToInt64Strict): Ditto.
+        (WTF::charactersToUInt64Strict): Ditto.
+        (WTF::charactersToIntPtrStrict): Ditto.
+        (WTF::charactersToInt): Ditto.
+        (WTF::charactersToUInt): Ditto.
+        (WTF::charactersToInt64): Ditto.
+        (WTF::charactersToUInt64): Ditto.
+        (WTF::charactersToIntPtr): Ditto.
+
 2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] allThreads registration is racy with allThreads unregistration

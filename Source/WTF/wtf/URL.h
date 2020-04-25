@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,47 +38,39 @@ OBJC_CLASS NSURL;
 #endif
 
 namespace WTF {
+
 class TextStream;
 
 class URLTextEncoding {
 public:
     virtual Vector<uint8_t> encodeForURLParsing(StringView) const = 0;
-    virtual ~URLTextEncoding() { };
+protected:
+    virtual ~URLTextEncoding() { }
 };
 
-struct URLHash;
-
-class WTF_EXPORT_PRIVATE URL {
+class URL {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // Generates a URL which contains a null string.
     URL() { invalidate(); }
 
-    explicit URL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
-    bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
+    explicit URL(HashTableDeletedValueType);
+    bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
     // Resolves the relative URL with the given base URL. If provided, the
     // URLTextEncoding is used to encode non-ASCII characers. The base URL can be
-    // null or empty, in which case the relative URL will be interpreted as
-    // absolute.
-    // FIXME: If the base URL is invalid, this always creates an invalid
-    // URL. Instead I think it would be better to treat all invalid base URLs
-    // the same way we treate null and empty base URLs.
-    URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
+    // null or empty, in which case the relative URL will be interpreted as absolute.
+    WTF_EXPORT_PRIVATE URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
 
-    static URL fakeURLWithRelativePart(const String&);
-    static URL fileURLWithFileSystemPath(const String&);
+    WTF_EXPORT_PRIVATE static URL fakeURLWithRelativePart(StringView);
+    WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
-    String strippedForUseAsReferrer() const;
-
-    // FIXME: The above functions should be harmonized so that passing a
-    // base of null or the empty string gives the same result as the
-    // standard String constructor.
+    WTF_EXPORT_PRIVATE String strippedForUseAsReferrer() const;
 
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer isolatedCopy() over plain old assignment.
-    URL isolatedCopy() const;
+    WTF_EXPORT_PRIVATE URL isolatedCopy() const;
 
     bool isNull() const;
     bool isEmpty() const;
@@ -89,122 +81,126 @@ public:
     bool canSetHostOrPort() const { return isHierarchical(); }
 
     bool canSetPathname() const { return isHierarchical(); }
-    bool isHierarchical() const;
+    WTF_EXPORT_PRIVATE bool isHierarchical() const;
 
     const String& string() const { return m_string; }
+    WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
-    String stringCenterEllipsizedToLength(unsigned length = 1024) const;
+    // Unlike user() and password(), encodedUser() and encodedPassword() don't decode escape sequences.
+    // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
 
-    StringView protocol() const;
-    StringView host() const;
-    Optional<uint16_t> port() const;
-    String hostAndPort() const;
-    String protocolHostAndPort() const;
-    String user() const;
-    String pass() const;
-    StringView path() const;
-    String lastPathComponent() const;
-    String query() const;
-    String fragmentIdentifier() const;
-    bool hasFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView protocol() const;
+    WTF_EXPORT_PRIVATE StringView encodedUser() const;
+    WTF_EXPORT_PRIVATE StringView encodedPassword() const;
+    WTF_EXPORT_PRIVATE StringView host() const;
+    WTF_EXPORT_PRIVATE Optional<uint16_t> port() const;
+    WTF_EXPORT_PRIVATE StringView path() const;
+    WTF_EXPORT_PRIVATE StringView lastPathComponent() const;
+    WTF_EXPORT_PRIVATE StringView query() const;
+    WTF_EXPORT_PRIVATE StringView fragmentIdentifier() const;
 
-    bool hasUsername() const;
-    bool hasPassword() const;
+    WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const;
+    WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const;
+    WTF_EXPORT_PRIVATE StringView stringWithoutQueryOrFragmentIdentifier() const;
+    StringView stringWithoutFragmentIdentifier() const;
+
+    WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
+    WTF_EXPORT_PRIVATE String hostAndPort() const;
+    WTF_EXPORT_PRIVATE String user() const;
+    WTF_EXPORT_PRIVATE String password() const;
+    WTF_EXPORT_PRIVATE String fileSystemPath() const;
+
+    WTF_EXPORT_PRIVATE URL truncatedForUseAsBase() const;
+
     bool hasQuery() const;
-    bool hasFragment() const;
+    bool hasFragmentIdentifier() const;
     bool hasPath() const;
 
-    // Unlike user() and pass(), these functions don't decode escape sequences.
-    // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
-    String encodedUser() const;
-    String encodedPass() const;
-
-    String baseAsString() const;
-
-    String fileSystemPath() const;
+    bool hasCredentials() const;
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    bool protocolIs(const char*) const;
-    bool protocolIs(StringView) const;
+    WTF_EXPORT_PRIVATE bool protocolIs(const char*) const;
+    WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }
-    bool protocolIsAbout() const;
+    WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
     bool protocolIsInHTTPFamily() const;
-    bool isLocalFile() const;
+    WTF_EXPORT_PRIVATE bool isLocalFile() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
-    bool isAboutBlank() const;
-    bool isAboutSrcDoc() const;
+    WTF_EXPORT_PRIVATE bool isAboutBlank() const;
+    WTF_EXPORT_PRIVATE bool isAboutSrcDoc() const;
 
-    bool isMatchingDomain(const String&) const;
+    WTF_EXPORT_PRIVATE bool isMatchingDomain(StringView) const;
 
-    bool setProtocol(const String&);
-    void setHost(const String&);
+    WTF_EXPORT_PRIVATE bool setProtocol(StringView);
+    WTF_EXPORT_PRIVATE void setHost(StringView);
 
-    void removePort();
-    void setPort(unsigned short);
+    WTF_EXPORT_PRIVATE void setPort(Optional<uint16_t>);
 
     // Input is like "foo.com" or "foo.com:8000".
-    void setHostAndPort(const String&);
-    void removeHostAndPort();
+    WTF_EXPORT_PRIVATE void setHostAndPort(StringView);
 
-    void setUser(const String&);
-    void setPass(const String&);
+    WTF_EXPORT_PRIVATE void setUser(StringView);
+    WTF_EXPORT_PRIVATE void setPassword(StringView);
+    WTF_EXPORT_PRIVATE void removeCredentials();
 
-    // If you pass an empty path for HTTP or HTTPS URLs, the resulting path
-    // will be "/".
-    void setPath(const String&);
+    // If you pass an empty path for HTTP or HTTPS URLs, the resulting path will be "/".
+    WTF_EXPORT_PRIVATE void setPath(StringView);
 
     // The query may begin with a question mark, or, if not, one will be added
     // for you. Setting the query to the empty string will leave a "?" in the
     // URL (with nothing after it). To clear the query, pass a null string.
-    void setQuery(const String&);
+    WTF_EXPORT_PRIVATE void setQuery(StringView);
 
-    void setFragmentIdentifier(StringView);
-    void removeFragmentIdentifier();
+    WTF_EXPORT_PRIVATE void setFragmentIdentifier(StringView);
+    WTF_EXPORT_PRIVATE void removeFragmentIdentifier();
 
-    void removeQueryAndFragmentIdentifier();
+    WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
-    static bool hostIsIPAddress(StringView);
+    WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
 
     unsigned pathStart() const;
     unsigned pathEnd() const;
     unsigned pathAfterLastSlash() const;
 
-    operator const String&() const { return string(); }
+    operator const String&() const { return m_string; }
+    operator StringView() const { return m_string; }
 
 #if USE(CF)
-    URL(CFURLRef);
-    RetainPtr<CFURLRef> createCFURL() const;
+    WTF_EXPORT_PRIVATE URL(CFURLRef);
+    WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> createCFURL() const;
 #endif
 
 #if USE(FOUNDATION)
-    URL(NSURL*);
-    operator NSURL*() const;
+    WTF_EXPORT_PRIVATE URL(NSURL *);
+    WTF_EXPORT_PRIVATE operator NSURL *() const;
 #endif
+
 #ifdef __OBJC__
-    operator NSString*() const { return string(); }
+    operator NSString *() const { return m_string; }
 #endif
 
 #ifndef NDEBUG
     void print() const;
 #endif
 
-    template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, URL&);
-    template <class Decoder> static Optional<URL> decode(Decoder&);
+    template<typename Encoder> void encode(Encoder&) const;
+    template<typename Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, URL&);
+    template<typename Decoder> static Optional<URL> decode(Decoder&);
 
 private:
     friend class URLParser;
-    void invalidate();
-    static bool protocolIs(const String&, const char*);
+
+    WTF_EXPORT_PRIVATE void invalidate();
     void copyToBuffer(Vector<char, 512>& buffer) const;
     unsigned hostStart() const;
+    unsigned credentialsEnd() const;
+    void remove(unsigned start, unsigned length);
+    void parse(const String&);
 
-    friend WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
-    friend WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
     String m_string;
 
@@ -229,49 +225,27 @@ private:
 
 static_assert(sizeof(URL) == sizeof(String) + 8 * sizeof(unsigned), "URL should stay small");
 
-template <class Encoder>
-void URL::encode(Encoder& encoder) const
-{
-    encoder << m_string;
-}
-
-template <class Decoder>
-bool URL::decode(Decoder& decoder, URL& url)
-{
-    auto optionalURL = URL::decode(decoder);
-    if (!optionalURL)
-        return false;
-    url = WTFMove(*optionalURL);
-    return true;
-}
-
-template <class Decoder>
-Optional<URL> URL::decode(Decoder& decoder)
-{
-    Optional<String> string;
-    decoder >> string;
-    if (!string)
-        return WTF::nullopt;
-    return URL(URL(), WTFMove(*string));
-}
+bool operator==(const URL&, const URL&);
+bool operator==(const URL&, const String&);
+bool operator==(const String&, const URL&);
+bool operator!=(const URL&, const URL&);
+bool operator!=(const URL&, const String&);
+bool operator!=(const String&, const URL&);
 
 WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
-WTF_EXPORT_PRIVATE bool equalIgnoringQueryAndFragment(const URL&, const URL&);
 WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
-WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
 WTF_EXPORT_PRIVATE const URL& aboutBlankURL();
 WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.
-// These are also different from the URL functions in that they don't require the string to be a valid and parsable URL.
-// This is especially important because valid javascript URLs are not necessarily considered valid by URL.
+// These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
+// This is especially important because valid javascript URLs are not necessarily considered valid by WTF::URL.
 
-WTF_EXPORT_PRIVATE bool protocolIs(const String& url, const char* protocol);
-WTF_EXPORT_PRIVATE bool protocolIsJavaScript(const String& url);
+WTF_EXPORT_PRIVATE bool protocolIs(StringView url, const char* protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
-WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(const String& url);
+WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE Optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
@@ -280,11 +254,9 @@ WTF_EXPORT_PRIVATE bool portAllowed(const URL&); // Blacklist ports that should 
 WTF_EXPORT_PRIVATE void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
 WTF_EXPORT_PRIVATE void clearDefaultPortForProtocolMapForTesting();
 
-WTF_EXPORT_PRIVATE bool isValidProtocol(const String&);
+WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(StringView dataURL);
 
-WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(const String& url);
-
-// FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
+// FIXME: This needs a new, more specific name. The general thing named here can't be implemented correctly, since different parts of a URL need different escaping.
 WTF_EXPORT_PRIVATE String encodeWithURLEscapeSequences(const String&);
 
 #ifdef __OBJC__
@@ -294,7 +266,35 @@ WTF_EXPORT_PRIVATE Optional<URL> makeVectorElement(const URL*, id);
 
 #endif
 
-// Inlines.
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const URL&);
+
+template<> struct DefaultHash<URL>;
+template<> struct HashTraits<URL>;
+
+// Function template and inline function definitions.
+
+template<typename Encoder> void URL::encode(Encoder& encoder) const
+{
+    encoder << m_string;
+}
+
+template<typename Decoder> bool URL::decode(Decoder& decoder, URL& url)
+{
+    auto optionalURL = decode(decoder);
+    if (!optionalURL)
+        return false;
+    url = WTFMove(*optionalURL);
+    return true;
+}
+
+template<typename Decoder> Optional<URL> URL::decode(Decoder& decoder)
+{
+    Optional<String> string;
+    decoder >> string;
+    if (!string)
+        return WTF::nullopt;
+    return URL(URL(), WTFMove(*string));
+}
 
 inline bool operator==(const URL& a, const URL& b)
 {
@@ -326,8 +326,10 @@ inline bool operator!=(const String& a, const URL& b)
     return a != b.string();
 }
 
-// Inline versions of some non-GoogleURL functions so we can get inlining
-// without having to have a lot of ugly ifdefs in the class definition.
+inline URL::URL(HashTableDeletedValueType)
+    : m_string(HashTableDeletedValue)
+{
+}
 
 inline bool URL::isNull() const
 {
@@ -346,17 +348,12 @@ inline bool URL::isValid() const
 
 inline bool URL::hasPath() const
 {
-    return m_pathEnd != m_hostEnd + m_portLength;
+    return m_pathEnd > pathStart();
 }
 
-inline bool URL::hasUsername() const
+inline bool URL::hasCredentials() const
 {
-    return m_userEnd > m_userStart;
-}
-
-inline bool URL::hasPassword() const
-{
-    return m_passwordEnd > (m_userEnd + 1);
+    return m_passwordEnd > m_userStart;
 }
 
 inline bool URL::hasQuery() const
@@ -364,7 +361,7 @@ inline bool URL::hasQuery() const
     return m_queryEnd > m_pathEnd;
 }
 
-inline bool URL::hasFragment() const
+inline bool URL::hasFragmentIdentifier() const
 {
     return m_isValid && m_string.length() > m_queryEnd;
 }
@@ -388,11 +385,6 @@ inline unsigned URL::pathAfterLastSlash() const
 {
     return m_pathAfterLastSlash;
 }
-
-WTF_EXPORT_PRIVATE WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
-
-template<> struct DefaultHash<URL>;
-template<> struct HashTraits<URL>;
 
 } // namespace WTF
 

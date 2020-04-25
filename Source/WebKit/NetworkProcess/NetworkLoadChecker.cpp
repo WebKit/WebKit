@@ -133,7 +133,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
             handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme")));
             return;
         }
-        if (location.hasUsername() || location.hasPassword()) {
+        if (location.hasCredentials()) {
             handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: redirection URL ", location.string(), " has credentials")));
             return;
         }
@@ -235,7 +235,7 @@ void NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest&& request, Co
     httpsUpgradeChecker.query(url.host().toString(), m_sessionID, [request = WTFMove(request), handler = WTFMove(handler)] (bool foundHost) mutable {
         if (foundHost) {
             auto newURL = request.url();
-            newURL.setProtocol("https"_s);
+            newURL.setProtocol("https");
             request.setURL(newURL);
         }
 

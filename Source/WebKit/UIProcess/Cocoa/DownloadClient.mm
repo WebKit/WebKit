@@ -220,8 +220,8 @@ void DownloadClient::didFinish(DownloadProxy& downloadProxy)
 #if USE(SYSTEM_PREVIEW)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* controller = systemPreviewController(downloadProxy)) {
-            WTF::URL destinationURL = WTF::URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
-            if (!destinationURL.fragmentIdentifier().length())
+            auto destinationURL = WTF::URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
+            if (!destinationURL.hasFragmentIdentifier())
                 destinationURL.setFragmentIdentifier(downloadProxy.request().url().fragmentIdentifier());
             controller->finish(destinationURL);
         }

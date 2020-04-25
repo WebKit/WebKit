@@ -1,3 +1,27 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::PluginDatabase): Moved initialization of
+        m_persistentMetadataCacheIsLoaded to the class definition.
+        (WebCore::PluginDatabase::MIMETypeForExtension const): Take StringView.
+        (WebCore::PluginDatabase::findPlugin): Use StringView.
+
+        * Plugins/PluginDatabase.h: Changed MIMETypeForExtension to take
+        a StringView. Took out some unneeded declarations. Initialized
+        m_persistentMetadataCacheIsLoaded here in the class definition.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::objectContentType): Use StringView a little more.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle): Streamlined the implementation a bit.
+        (WebContextMenuClient::lookUpInDictionary): Added "using namespace WebCore".
+
 2020-04-24  Antoine Quint  <graouts@apple.com>
 
         Update the css/css-animations WPT tests

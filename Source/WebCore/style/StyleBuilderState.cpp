@@ -165,17 +165,14 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
 
     FilterOperations operations;
     for (auto& currentValue : downcast<CSSValueList>(inValue)) {
-
         if (is<CSSPrimitiveValue>(currentValue)) {
             auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
             if (!primitiveValue.isURI())
                 continue;
 
-            String cssUrl = primitiveValue.stringValue();
-            URL url = document().completeURL(cssUrl);
-
-            auto operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
-            operations.operations().append(WTFMove(operation));
+            auto filterURL = primitiveValue.stringValue();
+            auto fragment = document().completeURL(filterURL).fragmentIdentifier().toString();
+            operations.operations().append(ReferenceFilterOperation::create(filterURL, fragment));
             continue;
         }
 

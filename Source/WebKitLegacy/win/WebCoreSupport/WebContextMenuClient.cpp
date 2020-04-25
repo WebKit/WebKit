@@ -25,20 +25,13 @@
 
 #include "WebContextMenuClient.h"
 
-#include "WebElementPropertyBag.h"
-#include "WebLocalizableStrings.h"
 #include "WebView.h"
-#include <WebCore/ContextMenuController.h>
 #include <WebCore/Editor.h>
-#include <WebCore/Event.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
-#include <WebCore/ResourceRequest.h>
 #include <WebCore/UserGestureIndicator.h>
-
-using namespace WebCore;
 
 WebContextMenuClient::WebContextMenuClient(WebView* webView)
     : m_webView(webView)
@@ -55,22 +48,23 @@ void WebContextMenuClient::downloadURL(const URL& url)
     m_webView->downloadURL(url);
 }
 
-void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
 {
-    String searchString = frame->editor().selectedText();
+    auto page = frame->page();
+    if (!page)
+        return;
+
+    auto searchString = frame->editor().selectedText();
     searchString.stripWhiteSpace();
-    String encoded = encodeWithURLEscapeSequences(searchString);
-    encoded.replace("%20"_s, "+"_s);
+    searchString = encodeWithURLEscapeSequences(searchString);
+    searchString.replace("%20"_s, "+"_s);
+    auto searchURL = URL { { }, "https://www.google.com/search?q=" + searchString + "&ie=UTF-8&oe=UTF-8" };
 
-    String url = "https://www.google.com/search?q=" + encoded + "&ie=UTF-8&oe=UTF-8";
-
-    if (Page* page = frame->page()) {
-        UserGestureIndicator indicator(ProcessingUserGesture);
-        page->mainFrame().loader().changeLocation(URL { URL { }, url }, { }, nullptr, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-    }
+    WebCore::UserGestureIndicator indicator { WebCore::ProcessingUserGesture };
+    page->mainFrame().loader().changeLocation(searchURL, { }, nullptr, WebCore::LockHistory::No, WebCore::LockBackForwardList::No, WebCore::ReferrerPolicy::EmptyString, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
-void WebContextMenuClient::lookUpInDictionary(Frame*)
+void WebContextMenuClient::lookUpInDictionary(WebCore::Frame*)
 {
     notImplemented();
 }

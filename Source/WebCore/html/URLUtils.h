@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-template <typename T>
-class URLUtils {
+// FIXME: Rename this to URLDecompositionFunctions.
+template<typename T> class URLUtils {
 public:
     URL href() const { return static_cast<const T*>(this)->href(); }
     void setHref(const String& url) { static_cast<T*>(this)->setHref(url); }
@@ -41,76 +41,68 @@ public:
     String origin() const;
 
     String protocol() const;
-    void setProtocol(const String&);
+    void setProtocol(StringView);
 
     String username() const;
-    void setUsername(const String&);
+    void setUsername(StringView);
 
     String password() const;
-    void setPassword(const String&);
+    void setPassword(StringView);
 
     String host() const;
-    void setHost(const String&);
+    void setHost(StringView);
 
     String hostname() const;
-    void setHostname(const String&);
+    void setHostname(StringView);
 
     String port() const;
-    void setPort(const String&);
+    void setPort(StringView);
 
     String pathname() const;
-    void setPathname(const String&);
+    void setPathname(StringView);
 
     String search() const;
     void setSearch(const String&);
 
     String hash() const;
-    void setHash(const String&);
+    void setHash(StringView);
 };
 
-template <typename T>
-String URLUtils<T>::toString() const
+template<typename T> String URLUtils<T>::toString() const
 {
     return href().string();
 }
 
-template <typename T>
-String URLUtils<T>::toJSON() const
+template<typename T> String URLUtils<T>::toJSON() const
 {
     return href().string();
 }
 
-template <typename T>
-String URLUtils<T>::origin() const
+template<typename T> String URLUtils<T>::origin() const
 {
-    auto origin = SecurityOrigin::create(href());
-    return origin->toString();
+    return SecurityOrigin::create(href())->toString();
 }
 
-template <typename T>
-String URLUtils<T>::protocol() const
+template<typename T> String URLUtils<T>::protocol() const
 {
     if (WTF::protocolIsJavaScript(href()))
         return "javascript:"_s;
     return makeString(href().protocol(), ':');
 }
 
-template <typename T>
-void URLUtils<T>::setProtocol(const String& value)
+template<typename T> void URLUtils<T>::setProtocol(StringView value)
 {
     URL url = href();
     url.setProtocol(value);
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::username() const
+template<typename T> String URLUtils<T>::username() const
 {
-    return href().encodedUser();
+    return href().encodedUser().toString();
 }
 
-template <typename T>
-void URLUtils<T>::setUsername(const String& user)
+template<typename T> void URLUtils<T>::setUsername(StringView user)
 {
     URL url = href();
     if (url.cannotBeABaseURL())
@@ -119,39 +111,36 @@ void URLUtils<T>::setUsername(const String& user)
     setHref(url);
 }
 
-template <typename T>
-String URLUtils<T>::password() const
+template<typename T> String URLUtils<T>::password() const
 {
-    return href().encodedPass();
+    return href().encodedPassword().toString();
 }
 
-template <typename T>
-void URLUtils<T>::setPassword(const String& pass)
+template<typename T> void URLUtils<T>::setPassword(StringView password)
 {
     URL url = href();
     if (url.cannotBeABaseURL())
         return;
-    url.setPass(pass);
+    url.setPassword(password);
     setHref(url);
 }
 
-template <typename T>
-String URLUtils<T>::host() const
+template<typename T> String URLUtils<T>::host() const
 {
     return href().hostAndPort();
 }
 
-// This function does not allow leading spaces before the port number.
-static inline unsigned parsePortFromStringPosition(const String& value, unsigned portStart, unsigned& portEnd)
+inline unsigned countASCIIDigits(StringView string)
 {
-    portEnd = portStart;
-    while (isASCIIDigit(value[portEnd]))
-        ++portEnd;
-    return value.substring(portStart, portEnd - portStart).toUInt();
+    unsigned length = string.length();
+    for (unsigned count = 0; count < length; ++count) {
+        if (!isASCIIDigit(string[count]))
+            return count;
+    }
+    return length;
 }
 
-template <typename T>
-void URLUtils<T>::setHost(const String& value)
+template<typename T> void URLUtils<T>::setHost(StringView value)
 {
     if (value.isEmpty())
         return;
@@ -168,40 +157,44 @@ void URLUtils<T>::setHost(const String& value)
     if (separator == notFound)
         url.setHostAndPort(value);
     else {
-        unsigned portEnd;
-        unsigned port = parsePortFromStringPosition(value, separator + 1, portEnd);
-        if (!port) {
+        unsigned portLength = countASCIIDigits(value.substring(separator + 1));
+        if (!portLength) {
             // http://dev.w3.org/html5/spec/infrastructure.html#url-decomposition-idl-attributes
             // specifically goes against RFC 3986 (p3.2) and
             // requires setting the port to "0" if it is set to empty string.
-            url.setHostAndPort(value.substring(0, separator + 1) + '0');
+            // FIXME: This seems like something that has since been changed and this rule and code may be obsolete.
+            url.setHostAndPort(makeString(value.substring(0, separator + 1), '0'));
         } else {
-            if (WTF::isDefaultPortForProtocol(port, url.protocol()))
+            auto portNumber = parseUInt16(value.substring(separator + 1, portLength));
+            if (portNumber && WTF::isDefaultPortForProtocol(*portNumber, url.protocol()))
                 url.setHostAndPort(value.substring(0, separator));
             else
-                url.setHostAndPort(value.substring(0, portEnd));
+                url.setHostAndPort(value.substring(0, separator + 1 + portLength));
         }
     }
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::hostname() const
+template<typename T> String URLUtils<T>::hostname() const
 {
     return href().host().toString();
 }
 
-template <typename T>
-void URLUtils<T>::setHostname(const String& value)
+inline StringView removeAllLeadingSolidusCharacters(StringView string)
 {
-    // Before setting new value:
-    // Remove all leading U+002F SOLIDUS ("/") characters.
-    unsigned i = 0;
-    unsigned hostLength = value.length();
-    while (value[i] == '/')
-        i++;
+    unsigned i;
+    unsigned length = string.length();
+    for (i = 0; i < length; ++i) {
+        if (string[i] != '/')
+            break;
+    }
+    return string.substring(i);
+}
 
-    if (i == hostLength)
+template<typename T> void URLUtils<T>::setHostname(StringView value)
+{
+    auto host = removeAllLeadingSolidusCharacters(value);
+    if (host.isEmpty())
         return;
 
     URL url = href();
@@ -210,12 +203,11 @@ void URLUtils<T>::setHostname(const String& value)
     if (!url.canSetHostOrPort())
         return;
 
-    url.setHost(value.substring(i));
+    url.setHost(host);
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::port() const
+template<typename T> String URLUtils<T>::port() const
 {
     if (href().port())
         return String::number(href().port().value());
@@ -223,33 +215,32 @@ String URLUtils<T>::port() const
     return emptyString();
 }
 
-template <typename T>
-void URLUtils<T>::setPort(const String& value)
+template<typename T> void URLUtils<T>::setPort(StringView value)
 {
     URL url = href();
-    if (url.cannotBeABaseURL() || url.protocolIs("file"))
-        return;
-    if (!url.canSetHostOrPort())
+    if (url.cannotBeABaseURL() || url.protocolIs("file") || !url.canSetHostOrPort())
         return;
 
-    bool success = true;
-    unsigned port = value.toUInt(&success);
-    if (!success || WTF::isDefaultPortForProtocol(port, url.protocol()))
-        url.removePort();
-    else
-        url.setPort(port);
+    auto digitsOnly = value.left(countASCIIDigits(value));
+    Optional<uint16_t> port;
+    if (!digitsOnly.isEmpty()) {
+        port = parseUInt16(digitsOnly);
+        if (!port)
+            return;
+        if (WTF::isDefaultPortForProtocol(*port, url.protocol()))
+            port = WTF::nullopt;
+    }
+    url.setPort(port);
 
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::pathname() const
+template<typename T> String URLUtils<T>::pathname() const
 {
     return href().path().toString();
 }
 
-template <typename T>
-void URLUtils<T>::setPathname(const String& value)
+template<typename T> void URLUtils<T>::setPathname(StringView value)
 {
     URL url = href();
     if (url.cannotBeABaseURL())
@@ -257,30 +248,27 @@ void URLUtils<T>::setPathname(const String& value)
     if (!url.canSetPathname())
         return;
 
-    if (value[0U] == '/')
+    if (value.startsWith('/'))
         url.setPath(value);
     else
-        url.setPath("/" + value);
+        url.setPath(makeString('/', value));
 
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::search() const
+template<typename T> String URLUtils<T>::search() const
 {
-    String query = href().query();
-    return query.isEmpty() ? emptyString() : "?" + query;
+    return href().query().isEmpty() ? emptyString() : href().queryWithLeadingQuestionMark().toString();
 }
 
-template <typename T>
-void URLUtils<T>::setSearch(const String& value)
+template<typename T> void URLUtils<T>::setSearch(const String& value)
 {
     URL url = href();
     if (value.isEmpty()) {
         // If the given value is the empty string, set url's query to null.
         url.setQuery({ });
     } else {
-        String newSearch = (value[0U] == '?') ? value.substring(1) : value;
+        String newSearch = value.startsWith('?') ? value.substring(1) : value;
         // Make sure that '#' in the query does not leak to the hash.
         url.setQuery(newSearch.replaceWithLiteral('#', "%23"));
     }
@@ -288,20 +276,16 @@ void URLUtils<T>::setSearch(const String& value)
     setHref(url.string());
 }
 
-template <typename T>
-String URLUtils<T>::hash() const
+template<typename T> String URLUtils<T>::hash() const
 {
-    String fragmentIdentifier = href().fragmentIdentifier();
-    if (fragmentIdentifier.isEmpty())
-        return emptyString();
-    return AtomString(String("#" + fragmentIdentifier));
+    // FIXME: Why convert this string to an atom here instead of just a string? Intentionally to save memory? An error?
+    return href().fragmentIdentifier().isEmpty() ? emptyAtom() : href().fragmentIdentifierWithLeadingNumberSign().toAtomString();
 }
 
-template <typename T>
-void URLUtils<T>::setHash(const String& value)
+template<typename T> void URLUtils<T>::setHash(StringView value)
 {
     URL url = href();
-    String newFragment = value[0U] == '#' ? value.substring(1) : value;
+    auto newFragment = value.startsWith('#') ? StringView(value).substring(1) : StringView(value);
     if (newFragment.isEmpty())
         url.removeFragmentIdentifier();
     else

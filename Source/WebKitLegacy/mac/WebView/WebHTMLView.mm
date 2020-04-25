@@ -2306,7 +2306,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (DOMDocumentFragment *)_web_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard pasteboardType:(NSString *)pasteboardType imageMIMEType:(NSString *)imageMIMEType
 {
-    auto filename = [imageMIMEType stringByReplacingOccurrencesOfString:@"/" withString:@"."];
+    String filename = [imageMIMEType stringByReplacingOccurrencesOfString:@"/" withString:@"."];
     auto resource = adoptNS([[WebResource alloc] initWithData:[pasteboard dataForType:pasteboardType]
         URL:URL::fakeURLWithRelativePart(filename) MIMEType:imageMIMEType textEncodingName:nil frameName:nil]);
     return [[self _dataSource] _documentFragmentWithImageResource:resource.get()];

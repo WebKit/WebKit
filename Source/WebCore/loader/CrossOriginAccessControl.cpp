@@ -167,7 +167,7 @@ String validateCrossOriginRedirectionURL(const URL& redirectURL)
     if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying()))
         return makeString("not allowed to follow a cross-origin CORS redirection with non CORS scheme");
 
-    if (redirectURL.hasUsername() || redirectURL.hasPassword())
+    if (redirectURL.hasCredentials())
         return makeString("redirection URL ", redirectURL.string(), " has credentials");
 
     return { };

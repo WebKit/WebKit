@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,21 +25,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginDatabase_h
-#define PluginDatabase_h
+#pragma once
 
 #include "PluginPackage.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class Element;
-    class Frame;
-    class IntSize;
-    class PluginDatabaseClient;
-    class PluginPackage;
 
     typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash, PluginPackageHashTraits> PluginSet;
 
@@ -79,7 +72,8 @@ namespace WebCore {
         static Vector<String> defaultPluginDirectories();
         Vector<String> pluginDirectories() const { return m_pluginDirectories; }
 
-        String MIMETypeForExtension(const String& extension) const;
+        String MIMETypeForExtension(StringView extension) const;
+
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
         static bool isPersistentMetadataCacheEnabled();
         static void setPersistentMetadataCacheEnabled(bool isEnabled);
@@ -108,10 +102,8 @@ namespace WebCore {
         HashMap<String, time_t> m_pluginPathsWithTimes;
         HashMap<String, RefPtr<PluginPackage>, ASCIICaseInsensitiveHash> m_preferredPlugins;
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
-        bool m_persistentMetadataCacheIsLoaded;
+        bool m_persistentMetadataCacheIsLoaded { false };
 #endif
     };
 
 } // namespace WebCore
-
-#endif

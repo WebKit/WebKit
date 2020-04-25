@@ -1562,10 +1562,8 @@ void PDFPlugin::installPDFDocument()
     if ([m_pdfDocument isLocked])
         createPasswordEntryForm();
 
-    if ([m_pdfLayerController respondsToSelector:@selector(setURLFragment:)]) {
-        String pdfURLFragment = m_frame.url().fragmentIdentifier();
-        [m_pdfLayerController setURLFragment:pdfURLFragment];
-    }
+    if ([m_pdfLayerController respondsToSelector:@selector(setURLFragment:)])
+        [m_pdfLayerController setURLFragment:m_frame.url().fragmentIdentifier().createNSString().get()];
 }
 
 void PDFPlugin::setSuggestedFilename(const String& suggestedFilename)

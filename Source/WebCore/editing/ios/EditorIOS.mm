@@ -202,7 +202,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.url.url = pasteboardImageURL;
         pasteboardImage.url.title = title;
     }
-    pasteboardImage.suggestedName = imageSourceURL.lastPathComponent();
+    pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
     pasteboardImage.imageSize = image->size();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
     pasteboardImage.resourceData = cachedImage->resourceBuffer();

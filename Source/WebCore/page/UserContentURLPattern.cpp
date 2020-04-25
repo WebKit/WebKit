@@ -147,22 +147,19 @@ bool UserContentURLPattern::matchesHost(const URL& test) const
     return host[host.length() - m_host.length() - 1] == '.';
 }
 
-struct MatchTester
-{
+struct MatchTester {
     StringView m_pattern;
-    unsigned m_patternIndex;
-    
+    unsigned m_patternIndex { 0 };
+
     StringView m_test;
-    unsigned m_testIndex;
-    
+    unsigned m_testIndex { 0 };
+
     MatchTester(StringView pattern, StringView test)
-    : m_pattern(pattern)
-    , m_patternIndex(0)
-    , m_test(test)
-    , m_testIndex(0)
+        : m_pattern(pattern)
+        , m_test(test)
     {
     }
-    
+
     bool testStringFinished() const { return m_testIndex >= m_test.length(); }
     bool patternStringFinished() const { return m_patternIndex >= m_pattern.length(); }
 
@@ -174,7 +171,7 @@ struct MatchTester
             m_patternIndex++;
         }
     }
-    
+
     void eatSameChars()
     {
         while (!patternStringFinished() && !testStringFinished()) {
@@ -226,8 +223,7 @@ struct MatchTester
 
 bool UserContentURLPattern::matchesPath(const URL& test) const
 {
-    MatchTester match(StringView(m_path), test.path());
-    return match.test();
+    return MatchTester(m_path, test.path()).test();
 }
 
 } // namespace WebCore

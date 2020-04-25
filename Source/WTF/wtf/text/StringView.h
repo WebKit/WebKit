@@ -137,8 +137,7 @@ public:
 
     size_t find(UChar, unsigned start = 0) const;
     size_t find(CodeUnitMatchFunction, unsigned start = 0) const;
-
-    WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start) const;
+    WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start = 0) const;
 
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
 
@@ -151,6 +150,7 @@ public:
     bool contains(UChar) const;
     bool contains(CodeUnitMatchFunction) const;
     bool contains(StringView string) const { return find(string, 0) != notFound; }
+    WTF_EXPORT_PRIVATE bool contains(const char*) const;
 
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
@@ -159,6 +159,7 @@ public:
     WTF_EXPORT_PRIVATE bool startsWith(const StringView&) const;
     WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringView&) const;
 
+    WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool endsWith(const StringView&) const;
     WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringView&) const;
 
@@ -174,6 +175,7 @@ public:
 
 private:
     friend bool equal(StringView, StringView);
+    friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
@@ -191,6 +193,7 @@ private:
     void setUnderlyingString(const StringImpl*) { }
     void setUnderlyingString(const StringView&) { }
 #endif
+
     void clear();
 
     const void* m_characters { nullptr };
@@ -209,6 +212,9 @@ bool equal(StringView, const LChar* b);
 
 bool equalIgnoringASCIICase(StringView, StringView);
 bool equalIgnoringASCIICase(StringView, const char*);
+
+WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
+bool equalIgnoringNullity(StringView, StringView);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
 template<unsigned length> bool startsWithLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
@@ -233,6 +239,8 @@ struct StringViewWithUnderlyingString;
 WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
+
+WTF_EXPORT_PRIVATE Optional<uint16_t> parseUInt16(StringView);
 
 }
 
@@ -1041,6 +1049,12 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(StringView s
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(StringView string, const char (&lowercaseLetters)[length])
 {
     return startsWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+}
+
+inline bool equalIgnoringNullity(StringView a, StringView b)
+{
+    // FIXME: equal(StringView, StringView) ignores nullity; consider changing to be like other string classes and respecting it.
+    return equal(a, b);
 }
 
 } // namespace WTF

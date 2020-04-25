@@ -37,7 +37,7 @@ ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey(SecurityOriginData&& 
     : m_topOrigin(WTFMove(topOrigin))
     , m_scope(WTFMove(scope))
 {
-    ASSERT(!m_scope.hasFragment());
+    ASSERT(!m_scope.hasFragmentIdentifier());
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()

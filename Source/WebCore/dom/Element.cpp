@@ -4491,7 +4491,7 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
         return nullptr;
 
     if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(url, document.baseURL())) {
-        outAnchorName = url.fragmentIdentifier();
+        outAnchorName = url.fragmentIdentifier().toString();
         return document.findAnchor(outAnchorName);
     }
 

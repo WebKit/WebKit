@@ -33,12 +33,12 @@
 #endif
 
 #include <curl/curl.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
-static const uint16_t SocksProxyPort = 1080;
+static constexpr uint16_t SocksProxyPort = 1080;
 
-static Optional<uint16_t> getProxyPort(const URL&);
 static Optional<String> createProxyUrl(const URL&);
 
 CurlProxySettings::CurlProxySettings(URL&& proxyUrl, String&& ignoreHosts)
@@ -61,7 +61,7 @@ void CurlProxySettings::rebuildUrl()
 void CurlProxySettings::setUserPass(const String& user, const String& password)
 {
     m_url.setUser(user);
-    m_url.setPass(password);
+    m_url.setPassword(password);
 
     rebuildUrl();
 }
@@ -118,8 +118,8 @@ static Optional<String> createProxyUrl(const URL &url)
     if (!port)
         return WTF::nullopt;
 
-    auto userpass = (url.hasUsername() || url.hasPassword()) ? makeString(url.user(), ":", url.pass(), "@") : String();
-    return makeString(url.protocol(), "://", userpass, url.host(), ":", String::number(*port));
+    auto userpass = url.hasCredentials() ? makeString(url.user(), ":", url.password(), "@") : String();
+    return makeString(url.protocol(), "://", userpass, url.host(), ":", *port);
 }
 
 }

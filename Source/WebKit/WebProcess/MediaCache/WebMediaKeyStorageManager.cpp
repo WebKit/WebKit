@@ -60,19 +60,10 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
     if (m_mediaKeyStorageDirectory.isEmpty())
         return results;
 
-    Vector<String> originPaths = FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*");
-    for (const auto& originPath : originPaths) {
-        URL url;
-        url.setProtocol("file"_s);
-        url.setPath(originPath);
-
-        String mediaKeyIdentifier = url.lastPathComponent();
-
-        auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(mediaKeyIdentifier);
-        if (!securityOrigin)
-            continue;
-
-        results.append(*securityOrigin);
+    for (auto& originPath : FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*")) {
+        auto identifier = URL::fileURLWithFileSystemPath(originPath).lastPathComponent().toString();
+        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(identifier))
+            results.append(*securityOrigin);
     }
 
     return results;

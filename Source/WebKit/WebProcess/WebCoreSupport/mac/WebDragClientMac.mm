@@ -129,7 +129,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     String title = label;
     if (title.isEmpty()) {
-        title = url.lastPathComponent();
+        title = url.lastPathComponent().toString();
         if (title.isEmpty())
             title = WTF::userVisibleString(url);
     }

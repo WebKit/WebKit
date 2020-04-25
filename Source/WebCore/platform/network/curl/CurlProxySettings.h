@@ -56,7 +56,7 @@ public:
 
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     const String user() const { return m_url.user(); }
-    const String password() const { return m_url.pass(); }
+    const String password() const { return m_url.password(); }
 
     void setDefaultAuthMethod() { m_authMethod = kCURLAUTH_ANY; }
     void setAuthMethod(long);

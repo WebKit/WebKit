@@ -103,19 +103,14 @@ bool YouTubePluginReplacement::installReplacement(ShadowRoot& root)
     return true;
 }
     
-static inline URL createYouTubeURL(const String& videoID, const String& timeID)
+static URL createYouTubeURL(StringView videoID, StringView timeID)
 {
     ASSERT(!videoID.isEmpty());
     ASSERT(videoID != "/");
-    
-    URL result(URL(), "youtube:" + videoID);
-    if (!timeID.isEmpty())
-        result.setQuery("t=" + timeID);
-    
-    return result;
+    return URL(URL(), makeString("youtube:", videoID, timeID.isEmpty() ? "" : "t=", timeID));
 }
-    
-static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& queryString)
+
+static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(StringView queryString)
 {
     YouTubePluginReplacement::KeyValueMap queryDictionary;
     
@@ -155,7 +150,7 @@ static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& qu
         // Save the key and the value.
         if (keyLength && valueLength) {
             String key = queryString.substring(keyLocation, keyLength).convertToASCIILowercase();
-            String value = queryString.substring(valueLocation, valueLength);
+            String value = queryString.substring(valueLocation, valueLength).toString();
             value.replace('+', ' ');
 
             if (!key.isEmpty() && !value.isEmpty())
@@ -209,16 +204,16 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
 
     // Short URL of the form: http://youtu.be/v1d301D
     if (isYouTubeShortenedURL) {
-        String videoID = url.lastPathComponent();
+        auto videoID = url.lastPathComponent();
         if (videoID.isEmpty() || videoID == "/")
             return URL();
-        return createYouTubeURL(videoID, emptyString());
+        return createYouTubeURL(videoID, { });
     }
-    
+
     auto path = url.path();
-    String query = url.query();
-    String fragment = url.fragmentIdentifier();
-    
+    auto query = url.query();
+    auto fragment = url.fragmentIdentifier();
+
     // On the YouTube mobile web app, the path and query string are put into the
     // fragment so that one web page is only ever loaded (see <rdar://problem/9550639>).
     if (isYouTubeMobileWebAppURL) {
@@ -227,7 +222,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             path = fragment;
             query = emptyString();
         } else {
-            path = StringView(fragment).substring(0, location);
+            path = fragment.substring(0, location);
             query = fragment.substring(location + 1);
         }
         fragment = emptyString();
@@ -260,10 +255,10 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             }
         }
     } else if (startsWithLettersIgnoringASCIICase(path, "/v/") || startsWithLettersIgnoringASCIICase(path, "/e/")) {
-        String lastPathComponent = url.lastPathComponent();
-        String videoID;
-        String pathAfterFirstAmpersand;
+        StringView videoID;
+        StringView pathAfterFirstAmpersand;
 
+        auto lastPathComponent = url.lastPathComponent();
         size_t ampersandLocation = lastPathComponent.find('&');
         if (ampersandLocation != notFound) {
             // Some URLs we care about use & in place of ? for the first query parameter.
@@ -273,11 +268,11 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             videoID = lastPathComponent;
 
         if (!videoID.isEmpty()) {
-            outPathAfterFirstAmpersand = pathAfterFirstAmpersand;
+            outPathAfterFirstAmpersand = pathAfterFirstAmpersand.toString();
             return createYouTubeURL(videoID, emptyString());
         }
     }
-    
+
     return URL();
 }
 
@@ -290,13 +285,13 @@ String YouTubePluginReplacement::youTubeURL(const String& srcString)
 String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString)
 {
     bool isYouTubeShortenedURL = false;
-    String possibleMalformedQuery;
-    URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL, possibleMalformedQuery);
+    String possiblyMalformedQuery;
+    URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL, possiblyMalformedQuery);
     if (srcURL.isEmpty() || youTubeURL.isEmpty())
         return srcString;
 
     // Transform the youtubeURL (youtube:VideoID) to iframe embed url which has the format: http://www.youtube.com/embed/VideoID
-    auto srcPath = srcURL.path().toString();
+    auto srcPath = srcURL.path();
     const String& videoID = youTubeURL.string().substring(youTubeURL.protocol().length() + 1);
     size_t locationOfVideoIDInPath = srcPath.find(videoID);
 
@@ -305,7 +300,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
         ASSERT(locationOfVideoIDInPath);
     
         // From the original URL, we need to get the part before /path/VideoId.
-        locationOfPathBeforeVideoID = srcString.find(srcPath.substring(0, locationOfVideoIDInPath));
+        locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.substring(0, locationOfVideoIDInPath));
     } else if (equalLettersIgnoringASCIICase(srcPath, "/watch")) {
         // From the original URL, we need to get the part before /watch/#!v=VideoID
         // FIXME: Shouldn't this be ASCII case-insensitive?
@@ -315,22 +310,21 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
 
     ASSERT(locationOfPathBeforeVideoID != notFound);
 
-    const String& srcURLPrefix = srcString.substring(0, locationOfPathBeforeVideoID);
-    String query = srcURL.query();
+    auto srcURLPrefix = StringView(srcString).substring(0, locationOfPathBeforeVideoID);
+    auto query = srcURL.query();
+
     // If the URL has no query, use the possibly malformed query we found.
     if (query.isEmpty())
-        query = possibleMalformedQuery;
+        query = possiblyMalformedQuery;
 
     // Append the query string if it is valid.
-    StringBuilder finalURL;
-    if (isYouTubeShortenedURL)
-        finalURL.appendLiteral("http://www.youtube.com");
-    else
-        finalURL.append(srcURLPrefix);
-    finalURL.append("/embed/", videoID);
-    if (!query.isEmpty())
-        finalURL.append('?', query);
-    return finalURL.toString();
+    return makeString(
+        isYouTubeShortenedURL ? "http://www.youtube.com" : srcURLPrefix,
+        "/embed/",
+        videoID,
+        query.isEmpty() ? "" : "?",
+        query
+    );
 }
     
 bool YouTubePluginReplacement::supportsURL(const URL& url)

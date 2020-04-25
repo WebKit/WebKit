@@ -35,13 +35,13 @@ namespace WebCore {
 
 enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
 
-static String manifestPath(const URL& manifestURL)
+static StringView manifestPath(const URL& manifestURL)
 {
     auto manifestPath = manifestURL.path();
     ASSERT(manifestPath[0] == '/');
     manifestPath = manifestPath.substring(0, manifestPath.reverseFind('/') + 1);
     ASSERT(manifestPath[0] == manifestPath[manifestPath.length() - 1]);
-    return manifestPath.toString();
+    return manifestPath;
 }
 
 bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest& manifest)
@@ -51,7 +51,7 @@ bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const
     ASSERT(manifest.fallbackURLs.isEmpty());
     manifest.allowAllNetworkRequests = false;
 
-    String manifestPath = WebCore::manifestPath(manifestURL);
+    auto manifestPath = WebCore::manifestPath(manifestURL);
 
     const char cacheManifestMIMEType[] = "text/cache-manifest";
     bool allowFallbackNamespaceOutsideManfestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);

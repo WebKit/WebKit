@@ -1,3 +1,28 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (shouldTryAppLink): Compare hosts with == rather than using hostsAreEqual.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _documentFragmentForImageData:withRelativeURLPart:andMIMEType:]):
+        Updated since fakeURLWithRelativePart takes a StringView. Also use RetainPtr
+        instead of an explicit call to release.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_documentFragmentFromPasteboard:pasteboardType:imageMIMEType:]):
+        Updated since fakeURLWithRelativePart takes a StringView. No conversion
+        directly from NSString to StringView, so we have to explicitly use a String.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]): Update
+        since protocolIs takes a StringView. No conversion directly from
+        NSString to StringView, so we have to explicitly use a String.
+
 2020-04-24  Megan Gardner  <megan_gardner@apple.com>
 
         Make LEGACY_PDF_SUPPORT feature flag.

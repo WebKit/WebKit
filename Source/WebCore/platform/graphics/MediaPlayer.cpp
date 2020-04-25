@@ -441,12 +441,12 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
     AtomString containerType = m_contentType.containerType();
     if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlain()) {
         if (m_url.protocolIsData())
-            m_contentType = ContentType(mimeTypeFromDataURL(m_url.string()));
+            m_contentType = ContentType(mimeTypeFromDataURL(m_url));
         else {
-            String lastPathComponent = url.lastPathComponent();
+            auto lastPathComponent = url.lastPathComponent();
             size_t pos = lastPathComponent.reverseFind('.');
             if (pos != notFound) {
-                String extension = lastPathComponent.substring(pos + 1);
+                String extension = lastPathComponent.substring(pos + 1).toString();
                 String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
                 if (!mediaType.isEmpty()) {
                     m_contentType = ContentType { WTFMove(mediaType) };

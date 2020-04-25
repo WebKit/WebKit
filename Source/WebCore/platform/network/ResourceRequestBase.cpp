@@ -165,12 +165,10 @@ void ResourceRequestBase::removeCredentials()
 {
     updateResourceRequest(); 
 
-    if (m_url.user().isEmpty() && m_url.pass().isEmpty())
+    if (!m_url.hasCredentials())
         return;
 
-    m_url.setUser(String());
-    m_url.setPass(String());
-
+    m_url.removeCredentials();
     m_platformRequestUpdated = false;
 }
 

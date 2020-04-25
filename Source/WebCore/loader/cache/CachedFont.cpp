@@ -86,10 +86,7 @@ bool CachedFont::ensureCustomFontData(const AtomString&)
 
 String CachedFont::calculateItemInCollection() const
 {
-    auto& url = this->url();
-    if (!url.hasFragmentIdentifier())
-        return String();
-    return url.fragmentIdentifier();
+    return url().fragmentIdentifier().toString();
 }
 
 bool CachedFont::ensureCustomFontData(SharedBuffer* data)

@@ -56,7 +56,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
             auto url = request.url();
             m_user = url.user();
-            m_password = url.pass();
+            m_password = url.password();
             request.removeCredentials();
 
             if (m_user.isEmpty() && m_password.isEmpty())
@@ -274,7 +274,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     bool didChangeCredential = false;
     const auto& url = request.url();
     m_user = url.user();
-    m_password = url.pass();
+    m_password = url.password();
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 

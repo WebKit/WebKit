@@ -172,7 +172,7 @@ static void convertToInternalProtocol(URL& url)
     if (webkitGstCheckVersion(1, 12, 0))
         return;
     if (url.protocolIsInHTTPFamily() || url.protocolIsBlob())
-        url.setProtocol("webkit+" + url.protocol());
+        url.setProtocol(makeString("webkit+", url.protocol()));
 }
 
 #if USE(TEXTURE_MAPPER_GL)

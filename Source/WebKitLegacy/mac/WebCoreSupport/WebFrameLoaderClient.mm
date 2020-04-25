@@ -882,7 +882,7 @@ static BOOL shouldTryAppLink(WebView *webView, const WebCore::NavigationAction& 
     if (!action.processingUserGesture())
         return NO;
 
-    if (targetFrame && targetFrame->document() && hostsAreEqual(targetFrame->document()->url(), action.url()))
+    if (targetFrame && targetFrame->document() && targetFrame->document()->url().host() == action.url().host())
         return NO;
 
     return YES;

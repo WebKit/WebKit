@@ -370,7 +370,7 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
         return false;
 
     if (title.isEmpty()) {
-        title = url.lastPathComponent();
+        title = url.lastPathComponent().toString();
         if (title.isEmpty())
             title = url.host().toString();
     }
@@ -579,10 +579,10 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
         // the path. If we can't find it, or we're coming up with the name for a link
         // we just use the entire url.
         DWORD len = fsPathMaxLengthExcludingExtension;
-        String lastComponent = kurl.lastPathComponent();
+        auto lastComponent = kurl.lastPathComponent();
         if (kurl.isLocalFile() || (!isLink && !lastComponent.isEmpty())) {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
-            StringView(lastComponent).substring(0, len).getCharactersWithUpconvert(fsPathBuffer);
+            lastComponent.substring(0, len).getCharactersWithUpconvert(fsPathBuffer);
         } else {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, url.length());
             StringView(url).substring(0, len).getCharactersWithUpconvert(fsPathBuffer);
@@ -708,7 +708,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
     String title(pasteboardURL.title);
     if (title.isEmpty()) {
-        title = pasteboardURL.url.lastPathComponent();
+        title = pasteboardURL.url.lastPathComponent().toString();
         if (title.isEmpty())
             title = pasteboardURL.url.host().toString();
     }

@@ -64,7 +64,7 @@ bool isCFURLSameOrigin(CFURLRef cfURL, const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
 
-    if (url.hasUsername() || url.hasPassword())
+    if (url.hasCredentials())
         return protocolHostAndPortAreEqual(url, URL { cfURL });
 
     URLCharBuffer bytes;

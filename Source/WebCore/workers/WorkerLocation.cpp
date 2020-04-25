@@ -53,23 +53,24 @@ String WorkerLocation::hostname() const
 
 String WorkerLocation::port() const
 {
-    return m_url.port() ? String::number(m_url.port().value()) : emptyString();
+    auto port = m_url.port();
+    return port ? String::number(*port) : emptyString();
 }
 
 String WorkerLocation::pathname() const
 {
     auto path = m_url.path();
-    return path.isEmpty() ? "/" : path.toString();
+    return path.isEmpty() ? "/"_s : path.toString();
 }
 
 String WorkerLocation::search() const
 {
-    return m_url.query().isEmpty() ? emptyString() : "?" + m_url.query();
+    return m_url.query().isEmpty() ? emptyString() : m_url.queryWithLeadingQuestionMark().toString();
 }
 
 String WorkerLocation::hash() const
 {
-    return m_url.fragmentIdentifier().isEmpty() ? emptyString() : "#" + m_url.fragmentIdentifier();
+    return m_url.fragmentIdentifier().isEmpty() ? emptyString() : m_url.fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
 String WorkerLocation::origin() const

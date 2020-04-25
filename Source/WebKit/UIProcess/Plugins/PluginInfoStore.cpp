@@ -145,16 +145,15 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
     return PluginModuleInfo();
 }
 
-static inline String pathExtension(const URL& url)
+static String pathExtension(const URL& url)
 {
-    String extension;
-    String filename = url.lastPathComponent();
-    if (!filename.endsWith('/')) {
-        size_t extensionPos = filename.reverseFind('.');
-        if (extensionPos != notFound)
-            extension = filename.substring(extensionPos + 1);
-    }
-    return extension.convertToASCIILowercase();
+    auto filename = url.lastPathComponent();
+    if (filename.endsWith('/'))
+        return { };
+    size_t lastDotPosition = filename.reverseFind('.');
+    if (lastDotPosition == notFound)
+        return { };
+    return filename.substring(lastDotPosition + 1).convertToASCIILowercase();
 }
 
 #if !PLATFORM(COCOA)

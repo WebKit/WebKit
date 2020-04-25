@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,11 @@
 
 namespace WebCore {
 
-typedef HashMap<String, RefPtr<PluginPackage> > PluginPackageByNameMap;
+typedef HashMap<String, RefPtr<PluginPackage>> PluginPackageByNameMap;
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
 
-static const size_t maximumPersistentPluginMetadataCacheSize = 32768;
+constexpr size_t maximumPersistentPluginMetadataCacheSize = 32768;
 
 static bool gPersistentPluginMetadataCacheIsEnabled;
 
@@ -55,9 +55,6 @@ String& persistentPluginMetadataCachePath()
 #endif
 
 PluginDatabase::PluginDatabase()
-#if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
-    : m_persistentMetadataCacheIsLoaded(false)
-#endif
 {
 }
 
@@ -228,7 +225,7 @@ PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
     return pluginChoices[0];
 }
 
-String PluginDatabase::MIMETypeForExtension(const String& extension) const
+String PluginDatabase::MIMETypeForExtension(StringView extension) const
 {
     if (extension.isEmpty())
         return String();
@@ -250,7 +247,7 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
             const Vector<String>& extensions = mime_it->value;
             bool foundMapping = false;
             for (unsigned i = 0; i < extensions.size(); i++) {
-                if (equalIgnoringASCIICase(extensions[i], extension)) {
+                if (equalIgnoringASCIICase(StringView { extensions[i] }, extension)) {
                     PluginPackage* plugin = (*it).get();
 
                     if (preferredPlugin && PluginPackage::equal(*plugin, *preferredPlugin))
@@ -284,20 +281,19 @@ PluginPackage* PluginDatabase::findPlugin(const URL& url, String& mimeType)
     if (!mimeType.isEmpty())
         return pluginForMIMEType(mimeType);
     
-    String filename = url.lastPathComponent();
+    auto filename = url.lastPathComponent();
     if (filename.endsWith('/'))
-        return 0;
+        return nullptr;
     
-    int extensionPos = filename.reverseFind('.');
-    if (extensionPos == -1)
-        return 0;
+    auto dotPosition = filename.reverseFind('.');
+    if (dotPosition == notFound)
+        return nullptr;
     
-    String mimeTypeForExtension = MIMETypeForExtension(filename.substring(extensionPos + 1));
+    String mimeTypeForExtension = MIMETypeForExtension(filename.substring(dotPosition + 1));
     PluginPackage* plugin = pluginForMIMEType(mimeTypeForExtension);
     if (!plugin) {
-        // FIXME: if no plugin could be found, query Windows for the mime type
-        // corresponding to the extension.
-        return 0;
+        // FIXME: If no plugin could be found, query Windows for the MIME type corresponding to the extension.
+        return nullptr;
     }
     
     mimeType = mimeTypeForExtension;
@@ -374,6 +370,7 @@ bool PluginDatabase::addDisabledPluginFile(const String& fileName)
 }
 
 #if !ENABLE(NETSCAPE_PLUGIN_API)
+
 // For Safari/Win the following three methods are implemented
 // in PluginDatabaseWin.cpp, but if we can use WebCore constructs
 // for the logic we should perhaps move it here under XP_WIN?
@@ -470,8 +467,8 @@ static bool readTime(time_t& resultTime, char*& start, const char* end)
     return true;
 }
 
-static const char schemaVersion = '1';
-static const char persistentPluginMetadataCacheFilename[] = "PluginMetadataCache.bin";
+constexpr char schemaVersion = '1';
+constexpr char persistentPluginMetadataCacheFilename[] = "PluginMetadataCache.bin";
 
 void PluginDatabase::loadPersistentMetadataCache()
 {
@@ -617,5 +614,7 @@ void PluginDatabase::setPersistentMetadataCachePath(const String& persistentMeta
 {
     WebCore::persistentPluginMetadataCachePath() = persistentMetadataCachePath;
 }
+
 #endif
+
 }

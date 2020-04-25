@@ -67,7 +67,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
         auto url = request.url();
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
             m_user = url.user();
-            m_password = url.pass();
+            m_password = url.password();
             request.removeCredentials();
 
             if (m_user.isEmpty() && m_password.isEmpty())
@@ -467,7 +467,7 @@ void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 
     auto url = request.url();
     url.setUser(m_user);
-    url.setPass(m_password);
+    url.setPassword(m_password);
     request.setURL(url);
 
     m_user = String();
@@ -688,7 +688,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     const auto& url = request.url();
     m_user = url.user();
-    m_password = url.pass();
+    m_password = url.password();
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
@@ -1117,24 +1117,22 @@ void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkData
 }
 
 #if SOUP_CHECK_VERSION(2, 67, 1)
+
 bool NetworkDataTaskSoup::shouldAllowHSTSPolicySetting() const
 {
     // Follow Apple's HSTS abuse mitigation 1:
     //  "Limit HSTS State to the Hostname, or the Top Level Domain + 1"
-    if (isTopLevelNavigation() || hostsAreEqual(m_currentRequest.url(), m_currentRequest.firstPartyForCookies()) || isPublicSuffix(m_currentRequest.url().host().toStringWithoutCopying()))
-        return true;
-
-    return false;
+    return isTopLevelNavigation()
+        || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host()
+        || isPublicSuffix(m_currentRequest.url().host().toStringWithoutCopying());
 }
 
 bool NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade() const
 {
-    // Follow Apple's HSTS abuse mitgation 2:
+    // Follow Apple's HSTS abuse mitigation 2:
     // "Ignore HSTS State for Subresource Requests to Blocked Domains"
-    if (!isTopLevelNavigation() && !m_currentRequest.allowCookies())
-        return false;
-
-    return true;
+    return isTopLevelNavigation()
+        || m_currentRequest.allowCookies();
 }
 
 void NetworkDataTaskSoup::protocolUpgradedViaHSTS(SoupMessage* soupMessage)
@@ -1153,6 +1151,7 @@ void NetworkDataTaskSoup::hstsEnforced(SoupHSTSEnforcer*, SoupMessage* soupMessa
     if (soupMessage == task->m_soupMessage.get())
         task->protocolUpgradedViaHSTS(soupMessage);
 }
+
 #endif
 
 void NetworkDataTaskSoup::didStartRequest()

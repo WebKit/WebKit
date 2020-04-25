@@ -255,7 +255,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
         return [[[WebAnimationController alloc] init] autorelease];
 
     NSURL *url = _hitTestResult.absoluteLinkURL();
-    NSString *absoluteURLString = [url absoluteString];
+    String absoluteURLString = [url absoluteString];
     if (url && _hitTestResult.URLElement()) {
         if (WTF::protocolIs(absoluteURLString, "mailto")) {
             _type = WebImmediateActionMailtoLink;

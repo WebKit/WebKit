@@ -402,7 +402,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, 
     if (!user.isNull())
         urlWithCredentials.setUser(user);
     if (!password.isNull())
-        urlWithCredentials.setPass(password);
+        urlWithCredentials.setPassword(password);
 
     return open(method, urlWithCredentials, async);
 }

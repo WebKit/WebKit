@@ -1,3 +1,87 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        Move URL to use StringView when returning substrings of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=210431
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection): Use hasCredentials.
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded const):
+        Remove use of ASCIILiteral for setProtocol.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::NetworkDataTaskCurl): Updated for
+        password name change.
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection): Ditto.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Updated
+        for password name change.
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection): Ditto.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup): Updated for
+        password name change.
+        (WebKit::NetworkDataTaskSoup::applyAuthenticationToRequest): Ditto.
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection): Ditto.
+        (WebKit::NetworkDataTaskSoup::shouldAllowHSTSPolicySetting const):
+        Use != to compare hosts, rather than hostsAreEqual.
+        (WebKit::NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade const):
+        Refactored to use || to match the function above.
+
+        * Shared/API/APIURL.h:
+        (API::URL::host const): Removed validity check; WTF::URL::host
+        returns null if the URL is invalid.
+        (API::URL::protocol const): Ditto.
+        (API::URL::path const): Ditto.
+        (API::URL::lastPathComponent const): Ditto. Also added toString
+        since WTF::URL::lastPathComponent now returns a StringView.
+
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didFinish): Use hasFragmentIdentifier.
+
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk):
+        Refactored a bit and use fileURLWithFileSystemPath and
+        updated since lastPathComponent returns a StringView.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::pathExtension): Updated since lastPathComponent
+        returns a StringView. Refactored a little.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        Use truncatedForUseAsBase.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Use != to compare hosts, rather than hostsAreEqual.
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction): Ditto.
+        (WebKit::WebPageProxy::createNewPage): Ditto.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::assumeReadAccessToBaseURL):
+        Use truncatedForUseAsBase.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        Don't use ASCIILiteral for argument to setProtocol.
+
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins):
+        Use fileURLWithFileSystemPath, also refactored a bit.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::installPDFDocument): Updated since
+        fragmentIdentifier returns a StringView.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle): Streamlined
+        the implementation a bit.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        Updated since lastPathComponent returns a StringView.
+
 2020-04-25  David Kilzer  <ddkilzer@apple.com>
 
         IPC::Decoder::isInvalid() should be renamed to isValid()

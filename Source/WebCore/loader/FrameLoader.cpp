@@ -1151,9 +1151,9 @@ void FrameLoader::loadInSameDocument(const URL& url, SerializedScriptValue* stat
 
         history().updateBackForwardListForFragmentScroll();
     }
-    
-    bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && url.fragmentIdentifier() != oldURL.fragmentIdentifier();
-    
+
+    bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && !equalRespectingNullity(url.fragmentIdentifier(), oldURL.fragmentIdentifier());
+
     history().updateForSameDocumentNavigation();
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor

@@ -241,7 +241,7 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
     // when both the username and password are non-null. When we have credentials, empty usernames and passwords
     // should be empty strings instead of null.
     String urlUser = m_url.user();
-    String urlPass = m_url.pass();
+    String urlPass = m_url.password();
     if (!urlUser.isEmpty() || !urlPass.isEmpty()) {
         soup_uri_set_user(soupURI.get(), urlUser.utf8().data());
         soup_uri_set_password(soupURI.get(), urlPass.utf8().data());

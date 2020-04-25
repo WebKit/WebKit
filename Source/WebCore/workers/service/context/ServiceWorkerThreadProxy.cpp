@@ -46,13 +46,12 @@
 
 namespace WebCore {
 
-URL static inline topOriginURL(const SecurityOrigin& origin)
+static URL topOriginURL(const SecurityOrigin& origin)
 {
     URL url;
     url.setProtocol(origin.protocol());
     url.setHost(origin.host());
-    if (origin.port())
-        url.setPort(*origin.port());
+    url.setPort(origin.port());
     return url;
 }
 

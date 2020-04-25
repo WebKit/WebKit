@@ -532,8 +532,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     // Any credential should have been removed from the cross-site requests.
     const URL& requestURL = request.url();
     m_options.securityCheck = securityCheck;
-    ASSERT(m_sameOriginRequest || requestURL.user().isEmpty());
-    ASSERT(m_sameOriginRequest || requestURL.pass().isEmpty());
+    ASSERT(m_sameOriginRequest || !requestURL.hasCredentials());
 
     if (!m_referrer.isNull())
         request.setHTTPReferrer(m_referrer);

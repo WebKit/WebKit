@@ -61,14 +61,8 @@ inline const URL& Location::url() const
 
 String Location::href() const
 {
-    auto& url = this->url();
-
-    if (!url.hasUsername() && !url.hasPassword())
-        return url.string();
-
-    URL urlWithoutCredentials(url);
-    urlWithoutCredentials.setUser(WTF::emptyString());
-    urlWithoutCredentials.setPass(WTF::emptyString());
+    URL urlWithoutCredentials(url());
+    urlWithoutCredentials.removeCredentials();
     return urlWithoutCredentials.string();
 }
 
@@ -91,20 +85,19 @@ String Location::hostname() const
 
 String Location::port() const
 {
-    const URL& url = this->url();
-    return url.port() ? String::number(url.port().value()) : emptyString();
+    auto port = url().port();
+    return port ? String::number(*port) : emptyString();
 }
 
 String Location::pathname() const
 {
     auto path = url().path();
-    return path.isEmpty() ? "/" : path.toString();
+    return path.isEmpty() ? "/"_s : path.toString();
 }
 
 String Location::search() const
 {
-    const URL& url = this->url();
-    return url.query().isEmpty() ? emptyString() : "?" + url.query();
+    return url().query().isEmpty() ? emptyString() : url().queryWithLeadingQuestionMark().toString();
 }
 
 String Location::origin() const
@@ -125,8 +118,7 @@ Ref<DOMStringList> Location::ancestorOrigins() const
 
 String Location::hash() const
 {
-    const String& fragmentIdentifier = url().fragmentIdentifier();
-    return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
+    return url().fragmentIdentifier().isEmpty() ? emptyString() : url().fragmentIdentifierWithLeadingNumberSign().toString();
 }
 
 ExceptionOr<void> Location::setHref(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url)
@@ -144,7 +136,7 @@ ExceptionOr<void> Location::setProtocol(DOMWindow& activeWindow, DOMWindow& firs
     URL url = frame->document()->url();
     if (!url.setProtocol(protocol))
         return Exception { SyntaxError };
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setHost(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& host)
@@ -154,7 +146,7 @@ ExceptionOr<void> Location::setHost(DOMWindow& activeWindow, DOMWindow& firstWin
         return { };
     URL url = frame->document()->url();
     url.setHostAndPort(host);
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setHostname(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& hostname)
@@ -164,7 +156,7 @@ ExceptionOr<void> Location::setHostname(DOMWindow& activeWindow, DOMWindow& firs
         return { };
     URL url = frame->document()->url();
     url.setHost(hostname);
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setPort(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& portString)
@@ -173,12 +165,8 @@ ExceptionOr<void> Location::setPort(DOMWindow& activeWindow, DOMWindow& firstWin
     if (!frame)
         return { };
     URL url = frame->document()->url();
-    int port = portString.toInt();
-    if (port < 0 || port > 0xFFFF || portString.isEmpty())
-        url.removePort();
-    else
-        url.setPort(port);
-    return setLocation(activeWindow, firstWindow, url.string());
+    url.setPort(parseUInt16(portString));
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setPathname(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& pathname)
@@ -188,7 +176,7 @@ ExceptionOr<void> Location::setPathname(DOMWindow& activeWindow, DOMWindow& firs
         return { };
     URL url = frame->document()->url();
     url.setPath(pathname);
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setSearch(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& search)
@@ -198,7 +186,7 @@ ExceptionOr<void> Location::setSearch(DOMWindow& activeWindow, DOMWindow& firstW
         return { };
     URL url = frame->document()->url();
     url.setQuery(search);
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::setHash(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& hash)
@@ -218,7 +206,7 @@ ExceptionOr<void> Location::setHash(DOMWindow& activeWindow, DOMWindow& firstWin
     // cases where fragment identifiers are ignored or invalid. 
     if (equalIgnoringNullity(oldFragmentIdentifier, url.fragmentIdentifier()))
         return { };
-    return setLocation(activeWindow, firstWindow, url.string());
+    return setLocation(activeWindow, firstWindow, url);
 }
 
 ExceptionOr<void> Location::assign(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url)
