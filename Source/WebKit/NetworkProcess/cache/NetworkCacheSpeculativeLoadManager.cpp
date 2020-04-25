@@ -267,6 +267,10 @@ SpeculativeLoadManager::SpeculativeLoadManager(Cache& cache, Storage& storage)
 
 SpeculativeLoadManager::~SpeculativeLoadManager()
 {
+    for (auto& pendingFrameLoad : copyToVector(m_pendingFrameLoads.values())) {
+        if (pendingFrameLoad)
+            pendingFrameLoad->markLoadAsCompleted();
+    }
 }
 
 bool SpeculativeLoadManager::canUsePreloadedEntry(const PreloadedEntry& entry, const ResourceRequest& actualRequest)
