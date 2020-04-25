@@ -1,3 +1,10 @@
+2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION(210942): [GTK][WPE] Unreviewed, EWS build bots fail in compile-webkit step
+        https://bugs.webkit.org/show_bug.cgi?id=211014
+
+        * CMakeLists.txt: Remove creation of file 'inspector-resources.stamp'.
+
 2020-04-24  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds
