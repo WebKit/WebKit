@@ -1,3 +1,32 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Unable to sign up on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=211003
+        <rdar://problem/58804852>
+
+        Reviewed by Darin Adler.
+
+        This is similar to the bug we had on nytimes.com and that was fixed in
+        r258767. However, instead of a 'resize' event, it is a 'change' event
+        on a MediaQueryList that is getting twitter.com in a bad state.
+
+        The issue is that when we home out of Safari, SpringBoard takes does
+        a snapshot sequence at various sizes / orientations and this causes
+        many JS events to get fired (e.g. 'resize', 'orientationchange',
+        'change', ...), which can get some sites in a bad state. To address
+        the issue, we now prevent firing of ALL JS events during the
+        SpringBoard snapshot, instead of merely preventing the 'resize' ones.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/Page.h:
+        (WebCore::Page::shouldFireEvents const):
+        (WebCore::Page::setShouldFireEvents):
+        (WebCore::Page::shouldFireResizeEvents const): Deleted.
+        (WebCore::Page::setShouldFireResizeEvents): Deleted.
+
 2020-04-24  Saam Barati  <sbarati@apple.com>
 
         Return BigInt32 whenever we can

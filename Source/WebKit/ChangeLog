@@ -1,3 +1,22 @@
+2020-04-24  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Unable to sign up on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=211003
+        <rdar://problem/58804852>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView _willBeginSnapshotSequence]):
+        (-[WKApplicationStateTrackingView _didCompleteSnapshotSequence]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setShouldFireEvents):
+        (WebKit::WebPage::setShouldFireResizeEvents): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-24  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds

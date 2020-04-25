@@ -1706,7 +1706,7 @@ private:
     void urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, const IPC::SharedBufferDataReference&);
     void urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceError&);
 
-    void setShouldFireResizeEvents(bool);
+    void setShouldFireEvents(bool);
     void setNeedsDOMWindowResizeEvent();
 
     void setIsSuspended(bool);

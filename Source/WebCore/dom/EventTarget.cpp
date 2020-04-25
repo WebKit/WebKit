@@ -40,6 +40,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
 #include "JSLazyEventListener.h"
+#include "Logging.h"
 #include "Quirks.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
@@ -250,6 +251,15 @@ void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
     auto* data = eventTargetData();
     if (!data)
         return;
+
+    // FIXME: Remove once <rdar://problem/62344280> is fixed.
+    if (is<Document>(scriptExecutionContext())) {
+        auto* page = downcast<Document>(*scriptExecutionContext()).page();
+        if (page && !page->shouldFireEvents()) {
+            RELEASE_LOG_IF(page->isAlwaysOnLoggingAllowed(), Events, "%p - EventTarget::fireEventListeners: Not firing %{public}s event because events are temporarily disabled for this page", this, event.type().string().utf8().data());
+            return;
+        }
+    }
 
     SetForScope<bool> firingEventListenersScope(data->isFiringEventListeners, true);
 
