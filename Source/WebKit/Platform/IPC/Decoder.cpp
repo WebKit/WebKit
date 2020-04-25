@@ -48,7 +48,7 @@ static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
 std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
 {
     auto decoder = makeUnique<Decoder>(buffer, bufferSize, bufferDeallocator, WTFMove(attachments));
-    return decoder->isInvalid() ? nullptr : WTFMove(decoder);
+    return decoder->isValid() ? WTFMove(decoder) : nullptr;
 }
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)

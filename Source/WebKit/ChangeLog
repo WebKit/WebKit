@@ -1,3 +1,32 @@
+2020-04-25  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Decoder::isInvalid() should be renamed to isValid()
+        <https://webkit.org/b/211000>
+
+        Reviewed by Darin Adler.
+
+        Negative logic is more difficult to reason about than positive
+        logic.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchMessage):
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::dispatchThreadMessageReceiverMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::create):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::isValid const): Rename from isInvalid()
+        and invert logic.
+        (IPC::Decoder::isInvalid const): Rename to isValid().
+        * Platform/IPC/MessageSender.h:
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        - Change Decoder::isInvalid() to Decoder::isValid() and reverse
+          the Boolean logic.
+
 2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(210942): [GTK][WPE] EWS build bots fail in compile-webkit step

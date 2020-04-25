@@ -355,7 +355,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     workQueueMessageReceiver.didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
-    ASSERT(!decoder.isInvalid());
+    ASSERT(decoder.isValid());
 
     if (replyEncoder)
         sendSyncReply(WTFMove(replyEncoder));
@@ -399,7 +399,7 @@ void Connection::dispatchThreadMessageReceiverMessage(ThreadMessageReceiver& thr
     threadMessageReceiver.didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
-    ASSERT(!decoder.isInvalid());
+    ASSERT(decoder.isValid());
 
     if (replyEncoder)
         sendSyncReply(WTFMove(replyEncoder));
@@ -930,7 +930,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
     }
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
-    ASSERT(!decoder.isInvalid());
+    ASSERT(decoder.isValid());
 
     if (replyEncoder)
         sendSyncReply(WTFMove(replyEncoder));
@@ -1076,7 +1076,7 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
     else
         dispatchMessage(*message);
 
-    m_didReceiveInvalidMessage |= message->isInvalid();
+    m_didReceiveInvalidMessage |= !message->isValid();
     m_inDispatchMessageCount--;
 
     // FIXME: For synchronous messages, we should not decrement the counter until we send a response.

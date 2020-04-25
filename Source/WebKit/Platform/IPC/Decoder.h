@@ -71,11 +71,11 @@ public:
 
     size_t length() const { return m_bufferEnd - m_buffer; }
 
-    bool isInvalid() const
+    bool isValid() const
     {
         // (m_bufferPos == m_bufferEnd) is a valid state for decoding if the last parameter
         // is a variable length byte array and its size == 0.
-        return m_bufferPos < m_buffer || m_bufferPos > m_bufferEnd;
+        return m_bufferPos >= m_buffer && m_bufferPos <= m_bufferEnd;
     }
     void markInvalid() { m_bufferPos = nullptr; }
 

@@ -93,7 +93,7 @@ public:
         encoder->encode(listenerID);
         encoder->encode(message.arguments());
         sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
-            if (decoder && !decoder->isInvalid())
+            if (decoder && decoder->isValid())
                 T::callReply(*decoder, WTFMove(completionHandler));
             else
                 T::cancelReply(WTFMove(completionHandler));
