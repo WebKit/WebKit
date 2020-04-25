@@ -2878,7 +2878,7 @@ EncodedJSValue JIT_OPERATION operationArithNegate(JSGlobalObject* globalObject, 
     if (primValue.isBigInt32()) {
         int32_t value = primValue.bigInt32AsInt32();
         if (value != INT_MIN)
-            return JSValue::encode(JSValue(JSValue::JSBigInt32, -value));
+            return JSValue::encode(jsBigInt32(-value));
         primValue = JSBigInt::createFrom(vm, value);
     }
 #endif
@@ -2910,7 +2910,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject* global
     if (primValue.isBigInt32()) {
         int32_t value = primValue.bigInt32AsInt32();
         if (value != INT_MIN) {
-            auto result = JSValue(JSValue::JSBigInt32, -value);
+            auto result = jsBigInt32(-value);
             arithProfile->observeResult(result);
             return JSValue::encode(result);
         }
@@ -2918,7 +2918,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiled(JSGlobalObject* global
     }
 #endif
     if (primValue.isHeapBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
+        JSValue result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         arithProfile->observeResult(result);
         return JSValue::encode(result);
     }
@@ -2956,7 +2956,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject
     if (primValue.isBigInt32()) {
         int32_t value = primValue.bigInt32AsInt32();
         if (value != INT_MIN) {
-            auto result = JSValue(JSValue::JSBigInt32, -value);
+            auto result = jsBigInt32(-value);
             arithProfile->observeResult(result);
             return JSValue::encode(result);
         }
@@ -2964,7 +2964,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateProfiledOptimize(JSGlobalObject
     }
 #endif
     if (primValue.isHeapBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
+        JSValue result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         arithProfile->observeResult(result);
         return JSValue::encode(result);
     }
@@ -3002,7 +3002,7 @@ EncodedJSValue JIT_OPERATION operationArithNegateOptimize(JSGlobalObject* global
     if (primValue.isBigInt32()) {
         int32_t value = primValue.bigInt32AsInt32();
         if (value != INT_MIN)
-            return JSValue::encode(JSValue(JSValue::JSBigInt32, -value));
+            return JSValue::encode(jsBigInt32(-value));
         primValue = JSBigInt::createFrom(vm, value);
     }
 #endif

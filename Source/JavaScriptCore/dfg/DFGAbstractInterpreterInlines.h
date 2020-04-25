@@ -508,9 +508,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 #else
             RELEASE_ASSERT_NOT_REACHED();
 #endif
-        } else if (node->child1().useKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->child1().useKind() == AnyBigIntUse)
+        } else if (node->child1().useKind() == HeapBigIntUse) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->child1().useKind() == AnyBigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -563,9 +566,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 #else
             DFG_CRASH(m_graph, node, "No BigInt32 support");
 #endif
-        } else if (node->binaryUseKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->binaryUseKind() == AnyBigIntUse)
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->binaryUseKind() == AnyBigIntUse)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -755,9 +761,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ValueSub:
     case ValueAdd: {
-        if (node->binaryUseKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
@@ -996,7 +1005,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setNonCellTypeForNode(node, typeOfDoubleIncOrDec(forNode(node->child1()).m_type));
             break;
         case HeapBigIntUse:
-            setTypeForNode(node, SpecHeapBigInt);
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
             break;
         case AnyBigIntUse:
         case BigInt32Use:
@@ -1023,9 +1035,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        if (node->binaryUseKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -1036,9 +1051,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ValueMul: {
         // FIXME: why is this code not shared with ValueSub?
-        if (node->binaryUseKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
@@ -1102,9 +1120,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (handleConstantDivOp(node))
             break;
 
-        if (node->binaryUseKind() == HeapBigIntUse)
-            setTypeForNode(node, SpecHeapBigInt);
-        else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
+            // the format of our result:
+            // https://bugs.webkit.org/show_bug.cgi?id=210982
+            setTypeForNode(node, SpecBigInt);
+        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();

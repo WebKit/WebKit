@@ -77,7 +77,7 @@ NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSV
         result += right;
         if (UNLIKELY(result.hasOverflowed()))
             return JSValue();
-        return JSValue(JSValue::JSBigInt32, result.unsafeGet());
+        return jsBigInt32(result.unsafeGet());
 #else
         UNUSED_PARAM(left);
         UNUSED_PARAM(right);

@@ -1,3 +1,13 @@
+2020-04-24  Saam Barati  <sbarati@apple.com>
+
+        Return BigInt32 whenever we can
+        https://bugs.webkit.org/show_bug.cgi?id=210922
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readBigInt):
+
 2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] allThreads registration is racy with allThreads unregistration

@@ -86,7 +86,7 @@ public:
     {
 #if USE(BIGINT32)
         if (value <= INT_MAX && value >= INT_MIN)
-            return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(value));
+            return jsBigInt32(static_cast<int32_t>(value));
 #endif
 
         auto ptr = JSBigInt::createFrom(vm, value);
@@ -120,6 +120,32 @@ public:
         GreaterThan,
         LessThan
     };
+
+    static ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
+    {
+#if USE(BIGINT32)
+        if (UNLIKELY(!bigInt))
+            return JSValue();
+
+        if (bigInt->length() <= 1) {
+            if (!bigInt->length())
+                return jsBigInt32(0);
+            Digit digit = bigInt->digit(0);
+            if (bigInt->sign()) {
+                static constexpr uint64_t maxValue = -static_cast<int64_t>(std::numeric_limits<int32_t>::min());
+                if (digit <= maxValue)
+                    return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit)));
+            } else {
+                static constexpr uint64_t maxValue = static_cast<uint64_t>(std::numeric_limits<int32_t>::max());
+                if (digit <= maxValue)
+                    return jsBigInt32(static_cast<int32_t>(digit));
+            }
+        }
+#endif
+
+        return bigInt;
+    }
+
     
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
     bool equalsToNumber(JSValue);
@@ -135,27 +161,97 @@ public:
     JSObject* toObject(JSGlobalObject*) const;
     inline bool toBoolean() const { return !isZero(); }
 
-    static JSBigInt* exponentiate(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
-
-    static JSBigInt* multiply(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    
     ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
-    static JSBigInt* inc(JSGlobalObject*, JSBigInt* x);
-    static JSBigInt* dec(JSGlobalObject*, JSBigInt* x);
-    static JSBigInt* add(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* sub(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* divide(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* remainder(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* unaryMinus(VM&, JSBigInt* x);
+    static JSBigInt* exponentiateHeap(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
+    static JSValue exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
+    {
+        return tryConvertToBigInt32(exponentiateHeap(globalObject, base, exponent));
+    }
 
-    static JSBigInt* bitwiseAnd(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* bitwiseOr(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* bitwiseXor(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* bitwiseNot(JSGlobalObject*, JSBigInt* x);
+    static JSBigInt* multiplyHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(multiplyHeap(globalObject, x, y));
+    }
+    
+    static JSBigInt* incHeap(JSGlobalObject*, JSBigInt* x);
+    static JSValue inc(JSGlobalObject* globalObject, JSBigInt* x)
+    {
+        return tryConvertToBigInt32(incHeap(globalObject, x));
+    }
 
-    static JSBigInt* leftShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* decHeap(JSGlobalObject*, JSBigInt* x);
+    static JSValue dec(JSGlobalObject* globalObject, JSBigInt* x)
+    {
+        return tryConvertToBigInt32(decHeap(globalObject, x));
+    }
+
+    static JSBigInt* addHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(addHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* subHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return subHeap(globalObject, x, y);
+    }
+
+    static JSBigInt* divideHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(divideHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* remainderHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(remainderHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* unaryMinusHeap(VM&, JSBigInt* x);
+    static JSValue unaryMinus(VM& vm, JSBigInt* x)
+    {
+        return tryConvertToBigInt32(unaryMinusHeap(vm, x));
+    }
+
+    static JSBigInt* bitwiseAndHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(bitwiseAndHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* bitwiseOrHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(bitwiseOrHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* bitwiseXorHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(bitwiseXorHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* bitwiseNotHeap(JSGlobalObject*, JSBigInt* x);
+    static JSValue bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
+    {
+        return tryConvertToBigInt32(bitwiseNotHeap(globalObject, x));
+    }
+
+    static JSBigInt* leftShiftHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(leftShiftHeap(globalObject, x, y));
+    }
+
+    static JSBigInt* signedRightShiftHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    static JSValue signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    {
+        return tryConvertToBigInt32(signedRightShiftHeap(globalObject, x, y));
+    }
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.

@@ -589,7 +589,7 @@ ALWAYS_INLINE JSValue jsSub(JSGlobalObject* globalObject, JSValue v1, JSValue v2
         result -= right;
         if (UNLIKELY(result.hasOverflowed()))
             return JSValue();
-        return JSValue(JSValue::JSBigInt32, result.unsafeGet());
+        return jsBigInt32(result.unsafeGet());
 #else
         UNUSED_PARAM(left);
         UNUSED_PARAM(right);
@@ -611,7 +611,7 @@ ALWAYS_INLINE JSValue jsMul(JSGlobalObject* globalObject, JSValue v1, JSValue v2
         result *= right;
         if (result.hasOverflowed())
             return JSValue();
-        return JSValue(JSValue::JSBigInt32, result.unsafeGet());
+        return jsBigInt32(result.unsafeGet());
 #else
         UNUSED_PARAM(left);
         UNUSED_PARAM(right);
@@ -631,7 +631,7 @@ ALWAYS_INLINE JSValue jsDiv(JSGlobalObject* globalObject, JSValue v1, JSValue v2
 #if USE(BIGINT32)
         if (!right)
             return JSValue();
-        return JSValue(JSValue::JSBigInt32, left / right);
+        return jsBigInt32(left / right);
 #else
         UNUSED_PARAM(left);
         UNUSED_PARAM(right);
@@ -686,7 +686,7 @@ ALWAYS_INLINE JSValue jsInc(JSGlobalObject* globalObject, JSValue v)
         // FIXME: the following next few lines might benefit from being made into a helper function
         if (newValue > INT_MAX)
             return JSBigInt::createFrom(vm, newValue);
-        return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(newValue));
+        return jsBigInt32(static_cast<int32_t>(newValue));
     }
 #endif
 
@@ -711,7 +711,7 @@ ALWAYS_INLINE JSValue jsDec(JSGlobalObject* globalObject, JSValue v)
         // FIXME: the following next few lines might benefit from being made into a helper function
         if (newValue < INT_MIN)
             return JSBigInt::createFrom(vm, newValue);
-        return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(newValue));
+        return jsBigInt32(static_cast<int32_t>(newValue));
     }
 #endif
 
@@ -732,7 +732,7 @@ ALWAYS_INLINE JSValue jsBitwiseNot(JSGlobalObject* globalObject, JSValue v)
 
 #if USE(BIGINT32)
     if (operandNumeric.isBigInt32())
-        return JSValue(JSValue::JSBigInt32, ~operandNumeric.bigInt32AsInt32());
+        return jsBigInt32(~operandNumeric.bigInt32AsInt32());
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
@@ -767,7 +767,7 @@ ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2
 
         // This std::min is a bit hacky, but required because in C++ it is undefined behavior to do a shift where the right operand is greater or equal to the bit-width of the left operand.
         if (!isLeft)
-            return JSValue(JSValue::JSBigInt32, leftInt32 >> std::min(rightInt32, 31));
+            return jsBigInt32(leftInt32 >> std::min(rightInt32, 31));
 
         // In the case of a left shift we can overflow. I deal with this by allocating HeapBigInts.
         // FIXME: it might be possible to do something smarter, trying to do the left shift and detecting somehow if it overflowed.
@@ -826,7 +826,7 @@ ALWAYS_INLINE JSValue bitwiseBinaryOp(JSGlobalObject* globalObject, JSValue v1, 
 
 #if USE(BIGINT32)
     if (leftNumeric.isBigInt32() && rightNumeric.isBigInt32())
-        return JSValue(JSValue::JSBigInt32, int32Op(leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
+        return jsBigInt32(int32Op(leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
     // FIXME: add fast path for BigInt32 / HeapBigInt, and for HeapBigInt / BigInt32
     // In many cases these could be made more efficient than heap-allocating the small big-int and going through the generic path.
     // But it is quite tricky, not least because HeapBigInt use a sign bit whereas BigInt32 use 2-complement representation.

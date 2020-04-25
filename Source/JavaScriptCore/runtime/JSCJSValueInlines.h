@@ -538,7 +538,7 @@ ALWAYS_INLINE JSBigInt* JSValue::asHeapBigInt() const
 #endif // USE(JSVALUE64)
 
 #if USE(BIGINT32)
-inline JSValue::JSValue(JSBigInt32Tag, int32_t value)
+inline JSValue::JSValue(EncodeAsBigInt32Tag, int32_t value)
 {
     uint64_t shiftedValue = static_cast<uint64_t>(static_cast<uint32_t>(value)) << 16;
     ASSERT(!(shiftedValue & NumberTag));

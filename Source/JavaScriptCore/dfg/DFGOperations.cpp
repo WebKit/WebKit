@@ -1338,7 +1338,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(JSGlobalObject* globalObject, En
     RELEASE_AND_RETURN(scope, regexp->test(globalObject, input));
 }
 
-JSCell* JIT_OPERATION operationSubHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationSubHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1347,10 +1347,10 @@ JSCell* JIT_OPERATION operationSubHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::sub(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::sub(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitNotHeapBigInt(JSGlobalObject* globalObject, JSCell* op1)
+EncodedJSValue JIT_OPERATION operationBitNotHeapBigInt(JSGlobalObject* globalObject, JSCell* op1)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1358,10 +1358,10 @@ JSCell* JIT_OPERATION operationBitNotHeapBigInt(JSGlobalObject* globalObject, JS
 
     JSBigInt* operand = jsCast<JSBigInt*>(op1);
 
-    return JSBigInt::bitwiseNot(globalObject, operand);
+    return JSValue::encode(JSBigInt::bitwiseNot(globalObject, operand));
 }
 
-JSCell* JIT_OPERATION operationMulHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationMulHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1370,10 +1370,10 @@ JSCell* JIT_OPERATION operationMulHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::multiply(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::multiply(globalObject, leftOperand, rightOperand));
 }
     
-JSCell* JIT_OPERATION operationModHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationModHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1382,10 +1382,10 @@ JSCell* JIT_OPERATION operationModHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::remainder(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::remainder(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationDivHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationDivHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1394,10 +1394,10 @@ JSCell* JIT_OPERATION operationDivHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::divide(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::divide(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationPowHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationPowHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1406,10 +1406,10 @@ JSCell* JIT_OPERATION operationPowHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::exponentiate(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::exponentiate(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitAndHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationBitAndHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1418,10 +1418,10 @@ JSCell* JIT_OPERATION operationBitAndHeapBigInt(JSGlobalObject* globalObject, JS
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::bitwiseAnd(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::bitwiseAnd(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitLShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationBitLShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1430,10 +1430,10 @@ JSCell* JIT_OPERATION operationBitLShiftHeapBigInt(JSGlobalObject* globalObject,
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::leftShift(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::leftShift(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationAddHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationAddHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1442,10 +1442,10 @@ JSCell* JIT_OPERATION operationAddHeapBigInt(JSGlobalObject* globalObject, JSCel
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::add(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::add(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitRShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationBitRShiftHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1454,10 +1454,10 @@ JSCell* JIT_OPERATION operationBitRShiftHeapBigInt(JSGlobalObject* globalObject,
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::signedRightShift(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::signedRightShift(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitOrHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationBitOrHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1466,10 +1466,10 @@ JSCell* JIT_OPERATION operationBitOrHeapBigInt(JSGlobalObject* globalObject, JSC
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::bitwiseOr(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::bitwiseOr(globalObject, leftOperand, rightOperand));
 }
 
-JSCell* JIT_OPERATION operationBitXorHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
+EncodedJSValue JIT_OPERATION operationBitXorHeapBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -1478,7 +1478,7 @@ JSCell* JIT_OPERATION operationBitXorHeapBigInt(JSGlobalObject* globalObject, JS
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::bitwiseXor(globalObject, leftOperand, rightOperand);
+    return JSValue::encode(JSBigInt::bitwiseXor(globalObject, leftOperand, rightOperand));
 }
 
 size_t JIT_OPERATION operationCompareStrictEqCell(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)

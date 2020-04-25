@@ -2290,15 +2290,15 @@ EncodedJSValue JSC_HOST_CALL functionCreateBigInt32(JSGlobalObject* globalObject
     ASSERT(bigIntValue.isHeapBigInt());
     JSBigInt* bigInt = jsCast<JSBigInt*>(bigIntValue);
     if (!bigInt->length())
-        return JSValue::encode(JSValue(JSValue::JSBigInt32, 0));
+        return JSValue::encode(jsBigInt32(0));
     if (bigInt->length() == 1) {
         JSBigInt::Digit digit = bigInt->digit(0);
         if (bigInt->sign()) {
             if (digit <= static_cast<uint64_t>(-static_cast<int64_t>(INT32_MIN)))
-                return JSValue::encode(JSValue(JSValue::JSBigInt32, static_cast<int32_t>(-static_cast<int64_t>(digit))));
+                return JSValue::encode(jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit))));
         } else {
             if (digit <= INT32_MAX)
-                return JSValue::encode(JSValue(JSValue::JSBigInt32, static_cast<int32_t>(digit)));
+                return JSValue::encode(jsBigInt32(static_cast<int32_t>(digit)));
         }
     }
     throwTypeError(globalObject, scope, "Out of range of BigInt32"_s);

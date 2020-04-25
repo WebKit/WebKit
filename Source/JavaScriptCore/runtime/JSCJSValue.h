@@ -178,7 +178,7 @@ public:
     enum JSFalseTag { JSFalse };
     enum JSCellTag { JSCellType };
 #if USE(BIGINT32)
-    enum JSBigInt32Tag { JSBigInt32 };
+    enum EncodeAsBigInt32Tag { EncodeAsBigInt32 };
 #endif
     enum EncodeAsDoubleTag { EncodeAsDouble };
 
@@ -190,7 +190,7 @@ public:
     JSValue(JSCell* ptr);
     JSValue(const JSCell* ptr);
 #if USE(BIGINT32)
-    JSValue(JSBigInt32Tag, int32_t);
+    JSValue(EncodeAsBigInt32Tag, int32_t);
 #endif
 
     // Numbers
@@ -576,6 +576,13 @@ inline JSValue jsBoolean(bool b)
 {
     return b ? JSValue(JSValue::JSTrue) : JSValue(JSValue::JSFalse);
 }
+
+#if USE(BIGINT32)
+ALWAYS_INLINE JSValue jsBigInt32(int32_t intValue)
+{
+    return JSValue(JSValue::EncodeAsBigInt32, intValue);
+}
+#endif
 
 ALWAYS_INLINE JSValue jsDoubleNumber(double d)
 {

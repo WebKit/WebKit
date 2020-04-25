@@ -3575,12 +3575,12 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
         speculateHeapBigInt(child1, operandGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationBitNotHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), operandGPR);
+        callOperation(operationBitNotHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), operandGPR);
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
 
         return;
     }
@@ -3746,7 +3746,7 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
     // FIXME: add support for mixed BigInt32 / HeapBigInt
 #endif
 
-    if (leftChild.useKind() == HeapBigIntUse && rightChild.useKind() == HeapBigIntUse) {
+    if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, node->child1());
         SpeculateCellOperand right(this, node->child2());
         GPRReg leftGPR = left.gpr();
@@ -3756,25 +3756,25 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
         switch (op) {
         case ValueBitAnd:
-            callOperation(operationBitAndHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+            callOperation(operationBitAndHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
             break;
         case ValueBitXor:
-            callOperation(operationBitXorHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+            callOperation(operationBitXorHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
             break;
         case ValueBitOr:
-            callOperation(operationBitOrHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+            callOperation(operationBitOrHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -3947,12 +3947,12 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationBitLShiftHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationBitLShiftHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -3975,12 +3975,12 @@ void SpeculativeJIT::compileValueBitRShift(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationBitRShiftHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(operationBitRShiftHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
         m_jit.exceptionCheck();
 
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -4081,12 +4081,12 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationAddHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(operationAddHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
         m_jit.exceptionCheck();
 
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -4185,13 +4185,13 @@ void SpeculativeJIT::compileValueSub(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationSubHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationSubHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -5014,13 +5014,13 @@ void SpeculativeJIT::compileValueMul(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationMulHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationMulHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -5220,13 +5220,13 @@ void SpeculativeJIT::compileValueDiv(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationDivHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationDivHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -5511,13 +5511,13 @@ void SpeculativeJIT::compileValueMod(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationModHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationModHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 
@@ -6078,13 +6078,13 @@ void SpeculativeJIT::compileValuePow(Node* node)
         speculateHeapBigInt(rightChild, rightGPR);
 
         flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
 
-        callOperation(operationPowHeapBigInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
+        callOperation(operationPowHeapBigInt, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), leftGPR, rightGPR);
 
         m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+        jsValueResult(resultRegs, node);
         return;
     }
 

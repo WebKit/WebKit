@@ -86,7 +86,7 @@ JSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
 
     if (argument.isBoolean()) {
 #if USE(BIGINT32)
-        return JSValue(JSValue::JSBigInt32, argument.asBoolean());
+        return jsBigInt32(argument.asBoolean());
 #else
         return JSBigInt::createFrom(vm, argument.asBoolean());
 #endif
@@ -115,7 +115,7 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
 
     if (primitive.isInt32()) {
 #if USE(BIGINT32)
-        return JSValue::encode(JSValue(JSValue::JSBigInt32, primitive.asInt32()));
+        return JSValue::encode(jsBigInt32(primitive.asInt32()));
 #else
         return JSValue::encode(JSBigInt::createFrom(vm, primitive.asInt32()));
 #endif

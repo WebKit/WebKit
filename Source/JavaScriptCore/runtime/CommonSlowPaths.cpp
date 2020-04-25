@@ -547,7 +547,7 @@ SLOW_PATH_DECL(slow_path_negate)
     if (primValue.isBigInt32()) {
         int32_t value = primValue.bigInt32AsInt32();
         if (value != INT_MIN) {
-            auto result = JSValue(JSValue::JSBigInt32, -value);
+            auto result = jsBigInt32(-value);
             RETURN_WITH_PROFILING(result, {
                 updateArithProfileForUnaryArithOp(metadata, result, operand);
             });
@@ -557,7 +557,7 @@ SLOW_PATH_DECL(slow_path_negate)
 #endif
 
     if (primValue.isHeapBigInt()) {
-        JSBigInt* result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
+        JSValue result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
         RETURN_WITH_PROFILING(result, {
             updateArithProfileForUnaryArithOp(metadata, result, operand);
         });

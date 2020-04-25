@@ -3005,7 +3005,7 @@ private:
 
         if (!lengthInUint64) {
 #if USE(BIGINT32)
-            return JSValue(JSValue::JSBigInt32, 0);
+            return jsBigInt32(0);
 #else
             JSBigInt* bigInt = JSBigInt::createZero(m_lexicalGlobalObject->vm());
             m_gcBuffer.appendWithCrashOnOverflow(bigInt);
@@ -3022,10 +3022,10 @@ private:
                 return JSValue();
             if (sign) {
                 if (digit64 <= static_cast<uint64_t>(-static_cast<int64_t>(INT32_MIN)))
-                    return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(-static_cast<int64_t>(digit64)));
+                    return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit64)));
             } else {
                 if (digit64 <= INT32_MAX)
-                    return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(digit64));
+                    return jsBigInt32(static_cast<int32_t>(digit64));
             }
             ASSERT(digit64 != 0);
             JSBigInt* bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject, 1);

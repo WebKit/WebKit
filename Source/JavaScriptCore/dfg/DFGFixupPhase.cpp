@@ -214,7 +214,7 @@ private:
 #if USE(BIGINT32)
             } else if (node->child1()->shouldSpeculateBigInt32()) {
                 node->setOp(op == Inc ? ValueAdd : ValueSub);
-                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(JSValue(JSValue::JSBigInt32, 1))));
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(jsBigInt32(1))));
                 node->children.setChild2(Edge(nodeConstantOne));
                 fixEdge<BigInt32Use>(node->child1());
                 fixEdge<BigInt32Use>(node->child2());
@@ -224,7 +224,7 @@ private:
                 // FIXME: the freezing does not appear useful (since the JSCell is kept alive by vm), but it refuses to compile otherwise.
                 // FIXME: we might optimize inc/dec to a specialized function call instead in that case.
                 node->setOp(op == Inc ? ValueAdd : ValueSub);
-                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(JSValue(JSValue::JSBigInt32, 1))));
+                nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecBigInt32, JSConstant, node->origin, OpInfo(m_graph.freeze(jsBigInt32(1))));
                 node->children.setChild2(Edge(nodeConstantOne));
                 fixEdge<AnyBigIntUse>(node->child1());
                 fixEdge<AnyBigIntUse>(node->child2());

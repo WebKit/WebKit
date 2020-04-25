@@ -237,7 +237,7 @@ void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
     internalMultiplyAdd(this, factor, summand, length(), this);
 }
 
-JSBigInt* JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
+JSBigInt* JSBigInt::exponentiateHeap(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -259,7 +259,7 @@ JSBigInt* JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, J
     if (base->length() == 1 && base->digit(0) == 1) {
         // (-1) ** even_number == 1.
         if (base->sign() && !(exponent->digit(0) & 1))
-            return JSBigInt::unaryMinus(vm, base);
+            return JSBigInt::unaryMinusHeap(vm, base);
 
         // (-1) ** odd_number == -1; 1 ** anything == 1.
         return base;
@@ -309,14 +309,14 @@ JSBigInt* JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, J
 
     n >>= 1;
     for (; n; n >>= 1) {
-        JSBigInt* maybeResult = JSBigInt::multiply(globalObject, runningSquare, runningSquare);
+        JSBigInt* maybeResult = JSBigInt::multiplyHeap(globalObject, runningSquare, runningSquare);
         RETURN_IF_EXCEPTION(scope, nullptr);
         runningSquare = maybeResult;
         if (n & 1) {
             if (!result)
                 result = runningSquare;
             else {
-                maybeResult = JSBigInt::multiply(globalObject, result, runningSquare);
+                maybeResult = JSBigInt::multiplyHeap(globalObject, result, runningSquare);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 result = maybeResult;
             }
@@ -326,7 +326,7 @@ JSBigInt* JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, J
     return result;
 }
 
-JSBigInt* JSBigInt::multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::multiplyHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -348,7 +348,7 @@ JSBigInt* JSBigInt::multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt
     return result->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::divideHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     // 1. If y is 0n, throw a RangeError exception.
     VM& vm = globalObject->vm();
@@ -370,7 +370,7 @@ JSBigInt* JSBigInt::divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* 
     if (y->length() == 1) {
         Digit divisor = y->digit(0);
         if (divisor == 1)
-            return resultSign == x->sign() ? x : unaryMinus(vm, x);
+            return resultSign == x->sign() ? x : JSBigInt::unaryMinusHeap(vm, x);
 
         Digit remainder;
         absoluteDivWithDigitDivisor(vm, x, divisor, &quotient, remainder);
@@ -393,7 +393,7 @@ JSBigInt* JSBigInt::copy(VM& vm, JSBigInt* x)
     return result;
 }
 
-JSBigInt* JSBigInt::unaryMinus(VM& vm, JSBigInt* x)
+JSBigInt* JSBigInt::unaryMinusHeap(VM& vm, JSBigInt* x)
 {
     if (x->isZero())
         return x;
@@ -403,7 +403,7 @@ JSBigInt* JSBigInt::unaryMinus(VM& vm, JSBigInt* x)
     return result;
 }
 
-JSBigInt* JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::remainderHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     // 1. If y is 0n, throw a RangeError exception.
     VM& vm = globalObject->vm();
@@ -441,7 +441,7 @@ JSBigInt* JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigIn
     return remainder->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
+JSBigInt* JSBigInt::incHeap(JSGlobalObject* globalObject, JSBigInt* x)
 {
     if (!x->sign())
         return absoluteAddOne(globalObject, x, SignOption::Unsigned);
@@ -452,7 +452,7 @@ JSBigInt* JSBigInt::inc(JSGlobalObject* globalObject, JSBigInt* x)
     return result;
 }
 
-JSBigInt* JSBigInt::dec(JSGlobalObject* globalObject, JSBigInt* x)
+JSBigInt* JSBigInt::decHeap(JSGlobalObject* globalObject, JSBigInt* x)
 {
     if (x->isZero()) {
         JSBigInt* result = createFrom(globalObject->vm(), 1);
@@ -464,7 +464,7 @@ JSBigInt* JSBigInt::dec(JSGlobalObject* globalObject, JSBigInt* x)
     return absoluteAddOne(globalObject, x, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::addHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     bool xSign = x->sign();
@@ -483,7 +483,7 @@ JSBigInt* JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::subHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     bool xSign = x->sign();
@@ -501,7 +501,7 @@ JSBigInt* JSBigInt::sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseAndHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -536,7 +536,7 @@ JSBigInt* JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigI
     return absoluteAndNot(vm, x, y1);
 }
 
-JSBigInt* JSBigInt::bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseOrHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -577,7 +577,7 @@ JSBigInt* JSBigInt::bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigIn
     return absoluteAddOne(globalObject, result, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseXorHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -615,7 +615,7 @@ JSBigInt* JSBigInt::bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigI
     return absoluteAddOne(globalObject, result, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::leftShiftHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     if (y->isZero() || x->isZero())
         return x;
@@ -626,7 +626,7 @@ JSBigInt* JSBigInt::leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigIn
     return leftShiftByAbsolute(globalObject, x, y);
 }
 
-JSBigInt* JSBigInt::signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::signedRightShiftHeap(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     if (y->isZero() || x->isZero())
         return x;
@@ -637,7 +637,7 @@ JSBigInt* JSBigInt::signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, 
     return rightShiftByAbsolute(globalObject, x, y);
 }
 
-JSBigInt* JSBigInt::bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
+JSBigInt* JSBigInt::bitwiseNotHeap(JSGlobalObject* globalObject, JSBigInt* x)
 {
     if (x->sign()) {
         // ~(-x) == ~(~(x-1)) == x-1
@@ -953,7 +953,7 @@ JSBigInt* JSBigInt::absoluteAdd(JSGlobalObject* globalObject, JSBigInt* x, JSBig
     }
 
     if (y->isZero())
-        return resultSign == x->sign() ? x : unaryMinus(vm, x);
+        return resultSign == x->sign() ? x : unaryMinusHeap(vm, x);
 
     JSBigInt* result = JSBigInt::tryCreateWithLength(globalObject, x->length() + 1);
     if (!result)
@@ -993,7 +993,7 @@ JSBigInt* JSBigInt::absoluteSub(VM& vm, JSBigInt* x, JSBigInt* y, bool resultSig
     }
 
     if (y->isZero())
-        return resultSign == x->sign() ? x : unaryMinus(vm, x);
+        return resultSign == x->sign() ? x : JSBigInt::unaryMinusHeap(vm, x);
 
     if (comparisonResult == ComparisonResult::Equal)
         return JSBigInt::createZero(vm);
@@ -1860,7 +1860,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
 
     if (p == length) {
 #if USE(BIGINT32)
-        return JSValue(JSValue::JSBigInt32, 0);
+        return jsBigInt32(0);
 #else
         return createZero(vm);
 #endif
@@ -1974,7 +1974,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data,
 
                 if (static_cast<int64_t>(static_cast<int32_t>(maybeResult)) == maybeResult) {
 #if USE(BIGINT32)
-                    return JSValue(JSValue::JSBigInt32, static_cast<int32_t>(maybeResult));
+                    return jsBigInt32(static_cast<int32_t>(maybeResult));
 #else
                     return JSBigInt::createFrom(vm, static_cast<int32_t>(maybeResult));
 #endif
