@@ -1,3 +1,17 @@
+2020-04-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] KeyframeEffect should ensure its target remains alive
+        https://bugs.webkit.org/show_bug.cgi?id=211019
+
+        Reviewed by Daniel Bates.
+
+        Add a test that creates a KeyframeEffect targeting an element with no other reference and trigger
+        garbage collection to check that the effect's target exists. This test would have failed prior to
+        this patch's code changes.
+
+        * webanimations/keyframe-effect-target-kept-alive-expected.txt: Added.
+        * webanimations/keyframe-effect-target-kept-alive.html: Added.
+
 2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, emit baselines after r260690

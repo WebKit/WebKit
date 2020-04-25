@@ -528,7 +528,7 @@ Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, PseudoId pseud
 }
 
 KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
-    : m_target(makeWeakPtr(target))
+    : m_target(target)
     , m_pseudoId(pseudoId)
 {
 }
@@ -1121,11 +1121,11 @@ Element* KeyframeEffect::targetElementOrPseudoElement() const
 
 void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
 {
-    if (m_target.get() == newTarget.get())
+    if (m_target == newTarget)
         return;
 
     auto* previousTargetElementOrPseudoElement = targetElementOrPseudoElement();
-    m_target = makeWeakPtr(newTarget.get());
+    m_target = WTFMove(newTarget);
     didChangeTargetElementOrPseudoElement(previousTargetElementOrPseudoElement);
 }
 

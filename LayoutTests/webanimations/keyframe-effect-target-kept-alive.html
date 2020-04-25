@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="target"></div>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("This test checks that a keyframe effect keeps its target alive even if that node has no other reference.");
+
+gc();
+const effect = new KeyframeEffect(document.createElement("div"), { });
+gc();
+shouldBeEqualToString("effect.target.localName", "div");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,20 @@
+2020-04-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] KeyframeEffect should ensure its target remains alive
+        https://bugs.webkit.org/show_bug.cgi?id=211019
+
+        Reviewed by Daniel Bates.
+
+        Test: webanimations/keyframe-effect-target-kept-alive.html
+
+        Make KeyframeEffect::m_target a RefPtr so that assigning an element to effect.target guarantees that element
+        is kept alive even if there are no other references to that element.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::KeyframeEffect::setTarget):
+        * animation/KeyframeEffect.h:
+
 2020-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Cleanup TableFormattingContext::layoutInFlowContent
