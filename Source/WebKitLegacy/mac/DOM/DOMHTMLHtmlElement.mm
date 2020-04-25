@@ -54,7 +54,7 @@
 - (NSString *)manifest
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::manifestAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::manifestAttr).string();
 }
 
 - (void)setManifest:(NSString *)newManifest

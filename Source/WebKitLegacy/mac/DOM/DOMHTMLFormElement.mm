@@ -56,7 +56,7 @@
 - (NSString *)action
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::actionAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::actionAttr).string();
 }
 
 - (void)setAction:(NSString *)newAction

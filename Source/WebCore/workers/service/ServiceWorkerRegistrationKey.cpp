@@ -49,7 +49,7 @@ unsigned ServiceWorkerRegistrationKey::hash() const
 {
     unsigned hashes[2];
     hashes[0] = SecurityOriginDataHash::hash(m_topOrigin);
-    hashes[1] = StringHash::hash(m_scope);
+    hashes[1] = StringHash::hash(m_scope.string());
 
     return StringHasher::hashMemory(hashes, sizeof(hashes));
 }
@@ -66,7 +66,7 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const
 
 bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
 {
-    return originIsMatching(topOrigin, clientURL) && clientURL.string().startsWith(m_scope);
+    return originIsMatching(topOrigin, clientURL) && clientURL.string().startsWith(m_scope.string());
 }
 
 bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const

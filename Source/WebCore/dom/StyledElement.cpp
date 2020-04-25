@@ -200,7 +200,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
         if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
             cssomWrapper->clearParentElement();
         ensureUniqueElementData().m_inlineStyle = nullptr;
-    } else if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url(), startLineNumber, String(), isInUserAgentShadowTree()))
+    } else if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, String(), isInUserAgentShadowTree()))
         setInlineStyleFromString(newStyleString);
 
     elementData()->setStyleAttributeIsDirty(false);

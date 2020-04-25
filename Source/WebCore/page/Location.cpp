@@ -259,7 +259,7 @@ void Location::reload(DOMWindow& activeWindow)
         return;
     }
 
-    if (WTF::protocolIsJavaScript(targetDocument.url()))
+    if (targetDocument.url().protocolIsJavaScript())
         return;
 
     frame->navigationScheduler().scheduleRefresh(activeDocument);

@@ -300,7 +300,7 @@ String FetchRequest::referrer() const
 const String& FetchRequest::urlString() const
 {
     if (m_requestURL.isNull())
-        m_requestURL = m_request.url();
+        m_requestURL = m_request.url().string();
     return m_requestURL;
 }
 

@@ -452,7 +452,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
     ASSERT(stagingDocument);
-    auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url(), DisallowScriptingAndPluginContent);
+    auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url().string(), DisallowScriptingAndPluginContent);
 
     if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(frame, fragment, markupAndArchive.archive->subresources());
@@ -515,21 +515,21 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
         return false;
     
     if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url(), DisallowScriptingAndPluginContent);
+        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), DisallowScriptingAndPluginContent);
         if (DocumentLoader* loader = frame.loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }
 
     if (!shouldSanitize()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url(), DisallowScriptingAndPluginContent);
+        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), DisallowScriptingAndPluginContent);
         return true;
     }
 
     String sanitizedMarkup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
-    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL(), DisallowScriptingAndPluginContent);
+    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL().string(), DisallowScriptingAndPluginContent);
 
     if (!fragment)
         return false;

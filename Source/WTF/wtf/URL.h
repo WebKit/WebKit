@@ -125,6 +125,7 @@ public:
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }
     WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
+    WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     bool protocolIsInHTTPFamily() const;
     WTF_EXPORT_PRIVATE bool isLocalFile() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }

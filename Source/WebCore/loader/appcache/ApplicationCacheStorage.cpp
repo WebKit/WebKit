@@ -102,7 +102,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manife
     if (statement.prepare() != SQLITE_OK)
         return nullptr;
     
-    statement.bindText(1, manifestURL);
+    statement.bindText(1, manifestURL.string());
    
     int result = statement.step();
     if (result == SQLITE_DONE)
@@ -129,7 +129,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const URL
 {
     ASSERT(!manifestURL.hasFragmentIdentifier());
 
-    auto result = m_cachesInMemory.add(manifestURL, nullptr);
+    auto result = m_cachesInMemory.add(manifestURL.string(), nullptr);
     if (!result.isNewEntry) {
         ASSERT(result.iterator->value);
         return result.iterator->value;
@@ -150,7 +150,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const URL
 
 ApplicationCacheGroup* ApplicationCacheStorage::findInMemoryCacheGroup(const URL& manifestURL) const
 {
-    return m_cachesInMemory.get(manifestURL);
+    return m_cachesInMemory.get(manifestURL.string());
 }
 
 void ApplicationCacheStorage::loadManifestHostHashes()
@@ -197,7 +197,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
             continue;
         
         if (ApplicationCache* cache = group->newestCache()) {
-            ApplicationCacheResource* resource = cache->resourceForURL(url);
+            ApplicationCacheResource* resource = cache->resourceForURL(url.string());
             if (!resource)
                 continue;
             if (resource->type() & ApplicationCacheResource::Foreign)
@@ -220,7 +220,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     while ((result = statement.step()) == SQLITE_ROW) {
         URL manifestURL = URL({ }, statement.getColumnText(1));
 
-        if (m_cachesInMemory.contains(manifestURL))
+        if (m_cachesInMemory.contains(manifestURL.string()))
             continue;
 
         if (!protocolHostAndPortAreEqual(url, manifestURL))
@@ -233,7 +233,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         if (!cache)
             continue;
 
-        auto* resource = cache->resourceForURL(url);
+        auto* resource = cache->resourceForURL(url.string());
         if (!resource)
             continue;
         if (resource->type() & ApplicationCacheResource::Foreign)
@@ -242,7 +242,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         auto& group = *new ApplicationCacheGroup(*this, manifestURL);
         group.setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
         group.setNewestCache(cache.releaseNonNull());
-        m_cachesInMemory.set(group.manifestURL(), &group);
+        m_cachesInMemory.set(group.manifestURL().string(), &group);
 
         return &group;
     }
@@ -269,7 +269,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
                 continue;
             if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
                 continue;
-            if (cache->resourceForURL(fallbackURL)->type() & ApplicationCacheResource::Foreign)
+            if (cache->resourceForURL(fallbackURL.string())->type() & ApplicationCacheResource::Foreign)
                 continue;
             return group;
         }
@@ -287,7 +287,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     while ((result = statement.step()) == SQLITE_ROW) {
         URL manifestURL = URL({ }, statement.getColumnText(1));
 
-        if (m_cachesInMemory.contains(manifestURL))
+        if (m_cachesInMemory.contains(manifestURL.string()))
             continue;
 
         // Fallback namespaces always have the same origin as manifest URL, so we can avoid loading caches that cannot match.
@@ -304,14 +304,14 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
             continue;
         if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
             continue;
-        if (cache->resourceForURL(fallbackURL)->type() & ApplicationCacheResource::Foreign)
+        if (cache->resourceForURL(fallbackURL.string())->type() & ApplicationCacheResource::Foreign)
             continue;
 
         auto& group = *new ApplicationCacheGroup(*this, manifestURL);
         group.setStorageID(static_cast<unsigned>(statement.getColumnInt64(0)));
         group.setNewestCache(cache.releaseNonNull());
 
-        m_cachesInMemory.set(group.manifestURL(), &group);
+        m_cachesInMemory.set(group.manifestURL().string(), &group);
 
         return &group;
     }
@@ -326,13 +326,13 @@ void ApplicationCacheStorage::cacheGroupDestroyed(ApplicationCacheGroup& group)
 {
     if (group.isObsolete()) {
         ASSERT(!group.storageID());
-        ASSERT(m_cachesInMemory.get(group.manifestURL()) != &group);
+        ASSERT(m_cachesInMemory.get(group.manifestURL().string()) != &group);
         return;
     }
 
-    ASSERT(m_cachesInMemory.get(group.manifestURL()) == &group);
+    ASSERT(m_cachesInMemory.get(group.manifestURL().string()) == &group);
 
-    m_cachesInMemory.remove(group.manifestURL());
+    m_cachesInMemory.remove(group.manifestURL().string());
     
     // If the cache group is half-created, we don't want it in the saved set (as it is not stored in database).
     if (!group.storageID())
@@ -341,13 +341,13 @@ void ApplicationCacheStorage::cacheGroupDestroyed(ApplicationCacheGroup& group)
 
 void ApplicationCacheStorage::cacheGroupMadeObsolete(ApplicationCacheGroup& group)
 {
-    ASSERT(m_cachesInMemory.get(group.manifestURL()) == &group);
+    ASSERT(m_cachesInMemory.get(group.manifestURL().string()) == &group);
     ASSERT(m_cacheHostSet.contains(urlHostHash(group.manifestURL())));
 
     if (auto* newestCache = group.newestCache())
         remove(newestCache);
 
-    m_cachesInMemory.remove(group.manifestURL());
+    m_cachesInMemory.remove(group.manifestURL().string());
     m_cacheHostSet.remove(urlHostHash(group.manifestURL()));
 }
 
@@ -668,14 +668,14 @@ bool ApplicationCacheStorage::store(ApplicationCacheGroup* group, GroupStorageID
     // a cache group with an identical manifest URL and associated cache entries. We want to remove
     // this cache group and its associated cache entries so that we can create it again (below) as
     // a way to repair it.
-    deleteCacheGroupRecord(group->manifestURL());
+    deleteCacheGroupRecord(group->manifestURL().string());
 
     SQLiteStatement statement(m_database, "INSERT INTO CacheGroups (manifestHostHash, manifestURL, origin) VALUES (?, ?, ?)");
     if (statement.prepare() != SQLITE_OK)
         return false;
 
     statement.bindInt64(1, urlHostHash(group->manifestURL()));
-    statement.bindText(2, group->manifestURL());
+    statement.bindText(2, group->manifestURL().string());
     statement.bindText(3, group->origin().data().databaseIdentifier());
 
     if (!executeStatement(statement))
@@ -728,7 +728,7 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
             SQLiteStatement statement(m_database, "INSERT INTO CacheWhitelistURLs (url, cache) VALUES (?, ?)");
             statement.prepare();
 
-            statement.bindText(1, whitelistURL);
+            statement.bindText(1, whitelistURL.string());
             statement.bindInt64(2, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -755,8 +755,8 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
             SQLiteStatement statement(m_database, "INSERT INTO FallbackURLs (namespace, fallbackURL, cache) VALUES (?, ?, ?)");
             statement.prepare();
 
-            statement.bindText(1, fallbackURL.first);
-            statement.bindText(2, fallbackURL.second);
+            statement.bindText(1, fallbackURL.first.string());
+            statement.bindText(2, fallbackURL.second.string());
             statement.bindInt64(3, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -850,9 +850,9 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     // The same ApplicationCacheResource are used in ApplicationCacheResource::size()
     // to calculate the approximate size of an ApplicationCacheResource object. If
     // you change the code below, please also change ApplicationCacheResource::size().
-    resourceStatement.bindText(1, resource->url());
+    resourceStatement.bindText(1, resource->url().string());
     resourceStatement.bindInt64(2, resource->response().httpStatusCode());
-    resourceStatement.bindText(3, resource->response().url());
+    resourceStatement.bindText(3, resource->response().url().string());
     resourceStatement.bindText(4, headers);
     resourceStatement.bindInt64(5, dataId);
     resourceStatement.bindText(6, resource->response().mimeType());
@@ -1514,7 +1514,7 @@ void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOrigin& securit
         if (auto* group = findInMemoryCacheGroup(url))
             group->makeObsolete();
         else
-            deleteCacheGroup(url);
+            deleteCacheGroup(url.string());
     }
 }
 

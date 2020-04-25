@@ -81,7 +81,7 @@
 - (NSString *)poster
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::posterAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::posterAttr).string();
 }
 
 - (void)setPoster:(NSString *)newPoster

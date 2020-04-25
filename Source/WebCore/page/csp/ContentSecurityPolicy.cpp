@@ -685,7 +685,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     // FIXME: Support sending reports from worker.
     CSPInfo info;
-    info.documentURI = blockedURL;
+    info.documentURI = blockedURL.string();
     if (m_client)
         m_client->willSendCSPViolationReport(info);
     else {

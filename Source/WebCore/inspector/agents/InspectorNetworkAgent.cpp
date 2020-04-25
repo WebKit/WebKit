@@ -398,7 +398,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
 Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildObjectForCachedResource(CachedResource* cachedResource)
 {
     auto resourceObject = Inspector::Protocol::Network::CachedResource::create()
-        .setUrl(cachedResource->url())
+        .setUrl(cachedResource->url().string())
         .setType(InspectorPageAgent::cachedResourceTypeJSON(*cachedResource))
         .setBodySize(cachedResource->encodedSize())
         .release();
@@ -458,7 +458,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     Document* document = loader && loader->frame() ? loader->frame()->document() : nullptr;
     auto initiatorObject = buildInitiatorObject(document, request);
 
-    String url = loader ? loader->url().string() : request.url();
+    String url = loader ? loader->url().string() : request.url().string();
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &protocolResourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
 }
 

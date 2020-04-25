@@ -94,13 +94,13 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
 
 String CSSImageValue::customCSSText() const
 {
-    return serializeURL(m_url);
+    return serializeURL(m_url.string());
 }
 
 Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
     // NOTE: We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.
-    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url, CSSUnitType::CSS_URI), styleDeclaration);
+    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url.string(), CSSUnitType::CSS_URI), styleDeclaration);
 }
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement& renderer) const

@@ -85,7 +85,7 @@ void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const Reso
         message.append(error.localizedDescription());
     }
 
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL(), 0, 0, nullptr, requestIdentifier));
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message.toString(), error.failingURL().string(), 0, 0, nullptr, requestIdentifier));
 }
 
 } // namespace WebCore

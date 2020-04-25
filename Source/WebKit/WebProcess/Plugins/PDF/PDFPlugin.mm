@@ -2299,7 +2299,7 @@ bool PDFPlugin::handlesPageScaleFactor() const
 void PDFPlugin::clickedLink(NSURL *url)
 {
     URL coreURL = url;
-    if (WTF::protocolIsJavaScript(coreURL))
+    if (coreURL.protocolIsJavaScript())
         return;
 
     auto* frame = m_frame.coreFrame();
@@ -2395,7 +2395,7 @@ void PDFPlugin::openWithNativeApplication()
         m_temporaryPDFUUID = createCanonicalUUIDString();
         ASSERT(m_temporaryPDFUUID);
 
-        m_frame.page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(m_suggestedFilename, m_frame.url(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);
+        m_frame.page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(m_suggestedFilename, m_frame.url().string(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);
         return;
     }
 

@@ -36,7 +36,7 @@ namespace WebCore {
 void ArchiveResourceCollection::addAllResources(Archive& archive)
 {
     for (auto& subresource : archive.subresources())
-        m_subresources.set(subresource->url(), subresource.ptr());
+        m_subresources.set(subresource->url().string(), subresource.ptr());
 
     for (auto& subframeArchive : archive.subframeArchives()) {
         ASSERT(subframeArchive->mainResource());
@@ -54,12 +54,12 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
 void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
     auto& url = resource->url();
-    m_subresources.set(url, WTFMove(resource));
+    m_subresources.set(url.string(), WTFMove(resource));
 }
 
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
-    return m_subresources.get(url);
+    return m_subresources.get(url.string());
 }
 
 RefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)

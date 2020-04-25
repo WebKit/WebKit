@@ -140,7 +140,7 @@
 - (NSString *)longDesc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::longdescAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::longdescAttr).string();
 }
 
 - (void)setLongDesc:(NSString *)newLongDesc
@@ -152,7 +152,7 @@
 - (NSString *)src
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string();
 }
 
 - (void)setSrc:(NSString *)newSrc
@@ -188,7 +188,7 @@
 - (NSString *)currentSrc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->currentSrc();
+    return IMPL->currentSrc().string();
 }
 
 - (NSString *)useMap
@@ -236,7 +236,7 @@
 - (NSString *)lowsrc
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::lowsrcAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::lowsrcAttr).string();
 }
 
 - (void)setLowsrc:(NSString *)newLowsrc

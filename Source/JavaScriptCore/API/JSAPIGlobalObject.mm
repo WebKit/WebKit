@@ -116,7 +116,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
 
     auto result = computeValidImportSpecifier(base, name);
     if (result)
-        return Identifier::fromString(vm, result.value());
+        return Identifier::fromString(vm, result.value().string());
 
     throwVMError(globalObject, scope, createError(globalObject, result.error()));
     return { };
@@ -137,7 +137,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
     };
 
     auto import = [&] (URL& url) {
-        auto result = importModule(globalObject, Identifier::fromString(vm, url), jsUndefined(), jsUndefined());
+        auto result = importModule(globalObject, Identifier::fromString(vm, url.string()), jsUndefined(), jsUndefined());
         if (UNLIKELY(scope.exception()))
             return reject(scope.exception());
         return result;

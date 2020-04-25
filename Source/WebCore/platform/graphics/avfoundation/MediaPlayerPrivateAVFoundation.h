@@ -299,7 +299,7 @@ protected:
     
     void invalidateCachedDuration();
 
-    const String& assetURL() const { return m_assetURL; }
+    const String& assetURL() const { return m_assetURL.string(); }
 
     MediaPlayer* player() { return m_player; }
     const MediaPlayer* player() const { return m_player; }

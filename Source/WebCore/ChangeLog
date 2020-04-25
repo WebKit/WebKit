@@ -1,3 +1,200 @@
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to remove automatic URL->String conversion operators
+        https://bugs.webkit.org/show_bug.cgi?id=211007
+
+        Reviewed by Darin Adler.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::requestFromInfo):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::urlString const):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::fetch):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::create):
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::stringValueForMSAA const):
+        * bindings/IDLTypes.h:
+        (WebCore::IDLString::isNullValue):
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::JSConverter<IDLDOMString>::convert):
+        (WebCore::Converter<IDLUSVString>::convert):
+        (WebCore::JSConverter<IDLUSVString>::convert):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        (WebCore::ScriptController::callInWorld):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateCursorElement):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::customCSSText const):
+        (WebCore::CSSImageValue::createDeprecatedCSSOMWrapper const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontFaceSrcURI):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::createExtensionsStyleSheet):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestModuleScript):
+        (WebCore::ScriptElement::executeClassicScript):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readWebArchive):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formAction const):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::canLoadURL const):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::shouldLoadLink):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::canLoadURL const):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterToken):
+        * inspector/InspectorAuditResourcesObject.cpp:
+        (WebCore::InspectorAuditResourcesObject::getResources):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildArrayForGroupings):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::responseReceived):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForCachedResource):
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::connectToWorkerInspectorProxy):
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::didFailLoading):
+        * inspector/agents/worker/ServiceWorkerAgent.cpp:
+        (WebCore::ServiceWorkerAgent::getInitializationInfo):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresources const):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::clientRedirectDestinationForHistory const):
+        (WebCore::DocumentLoader::serverRedirectDestinationForHistory const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::createWindow):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::currentItemShouldBeReplaced const):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        (WebCore::LinkLoader::prefetchIfNeeded):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::checkFormForMixedContent const):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation const):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestObject):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addResource):
+        (WebCore::ApplicationCache::resourceForRequest):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingEntry):
+        (WebCore::ApplicationCacheGroup::didFailLoadingEntry):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::shouldLoadResourceFromApplicationCache):
+        (WebCore::ApplicationCacheHost::getApplicationCacheFallbackResource):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        (WebCore::ApplicationCacheStorage::findInMemoryCacheGroup const):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::cacheGroupDestroyed):
+        (WebCore::ApplicationCacheStorage::cacheGroupMadeObsolete):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::deleteCacheForOrigin):
+        * loader/archive/ArchiveResourceCollection.cpp:
+        (WebCore::ArchiveResourceCollection::addAllResources):
+        (WebCore::ArchiveResourceCollection::addResource):
+        (WebCore::ArchiveResourceCollection::archiveResourceForURL):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::cachedResource const):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+        (WebCore::CachedResourceLoader::notifyFinished):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+        * page/Location.cpp:
+        (WebCore::Location::reload):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForProperties):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::shouldIgnoreHost):
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::shouldInheritSecurityOriginFromOwner):
+        (WebCore::SecurityPolicy::isBaseURLSchemeAllowed):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::assetURL const):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::writeBlobToFilePath):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::platformLazyInit):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI const):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::scope const):
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::hash const):
+        (WebCore::ServiceWorkerRegistrationKey::isMatching const):
+        * workers/service/context/ServiceWorkerDebuggable.cpp:
+        (WebCore::ServiceWorkerDebuggable::ServiceWorkerDebuggable):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::startScriptFetch):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2020-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add vertical-align: baseline support

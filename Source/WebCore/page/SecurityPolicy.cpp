@@ -176,13 +176,13 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     //
     // Note: We generalize this to invalid URLs because we treat such URLs as about:blank.
     // FIXME: We also allow some URLs like "about:BLANK". We should probably block navigation to these URLs, see rdar://problem/57966056.
-    return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), aboutBlankURL());
+    return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), aboutBlankURL().string());
 }
 
 bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)
 {
     // See <https://github.com/whatwg/html/issues/2249>.
-    return !url.protocolIsData() && !WTF::protocolIsJavaScript(url);
+    return !url.protocolIsData() && !url.protocolIsJavaScript();
 }
 
 void SecurityPolicy::setLocalLoadPolicy(LocalLoadPolicy policy)

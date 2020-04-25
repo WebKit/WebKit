@@ -131,7 +131,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
     ASSERT(m_frame.loader().documentLoader());
     if (m_frame.loader().documentLoader())
-        m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
+        m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url().string());
 
     if (auto* page = m_frame.page()) {
         if (!page->loadsSubresources()) {
@@ -147,7 +147,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
     if (!request.isNull() && oldRequestURL != request.url().string() && m_frame.loader().documentLoader())
-        m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
+        m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url().string());
 
     InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse);
 }

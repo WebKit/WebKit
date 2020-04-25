@@ -302,6 +302,11 @@ bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
     return defaultPortForProtocol(protocol) == port;
 }
 
+bool URL::protocolIsJavaScript() const
+{
+    return WTF::protocolIsJavaScript(string());
+}
+
 bool URL::protocolIs(const char* protocol) const
 {
     assertProtocolIsGood(protocol);

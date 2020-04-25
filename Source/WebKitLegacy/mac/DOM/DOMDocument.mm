@@ -214,7 +214,7 @@
 - (NSString *)URL
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->urlForBindings();
+    return IMPL->urlForBindings().string();
 }
 
 - (NSString *)cookie

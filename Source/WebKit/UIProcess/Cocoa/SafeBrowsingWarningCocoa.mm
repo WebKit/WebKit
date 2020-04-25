@@ -83,7 +83,7 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
 
 static NSURL *reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
 {
-    return URL({ }, makeString(reportAnErrorBase(result), "&url=", encodeWithURLEscapeSequences(url), "&hl=", defaultLanguage()));
+    return URL({ }, makeString(reportAnErrorBase(result), "&url=", encodeWithURLEscapeSequences(url.string()), "&hl=", defaultLanguage()));
 }
 
 static NSURL *malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)

@@ -175,7 +175,7 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
     auto socket = adoptRef(*new WebSocket(context));
     socket->suspendIfNeeded();
 
-    auto result = socket->connect(context.completeURL(url), protocols);
+    auto result = socket->connect(context.completeURL(url).string(), protocols);
     if (result.hasException())
         return result.releaseException();
 

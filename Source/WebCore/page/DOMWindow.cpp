@@ -2326,7 +2326,7 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, const URL& completedURL, Se
     if (!activeDocument->canNavigate(frame, completedURL))
         return;
 
-    if (isInsecureScriptAccess(activeWindow, completedURL))
+    if (isInsecureScriptAccess(activeWindow, completedURL.string()))
         return;
 
     // We want a new history item if we are processing a user gesture.
@@ -2458,7 +2458,7 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
     if (created)
         newFrame->page()->setOpenedByDOM();
 
-    if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
+    if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
         return noopener ? RefPtr<Frame> { nullptr } : newFrame;
 
     if (prepareDialogFunction)
@@ -2535,7 +2535,7 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
 
         URL completedURL = firstFrame->document()->completeURL(urlString);
 
-        if (targetFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
+        if (targetFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
             return &targetFrame->windowProxy();
 
         if (urlString.isEmpty())

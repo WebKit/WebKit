@@ -47,7 +47,7 @@ public:
     const SourceCode& source() const { return m_source; }
     intptr_t sourceID() const { return m_source.providerID(); }
     const SourceOrigin& sourceOrigin() const { return m_source.provider()->sourceOrigin(); }
-    const String& sourceURL() const { return m_source.provider()->url(); }
+    const String& sourceURL() const { return m_source.provider()->url().string(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
     JS_EXPORT_PRIVATE int lastLine() const;
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }

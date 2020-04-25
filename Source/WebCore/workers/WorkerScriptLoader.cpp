@@ -61,7 +61,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
     if (isServiceWorkerGlobalScope) {
         if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(workerGlobalScope).scriptResource(url)) {
             m_script.append(scriptResource->script);
-            m_responseURL = URL { URL { }, scriptResource->responseURL };
+            m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
             return WTF::nullopt;
         }

@@ -95,7 +95,7 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
     m_pendingValueChanges.add(key);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::SetItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::SetItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, value, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::setItem failed because storage map ID is invalid");
 }
@@ -114,7 +114,7 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
     m_pendingValueChanges.add(key);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::RemoveItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::RemoveItem(*m_mapID, sourceArea->identifier(), m_currentSeed, key, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::removeItem failed because storage map ID is invalid");
 }
@@ -129,7 +129,7 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
     m_map = StorageMap::create(m_quotaInBytes);
 
     if (m_mapID)
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::Clear(*m_mapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::StorageManagerSet::Clear(*m_mapID, sourceArea->identifier(), m_currentSeed, sourceFrame->document()->url().string()), 0);
     else
         RELEASE_LOG_ERROR(Storage, "StorageAreaMap::clear failed because storage map ID is invalid");
 }

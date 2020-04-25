@@ -114,7 +114,7 @@
 - (NSString *)src
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr);
+    return IMPL->getURLAttribute(WebCore::HTMLNames::srcAttr).string();
 }
 
 - (void)setSrc:(NSString *)newSrc

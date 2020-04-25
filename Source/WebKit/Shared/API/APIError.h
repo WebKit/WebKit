@@ -100,7 +100,7 @@ public:
 
     const WTF::String& domain() const { return m_platformError.domain(); }
     int errorCode() const { return m_platformError.errorCode(); }
-    const WTF::String& failingURL() const { return m_platformError.failingURL(); }
+    const WTF::String& failingURL() const { return m_platformError.failingURL().string(); }
     const WTF::String& localizedDescription() const { return m_platformError.localizedDescription(); }
 
     const WebCore::ResourceError& platformError() const { return m_platformError; }

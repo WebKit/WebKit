@@ -4591,7 +4591,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 
         type = source->attributeWithoutSynchronization(typeAttr);
         if (type.isEmpty() && mediaURL.protocolIsData())
-            type = mimeTypeFromDataURL(mediaURL);
+            type = mimeTypeFromDataURL(mediaURL.string());
         if (!type.isEmpty()) {
             if (shouldLog)
                 INFO_LOG(LOGIDENTIFIER, "'type' is ", type);

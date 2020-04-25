@@ -1213,12 +1213,12 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
             createdExtension = SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
 
         if (createdExtension) {
-            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
             return;
         }
 #else
         if (SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle)) {
-            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
             return;
         }
 #endif
@@ -1266,10 +1266,10 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         createdExtension = SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
     
     if (createdExtension)
-        process.assumeReadAccessToBaseURL(*this, baseURL);
+        process.assumeReadAccessToBaseURL(*this, baseURL.string());
 #else
     if (SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle))
-        process.assumeReadAccessToBaseURL(*this, baseURL);
+        process.assumeReadAccessToBaseURL(*this, baseURL.string());
 #endif
 }
 
@@ -1316,7 +1316,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     auto url = request.url();
     if (shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::Yes)
-        m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), url });
+        m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), url.string() });
 
     LoadParameters loadParameters;
     loadParameters.navigationID = navigation.navigationID();
@@ -1479,8 +1479,8 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
 
     auto transaction = m_pageLoadState.transaction();
 
-    m_pageLoadState.setPendingAPIRequest(transaction, { 0, unreachableURL });
-    m_pageLoadState.setUnreachableURL(transaction, unreachableURL);
+    m_pageLoadState.setPendingAPIRequest(transaction, { 0, unreachableURL.string() });
+    m_pageLoadState.setUnreachableURL(transaction, unreachableURL.string());
 
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
@@ -1490,14 +1490,14 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     loadParameters.data = htmlData;
     loadParameters.MIMEType = "text/html"_s;
     loadParameters.encodingName = encoding;
-    loadParameters.baseURLString = baseURL;
-    loadParameters.unreachableURLString = unreachableURL;
+    loadParameters.baseURLString = baseURL.string();
+    loadParameters.unreachableURLString = unreachableURL.string();
     loadParameters.provisionalLoadErrorURLString = m_failingProvisionalLoadURL;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
 
-    m_process->assumeReadAccessToBaseURL(*this, baseURL);
-    m_process->assumeReadAccessToBaseURL(*this, unreachableURL);
+    m_process->assumeReadAccessToBaseURL(*this, baseURL.string());
+    m_process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
     send(Messages::WebPage::LoadAlternateHTML(loadParameters));
     m_process->startResponsivenessTimer();
 }
@@ -4426,7 +4426,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         process->didStartProvisionalLoadForMainFrame(url);
         reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
         m_pageLoadStart = MonotonicTime::now();
-        m_pageLoadState.didStartProvisionalLoad(transaction, url, unreachableURL);
+        m_pageLoadState.didStartProvisionalLoad(transaction, url.string(), unreachableURL.string());
         pageClient().didStartProvisionalLoadForMainFrame();
         closeOverlayedViews();
     }
@@ -4461,7 +4461,7 @@ void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url, S
     auto transaction = m_pageLoadState.transaction();
 
     if (frame->isMainFrame())
-        m_pageLoadState.didExplicitOpen(transaction, url);
+        m_pageLoadState.didExplicitOpen(transaction, url.string());
 
     frame->didExplicitOpen(WTFMove(url), WTFMove(mimeType));
 
@@ -4495,7 +4495,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<
     auto transaction = m_pageLoadState.transaction();
 
     if (frame->isMainFrame())
-        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, request.url());
+        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, request.url().string());
 
     frame->didReceiveServerRedirectForProvisionalLoad(request.url());
 
@@ -4551,7 +4551,7 @@ void WebPageProxy::didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&& 
     // Internally, we handle this the same way we handle a server redirect. There are no client callbacks
     // for this, but if this is the main frame, clients may observe a change to the page's URL.
     if (frame->isMainFrame())
-        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, url);
+        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, url.string());
 
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 }
@@ -4906,7 +4906,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(FrameIdentifier frameID, ui
 
     bool isMainFrame = frame->isMainFrame();
     if (isMainFrame)
-        m_pageLoadState.didSameDocumentNavigation(transaction, url);
+        m_pageLoadState.didSameDocumentNavigation(transaction, url.string());
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5190,7 +5190,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         if (safeBrowsingWarning) {
             if (frame->isMainFrame() && safeBrowsingWarning->url().isValid()) {
                 auto transaction = m_pageLoadState.transaction();
-                m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url() });
+                m_pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url().string() });
                 m_pageLoadState.commitChanges();
             }
 
@@ -5570,7 +5570,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, Optio
 
         reply(newPage->webPageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 
-        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = URL({ }, mainFrameURL).host() == request.url().host();
+        newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = mainFrameURL.host() == request.url().host();
 
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;

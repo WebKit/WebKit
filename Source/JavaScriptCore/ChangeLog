@@ -1,3 +1,27 @@
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to remove automatic URL->String conversion operators
+        https://bugs.webkit.org/show_bug.cgi?id=211007
+
+        Reviewed by Darin Adler.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderResolve):
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+        (+[JSScript scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error:]):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::sourceParsed):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::sourceURL const):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSourceProviderShape::encode):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::sourceURL const):
+
 2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Locale validation/canonicalization should defer to ICU

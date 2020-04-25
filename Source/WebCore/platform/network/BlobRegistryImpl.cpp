@@ -330,7 +330,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
 void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
-    if (!populateBlobsForFileWriting({ blobURL }, blobsForWriting) || blobsForWriting.size() != 1) {
+    if (!populateBlobsForFileWriting({ blobURL.string() }, blobsForWriting) || blobsForWriting.size() != 1) {
         completionHandler(false);
         return;
     }

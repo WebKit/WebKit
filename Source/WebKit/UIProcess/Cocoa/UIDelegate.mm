@@ -916,8 +916,8 @@ static void requestUserMediaAuthorizationForFrame(const WebFrameProxy& frame, AP
         return;
     }
 
-    URL requestFrameURL { URL(), frame.url() };
-    URL mainFrameURL { URL(), mainFrame->url() };
+    URL requestFrameURL { frame.url() };
+    URL mainFrameURL { mainFrame->url() };
 
     [delegate _webView:&webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 }
@@ -1034,8 +1034,8 @@ void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
         protectedRequest->setUserMediaAccessInfo(authorized);
     });
 
-    URL requestFrameURL { URL(), frame.url() };
-    URL mainFrameURL { URL(), mainFrame->url() };
+    URL requestFrameURL { frame.url() };
+    URL mainFrameURL { mainFrame->url() };
 
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID().toUInt64() decisionHandler:decisionHandler.get()];
 }

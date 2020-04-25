@@ -54,14 +54,6 @@ static NSString *toNSString(JSC::SourceProvider* sourceProvider)
     return sourceString;
 }
 
-// Convert String to NSURL.
-static NSURL *toNSURL(const String& s)
-{
-    if (s.isEmpty())
-        return nil;
-    return URL({ }, s);
-}
-
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
 {
     WebCore::JSDOMWindow* window = static_cast<WebCore::JSDOMWindow*>(globalObject);
@@ -87,7 +79,7 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
     m_callingDelegate = true;
 
     NSString *nsSource = toNSString(sourceProvider);
-    NSURL *nsURL = toNSURL(sourceProvider->url());
+    NSURL *nsURL = sourceProvider->url();
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     JSC::VM& vm = lexicalGlobalObject->vm();

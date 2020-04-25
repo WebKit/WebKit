@@ -491,7 +491,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
             if (originatingFrame) {
                 actionDictionary = [[actionDictionary mutableCopy] autorelease];
-                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url()] forKey:WKActionOriginatingFrameURLKey];
+                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
             }
             
             [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];

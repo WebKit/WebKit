@@ -74,7 +74,7 @@ void NetscapePluginStream::didReceiveResponse(const URL& responseURL, uint32_t s
     // Starting the stream could cause the plug-in stream to go away so we keep a reference to it here.
     Ref<NetscapePluginStream> protect(*this);
 
-    start(responseURL, streamLength, lastModifiedTime, mimeType, headers);
+    start(responseURL.string(), streamLength, lastModifiedTime, mimeType, headers);
 }
 
 void NetscapePluginStream::didReceiveData(const char* bytes, int length)

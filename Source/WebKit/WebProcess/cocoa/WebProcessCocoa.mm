@@ -627,7 +627,7 @@ static NSURL *origin(WebPage& page)
 {
     auto& mainFrame = page.mainWebFrame();
 
-    URL mainFrameURL = { URL(), mainFrame.url() };
+    URL mainFrameURL = mainFrame.url();
     Ref<SecurityOrigin> mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
     String mainFrameOriginString;
     if (!mainFrameOrigin->isUnique())

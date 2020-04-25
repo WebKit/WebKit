@@ -179,6 +179,11 @@ inline WKURLRef toCopiedURLAPI(const String& string)
     return toAPI(&API::URL::create(string).leakRef());
 }
 
+inline WKURLRef toCopiedURLAPI(const URL& url)
+{
+    return toCopiedURLAPI(url.string());
+}
+
 inline String toWTFString(WKStringRef stringRef)
 {
     if (!stringRef)

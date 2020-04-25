@@ -1495,7 +1495,7 @@ public:
     void encode(Encoder& encoder, const SourceProvider& sourceProvider)
     {
         m_sourceOrigin.encode(encoder, sourceProvider.sourceOrigin());
-        m_url.encode(encoder, sourceProvider.url());
+        m_url.encode(encoder, sourceProvider.url().string());
         m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
         m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
         m_startPosition.encode(encoder, sourceProvider.startPosition());

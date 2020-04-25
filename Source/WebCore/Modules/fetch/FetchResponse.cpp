@@ -236,7 +236,7 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
         return;
     }
 
-    InspectorInstrumentation::willFetch(context, request.url());
+    InspectorInstrumentation::willFetch(context, request.url().string());
 
     auto response = adoptRef(*new FetchResponse(context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 

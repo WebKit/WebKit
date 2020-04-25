@@ -148,7 +148,8 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.contentSecurityPolicyImposition = element.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    ResourceRequest resourceRequest(m_document.completeURL(url));
+    // FIXME: Do we really need to call completeURL here?
+    ResourceRequest resourceRequest(m_document.completeURL(url.string()));
 
     if (auto mediaElement = element.mediaElement())
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*mediaElement));

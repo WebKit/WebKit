@@ -1,3 +1,62 @@
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to remove automatic URL->String conversion operators
+        https://bugs.webkit.org/show_bug.cgi?id=211007
+
+        Reviewed by Darin Adler.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument URL]):
+        * DOM/DOMHTMLAnchorElement.mm:
+        (-[DOMHTMLAnchorElement href]):
+        * DOM/DOMHTMLAreaElement.mm:
+        (-[DOMHTMLAreaElement href]):
+        * DOM/DOMHTMLEmbedElement.mm:
+        (-[DOMHTMLEmbedElement src]):
+        * DOM/DOMHTMLFormElement.mm:
+        (-[DOMHTMLFormElement action]):
+        * DOM/DOMHTMLFrameElement.mm:
+        (-[DOMHTMLFrameElement src]):
+        (-[DOMHTMLFrameElement location]):
+        * DOM/DOMHTMLHtmlElement.mm:
+        (-[DOMHTMLHtmlElement manifest]):
+        * DOM/DOMHTMLIFrameElement.mm:
+        (-[DOMHTMLIFrameElement src]):
+        * DOM/DOMHTMLImageElement.mm:
+        (-[DOMHTMLImageElement longDesc]):
+        (-[DOMHTMLImageElement src]):
+        (-[DOMHTMLImageElement currentSrc]):
+        (-[DOMHTMLImageElement lowsrc]):
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement src]):
+        * DOM/DOMHTMLLinkElement.mm:
+        (-[DOMHTMLLinkElement href]):
+        * DOM/DOMHTMLMediaElement.mm:
+        (-[DOMHTMLMediaElement src]):
+        (-[DOMHTMLMediaElement currentSrc]):
+        * DOM/DOMHTMLModElement.mm:
+        (-[DOMHTMLModElement cite]):
+        * DOM/DOMHTMLObjectElement.mm:
+        (-[DOMHTMLObjectElement data]):
+        * DOM/DOMHTMLQuoteElement.mm:
+        (-[DOMHTMLQuoteElement cite]):
+        * DOM/DOMHTMLScriptElement.mm:
+        (-[DOMHTMLScriptElement src]):
+        * DOM/DOMHTMLVideoElement.mm:
+        (-[DOMHTMLVideoElement poster]):
+        * DOM/DOMNode.mm:
+        (-[DOMNode baseURI]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::setTitle):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        * WebView/WebNotification.mm:
+        (-[WebNotification iconURL]):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+        (toNSURL): Deleted.
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         Move URL to use StringView when returning substrings of the URL

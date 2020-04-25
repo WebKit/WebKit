@@ -71,7 +71,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     URL cachePathURL([cachePath absoluteURL]);
     if (!cachePathURL.isLocalFile()) {
-        createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSString *>(cachePathURL)], error);
+        createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSURL *>(cachePathURL)], error);
         return false;
     }
 
@@ -127,7 +127,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     URL filePathURL([filePath absoluteURL]);
     if (!filePathURL.isLocalFile())
-        return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSString *>(filePathURL)], error);
+        return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSURL *>(filePathURL)], error);
 
     bool success = false;
     String systemPath = filePathURL.fileSystemPath();

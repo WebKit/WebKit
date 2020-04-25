@@ -1831,7 +1831,7 @@ namespace JSC {
         ScopeNode(ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VariableEnvironment&, FunctionStack&&, VariableEnvironment&, UniquedStringImplPtrSet&&, CodeFeatures, InnerArrowFunctionCodeFeatures, int numConstants);
 
         const SourceCode& source() const { return m_source; }
-        const String& sourceURL() const { return m_source.provider()->url(); }
+        const String& sourceURL() const { return m_source.provider()->url().string(); }
         intptr_t sourceID() const { return m_source.providerID(); }
 
         int startLine() const { return m_startLineNumber; }

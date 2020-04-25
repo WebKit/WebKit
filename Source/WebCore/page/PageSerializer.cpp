@@ -312,7 +312,7 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
         if (!image)
             continue;
 
-        addImageToResources(image, nullptr, document->completeURL(image->url()));
+        addImageToResources(image, nullptr, document->completeURL(image->url().string()));
     }
 }
 

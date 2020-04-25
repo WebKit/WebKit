@@ -163,8 +163,8 @@ void ApplicationCacheGroup::selectCache(Frame& frame, const URL& passedManifestU
             URL resourceURL { documentLoader.responseURL() };
             resourceURL.removeFragmentIdentifier();
 
-            ASSERT(mainResourceCache->resourceForURL(resourceURL));
-            auto& resource = *mainResourceCache->resourceForURL(resourceURL);
+            ASSERT(mainResourceCache->resourceForURL(resourceURL.string()));
+            auto& resource = *mainResourceCache->resourceForURL(resourceURL.string());
 
             bool inStorage = resource.storageID();
             resource.addType(ApplicationCacheResource::Foreign);
@@ -239,7 +239,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader& loader)
     case NoUpdate:
         ASSERT(!m_cacheBeingUpdated);
         associateDocumentLoaderWithCache(&loader, m_newestCache.get());
-        if (auto* resource = m_newestCache->resourceForURL(url)) {
+        if (auto* resource = m_newestCache->resourceForURL(url.string())) {
             if (!(resource->type() & ApplicationCacheResource::Master)) {
                 resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
@@ -257,7 +257,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader& loader)
         break;
     case Completed:
         ASSERT(m_associatedDocumentLoaders.contains(&loader));
-        if (auto* resource = m_cacheBeingUpdated->resourceForURL(url)) {
+        if (auto* resource = m_cacheBeingUpdated->resourceForURL(url.string())) {
             if (!(resource->type() & ApplicationCacheResource::Master)) {
                 resource->addType(ApplicationCacheResource::Master);
                 ASSERT(!resource->storageID());
@@ -496,16 +496,16 @@ void ApplicationCacheGroup::didFinishLoadingEntry(const URL& entryURL)
     NetworkLoadMetrics emptyMetrics;
     InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, emptyMetrics, nullptr);
 
-    ASSERT(m_pendingEntries.contains(entryURL));
+    ASSERT(m_pendingEntries.contains(entryURL.string()));
     
-    auto type = m_pendingEntries.take(entryURL);
+    auto type = m_pendingEntries.take(entryURL.string());
     
     ASSERT(m_cacheBeingUpdated);
 
     // Did we received a 304?
     if (!m_currentResource) {
         if (m_newestCache) {
-            ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(entryURL);
+            ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(entryURL.string());
             if (newestCachedResource) {
                 m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(entryURL, newestCachedResource->response(), type, &newestCachedResource->data(), newestCachedResource->path()));
                 m_entryLoader = nullptr;
@@ -548,9 +548,9 @@ void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::
     URL url(entryURL);
     url.removeFragmentIdentifier();
 
-    ASSERT(!m_currentResource || !m_pendingEntries.contains(url));
+    ASSERT(!m_currentResource || !m_pendingEntries.contains(url.string()));
     m_currentResource = nullptr;
-    m_pendingEntries.remove(url);
+    m_pendingEntries.remove(url.string());
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
         m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache update failed, because ", url.stringCenterEllipsizedToLength(), (m_entryLoader && m_entryLoader->hasRedirection() ? " was redirected." : " could not be fetched.")));
@@ -561,7 +561,7 @@ void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::
 
     if (error == ApplicationCacheResourceLoader::Error::NotFound) {
         // Skip this resource. It is dropped from the cache.
-        m_pendingEntries.remove(url);
+        m_pendingEntries.remove(url.string());
         startLoadingEntry();
         return;
     }
@@ -569,7 +569,7 @@ void ApplicationCacheGroup::didFailLoadingEntry(ApplicationCacheResourceLoader::
     // Copy the resource and its metadata from the newest application cache in cache group whose completeness flag is complete, and act
     // as if that was the fetched resource, ignoring the resource obtained from the network.
     ASSERT(m_newestCache);
-    ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(url);
+    ApplicationCacheResource* newestCachedResource = m_newestCache->resourceForURL(url.string());
     ASSERT(newestCachedResource);
     m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, &newestCachedResource->data(), newestCachedResource->path()));
     // Load the next resource, if any.
@@ -639,7 +639,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         addEntry(explicitURL, ApplicationCacheResource::Explicit);
 
     for (auto& fallbackURL : manifest.fallbackURLs)
-        addEntry(fallbackURL.second, ApplicationCacheResource::Fallback);
+        addEntry(fallbackURL.second.string(), ApplicationCacheResource::Fallback);
     
     m_cacheBeingUpdated->setOnlineWhitelist(manifest.onlineWhitelistedURLs);
     m_cacheBeingUpdated->setFallbackURLs(manifest.fallbackURLs);

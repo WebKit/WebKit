@@ -236,7 +236,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document.page(), mimeType, completedURL, success);
+        logPluginRequest(document.page(), mimeType, completedURL.string(), success);
         return success;
     }
 

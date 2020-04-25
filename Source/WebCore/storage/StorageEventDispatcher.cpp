@@ -56,7 +56,7 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
             frames.append(frame);
     }
 
-    dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
+    dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, sourceFrame->document()->url().string(), securityOrigin);
 }
 
 void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData& securityOrigin, Frame* sourceFrame)
@@ -77,7 +77,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
         }
     }
 
-    dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
+    dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url().string(), securityOrigin);
 }
 
 void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)

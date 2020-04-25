@@ -366,7 +366,7 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
         return completionHandler({ }, { });
 
     String title;
-    String url = PlatformPasteboard(pasteboardName).readURL(index, title);
+    String url = PlatformPasteboard(pasteboardName).readURL(index, title).string();
     completionHandler(WTFMove(url), WTFMove(title));
 }
 

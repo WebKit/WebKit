@@ -214,7 +214,7 @@ ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, boo
     } else
         request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
 
-    if (!protocolIsInHTTPFamily(request->url()))
+    if (!request->url().protocolIsInHTTPFamily())
         return Exception { TypeError, "Request url is not HTTP/HTTPS"_s };
 
     return request.releaseNonNull();

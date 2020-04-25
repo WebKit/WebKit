@@ -453,7 +453,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, bool should
 
         request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
         request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
-        request.setHTTPReferrer(originURL(origin));
+        request.setHTTPReferrer(originURL(origin).string());
         request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
         request.setPriority(ResourceLoadPriority::Low);
 

@@ -203,7 +203,7 @@ void ImageLoader::updateFromElement()
             newImage = new CachedImage(WTFMove(request), page->sessionID(), &page->cookieJar());
             newImage->setStatus(CachedResource::Pending);
             newImage->setLoading(true);
-            document.cachedResourceLoader().m_documentResources.set(newImage->url(), newImage.get());
+            document.cachedResourceLoader().m_documentResources.set(newImage->url().string(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else {
             if (m_lazyImageLoadState == LazyImageLoadState::None && isImageElement) {
@@ -507,7 +507,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         return;
     m_hasPendingBeforeLoadEvent = false;
     Ref<Document> originalDocument = element().document();
-    if (element().dispatchBeforeLoadEvent(m_image->url())) {
+    if (element().dispatchBeforeLoadEvent(m_image->url().string())) {
         bool didEventListenerDisconnectThisElement = !element().isConnected() || &element().document() != originalDocument.ptr();
         if (didEventListenerDisconnectThisElement)
             return;

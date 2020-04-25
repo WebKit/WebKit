@@ -163,7 +163,7 @@ bool HTMLPlugInImageElement::canLoadURL(const String& relativeURL) const
 // Note that unlike HTMLFrameElementBase::canLoadURL this uses SecurityOrigin::canAccess.
 bool HTMLPlugInImageElement::canLoadURL(const URL& completeURL) const
 {
-    if (WTF::protocolIsJavaScript(completeURL)) {
+    if (completeURL.protocolIsJavaScript()) {
         RefPtr<Document> contentDocument = this->contentDocument();
         if (contentDocument && !document().securityOrigin().canAccess(contentDocument->securityOrigin()))
             return false;

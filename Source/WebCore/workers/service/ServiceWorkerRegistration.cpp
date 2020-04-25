@@ -112,7 +112,7 @@ ServiceWorker* ServiceWorkerRegistration::getNewestWorker() const
 
 const String& ServiceWorkerRegistration::scope() const
 {
-    return m_registrationData.scopeURL;
+    return m_registrationData.scopeURL.string();
 }
 
 ServiceWorkerUpdateViaCache ServiceWorkerRegistration::updateViaCache() const

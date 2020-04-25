@@ -86,7 +86,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     auto& document = *frame.document();
 
     if (!document.securityOrigin().canDisplay(url)) {
-        FrameLoader::reportLocalLoadFailed(&frame, url);
+        FrameLoader::reportLocalLoadFailed(&frame, url.string());
         return;
     }
 
@@ -141,9 +141,9 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         request.setHTTPOrigin(origin);
     }
     frame.loader().addExtraFieldsToRequest(request, IsMainResource::No);
-    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL);
+    request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
     if (!SecurityPolicy::shouldHideReferrer(pingURL, frame.loader().outgoingReferrer()))
-        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url());
+        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url().string());
 
     startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::NoReferrer);
 }

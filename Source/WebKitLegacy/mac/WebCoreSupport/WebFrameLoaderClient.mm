@@ -1041,7 +1041,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if ([view historyDelegate]) {
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
         if (implementations->navigatedFunc) {
-            WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->url()
+            WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->url().string()
                 title:nilOrNSString(loader->title().string)
                 originalRequest:loader->originalRequestCopy().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)
                 response:loader->response().nsURLResponse()
@@ -1352,11 +1352,11 @@ void WebFrameLoaderClient::setTitle(const WebCore::StringWithDirection& title, c
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
         // FIXME: Use direction of title.
         if (implementations->setTitleFunc)
-            CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:inFrame:), (NSString *)title.string, (NSString *)url, m_webFrame.get());
+            CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:inFrame:), (NSString *)title.string, (NSString *)url.string(), m_webFrame.get());
         else if (implementations->deprecatedSetTitleFunc) {
-IGNORE_WARNINGS_BEGIN("undeclared-selector")
-            CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string, (NSString *)url);
-IGNORE_WARNINGS_END
+            IGNORE_WARNINGS_BEGIN("undeclared-selector")
+            CallHistoryDelegate(implementations->deprecatedSetTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string, (NSString *)url.string());
+            IGNORE_WARNINGS_END
         }
         return;
     }

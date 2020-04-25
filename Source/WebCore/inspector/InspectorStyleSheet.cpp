@@ -461,7 +461,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> buildArrayForGroup
 
         if (ruleGroupingPayload) {
             if (auto* parentStyleSheet = parentRule->parentStyleSheet()) {
-                String sourceURL = parentStyleSheet->contents().baseURL();
+                String sourceURL = parentStyleSheet->contents().baseURL().string();
                 if (sourceURL.isEmpty()) {
                     if (auto* ownerDocument = parentStyleSheet->ownerDocument())
                         sourceURL = InspectorDOMAgent::documentURLString(ownerDocument);
@@ -489,9 +489,9 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> buildArrayForGroup
 
                 String sourceURL;
                 if (auto* ownerDocument = styleSheet->ownerDocument())
-                    sourceURL = ownerDocument->url();
+                    sourceURL = ownerDocument->url().string();
                 else if (!styleSheet->contents().baseURL().isEmpty())
-                    sourceURL = styleSheet->contents().baseURL();
+                    sourceURL = styleSheet->contents().baseURL().string();
                 if (!sourceURL.isEmpty())
                     sheetGroupingPayload->setSourceURL(sourceURL);
 

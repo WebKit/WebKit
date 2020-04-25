@@ -211,7 +211,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
 bool HTMLLinkElement::shouldLoadLink()
 {
     Ref<Document> originalDocument = document();
-    if (!dispatchBeforeLoadEvent(getNonEmptyURLAttribute(hrefAttr)))
+    if (!dispatchBeforeLoadEvent(getNonEmptyURLAttribute(hrefAttr).string()))
         return false;
     // A beforeload handler might have removed us from the document or changed the document.
     if (!isConnected() || &document() != originalDocument.ptr())

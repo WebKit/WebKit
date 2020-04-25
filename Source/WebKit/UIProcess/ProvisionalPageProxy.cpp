@@ -140,7 +140,7 @@ void ProvisionalPageProxy::cancel()
         m_mainFrame->frameID(),
         WTF::nullopt,
     };
-    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL, error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
+    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)

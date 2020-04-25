@@ -429,7 +429,7 @@ bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const Resource
 
     // If the resource's URL is an master entry, the manifest, an explicit entry, or a fallback entry
     // in the application cache, then get the resource from the cache (instead of fetching it).
-    resource = cache->resourceForURL(request.url());
+    resource = cache->resourceForURL(request.url().string());
 
     // Resources that match fallback namespaces or online whitelist entries are fetched from the network,
     // unless they are also cached.
@@ -461,7 +461,7 @@ bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceReq
     if (!cache->urlMatchesFallbackNamespace(request.url(), &fallbackURL))
         return false;
 
-    resource = cache->resourceForURL(fallbackURL);
+    resource = cache->resourceForURL(fallbackURL.string());
     ASSERT(resource);
     return true;
 }

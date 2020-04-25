@@ -59,7 +59,7 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient& client)
     CachedResource::didAddClient(client);
 
     if (!isLoading())
-        static_cast<CachedStyleSheetClient&>(client).setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
+        static_cast<CachedStyleSheetClient&>(client).setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
@@ -117,7 +117,7 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker<CachedStyleSheetClient> w(m_clients);
     while (CachedStyleSheetClient* c = w.next())
-        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
+        c->setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 String CachedCSSStyleSheet::responseMIMEType() const

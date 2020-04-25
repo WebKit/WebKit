@@ -59,7 +59,7 @@ ExtensionStyleSheets::ExtensionStyleSheets(Document& document)
 
 static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url, const String& text, UserStyleLevel level)
 {
-    auto contents = StyleSheetContents::create(url, CSSParserContext(document, url));
+    auto contents = StyleSheetContents::create(url.string(), CSSParserContext(document, url));
     auto styleSheet = CSSStyleSheet::create(contents.get(), document, true);
 
     contents->setIsUserStyleSheet(level == UserStyleUserLevel);

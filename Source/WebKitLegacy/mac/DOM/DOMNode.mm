@@ -181,7 +181,7 @@ DOMNode *kit(Node* value)
 - (NSString *)baseURI
 {
     JSMainThreadNullState state;
-    return unwrap(*self).baseURI();
+    return unwrap(*self).baseURI().string();
 }
 
 - (NSString *)textContent

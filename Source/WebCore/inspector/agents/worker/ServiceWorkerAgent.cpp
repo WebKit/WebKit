@@ -59,7 +59,7 @@ void ServiceWorkerAgent::getInitializationInfo(ErrorString&, RefPtr<Inspector::P
     info = Inspector::Protocol::ServiceWorker::Configuration::create()
         .setTargetId(m_serviceWorkerGlobalScope.identifier())
         .setSecurityOrigin(m_serviceWorkerGlobalScope.securityOrigin()->toRawString())
-        .setUrl(m_serviceWorkerGlobalScope.thread().contextData().scriptURL)
+        .setUrl(m_serviceWorkerGlobalScope.thread().contextData().scriptURL.string())
         .setContent(m_serviceWorkerGlobalScope.thread().contextData().script)
         .release();
 }

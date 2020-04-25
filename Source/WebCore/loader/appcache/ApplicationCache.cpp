@@ -86,8 +86,8 @@ void ApplicationCache::addResource(Ref<ApplicationCacheResource>&& resource)
 {
     auto& url = resource->url();
 
-    ASSERT(!URL({ }, url).hasFragmentIdentifier());
-    ASSERT(!m_resources.contains(url));
+    ASSERT(!url.hasFragmentIdentifier());
+    ASSERT(!m_resources.contains(url.string()));
 
     if (m_storageID) {
         ASSERT(!resource->storageID());
@@ -99,7 +99,7 @@ void ApplicationCache::addResource(Ref<ApplicationCacheResource>&& resource)
 
     m_estimatedSizeInStorage += resource->estimatedSizeInStorage();
 
-    m_resources.set(url, WTFMove(resource));
+    m_resources.set(url.string(), WTFMove(resource));
 }
 
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
@@ -121,7 +121,7 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
 
     URL url(request.url());
     url.removeFragmentIdentifier();
-    return resourceForURL(url);
+    return resourceForURL(url.string());
 }
 
 void ApplicationCache::setOnlineWhitelist(const Vector<URL>& onlineWhitelist)

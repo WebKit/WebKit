@@ -614,7 +614,7 @@ bool HistoryController::currentItemShouldBeReplaced() const
     //  "If the browsing context's session history contains only one Document,
     //   and that was the about:blank Document created when the browsing context
     //   was created, then the navigation must be done with replacement enabled."
-    return m_currentItem && !m_previousItem && equalIgnoringASCIICase(m_currentItem->urlString(), aboutBlankURL());
+    return m_currentItem && !m_previousItem && equalIgnoringASCIICase(m_currentItem->urlString(), aboutBlankURL().string());
 }
 
 void HistoryController::clearPreviousItem()

@@ -184,7 +184,7 @@ FrameInfoData WebFrame::info() const
     FrameInfoData info {
         isMainFrame(),
         // FIXME: This should use the full request.
-        ResourceRequest(URL(URL(), url())),
+        ResourceRequest(url()),
         SecurityOriginData::fromFrame(m_coreFrame),
         m_frameID,
         parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : WTF::nullopt,

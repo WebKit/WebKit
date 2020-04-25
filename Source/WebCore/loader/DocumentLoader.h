@@ -267,11 +267,11 @@ public:
     // item were created. This allows WebKit to link history items reflecting
     // redirects into a chain from start to finish.
     String clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
-    String clientRedirectDestinationForHistory() const { return urlForHistory(); }
+    String clientRedirectDestinationForHistory() const { return urlForHistory().string(); }
     void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
     
     String serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == aboutBlankURL()) ? String() : urlForHistory().string(); } // null if no server redirect occurred.
-    String serverRedirectDestinationForHistory() const { return url(); }
+    String serverRedirectDestinationForHistory() const { return url().string(); }
 
     bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }
     void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }

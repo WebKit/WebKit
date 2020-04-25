@@ -58,7 +58,7 @@ static bool schemeRequiresHost(const URL& url)
 
 bool SecurityOrigin::shouldIgnoreHost(const URL& url)
 {
-    return url.protocolIsData() || url.protocolIsAbout() || protocolIsJavaScript(url) || url.protocolIs("file");
+    return url.protocolIsData() || url.protocolIsAbout() || url.protocolIsJavaScript() || url.protocolIs("file");
 }
 
 bool SecurityOrigin::shouldUseInnerURL(const URL& url)

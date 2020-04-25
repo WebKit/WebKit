@@ -160,7 +160,7 @@ void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy* p
 
     m_connectedProxies.set(proxy->identifier(), proxy);
 
-    m_frontendDispatcher->workerCreated(proxy->identifier(), proxy->url());
+    m_frontendDispatcher->workerCreated(proxy->identifier(), proxy->url().string());
 }
 
 void InspectorWorkerAgent::disconnectFromWorkerInspectorProxy(WorkerInspectorProxy* proxy)

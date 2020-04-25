@@ -401,7 +401,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
 {
     if (!shouldScheduleNavigation())
         return false;
-    if (WTF::protocolIsJavaScript(url))
+    if (url.protocolIsJavaScript())
         return true;
     return NavigationDisabler::isNavigationAllowed(m_frame);
 }
@@ -453,7 +453,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
     if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame.document()->url(), url)) {
-        ResourceRequest resourceRequest { m_frame.document()->completeURL(url), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
+        ResourceRequest resourceRequest { m_frame.document()->completeURL(url.string()), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         auto* frame = lexicalFrameFromCommonVM();
         auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
         

@@ -1143,8 +1143,8 @@ private:
             }
             if (auto* blob = JSBlob::toWrapped(vm, obj)) {
                 write(BlobTag);
-                m_blobURLs.append(blob->url());
-                write(blob->url());
+                m_blobURLs.append(blob->url().string());
+                write(blob->url().string());
                 write(blob->type());
                 write(blob->size());
                 return true;
@@ -1445,9 +1445,9 @@ private:
 
     void write(const File& file)
     {
-        m_blobURLs.append(file.url());
+        m_blobURLs.append(file.url().string());
         write(file.path());
-        write(file.url());
+        write(file.url().string());
         write(file.type());
         write(file.name());
         write(static_cast<double>(file.lastModifiedOverride().valueOr(-1)));

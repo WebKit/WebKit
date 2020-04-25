@@ -144,7 +144,7 @@ void ScriptDebugServer::sourceParsed(JSGlobalObject* globalObject, SourceProvide
         auto data = sourceProvider->source().toString();
         auto firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
         dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
-            listener.failedToParseSource(url, data, firstLine, errorLine, errorMessage);
+            listener.failedToParseSource(url.string(), data, firstLine, errorLine, errorMessage);
         });
         return;
     }
@@ -154,7 +154,7 @@ void ScriptDebugServer::sourceParsed(JSGlobalObject* globalObject, SourceProvide
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify ScriptDebugListener::Script to use SourceProvider
     ScriptDebugListener::Script script;
     script.sourceProvider = sourceProvider;
-    script.url = sourceProvider->url();
+    script.url = sourceProvider->url().string();
     script.source = sourceProvider->source().toString();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();

@@ -248,9 +248,9 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadResponsiveImagesEnabled() && type == CachedResource::Type::ImageResource && !params.imageSrcSet.isEmpty()) {
         auto sourceSize = SizesAttributeParser(params.imageSizes, document).length();
         auto candidate = bestFitSourceForImageAttributes(document.deviceScaleFactor(), params.href.string(), params.imageSrcSet, sourceSize);
-        url = document.completeURL(URL({ }, candidate.string.toString()));
+        url = document.completeURL(URL({ }, candidate.string.toString()).string());
     } else
-        url = document.completeURL(params.href);
+        url = document.completeURL(params.href.string());
 
     if (!url.isValid()) {
         if (params.imageSrcSet.isEmpty())
@@ -305,7 +305,7 @@ void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& do
     options.mode = FetchOptions::Mode::Navigate;
     options.serviceWorkersMode = ServiceWorkersMode::None;
     options.cachingPolicy = CachingPolicy::DisallowCaching;
-    m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href) }, options, priority)).value_or(nullptr);
+    m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href.string()) }, options, priority)).value_or(nullptr);
     if (m_cachedLinkResource)
         m_cachedLinkResource->addClient(*this);
 }

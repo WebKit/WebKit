@@ -1348,7 +1348,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagDownloadImageToDisk:
 #if PLATFORM(MAC)
-            if (WTF::protocolIs(m_context.hitTestResult().absoluteImageURL(), "file"))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"))
                 shouldEnable = false;
 #endif
             break;
@@ -1363,7 +1363,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagDownloadVideoToDisk());
             else
                 item.setTitle(contextMenuItemTagDownloadAudioToDisk());
-            if (WTF::protocolIs(m_context.hitTestResult().absoluteImageURL(), "file"))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"))
                 shouldEnable = false;
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:

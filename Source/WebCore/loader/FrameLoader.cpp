@@ -469,7 +469,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
         return;
     }
 
-    if (WTF::protocolIsJavaScript(submission->action())) {
+    if (submission->action().protocolIsJavaScript()) {
         if (!m_frame.document()->contentSecurityPolicy()->allowFormAction(URL(submission->action())))
             return;
         m_isExecutingJavaScriptFormAction = true;
@@ -736,7 +736,7 @@ void FrameLoader::receivedFirstData()
     if (!parseMetaHTTPEquivRefresh(documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
         return;
     auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
-    if (!WTF::protocolIsJavaScript(completedURL))
+    if (!completedURL.protocolIsJavaScript())
         m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
     else {
         auto message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
@@ -1191,7 +1191,7 @@ void FrameLoader::loadInSameDocument(const URL& url, SerializedScriptValue* stat
     m_client->dispatchDidPopStateWithinPage();
     
     if (hashChange) {
-        m_frame.document()->enqueueHashchangeEvent(oldURL, url);
+        m_frame.document()->enqueueHashchangeEvent(oldURL.string(), url.string());
         m_client->dispatchDidChangeLocationWithinPage();
     }
     
@@ -3558,7 +3558,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     if (!page)
         return;
 
-    if (!resource.shouldSendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource.url()))
+    if (!resource.shouldSendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource.url().string()))
         return;
 
     // Main resource delegate messages are synthesized in MainResourceLoader, so we must not send them here.
@@ -3568,13 +3568,13 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     if (!page->areMemoryCacheClientCallsEnabled()) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(*page, m_documentLoader.get(), &resource);
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource.resourceRequest());
-        m_documentLoader->didTellClientAboutLoad(resource.url());
+        m_documentLoader->didTellClientAboutLoad(resource.url().string());
         return;
     }
 
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), newRequest, resource.response(), resource.encodedSize())) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(*page, m_documentLoader.get(), &resource);
-        m_documentLoader->didTellClientAboutLoad(resource.url());
+        m_documentLoader->didTellClientAboutLoad(resource.url().string());
         return;
     }
 
@@ -4052,7 +4052,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     created = false;
 
     // FIXME: Provide line number information with respect to the opener's document.
-    if (WTF::protocolIsJavaScript(request.resourceRequest().url()) && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url(), { }))
+    if (request.resourceRequest().url().protocolIsJavaScript() && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url().string(), { }))
         return nullptr;
 
     if (!request.frameName().isEmpty() && !equalIgnoringASCIICase(request.frameName(), "_blank")) {

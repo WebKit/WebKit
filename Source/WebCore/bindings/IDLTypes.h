@@ -31,7 +31,7 @@
 #include <wtf/Brigand.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/URL.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLAny.h"
@@ -132,6 +132,7 @@ template<typename StringType> struct IDLString : IDLType<StringType> {
     static bool isNullValue(const StringType& value) { return value.isNull(); }
     static bool isNullValue(const UncachedString& value) { return value.string.isNull(); }
     static bool isNullValue(const OwnedString& value) { return value.string.isNull(); }
+    static bool isNullValue(const URL& value) { return value.isNull(); }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 struct IDLDOMString : IDLString<String> { };

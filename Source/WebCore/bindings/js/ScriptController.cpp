@@ -126,7 +126,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     JSLockHolder lock(world.vm());
 
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
-    String sourceURL = jsSourceCode.provider()->url();
+    String sourceURL = jsSourceCode.provider()->url().string();
 
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occurred or the type couldn't be converted.
@@ -240,7 +240,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
     Ref<Frame> protector(m_frame);
 
-    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
+    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     auto returnValue = moduleRecord.evaluate(&lexicalGlobalObject);
     InspectorInstrumentation::didEvaluateScript(m_frame);
 
@@ -642,7 +642,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
     auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
     const auto& jsSourceCode = sourceCode.jsSourceCode();
 
-    String sourceURL = jsSourceCode.provider()->url();
+    String sourceURL = jsSourceCode.provider()->url().string();
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
 
@@ -806,13 +806,13 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
 
 bool ScriptController::executeIfJavaScriptURL(const URL& url, RefPtr<SecurityOrigin> requesterSecurityOrigin, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
 {
-    if (!WTF::protocolIsJavaScript(url))
+    if (!url.protocolIsJavaScript())
         return false;
 
     if (requesterSecurityOrigin && !requesterSecurityOrigin->canAccess(m_frame.document()->securityOrigin()))
         return true;
 
-    if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url(), eventHandlerPosition().m_line))
+    if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url().string(), eventHandlerPosition().m_line))
         return true;
 
     // We need to hold onto the Frame here because executing script can

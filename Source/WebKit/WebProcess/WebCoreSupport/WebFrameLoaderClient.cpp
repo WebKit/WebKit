@@ -375,7 +375,7 @@ void WebFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url, dou
         return;
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().willPerformClientRedirectForFrame(*webPage, m_frame, url, interval, fireDate);
+    webPage->injectedBundleLoaderClient().willPerformClientRedirectForFrame(*webPage, m_frame, url.string(), interval, fireDate);
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::WillPerformClientRedirectForFrame(m_frame->frameID(), url.string(), interval, lockBackForwardList));
@@ -594,7 +594,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
     // Notify the UIProcess.
     WebCore::Frame* coreFrame = m_frame->coreFrame();
-    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
@@ -1851,7 +1851,7 @@ bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const URL& url
     if (!webPage)
         return false;
 
-    return webPage->injectedBundleLoaderClient().shouldForceUniversalAccessFromLocalURL(*webPage, url);
+    return webPage->injectedBundleLoaderClient().shouldForceUniversalAccessFromLocalURL(*webPage, url.string());
 }
 
 Ref<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()

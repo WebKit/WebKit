@@ -1168,7 +1168,7 @@ void PluginView::performURLRequest(URLRequest* request)
     Ref<PluginView> protect(*this);
 
     // First, check if this is a javascript: url.
-    if (WTF::protocolIsJavaScript(request->request().url())) {
+    if (request->request().url().protocolIsJavaScript()) {
         performJavaScriptURLRequest(request);
         return;
     }
@@ -1233,7 +1233,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
 
 void PluginView::performJavaScriptURLRequest(URLRequest* request)
 {
-    ASSERT(WTF::protocolIsJavaScript(request->request().url()));
+    ASSERT(request->request().url().protocolIs("javasript"));
 
     RefPtr<Frame> frame = m_pluginElement->document().frame();
     if (!frame)

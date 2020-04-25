@@ -157,7 +157,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
         return;
 
     resourceData->setFrameId(frameId);
-    resourceData->setURL(response.url());
+    resourceData->setURL(response.url().string());
     resourceData->setHTTPStatusCode(response.httpStatusCode());
     resourceData->setType(type);
     resourceData->setForceBufferData(forceBufferData);

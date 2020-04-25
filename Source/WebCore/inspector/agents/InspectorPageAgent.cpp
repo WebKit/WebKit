@@ -530,7 +530,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector
 
         for (auto& url : allResourcesURLsForFrame(frame)) {
             Vector<Cookie> rawCookiesForURLInDocument;
-            if (!document->page()->cookieJar().getRawCookies(*document, URL({ }, url), rawCookiesForURLInDocument))
+            if (!document->page()->cookieJar().getRawCookies(*document, url, rawCookiesForURLInDocument))
                 continue;
 
             for (auto& rawCookieForURLInDocument : rawCookiesForURLInDocument)
@@ -723,7 +723,7 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
             if (auto textContent = InspectorNetworkAgent::textContentForCachedResource(*cachedResource)) {
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
                 if (matchesCount)
-                    result->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url(), matchesCount));
+                    result->addItem(buildObjectForSearchResult(frameId(frame), cachedResource->url().string(), matchesCount));
             }
         }
     }
@@ -924,7 +924,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
 
     for (auto* cachedResource : cachedResourcesForFrame(frame)) {
         auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
-            .setUrl(cachedResource->url())
+            .setUrl(cachedResource->url().string())
             .setType(cachedResourceTypeJSON(*cachedResource))
             .setMimeType(cachedResource->response().mimeType())
             .release();

@@ -190,7 +190,7 @@ CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) 
 CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
 {
     ASSERT(!MemoryCache::shouldRemoveFragmentIdentifier(url));
-    return m_documentResources.get(url).get();
+    return m_documentResources.get(url.string()).get();
 }
 
 Frame* CachedResourceLoader::frame() const
@@ -1005,10 +1005,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
     if (document() && !document()->loadEventFinished() && !resource->resourceRequest().url().protocolIsData())
-        m_validatedURLs.add(resource->resourceRequest().url());
+        m_validatedURLs.add(resource->resourceRequest().url().string());
 
     ASSERT(resource->url() == url.string());
-    m_documentResources.set(resource->url(), resource);
+    m_documentResources.set(resource->url().string(), resource);
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     frame.loader().client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
 #endif
@@ -1212,7 +1212,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     }
 
     // During the initial load, avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
-    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
+    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url().string()))
         return Use;
 
     // CachePolicyReload always reloads
@@ -1418,7 +1418,7 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 void CachedResourceLoader::notifyFinished(const CachedResource& resource)
 {
     if (isSVGImageCachedResource(&resource))
-        m_cachedSVGImagesURLs.add(resource.url());
+        m_cachedSVGImagesURLs.add(resource.url().string());
 }
 
 Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const

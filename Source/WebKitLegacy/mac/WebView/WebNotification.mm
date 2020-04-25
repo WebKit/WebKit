@@ -116,7 +116,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)iconURL
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->icon();
+    return core(self)->icon().string();
 #else
     return nil;
 #endif

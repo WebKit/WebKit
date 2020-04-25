@@ -72,7 +72,7 @@ bool HTMLFrameElementBase::canLoadURL(const String& relativeURL) const
 // Note that unlike HTMLPlugInImageElement::canLoadURL this uses ScriptController::canAccessFromCurrentOrigin.
 bool HTMLFrameElementBase::canLoadURL(const URL& completeURL) const
 {
-    if (WTF::protocolIsJavaScript(completeURL)) {
+    if (completeURL.protocolIsJavaScript()) {
         RefPtr<Document> contentDocument = this->contentDocument();
         if (contentDocument && !ScriptController::canAccessFromCurrentOrigin(contentDocument->frame(), document()))
             return false;
