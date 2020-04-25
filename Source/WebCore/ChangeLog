@@ -1,3 +1,21 @@
+2020-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add vertical-align: baseline support
+        https://bugs.webkit.org/show_bug.cgi?id=211024
+
+        Reviewed by Antti Koivisto.
+
+        Adjust the padding with the baseline offset when the cell is baseline aligned (as opposed to the initial value of 'middle').
+
+        Test: fast/layoutformattingcontext/table-basic-row-vertical-align-baseline.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Cell::setBaselineOffset):
+        (WebCore::Layout::TableGrid::Cell::baselineOffset const):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         Move URL to use StringView when returning substrings of the URL

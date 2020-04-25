@@ -160,6 +160,9 @@ public:
         SlotPosition position() const { return m_position; }
         CellSpan span() const { return m_span; }
 
+        void setBaselineOffset(InlineLayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
+        InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
+
         bool isFixedWidth() const;
 
         const ContainerBox& box() const { return *m_layoutBox.get(); }
@@ -168,6 +171,7 @@ public:
         WeakPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
+        InlineLayoutUnit m_baselineOffset;
     };
 
     class Slot {

@@ -68,18 +68,39 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
     auto& rowList = grid.rows().list();
     // Final table cell layout. At this point all percentage values can be resolved.
     for (auto& cell : grid.cells()) {
-        auto& cellDisplayBox = formattingState().displayBox(cell->box());
+        auto& cellBox = cell->box();
+        auto& cellDisplayBox = formattingState().displayBox(cellBox);
         cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop());
         cellDisplayBox.setLeft(columnList[cell->startColumn()].logicalLeft());
         auto rowHeight = rowList[cell->startRow()].logicalHeight();
         layoutCell(*cell, availableHorizontalSpace, rowHeight);
+        
         // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
         // use some kind of intrinsic padding similar to RenderTableCell.
-        auto verticalBorder = cellDisplayBox.verticalBorder();
-        auto contentHeight = cellDisplayBox.contentBoxHeight();
-        auto intrinsicVerticalPadding = std::max(0_lu, rowHeight - verticalBorder - contentHeight);
-        // FIXME: Take vertical-align into account here.
-        cellDisplayBox.setVerticalPadding({ intrinsicVerticalPadding / 2, intrinsicVerticalPadding / 2 });
+        auto paddingTop = cellDisplayBox.paddingTop().valueOr(LayoutUnit { });
+        auto paddingBottom = cellDisplayBox.paddingBottom().valueOr(LayoutUnit { });
+        auto intrinsicPaddingTop = LayoutUnit { };
+        auto intrinsicPaddingBottom = LayoutUnit { };
+
+        switch (cellBox.style().verticalAlign()) {
+        case VerticalAlign::Middle: {
+            auto intrinsicVerticalPadding = std::max(0_lu, rowHeight - cellDisplayBox.verticalMarginBorderAndPadding() - cellDisplayBox.contentBoxHeight()); 
+            intrinsicPaddingTop = intrinsicVerticalPadding / 2;
+            intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
+            break;
+        }
+        case VerticalAlign::Baseline: {
+            auto rowBaselineOffset = LayoutUnit { rowList[cell->startRow()].baselineOffset() };
+            auto cellBaselineOffset = LayoutUnit { cell->baselineOffset() };
+            intrinsicPaddingTop = std::max(0_lu, rowBaselineOffset - cellBaselineOffset - cellDisplayBox.borderTop());
+            intrinsicPaddingBottom = std::max(0_lu, rowHeight - cellDisplayBox.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellDisplayBox.contentBoxHeight());
+            break;
+        }
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        }
+        cellDisplayBox.setVerticalPadding({ paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
     }
 }
 
@@ -490,10 +511,11 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
             layoutCell(slot.cell(), availableHorizontalSpace);
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
-            auto& cellBox = slot.cell().box();
-            auto cellBaselineOffset = geometry().usedBaselineForCell(cellBox);
-            maximumColumnAscent = std::max(maximumColumnAscent, cellBaselineOffset);
-            maximumColumnDescent = std::max(maximumColumnDescent, geometryForBox(cellBox).height() - cellBaselineOffset);
+            auto& cell = slot.cell();
+            auto& cellBox = cell.box();
+            cell.setBaselineOffset(geometry().usedBaselineForCell(cellBox));
+            maximumColumnAscent = std::max(maximumColumnAscent, cell.baselineOffset());
+            maximumColumnDescent = std::max(maximumColumnDescent, geometryForBox(cellBox).height() - cell.baselineOffset());
         }
         // <tr style="height: 10px"> is considered as min height.
         auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }).valueOr(LayoutUnit { });

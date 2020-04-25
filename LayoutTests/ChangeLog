@@ -1,3 +1,13 @@
+2020-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add vertical-align: baseline support
+        https://bugs.webkit.org/show_bug.cgi?id=211024
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-basic-row-vertical-align-baseline-expected.txt: Added.
+        * fast/layoutformattingcontext/table-basic-row-vertical-align-baseline.html: Added.
+
 2020-04-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] KeyframeEffect should ensure its target remains alive
