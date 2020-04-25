@@ -1,5 +1,67 @@
 2020-04-24  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r260486. rdar://problem/62349885
+
+    Fix MACCATALYST build failures
+    https://bugs.webkit.org/show_bug.cgi?id=210815
+    
+    Reviewed by Tim Horton.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    No new tests, no functional change.
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (-[WKWebView _isShowingVideoPictureInPicture]):
+    (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::applicationDidBecomeActive):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnable.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260486 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-21  Peng Liu  <peng.liu6@apple.com>
+
+            Fix MACCATALYST build failures
+            https://bugs.webkit.org/show_bug.cgi?id=210815
+
+            Reviewed by Tim Horton.
+
+            * Configurations/FeatureDefines.xcconfig:
+            * UIProcess/API/ios/WKWebViewIOS.mm:
+            (-[WKWebView _isShowingVideoPictureInPicture]):
+            (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::applicationDidBecomeActive):
+
+2020-04-24  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r260412. rdar://problem/62349885
 
     Fix build failures when video fullscreen and picture-in-picture is disabled

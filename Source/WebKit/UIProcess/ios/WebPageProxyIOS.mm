@@ -741,7 +741,7 @@ void WebPageProxy::applicationWillEnterForegroundForMedia()
 
 void WebPageProxy::applicationDidBecomeActive()
 {
-#if HAVE(AVKIT)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->applicationDidBecomeActive();
 #endif

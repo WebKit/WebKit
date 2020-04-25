@@ -47,7 +47,7 @@
 
 using namespace WebCore;
 
-#if !HAVE(AVKIT)
+#if !(ENABLE(VIDEO_PRESENTATION_MODE) && HAVE(AVKIT))
 
 @implementation WebVideoFullscreenController
 - (void)setVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement
