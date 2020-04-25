@@ -47,8 +47,8 @@ public:
 private:
     class Geometry : public FormattingContext::Geometry {
     public:
-        ContentHeightAndMargin tableCellHeightAndMargin(const Box&) const;
-        Optional<LayoutUnit> computedColumnWidth(const Box& columnBox) const;
+        LayoutUnit cellHeigh(const ContainerBox&) const;
+        Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
         FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const ContainerBox& cellBox);
         InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
 
@@ -61,17 +61,15 @@ private:
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void layoutCell(const TableGrid::Cell&, InvalidationState&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight = WTF::nullopt);
-    void positionTableCells();
-    void setComputedGeometryForRows();
-    void setComputedGeometryForSections();
+    void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight = WTF::nullopt);
+    void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace);
+    void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
+    void setUsedGeometryForSections(LayoutUnit availableHorizontalSpace);
 
     void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace);
     void computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
-
-    void initializeDisplayBoxToBlank(Display::Box&) const;
 
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }

@@ -1,3 +1,29 @@
+2020-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Cleanup TableFormattingContext::layoutInFlowContent
+        https://bugs.webkit.org/show_bug.cgi?id=211023
+
+        Reviewed by Sam Weinig.
+
+        Move some code to dedicated functions.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+        (WebCore::Layout::TableFormattingContext::initializeDisplayBoxToBlank const): Deleted.
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForRows): Deleted.
+        (WebCore::Layout::TableFormattingContext::setComputedGeometryForSections): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::cellHeigh const):
+        (WebCore::Layout::TableFormattingContext::Geometry::computedColumnWidth const):
+        (WebCore::Layout::TableFormattingContext::Geometry::tableCellHeightAndMargin const): Deleted.
+
 2020-04-25  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r260247.

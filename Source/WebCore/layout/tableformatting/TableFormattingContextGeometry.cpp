@@ -36,19 +36,15 @@
 namespace WebCore {
 namespace Layout {
 
-ContentHeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const Box& layoutBox) const
+LayoutUnit TableFormattingContext::Geometry::cellHeigh(const ContainerBox& cellBox) const
 {
-    ASSERT(layoutBox.isInFlow());
-
-    auto height = computedContentHeight(layoutBox);
-    if (!height)
-        height = contentHeightForFormattingContextRoot(layoutBox);
-
-    // Margins don't apply to internal table elements.
-    return ContentHeightAndMargin { *height, { } };
+    ASSERT(cellBox.isInFlow());
+    if (auto height = computedContentHeight(cellBox))
+        return *height;
+    return contentHeightForFormattingContextRoot(cellBox);
 }
 
-Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const Box& columnBox) const
+Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const ContainerBox& columnBox) const
 {
     // Check both style and <col>'s width attribute.
     // FIXME: Figure out what to do with calculated values, like <col style="width: 10%">.
