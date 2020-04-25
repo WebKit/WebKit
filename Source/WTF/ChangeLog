@@ -1,3 +1,76 @@
+2020-04-24  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r260412. rdar://problem/62349885
+
+    Fix build failures when video fullscreen and picture-in-picture is disabled
+    https://bugs.webkit.org/show_bug.cgi?id=210777
+    
+    Reviewed by Eric Carlson.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    Wrap video fullscreen and picture-in-picture related code with "#if ENABLE(VIDEO_PRESENTATION_MODE)".
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity):
+    * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h:
+    * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+    (WebCore::VideoLayerManagerObjC::setVideoLayer):
+    (WebCore::VideoLayerManagerObjC::requiresTextTrackRepresentation const):
+    (WebCore::VideoLayerManagerObjC::syncTextTrackBounds):
+    (WebCore::VideoLayerManagerObjC::setTextTrackRepresentation):
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    Wrap video fullscreen and picture-in-picture related code with "#if ENABLE(VIDEO_PRESENTATION_MODE)".
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenGravity):
+    (WebKit::RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage):
+    (WebKit::RemoteMediaPlayerProxy::setVideoFullscreenMode):
+    (WebKit::RemoteMediaPlayerProxy::videoFullscreenStandbyChanged):
+    (WebKit::RemoteMediaPlayerProxy::setBufferingPolicy):
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WTF:
+    
+    * wtf/PlatformEnable.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260412 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-20  Peng Liu  <peng.liu6@apple.com>
+
+            Fix build failures when video fullscreen and picture-in-picture is disabled
+            https://bugs.webkit.org/show_bug.cgi?id=210777
+
+            Reviewed by Eric Carlson.
+
+            * wtf/PlatformEnable.h:
+
 2020-04-20  Darin Adler  <darin@apple.com>
 
         Use #import instead of #include in Objective-C and don't use #pragma once

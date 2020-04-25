@@ -201,12 +201,12 @@ void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)
     m_player->setShouldMaintainAspectRatio(maintainRatio);
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums::VideoGravity gravity)
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->setVideoFullscreenGravity(gravity);
-#endif
 }
+#endif
 
 void RemoteMediaPlayerProxy::acceleratedRenderingStateChanged(bool renderingCanBeAccelerated)
 {
@@ -244,30 +244,27 @@ void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remote
 }
 
 // MediaPlayerClient
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void RemoteMediaPlayerProxy::updateVideoFullscreenInlineImage()
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->updateVideoFullscreenInlineImage();
-#endif
 }
 
 void RemoteMediaPlayerProxy::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->setVideoFullscreenMode(mode);
-#endif
-}
 
-void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
-{
-    m_player->setBufferingPolicy(policy);
 }
 
 void RemoteMediaPlayerProxy::videoFullscreenStandbyChanged()
 {
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     m_player->videoFullscreenStandbyChanged();
+}
 #endif
+
+void RemoteMediaPlayerProxy::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
+{
+    m_player->setBufferingPolicy(policy);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -677,6 +674,7 @@ double RemoteMediaPlayerProxy::mediaPlayerRequestedPlaybackRate() const
     return 0;
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 MediaPlayerEnums::VideoFullscreenMode RemoteMediaPlayerProxy::mediaPlayerFullscreenMode() const
 {
     notImplemented();
@@ -688,6 +686,7 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideoFullscreenStandby() const
     notImplemented();
     return false;
 }
+#endif
 
 bool RemoteMediaPlayerProxy::mediaPlayerShouldDisableSleep() const
 {

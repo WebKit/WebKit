@@ -1805,10 +1805,12 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     if (!m_videoLayer)
         return;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     // Do not attempt to change the video gravity while in full screen mode.
     // See setVideoFullscreenGravity().
     if (m_videoLayerManager->videoFullscreenLayer())
         return;
+#endif
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];    
