@@ -1,3 +1,14 @@
+2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for JSC Debug tests following r210853.
+
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleList):
+        (JSC::defaultLocale):
+        Deal with unchecked exception by moving tryGetUtf8 call out of canonicalizeLanguageTag; it's meant to
+        verify the user input from canonicalizeLocaleList and needn't change the noexcept-ness of defaultLocale.
+
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to remove automatic URL->String conversion operators

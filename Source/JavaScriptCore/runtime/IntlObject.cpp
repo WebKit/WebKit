@@ -313,20 +313,10 @@ bool isUnicodeLocaleIdentifierType(StringView string)
 
 // https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
-static String canonicalizeLanguageTag(JSGlobalObject* globalObject, StringView locale)
+static String canonicalizeLanguageTag(const CString& input)
 {
-    if (locale.isEmpty())
+    if (!input.length())
         return String();
-
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto input = locale.tryGetUtf8();
-    if (!input) {
-        if (input.error() == UTF8ConversionError::OutOfMemory)
-            throwOutOfMemoryError(globalObject, scope);
-        return String();
-    }
 
     // We need to be careful with the output of uloc_forLanguageTag:
     // - uloc_toLanguageTag doesn't take an input size param so we must ensure the string is null-terminated ourselves
@@ -334,13 +324,13 @@ static String canonicalizeLanguageTag(JSGlobalObject* globalObject, StringView l
     UErrorCode status = U_ZERO_ERROR;
     Vector<char, 32> intermediate(31);
     int32_t parsedLength;
-    auto intermediateLength = uloc_forLanguageTag(input.value().data(), intermediate.data(), intermediate.size(), &parsedLength, &status);
+    auto intermediateLength = uloc_forLanguageTag(input.data(), intermediate.data(), intermediate.size(), &parsedLength, &status);
     if (status == U_BUFFER_OVERFLOW_ERROR) {
         intermediate.resize(intermediateLength + 1);
         status = U_ZERO_ERROR;
-        uloc_forLanguageTag(input.value().data(), intermediate.data(), intermediateLength + 1, &parsedLength, &status);
+        uloc_forLanguageTag(input.data(), intermediate.data(), intermediateLength + 1, &parsedLength, &status);
     }
-    if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(input.value().length()))
+    if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(input.length()))
         return String();
 
     Vector<char, 32> result(32);
@@ -412,7 +402,14 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
             auto tagValue = tag->value(globalObject);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            String canonicalizedTag = canonicalizeLanguageTag(globalObject, tagValue);
+            auto rawTag = tagValue.tryGetUtf8();
+            if (!rawTag) {
+                if (rawTag.error() == UTF8ConversionError::OutOfMemory)
+                    throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+
+            String canonicalizedTag = canonicalizeLanguageTag(rawTag.value());
             if (canonicalizedTag.isNull()) {
                 String errorMessage = tryMakeString("invalid language tag: ", tagValue);
                 if (UNLIKELY(!errorMessage)) {
@@ -463,14 +460,14 @@ String defaultLocale(JSGlobalObject* globalObject)
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
     if (auto defaultLanguage = globalObject->globalObjectMethodTable()->defaultLanguage) {
-        String locale = canonicalizeLanguageTag(globalObject, defaultLanguage());
+        String locale = canonicalizeLanguageTag(defaultLanguage().utf8());
         if (!locale.isEmpty())
             return locale;
     }
 
     Vector<String> languages = userPreferredLanguages();
     for (const auto& language : languages) {
-        String locale = canonicalizeLanguageTag(globalObject, language);
+        String locale = canonicalizeLanguageTag(language.utf8());
         if (!locale.isEmpty())
             return locale;
     }
