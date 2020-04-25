@@ -1,3 +1,13 @@
+2020-04-25  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r260247.
+        warning: unused parameter ‘foo’ [-Wunused-parameter]
+
+        No new tests, no new behaviors.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSandboxIOKitOpenAccessToClass):
+
 2020-04-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Unable to sign up on twitter.com

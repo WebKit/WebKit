@@ -5628,6 +5628,8 @@ bool Internals::isRemoteUIAppForAccessibility()
 
 bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
 {
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(ioKitClass);
     return false;
 }
 #endif
