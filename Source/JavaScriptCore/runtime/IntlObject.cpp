@@ -31,7 +31,6 @@
 
 #include "Error.h"
 #include "FunctionPrototype.h"
-#include "IntlCanonicalizeLanguage.h"
 #include "IntlCollatorConstructor.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormatConstructor.h"
@@ -155,25 +154,6 @@ static String convertICULocaleToBCP47LanguageTag(const char* localeID)
     return String();
 }
 
-static void addMissingScriptLocales(HashSet<String>& availableLocales)
-{
-    static const NeverDestroyed<String> pa_PK_String(MAKE_STATIC_STRING_IMPL("pa-PK"));
-    static const NeverDestroyed<String> zh_CN_String(MAKE_STATIC_STRING_IMPL("zh-CN"));
-    static const NeverDestroyed<String> zh_HK_String(MAKE_STATIC_STRING_IMPL("zh-HK"));
-    static const NeverDestroyed<String> zh_SG_String(MAKE_STATIC_STRING_IMPL("zh-SG"));
-    static const NeverDestroyed<String> zh_TW_String(MAKE_STATIC_STRING_IMPL("zh-TW"));
-    if (availableLocales.contains("pa-Arab-PK"))
-        availableLocales.add(pa_PK_String.get());
-    if (availableLocales.contains("zh-Hans-CN"))
-        availableLocales.add(zh_CN_String.get());
-    if (availableLocales.contains("zh-Hant-HK"))
-        availableLocales.add(zh_HK_String.get());
-    if (availableLocales.contains("zh-Hans-SG"))
-        availableLocales.add(zh_SG_String.get());
-    if (availableLocales.contains("zh-Hant-TW"))
-        availableLocales.add(zh_TW_String.get());
-}
-
 const HashSet<String>& intlAvailableLocales()
 {
     static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
@@ -188,7 +168,6 @@ const HashSet<String>& intlAvailableLocales()
             if (!locale.isEmpty())
                 availableLocales.add(locale);
         }
-        addMissingScriptLocales(availableLocales);
     });
     return availableLocales;
 }
@@ -207,7 +186,6 @@ const HashSet<String>& intlCollatorAvailableLocales()
             if (!locale.isEmpty())
                 availableLocales.add(locale);
         }
-        addMissingScriptLocales(availableLocales);
     });
     return availableLocales;
 }
@@ -333,267 +311,49 @@ bool isUnicodeLocaleIdentifierType(StringView string)
     return true;
 }
 
-static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
+// https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
+// https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
+static String canonicalizeLanguageTag(JSGlobalObject* globalObject, StringView locale)
 {
-    size_t numParts = parts.size();
-    size_t currentIndex = startIndex;
-
-    // Check for privateuse.
-    // privateuse = "x" 1*("-" (1*8alphanum))
-    StringBuilder privateuse;
-    while (currentIndex < numParts) {
-        const String& singleton = parts[currentIndex];
-        unsigned singletonLength = singleton.length();
-        bool isValid = (singletonLength == 1 && (singleton == "x" || singleton == "X"));
-        if (!isValid)
-            break;
-
-        if (currentIndex != startIndex)
-            privateuse.append('-');
-
-        ++currentIndex;
-        unsigned numExtParts = 0;
-        privateuse.append('x');
-        while (currentIndex < numParts) {
-            const String& extPart = parts[currentIndex];
-            unsigned extPartLength = extPart.length();
-
-            bool isValid = (extPartLength >= 1 && extPartLength <= 8 && extPart.isAllSpecialCharacters<isASCIIAlphanumeric>());
-            if (!isValid)
-                break;
-
-            ++currentIndex;
-            ++numExtParts;
-            privateuse.append('-');
-            privateuse.append(extPart.convertToASCIILowercase());
-        }
-
-        // Requires at least one production.
-        if (!numExtParts)
-            return String();
-    }
-
-    // Leftovers makes it invalid.
-    if (currentIndex < numParts)
+    if (locale.isEmpty())
         return String();
 
-    return privateuse.toString();
-}
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-static String preferredLanguage(const String& language)
-{
-    auto preferred = intlPreferredLanguageTag(language);
-    if (!preferred.isNull())
-        return preferred;
-    return language;
-}
+    auto input = locale.tryGetUtf8();
+    if (!input) {
+        if (input.error() == UTF8ConversionError::OutOfMemory)
+            throwOutOfMemoryError(globalObject, scope);
+        return String();
+    }
 
-static String preferredRegion(const String& region)
-{
-    auto preferred = intlPreferredRegionTag(region);
-    if (!preferred.isNull())
-        return preferred;
-    return region;
-
-}
-
-static String canonicalLangTag(const Vector<String>& parts)
-{
-    ASSERT(!parts.isEmpty());
-
-    // Follows the grammar at https://www.rfc-editor.org/rfc/bcp/bcp47.txt
-    // langtag = language ["-" script] ["-" region] *("-" variant) *("-" extension) ["-" privateuse]
-
-    size_t numParts = parts.size();
-    // Check for language.
-    // language = 2*3ALPHA ["-" extlang] / 4ALPHA / 5*8ALPHA
-    size_t currentIndex = 0;
-    const String& language = parts[currentIndex];
-    unsigned languageLength = language.length();
-    bool canHaveExtlang = languageLength >= 2 && languageLength <= 3;
-    bool isValidLanguage = languageLength >= 2 && languageLength <= 8 && language.isAllSpecialCharacters<isASCIIAlpha>();
-    if (!isValidLanguage)
+    // We need to be careful with the output of uloc_forLanguageTag:
+    // - uloc_toLanguageTag doesn't take an input size param so we must ensure the string is null-terminated ourselves
+    // - before ICU 64, there's a chance that it will "buffer overflow" while requesting a *smaller* size
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<char, 32> intermediate(31);
+    int32_t parsedLength;
+    auto intermediateLength = uloc_forLanguageTag(input.value().data(), intermediate.data(), intermediate.size(), &parsedLength, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        intermediate.resize(intermediateLength + 1);
+        status = U_ZERO_ERROR;
+        uloc_forLanguageTag(input.value().data(), intermediate.data(), intermediateLength + 1, &parsedLength, &status);
+    }
+    if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(input.value().length()))
         return String();
 
-    ++currentIndex;
-    StringBuilder canonical;
-
-    const String langtag = preferredLanguage(language.convertToASCIILowercase());
-    canonical.append(langtag);
-
-    // Check for extlang.
-    // extlang = 3ALPHA *2("-" 3ALPHA)
-    if (canHaveExtlang) {
-        for (unsigned times = 0; times < 3 && currentIndex < numParts; ++times) {
-            const String& extlang = parts[currentIndex];
-            unsigned extlangLength = extlang.length();
-            if (extlangLength == 3 && extlang.isAllSpecialCharacters<isASCIIAlpha>()) {
-                ++currentIndex;
-                auto extlangLower = extlang.convertToASCIILowercase();
-                if (!times && intlPreferredExtlangTag(extlangLower) == langtag) {
-                    canonical.clear();
-                    canonical.append(extlangLower);
-                    continue;
-                }
-                canonical.append('-');
-                canonical.append(extlangLower);
-            } else
-                break;
-        }
+    Vector<char, 32> result(32);
+    auto resultLength = uloc_toLanguageTag(intermediate.data(), result.data(), result.size(), false, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        result.grow(resultLength);
+        status = U_ZERO_ERROR;
+        uloc_toLanguageTag(intermediate.data(), result.data(), resultLength, false, &status);
     }
+    if (U_FAILURE(status))
+        return String();
 
-    // Check for script.
-    // script = 4ALPHA
-    if (currentIndex < numParts) {
-        const String& script = parts[currentIndex];
-        unsigned scriptLength = script.length();
-        if (scriptLength == 4 && script.isAllSpecialCharacters<isASCIIAlpha>()) {
-            ++currentIndex;
-            canonical.append('-');
-            canonical.append(toASCIIUpper(script[0]));
-            canonical.append(script.substring(1, 3).convertToASCIILowercase());
-        }
-    }
-
-    // Check for region.
-    // region = 2ALPHA / 3DIGIT
-    if (currentIndex < numParts) {
-        const String& region = parts[currentIndex];
-        unsigned regionLength = region.length();
-        bool isValidRegion = (
-            (regionLength == 2 && region.isAllSpecialCharacters<isASCIIAlpha>())
-            || (regionLength == 3 && region.isAllSpecialCharacters<isASCIIDigit>())
-        );
-        if (isValidRegion) {
-            ++currentIndex;
-            canonical.append('-');
-            canonical.append(preferredRegion(region.convertToASCIIUppercase()));
-        }
-    }
-
-    // Check for variant.
-    // variant = 5*8alphanum / (DIGIT 3alphanum)
-    HashSet<String> subtags;
-    while (currentIndex < numParts) {
-        const String& variant = parts[currentIndex];
-        unsigned variantLength = variant.length();
-        bool isValidVariant = (
-            (variantLength >= 5 && variantLength <= 8 && variant.isAllSpecialCharacters<isASCIIAlphanumeric>())
-            || (variantLength == 4 && isASCIIDigit(variant[0]) && variant.substring(1, 3).isAllSpecialCharacters<isASCIIAlphanumeric>())
-        );
-        if (!isValidVariant)
-            break;
-
-        // Cannot include duplicate subtags (case insensitive).
-        String lowerVariant = variant.convertToASCIILowercase();
-        if (!subtags.add(lowerVariant).isNewEntry)
-            return String();
-
-        ++currentIndex;
-
-        // Reordering variant subtags is not required in the spec.
-        canonical.append('-');
-        canonical.append(lowerVariant);
-    }
-
-    // Check for extension.
-    // extension = singleton 1*("-" (2*8alphanum))
-    // singleton = alphanum except x or X
-    subtags.clear();
-    Vector<String> extensions;
-    while (currentIndex < numParts) {
-        const String& possibleSingleton = parts[currentIndex];
-        unsigned singletonLength = possibleSingleton.length();
-        bool isValidSingleton = (singletonLength == 1 && possibleSingleton != "x" && possibleSingleton != "X" && isASCIIAlphanumeric(possibleSingleton[0]));
-        if (!isValidSingleton)
-            break;
-
-        // Cannot include duplicate singleton (case insensitive).
-        String singleton = possibleSingleton.convertToASCIILowercase();
-        if (!subtags.add(singleton).isNewEntry)
-            return String();
-
-        ++currentIndex;
-        int numExtParts = 0;
-        StringBuilder extension;
-        extension.append(singleton);
-        while (currentIndex < numParts) {
-            const String& extPart = parts[currentIndex];
-            unsigned extPartLength = extPart.length();
-
-            bool isValid = (extPartLength >= 2 && extPartLength <= 8 && extPart.isAllSpecialCharacters<isASCIIAlphanumeric>());
-            if (!isValid)
-                break;
-
-            ++currentIndex;
-            ++numExtParts;
-
-            auto lowercase = extPart.convertToASCIILowercase();
-            if (lowercase != "true")
-                extension.append('-', lowercase);
-        }
-
-        // Requires at least one production.
-        if (!numExtParts)
-            return String();
-
-        extensions.append(extension.toString());
-    }
-
-    // Add extensions to canonical sorted by singleton.
-    std::sort(
-        extensions.begin(),
-        extensions.end(),
-        [] (const String& a, const String& b) -> bool {
-            return a[0] < b[0];
-        }
-    );
-    size_t numExtenstions = extensions.size();
-    for (size_t i = 0; i < numExtenstions; ++i) {
-        canonical.append('-');
-        canonical.append(extensions[i]);
-    }
-
-    // Check for privateuse.
-    if (currentIndex < numParts) {
-        String privateuse = privateUseLangTag(parts, currentIndex);
-        if (privateuse.isNull())
-            return String();
-        canonical.append('-');
-        canonical.append(privateuse);
-    }
-
-    const String tag = canonical.toString();
-    const String preferred = intlRedundantLanguageTag(tag);
-    if (!preferred.isNull())
-        return preferred;
-    return tag;
-}
-
-static String canonicalizeLanguageTag(const String& locale)
-{
-    // IsStructurallyValidLanguageTag (locale)
-    // CanonicalizeLanguageTag (locale)
-    // These are done one after another in CanonicalizeLocaleList, so they are combined here to reduce duplication.
-    // https://www.rfc-editor.org/rfc/bcp/bcp47.txt
-
-    // Language-Tag = langtag / privateuse / grandfathered
-    String grandfather = intlGrandfatheredLanguageTag(locale.convertToASCIILowercase());
-    if (!grandfather.isNull())
-        return grandfather;
-
-    Vector<String> parts = locale.splitAllowingEmptyEntries('-');
-    if (!parts.isEmpty()) {
-        String langtag = canonicalLangTag(parts);
-        if (!langtag.isNull())
-            return langtag;
-
-        String privateuse = privateUseLangTag(parts, 0);
-        if (!privateuse.isNull())
-            return privateuse;
-    }
-
-    return String();
+    return String(result.data(), resultLength);
 }
 
 Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
@@ -614,7 +374,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
         JSArray* localesArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
         if (!localesArray) {
             throwOutOfMemoryError(globalObject, scope);
-            RETURN_IF_EXCEPTION(scope, Vector<String>());
+            return { };
         }
         localesArray->push(globalObject, locales);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
@@ -652,7 +412,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
             auto tagValue = tag->value(globalObject);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            String canonicalizedTag = canonicalizeLanguageTag(tagValue);
+            String canonicalizedTag = canonicalizeLanguageTag(globalObject, tagValue);
             if (canonicalizedTag.isNull()) {
                 String errorMessage = tryMakeString("invalid language tag: ", tagValue);
                 if (UNLIKELY(!errorMessage)) {
@@ -703,14 +463,14 @@ String defaultLocale(JSGlobalObject* globalObject)
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
     if (auto defaultLanguage = globalObject->globalObjectMethodTable()->defaultLanguage) {
-        String locale = canonicalizeLanguageTag(defaultLanguage());
+        String locale = canonicalizeLanguageTag(globalObject, defaultLanguage());
         if (!locale.isEmpty())
             return locale;
     }
 
     Vector<String> languages = userPreferredLanguages();
     for (const auto& language : languages) {
-        String locale = canonicalizeLanguageTag(language);
+        String locale = canonicalizeLanguageTag(globalObject, language);
         if (!locale.isEmpty())
             return locale;
     }
@@ -745,8 +505,7 @@ String removeUnicodeLocaleExtension(const String& locale)
             while (p + 1 < partsSize && parts[p + 1].length() > 1)
                 ++p;
         } else {
-            builder.append('-');
-            builder.append(parts[p]);
+            builder.append('-', parts[p]);
         }
     }
     return builder.toString();

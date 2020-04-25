@@ -3,6 +3,15 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
+const icuVersion = $vm.icuVersion();
+function shouldBeForICUVersion(minimumVersion, actual, expected) {
+    if (icuVersion < minimumVersion)
+        return;
+
+    if (actual !== expected)
+        throw new Error(`expected ${expected} but got ${actual}`);
+}
+
 function shouldNotThrow(func) {
     func();
 }
@@ -71,7 +80,7 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf({ length: 4, 1: '
 // Deduplicates tags.
 shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])), '["en","pt","es"]');
 // Canonicalizes tags.
-shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-x-reserved"]');
+shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]');
 // Replaces outdated tags.
 shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('no-bok')), '["nb"]');
 // Doesn't throw, but ignores private tags.
@@ -288,7 +297,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist').resolvedOptions().calendar, 'bu
 shouldBe(Intl.DateTimeFormat('en-u-ca-chinese').resolvedOptions().calendar, 'chinese');
 shouldBe(Intl.DateTimeFormat('en-u-ca-coptic').resolvedOptions().calendar, 'coptic');
 shouldBe(Intl.DateTimeFormat('en-u-ca-dangi').resolvedOptions().calendar, 'dangi');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethioaa').resolvedOptions().calendar, 'ethiopic-amete-alem');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethioaa').resolvedOptions().calendar, 'ethiopic-amete-alem');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic').resolvedOptions().calendar, 'ethiopic');
 shouldBe(Intl.DateTimeFormat('ar-SA-u-ca-gregory').resolvedOptions().calendar, 'gregory');
 shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew').resolvedOptions().calendar, 'hebrew');
@@ -299,7 +308,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601').resolvedOptions().calendar, 'iso
 shouldBe(Intl.DateTimeFormat('en-u-ca-japanese').resolvedOptions().calendar, 'japanese');
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian').resolvedOptions().calendar, 'persian');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar, 'roc');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar, 'ethiopic-amete-alem');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar, 'ethiopic-amete-alem');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura').resolvedOptions().calendar, 'islamic-umalqura');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla').resolvedOptions().calendar, 'islamic-tbla');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar, 'islamic-civil');
@@ -310,7 +319,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angele
 shouldBe(Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
 shouldBe(Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/1732 ERA1');
 shouldBe(Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '11/15/2015');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/2008 ERA1');
 shouldBe(Intl.DateTimeFormat('en-u-ca-gregory', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
 shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '13 Tevet 5776');
@@ -321,7 +330,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles
 shouldBe(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/27 H');
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394 AP');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104 Minguo');
-shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');

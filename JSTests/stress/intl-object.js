@@ -68,7 +68,7 @@ shouldBe(JSON.stringify(Intl.getCanonicalLocales({ length: 4, 1: 'en', 0: 'es', 
 // Deduplicates tags.
 shouldBe(JSON.stringify(Intl.getCanonicalLocales([ 'en', 'pt', 'en', 'es' ])), '["en","pt","es"]');
 // Canonicalizes tags.
-shouldBe(JSON.stringify(Intl.getCanonicalLocales('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-x-reserved"]');
+shouldBe(JSON.stringify(Intl.getCanonicalLocales('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]');
 // Replaces outdated tags.
 shouldBe(JSON.stringify(Intl.getCanonicalLocales('no-bok')), '["nb"]');
 // Canonicalizes private tags.

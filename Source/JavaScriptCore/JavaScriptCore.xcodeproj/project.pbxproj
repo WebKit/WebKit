@@ -4082,7 +4082,6 @@
 		7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRulesConstructor.h; sourceTree = "<group>"; };
 		7D5FB19120744BF1005DDF64 /* IntlPluralRulesPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPluralRulesPrototype.cpp; sourceTree = "<group>"; };
 		7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlPluralRules.h; sourceTree = "<group>"; };
-		7D734FE420B4D8410018844A /* IntlCanonicalizeLanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlCanonicalizeLanguage.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		84925A9A22B30CBA00D1DFFF /* RegExpStringIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpStringIteratorPrototype.cpp; sourceTree = "<group>"; };
@@ -6754,7 +6753,6 @@
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
 				E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */,
-				7D734FE420B4D8410018844A /* IntlCanonicalizeLanguage.h */,
 				A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */,
 				A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */,
 				A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */,
@@ -8969,7 +8967,6 @@
 				0FEC85911BDACDC70080FF74 /* AirValidate.h in Headers */,
 				0FEC3C531F33A41600F59B6C /* AlignedMemoryAllocator.h in Headers */,
 				0FA7620B1DB959F900B7A2FD /* AllocatingScope.h in Headers */,
-				33111B8B2397256500AA34CE /* Scribble.h in Headers */,
 				0FDCE11C1FAE6209006F3901 /* AllocationFailureMode.h in Headers */,
 				0F75A063200D261F0038E2CF /* Allocator.h in Headers */,
 				0F30CB5E1FCE4E37004B5323 /* AllocatorForMode.h in Headers */,
@@ -10203,6 +10200,7 @@
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
+				33111B8B2397256500AA34CE /* Scribble.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,

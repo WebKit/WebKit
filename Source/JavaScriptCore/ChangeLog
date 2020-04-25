@@ -1,3 +1,39 @@
+2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Intl] Locale validation/canonicalization should defer to ICU
+        https://bugs.webkit.org/show_bug.cgi?id=210853
+
+        Reviewed by Darin Adler.
+
+        The mappings for locale canonicalization in latest CLDR are sufficiently complex
+        that it really no longer makes sense not to have ICU do this work for us.
+
+        This means the UTS 35 canonicalization desired by ECMA-402 will not be fully achievable until ICU ~67,
+        but it's better than reaching right into CLDR and pretending that we *are* ICU.
+        (On this point, we thus align with V8 and diverge from SM.)
+
+        Of course, we can still add our own pre-validations / post-canonicalizations if desired.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generateIntlCanonicalizeLanguage.py: Removed.
+        * runtime/IntlObject.cpp:
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleList):
+        (JSC::defaultLocale):
+        (JSC::removeUnicodeLocaleExtension):
+        (JSC::addMissingScriptLocales): Deleted. This one was ostensibly a fix for an old ICU bug.
+        (JSC::privateUseLangTag): Deleted.
+        (JSC::preferredLanguage): Deleted.
+        (JSC::preferredRegion): Deleted.
+        (JSC::canonicalLangTag): Deleted.
+        * ucd/language-subtag-registry.txt: Removed.
+
 2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix internal build by using strcmp instead of using string literal comparison

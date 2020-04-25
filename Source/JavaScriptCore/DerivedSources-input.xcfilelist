@@ -4,7 +4,6 @@ $(PROJECT_DIR)/KeywordLookupGenerator.py
 $(PROJECT_DIR)/Scripts/UpdateContents.py
 $(PROJECT_DIR)/Scripts/generate-combined-inspector-json.py
 $(PROJECT_DIR)/Scripts/generate-js-builtins.py
-$(PROJECT_DIR)/Scripts/generateIntlCanonicalizeLanguage.py
 $(PROJECT_DIR)/Scripts/jsmin.py
 $(PROJECT_DIR)/Scripts/lazywriter.py
 $(PROJECT_DIR)/Scripts/wkbuiltins/__init__.py

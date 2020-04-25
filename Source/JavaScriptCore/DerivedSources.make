@@ -52,7 +52,6 @@ endif
 all : \
     udis86_itab.h \
     InjectedScriptSource.h \
-    IntlCanonicalizeLanguage.h \
     JSCBuiltins.h \
     Lexer.lut.h \
     KeywordLookup.h \
@@ -351,9 +350,6 @@ UnicodePatternTables.h: $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables
 
 yarr/YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./yarr/YarrCanonicalizeUnicode.cpp
-
-IntlCanonicalizeLanguage.h: $(JavaScriptCore)/Scripts/generateIntlCanonicalizeLanguage.py $(JavaScriptCore)/ucd/language-subtag-registry.txt
-	$(PYTHON) $(JavaScriptCore)/Scripts/generateIntlCanonicalizeLanguage.py $(JavaScriptCore)/ucd/language-subtag-registry.txt ./IntlCanonicalizeLanguage.h
 
 WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmOps.h
