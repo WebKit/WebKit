@@ -1197,7 +1197,7 @@ class InstallGtkDependencies(shell.ShellCommand):
     name = 'jhbuild'
     description = ['updating gtk dependencies']
     descriptionDone = ['Updated gtk dependencies']
-    command = ['perl', 'Tools/Scripts/update-webkitgtk-libs']
+    command = ['perl', 'Tools/Scripts/update-webkitgtk-libs', WithProperties('--%(configuration)s')]
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -1208,7 +1208,7 @@ class InstallWpeDependencies(shell.ShellCommand):
     name = 'jhbuild'
     description = ['updating wpe dependencies']
     descriptionDone = ['Updated wpe dependencies']
-    command = ['perl', 'Tools/Scripts/update-webkitwpe-libs']
+    command = ['perl', 'Tools/Scripts/update-webkitwpe-libs', WithProperties('--%(configuration)s')]
     haltOnFailure = True
 
     def __init__(self, **kwargs):

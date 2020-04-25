@@ -874,11 +874,12 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(InstallGtkDependencies())
+        self.setProperty('configuration', 'release')
         self.assertEqual(InstallGtkDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs'],
+                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--release'],
                         )
             + 0,
         )
@@ -887,11 +888,12 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(InstallGtkDependencies())
+        self.setProperty('configuration', 'release')
         self.assertEqual(InstallGtkDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs'],
+                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--release'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
@@ -910,11 +912,12 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(InstallWpeDependencies())
+        self.setProperty('configuration', 'release')
         self.assertEqual(InstallWpeDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs'],
+                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
                         )
             + 0,
         )
@@ -923,11 +926,12 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(InstallWpeDependencies())
+        self.setProperty('configuration', 'release')
         self.assertEqual(InstallWpeDependencies.haltOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs'],
+                        command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
