@@ -859,8 +859,6 @@ void AXObjectCache::remove(RenderObject* renderer)
 void AXObjectCache::remove(Node& node)
 {
     if (is<Element>(node)) {
-        m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(&node));
-        m_deferredSelectedChildredChangedList.remove(downcast<Element>(&node));
         m_deferredTextFormControlValue.remove(downcast<Element>(&node));
         m_deferredAttributeChange.remove(downcast<Element>(&node));
     }
@@ -2997,9 +2995,7 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     HashSet<Node*> nodesToRemove;
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
     filterListForRemoval(m_modalNodesSet, document, nodesToRemove);
-    filterListForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
-    filterListForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
     filterListForRemoval(m_deferredChildrenChangedNodeList, document, nodesToRemove);
     filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
     filterMapForRemoval(m_deferredAttributeChange, document, nodesToRemove);
@@ -3048,14 +3044,14 @@ void AXObjectCache::performDeferredCacheUpdate()
         textChanged(node);
     m_deferredTextChangedList.clear();
 
-    for (auto* element : m_deferredRecomputeIsIgnoredList) {
-        if (auto* renderer = element->renderer())
+    for (auto& element : m_deferredRecomputeIsIgnoredList) {
+        if (auto* renderer = element.renderer())
             recomputeIsIgnored(renderer);
     }
     m_deferredRecomputeIsIgnoredList.clear();
     
-    for (auto* selectElement : m_deferredSelectedChildredChangedList)
-        selectedChildrenChanged(selectElement);
+    for (auto& selectElement : m_deferredSelectedChildredChangedList)
+        selectedChildrenChanged(&selectElement);
     m_deferredSelectedChildredChangedList.clear();
 
     for (auto& deferredFormControlContext : m_deferredTextFormControlValue) {

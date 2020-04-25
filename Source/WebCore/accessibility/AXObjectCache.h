@@ -487,9 +487,9 @@ private:
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
-    ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
+    WeakHashSet<Element> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
-    ListHashSet<Element*> m_deferredSelectedChildredChangedList;
+    WeakHashSet<Element> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AXCoreObject>> m_deferredChildrenChangedList;
     ListHashSet<Node*> m_deferredChildrenChangedNodeList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
