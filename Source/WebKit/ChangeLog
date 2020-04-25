@@ -1,3 +1,13 @@
+2020-04-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE][Debug] Unreviewed, fix build after r260063
+        https://bugs.webkit.org/show_bug.cgi?id=211009
+
+        r260063 removed include of WebProcess.h in WebSocketProvider.cpp,
+        which broke unified builds in WPE Debug.
+
+        * WebProcess/Network/WebSocketProvider.cpp:
+
 2020-04-24  David Kilzer  <ddkilzer@apple.com>
 
         WebPasteboardProxy::getPasteboardStringsForType() and WebPasteboardProxy::readURLFromPasteboard() should check return value of SharedMemory::createHandle()

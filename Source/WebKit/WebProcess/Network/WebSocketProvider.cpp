@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebSocketProvider.h"
 
+#include "WebProcess.h"
 #include "WebSocketChannelManager.h"
 #include "WebSocketStream.h"
 
