@@ -1,3 +1,16 @@
+2020-04-24  Mark Lam  <mark.lam@apple.com>
+
+        Suppress ASan on DFG::clobberize() to work around an ASan bug.
+        https://bugs.webkit.org/show_bug.cgi?id=211012
+        <rdar://problem/62275430>
+
+        Reviewed by Yusuke Suzuki.
+
+        Test is courtesy of Fabien Duchene and Pinki Gyanchandani.
+
+        * js/suppress-asan-on-clobberize-to-workaround-asan-bug-expected.txt: Added.
+        * js/suppress-asan-on-clobberize-to-workaround-asan-bug.html: Added.
+
 2020-04-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Removing website data for a domain should delete corresponding ITP entry
