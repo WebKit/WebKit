@@ -1,3 +1,15 @@
+2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix internal build by using strcmp instead of using string literal comparison
+        https://bugs.webkit.org/show_bug.cgi?id=211011
+
+        Reviewed by Keith Miller.
+
+        Use strcmp for string literal comparison to expect that this is fully handled by compiler and converted into constant at compile time.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2020-04-24  Mark Lam  <mark.lam@apple.com>
 
         Suppress ASan on DFG::clobberize() to work around an ASan bug.

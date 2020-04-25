@@ -1243,7 +1243,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             [] (LazyClassStructure::Initializer& init) { \
                 init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, init.global->prototypeBase ## Prototype()))); \
                 init.setStructure(instanceType::createStructure(init.vm, init.global, init.prototype)); \
-                auto* constructorPrototype = #prototypeBase == "error" ? init.global->m_errorStructure.constructor(init.global) : init.global->functionPrototype(); \
+                auto* constructorPrototype = strcmp(#prototypeBase, "error") == 0 ? init.global->m_errorStructure.constructor(init.global) : init.global->functionPrototype(); \
                 init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, constructorPrototype), jsCast<capitalName ## Prototype*>(init.prototype))); \
             }); \
     }
