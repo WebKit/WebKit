@@ -1,3 +1,18 @@
+2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add fast path for BigInt32 left-shift
+        https://bugs.webkit.org/show_bug.cgi?id=211029
+
+        Reviewed by Saam Barati.
+
+        Currently, the left-shift operation misses the fast path for BigInt32 <> BigInt32 case. This patch adds it. We also fixes
+        prediction-propagation for left/right shift to use existing heap prediction instead of polluting the result with SpecBigInt.
+        This offer 4.5% improvement in microbenchmarks/sunspider-sha1-big-int.js.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * runtime/Operations.h:
+        (JSC::shift):
+
 2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for JSC Debug tests following r210853.

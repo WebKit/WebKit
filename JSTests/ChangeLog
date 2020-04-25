@@ -1,3 +1,17 @@
+2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add fast path for BigInt32 left-shift
+        https://bugs.webkit.org/show_bug.cgi?id=211029
+
+        Reviewed by Saam Barati.
+
+        * stress/bigint-left-shift-overflow.js: Added.
+        (shouldBe):
+        (leftShift):
+        (noInline):
+        * stress/bigint-right-shift-large.js: Added.
+        (shouldBe):
+
 2020-04-25  Paulo Matos  <pmatos@igalia.com>
 
         Skip stress/butterfly-zero-unused-butterfly-properties.js on MIPS

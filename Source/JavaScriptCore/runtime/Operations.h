@@ -764,10 +764,20 @@ ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2
             isLeft = !isLeft;
             rightInt32 = -rightInt32;
         }
+        ASSERT(rightInt32 >= 0);
 
         // This std::min is a bit hacky, but required because in C++ it is undefined behavior to do a shift where the right operand is greater or equal to the bit-width of the left operand.
         if (!isLeft)
             return jsBigInt32(leftInt32 >> std::min(rightInt32, 31));
+
+        // Do some checks to detect overflow of left-shift. But this is much cheaper compared to allocating two JSBigInt and perform shift operations in JSBigInt.
+        if (!leftInt32)
+            return jsBigInt32(0);
+        if (rightInt32 < 32) {
+            int64_t result64 = static_cast<int64_t>(leftInt32) << rightInt32;
+            if (static_cast<int64_t>(static_cast<int32_t>(result64)) == result64)
+                return jsBigInt32(static_cast<int32_t>(result64));
+        }
 
         // In the case of a left shift we can overflow. I deal with this by allocating HeapBigInts.
         // FIXME: it might be possible to do something smarter, trying to do the left shift and detecting somehow if it overflowed.

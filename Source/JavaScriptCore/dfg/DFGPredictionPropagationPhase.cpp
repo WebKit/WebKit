@@ -185,9 +185,7 @@ private:
             SpeculatedType right = node->child2()->prediction();
 
             if (left && right) {
-                if (isBigIntSpeculation(left) && isBigIntSpeculation(right))
-                    changed |= mergePrediction(SpecBigInt);
-                else if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
                     changed |= mergePrediction(SpecInt32Only);
                 else
                     changed |= mergePrediction(node->getHeapPrediction());
