@@ -1615,9 +1615,6 @@ test/built-ins/String/prototype/replace/cstm-replace-is-null.js:
 test/built-ins/String/prototype/replaceAll/searchValue-replacer-is-null.js:
   default: 'TypeError: null is not a function'
   strict mode: 'TypeError: null is not a function'
-test/built-ins/Symbol/is-constructor.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'

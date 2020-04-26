@@ -1,5 +1,23 @@
 2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Symbol should have [[Construct]] internal method
+        https://bugs.webkit.org/show_bug.cgi?id=211050
+
+        Reviewed by Yusuke Suzuki.
+
+        This change introduces constructSymbol() method, which unconditionally throws
+        a TypeError, since its presence is observable when, for example, Symbol is a
+        [[ProxyTarget]] itself [1]. Aligns JSC with the spec [2], V8, and SpiderMonkey.
+
+        [1]: https://tc39.es/ecma262/#sec-proxycreate (step 7.b)
+        [2]: https://tc39.es/ecma262/#constructor
+
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::SymbolConstructor):
+        (JSC::constructSymbol):
+
+2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         InternalFunction::createSubclassStructure should use newTarget's globalObject
         https://bugs.webkit.org/show_bug.cgi?id=202599
 
