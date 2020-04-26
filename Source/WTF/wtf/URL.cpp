@@ -436,7 +436,7 @@ void URL::setHost(StringView newHost)
     if (!appendEncodedHostname(encodedHostName, newHost))
         return;
 
-    bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
+    bool slashSlashNeeded = m_userStart == static_cast<unsigned>(m_schemeEnd + 1);
     parse(makeString(
         StringView(m_string).left(hostStart()),
         slashSlashNeeded ? "//" : "",
@@ -486,7 +486,7 @@ void URL::setHostAndPort(StringView hostAndPort)
     if (!appendEncodedHostname(encodedHostName, hostName))
         return;
 
-    bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
+    bool slashSlashNeeded = m_userStart == static_cast<unsigned>(m_schemeEnd + 1);
     parse(makeString(
         StringView(m_string).left(hostStart()),
         slashSlashNeeded ? "//" : "",
@@ -547,7 +547,7 @@ void URL::setUser(StringView newUser)
 
     unsigned end = m_userEnd;
     if (!newUser.isEmpty()) {
-        bool slashSlashNeeded = m_userStart == m_schemeEnd + 1;
+        bool slashSlashNeeded = m_userStart == static_cast<unsigned>(m_schemeEnd + 1);
         bool needSeparator = end == m_hostEnd || (end == m_passwordEnd && m_string[end] != '@');
         parse(makeString(
             StringView(m_string).left(m_userStart),
@@ -570,7 +570,7 @@ void URL::setPassword(StringView newPassword)
         return;
 
     if (!newPassword.isEmpty()) {
-        bool needLeadingSlashes = m_userEnd == m_schemeEnd + 1;
+        bool needLeadingSlashes = m_userEnd == static_cast<unsigned>(m_schemeEnd + 1);
         parse(makeString(
             StringView(m_string).left(m_userEnd),
             needLeadingSlashes ? "//:" : ":",

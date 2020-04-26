@@ -1,3 +1,14 @@
+2020-04-25  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the bulid warnings below since r260707.
+        warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+
+        * wtf/URL.cpp:
+        (WTF::URL::setHost):
+        (WTF::URL::setHostAndPort):
+        (WTF::URL::setUser):
+        (WTF::URL::setPassword):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks
