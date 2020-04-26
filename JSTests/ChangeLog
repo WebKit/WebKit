@@ -1,3 +1,31 @@
+2020-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ValueAdd, VaueSub, ValueMul, Inc, Dec should say SpecBigInt32 prediction based on ArithProfile
+        https://bugs.webkit.org/show_bug.cgi?id=211038
+
+        Reviewed by Filip Pizlo.
+
+        * stress/bigint32-add-overflow.js: Added.
+        (shouldBe):
+        (add):
+        (noInline):
+        * stress/bigint32-dec-overflow.js: Added.
+        (shouldBe):
+        (dec):
+        (noInline):
+        * stress/bigint32-inc-overflow.js: Added.
+        (shouldBe):
+        (inc):
+        (noInline):
+        * stress/bigint32-mul-overflow.js: Added.
+        (shouldBe):
+        (mul):
+        (noInline):
+        * stress/bigint32-sub-overflow.js: Added.
+        (shouldBe):
+        (sub):
+        (noInline):
+
 2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Handle BigInt32 INT32_MIN shift amount

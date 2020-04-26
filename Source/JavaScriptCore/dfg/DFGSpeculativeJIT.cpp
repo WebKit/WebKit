@@ -4026,6 +4026,10 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     Edge& rightChild = node->child2();
 
 #if USE(BIGINT32)
+    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+    // https://bugs.webkit.org/show_bug.cgi?id=210957
+    // https://bugs.webkit.org/show_bug.cgi?id=211040
     if (node->isBinaryUseKind(BigInt32Use)) {
         SpeculateBigInt32Operand left(this, leftChild);
         SpeculateBigInt32Operand right(this, rightChild);
@@ -4040,10 +4044,9 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         m_jit.unboxBigInt32(leftGPR, resultGPR);
         m_jit.unboxBigInt32(rightGPR, tempGPR);
 
-        // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchAdd32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
 
-        speculationCheck(Overflow, JSValueRegs(), 0, check);
+        speculationCheck(BigInt32Overflow, JSValueRegs(), 0, check);
 
         m_jit.boxBigInt32(resultGPR);
         jsValueResult(resultGPR, node);
@@ -4130,6 +4133,10 @@ void SpeculativeJIT::compileValueSub(Node* node)
     Edge& rightChild = node->child2();
 
 #if USE(BIGINT32)
+    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+    // https://bugs.webkit.org/show_bug.cgi?id=210957
+    // https://bugs.webkit.org/show_bug.cgi?id=211040
     if (node->binaryUseKind() == BigInt32Use) {
         SpeculateBigInt32Operand left(this, node->child1());
         SpeculateBigInt32Operand right(this, node->child2());
@@ -4144,10 +4151,9 @@ void SpeculativeJIT::compileValueSub(Node* node)
         m_jit.unboxBigInt32(leftGPR, resultGPR);
         m_jit.unboxBigInt32(rightGPR, tempGPR);
 
-        // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchSub32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
 
-        speculationCheck(Overflow, JSValueRegs(), 0, check);
+        speculationCheck(BigInt32Overflow, JSValueRegs(), 0, check);
 
         m_jit.boxBigInt32(resultGPR);
         jsValueResult(resultGPR, node);
@@ -4977,6 +4983,10 @@ void SpeculativeJIT::compileValueMul(Node* node)
     Edge& rightChild = node->child2();
 
 #if USE(BIGINT32)
+    // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+    // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+    // https://bugs.webkit.org/show_bug.cgi?id=210957
+    // https://bugs.webkit.org/show_bug.cgi?id=211040
     if (node->binaryUseKind() == BigInt32Use) {
         // FIXME: the code between compileValueAdd, compileValueSub and compileValueMul for BigInt32 is nearly identical, so try to get rid of the duplication.
         SpeculateBigInt32Operand left(this, node->child1());
@@ -4992,10 +5002,9 @@ void SpeculativeJIT::compileValueMul(Node* node)
         m_jit.unboxBigInt32(leftGPR, resultGPR);
         m_jit.unboxBigInt32(rightGPR, tempGPR);
 
-        // FIXME: add some way to eliminate the overflow check
         MacroAssembler::Jump check = m_jit.branchMul32(MacroAssembler::Overflow, resultGPR, tempGPR, resultGPR);
 
-        speculationCheck(Overflow, JSValueRegs(), 0, check);
+        speculationCheck(BigInt32Overflow, JSValueRegs(), 0, check);
 
         m_jit.boxBigInt32(resultGPR);
         jsValueResult(resultGPR, node);
@@ -5209,6 +5218,7 @@ void SpeculativeJIT::compileValueDiv(Node* node)
     Edge& rightChild = node->child2();
 
     // FIXME: add a fast path for BigInt32. Currently we go through the slow path, because of how ugly the code for Div gets.
+    // https://bugs.webkit.org/show_bug.cgi?id=211041
 
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
@@ -10802,7 +10812,7 @@ void SpeculativeJIT::speculateHeapBigInt(Edge edge, GPRReg cell)
 
 void SpeculativeJIT::speculateHeapBigInt(Edge edge)
 {
-    if (!needsTypeCheck(edge, SpecBigInt))
+    if (!needsTypeCheck(edge, SpecHeapBigInt))
         return;
 
     SpeculateCellOperand operand(this, edge);

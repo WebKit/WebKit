@@ -2143,6 +2143,10 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
 #if USE(BIGINT32)
+        // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+        // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+        // https://bugs.webkit.org/show_bug.cgi?id=210957
+        // https://bugs.webkit.org/show_bug.cgi?id=211040
         if (m_node->isBinaryUseKind(BigInt32Use)) {
             LValue left = lowBigInt32(m_node->child1());
             LValue right = lowBigInt32(m_node->child2());
@@ -2151,7 +2155,7 @@ private:
             LValue unboxedRight = unboxBigInt32(right);
 
             CheckValue* result = m_out.speculateAdd(unboxedLeft, unboxedRight);
-            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+            blessSpeculation(result, BigInt32Overflow, noValue(), nullptr, m_origin);
 
             LValue boxedResult = boxBigInt32(result);
             setJSValue(boxedResult);
@@ -2181,6 +2185,10 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
 #if USE(BIGINT32)
+        // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+        // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+        // https://bugs.webkit.org/show_bug.cgi?id=210957
+        // https://bugs.webkit.org/show_bug.cgi?id=211040
         if (m_node->isBinaryUseKind(BigInt32Use)) {
             LValue left = lowBigInt32(m_node->child1());
             LValue right = lowBigInt32(m_node->child2());
@@ -2189,7 +2197,7 @@ private:
             LValue unboxedRight = unboxBigInt32(right);
 
             CheckValue* result = m_out.speculateSub(unboxedLeft, unboxedRight);
-            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+            blessSpeculation(result, BigInt32Overflow, noValue(), nullptr, m_origin);
 
             LValue boxedResult = boxBigInt32(result);
             setJSValue(boxedResult);
@@ -2219,6 +2227,10 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
 #if USE(BIGINT32)
+        // FIXME: Introduce another BigInt32 code generation: binary use kinds are BigIntUse32, but result is SpecAnyInt and accepting overflow.
+        // Let's distinguish these modes based on result type information by introducing NodeResultBigInt32.
+        // https://bugs.webkit.org/show_bug.cgi?id=210957
+        // https://bugs.webkit.org/show_bug.cgi?id=211040
         if (m_node->isBinaryUseKind(BigInt32Use)) {
             LValue left = lowBigInt32(m_node->child1());
             LValue right = lowBigInt32(m_node->child2());
@@ -2227,7 +2239,7 @@ private:
             LValue unboxedRight = unboxBigInt32(right);
 
             CheckValue* result = m_out.speculateMul(unboxedLeft, unboxedRight);
-            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+            blessSpeculation(result, BigInt32Overflow, noValue(), nullptr, m_origin);
 
             LValue boxedResult = boxBigInt32(result);
             setJSValue(boxedResult);
@@ -2627,6 +2639,7 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         // FIXME: add a fast path for BigInt32 here
+        // https://bugs.webkit.org/show_bug.cgi?id=211041
         if (m_node->isBinaryUseKind(HeapBigIntUse)) {
             LValue left = lowHeapBigInt(m_node->child1());
             LValue right = lowHeapBigInt(m_node->child2());

@@ -55,6 +55,7 @@ enum ExitKind : uint8_t {
     DebuggerEvent, // We exited because we need to service the debugger.
     ExceptionCheck, // We exited because a direct exception check showed that we threw an exception from a C call.
     GenericUnwind, // We exited because we arrived at this OSR exit from genericUnwind.
+    BigInt32Overflow, // We exited because of an BigInt32 overflow.
 };
 
 const char* exitKindToString(ExitKind);

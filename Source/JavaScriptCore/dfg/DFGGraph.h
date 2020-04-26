@@ -410,6 +410,26 @@ public:
             && !hasExitSite(node, Int52Overflow);
     }
 
+#if USE(BIGINT32)
+    bool binaryArithShouldSpeculateBigInt32(Node* node, PredictionPass pass)
+    {
+        if (!node->canSpeculateBigInt32(pass))
+            return false;
+        if (hasExitSite(node, BigInt32Overflow))
+            return false;
+        return Node::shouldSpeculateBigInt32(node->child1().node(), node->child2().node());
+    }
+
+    bool unaryArithShouldSpeculateBigInt32(Node* node, PredictionPass pass)
+    {
+        if (!node->canSpeculateBigInt32(pass))
+            return false;
+        if (hasExitSite(node, BigInt32Overflow))
+            return false;
+        return node->child1()->shouldSpeculateBigInt32();
+    }
+#endif
+
     bool canOptimizeStringObjectAccess(const CodeOrigin&);
 
     bool getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue);

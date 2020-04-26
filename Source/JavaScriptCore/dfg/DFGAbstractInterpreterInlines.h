@@ -766,8 +766,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        } else if (node->isBinaryUseKind(AnyBigIntUse))
             setTypeForNode(node, SpecBigInt);
+        else if (node->isBinaryUseKind(BigInt32Use))
+            setTypeForNode(node, SpecBigInt32);
         else {
             DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
             clobberWorld();
@@ -1056,8 +1058,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
             setTypeForNode(node, SpecBigInt);
-        } else if (node->binaryUseKind() == AnyBigIntUse || node->binaryUseKind() == BigInt32Use)
+        } else if (node->isBinaryUseKind(AnyBigIntUse))
             setTypeForNode(node, SpecBigInt);
+        else if (node->isBinaryUseKind(BigInt32Use))
+            setTypeForNode(node, SpecBigInt32);
         else {
             clobberWorld();
             setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);

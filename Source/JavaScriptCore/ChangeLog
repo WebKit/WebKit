@@ -1,3 +1,77 @@
+2020-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ValueAdd, VaueSub, ValueMul, Inc, Dec should say SpecBigInt32 prediction based on ArithProfile
+        https://bugs.webkit.org/show_bug.cgi?id=211038
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds profile feedback to ValueAdd, ValueSub, ValueMul, Inc, Dec to say SpecBigInt32 prediction.
+
+        Our HeapBigInt v.s. BigInt32 strategy is simpler than Double v.s. Int32 strategy: we always
+        prefer BigInt32 over HeapBigInt. This is because HeapBigInt calculation and conversion require
+        much higher cost than BigInt32. This tradeoff is largely different from Double v.s. Int32.
+        So keeping HeapBigInt is simply inefficient when we can use BigInt32.
+
+        This means that ArithProfile's feedback is also very simple. If we see HeapBigInt, this means
+        overflow happens. In DFG, we propagate this information to ValueAdd, ValueSub, and ValueMul nodes
+        and record it in DFGNodeFlags. And based on this information, we change the prediction and
+        speculation in prediction propagation and fixup phase.
+
+        We change exit reason from Overflow to BigInt32Overflow since Overflow is solely used for Int32 case,
+        and we have Int52Overflow for Int52 case. We should have BigInt32Overflow for BigInt32 to precisely
+        record and tell about what happens in DFG as a feedback for the next compilation.
+
+        We add BigInt32 speculation for ValueSub. Previously, we missed that in fixup phase and we always
+        speculate ValueSub with AnyBigIntUse or HeapBigIntUse. Now it can use BigInt32Use.
+
+        We also fix Inc / Dec's fixup phase to use BigInt path. Previously, it was always using UntypedUse since
+        `node->child1()->shouldSpeculateUntypedForArithmetic()` returns true for BigInt. We fix the ordering of
+        speculation attempts as it is done in the other places in fixup phase.
+
+        This patch offers 7.9% performance improvement in sunspider-sha1-big-int.
+
+                                               ToT                     Patched
+
+            sunspider-sha1-big-int      134.5668+-2.8695     ^    124.6743+-0.7541        ^ definitely 1.0793x faster
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::binaryArithShouldSpeculateBigInt32):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateBigInt32):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mayHaveBigInt32Result):
+        (JSC::DFG::Node::mayHaveHeapBigIntResult):
+        (JSC::DFG::Node::mayHaveBigIntResult):
+        (JSC::DFG::Node::canSpeculateBigInt32):
+        (JSC::DFG::Node::canSpeculateInt52):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeMayHaveHeapBigInt):
+        (JSC::DFG::nodeCanSpeculateBigInt32):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::compileValueDiv):
+        (JSC::DFG::SpeculativeJIT::speculateHeapBigInt):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueDiv):
+
 2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] isCallable is redundant with isFunction

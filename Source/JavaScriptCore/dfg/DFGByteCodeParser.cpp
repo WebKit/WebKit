@@ -1011,8 +1011,10 @@ private:
                 node->mergeFlags(NodeMayHaveDoubleResult);
             if (observed.didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (observed.didObserveBigInt())
-                node->mergeFlags(NodeMayHaveBigIntResult);
+            if (observed.didObserveBigInt32())
+                node->mergeFlags(NodeMayHaveBigInt32Result);
+            if (observed.didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+                node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
         case ValueMul:
@@ -1030,8 +1032,10 @@ private:
                 node->mergeFlags(NodeMayHaveDoubleResult);
             if (arithProfile->didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (arithProfile->didObserveBigInt())
-                node->mergeFlags(NodeMayHaveBigIntResult);
+            if (arithProfile->didObserveBigInt32())
+                node->mergeFlags(NodeMayHaveBigInt32Result);
+            if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+                node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
         case ValueNegate:
@@ -1049,8 +1053,10 @@ private:
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
             if (arithProfile->didObserveNonNumeric())
                 node->mergeFlags(NodeMayHaveNonNumericResult);
-            if (arithProfile->didObserveBigInt())
-                node->mergeFlags(NodeMayHaveBigIntResult);
+            if (arithProfile->didObserveBigInt32())
+                node->mergeFlags(NodeMayHaveBigInt32Result);
+            if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+                node->mergeFlags(NodeMayHaveHeapBigIntResult);
             break;
         }
 
@@ -1099,8 +1105,11 @@ private:
         node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
 
         BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
-        if (arithProfile->didObserveBigInt())
-            node->mergeFlags(NodeMayHaveBigIntResult);
+
+        if (arithProfile->didObserveBigInt32())
+            node->mergeFlags(NodeMayHaveBigInt32Result);
+        if (arithProfile->didObserveHeapBigInt() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BigInt32Overflow))
+            node->mergeFlags(NodeMayHaveHeapBigIntResult);
 
         return node;
     }

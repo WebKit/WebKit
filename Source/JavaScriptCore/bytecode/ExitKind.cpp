@@ -88,6 +88,8 @@ const char* exitKindToString(ExitKind kind)
         return "ExceptionCheck";
     case GenericUnwind:
         return "GenericUnwind";
+    case BigInt32Overflow:
+        return "BigInt32Overflow";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "Unknown";

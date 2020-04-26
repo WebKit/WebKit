@@ -42,37 +42,37 @@ namespace JSC { namespace DFG {
 #define NodeResultInt52                  0x0005
 #define NodeResultBoolean                0x0006
 #define NodeResultStorage                0x0007
-                                
+
 #define NodeMustGenerate                 0x0008 // set on nodes that have side effects, and may not trivially be removed by DCE.
 #define NodeHasVarArgs                   0x0010
-    
-#define NodeBehaviorMask                 0x007e0
+
 #define NodeMayHaveDoubleResult          0x00020
 #define NodeMayOverflowInt52             0x00040
 #define NodeMayOverflowInt32InBaseline   0x00080
 #define NodeMayOverflowInt32InDFG        0x00100
 #define NodeMayNegZeroInBaseline         0x00200
 #define NodeMayNegZeroInDFG              0x00400
-#define NodeMayHaveNonNumericResult      0x00800
-// FIXME: we should have separate flags for HeapBigInt and BigInt32, currently prediction propagation will pessimize things.
-#define NodeMayHaveBigIntResult          0x01000
-#define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveBigIntResult)
-                                
-#define NodeBytecodeBackPropMask        0x3e000
-#define NodeBytecodeUseBottom           0x00000
-#define NodeBytecodeUsesAsNumber        0x02000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
-#define NodeBytecodeNeedsNegZero        0x04000 // The result of this computation may be used in a context that observes -0.
-#define NodeBytecodeUsesAsOther         0x08000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
-#define NodeBytecodeUsesAsValue         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther)
-#define NodeBytecodeUsesAsInt           0x10000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
-#define NodeBytecodeUsesAsArrayIndex    0x20000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
+#define NodeMayHaveBigInt32Result        0x00800
+#define NodeMayHaveHeapBigIntResult      0x01000
+#define NodeMayHaveNonNumericResult      0x02000
+#define NodeBehaviorMask                 (NodeMayHaveDoubleResult | NodeMayOverflowInt52 | NodeMayOverflowInt32InBaseline | NodeMayOverflowInt32InDFG | NodeMayNegZeroInBaseline | NodeMayNegZeroInDFG | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult | NodeMayHaveNonNumericResult)
+#define NodeMayHaveNonIntResult          (NodeMayHaveDoubleResult | NodeMayHaveNonNumericResult | NodeMayHaveBigInt32Result | NodeMayHaveHeapBigIntResult)
+
+#define NodeBytecodeUseBottom            0x00000
+#define NodeBytecodeUsesAsNumber         0x04000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
+#define NodeBytecodeNeedsNegZero         0x08000 // The result of this computation may be used in a context that observes -0.
+#define NodeBytecodeUsesAsOther          0x10000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
+#define NodeBytecodeUsesAsInt            0x20000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeBytecodeUsesAsArrayIndex     0x40000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
+#define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther)
+#define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex)
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeIsFlushed                   0x40000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                    0x80000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
-#define NodeMiscFlag1                   0x80000
-#define NodeMiscFlag2                   0x100000
+#define NodeMiscFlag1                   0x100000
+#define NodeMiscFlag2                   0x200000
 
 typedef uint32_t NodeFlags;
 
@@ -156,6 +156,19 @@ static inline bool nodeCanSpeculateInt52(NodeFlags flags, RareCaseProfilingSourc
         return bytecodeCanIgnoreNegativeZero(flags);
     
     return true;
+}
+
+static inline bool nodeMayHaveHeapBigInt(NodeFlags flags, RareCaseProfilingSource)
+{
+    return !!(flags & NodeMayHaveHeapBigIntResult);
+}
+
+static inline bool nodeCanSpeculateBigInt32(NodeFlags flags, RareCaseProfilingSource source)
+{
+    // We always attempt to produce BigInt32 as much as possible. If we see HeapBigInt, we observed overflow.
+    // FIXME: Extend this information by tiered profiling (from Baseline, DFG etc.).
+    // https://bugs.webkit.org/show_bug.cgi?id=211039
+    return !nodeMayHaveHeapBigInt(flags, source);
 }
 
 // FIXME: Get rid of this.

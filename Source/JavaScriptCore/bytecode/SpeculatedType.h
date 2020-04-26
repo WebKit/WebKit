@@ -100,7 +100,12 @@ static constexpr SpeculatedType SpecMisc                              = SpecBool
 static constexpr SpeculatedType SpecEmpty                             = 1ull << 40; // It's definitely an empty value marker.
 static constexpr SpeculatedType SpecHeapBigInt                        = 1ull << 41; // It's definitely a BigInt that is allocated on the heap
 static constexpr SpeculatedType SpecBigInt32                          = 1ull << 42; // It's definitely a small BigInt that is inline the JSValue
+#if USE(BIGINT32)
 static constexpr SpeculatedType SpecBigInt                            = SpecBigInt32 | SpecHeapBigInt;
+#else
+// We should not include SpecBigInt32. We are using SpecBigInt in various places like prediction. If this includes SpecBigInt32, fixup phase is confused if !USE(BIGINT32) since it is not using AnyBigIntUse.
+static constexpr SpeculatedType SpecBigInt                            = SpecHeapBigInt;
+#endif
 static constexpr SpeculatedType SpecDataViewObject                    = 1ull << 43; // It's definitely a JSDataView.
 static constexpr SpeculatedType SpecPrimitive                         = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc | SpecBigInt; // It's any non-Object JSValue.
 static constexpr SpeculatedType SpecObject                            = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecRegExpObject | SpecDateObject | SpecPromiseObject | SpecMapObject | SpecSetObject | SpecWeakMapObject | SpecWeakSetObject | SpecProxyObject | SpecDerivedArray | SpecObjectOther | SpecDataViewObject; // Bitmask used for testing for any kind of object prediction.
