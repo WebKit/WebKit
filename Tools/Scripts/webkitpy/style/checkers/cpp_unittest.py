@@ -5486,6 +5486,75 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_move] [4]",
             'foo.mm')
 
+    def test_wtf_never_destroyed(self):
+        self.assert_lint(
+             'static NeverDestroyed<Foo> foo;',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+             'static LazyNeverDestroyed<Foo> foo;',
+             '',
+             'foo.cpp')
+
+        self.assert_lint(
+            'static NeverDestroyed<Lock> lock;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'static NeverDestroyed<Condition> condition;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'static LazyNeverDestroyed<Lock> lock;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'static LazyNeverDestroyed<Condition> condition;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.cpp')
+
+        self.assert_lint(
+             'static NeverDestroyed<Foo> foo;',
+             '',
+             'foo.mm')
+
+        self.assert_lint(
+             'static LazyNeverDestroyed<Foo> foo;',
+             '',
+             'foo.mm')
+
+        self.assert_lint(
+            'static NeverDestroyed<Lock> lock;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            'static NeverDestroyed<Condition> condition;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            'static LazyNeverDestroyed<Lock> lock;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.mm')
+
+        self.assert_lint(
+            'static LazyNeverDestroyed<Condition> condition;',
+            "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'."
+            "  [runtime/wtf_never_destroyed] [4]",
+            'foo.mm')
+
     def test_wtf_optional(self):
         self.assert_lint(
              'Optional<int> a;',

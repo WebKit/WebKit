@@ -1,3 +1,21 @@
+2020-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Warn when NeverDestroyed<Lock> is used
+        https://bugs.webkit.org/show_bug.cgi?id=211054
+
+        Reviewed by Darin Adler.
+
+        WTF::Lock and WTF::Condition are designed to be constant-initialize compliant. So NeverDestroyed<> for these types are not necessary,
+        or rather, introducing race condition issue while `static Lock` doesn't have that issue. This patch adds lint rules which prevent
+        us from using `NeverDestroyed<Lock>` and `LazyNeverDestroyed<Lock>`.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_wtf_never_destroyed):
+        (check_style):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_wtf_never_destroyed):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks

@@ -2544,6 +2544,28 @@ def check_wtf_make_unique(clean_lines, line_number, file_state, error):
               "Use 'WTF::makeUnique<{typename}>' instead of 'std::make_unique<{typename}>'.".format(typename=typename))
 
 
+def check_wtf_never_destroyed(clean_lines, line_number, file_state, error):
+    """Looks for use of 'NeverDestroyed<Lock/Condition>' which should be replaced with 'Lock/Condition'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_wtf_never_destroyed_search = search(r'\b(?:Lazy)?NeverDestroyed\s*<([^(>]+)>', line)  # LazyNeverDestroyed is also caught.
+    if not using_wtf_never_destroyed_search:
+        return
+
+    typename = using_wtf_never_destroyed_search.group(1).strip()
+    if search(r'(Lock|Condition)', typename):
+        error(line_number, 'runtime/wtf_never_destroyed', 4, "Use 'static Lock/Condition' instead of 'NeverDestroyed<Lock/Condition>'.")
+
+
 def check_lock_guard(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::lock_guard<>' which should be replaced with 'WTF::Locker'.
 
@@ -3124,6 +3146,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_optional(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
+    check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
@@ -4305,6 +4328,7 @@ class CppChecker(object):
         'runtime/wtf_optional',
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
+        'runtime/wtf_never_destroyed',
         'security/assertion',
         'security/missing_warn_unused_return',
         'security/printf',
