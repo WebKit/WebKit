@@ -1,3 +1,12 @@
+2020-04-26  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Fix windows build with MSBuild after 260672
+        https://bugs.webkit.org/show_bug.cgi?id=211047
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt:
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks
