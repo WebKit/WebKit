@@ -1,3 +1,12 @@
+2020-04-26  Peng Liu  <peng.liu6@apple.com>
+
+        Remove unused class PlaybackSessionInterface
+        https://bugs.webkit.org/show_bug.cgi?id=211031
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+
 2020-04-11  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in functions that return range of the selection

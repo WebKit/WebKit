@@ -39,7 +39,6 @@ namespace WebCore {
 class AudioTrack;
 class HTMLMediaElement;
 class TextTrack;
-class PlaybackSessionInterface;
 
 class PlaybackSessionModelMediaElement final : public PlaybackSessionModel, public EventListener {
 public:

@@ -28,7 +28,6 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "HTMLMediaElementEnums.h"
-#include "PlaybackSessionInterface.h"
 #include "PlaybackSessionModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -43,8 +42,7 @@ class IntRect;
 class PlaybackSessionModel;
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
-    : public PlaybackSessionInterface
-    , public PlaybackSessionModelClient
+    : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceMac> {
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);

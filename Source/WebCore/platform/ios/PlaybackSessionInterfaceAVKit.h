@@ -30,7 +30,6 @@
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
-#include "PlaybackSessionInterface.h"
 #include "PlaybackSessionModel.h"
 #include "Timer.h"
 #include <functional>
@@ -48,8 +47,7 @@ class PlaybackSessionModel;
 class WebPlaybackSessionChangeObserver;
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
-    : public PlaybackSessionInterface
-    , public PlaybackSessionModelClient
+    : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceAVKit> {
 
 public:
