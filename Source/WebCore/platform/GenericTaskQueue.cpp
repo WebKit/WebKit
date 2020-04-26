@@ -63,7 +63,7 @@ Timer& TaskDispatcher<Timer>::sharedTimer()
 
 Lock& TaskDispatcher<Timer>::sharedLock()
 {
-    static NeverDestroyed<Lock> lock;
+    static Lock lock;
     return lock;
 }
 

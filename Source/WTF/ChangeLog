@@ -1,3 +1,15 @@
+2020-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use `static Lock` instead of `static NeverDestroyed<Lock>`
+        https://bugs.webkit.org/show_bug.cgi?id=211036
+
+        Reviewed by Darin Adler.
+
+        Lock can be static-initialized since it has constexpr constructor. No need to use NeverDestroyed<Lock>.
+
+        * wtf/Logger.h:
+        (WTF::Logger::observerLock):
+
 2020-04-26  Joonghun Park  <jh718.park@samsung.com>
 
         [WTF] Workaround gcc bug for unsigned bitfield related usual arithmetic conversions

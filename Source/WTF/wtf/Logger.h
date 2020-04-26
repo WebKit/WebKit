@@ -367,7 +367,7 @@ private:
 
     static Lock& observerLock()
     {
-        static NeverDestroyed<Lock> observerLock;
+        static Lock observerLock;
         return observerLock;
     }
 
