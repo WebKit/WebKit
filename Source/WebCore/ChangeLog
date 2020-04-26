@@ -1,3 +1,21 @@
+2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use static initialized Lock instead of LazyNeverDestroyed<Lock>
+        https://bugs.webkit.org/show_bug.cgi?id=211010
+
+        Reviewed by Mark Lam.
+
+        WTF::Lock can be static-initialized, so no need to use LazyNeverDestroyed<Lock>.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::instancesMutex):
+        * Modules/webgpu/WebGPUPipeline.cpp:
+        (WebCore::WebGPUPipeline::instancesMutex):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::instancesMutex):
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::instancesMutex):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks

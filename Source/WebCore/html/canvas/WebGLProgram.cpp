@@ -46,12 +46,8 @@ HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances(cons
 
 Lock& WebGLProgram::instancesMutex()
 {
-    static LazyNeverDestroyed<Lock> mutex;
-    static std::once_flag initializeMutex;
-    std::call_once(initializeMutex, [] {
-        mutex.construct();
-    });
-    return mutex.get();
+    static Lock mutex;
+    return mutex;
 }
 
 Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
