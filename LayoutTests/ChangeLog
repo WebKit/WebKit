@@ -1,3 +1,12 @@
+2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, temporarily skip WebInspector tests after r210942 and r260696
+        https://bugs.webkit.org/show_bug.cgi?id=211035
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add vertical-align: baseline support
