@@ -365,7 +365,7 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, Messages::WebPaymentCoordinatorProxy::BeginApplePaySetup::AsyncReply&& reply)
 {
-    UIViewController *presentingViewController = m_paymentCoordinatorProxy.m_client.paymentCoordinatorPresentingViewController(m_paymentCoordinatorProxy);
+    UIViewController *presentingViewController = m_client.paymentCoordinatorPresentingViewController(*this);
     if (!presentingViewController) {
         reply(false);
         return;

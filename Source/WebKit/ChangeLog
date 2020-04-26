@@ -1,5 +1,13 @@
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal iOS build.
+        https://bugs.webkit.org/show_bug.cgi?id=210521
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformBeginApplePaySetup):
+
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
         Move ApplePay code from WebKitAdditions to WebCore and WebKit
         https://bugs.webkit.org/show_bug.cgi?id=210521
 
