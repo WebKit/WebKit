@@ -1,3 +1,16 @@
+2020-04-26  Joonghun Park  <jh718.park@samsung.com>
+
+        [WTF] Workaround gcc bug for unsigned bitfield related usual arithmetic conversions
+        https://bugs.webkit.org/show_bug.cgi?id=211044
+
+        Reviewed by Darin Adler.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setHost):
+        (WTF::URL::setHostAndPort):
+        (WTF::URL::setUser):
+        (WTF::URL::setPassword):
+
 2020-04-25  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the bulid warnings below since r260707.
