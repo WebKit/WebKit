@@ -149,7 +149,6 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "DOMURL.h"
 #include "MediaStream.h"
 #endif
 

@@ -26,7 +26,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "SharedStringHash.h"
-#include "URLUtils.h"
+#include "URLDecomposition.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ enum class Relation : uint8_t {
     Opener = 1 << 2,
 };
 
-class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
+class HTMLAnchorElement : public HTMLElement, public URLDecomposition {
     WTF_MAKE_ISO_ALLOCATED(HTMLAnchorElement);
 public:
     static Ref<HTMLAnchorElement> create(Document&);
@@ -116,8 +116,11 @@ private:
     void setRootEditableElementForSelectionOnMouseDown(Element*);
     void clearRootEditableElementForSelectionOnMouseDown();
 
-    bool m_hasRootEditableElementForSelectionOnMouseDown;
-    bool m_wasShiftKeyDownOnMouseDown;
+    URL fullURL() const final { return href(); }
+    void setFullURL(const URL& fullURL) final { setHref(fullURL.string()); }
+
+    bool m_hasRootEditableElementForSelectionOnMouseDown { false };
+    bool m_wasShiftKeyDownOnMouseDown { false };
     OptionSet<Relation> m_linkRelations;
 
     // This is computed only once and must not be affected by subsequent URL changes.

@@ -650,8 +650,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/StepRange.h
     html/TimeRanges.h
     html/TypeAhead.h
+    html/URLDecomposition.h
     html/URLRegistry.h
-    html/URLUtils.h
     html/ValidityState.h
     html/VoidCallback.h
 

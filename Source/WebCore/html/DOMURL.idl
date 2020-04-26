@@ -32,7 +32,6 @@
     ConstructorMayThrowException,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     InterfaceName=URL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,

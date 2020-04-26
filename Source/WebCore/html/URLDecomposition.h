@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2012 Motorola Mobility Inc.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +25,47 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include "URLDecomposition.h"
-#include <wtf/URL.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class Blob;
-class ScriptExecutionContext;
-class URLRegistrable;
-class URLSearchParams;
-
-class DOMURL final : public RefCounted<DOMURL>, public URLDecomposition {
+class URLDecomposition {
 public:
-    static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
-    static ExceptionOr<Ref<DOMURL>> create(const String& url, const DOMURL& base);
-    static ExceptionOr<Ref<DOMURL>> create(const String& url);
-    ~DOMURL();
+    String origin() const;
 
-    const URL& href() const { return m_url; }
-    ExceptionOr<void> setHref(const String&);
-    void setQuery(const String&);
+    WEBCORE_EXPORT String protocol() const;
+    void setProtocol(StringView);
 
-    URLSearchParams& searchParams();
+    String username() const;
+    void setUsername(StringView);
 
-    const String& toJSON() const { return m_url.string(); }
+    String password() const;
+    void setPassword(StringView);
 
-    static String createObjectURL(ScriptExecutionContext&, Blob&);
-    static void revokeObjectURL(ScriptExecutionContext&, const String&);
+    WEBCORE_EXPORT String host() const;
+    void setHost(StringView);
 
-    static String createPublicURL(ScriptExecutionContext&, URLRegistrable&);
+    WEBCORE_EXPORT String hostname() const;
+    void setHostname(StringView);
+
+    WEBCORE_EXPORT String port() const;
+    void setPort(StringView);
+
+    WEBCORE_EXPORT String pathname() const;
+    void setPathname(StringView);
+
+    WEBCORE_EXPORT String search() const;
+    void setSearch(const String&);
+
+    WEBCORE_EXPORT String hash() const;
+    void setHash(StringView);
+
+protected:
+    virtual ~URLDecomposition() = default;
 
 private:
-    DOMURL(URL&& completeURL, URL&& baseURL);
-
-    URL fullURL() const final { return m_url; }
-    void setFullURL(const URL& fullURL) final { setHref(fullURL.string()); }
-
-    URL m_baseURL;
-    URL m_url;
-    RefPtr<URLSearchParams> m_searchParams;
+    virtual URL fullURL() const = 0;
+    virtual void setFullURL(const URL&) = 0;
 };
 
 } // namespace WebCore

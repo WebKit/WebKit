@@ -1276,6 +1276,7 @@ html/TextInputType.cpp
 html/TimeInputType.cpp
 html/TimeRanges.cpp
 html/TypeAhead.cpp
+html/URLDecomposition.cpp
 html/URLInputType.cpp
 html/URLSearchParams.cpp
 html/ValidationMessage.cpp

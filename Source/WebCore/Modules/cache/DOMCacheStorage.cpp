@@ -32,9 +32,9 @@
 #include "JSDOMCache.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
-using namespace WebCore::DOMCacheEngine;
 
 DOMCacheStorage::DOMCacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
