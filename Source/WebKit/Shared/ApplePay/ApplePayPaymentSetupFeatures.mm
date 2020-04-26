@@ -24,14 +24,14 @@
  */
 
 #import "config.h"
-#import "ApplePayPaymentSetupFeatures.h"
+#import "ApplePayPaymentSetupFeaturesWebKit.h"
 
 #if HAVE(PASSKIT_PAYMENT_SETUP)
 
 #import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
 #import "Encoder.h"
-#import <WebCore/ApplePaySetupFeature.h>
+#import <WebCore/ApplePaySetupFeatureWebCore.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
 

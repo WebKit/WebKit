@@ -28,8 +28,8 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySessionPaymentRequest.h"
-#include "ApplePaySetup.h"
-#include "ApplePaySetupFeature.h"
+#include "ApplePaySetupFeatureWebCore.h"
+#include "ApplePaySetupWebCore.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>

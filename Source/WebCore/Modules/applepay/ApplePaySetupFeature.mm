@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-#import "ApplePaySetupFeature.h"
+#import "ApplePaySetupFeatureWebCore.h"
 
 #if ENABLE(APPLE_PAY_SETUP)
 
-#import "ApplePaySetupFeatureType.h"
+#import "ApplePaySetupFeatureTypeWebCore.h"
 #import "PassKitSPIAdditions.h"
 
 namespace WebCore {

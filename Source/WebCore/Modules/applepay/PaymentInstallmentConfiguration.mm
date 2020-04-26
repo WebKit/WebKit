@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-#import "PaymentInstallmentConfiguration.h"
+#import "PaymentInstallmentConfigurationWebCore.h"
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 
-#import "ApplePayInstallmentConfiguration.h"
+#import "ApplePayInstallmentConfigurationWebCore.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {

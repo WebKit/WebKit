@@ -77,6 +77,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayMerchantCapability.cpp
@@ -115,6 +117,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetup.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetupFeature.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetupFeature.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetupFeatureType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePaySetupFeatureType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayShippingContactSelectedEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayShippingContactSelectedEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayShippingContactUpdate.cpp

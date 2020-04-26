@@ -7185,6 +7185,28 @@ sub GenerateHashTable
     push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, ${className}::info(), $nameEntries, $nameIndex };\n");
 }
 
+sub SubstituteHeader
+{
+    # Internal macOS SDKs up to 10.15 have non-suffixed headers in their WebKitAdditions, requiring the addition of the suffix to build successfully.
+    my $include = shift;
+    if ($include eq "\"ApplePayInstallmentConfiguration.h\"") {
+        return "\"ApplePayInstallmentConfigurationWebCore.h\"";
+    }
+    if ($include eq "\"ApplePaySetupFeatureType.h\"") {
+        return "\"ApplePaySetupFeatureTypeWebCore.h\"";
+    }
+    if ($include eq "\"ApplePaySetupFeature.h\"") {
+        return "\"ApplePaySetupFeatureWebCore.h\"";
+    }
+    if ($include eq "\"ApplePaySetup.h\"") {
+        return "\"ApplePaySetupWebCore.h\"";
+    }
+    if ($include eq "\"PaymentInstallmentConfiguration.h\"") {
+        return "\"PaymentInstallmentConfigurationWebCore.h\"";
+    }
+    return $include;
+}
+
 sub WriteData
 {
     my $object = shift;
@@ -7243,6 +7265,7 @@ sub WriteData
     @includes = ();
     foreach my $include (keys %headerIncludes) {
         $include = "\"$include\"" unless $include =~ /^["<]/; # "
+        $include = SubstituteHeader($include);
         push @includes, $include;
     }
     foreach my $include (sort @includes) {

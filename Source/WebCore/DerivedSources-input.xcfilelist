@@ -24,6 +24,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayContactField.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentConfiguration.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayLineItem.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayMerchantCapability.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPayment.idl
@@ -39,6 +40,9 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRequestBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySession.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySessionError.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySetup.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeature.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeatureType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethod.idl

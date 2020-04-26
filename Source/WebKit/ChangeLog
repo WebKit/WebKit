@@ -3,6 +3,11 @@
         Move ApplePay code from WebKitAdditions to WebCore and WebKit
         https://bugs.webkit.org/show_bug.cgi?id=210521
 
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Move ApplePay code from WebKitAdditions to WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210521
+
         Reviewed by Andy Estes.
 
         * DerivedSources.make:

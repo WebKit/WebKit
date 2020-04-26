@@ -28,7 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayContactField.h"
-#include "ApplePayInstallmentConfiguration.h"
+#include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayPaymentContact.h"
 

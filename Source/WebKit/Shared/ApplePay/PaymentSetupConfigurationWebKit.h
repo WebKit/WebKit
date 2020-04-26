@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,38 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
+#if HAVE(PASSKIT_PAYMENT_SETUP)
 
-#include "ApplePaySetupFeatureType.h"
-#include <wtf/text/WTFString.h>
+#include <WebCore/ApplePaySetupWebCore.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
-namespace WebCore {
+OBJC_CLASS PKPaymentSetupConfiguration;
 
-struct ApplePayInstallmentConfiguration {
-    ApplePaySetupFeatureType featureType { ApplePaySetupFeatureType::AppleCard };
-    String merchandisingImageData;
-    String openToBuyThresholdAmount;
-    String bindingTotalAmount;
-    String currencyCode;
-    String merchantIdentifier;
-    String referrerIdentifier;
-    bool isInStorePurchase { false };
+namespace IPC {
+class Decoder;
+class Encoder;
+}
+
+namespace WebKit {
+
+class PaymentSetupConfiguration {
+public:
+    PaymentSetupConfiguration() = default;
+    PaymentSetupConfiguration(const WebCore::ApplePaySetup::Configuration&, const URL&);
+
+    void encode(IPC::Encoder&) const;
+    static Optional<PaymentSetupConfiguration> decode(IPC::Decoder&);
+
+    PKPaymentSetupConfiguration *platformConfiguration() const { return m_configuration.get(); }
+
+private:
+    explicit PaymentSetupConfiguration(RetainPtr<PKPaymentSetupConfiguration>&&);
+
+    RetainPtr<PKPaymentSetupConfiguration> m_configuration;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
+#endif // HAVE(PASSKIT_PAYMENT_SETUP)
+

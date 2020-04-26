@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ApplePaySetup.h"
+#include "ApplePaySetupWebCore.h"
 
 #if ENABLE(APPLE_PAY_SETUP)
 
@@ -35,7 +35,6 @@
 #include "PaymentCoordinator.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
-#include "PaymentSetupConfiguration.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
 

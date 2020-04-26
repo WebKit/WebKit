@@ -4028,8 +4028,8 @@
 		5C46C0AE21B71AE200BC5991 /* _WKWebsiteDataStoreConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreConfigurationInternal.h; sourceTree = "<group>"; };
 		5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoOrRedo.h; sourceTree = "<group>"; };
 		5C53DCDD24465BF900A93124 /* ApplePayPaymentSetupFeatures.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePayPaymentSetupFeatures.mm; sourceTree = "<group>"; };
-		5C53DCDE24465BF900A93124 /* PaymentSetupConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentSetupConfiguration.h; sourceTree = "<group>"; };
-		5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentSetupFeatures.h; sourceTree = "<group>"; };
+		5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentSetupConfigurationWebKit.h; sourceTree = "<group>"; };
+		5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentSetupFeaturesWebKit.h; sourceTree = "<group>"; };
 		5C53DCE024465BF900A93124 /* PaymentSetupConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentSetupConfiguration.mm; sourceTree = "<group>"; };
 		5C5CEC382209583200D6BBB0 /* DaemonEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DaemonEntryPoint.h; sourceTree = "<group>"; };
 		5C5CEC392209583200D6BBB0 /* DaemonEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DaemonEntryPoint.mm; sourceTree = "<group>"; };
@@ -6268,10 +6268,10 @@
 				1AB1F7771D1B30A9007C9BD1 /* cocoa */,
 				1AB1F77A1D1B30A9007C9BD1 /* ios */,
 				1AB1F77C1D1B30A9007C9BD1 /* mac */,
-				5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeatures.h */,
 				5C53DCDD24465BF900A93124 /* ApplePayPaymentSetupFeatures.mm */,
-				5C53DCDE24465BF900A93124 /* PaymentSetupConfiguration.h */,
+				5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */,
 				5C53DCE024465BF900A93124 /* PaymentSetupConfiguration.mm */,
+				5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */,
 				1AB1F7881D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp */,
 				1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */,
 				1AB1F78A1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.messages.in */,

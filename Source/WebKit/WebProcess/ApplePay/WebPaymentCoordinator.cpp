@@ -28,9 +28,9 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayPaymentSetupFeatures.h"
+#include "ApplePayPaymentSetupFeaturesWebKit.h"
 #include "DataReference.h"
-#include "PaymentSetupConfiguration.h"
+#include "PaymentSetupConfigurationWebKit.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPaymentCoordinatorMessages.h"

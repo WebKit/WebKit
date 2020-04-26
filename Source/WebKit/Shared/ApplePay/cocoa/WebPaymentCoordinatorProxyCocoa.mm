@@ -40,8 +40,8 @@
 
 #if HAVE(PASSKIT_PAYMENT_SETUP)
 #import "APIUIClient.h"
-#import "ApplePayPaymentSetupFeatures.h"
-#import "PaymentSetupConfiguration.h"
+#import "ApplePayPaymentSetupFeaturesWebKit.h"
+#import "PaymentSetupConfigurationWebKit.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #endif

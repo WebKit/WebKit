@@ -28,7 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentContact.h"
-#include "PaymentInstallmentConfiguration.h"
+#include "PaymentInstallmentConfigurationWebCore.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

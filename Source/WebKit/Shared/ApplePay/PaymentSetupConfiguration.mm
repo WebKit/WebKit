@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PaymentSetupConfiguration.h"
+#import "PaymentSetupConfigurationWebKit.h"
 
 #if HAVE(PASSKIT_PAYMENT_SETUP)
 
