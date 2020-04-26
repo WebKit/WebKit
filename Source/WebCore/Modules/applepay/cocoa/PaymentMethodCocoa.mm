@@ -32,15 +32,18 @@
 #import "ApplePayPaymentMethodType.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PaymentMethodCocoaAdditions.mm>
-#else
 namespace WebCore {
-static void finishConverting(PKPaymentMethod *, ApplePayPaymentMethod&) { }
-}
-#endif
 
-namespace WebCore {
+static void finishConverting(PKPaymentMethod *paymentMethod, ApplePayPaymentMethod& result)
+{
+#if HAVE(PASSKIT_INSTALLMENTS)
+    if (NSString *bindToken = paymentMethod.bindToken)
+        result.bindToken = bindToken;
+#else
+    UNUSED_PARAM(paymentMethod);
+    UNUSED_PARAM(result);
+#endif
+}
 
 static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState paymentPassActivationState)
 {

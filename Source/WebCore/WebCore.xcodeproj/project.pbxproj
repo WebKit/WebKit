@@ -1900,6 +1900,9 @@
 		5C2B1AEC22397EBC00B91CF7 /* ResourceResponseCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */; };
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
 		5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304B4191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h */; };
+		5C53DCE124465DFC00A93124 /* ApplePaySetupFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C53DCCF2446449900A93124 /* ApplePaySetupFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C53DCE724468AD200A93124 /* PaymentInstallmentConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C53DCCE2446449900A93124 /* PaymentInstallmentConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C53DCEA24468FB400A93124 /* ApplePaySetup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C53DCCB2446449800A93124 /* ApplePaySetup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C5D2385227A0652000B9BDA /* CustomHeaderFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C5D2383227A063A000B9BDA /* CustomHeaderFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C7C88D81D0F1F4A009D2F6D /* SocketProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C9C2DB52241A67B00996B0B /* ContentRuleListResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9C2DB32241A67300996B0B /* ContentRuleListResults.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9091,6 +9094,18 @@
 		5C5381B11D87D45700E2EBE6 /* URLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSearchParams.h; sourceTree = "<group>"; };
 		5C5381B31D87E08100E2EBE6 /* JSURLSearchParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSURLSearchParams.cpp; sourceTree = "<group>"; };
 		5C5381B41D87E08100E2EBE6 /* JSURLSearchParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSURLSearchParams.h; sourceTree = "<group>"; };
+		5C53DCC62446449700A93124 /* ApplePaySetup.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePaySetup.idl; sourceTree = "<group>"; };
+		5C53DCC92446449800A93124 /* ApplePaySetupFeature.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePaySetupFeature.mm; sourceTree = "<group>"; };
+		5C53DCCA2446449800A93124 /* ApplePaySetupFeature.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePaySetupFeature.idl; sourceTree = "<group>"; };
+		5C53DCCB2446449800A93124 /* ApplePaySetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePaySetup.h; sourceTree = "<group>"; };
+		5C53DCCC2446449900A93124 /* PaymentInstallmentConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentInstallmentConfiguration.mm; sourceTree = "<group>"; };
+		5C53DCCE2446449900A93124 /* PaymentInstallmentConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentInstallmentConfiguration.h; sourceTree = "<group>"; };
+		5C53DCCF2446449900A93124 /* ApplePaySetupFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePaySetupFeature.h; sourceTree = "<group>"; };
+		5C53DCD02446449A00A93124 /* ApplePayInstallmentConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayInstallmentConfiguration.h; sourceTree = "<group>"; };
+		5C53DCD22446449A00A93124 /* ApplePaySetup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePaySetup.cpp; sourceTree = "<group>"; };
+		5C53DCD42446449B00A93124 /* ApplePaySetupFeatureType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePaySetupFeatureType.h; sourceTree = "<group>"; };
+		5C53DCD52446449B00A93124 /* ApplePayInstallmentConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayInstallmentConfiguration.idl; sourceTree = "<group>"; };
+		5C53DCD62446449C00A93124 /* ApplePaySetupFeatureType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePaySetupFeatureType.idl; sourceTree = "<group>"; };
 		5C5D2383227A063A000B9BDA /* CustomHeaderFields.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomHeaderFields.h; sourceTree = "<group>"; };
 		5C5D2386227A077C000B9BDA /* CustomHeaderFields.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomHeaderFields.cpp; sourceTree = "<group>"; };
 		5C668E641E7C6C3500D32B3B /* SocketStreamHandleImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleImpl.cpp; sourceTree = "<group>"; };
@@ -17311,6 +17326,8 @@
 				A1BB859B2159AEA10067E07D /* ApplePayErrorCode.idl */,
 				A1BB85A02159AF570067E07D /* ApplePayErrorContactField.h */,
 				A1BB85A22159AF570067E07D /* ApplePayErrorContactField.idl */,
+				5C53DCD02446449A00A93124 /* ApplePayInstallmentConfiguration.h */,
+				5C53DCD52446449B00A93124 /* ApplePayInstallmentConfiguration.idl */,
 				7C6579E21E00827000E3A27A /* ApplePayLineItem.h */,
 				7C6579E41E0082C800E3A27A /* ApplePayLineItem.idl */,
 				A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */,
@@ -17348,6 +17365,14 @@
 				A1956F1F2331A8C70057E9D2 /* ApplePaySessionError.idl */,
 				1A58E8631D19D4DF00C0EA73 /* ApplePaySessionPaymentRequest.cpp */,
 				1A58E8641D19D4DF00C0EA73 /* ApplePaySessionPaymentRequest.h */,
+				5C53DCD22446449A00A93124 /* ApplePaySetup.cpp */,
+				5C53DCCB2446449800A93124 /* ApplePaySetup.h */,
+				5C53DCC62446449700A93124 /* ApplePaySetup.idl */,
+				5C53DCCF2446449900A93124 /* ApplePaySetupFeature.h */,
+				5C53DCCA2446449800A93124 /* ApplePaySetupFeature.idl */,
+				5C53DCC92446449800A93124 /* ApplePaySetupFeature.mm */,
+				5C53DCD42446449B00A93124 /* ApplePaySetupFeatureType.h */,
+				5C53DCD62446449C00A93124 /* ApplePaySetupFeatureType.idl */,
 				1A8A64471D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.cpp */,
 				1A8A64481D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.h */,
 				1A8A64491D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.idl */,
@@ -17371,6 +17396,8 @@
 				A104EC53220A017400CBF67A /* PaymentCoordinatorClient.cpp */,
 				1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */,
 				7CF930E61E01F9AD00BAFFBE /* PaymentHeaders.h */,
+				5C53DCCE2446449900A93124 /* PaymentInstallmentConfiguration.h */,
+				5C53DCCC2446449900A93124 /* PaymentInstallmentConfiguration.mm */,
 				1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */,
 				1A8A64391D19FC5300D0E00F /* PaymentMethod.h */,
 				A1DFD5242334593A0042FCDB /* PaymentMethodUpdate.h */,
@@ -29487,6 +29514,8 @@
 				1A8A64591D19FCFC00D0E00F /* ApplePaySession.h in Headers */,
 				A1956F202331A8C70057E9D2 /* ApplePaySessionError.h in Headers */,
 				1A58E8651D19D4EB00C0EA73 /* ApplePaySessionPaymentRequest.h in Headers */,
+				5C53DCEA24468FB400A93124 /* ApplePaySetup.h in Headers */,
+				5C53DCE124465DFC00A93124 /* ApplePaySetupFeature.h in Headers */,
 				1A8A645C1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.h in Headers */,
 				A12C59F22035FCD60012236B /* ApplePayShippingContactUpdate.h in Headers */,
 				7C6579E81E00831600E3A27A /* ApplePayShippingMethod.h in Headers */,
@@ -32212,6 +32241,7 @@
 				A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */,
 				A1DF5AA61F7F64BB0058A477 /* PaymentHandler.h in Headers */,
 				7CF930E71E01F9B400BAFFBE /* PaymentHeaders.h in Headers */,
+				5C53DCE724468AD200A93124 /* PaymentInstallmentConfiguration.h in Headers */,
 				A1F76B311F44C55A0014C318 /* PaymentItem.h in Headers */,
 				1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */,
 				1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */,

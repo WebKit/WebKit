@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,28 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if HAVE(PASSKIT_INSTALLMENTS)
 
-#include "ApplePayPaymentPass.h"
-#include <wtf/Optional.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS PKPaymentInstallmentConfiguration;
 
 namespace WebCore {
 
-enum class ApplePayPaymentMethodType;
+struct ApplePayInstallmentConfiguration;
 
-struct ApplePayPaymentMethod {    
-    using Type = ApplePayPaymentMethodType;
+class WEBCORE_EXPORT PaymentInstallmentConfiguration {
+public:
+    PaymentInstallmentConfiguration() = default;
+    PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration&);
+    PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&&);
 
-    String displayName;
-    String network;
-    Optional<Type> type;
-    Optional<ApplePayPaymentPass> paymentPass;
-    Optional<ApplePayPaymentContact> billingContact;
-    String bindToken;
+    PKPaymentInstallmentConfiguration *platformConfiguration() const;
+
+private:
+    RetainPtr<PKPaymentInstallmentConfiguration> m_configuration;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // HAVE(PASSKIT_INSTALLMENTS)

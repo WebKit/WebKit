@@ -595,6 +595,8 @@ WHLSLStandardLibraryFunctionMap.cpp
     Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
     Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
     Modules/applepay/ApplePayRequestBase.cpp
+    Modules/applepay/ApplePaySetup.cpp
+    Modules/applepay/ApplePaySetupFeature.mm
     Modules/applepay/ApplePaySession.cpp
     Modules/applepay/ApplePaySessionPaymentRequest.cpp
     Modules/applepay/ApplePayShippingContactSelectedEvent.cpp
@@ -602,6 +604,7 @@ WHLSLStandardLibraryFunctionMap.cpp
     Modules/applepay/ApplePayValidateMerchantEvent.cpp
     Modules/applepay/PaymentCoordinator.cpp
     Modules/applepay/PaymentCoordinatorClient.cpp
+    Modules/applepay/PaymentInstallmentConfiguration.mm
     Modules/applepay/PaymentRequestValidator.mm
     Modules/applepay/PaymentSession.cpp
 
@@ -620,6 +623,7 @@ WHLSLStandardLibraryFunctionMap.cpp
     JSApplePayError.cpp
     JSApplePayErrorCode.cpp
     JSApplePayErrorContactField.cpp
+    JSApplePayInstallmentConfiguration.cpp
     JSApplePayLineItem.cpp
     JSApplePayMerchantCapability.cpp
     JSApplePayModifier.cpp
@@ -637,6 +641,9 @@ WHLSLStandardLibraryFunctionMap.cpp
     JSApplePayRequestBase.cpp
     JSApplePaySession.cpp
     JSApplePaySessionError.cpp
+    JSApplePaySetup.cpp
+    JSApplePaySetupFeature.cpp
+    JSApplePaySetupFeatureType.cpp
     JSApplePayShippingContactSelectedEvent.cpp
     JSApplePayShippingContactUpdate.cpp
     JSApplePayShippingMethod.cpp

@@ -28,12 +28,11 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySessionPaymentRequest.h"
+#include "ApplePaySetup.h"
+#include "ApplePaySetupFeature.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PaymentCoordinatorClientAdditions.h>
-#endif
 
 namespace WebCore {
 
@@ -71,13 +70,14 @@ public:
 
     virtual bool isAlwaysOnLoggingAllowed() const { return false; }
 
+#if ENABLE(APPLE_PAY_SETUP)
+    virtual void getSetupFeatures(const ApplePaySetup::Configuration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler) { completionHandler({ }); }
+    virtual void beginApplePaySetup(const ApplePaySetup::Configuration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void endApplePaySetup() { }
+#endif
+
 protected:
     virtual ~PaymentCoordinatorClient() = default;
-
-#if defined(PAYMENTCOORDINATORCLIENT_ADDITIONS)
-PAYMENTCOORDINATORCLIENT_ADDITIONS
-#undef PAYMENTCOORDINATORCLIENT_ADDITIONS
-#endif
 };
 
 }

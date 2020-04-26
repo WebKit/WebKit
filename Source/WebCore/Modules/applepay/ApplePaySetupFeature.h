@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,46 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if ENABLE(APPLE_PAY_SETUP)
 
-#include "ApplePayPaymentPass.h"
-#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS PKPaymentSetupFeature;
 
 namespace WebCore {
 
-enum class ApplePayPaymentMethodType;
+enum class ApplePaySetupFeatureType : uint8_t;
 
-struct ApplePayPaymentMethod {    
-    using Type = ApplePayPaymentMethodType;
+class ApplePaySetupFeature : public RefCounted<ApplePaySetupFeature> {
+public:
+    static Ref<ApplePaySetupFeature> create(PKPaymentSetupFeature *feature)
+    {
+        return adoptRef(*new ApplePaySetupFeature(feature));
+    }
 
-    String displayName;
-    String network;
-    Optional<Type> type;
-    Optional<ApplePayPaymentPass> paymentPass;
-    Optional<ApplePayPaymentContact> billingContact;
-    String bindToken;
+    ApplePaySetupFeatureType type() const;
+
+    enum class State : uint8_t {
+        Unsupported,
+        Supported,
+        SupplementarySupported,
+        Completed,
+    };
+    State state() const;
+
+    PKPaymentSetupFeature *platformFeature() const { return m_feature.get(); }
+
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    bool supportsInstallments() const;
+#endif
+
+private:
+    WEBCORE_EXPORT explicit ApplePaySetupFeature(PKPaymentSetupFeature *);
+
+    RetainPtr<PKPaymentSetupFeature> m_feature;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(APPLE_PAY_SETUP)

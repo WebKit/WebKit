@@ -103,6 +103,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorContactField.idl \
+    $(WebCore)/Modules/applepay/ApplePayInstallmentConfiguration.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
@@ -118,6 +119,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayRequestBase.idl \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
     $(WebCore)/Modules/applepay/ApplePaySessionError.idl \
+    $(WebCore)/Modules/applepay/ApplePaySetup.idl \
+    $(WebCore)/Modules/applepay/ApplePaySetupFeature.idl \
+    $(WebCore)/Modules/applepay/ApplePaySetupFeatureType.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingMethod.idl \
@@ -1263,8 +1267,6 @@ vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
 ADDITIONAL_EVENT_NAMES =
 ADDITIONAL_EVENT_TARGET_FACTORY =
-
--include WebCoreDerivedSourcesAdditions.make
 
 JS_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 

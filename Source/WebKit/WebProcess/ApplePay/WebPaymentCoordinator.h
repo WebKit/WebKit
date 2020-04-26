@@ -85,6 +85,12 @@ private:
 
     String userAgentScriptsBlockedErrorMessage() const final;
 
+#if ENABLE(APPLE_PAY_SETUP)
+    void getSetupFeatures(const WebCore::ApplePaySetup::Configuration&, const URL&, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&&) final;
+    void beginApplePaySetup(const WebCore::ApplePaySetup::Configuration&, const URL&, Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
+    void endApplePaySetup() final;
+#endif
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -112,10 +118,6 @@ private:
     WebPage& m_webPage;
 
     Optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPaymentCoordinatorAdditions.h>
-#endif
 };
 
 } // namespace WebKit

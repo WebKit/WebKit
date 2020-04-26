@@ -31,16 +31,29 @@
 #include "PaymentCoordinator.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayRequestBaseAdditions.cpp>
-#else
 namespace WebCore {
-static void finishConverting(ApplePaySessionPaymentRequest&, ApplePayRequestBase&) { }
-static bool requiresSupportedNetworks(unsigned, const ApplePayRequestBase&) { return true; }
-}
-#endif
 
-namespace WebCore {
+static void finishConverting(ApplePaySessionPaymentRequest& result, ApplePayRequestBase& request)
+{
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    if (request.installmentConfiguration)
+        result.setInstallmentConfiguration(WTFMove(*request.installmentConfiguration));
+#else
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(request);
+#endif
+}
+
+static bool requiresSupportedNetworks(unsigned version, const ApplePayRequestBase& request)
+{
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    return version < 8 || !request.installmentConfiguration;
+#else
+    UNUSED_PARAM(version);
+    UNUSED_PARAM(request);
+    return true;
+#endif
+}
 
 static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {

@@ -122,6 +122,8 @@ Shared/API/Cocoa/WKBrowsingContextHandle.mm
 Shared/API/Cocoa/WKRemoteObject.mm
 Shared/API/Cocoa/WKRemoteObjectCoder.mm
 
+Shared/ApplePay/ApplePayPaymentSetupFeatures.mm
+Shared/ApplePay/PaymentSetupConfiguration.mm
 Shared/ApplePay/WebPaymentCoordinatorProxy.cpp
 Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm
 Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm

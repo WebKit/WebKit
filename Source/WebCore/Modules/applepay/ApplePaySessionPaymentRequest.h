@@ -28,13 +28,10 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentContact.h"
+#include "PaymentInstallmentConfiguration.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePaySessionPaymentRequestAdditions.h>
-#endif
 
 namespace WebCore {
 
@@ -141,9 +138,9 @@ public:
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 
-#if defined(APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS)
-APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS
-#undef APPLEPAYSESSIONPAYMENTREQUEST_PUBLIC_ADDITIONS
+#if HAVE(PASSKIT_INSTALLMENTS)
+    const PaymentInstallmentConfiguration& installmentConfiguration() const { return m_installmentConfiguration; }
+    void setInstallmentConfiguration(PaymentInstallmentConfiguration&& installmentConfiguration) { m_installmentConfiguration = WTFMove(installmentConfiguration); }
 #endif
 
 private:
@@ -172,9 +169,8 @@ private:
 
     Requester m_requester { Requester::ApplePayJS };
 
-#if defined(APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS)
-APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS
-#undef APPLEPAYSESSIONPAYMENTREQUEST_PRIVATE_ADDITIONS
+#if HAVE(PASSKIT_INSTALLMENTS)
+    PaymentInstallmentConfiguration m_installmentConfiguration;
 #endif
 };
 

@@ -45,11 +45,28 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PKPaymentMethod.h>
 #import <PassKit/PKPaymentRequest_Private.h>
+#import <PassKit/PKPaymentSetupConfiguration_WebKit.h>
+#import <PassKit/PKPaymentSetupController.h>
+#import <PassKit/PKPaymentSetupRequest.h>
 #import <PassKitCore/PKPaymentRequestStatus_Private.h>
 #import <PassKitCore/PKPaymentRequest_WebKit.h>
 
+#if HAVE(PASSKIT_INSTALLMENTS)
+#import <PassKitCore/PKPayment_Private.h>
+#import <PassKitCore/PKPaymentInstallmentConfiguration.h>
+#import <PassKitCore/PKPaymentMethod_Private.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <PassKit/PKPaymentAuthorizationController_Private.h>
+#import <PassKit/PKPaymentSetupViewController.h>
+#endif
+
+#if HAVE(PASSKIT_INSTALLMENT_IDENTIFIERS) && PLATFORM(MAC)
+@interface PKPaymentInstallmentConfiguration (WebKitSPI)
+@property (nonatomic, copy, nullable) NSString *installmentMerchantIdentifier;
+@property (nonatomic, copy, nullable) NSString *referrerIdentifier;
+@end
 #endif
 
 #else

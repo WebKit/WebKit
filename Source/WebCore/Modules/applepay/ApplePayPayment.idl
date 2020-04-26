@@ -30,6 +30,7 @@
     required ApplePayPaymentToken token;
     ApplePayPaymentContact billingContact;
     ApplePayPaymentContact shippingContact;
+    [Conditional=APPLE_PAY_INSTALLMENTS] DOMString installmentAuthorizationToken;
 };
 
 [

@@ -33,15 +33,18 @@
 #import "PaymentMethod.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PaymentCocoaAdditions.mm>
-#else
 namespace WebCore {
-static void finishConverting(PKPayment *, ApplePayPayment&) { }
-}
-#endif
 
-namespace WebCore {
+static void finishConverting(PKPayment *payment, ApplePayPayment& result)
+{
+#if HAVE(PASSKIT_INSTALLMENTS)
+    if (NSString *installmentAuthorizationToken = payment.installmentAuthorizationToken)
+        result.installmentAuthorizationToken = installmentAuthorizationToken;
+#else
+    UNUSED_PARAM(payment);
+    UNUSED_PARAM(result);
+#endif
+}
 
 static ApplePayPayment::Token convert(PKPaymentToken *paymentToken)
 {

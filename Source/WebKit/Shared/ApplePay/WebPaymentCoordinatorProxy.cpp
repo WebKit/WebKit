@@ -45,22 +45,6 @@ static WeakPtr<WebPaymentCoordinatorProxy>& activePaymentCoordinatorProxy()
     return activePaymentCoordinatorProxy.get();
 }
 
-WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
-    : m_client { client }
-    , m_canMakePaymentsQueue { WorkQueue::create("com.apple.WebKit.CanMakePayments") }
-{
-    m_client.paymentCoordinatorAddMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName(), *this);
-    finishConstruction(*this);
-}
-
-WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
-{
-    if (m_state != State::Idle)
-        hidePaymentUI();
-
-    m_client.paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
-}
-
 IPC::Connection* WebPaymentCoordinatorProxy::messageSenderConnection() const
 {
     return m_client.paymentCoordinatorConnection(*this);

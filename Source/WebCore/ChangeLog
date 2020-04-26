@@ -1,3 +1,103 @@
+2020-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Move ApplePay code from WebKitAdditions to WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=210521
+
+        Reviewed by Andy Estes.
+
+        Only 4 minor modifications were necessary, as follows:
+
+        1. PaymentSetupFeatures's RetainPtr<NSArray<PKPaymentSetupFeature *>> was changed to RetainPtr<NSArray> to work with C++.
+        2. WebPaymentCoordinatorProxyAdditions messages were moved to WebPaymentCoordinatorProxy, removing the need for
+           the extra message receiver, the Optional<WebPaymentCoordinatorProxyAdditions>, and the finishConstruction.
+        3. WebMediaSessionManager.cpp's macros that collided with other macros were renamed.  This was necessary because of different source unification.
+        4. PaymentSetupFeatures.h was renamed to ApplePayPaymentSetupFeatures.h to be able to build with PaymentSetupFeatures.h in the SDK.
+
+        The rest is just copy and paste.
+
+        There isn't a good way to land this without breaking the build without removing the files from WebKitAdditions at the same time,
+        so I'll do the two at the same time late at night to not cause disruption.
+
+        * DerivedSources.make:
+        * Modules/applepay/ApplePayInstallmentConfiguration.h: Added.
+        * Modules/applepay/ApplePayInstallmentConfiguration.idl: Added.
+        * Modules/applepay/ApplePayPayment.h:
+        * Modules/applepay/ApplePayPayment.idl:
+        * Modules/applepay/ApplePayPaymentMethod.h:
+        * Modules/applepay/ApplePayPaymentMethod.idl:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.idl:
+        * Modules/applepay/ApplePayRequestBase.cpp:
+        (WebCore::finishConverting):
+        (WebCore::requiresSupportedNetworks):
+        * Modules/applepay/ApplePayRequestBase.h:
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::finishConverting):
+        * Modules/applepay/ApplePaySessionPaymentRequest.h:
+        (WebCore::ApplePaySessionPaymentRequest::installmentConfiguration const):
+        (WebCore::ApplePaySessionPaymentRequest::setInstallmentConfiguration):
+        * Modules/applepay/ApplePaySetup.cpp: Added.
+        (WebCore::shouldDiscloseFeatures):
+        (WebCore::ApplePaySetup::getSetupFeatures):
+        (WebCore::ApplePaySetup::begin):
+        (WebCore::ApplePaySetup::ApplePaySetup):
+        (WebCore::ApplePaySetup::stop):
+        (WebCore::ApplePaySetup::suspend):
+        * Modules/applepay/ApplePaySetup.h: Added.
+        (WebCore::ApplePaySetup::create):
+        * Modules/applepay/ApplePaySetup.idl: Added.
+        * Modules/applepay/ApplePaySetupFeature.h: Added.
+        (WebCore::ApplePaySetupFeature::create):
+        (WebCore::ApplePaySetupFeature::platformFeature const):
+        * Modules/applepay/ApplePaySetupFeature.idl: Added.
+        * Modules/applepay/ApplePaySetupFeature.mm: Added.
+        (WebCore::ApplePaySetupFeature::type const):
+        (WebCore::ApplePaySetupFeature::state const):
+        (WebCore::ApplePaySetupFeature::supportsInstallments const):
+        (WebCore::ApplePaySetupFeature::ApplePaySetupFeature):
+        * Modules/applepay/ApplePaySetupFeatureType.h: Added.
+        * Modules/applepay/ApplePaySetupFeatureType.idl: Added.
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::getSetupFeatures):
+        (WebCore::PaymentCoordinatorClient::beginApplePaySetup):
+        (WebCore::PaymentCoordinatorClient::endApplePaySetup):
+        * Modules/applepay/PaymentInstallmentConfiguration.h: Added.
+        * Modules/applepay/PaymentInstallmentConfiguration.mm: Added.
+        (WebCore::toDecimalNumber):
+        (WebCore::platformFeatureType):
+        (WebCore::createPlatformConfiguration):
+        (WebCore::PaymentInstallmentConfiguration::PaymentInstallmentConfiguration):
+        (WebCore::PaymentInstallmentConfiguration::platformConfiguration const):
+        * Modules/applepay/PaymentMethodUpdate.h:
+        * Modules/applepay/cocoa/PaymentCocoa.mm:
+        (WebCore::finishConverting):
+        * Modules/applepay/cocoa/PaymentMethodCocoa.mm:
+        (WebCore::finishConverting):
+        * Modules/applepay/cocoa/PaymentMethodUpdateCocoa.mm:
+        (WebCore::PaymentMethodUpdate::setInstallmentGroupIdentifier):
+        * Modules/applepay/cocoa/PaymentSessionErrorCocoa.mm:
+        (WebCore::additionalError):
+        * Modules/applepay/paymentrequest/ApplePayRequest.idl:
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled):
+        (WebCore::WebMediaSessionManager::setMockMediaPlaybackTargetPickerState):
+        (WebCore::WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup):
+        (WebCore::WebMediaSessionManager::addPlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::removePlaybackTargetPickerClient):
+        (WebCore::WebMediaSessionManager::removeAllPlaybackTargetPickerClients):
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::clientStateDidChange):
+        (WebCore::WebMediaSessionManager::setPlaybackTarget):
+        (WebCore::WebMediaSessionManager::externalOutputDeviceAvailableDidChange):
+        (WebCore::WebMediaSessionManager::playbackTargetPickerWasDismissed):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetClients):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring):
+        (WebCore::WebMediaSessionManager::configureWatchdogTimer):
+        (WebCore::WebMediaSessionManager::watchdogTimerFired):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/WebCoreAdditions.mm:
+
 2020-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Commit the scrolling tree from the main thread

@@ -34,11 +34,13 @@
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPaymentCoordinatorProxyAdditions.h>
+#if HAVE(PASSKIT_PAYMENT_SETUP)
+OBJC_CLASS PKPaymentSetupViewController;
+OBJC_CLASS UIViewController;
 #endif
 
 namespace IPC {
@@ -60,8 +62,14 @@ OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
 
+#if PLATFORM(IOS)
+OBJC_CLASS PKPaymentSetupViewController;
+#endif
+
 namespace WebKit {
 
+class PaymentSetupConfiguration;
+class PaymentSetupFeatures;
 class WebPageProxy;
 
 class WebPaymentCoordinatorProxy
@@ -123,6 +131,14 @@ private:
     void completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
     void abortPaymentSession();
     void cancelPaymentSession();
+
+#if HAVE(PASSKIT_PAYMENT_SETUP)
+    void getSetupFeatures(const PaymentSetupConfiguration&, CompletionHandler<void(const PaymentSetupFeatures&)>&&);
+    void beginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
+    void endApplePaySetup();
+    void platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
+    void platformEndApplePaySetup();
+#endif
 
     bool canBegin() const;
     bool canCancel() const;
@@ -191,12 +207,8 @@ private:
     RetainPtr<NSWindow> m_sheetWindow;
     RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
 #endif
-    
-#if defined(WEBPAYMENTCOORDINATORPROXY_ADDITIONS)
-WEBPAYMENTCOORDINATORPROXY_ADDITIONS
-#undef WEBPAYMENTCOORDINATORPROXY_ADDITIONS
-#else
-    void finishConstruction(WebPaymentCoordinatorProxy&) { }
+#if PLATFORM(IOS)
+    WeakObjCPtr<PKPaymentSetupViewController> m_paymentSetupViewController;
 #endif
 };
 

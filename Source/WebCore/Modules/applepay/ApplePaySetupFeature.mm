@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "ApplePaySetupFeature.h"
 
-#if ENABLE(APPLE_PAY)
+#if ENABLE(APPLE_PAY_SETUP)
 
-#include "ApplePayContactField.h"
-#include "ApplePayInstallmentConfiguration.h"
-#include "ApplePayMerchantCapability.h"
-#include "ApplePayPaymentContact.h"
+#import "ApplePaySetupFeatureType.h"
+#import "PassKitSPIAdditions.h"
 
 namespace WebCore {
 
-class Document;
-class PaymentCoordinator;
+ApplePaySetupFeatureType ApplePaySetupFeature::type() const
+{
+    switch ([m_feature type]) {
+    case PKPaymentSetupFeatureTypeApplePay:
+        return ApplePaySetupFeatureType::ApplePay;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    case PKPaymentSetupFeatureTypeApplePay_X:
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        return ApplePaySetupFeatureType::AppleCard;
+    }
+}
 
-struct ApplePayRequestBase {
-    Vector<ApplePayMerchantCapability> merchantCapabilities;
-    Vector<String> supportedNetworks;
-    String countryCode;
-
-    Optional<Vector<ApplePayContactField>> requiredBillingContactFields;
-    Optional<ApplePayPaymentContact> billingContact;
-
-    Optional<Vector<ApplePayContactField>> requiredShippingContactFields;
-    Optional<ApplePayPaymentContact> shippingContact;
-
-    String applicationData;
-    Vector<String> supportedCountries;
+ApplePaySetupFeature::State ApplePaySetupFeature::state() const
+{
+    switch ([m_feature state]) {
+    case PKPaymentSetupFeatureStateUnsupported:
+        return State::Unsupported;
+    case PKPaymentSetupFeatureStateSupported:
+        return State::Supported;
+    case PKPaymentSetupFeatureStateSupplementarySupported:
+        return State::SupplementarySupported;
+    case PKPaymentSetupFeatureStateCompleted:
+        return State::Completed;
+    }
+}
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    Optional<ApplePayInstallmentConfiguration> installmentConfiguration;
+bool ApplePaySetupFeature::supportsInstallments() const
+{
+    return [m_feature supportedOptions] & PKPaymentSetupFeatureSupportedOptionsInstallments;
+}
 #endif
-};
 
-ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, ApplePayRequestBase&, const PaymentCoordinator&);
+ApplePaySetupFeature::ApplePaySetupFeature(PKPaymentSetupFeature *feature)
+    : m_feature { feature }
+{
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY)
+#endif // ENABLE(APPLE_PAY_SETUP)

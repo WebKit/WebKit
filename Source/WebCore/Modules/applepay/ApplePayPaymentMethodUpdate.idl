@@ -28,4 +28,5 @@
 ] dictionary ApplePayPaymentMethodUpdate {
     required ApplePayLineItem newTotal;
     sequence<ApplePayLineItem> newLineItems;
+    [Conditional=APPLE_PAY_INSTALLMENTS] DOMString installmentGroupIdentifier;
 };

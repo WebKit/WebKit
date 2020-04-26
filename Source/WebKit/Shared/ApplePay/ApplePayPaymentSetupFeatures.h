@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,36 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if HAVE(PASSKIT_PAYMENT_SETUP)
 
-#include "ApplePayPaymentPass.h"
-#include <wtf/Optional.h>
+OBJC_CLASS PKPaymentSetupFeature;
 
-namespace WebCore {
+#include <WebCore/ApplePaySetupFeature.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
-enum class ApplePayPaymentMethodType;
-
-struct ApplePayPaymentMethod {    
-    using Type = ApplePayPaymentMethodType;
-
-    String displayName;
-    String network;
-    Optional<Type> type;
-    Optional<ApplePayPaymentPass> paymentPass;
-    Optional<ApplePayPaymentContact> billingContact;
-    String bindToken;
-};
-
+namespace IPC {
+class Decoder;
+class Encoder;
 }
 
-#endif
+namespace WebKit {
+
+class PaymentSetupFeatures {
+public:
+    PaymentSetupFeatures(Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&);
+    PaymentSetupFeatures(RetainPtr<NSArray>&& = nullptr);
+
+    void encode(IPC::Encoder&) const;
+    static Optional<PaymentSetupFeatures> decode(IPC::Decoder&);
+
+    NSArray *platformFeatures() const { return m_platformFeatures.get(); }
+    operator Vector<Ref<WebCore::ApplePaySetupFeature>>() const;
+
+private:
+    RetainPtr<NSArray> m_platformFeatures;
+};
+
+} // namespace WebKit
+
+#endif // HAVE(PASSKIT_PAYMENT_SETUP)

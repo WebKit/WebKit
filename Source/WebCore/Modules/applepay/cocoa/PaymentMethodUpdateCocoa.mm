@@ -59,6 +59,13 @@ PKPaymentRequestPaymentMethodUpdate *PaymentMethodUpdate::platformUpdate() const
     return m_platformUpdate.get();
 }
 
+#if HAVE(PASSKIT_INSTALLMENTS)
+void PaymentMethodUpdate::setInstallmentGroupIdentifier(const String& installmentGroupIdentifier)
+{
+    [m_platformUpdate setInstallmentGroupIdentifier:installmentGroupIdentifier];
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

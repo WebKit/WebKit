@@ -41,19 +41,55 @@
 #import <UIKit/UIFont.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
-#elif ENABLE(APPLE_PAY)
-namespace IPC {
-static bool finishDecoding(Decoder&, WebCore::ApplePaySessionPaymentRequest&) { return true; }
-static void finishEncoding(Encoder&, const WebCore::ApplePaySessionPaymentRequest&) { }
-}
-#endif
-
 namespace IPC {
 using namespace WebCore;
 
 #if ENABLE(APPLE_PAY)
+
+static bool finishDecoding(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
+{
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    Optional<WebCore::PaymentInstallmentConfiguration> installmentConfiguration;
+    decoder >> installmentConfiguration;
+    if (!installmentConfiguration)
+        return false;
+
+    request.setInstallmentConfiguration(WTFMove(*installmentConfiguration));
+    return true;
+#else
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(request);
+    return true;
+#endif
+}
+
+static void finishEncoding(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest& request)
+{
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    encoder << request.installmentConfiguration();
+#else
+    UNUSED_PARAM(encoder);
+    UNUSED_PARAM(request);
+#endif
+}
+
+#if HAVE(PASSKIT_INSTALLMENTS)
+
+void ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::encode(Encoder& encoder, const WebCore::PaymentInstallmentConfiguration& configuration)
+{
+    encoder << configuration.platformConfiguration();
+}
+
+Optional<WebCore::PaymentInstallmentConfiguration> ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::decode(Decoder& decoder)
+{
+    auto configuration = IPC::decode<PKPaymentInstallmentConfiguration>(decoder, PAL::getPKPaymentInstallmentConfigurationClass());
+    if (!configuration)
+        return WTF::nullopt;
+
+    return { WTFMove(*configuration) };
+}
+
+#endif // HAVE(PASSKIT_INSTALLMENTS)
 
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {

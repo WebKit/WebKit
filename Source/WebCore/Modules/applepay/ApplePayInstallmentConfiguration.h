@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,24 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
 
-#include "ApplePayPaymentPass.h"
-#include <wtf/Optional.h>
+#include "ApplePaySetupFeatureType.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-enum class ApplePayPaymentMethodType;
-
-struct ApplePayPaymentMethod {    
-    using Type = ApplePayPaymentMethodType;
-
-    String displayName;
-    String network;
-    Optional<Type> type;
-    Optional<ApplePayPaymentPass> paymentPass;
-    Optional<ApplePayPaymentContact> billingContact;
-    String bindToken;
+struct ApplePayInstallmentConfiguration {
+    ApplePaySetupFeatureType featureType { ApplePaySetupFeatureType::AppleCard };
+    String merchandisingImageData;
+    String openToBuyThresholdAmount;
+    String bindingTotalAmount;
+    String currencyCode;
+    String merchantIdentifier;
+    String referrerIdentifier;
+    bool isInStorePurchase { false };
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
