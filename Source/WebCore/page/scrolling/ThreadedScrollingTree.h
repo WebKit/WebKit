@@ -44,8 +44,6 @@ class ThreadedScrollingTree : public ScrollingTree {
 public:
     virtual ~ThreadedScrollingTree();
 
-    void commitTreeState(std::unique_ptr<ScrollingStateTree>) override;
-
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
@@ -54,9 +52,6 @@ public:
     ScrollingEventResult tryToHandleWheelEvent(const PlatformWheelEvent&, CompletionFunction&&) override;
 
     void invalidate() override;
-
-    void incrementPendingCommitCount();
-    void decrementPendingCommitCount();
 
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
@@ -77,17 +72,9 @@ protected:
 
 private:
     bool isThreadedScrollingTree() const override { return true; }
-    void applyLayerPositions() override;
-    void waitForScrollingTreeCommit() override;
     void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
-
-    void waitForPendingCommits();
-
-    Lock m_pendingCommitCountMutex;
-    unsigned m_pendingCommitCount { 0 };
-    Condition m_commitCondition;
 };
 
 } // namespace WebCore

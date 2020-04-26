@@ -1,3 +1,39 @@
+2020-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Commit the scrolling tree from the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=211026
+        <rdar://problem/62374855>
+
+        Reviewed by Darin Adler.
+
+        ScrollingCoordinatorMac::commitTreeStateIfNeeded() passed the new state tree to
+        the scrolling thread which then did the commit (which updates the scrolling tree
+        from the state tree). However, applyLayerPositions() immediately waited for that
+        commit to complete, blocking the main thread anyway.
+
+        We might as well just commit the scrolling tree on the main thread. ScrollingTree::commitTreeState()
+        locks m_treeMutex, so this is still safe. Lock contention with the scrolling or event dispatcher
+        threads should be rare; those threads are both mostly responsive.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollingTreeAsText const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::waitForScrollingTreeCommit): Deleted.
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::commitTreeState): Deleted.
+        (WebCore::ThreadedScrollingTree::incrementPendingCommitCount): Deleted.
+        (WebCore::ThreadedScrollingTree::decrementPendingCommitCount): Deleted.
+        (WebCore::ThreadedScrollingTree::waitForPendingCommits): Deleted.
+        (WebCore::ThreadedScrollingTree::waitForScrollingTreeCommit): Deleted.
+        (WebCore::ThreadedScrollingTree::applyLayerPositions): Deleted.
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeStateIfNeeded):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::commitTreeState):
+
 2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use static initialized Lock instead of LazyNeverDestroyed<Lock>

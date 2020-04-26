@@ -853,7 +853,6 @@ String AsyncScrollingCoordinator::scrollingTreeAsText(ScrollingStateTreeAsTextBe
     if (!m_scrollingTree)
         return emptyString();
 
-    m_scrollingTree->waitForScrollingTreeCommit();
     return m_scrollingTree->scrollingTreeAsText(behavior);
 }
 

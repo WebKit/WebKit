@@ -97,22 +97,15 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
     willCommitTree();
 
-    LOG(Scrolling, "ScrollingCoordinatorMac::commitTreeState, has changes %d", scrollingStateTree()->hasChangedProperties());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::commitTreeState, has changes " << scrollingStateTree()->hasChangedProperties());
 
     if (!scrollingStateTree()->hasChangedProperties())
         return;
 
-    LOG(Scrolling, "%s", scrollingStateTreeAsText(ScrollingStateTreeAsTextBehaviorDebug).utf8().data());
+    LOG_WITH_STREAM(Scrolling, stream << scrollingStateTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
 
-    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    ScrollingStateTree* unprotectedTreeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation).release();
-
-    threadedScrollingTree->incrementPendingCommitCount();
-
-    ScrollingThread::dispatch([threadedScrollingTree, unprotectedTreeState] {
-        std::unique_ptr<ScrollingStateTree> treeState(unprotectedTreeState);
-        threadedScrollingTree->commitTreeState(WTFMove(treeState));
-    });
+    auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
+    scrollingTree()->commitTreeState(WTFMove(stateTree));
 
     updateTiledScrollingIndicator();
 }

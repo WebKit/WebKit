@@ -94,13 +94,8 @@ void ScrollingCoordinatorNicosia::commitTreeState()
     if (!scrollingStateTree()->hasChangedProperties())
         return;
 
-    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
-    threadedScrollingTree->incrementPendingCommitCount();
-
-    auto treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    ScrollingThread::dispatch([threadedScrollingTree, treeState = WTFMove(treeState)]() mutable {
-        threadedScrollingTree->commitTreeState(WTFMove(treeState));
-    });
+    auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
+    scrollingTree()->commitTreeState(WTFMove(stateTree));
 }
 
 } // namespace WebCore

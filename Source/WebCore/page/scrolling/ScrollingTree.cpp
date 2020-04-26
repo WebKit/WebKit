@@ -191,7 +191,7 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
     m_rootNode->wasScrolledByDelegatedScrolling(scrollPosition, layoutViewport);
 }
 
-void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
+void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scrollingStateTree)
 {
     SetForScope<bool> inCommitTreeState(m_inCommitTreeState, true);
     LockHolder locker(m_treeMutex);

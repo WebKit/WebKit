@@ -78,7 +78,7 @@ public:
     bool isScrollSnapInProgress();
 
     virtual void invalidate() { }
-    WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
+    WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>&&);
     
     WEBCORE_EXPORT virtual void applyLayerPositions();
     WEBCORE_EXPORT void applyLayerPositionsAfterCommit();
@@ -173,8 +173,6 @@ public:
 
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
-
-    virtual void waitForScrollingTreeCommit() { }
 
 protected:
     FloatPoint mainFrameScrollPosition() const;
