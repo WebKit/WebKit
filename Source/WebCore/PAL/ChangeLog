@@ -1,3 +1,12 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PAL.xcodeproj/project.pbxproj: Bump the upgrade check version.
+
 2020-04-21  Peng Liu  <peng.liu6@apple.com>
 
         Fix MACCATALYST build failures

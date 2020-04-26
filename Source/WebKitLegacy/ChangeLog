@@ -1,3 +1,12 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj: Bump the upgrade check version.
+
 2020-04-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Classes marked final should not use protected access specifier

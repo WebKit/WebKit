@@ -1,3 +1,14 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Bump the upgrade check version.
+        Add a harmless base localization, rename English localization to en,
+        remove Japanese, French, German; this project contains nothing localized.
+
 2020-04-03  David Kilzer  <ddkilzer@apple.com>
 
         [Xcode] Replace ASAN_OTHER_CFLAGS and ASAN_OTHER_CPLUSPLUSFLAGS with $(inherited)

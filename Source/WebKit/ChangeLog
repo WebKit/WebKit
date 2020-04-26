@@ -1,3 +1,13 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.xcodeproj/project.pbxproj: Bump the upgrade check version.
+        Add a base localization.
+
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to remove automatic URL->String conversion operators

@@ -1011,7 +1011,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1140;
 				TargetAttributes = {
 					5325BDD921DFF4F500A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1030,6 +1030,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* WebKitTestRunner */;
 			projectDirPath = "";

@@ -1202,7 +1202,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1361,6 +1360,7 @@
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
 				7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */,
 				49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */,
+				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
 				935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */,
 				935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */,
 				935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */,
@@ -3456,7 +3456,6 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
 				55A817FE218101DF0004A39A /* 100x100-red.tga */,
 				55A817FD218101DF0004A39A /* 400x400-green.png */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
@@ -3552,6 +3551,7 @@
 				3128A814237640FD00D90D40 /* image.html */,
 				7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,
+				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
 				934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */,
 				934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */,
 				934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */,
@@ -4505,7 +4505,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1140;
 				TargetAttributes = {
 					537CF84322EFD64100C6EBB3 = {
 						CreatedOnToolsVersion = 11.0;
@@ -4536,6 +4536,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* TestWebKitAPI */;
 			projectDirPath = "";

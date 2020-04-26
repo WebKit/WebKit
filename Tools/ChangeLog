@@ -1,5 +1,22 @@
 2020-04-25  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Bump the upgrade check version.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Bump the upgrade check version.
+        Add a harmless base localization; this project contains nothing localized. Also let the
+        script sort the project.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Bump the upgrade check version.
+        Add a harmless base localization; this project contains nothing localized. Also let the
+        script sort the project.
+
+2020-04-25  Darin Adler  <darin@apple.com>
+
         Move URL to use StringView when returning substrings of the URL
         https://bugs.webkit.org/show_bug.cgi?id=210431
 

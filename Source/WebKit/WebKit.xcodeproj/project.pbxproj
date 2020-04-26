@@ -12024,7 +12024,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1140;
 				TargetAttributes = {
 					5325BDCD21DFF47700A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -12042,6 +12042,7 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit2 */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;

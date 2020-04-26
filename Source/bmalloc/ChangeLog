@@ -1,3 +1,13 @@
+2020-04-25  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Deal with another round of Xcode upgrade checks
+        https://bugs.webkit.org/show_bug.cgi?id=211027
+
+        Reviewed by Alexey Proskuryakov.
+
+        * bmalloc.xcodeproj/project.pbxproj: Bump the upgrade check version.
+        Add a harmless base localization; this project contains nothing localized.
+
 2020-04-07  Saam Barati  <sbarati@apple.com>
 
         RAMification should have a way of gathering vmmaps for each test at the end of each run
