@@ -54,11 +54,10 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, scope, "HTMLElement");
     ASSERT(context->isDocument());
 
-    JSValue newTargetValue = callFrame.thisValue();
-    auto* newTarget = newTargetValue.getObject();
-    auto* newTargetGlobalObject = jsCast<JSDOMGlobalObject*>(newTarget->globalObject(vm));
+    auto* newTarget = callFrame.newTarget().getObject();
+    auto* newTargetGlobalObject = jsCast<JSDOMGlobalObject*>(getFunctionRealm(vm, newTarget));
     JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, newTargetGlobalObject);
-    if (newTargetValue == htmlElementConstructorValue)
+    if (newTarget == htmlElementConstructorValue)
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
 
     auto& document = downcast<Document>(*context);
@@ -77,8 +76,8 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
     if (!elementInterface->isUpgradingElement()) {
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *newTargetGlobalObject);
-        auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, jsConstructor, newTargetValue, baseStructure);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
+        RETURN_IF_EXCEPTION(scope, { });
 
         Ref<HTMLElement> element = HTMLElement::create(elementInterface->name(), document);
         element->setIsDefinedCustomElement(*elementInterface);

@@ -67,8 +67,11 @@ static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject* globalObject, C
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* mapStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->mapStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* mapStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->mapStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->mapStructure());
+    RETURN_IF_EXCEPTION(scope, { });
 
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())

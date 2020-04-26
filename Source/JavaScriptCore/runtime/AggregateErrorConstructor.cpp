@@ -63,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL callAggregateErrorConstructor(JSGlobalObject
     VM& vm = globalObject->vm();
     JSValue errors = callFrame->argument(0);
     JSValue message = callFrame->argument(1);
-    Structure* errorStructure = jsCast<AggregateErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm);
+    Structure* errorStructure = globalObject->errorStructure(ErrorType::AggregateError);
     return JSValue::encode(AggregateError::create(globalObject, vm, errorStructure, errors, message, nullptr, TypeNothing, false));
 }
 
@@ -73,12 +73,14 @@ static EncodedJSValue JSC_HOST_CALL constructAggregateErrorConstructor(JSGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue errors = callFrame->argument(0);
     JSValue message = callFrame->argument(1);
-    JSValue newTarget = callFrame->newTarget();
-    ASSERT(newTarget.isObject());
-    Structure* baseStructure = asObject(newTarget)->globalObject(vm)->errorStructure(ErrorType::AggregateError);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), newTarget, baseStructure);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* errorStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->errorStructure(ErrorType::AggregateError)
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->errorStructure(ErrorType::AggregateError));
+    RETURN_IF_EXCEPTION(scope, { });
     ASSERT(errorStructure);
+
     RELEASE_AND_RETURN(scope, JSValue::encode(AggregateError::create(globalObject, vm, errorStructure, errors, message, nullptr, TypeNothing, false)));
 }
 

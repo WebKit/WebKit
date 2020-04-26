@@ -74,8 +74,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(JSGlobalObjec
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject)
         return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
-    
-    Structure* instanceStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->webAssemblyInstanceStructure());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* instanceStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->webAssemblyInstanceStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::tryCreate(vm, globalObject, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);

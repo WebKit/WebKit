@@ -49,8 +49,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(JSGlobalObje
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    auto* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->webAssemblyLinkErrorStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->webAssemblyLinkErrorStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyLinkErrorStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(globalObject, vm, structure, message)));
 }
 

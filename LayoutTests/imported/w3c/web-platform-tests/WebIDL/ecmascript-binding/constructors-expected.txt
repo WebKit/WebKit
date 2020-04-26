@@ -10,8 +10,8 @@ PASS Subclass constructor in parent window with parent class in child window
 PASS Subclass constructor in child window with parent class in parent window 
 PASS Constructor in child window with bad NewTarget from parent window 
 PASS Constructor in parent window with bad NewTarget from child window 
-FAIL Constructor in parent window with bad NewTarget from parent window that's a bound child window function assert_equals: expected object "[object DOMParserPrototype]" but got object "[object DOMParserPrototype]"
-FAIL Constructor in child window with bad NewTarget from child window that's a bound parent window function assert_equals: expected object "[object DOMParserPrototype]" but got object "[object DOMParserPrototype]"
-FAIL Constructor in parent window with bad NewTarget from parent window that's a proxy for a child window function assert_equals: expected object "[object DOMParserPrototype]" but got object "[object DOMParserPrototype]"
-FAIL Constructor in child window with bad NewTarget from child window that's a proxy for a parent window function assert_equals: expected object "[object DOMParserPrototype]" but got object "[object DOMParserPrototype]"
+PASS Constructor in parent window with bad NewTarget from parent window that's a bound child window function 
+PASS Constructor in child window with bad NewTarget from child window that's a bound parent window function 
+PASS Constructor in parent window with bad NewTarget from parent window that's a proxy for a child window function 
+PASS Constructor in child window with bad NewTarget from child window that's a proxy for a parent window function 
 

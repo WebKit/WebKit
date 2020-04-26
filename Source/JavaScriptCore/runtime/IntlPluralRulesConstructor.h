@@ -43,8 +43,6 @@ public:
 
     DECLARE_INFO;
 
-    Structure* pluralRulesStructure(VM&) const { return globalObject()->pluralRulesStructure(); }
-
 private:
     IntlPluralRulesConstructor(VM&, Structure*);
     void finishCreation(VM&, IntlPluralRulesPrototype*);

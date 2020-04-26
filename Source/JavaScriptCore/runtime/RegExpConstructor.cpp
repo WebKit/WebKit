@@ -172,10 +172,9 @@ bool setRegExpConstructorMultiline(JSGlobalObject* globalObject, EncodedJSValue 
 
 inline Structure* getRegExpStructure(JSGlobalObject* globalObject, JSValue newTarget)
 {
-    Structure* structure = globalObject->regExpStructure();
-    if (newTarget != jsUndefined())
-        structure = InternalFunction::createSubclassStructure(globalObject, globalObject->regExpConstructor(), newTarget, structure);
-    return structure;
+    return !newTarget || newTarget == globalObject->regExpConstructor()
+        ? globalObject->regExpStructure()
+        : InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), getFunctionRealm(globalObject->vm(), asObject(newTarget))->regExpStructure());
 }
 
 inline OptionSet<Yarr::Flags> toFlags(JSGlobalObject* globalObject, JSValue flags)
@@ -229,7 +228,7 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
     bool constructAsRegexp = isRegExp(vm, globalObject, patternArg);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (newTarget.isUndefined() && constructAsRegexp && flagsArg.isUndefined()) {
+    if (!newTarget && constructAsRegexp && flagsArg.isUndefined()) {
         JSValue constructor = patternArg.get(globalObject, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (callee == constructor) {
@@ -274,7 +273,7 @@ EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject* globalObject, Ca
 {
     JSValue patternArg = callFrame->argument(0);
     JSValue flagsArg = callFrame->argument(1);
-    return JSValue::encode(regExpCreate(globalObject, jsUndefined(), patternArg, flagsArg));
+    return JSValue::encode(regExpCreate(globalObject, JSValue(), patternArg, flagsArg));
 }
 
 EncodedJSValue JSC_HOST_CALL esSpecIsRegExp(JSGlobalObject* globalObject, CallFrame* callFrame)

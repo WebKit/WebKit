@@ -45,7 +45,7 @@ static EncodedJSValue JSC_HOST_CALL callAsyncGeneratorFunctionConstructor(JSGlob
 static EncodedJSValue JSC_HOST_CALL constructAsyncGeneratorFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::AsyncGenerator));
+    return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::AsyncGenerator, callFrame->newTarget()));
 }
 
 AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Structure* structure)

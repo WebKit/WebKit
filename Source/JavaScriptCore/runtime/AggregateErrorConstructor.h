@@ -55,8 +55,6 @@ public:
         return constructor;
     }
 
-    Structure* errorStructure(VM&) { return globalObject()->errorStructure(ErrorType::AggregateError); }
-
 private:
     explicit AggregateErrorConstructor(VM&, Structure*);
 

@@ -211,10 +211,11 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    InternalFunction* function = jsCast<InternalFunction*>(callFrame->jsCallee());
-    Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), parentStructure);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType)
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->typedArrayStructure(ViewClass::TypedArrayStorageType));
+    RETURN_IF_EXCEPTION(scope, { });
 
     size_t argCount = callFrame->argumentCount();
 

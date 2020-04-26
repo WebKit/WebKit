@@ -51,8 +51,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyRuntimeError(JSGlobalO
     JSValue message = callFrame->argument(0);
     String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->webAssemblyRuntimeErrorStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->webAssemblyRuntimeErrorStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyRuntimeErrorStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     return JSValue::encode(JSWebAssemblyRuntimeError::create(globalObject, vm, structure, WTFMove(messageString)));
 }
 

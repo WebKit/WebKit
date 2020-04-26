@@ -42,8 +42,6 @@ public:
 
     DECLARE_INFO;
 
-    Structure* relativeTimeFormatStructure(VM&) const { return globalObject()->relativeTimeFormatStructure(); }
-
 private:
     IntlRelativeTimeFormatConstructor(VM&, Structure*);
     void finishCreation(VM&, IntlRelativeTimeFormatPrototype*);

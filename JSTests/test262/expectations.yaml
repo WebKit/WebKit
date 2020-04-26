@@ -633,15 +633,6 @@ test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/built-ins/Array/proto-from-ctor-realm-one.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
-test/built-ins/Array/proto-from-ctor-realm-two.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
-test/built-ins/Array/proto-from-ctor-realm-zero.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«», «») to be true'
 test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
@@ -708,9 +699,6 @@ test/built-ins/Array/prototype/splice/throws-if-integer-limit-exceeded.js:
 test/built-ins/Array/prototype/unshift/clamps-to-integer-limit.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected SameValue(«4294967295», «9007199254740991») to be true'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected SameValue(«4294967295», «9007199254740991») to be true'
-test/built-ins/ArrayBuffer/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object ArrayBuffer]», «[object ArrayBuffer]») to be true'
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -747,12 +735,6 @@ test/built-ins/AsyncFromSyncIteratorPrototype/next/absent-value-not-passed.js:
 test/built-ins/AsyncFromSyncIteratorPrototype/return/absent-value-not-passed.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
-test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncFunction]», «[object AsyncFunction]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncFunction]», «[object AsyncFunction]») to be true'
-test/built-ins/AsyncGeneratorFunction/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncGeneratorFunction]», «[object AsyncGeneratorFunction]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object AsyncGeneratorFunction]», «[object AsyncGeneratorFunction]») to be true'
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-promise.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
@@ -816,9 +798,6 @@ test/built-ins/BigInt/asUintN/bits-toindex.js:
 test/built-ins/BigInt/asUintN/order-of-steps.js:
   default: 'Test262Error: Expected SameValue(«0», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
-test/built-ins/Boolean/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«false», «false») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «false») to be true'
 test/built-ins/DataView/custom-proto-access-detaches-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -828,9 +807,6 @@ test/built-ins/DataView/detached-buffer.js:
 test/built-ins/DataView/length.js:
   default: 'Test262Error: descriptor value should be 1'
   strict mode: 'Test262Error: descriptor value should be 1'
-test/built-ins/DataView/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object DataView]», «[object DataView]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object DataView]», «[object DataView]») to be true'
 test/built-ins/DataView/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -933,18 +909,6 @@ test/built-ins/DataView/prototype/setUint8/detached-buffer-before-outofrange-byt
 test/built-ins/DataView/prototype/setUint8/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
-test/built-ins/Date/proto-from-ctor-realm-one.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/built-ins/Date/proto-from-ctor-realm-two.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/built-ins/Date/proto-from-ctor-realm-zero.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/built-ins/Error/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«Error», «Error») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«Error», «Error») to be true'
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(«[object global]», «[object Undefined]») to be true'
@@ -963,15 +927,6 @@ test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
-test/built-ins/Function/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«function () {'
-  strict mode: 'Test262Error: Expected SameValue(«function () {'
-test/built-ins/Function/prototype/bind/get-fn-realm-recursive.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
-test/built-ins/Function/prototype/bind/get-fn-realm.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/Function/prototype/bind/length-exceeds-int32.js:
   default: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
   strict mode: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
@@ -1110,39 +1065,12 @@ test/built-ins/Function/prototype/toString/setter-object.js:
 test/built-ins/Function/prototype/toString/unicode.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
-test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object GeneratorFunction]», «[object GeneratorFunction]») to be true'
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/Map/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Map]», «[object Map]») to be true'
-test/built-ins/NativeErrors/EvalError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«EvalError», «EvalError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«EvalError», «EvalError») to be true'
-test/built-ins/NativeErrors/RangeError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«RangeError», «RangeError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«RangeError», «RangeError») to be true'
-test/built-ins/NativeErrors/ReferenceError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«ReferenceError», «ReferenceError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«ReferenceError», «ReferenceError») to be true'
-test/built-ins/NativeErrors/SyntaxError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«SyntaxError», «SyntaxError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«SyntaxError», «SyntaxError») to be true'
-test/built-ins/NativeErrors/TypeError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«TypeError», «TypeError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«TypeError», «TypeError») to be true'
-test/built-ins/NativeErrors/URIError/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«URIError», «URIError») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«URIError», «URIError») to be true'
 test/built-ins/Number/bigint-conversion.js:
   default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
   strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-test/built-ins/Number/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«0», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «0») to be true'
 test/built-ins/Object/entries/order-after-define-property.js:
   default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
   strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
@@ -1165,9 +1093,6 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar
 test/built-ins/Object/keys/order-after-define-property.js:
   default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
   strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-test/built-ins/Object/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/built-ins/Object/prototype/toString/proxy-function.js:
   default: 'Test262Error: function proxy Expected SameValue(«[object Object]», «[object Function]») to be true'
   strict mode: 'Test262Error: function proxy Expected SameValue(«[object Object]», «[object Function]») to be true'
@@ -1198,9 +1123,6 @@ test/built-ins/Promise/create-resolving-functions-resolve.js:
 test/built-ins/Promise/executor-function-nonconstructor.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
-test/built-ins/Promise/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Promise]», «[object Promise]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Promise]», «[object Promise]») to be true'
 test/built-ins/Promise/prototype/finally/invokes-then-with-function.js:
   default: 'Test262Error: fulfillment handler is not constructor'
   strict mode: 'Test262Error: fulfillment handler is not constructor'
@@ -1252,12 +1174,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/Proxy/get-fn-realm-recursive.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
-test/built-ins/Proxy/get-fn-realm.js:
-  default: 'Test262Error: Expected true but got false'
-  strict mode: 'Test262Error: Expected true but got false'
 test/built-ins/Proxy/ownKeys/trap-is-undefined-target-is-proxy.js:
   default: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [length, foo, 0, Symbol()] and [Symbol(), length, foo, 0] to have the same contents. '
@@ -1657,9 +1573,6 @@ test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
 test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
   default: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
   strict mode: 'Test262Error: `\p{XID_Start}` should match U+001CFA (`ᳺ`)'
-test/built-ins/RegExp/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«/(?:)/», «/(?:)/») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«/(?:)/», «/(?:)/») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -1696,12 +1609,6 @@ test/built-ins/RegExp/prototype/unicode/cross-realm.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/Set/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Set]», «[object Set]») to be true'
-test/built-ins/String/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«», «») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «») to be true'
 test/built-ins/String/prototype/replace/cstm-replace-is-null.js:
   default: 'TypeError: null is not a function'
   strict mode: 'TypeError: null is not a function'
@@ -1776,21 +1683,9 @@ test/built-ins/TypedArrayConstructors/ctors/buffer-arg/detachedbuffer.js:
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/length-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/buffer-arg/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/length-arg/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/no-args/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/length-excessive-throws.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/object-arg/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/detached-when-species-retrieved-different-type.js:
   default: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: TypeError thrown for detached source buffer Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -1818,9 +1713,6 @@ test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-cto
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/other-ctor-buffer-ctor-species-prototype-throws.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«[object Float64ArrayPrototype]», «[object Float64ArrayPrototype]») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/same-ctor-buffer-ctor-access-throws.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -1908,27 +1800,12 @@ test/built-ins/TypedArrayConstructors/of/custom-ctor.js:
 test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
   default: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
   strict mode: 'TypeError: TypedArray.of requires its this argument to subclass a TypedArray constructor (Testing with Float64Array.)'
-test/built-ins/WeakMap/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object WeakMap]», «[object WeakMap]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object WeakMap]», «[object WeakMap]») to be true'
-test/built-ins/WeakRef/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object WeakRef]», «[object WeakRef]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object WeakRef]», «[object WeakRef]») to be true'
-test/built-ins/WeakSet/proto-from-ctor-realm.js:
-  default: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object WeakSet]», «[object WeakSet]») to be true'
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
-test/intl402/Collator/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
-test/intl402/DateTimeFormat/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
@@ -1974,18 +1851,9 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/NumberFormat/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-test/intl402/PluralRules/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Object]», «[object Object]») to be true'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/RelativeTimeFormat/constructor/constructor/proto-from-ctor-realm.js:
-  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
-  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(«[object Intl.RelativeTimeFormat]», «[object Intl.RelativeTimeFormat]») to be true'
 test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js:
   default: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'
   strict mode: 'Test262Error: Expected SameValue(«za 1000 sekund», «za 1 000 sekund») to be true'

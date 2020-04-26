@@ -87,8 +87,12 @@ static EncodedJSValue JSC_HOST_CALL constructIntlRelativeTimeFormat(JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<IntlRelativeTimeFormatConstructor*>(callFrame->jsCallee())->relativeTimeFormatStructure(vm));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->relativeTimeFormatStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->relativeTimeFormatStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     IntlRelativeTimeFormat* relativeTimeFormat = IntlRelativeTimeFormat::create(vm, structure);
     ASSERT(relativeTimeFormat);
 

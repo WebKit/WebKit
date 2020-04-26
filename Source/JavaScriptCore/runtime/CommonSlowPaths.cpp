@@ -283,11 +283,15 @@ SLOW_PATH_DECL(slow_path_create_promise)
 
     JSPromise* result = nullptr;
     if (bytecode.m_isInternalPromise) {
-        Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->internalPromiseConstructor(), constructorAsObject, globalObject->internalPromiseStructure());
+        Structure* structure = constructorAsObject == globalObject->internalPromiseConstructor()
+            ? globalObject->internalPromiseStructure()
+            : InternalFunction::createSubclassStructure(globalObject, constructorAsObject, getFunctionRealm(vm, constructorAsObject)->internalPromiseStructure());
         CHECK_EXCEPTION();
         result = JSInternalPromise::create(vm, structure);
     } else {
-        Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->promiseConstructor(), constructorAsObject, globalObject->promiseStructure());
+        Structure* structure = constructorAsObject == globalObject->promiseConstructor()
+            ? globalObject->promiseStructure()
+            : InternalFunction::createSubclassStructure(globalObject, constructorAsObject, getFunctionRealm(vm, constructorAsObject)->promiseStructure());
         CHECK_EXCEPTION();
         result = JSPromise::create(vm, structure);
     }
@@ -320,7 +324,7 @@ static JSClass* createInternalFieldObject(JSGlobalObject* globalObject, VM& vm, 
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, nullptr, constructorAsObject, baseStructure);
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, constructorAsObject, baseStructure);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSClass* result = JSClass::create(vm, structure);
 

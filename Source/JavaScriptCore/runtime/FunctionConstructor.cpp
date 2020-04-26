@@ -152,34 +152,38 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         return nullptr;
     }
 
+    bool needsSubclassStructure = newTarget && newTarget != globalObject->functionConstructor();
+    JSGlobalObject* structureGlobalObject = needsSubclassStructure ? getFunctionRealm(vm, asObject(newTarget)) : globalObject;
     Structure* structure = nullptr;
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        structure = JSFunction::selectStructureForNewFuncExp(globalObject, function);
+        structure = JSFunction::selectStructureForNewFuncExp(structureGlobalObject, function);
         break;
     case FunctionConstructionMode::Generator:
-        structure = globalObject->generatorFunctionStructure();
+        structure = structureGlobalObject->generatorFunctionStructure();
         break;
     case FunctionConstructionMode::Async:
-        structure = globalObject->asyncFunctionStructure();
+        structure = structureGlobalObject->asyncFunctionStructure();
         break;
     case FunctionConstructionMode::AsyncGenerator:
-        structure = globalObject->asyncGeneratorFunctionStructure();
+        structure = structureGlobalObject->asyncGeneratorFunctionStructure();
         break;
     }
 
-    Structure* subclassStructure = InternalFunction::createSubclassStructure(globalObject, globalObject->functionConstructor(), newTarget, structure);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (needsSubclassStructure) {
+        structure = InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), structure);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
 
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        return JSFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
+        return JSFunction::create(vm, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::Generator:
-        return JSGeneratorFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
+        return JSGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::Async:
-        return JSAsyncFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
+        return JSAsyncFunction::create(vm, function, globalObject->globalScope(), structure);
     case FunctionConstructionMode::AsyncGenerator:
-        return JSAsyncGeneratorFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
+        return JSAsyncGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
     }
 
     ASSERT_NOT_REACHED();

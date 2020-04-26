@@ -1,3 +1,125 @@
+2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        InternalFunction::createSubclassStructure should use newTarget's globalObject
+        https://bugs.webkit.org/show_bug.cgi?id=202599
+
+        Reviewed by Yusuke Suzuki.
+
+        If "prototype" of NewTarget is not an object, built-in constructors [1] should acquire
+        default [[Prototype]] from realm of NewTarget, utilizing GetFunctionRealm helper [2].
+        Before this change, realm of active constructor was used instead. This patch introduces
+        GetFunctionRealm and aligns all subclassable constructors with the spec, V8, and SpiderMonkey.
+
+        This change inlines fast paths checks of InternalFunction::createSubclassStructure() and
+        simplifies its signature; getFunctionRealm() is invoked in slow paths only.
+
+        While a dynamically created function uses NewTarget's realm for its default [[Prototype]]
+        similar to other built-ins, its "prototype" object inherit from ObjectPrototype
+        of active constructor's realm [3] (just like their scope), making it retain references
+        to 2 different global objects. To accomodate this behavior, this change introduces
+        `scopeGlobalObject` in JSFunction.cpp methods.
+
+        Above-mentioned behavior also simplifies creation of JSGenerator and JSAsyncGenerator
+        instances since NewTarget's realm is irrelevant to them.
+
+        IntlCollatorConstructor::collatorStructure() and 6 similar methods are removed:
+        a) to impose good practice of using newTarget's globalObject;
+        b) with this change, each of them have 1 call site max;
+        c) other JSC constructors have no methods alike.
+
+        [1]: https://tc39.es/ecma262/#sec-map-constructor (step 2)
+        [2]: https://tc39.es/ecma262/#sec-getfunctionrealm
+        [3]: https://tc39.es/ecma262/#sec-createdynamicfunction (steps 23-25)
+
+        * dfg/DFGOperations.cpp:
+        * runtime/AggregateErrorConstructor.cpp:
+        (JSC::callAggregateErrorConstructor):
+        (JSC::constructAggregateErrorConstructor):
+        * runtime/AggregateErrorConstructor.h:
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::constructAsyncFunctionConstructor):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::constructAsyncGeneratorFunctionConstructor):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        (JSC::createInternalFieldObject):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructErrorConstructor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        (JSC::getFunctionRealm):
+        (JSC::InternalFunction::createSubclassStructureSlow): Deleted.
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createSubclassStructure): Deleted.
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::constructIntlPluralRules):
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::constructIntlRelativeTimeFormat):
+        * runtime/IntlRelativeTimeFormatConstructor.h:
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSGenericArrayBufferConstructor<sharingMode>::constructArrayBuffer):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation const):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor<errorType>::constructNativeErrorConstructor):
+        (JSC::NativeErrorConstructor<errorType>::callNativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructNumberConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObjectWithNewTarget):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        (JSC::constructRegExp):
+        (JSC::esSpecRegExpCreate):
+        * runtime/RegExpConstructor.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakObjectRefConstructor.cpp:
+        (JSC::constructWeakRef):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyLinkError):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+
 2020-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ValueAdd, VaueSub, ValueMul, Inc, Dec should say SpecBigInt32 prediction based on ArithProfile

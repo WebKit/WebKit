@@ -91,8 +91,12 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(JSGlobalObject* global
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     // 3. ReturnIfAbrupt(collator).
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<IntlCollatorConstructor*>(callFrame->jsCallee())->collatorStructure(vm));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->collatorStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->collatorStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     IntlCollator* collator = IntlCollator::create(vm, structure);
     ASSERT(collator);
 
@@ -109,14 +113,12 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(JSGlobalObject* globalObjec
     // NewTarget is always undefined when called as a function.
 
     VM& vm = globalObject->vm();
-    IntlCollatorConstructor* callee = jsCast<IntlCollatorConstructor*>(callFrame->jsCallee());
-
-    // FIXME: Collator does not get the workaround for ECMA-402 1.0 compatibility.
+    // Collator does not require the workaround for ECMA-402 1.0 compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
 
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     // 3. ReturnIfAbrupt(collator).
-    IntlCollator* collator = IntlCollator::create(vm, callee->collatorStructure(vm));
+    IntlCollator* collator = IntlCollator::create(vm, globalObject->collatorStructure());
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).

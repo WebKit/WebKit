@@ -174,18 +174,17 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
     scope.releaseAssertNoException();
     if (LIKELY(prototype.isObject()))
         return asObject(prototype);
+    if (isHostOrBuiltinFunction())
+        return this->globalObject()->objectPrototype();
 
-    JSGlobalObject* thisGlobalObject = this->globalObject();
-    if (!isHostOrBuiltinFunction()) {
-        // https://tc39.github.io/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluatebody
-        if (isGeneratorWrapperParseMode(jsExecutable()->parseMode()))
-            return thisGlobalObject->generatorPrototype();
-
-        // https://tc39.github.io/ecma262/#sec-asyncgenerator-definitions-evaluatebody
-        if (isAsyncGeneratorWrapperParseMode(jsExecutable()->parseMode()))
-            return thisGlobalObject->asyncGeneratorPrototype();
-    }
-    return thisGlobalObject->objectPrototype();
+    JSGlobalObject* scopeGlobalObject = this->scope()->globalObject();
+    // https://tc39.github.io/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluatebody
+    if (isGeneratorWrapperParseMode(jsExecutable()->parseMode()))
+        return scopeGlobalObject->generatorPrototype();
+    // https://tc39.github.io/ecma262/#sec-asyncgenerator-definitions-evaluatebody
+    if (isAsyncGeneratorWrapperParseMode(jsExecutable()->parseMode()))
+        return scopeGlobalObject->asyncGeneratorPrototype();
+    return scopeGlobalObject->objectPrototype();
 }
 
 FunctionRareData* JSFunction::allocateAndInitializeRareData(JSGlobalObject* globalObject, size_t inlineCapacity)
@@ -460,16 +459,17 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObje
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
+            JSGlobalObject* scopeGlobalObject = thisObject->scope()->globalObject();
             JSObject* prototype = nullptr;
             if (isGeneratorWrapperParseMode(thisObject->jsExecutable()->parseMode())) {
                 // Unlike function instances, the object that is the value of the a GeneratorFunction's prototype
                 // property does not have a constructor property whose value is the GeneratorFunction instance.
                 // https://tc39.github.io/ecma262/#sec-generatorfunction-instances-prototype
-                prototype = constructEmptyObject(globalObject, thisObject->globalObject()->generatorPrototype());
+                prototype = constructEmptyObject(globalObject, scopeGlobalObject->generatorPrototype());
             } else if (isAsyncGeneratorWrapperParseMode(thisObject->jsExecutable()->parseMode()))
-                prototype = constructEmptyObject(globalObject, thisObject->globalObject()->asyncGeneratorPrototype());
+                prototype = constructEmptyObject(globalObject, scopeGlobalObject->asyncGeneratorPrototype());
             else {
-                prototype = constructEmptyObject(globalObject);
+                prototype = constructEmptyObject(globalObject, scopeGlobalObject->objectPrototype());
                 prototype->putDirect(vm, vm.propertyNames->constructor, thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum));
             }
 

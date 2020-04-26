@@ -92,8 +92,12 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
     double n = callFrame->argumentCount() ? callFrame->uncheckedArgument(0).toNumber(globalObject) : 0;
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->numberObjectStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->numberObjectStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->numberObjectStructure());
+    RETURN_IF_EXCEPTION(scope, { });
 
     NumberObject* object = NumberObject::create(vm, structure);
     object->setInternalValue(vm, jsNumber(n));

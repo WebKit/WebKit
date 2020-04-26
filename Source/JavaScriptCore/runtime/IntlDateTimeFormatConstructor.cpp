@@ -91,8 +91,12 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(JSGlobalObject* 
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
     // 3. ReturnIfAbrupt(dateTimeFormat).
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<IntlDateTimeFormatConstructor*>(callFrame->jsCallee())->dateTimeFormatStructure(vm));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->dateTimeFormatStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->dateTimeFormatStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, structure);
     ASSERT(dateTimeFormat);
 
@@ -108,14 +112,12 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(JSGlobalObject* globa
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    IntlDateTimeFormatConstructor* callee = jsCast<IntlDateTimeFormatConstructor*>(callFrame->jsCallee());
-
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
-    return JSValue::encode(constructIntlInstanceWithWorkaroundForLegacyIntlConstructor<IntlDateTimeFormat>(globalObject, callFrame->thisValue(), callee, [&] (VM& vm) {
+    return JSValue::encode(constructIntlInstanceWithWorkaroundForLegacyIntlConstructor<IntlDateTimeFormat>(globalObject, callFrame->thisValue(), callFrame->jsCallee(), [&] (VM& vm) {
         // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
         // 3. ReturnIfAbrupt(dateTimeFormat).
-        IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, callee->dateTimeFormatStructure(vm));
+        IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
         ASSERT(dateTimeFormat);
 
         // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).

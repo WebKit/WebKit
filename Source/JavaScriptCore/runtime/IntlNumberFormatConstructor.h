@@ -43,8 +43,6 @@ public:
 
     DECLARE_INFO;
 
-    Structure* numberFormatStructure(VM&) const { return globalObject()->numberFormatStructure(); }
-
 private:
     IntlNumberFormatConstructor(VM&, Structure*);
     void finishCreation(VM&, IntlNumberFormatPrototype*);

@@ -57,8 +57,13 @@ EncodedJSValue JSC_HOST_CALL constructErrorConstructor(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->errorStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* errorStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->errorStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->errorStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false)));
 }
 

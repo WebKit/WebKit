@@ -68,9 +68,13 @@ static EncodedJSValue JSC_HOST_CALL constructWeakRef(JSGlobalObject* globalObjec
     if (!callFrame->argument(0).isObject())
         return throwVMTypeError(globalObject, scope, "First argument to WeakRef should be an object"_s);
 
-    Structure* WeakObjectRefStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->weakObjectRefStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSWeakObjectRef::create(vm, WeakObjectRefStructure, callFrame->uncheckedArgument(0).getObject())));
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* weakObjectRefStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->weakObjectRefStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->weakObjectRefStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSWeakObjectRef::create(vm, weakObjectRefStructure, callFrame->uncheckedArgument(0).getObject())));
 }
 
 }

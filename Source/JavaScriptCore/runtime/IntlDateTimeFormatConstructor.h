@@ -43,8 +43,6 @@ public:
 
     DECLARE_INFO;
 
-    Structure* dateTimeFormatStructure(VM&) const { return globalObject()->dateTimeFormatStructure(); }
-
 private:
     IntlDateTimeFormatConstructor(VM&, Structure*);
     void finishCreation(VM&, IntlDateTimeFormatPrototype*);

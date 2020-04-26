@@ -89,8 +89,12 @@ static EncodedJSValue JSC_HOST_CALL constructIntlPluralRules(JSGlobalObject* glo
 
     // 13.2.1 Intl.PluralRules ([ locales [ , options ] ])
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<IntlPluralRulesConstructor*>(callFrame->jsCallee())->pluralRulesStructure(vm));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* structure = newTarget == callFrame->jsCallee()
+        ? globalObject->pluralRulesStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->pluralRulesStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     IntlPluralRules* pluralRules = IntlPluralRules::create(vm, structure);
     ASSERT(pluralRules);
 

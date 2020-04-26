@@ -344,7 +344,9 @@ JSCell* JIT_OPERATION operationCreatePromise(JSGlobalObject* globalObject, JSObj
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->promiseConstructor(), constructor, globalObject->promiseStructure());
+    Structure* structure = constructor == globalObject->promiseConstructor()
+        ? globalObject->promiseStructure()
+        : InternalFunction::createSubclassStructure(globalObject, constructor, getFunctionRealm(vm, constructor)->promiseStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSPromise::create(vm, structure));
 }
@@ -355,7 +357,9 @@ JSCell* JIT_OPERATION operationCreateInternalPromise(JSGlobalObject* globalObjec
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->internalPromiseConstructor(), constructor, globalObject->internalPromiseStructure());
+    Structure* structure = constructor == globalObject->internalPromiseConstructor()
+        ? globalObject->internalPromiseStructure()
+        : InternalFunction::createSubclassStructure(globalObject, constructor, getFunctionRealm(vm, constructor)->internalPromiseStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSInternalPromise::create(vm, structure));
 }
@@ -366,7 +370,7 @@ JSCell* JIT_OPERATION operationCreateGenerator(JSGlobalObject* globalObject, JSO
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, nullptr, constructor, globalObject->generatorStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, constructor, globalObject->generatorStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSGenerator::create(vm, structure));
 }
@@ -377,7 +381,7 @@ JSCell* JIT_OPERATION operationCreateAsyncGenerator(JSGlobalObject* globalObject
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(globalObject, nullptr, constructor, globalObject->asyncGeneratorStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, constructor, globalObject->asyncGeneratorStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSAsyncGenerator::create(vm, structure));
 }

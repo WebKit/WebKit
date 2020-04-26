@@ -65,8 +65,12 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* weakSetStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->weakSetStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* weakSetStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->weakSetStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->weakSetStructure());
+    RETURN_IF_EXCEPTION(scope, { });
+
     JSWeakSet* weakSet = JSWeakSet::create(vm, weakSetStructure);
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())

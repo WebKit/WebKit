@@ -67,8 +67,11 @@ static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, C
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* setStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->setStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* setStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->setStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->setStructure());
+    RETURN_IF_EXCEPTION(scope, { });
 
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull()) 
