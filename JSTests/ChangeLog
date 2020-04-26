@@ -1,5 +1,16 @@
 2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Handle BigInt32 INT32_MIN shift amount
+        https://bugs.webkit.org/show_bug.cgi?id=211030
+
+        Reviewed by Darin Adler.
+
+        * stress/bigint-int32-min-shift.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
+2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add fast path for BigInt32 left-shift
         https://bugs.webkit.org/show_bug.cgi?id=211029
 

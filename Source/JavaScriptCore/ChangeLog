@@ -1,3 +1,16 @@
+2020-04-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Handle BigInt32 INT32_MIN shift amount
+        https://bugs.webkit.org/show_bug.cgi?id=211030
+
+        Reviewed by Darin Adler.
+
+        Our BigInt shift-operation does not correctly handle INT32_MIN shift amount, and producing a wrong result.
+        This patch fixes it.
+
+        * runtime/Operations.h:
+        (JSC::shift):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks

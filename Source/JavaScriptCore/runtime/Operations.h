@@ -762,7 +762,10 @@ ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2
         int32_t rightInt32 = rightNumeric.bigInt32AsInt32();
         if (rightInt32 < 0) {
             isLeft = !isLeft;
-            rightInt32 = -rightInt32;
+            if (rightInt32 == INT32_MIN)
+                rightInt32 = INT32_MAX; // Shifts one less than requested, but makes no observable difference.
+            else
+                rightInt32 = -rightInt32;
         }
         ASSERT(rightInt32 >= 0);
 
