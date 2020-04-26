@@ -141,7 +141,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         return;
 
     auto& selection = frame.selection().selection();
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return;
 
@@ -339,8 +339,8 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    NSAttributedString *attributedString = editingAttributedStringFromRange(*range, IncludeImagesInAttributedString::No);
-    
+    auto attributedString = editingAttributedString(*range, IncludeImages::No);
+
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
@@ -350,15 +350,15 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
     }
 
-    EditingRange rangeToSend(editingRange.location, attributedString.length);
+    EditingRange rangeToSend(editingRange.location, [attributedString length]);
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, EditingRange(), callbackID));
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString.get(), EditingRange(), callbackID));
         return;
     }
 
-    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, rangeToSend, callbackID));
+    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString.get(), rangeToSend, callbackID));
 }
 
 void WebPage::fontAtSelection(CallbackID callbackID)
@@ -803,17 +803,18 @@ void WebPage::handleTelephoneNumberClick(const String& number, const IntPoint& p
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
+
 void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vector<String>& phoneNumbers, const IntPoint& point)
 {
-    RefPtr<Range> range = selection.selection().firstRange();
+    auto range = selection.selection().firstRange();
     if (!range)
         return;
 
-    NSAttributedString *attributedSelection = attributedStringFromRange(*range);
+    auto attributedSelection = attributedString(*range);
     if (!attributedSelection)
         return;
 
-    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, attributedSelection.length) documentAttributes:@{ }];
+    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
 
     Vector<uint8_t> selectionDataVector;
     selectionDataVector.append(reinterpret_cast<const uint8_t*>(selectionData.bytes), selectionData.length);
@@ -821,6 +822,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     flushPendingEditorStateUpdate();
     send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
+
 #endif
 
 String WebPage::platformUserAgent(const URL&) const
@@ -851,7 +853,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     WebHitTestResultData immediateActionResult(hitTestResult, { });
 
-    RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
+    auto selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
     Element* URLElement = hitTestResult.URLElement();

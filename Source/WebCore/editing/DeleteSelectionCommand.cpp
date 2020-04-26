@@ -503,19 +503,23 @@ void DeleteSelectionCommand::deleteTextFromNode(Text& node, unsigned offset, uns
 
 void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss()
 {
-    RefPtr<Range> range = m_selectionToDelete.toNormalizedRange();
-    RefPtr<Node> node = range ? range->firstNode() : nullptr;
-    while (node && node != range->pastLastNode()) {
-        RefPtr<Node> nextNode = NodeTraversal::next(*node);
-        if ((is<HTMLStyleElement>(*node) && !downcast<HTMLStyleElement>(*node).hasAttributeWithoutSynchronization(scopedAttr)) || is<HTMLLinkElement>(*node)) {
-            nextNode = NodeTraversal::nextSkippingChildren(*node);
-            RefPtr<ContainerNode> rootEditableElement = node->rootEditableElement();
-            if (rootEditableElement) {
-                removeNode(*node);
-                appendNode(*node, *rootEditableElement);
+    auto range = m_selectionToDelete.toNormalizedRange();
+    if (!range)
+        return;
+    auto nodes = intersectingNodes(*range).begin();
+    while (nodes) {
+        auto node = makeRef(*nodes);
+        auto shouldMove = is<HTMLLinkElement>(node)
+            || (is<HTMLStyleElement>(node) && !downcast<HTMLStyleElement>(node.get()).hasAttributeWithoutSynchronization(scopedAttr));
+        if (!shouldMove)
+            nodes.advance();
+        else {
+            nodes.advanceSkippingChildren();
+            if (auto rootEditableElement = makeRefPtr(node->rootEditableElement())) {
+                removeNode(node.get());
+                appendNode(node.get(), *rootEditableElement);
             }
         }
-        node = nextNode;
     }
 }
 

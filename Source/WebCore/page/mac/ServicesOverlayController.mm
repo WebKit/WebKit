@@ -532,13 +532,12 @@ void ServicesOverlayController::buildSelectionHighlight()
     Vector<CGRect> cgRects;
     cgRects.reserveCapacity(m_currentSelectionRects.size());
 
-    RefPtr<Range> selectionRange = m_page.selection().firstRange();
-    if (selectionRange) {
+    if (auto selectionRange = m_page.selection().firstRange()) {
         FrameView* mainFrameView = mainFrame().view();
         if (!mainFrameView)
             return;
 
-        RefPtr<FrameView> viewForRange = selectionRange->ownerDocument().view();
+        auto viewForRange = makeRefPtr(selectionRange->start.document().view());
         if (!viewForRange)
             return;
 
@@ -555,7 +554,7 @@ void ServicesOverlayController::buildSelectionHighlight()
 #else
             RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
 #endif
-            newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, selectionRange.releaseNonNull()));
+            newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, createLiveRange(*selectionRange)));
         }
     }
 
@@ -627,19 +626,12 @@ ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNu
     if (selectionHighlight.type() != Highlight::SelectionType)
         return nullptr;
 
-    const VisibleSelection& selection = m_page.selection();
-    if (!selection.isRange())
-        return nullptr;
-
-    RefPtr<Range> activeSelectionRange = selection.toNormalizedRange();
-    if (!activeSelectionRange)
+    auto selectionRange = m_page.selection().toNormalizedRange();
+    if (!selectionRange)
         return nullptr;
 
     for (auto& highlight : m_potentialHighlights) {
-        if (highlight->type() != Highlight::TelephoneNumberType)
-            continue;
-
-        if (highlight->range().contains(*activeSelectionRange))
+        if (highlight->type() == Highlight::TelephoneNumberType && highlight->range().contains(createLiveRange(*selectionRange)))
             return highlight.get();
     }
 

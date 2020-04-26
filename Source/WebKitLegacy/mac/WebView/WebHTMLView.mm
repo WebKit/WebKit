@@ -1336,7 +1336,7 @@ static NSControlStateValue kit(TriState state)
 - (DOMRange *)_selectedRange
 {
     auto* coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->selection().toNormalizedRange().get()) : nil;
+    return coreFrame ? kit(createLiveRange(coreFrame->selection().selection().toNormalizedRange()).get()) : nil;
 }
 
 #if PLATFORM(MAC)
@@ -5928,7 +5928,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (!coreFrame)
         return;
 
-    RefPtr<WebCore::Range> selectionRange = coreFrame->selection().selection().firstRange();
+    auto selectionRange = coreFrame->selection().selection().firstRange();
     if (!selectionRange)
         return;
 
@@ -6399,9 +6399,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     WebFrame *webFrame = [self _frame];
     auto* coreFrame = core(webFrame);
     if (!coreFrame)
-        return NSMakeRange(0, 0);
-    NSRange result = [webFrame _convertToNSRange:coreFrame->editor().compositionRange().get()];
+        return NSMakeRange(0, 0); // FIXME: Why not NSNotFound, 0?
 
+    auto range = coreFrame->editor().compositionRange();
+    if (!range)
+        return NSMakeRange(NSNotFound, 0);
+
+    NSRange result = [webFrame _convertToNSRange:*range];
     LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
     return result;
 }
@@ -6426,7 +6430,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    NSAttributedString *result = editingAttributedStringFromRange(*range);
+    auto result = editingAttributedString(*range);
     
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -6437,7 +6441,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         result = [result attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
     }
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result string]);
-    return result;
+    return result.autorelease();
 }
 
 #endif
@@ -6994,52 +6998,51 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
 
 - (NSAttributedString *)_attributedStringFromDOMRange:(DOMRange *)range
 {
-    NSAttributedString *attributedString;
+    if (!range)
+        return nil;
 #if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-    if (!range)
-        return nullptr;
-    attributedString = attributedStringFromRange(*core(range));
+    auto result = attributedString(*core(range)).autorelease();
 #if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
 #endif
-    return attributedString;
+    return result;
 }
 
-- (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode*)startContainer offset:(int)startOffset to:(DOMNode*)endContainer offset:(int)endOffset
+- (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode *)startContainer offset:(int)startOffset to:(DOMNode *)endContainer offset:(int)endOffset
 {
-    return attributedStringBetweenStartAndEnd(
-        WebCore::Position { core(startContainer), static_cast<unsigned>(startOffset), WebCore::Position::PositionIsOffsetInAnchor },
-        WebCore::Position { core(endContainer), static_cast<unsigned>(endOffset), WebCore::Position::PositionIsOffsetInAnchor });
+    if (!startContainer || !endContainer)
+        return [[[NSAttributedString alloc] initWithString:@""] autorelease];
+    return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
+        { *core(endContainer), static_cast<unsigned>(endOffset) } }).autorelease();
 }
 
 - (NSAttributedString *)attributedString
 {
     DOMDocument *document = [[self _frame] DOMDocument];
-    NSAttributedString *attributedString = [self _attributedStringFromDOMRange:[document _documentRange]];
-    if (!attributedString) {
-        auto* coreDocument = core(document);
-        attributedString = editingAttributedStringFromRange(WebCore::Range::create(*coreDocument, coreDocument, 0, coreDocument, coreDocument->countChildNodes()));
-    }
-    return attributedString;
+    if (!document)
+        return [[[NSAttributedString alloc] initWithString:@""] autorelease];
+    if (auto attributedString = [self _attributedStringFromDOMRange:[document _documentRange]])
+        return attributedString;
+    return editingAttributedString(makeRangeSelectingNodeContents(*core(document))).autorelease();
 }
 
 - (NSAttributedString *)selectedAttributedString
 {
-    NSAttributedString *attributedString = [self _attributedStringFromDOMRange:[self _selectedRange]];
+    RetainPtr<NSAttributedString> attributedString = [self _attributedStringFromDOMRange:[self _selectedRange]];
     if (!attributedString) {
         auto* coreFrame = core([self _frame]);
         if (coreFrame) {
-            RefPtr<WebCore::Range> range = coreFrame->selection().selection().toNormalizedRange();
+            auto range = coreFrame->selection().selection().toNormalizedRange();
             if (range)
-                attributedString = editingAttributedStringFromRange(*range);
+                attributedString = editingAttributedString(*range);
             else
-                attributedString = [[[NSAttributedString alloc] init] autorelease];
+                attributedString = adoptNS([[NSAttributedString alloc] init]);
         }
     }
-    return attributedString;
+    return attributedString.autorelease();
 }
 
 #endif

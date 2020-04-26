@@ -58,7 +58,6 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
-#import "Range.h"
 #import "RenderImage.h"
 #import "RenderText.h"
 #import "StyleProperties.h"
@@ -277,15 +276,15 @@ private:
 
 class HTMLConverter {
 public:
-    HTMLConverter(const Position&, const Position&);
+    explicit HTMLConverter(const SimpleRange&);
     ~HTMLConverter();
 
-    NSAttributedString* convert(NSDictionary** documentAttributes = nullptr);
+    RetainPtr<NSAttributedString> convert(RetainPtr<NSDictionary>* documentAttributes = nullptr);
 
 private:
     Position m_start;
     Position m_end;
-    DocumentLoader* m_dataSource;
+    DocumentLoader* m_dataSource { nullptr };
     
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
     HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
@@ -353,10 +352,9 @@ private:
     void _adjustTrailingNewline();
 };
 
-HTMLConverter::HTMLConverter(const Position& start, const Position& end)
-    : m_start(start)
-    , m_end(end)
-    , m_dataSource(nullptr)
+HTMLConverter::HTMLConverter(const SimpleRange& range)
+    : m_start(createLegacyEditingPosition(range.start))
+    , m_end(createLegacyEditingPosition(range.end))
 {
     _attrStr = [[NSMutableAttributedString alloc] init];
     _documentAttrs = [[NSMutableDictionary alloc] init];
@@ -399,7 +397,7 @@ HTMLConverter::~HTMLConverter()
     [_writingDirectionArray release];
 }
 
-NSAttributedString *HTMLConverter::convert(NSDictionary** documentAttributes)
+RetainPtr<NSAttributedString> HTMLConverter::convert(RetainPtr<NSDictionary>* documentAttributes)
 {
     if (comparePositions(m_start, m_end) > 0)
         return nil;
@@ -421,9 +419,9 @@ NSAttributedString *HTMLConverter::convert(NSDictionary** documentAttributes)
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
 
     if (documentAttributes)
-        *documentAttributes = [[_documentAttrs retain] autorelease];
+        *documentAttributes = _documentAttrs;
 
-    return [[_attrStr retain] autorelease];
+    return _attrStr;
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2370,25 +2368,15 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 namespace WebCore {
 
 // This function supports more HTML features than the editing variant below, such as tables.
-NSAttributedString *attributedStringFromRange(Range& range, NSDictionary** documentAttributes)
+RetainPtr<NSAttributedString> attributedString(const SimpleRange& range, RetainPtr<NSDictionary>* documentAttributes)
 {
-    return HTMLConverter { range.startPosition(), range.endPosition() }.convert(documentAttributes);
+    return HTMLConverter { range }.convert(documentAttributes);
 }
 
-NSAttributedString *attributedStringFromSelection(const VisibleSelection& selection, NSDictionary** documentAttributes)
-{
-    return attributedStringBetweenStartAndEnd(selection.start(), selection.end(), documentAttributes);
-}
-
-NSAttributedString *attributedStringBetweenStartAndEnd(const Position& start, const Position& end, NSDictionary** documentAttributes)
-{
-    return HTMLConverter { start, end }.convert(documentAttributes);
-}
-
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
-NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImagesInAttributedString includeOrSkipImages)
+RetainPtr<NSAttributedString> editingAttributedString(const SimpleRange& range, IncludeImages includeImages)
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
@@ -2402,7 +2390,7 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
         int startOffset = currentTextRange.start.offset;
         int endOffset = currentTextRange.end.offset;
 
-        if (includeOrSkipImages == IncludeImagesInAttributedString::Yes) {
+        if (includeImages == IncludeImages::Yes) {
             if (&startContainer == &endContainer && (startOffset == endOffset - 1)) {
                 Node* node = startContainer.traverseToChildAt(startOffset);
                 if (is<HTMLImageElement>(node)) {

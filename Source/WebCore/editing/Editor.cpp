@@ -728,7 +728,7 @@ void Editor::replaceSelectionWithText(const String& text, SelectReplacement sele
 
 RefPtr<Range> Editor::selectedRange()
 {
-    return m_frame.selection().toNormalizedRange();
+    return createLiveRange(m_frame.selection().selection().toNormalizedRange());
 }
 
 bool Editor::shouldDeleteRange(Range* range) const
@@ -1005,7 +1005,7 @@ void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAct
     if (!style || style->isEmpty() || !canEditRichly())
         return;
 
-    if (!client() || !client()->shouldApplyStyle(style, m_frame.selection().toNormalizedRange().get()))
+    if (!client() || !client()->shouldApplyStyle(style, createLiveRange(m_frame.selection().selection().toNormalizedRange()).get()))
         return;
     applyStyle(style, editingAction);
 }
@@ -1016,7 +1016,7 @@ void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editing
         return;
 
     // FIXME: This is wrong for text decorations since m_mutableStyle is empty.
-    if (!client() || !client()->shouldApplyStyle(style->styleWithResolvedTextDecorations().ptr(), m_frame.selection().toNormalizedRange().get()))
+    if (!client() || !client()->shouldApplyStyle(style->styleWithResolvedTextDecorations().ptr(), createLiveRange(m_frame.selection().selection().toNormalizedRange()).get()))
         return;
 
     applyStyle(WTFMove(style), editingAction, colorFilterMode);
@@ -1027,7 +1027,7 @@ void Editor::applyParagraphStyleToSelection(StyleProperties* style, EditAction e
     if (!style || style->isEmpty() || !canEditRichly())
         return;
     
-    if (client() && client()->shouldApplyStyle(style, m_frame.selection().toNormalizedRange().get()))
+    if (client() && client()->shouldApplyStyle(style, createLiveRange(m_frame.selection().selection().toNormalizedRange()).get()))
         applyParagraphStyle(style, editingAction);
 }
 
@@ -1259,9 +1259,8 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     VisibleSelection selection = selectionForCommand(triggeringEvent);
     if (!selection.isContentEditable())
         return false;
-    RefPtr<Range> range = selection.toNormalizedRange();
 
-    if (!shouldInsertText(text, range.get(), EditorInsertAction::Typed))
+    if (!shouldInsertText(text, createLiveRange(selection.toNormalizedRange()).get(), EditorInsertAction::Typed))
         return true;
 
     updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
@@ -1319,7 +1318,7 @@ bool Editor::insertLineBreak()
     if (!canEdit())
         return false;
 
-    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertAction::Typed))
+    if (!shouldInsertText("\n", createLiveRange(m_frame.selection().selection().toNormalizedRange()).get(), EditorInsertAction::Typed))
         return true;
 
     VisiblePosition caret = m_frame.selection().selection().visibleStart();
@@ -1339,7 +1338,7 @@ bool Editor::insertParagraphSeparator()
     if (!canEditRichly())
         return insertLineBreak();
 
-    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertAction::Typed))
+    if (!shouldInsertText("\n", createLiveRange(m_frame.selection().selection().toNormalizedRange()).get(), EditorInsertAction::Typed))
         return true;
 
     VisiblePosition caret = m_frame.selection().selection().visibleStart();
@@ -2123,8 +2122,7 @@ void Editor::ignoreSpelling()
     if (!client())
         return;
         
-    RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
-    if (selectedRange)
+    if (auto selectedRange = m_frame.selection().selection().toNormalizedRange())
         document().markers().removeMarkers(*selectedRange, DocumentMarker::Spelling);
 
     String text = selectedText();
@@ -2139,8 +2137,7 @@ void Editor::learnSpelling()
         
     // FIXME: On Mac OS X, when use "learn" button on "Spelling and Grammar" panel, we don't call this function. It should remove misspelling markers around the learned word, see <rdar://problem/5396072>.
 
-    RefPtr<Range> selectedRange = m_frame.selection().toNormalizedRange();
-    if (selectedRange)
+    if (auto selectedRange = m_frame.selection().selection().toNormalizedRange())
         document().markers().removeMarkers(*selectedRange, DocumentMarker::Spelling);
 
     String text = selectedText();
@@ -2341,16 +2338,16 @@ String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const
 
     VisibleSelection wordSelection(selection.base());
     wordSelection.expandUsingGranularity(WordGranularity);
-    RefPtr<Range> wordRange = wordSelection.toNormalizedRange();
+    auto wordRange = wordSelection.toNormalizedRange();
     if (!wordRange)
         return String();
 
     // In compliance with GTK+ applications, additionally allow to provide suggestions when the current
     // selection exactly match the word selection.
-    if (selection.isRange() && !areRangesEqual(wordRange.get(), selection.toNormalizedRange().get()))
+    if (selection.isRange() && *wordRange != selection.toNormalizedRange())
         return String();
 
-    String word = wordRange->text();
+    String word = plainText(*wordRange);
     if (word.isEmpty() || !client())
         return String();
 
@@ -2389,7 +2386,7 @@ String Editor::misspelledSelectionString() const
 bool Editor::isSelectionUngrammatical()
 {
 #if USE(GRAMMAR_CHECKING)
-    RefPtr<Range> range = m_frame.selection().toNormalizedRange();
+    auto range = m_frame.selection().selection().toNormalizedRange();
     if (!range || !client())
         return false;
     return TextCheckingHelper(*client(), *range).isUngrammatical();
@@ -2411,7 +2408,7 @@ Vector<String> Editor::guessesForMisspelledWord(const String& word) const
 Vector<String> Editor::guessesForMisspelledOrUngrammatical(bool& misspelled, bool& ungrammatical)
 {
     if (unifiedTextCheckerEnabled()) {
-        RefPtr<Range> range;
+        Optional<SimpleRange> range;
         VisibleSelection selection = m_frame.selection().selection();
         if (selection.isCaret() && behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
             VisibleSelection wordSelection = VisibleSelection(selection.base());
@@ -2488,7 +2485,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
     VisibleSelection adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
     auto adjacentWordRange = adjacentWords.toNormalizedRange();
-    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, adjacentWordRange.copyRef(), adjacentWordRange.copyRef(), adjacentWordRange.copyRef());
+    markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, createLiveRange(adjacentWordRange), createLiveRange(adjacentWordRange), createLiveRange(adjacentWordRange));
 #else
 #if !USE(AUTOMATIC_TEXT_REPLACEMENT)
     UNUSED_PARAM(doReplacement);
@@ -2571,9 +2568,9 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         // cause any other part of the current sentence to lose or gain spelling correction markers, due to
         // sentence retro correction. As such, we expand the spell checking range to encompass as much of the
         // full sentence as we can, respecting boundaries where spellchecking is disabled.
-        fullSentenceRange->ownerDocument().markers().removeMarkers(*fullSentenceRange, DocumentMarker::Grammar);
-        spellCheckingRange->ownerDocument().markers().removeMarkers(*spellCheckingRange, DocumentMarker::Spelling);
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, WTFMove(spellCheckingRange), WTFMove(adjacentWordRange), WTFMove(fullSentenceRange));
+        fullSentenceRange->start.document().markers().removeMarkers(*fullSentenceRange, DocumentMarker::Grammar);
+        spellCheckingRange->start.document().markers().removeMarkers(*spellCheckingRange, DocumentMarker::Spelling);
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, createLiveRange(spellCheckingRange), createLiveRange(adjacentWordRange), createLiveRange(fullSentenceRange));
         return;
     }
 
@@ -2628,7 +2625,7 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
     if (!isContinuousSpellCheckingEnabled())
         return;
     
-    RefPtr<Range> searchRange(selection.toNormalizedRange());
+    auto searchRange = selection.toNormalizedRange();
     if (!searchRange)
         return;
     
@@ -2656,9 +2653,9 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
 #endif
     }    
 #else
-        UNUSED_PARAM(selection);
-        UNUSED_PARAM(checkSpelling);
-        UNUSED_PARAM(firstMisspellingRange);
+    UNUSED_PARAM(selection);
+    UNUSED_PARAM(checkSpelling);
+    UNUSED_PARAM(firstMisspellingRange);
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
@@ -2990,7 +2987,7 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
         if (markGrammar && isGrammarCheckingEnabled())
             textCheckingOptions.add(TextCheckingType::Grammar);
         auto spellCheckingRange = spellingSelection.toNormalizedRange();
-        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange.copyRef(), spellCheckingRange.copyRef(), grammarSelection.toNormalizedRange());
+        markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, createLiveRange(spellCheckingRange), createLiveRange(spellCheckingRange), createLiveRange(grammarSelection.toNormalizedRange()));
         return;
     }
 
@@ -3096,19 +3093,21 @@ void Editor::deletedAutocorrectionAtPosition(const Position& position, const Str
 
 RefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
 {
-    Document* document = m_frame.documentAtPoint(windowPoint);
+    auto document = m_frame.documentAtPoint(windowPoint);
     if (!document)
         return nullptr;
-    
-    Frame* frame = document->frame();
-    ASSERT(frame);
-    FrameView* frameView = frame->view();
+
+    auto frame = document->frame();
+    if (!frame)
+        return nullptr;
+
+    auto frameView = frame->view();
     if (!frameView)
         return nullptr;
-    IntPoint framePoint = frameView->windowToContents(windowPoint);
-    VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
 
-    return selection.toNormalizedRange();
+    auto framePoint = frameView->windowToContents(windowPoint);
+    auto selection = VisibleSelection { frame->visiblePositionForPoint(framePoint) };
+    return createLiveRange(selection.toNormalizedRange());
 }
 
 void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
@@ -3322,12 +3321,12 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
     // FIXME: Write in terms of replaceSelectionWithFragment(). See <https://bugs.webkit.org/show_bug.cgi?id=208744>.
     deleteSelectionWithSmartDelete(false);
 
-    auto range = m_frame.selection().toNormalizedRange();
+    auto range = m_frame.selection().selection().toNormalizedRange();
     if (!range)
         return nullptr;
 
     auto placeholder = TextPlaceholderElement::create(document, size);
-    range->insertNode(placeholder.copyRef());
+    createLiveRange(*range)->insertNode(placeholder.copyRef());
 
     VisibleSelection newSelection { positionBeforeNode(placeholder.ptr()), positionAfterNode(placeholder.ptr()) };
     m_frame.selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
@@ -3406,7 +3405,7 @@ bool Editor::shouldChangeSelection(const VisibleSelection& oldSelection, const V
     if (m_frame.selectionChangeCallbacksDisabled())
         return true;
 #endif
-    return client() && client()->shouldChangeSelectedRange(oldSelection.toNormalizedRange().get(), newSelection.toNormalizedRange().get(), affinity, stillSelecting);
+    return client() && client()->shouldChangeSelectedRange(createLiveRange(oldSelection.toNormalizedRange()).get(), createLiveRange(newSelection.toNormalizedRange()).get(), affinity, stillSelecting);
 }
 
 void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAction)
@@ -3493,8 +3492,7 @@ bool Editor::findString(const String& target, FindOptions options)
 
     VisibleSelection selection = m_frame.selection().selection();
 
-    RefPtr<Range> resultRange = rangeOfString(target, selection.firstRange().get(), options);
-
+    auto resultRange = rangeOfString(target, createLiveRange(selection.firstRange()).get(), options);
     if (!resultRange)
         return false;
 
@@ -3536,7 +3534,7 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
     // If we started in the reference range and the found range exactly matches the reference range, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
-    if (startInReferenceRange && areRangesEqual(VisibleSelection(*resultRange).toNormalizedRange().get(), referenceRange)) {
+    if (startInReferenceRange && areRangesEqual(createLiveRange(VisibleSelection(*resultRange).toNormalizedRange()).get(), referenceRange)) {
         searchRange = rangeOfContents(document());
         if (forward)
             searchRange->setStart(referenceRange->endPosition());
@@ -3711,7 +3709,7 @@ void Editor::scanSelectionForTelephoneNumbers()
             page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
         return;
     }
-    RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
+    auto selectedRange = createLiveRange(frameSelection.selection().toNormalizedRange());
 
     // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
     static const int charactersToExtend = 15;
@@ -3726,7 +3724,7 @@ void Editor::scanSelectionForTelephoneNumbers()
     FrameSelection extendedSelection;
     extendedSelection.setStart(start);
     extendedSelection.setEnd(end);
-    RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
+    auto extendedRange = extendedSelection.selection().toNormalizedRange();
 
     if (!extendedRange) {
         if (auto* page = m_frame.page())
@@ -3734,7 +3732,7 @@ void Editor::scanSelectionForTelephoneNumbers()
         return;
     }
 
-    scanRangeForTelephoneNumbers(*extendedRange, extendedRange->text(), markedRanges);
+    scanRangeForTelephoneNumbers(createLiveRange(*extendedRange), plainText(*extendedRange), markedRanges);
 
     // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
     for (auto& range : markedRanges) {
@@ -3838,11 +3836,11 @@ void Editor::editorUIUpdateTimerFired()
         }
 
         if (!textChecker() || textChecker()->shouldEraseMarkersAfterChangeSelection(TextCheckingType::Spelling)) {
-            if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
+            if (auto wordRange = newAdjacentWords.toNormalizedRange())
                 document().markers().removeMarkers(*wordRange, DocumentMarker::Spelling);
         }
         if (!textChecker() || textChecker()->shouldEraseMarkersAfterChangeSelection(TextCheckingType::Grammar)) {
-            if (RefPtr<Range> sentenceRange = newSelectedSentence.toNormalizedRange())
+            if (auto sentenceRange = newSelectedSentence.toNormalizedRange())
                 document().markers().removeMarkers(*sentenceRange, DocumentMarker::Grammar);
         }
     }
@@ -3950,12 +3948,6 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
     return checkingTypes;
 }
 
-static RefPtr<Range> candidateRangeForSelection(Frame& frame)
-{
-    const VisibleSelection& selection = frame.selection().selection();
-    return selection.isCaret() ? wordRangeFromPosition(selection.start()) : frame.selection().toNormalizedRange();
-}
-
 static bool candidateWouldReplaceText(const VisibleSelection& selection)
 {
     // If the character behind the caret in the current selection is anything but a space or a newline then we should
@@ -3967,14 +3959,17 @@ static bool candidateWouldReplaceText(const VisibleSelection& selection)
 
 String Editor::stringForCandidateRequest() const
 {
-    const VisibleSelection& selection = m_frame.selection().selection();
-    RefPtr<Range> rangeForCurrentlyTypedString = candidateRangeForSelection(m_frame);
-    if (rangeForCurrentlyTypedString && candidateWouldReplaceText(selection))
-        return plainText(*rangeForCurrentlyTypedString);
-
-    return String();
+    auto& selection = m_frame.selection().selection();
+    auto range = selection.isCaret()
+        ? wordRangeFromPosition(selection.start())
+        : createLiveRange(selection.toNormalizedRange());
+    if (!range)
+        return { };
+    if (!candidateWouldReplaceText(selection))
+        return { };
+    return plainText(*range);
 }
-    
+
 RefPtr<Range> Editor::contextRangeForCandidateRequest() const
 {
     const VisibleSelection& selection = m_frame.selection().selection();
@@ -4335,24 +4330,22 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         return font;
     }
 
-    RefPtr<Range> range = m_frame.selection().toNormalizedRange();
+    auto range = m_frame.selection().selection().toNormalizedRange();
     if (!range)
         return nullptr;
 
-    Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode();
-    if (!startNode)
+    // FIXME: Adjusting the start may move it past the end. In that case the iterator below will go on to the end of the document.
+    auto adjustedStart = makeBoundaryPoint(adjustedSelectionStartForStyleComputation(m_frame.selection().selection()));
+    if (!adjustedStart)
         return nullptr;
+    range->start = *adjustedStart;
 
     const Font* font = nullptr;
-    Node* pastEnd = range->pastLastNode();
-    // In the loop below, node should eventually match pastEnd and not become null, but we've seen at least one
-    // unreproducible case where this didn't happen, so check for null also.
-    for (Node* node = startNode; node && node != pastEnd; node = NodeTraversal::next(*node)) {
-        auto renderer = node->renderer();
+    for (auto& node : intersectingNodes(*range)) {
+        auto renderer = node.renderer();
         if (!renderer)
             continue;
-        // FIXME: Are there any node types that have renderers, but that we should be skipping?
-        const Font& primaryFont = renderer->style().fontCascade().primaryFont();
+        auto& primaryFont = renderer->style().fontCascade().primaryFont();
         if (!font)
             font = &primaryFont;
         else if (font != &primaryFont) {

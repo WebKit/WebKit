@@ -1144,7 +1144,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (selection != m_lastSelectionForRequestedCandidates)
         return;
 
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return;
 

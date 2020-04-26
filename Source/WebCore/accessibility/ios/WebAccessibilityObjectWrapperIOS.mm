@@ -2427,7 +2427,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!cache)
         return nil;
     
-    RefPtr<Range> range = selection.toNormalizedRange();
+    auto range = createLiveRange(selection.toNormalizedRange());
     if (!range)
         return nil;
 

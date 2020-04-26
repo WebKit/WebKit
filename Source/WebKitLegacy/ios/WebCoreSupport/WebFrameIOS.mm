@@ -204,14 +204,11 @@ using namespace WebCore;
     }    
 }
 
-- (NSArray *)selectionRectsForCoreRange:(Range *)range
+- (NSArray *)selectionRectsForCoreRange:(const SimpleRange&)range
 {
-    if (!range)
-        return nil;
-    
     Vector<SelectionRect> rects;
-    range->collectSelectionRects(rects);
-    
+    createLiveRange(range)->collectSelectionRects(rects);
+
     return createNSArray(rects, [] (auto& coreRect) {
         auto webRect = [WebSelectionRect selectionRect];
         webRect.rect = coreRect.rect();
@@ -229,16 +226,14 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForRange:(DOMRange *)domRange
 {
-    return [self selectionRectsForCoreRange:core(domRange)];
+    auto range = core(domRange);
+    return range ? [self selectionRectsForCoreRange:*range] : nil;
 }
 
 - (NSArray *)selectionRects
 {
-    if (![self hasSelection])
-        return nil;
-
-    Frame *frame = [self coreFrame];
-    return [self selectionRectsForCoreRange:frame->selection().toNormalizedRange().get()];
+    auto range = self.coreFrame->selection().selection().toNormalizedRange();
+    return range ? [self selectionRectsForCoreRange:*range] : nil;
 }
 
 - (DOMRange *)wordAtPoint:(CGPoint)point

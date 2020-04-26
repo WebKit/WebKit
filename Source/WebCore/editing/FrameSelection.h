@@ -197,8 +197,6 @@ public:
     bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
     bool isAll(EditingBoundaryCrossingRule rule = CannotCrossEditingBoundary) const { return m_selection.isAll(rule); }
     
-    RefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
-
     void debugRenderer(RenderObject*, bool selected) const;
 
     void nodeWillBeRemoved(Node&);
@@ -226,11 +224,10 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-public:
     WEBCORE_EXPORT void expandSelectionToElementContainingCaretSelection();
-    WEBCORE_EXPORT RefPtr<Range> elementRangeContainingCaretSelection() const;
+    WEBCORE_EXPORT Optional<SimpleRange> elementRangeContainingCaretSelection() const;
     WEBCORE_EXPORT void expandSelectionToWordContainingCaretSelection();
-    WEBCORE_EXPORT RefPtr<Range> wordRangeContainingCaretSelection();
+    WEBCORE_EXPORT Optional<SimpleRange> wordRangeContainingCaretSelection();
     WEBCORE_EXPORT void expandSelectionToStartOfWordContainingCaretSelection();
     WEBCORE_EXPORT UChar characterInRelationToCaretSelection(int amount) const;
     WEBCORE_EXPORT UChar characterBeforeCaretSelection() const;
@@ -240,8 +237,8 @@ public:
     WEBCORE_EXPORT bool selectionAtDocumentStart() const;
     WEBCORE_EXPORT bool selectionAtSentenceStart() const;
     WEBCORE_EXPORT bool selectionAtWordStart() const;
-    WEBCORE_EXPORT RefPtr<Range> rangeByMovingCurrentSelection(int amount) const;
-    WEBCORE_EXPORT RefPtr<Range> rangeByExtendingCurrentSelection(int amount) const;
+    WEBCORE_EXPORT Optional<SimpleRange> rangeByMovingCurrentSelection(int amount) const;
+    WEBCORE_EXPORT Optional<SimpleRange> rangeByExtendingCurrentSelection(int amount) const;
     WEBCORE_EXPORT void selectRangeOnElement(unsigned location, unsigned length, Node&);
     WEBCORE_EXPORT void clearCurrentSelection();
     void setCaretBlinks(bool caretBlinks = true);
@@ -255,10 +252,6 @@ public:
         ASSERT(m_scrollingSuppressCount);
         --m_scrollingSuppressCount;
     }
-private:
-    bool actualSelectionAtSentenceStart(const VisibleSelection&) const;
-    RefPtr<Range> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
-public:
 #endif
 
     bool shouldChangeSelection(const VisibleSelection&) const;
@@ -337,6 +330,11 @@ private:
     void invalidateCaretRect();
 
     bool dispatchSelectStart();
+
+#if PLATFORM(IOS_FAMILY)
+    bool actualSelectionAtSentenceStart(const VisibleSelection&) const;
+    Optional<SimpleRange> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
+#endif
 
     Frame* m_frame;
 

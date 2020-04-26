@@ -146,18 +146,29 @@ namespace WebKit {
 
 // FIXME: Unclear if callers in this file are correctly choosing which of these two functions to use.
 
+static String plainTextForContext(const SimpleRange& range)
+{
+    return WebCore::plainTextReplacingNoBreakSpace(range);
+}
+
+static String plainTextForContext(const Optional<SimpleRange> range)
+{
+    return range ? plainTextForContext(*range) : emptyString();
+}
+
 static String plainTextForContext(const Range* range)
 {
-    if (!range)
-        return emptyString();
-    return WebCore::plainTextReplacingNoBreakSpace(*range);
+    return range ? plainTextForContext(*range) : emptyString();
+}
+
+static String plainTextForDisplay(const SimpleRange& range)
+{
+    return WebCore::plainTextReplacingNoBreakSpace(range, TextIteratorDefaultBehavior, true);
 }
 
 static String plainTextForDisplay(const Range* range)
 {
-    if (!range)
-        return emptyString();
-    return WebCore::plainTextReplacingNoBreakSpace(*range, TextIteratorDefaultBehavior, true);
+    return range ? plainTextForDisplay(*range) : emptyString();
 }
 
 void WebPage::platformInitialize()
@@ -282,12 +293,12 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     } else if (selection.isRange()) {
         postLayoutData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
         postLayoutData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
-        RefPtr<Range> selectedRange = selection.toNormalizedRange();
+        auto selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            selectedRange->collectSelectionRects(postLayoutData.selectionRects);
+            createLiveRange(*selectedRange)->collectSelectionRects(postLayoutData.selectionRects);
             convertSelectionRectsToRootView(view, postLayoutData.selectionRects);
-            selectedText = plainTextForDisplay(selectedRange.get());
+            selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
             postLayoutData.wordAtSelection = selectedText.left(maxSelectedTextLength);
@@ -536,7 +547,7 @@ void WebPage::getSelectionContext(CallbackID callbackID)
     }
     const int selectionExtendedContextLength = 350;
     
-    String selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange().get());
+    String selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange());
     String textBefore = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(frame.selection().selection().start(), selectionExtendedContextLength, DirectionBackward).get());
     String textAfter = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(frame.selection().selection().end(), selectionExtendedContextLength, DirectionForward).get());
 
@@ -958,7 +969,7 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
 
 void WebPage::didConcludeDrop()
 {
-    m_rangeForDropSnapshot = nullptr;
+    m_rangeForDropSnapshot = WTF::nullopt;
     m_pendingImageElementsForDropSnapshot.clear();
 }
 
@@ -973,9 +984,8 @@ void WebPage::didConcludeEditDrag()
     auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
     if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
         m_pendingImageElementsForDropSnapshot = visibleImageElementsInRangeWithNonLoadedImages(*selectionRange);
-        auto collapsedRange = Range::create(selectionRange->ownerDocument(), selectionRange->endPosition(), selectionRange->endPosition());
-        frame->selection().setSelectedRange(collapsedRange.ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-
+        auto collapsedRange = SimpleRange { selectionRange->end, selectionRange->end };
+        frame->selection().setSelectedRange(createLiveRange(collapsedRange).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
         m_rangeForDropSnapshot = WTFMove(selectionRange);
     }
 
@@ -1001,8 +1011,8 @@ void WebPage::computeAndSendEditDragSnapshot()
 {
     Optional<TextIndicatorData> textIndicatorData;
     static auto defaultTextIndicatorOptionsForEditDrag = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor | TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
-    if (auto range = std::exchange(m_rangeForDropSnapshot, nullptr)) {
-        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
+    if (auto range = std::exchange(m_rangeForDropSnapshot, WTF::nullopt)) {
+        if (auto textIndicator = TextIndicator::createWithRange(createLiveRange(*range), defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
     }
     send(Messages::WebPageProxy::DidReceiveEditDragSnapshot(WTFMove(textIndicatorData)));
@@ -1854,13 +1864,13 @@ void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWin
     }
     
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    VisibleSelection selection = frame.selection().selection();
+    auto& selection = frame.selection().selection();
     if (!selection.isRange())
         return;
-    RefPtr<Range> range = frame.selection().toNormalizedRange();
+    auto range = selection.toNormalizedRange();
     if (!range)
         return;
-    auto* renderer = range->startContainer().renderer();
+    auto* renderer = range->start.container->renderer();
     if (!renderer)
         return;
 
@@ -1910,7 +1920,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
 
     FloatRect selectionBoundsInRootViewCoordinates;
     if (selection.isRange())
-        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(selectedRange->absoluteBoundingBox());
+        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(createLiveRange(*selectedRange)->absoluteBoundingBox());
     else
         selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(frame.selection().absoluteCaretBounds());
 
@@ -2263,9 +2273,7 @@ void WebPage::requestDictationContext(CallbackID callbackID)
     VisiblePosition endPosition = frame.selection().selection().end();
     const unsigned dictationContextWordCount = 5;
 
-    String selectedText;
-    if (frame.selection().isRange())
-        selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange().get());
+    String selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange());
 
     String contextBefore;
     if (startPosition != startOfEditableContent(startPosition)) {
@@ -2301,7 +2309,9 @@ void WebPage::requestDictationContext(CallbackID callbackID)
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> wordRange = frame.selection().isCaret() ? wordRangeFromPosition(frame.selection().selection().start()) : frame.selection().toNormalizedRange();
+    auto wordRange = frame.selection().isCaret()
+        ? wordRangeFromPosition(frame.selection().selection().start())
+        : createLiveRange(frame.selection().selection().toNormalizedRange());
     if (plainTextForContext(wordRange.get()) != oldText)
         return;
     
@@ -2456,7 +2466,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         }
     } else {
         // Range selection.
-        range = frame.selection().toNormalizedRange();
+        range = createLiveRange(frame.selection().selection().toNormalizedRange());
         if (!range)
             return false;
 
@@ -2496,7 +2506,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     const unsigned maxContextLength = 30;
 
     if (frame.selection().isRange())
-        selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange().get());
+        selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange());
 
     if (auto compositionRange = frame.editor().compositionRange()) {
         range = Range::create(*frame.document(), compositionRange->startPosition(), startPosition);
@@ -4200,7 +4210,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     auto selectionRange = selection.toNormalizedRange();
     auto rangeOfInterest = makeRange(rangeOfInterestStart, rangeOfInterestEnd);
-    if (selectionRange && rangesOverlap(rangeOfInterest.get(), selectionRange.get())) {
+    if (selectionRange && rangesOverlap(rangeOfInterest.get(), createLiveRange(*selectionRange).ptr())) {
         startOfRangeOfInterestInSelection = rangeOfInterestStart > selectionStart ? rangeOfInterestStart : selectionStart;
         endOfRangeOfInterestInSelection = rangeOfInterestEnd < selectionEnd ? rangeOfInterestEnd : selectionEnd;
     } else {

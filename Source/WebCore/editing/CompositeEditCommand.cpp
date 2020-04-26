@@ -388,7 +388,7 @@ Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
     if (!firstRange)
         return { };
 
-    return { 1, StaticRange::create(*firstRange) };
+    return { 1, StaticRange::create(WTFMove(*firstRange)) };
 }
 
 Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRangesForBindings() const

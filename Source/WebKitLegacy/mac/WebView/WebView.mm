@@ -1964,7 +1964,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     static auto defaultEditDragTextIndicatorOptions = WebCore::TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | WebCore::TextIndicatorOptionExpandClipBeyondVisibleRect | WebCore::TextIndicatorOptionPaintAllContent | WebCore::TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | WebCore::TextIndicatorOptionPaintBackgrounds | WebCore::TextIndicatorOptionUseSelectionRectForSizing | WebCore::TextIndicatorOptionIncludeSnapshotWithSelectionHighlight | WebCore::TextIndicatorOptionRespectTextColor;
     auto& frame = page->focusController().focusedOrMainFrame();
     if (auto range = frame.selection().selection().toNormalizedRange()) {
-        if (auto textIndicator = WebCore::TextIndicator::createWithRange(*range, defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))
+        if (auto textIndicator = WebCore::TextIndicator::createWithRange(createLiveRange(*range), defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))
             _private->dataOperationTextIndicator = adoptNS([[WebUITextIndicatorData alloc] initWithImage:nil textIndicatorData:textIndicator->data() scale:page->deviceScaleFactor()]);
     }
 }
@@ -4417,16 +4417,14 @@ IGNORE_WARNINGS_END
 
 - (WebTextIterator *)textIteratorForRect:(NSRect)rect
 {
-    WebCore::IntPoint rectStart(rect.origin.x, rect.origin.y);
-    WebCore::IntPoint rectEnd(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
-
     auto* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return nil;
 
-    WebCore::VisibleSelection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
-
-    return [[[WebTextIterator alloc] initWithRange:kit(selectionInsideRect.toNormalizedRange().get())] autorelease];
+    auto intRect = WebCore::enclosingIntRect(rect);
+    auto range = WebCore::VisibleSelection(coreFrame->visiblePositionForPoint(intRect.minXMinYCorner()),
+        coreFrame->visiblePositionForPoint(intRect.maxXMaxYCorner())).toNormalizedRange();
+    return [[[WebTextIterator alloc] initWithRange:kit(createLiveRange(range).get())] autorelease];
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -8327,7 +8325,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     auto* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->selection().toNormalizedRange().get());
+    return kit(createLiveRange(coreFrame->selection().selection().toNormalizedRange()).get());
 }
 
 - (NSSelectionAffinity)selectionAffinity

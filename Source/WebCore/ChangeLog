@@ -1,3 +1,227 @@
+2020-04-11  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in functions that return range of the selection
+        https://bugs.webkit.org/show_bug.cgi?id=210396
+
+        Reviewed by Sam Weinig.
+
+        - Added makeRangeSelectingNode, to create a range that selects a node
+          and all its descendants.
+        - Improved intersectingNodes so it can now easily be used in a while loop
+          style as well as the range-for loop style. Also made it more robust
+          against tree changes while iterating; it will now always stop at the
+          end of the document.
+        - Changed functions that work with selection to get a SimpleRange, and
+          then either do all the work without a live range, or call createLiveRange
+          right where it's needed, making it clearer when we can delete that
+          call later as we cut down live ranges even more.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectionRange const): Return a SimpleRange
+        instead of a live range.
+        (WebCore::AccessibilityObject::findTextRanges const): Use createLiveRange
+        on the result of selectionRange since this still mostly uses live ranges.
+        * accessibility/AccessibilityObject.h: Updated for the above.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange const):
+        Updated to create a live range only in the one place we need to call a
+        Range class member function.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]):
+        Use createLiveRange here.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::makeRangeSelectingNode): Added. For use when we need to make
+        a range that selects a node, not just the node's contents.
+        (WebCore::firstIntersectingNode): Renamed from IntersectingNodeRange::first
+        since this is now used in the iterator class, not the range class. Also
+        letting it be a non-member function so we can tweak it without touching
+        the haeder file.
+        (WebCore::nodePastLastIntersectingNode): Ditto.
+        (WebCore::IntersectingNodeIterator::IntersectingNodeIterator): Changed
+        this constructor to take a SimpleRange. To add the advanceSkippingChildren
+        feature, had to build the termination condition into the iterator rather
+        than basing it on the value of the sentinel.
+        (WebCore::IntersectingNodeIterator::advance): Added. Contains the logic
+        from the ++ operator, so it can be called in a more straightforward way
+        when this is being used with a while loop rather than a range-for loop.
+        (WebCore::IntersectingNodeIterator::advanceSkippingChildren): Added.
+        * dom/SimpleRange.h: Updated for the changes to IntersectingNodeIterator
+        and IntersectingNodeRange.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Use createLiveRange.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::targetRanges const): Use WTFMove in
+        a place where the old code was copying instead.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        Use intersectingNodes to make the function's logic easier to understand.
+
+        * editing/Editing.cpp:
+        (WebCore::visibleImageElementsInRangeWithNonLoadedImages): Changed
+        the argument type to SimpleRange.
+        * editing/Editing.h: Updated for the change above.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleAtSelectionStart): Use createLiveRange.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedRange): Use createLiveRange.
+        (WebCore::Editor::applyStyleToSelection): Ditto.
+        (WebCore::Editor::applyParagraphStyleToSelection): Ditto.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Ditto.
+        (WebCore::Editor::insertLineBreak): Ditto.
+        (WebCore::Editor::insertParagraphSeparator): Ditto.
+        (WebCore::Editor::ignoreSpelling): Remove use of live range.
+        (WebCore::Editor::learnSpelling): Ditto.
+        (WebCore::Editor::misspelledWordAtCaretOrRange const): Ditto.
+        (WebCore::Editor::isSelectionUngrammatical): Ditto.
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical): Ditto.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Use createLiveRange.
+        (WebCore::Editor::markMisspellingsOrBadGrammar): Ditto.
+        (WebCore::Editor::markMisspellingsAndBadGrammar): Ditto.
+        (WebCore::Editor::rangeForPoint): Ditto.
+        (WebCore::Editor::insertTextPlaceholder): Ditto.
+        (WebCore::Editor::shouldChangeSelection const): Ditto.
+        (WebCore::Editor::findString): Ditto.
+        (WebCore::Editor::rangeOfString): Ditto.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Ditto.
+        (WebCore::Editor::editorUIUpdateTimerFired): Remove use of live range.
+        (WebCore::candidateRangeForSelection): Deleted.
+        (WebCore::Editor::stringForCandidateRequest const): Use createLiveRange
+        and merged in the logic from candidateRangeForSelection.
+        (WebCore::Editor::fontForSelection const): Remove use of live range.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity): Use createLiveRange.
+        (WebCore::executeDeleteToMark): Ditto.
+        (WebCore::executeSelectToMark): Ditto.
+        (WebCore::valueFormatBlock): Ditto.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification): Use createLiveRange.
+        (WebCore::FrameSelection::shouldDeleteSelection const): Ditto.
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles const): Do the work
+        without a live range.
+        (WebCore::FrameSelection::expandSelectionToElementContainingCaretSelection): Ditto.
+        (WebCore::FrameSelection::elementRangeContainingCaretSelection const): Changed
+        to return a SimpleRange rather than a live range. Also removed redundant checks
+        and renamed locals to streamline the function.
+        (WebCore::FrameSelection::wordRangeContainingCaretSelection): Return a
+        SimpleRange instead of a live range.
+        (WebCore::FrameSelection::rangeByMovingCurrentSelection const): Ditto.
+        (WebCore::FrameSelection::rangeByExtendingCurrentSelection const): Ditto.
+        (WebCore::FrameSelection::rangeByAlteringCurrentSelection const): Ditto.
+        * editing/FrameSelection.h: Removed the toNormalizedRange function, since the
+        VisibleSelection class has a comment claiming most callers should not call it.
+        Updated forthe other changes above.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Use createLiveRange.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Ditto.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::TextCheckingHelper): Remove use of live range,
+        changing the type of m_range to SimpleRange.
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar): Reduce use
+        of live range.
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail const): Use createLiveRange.
+        (WebCore::TextCheckingHelper::findFirstBadGrammar const): Ditto.
+        (WebCore::TextCheckingHelper::isUngrammatical const): Remove use of live range.
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange const):
+        Use createLiveRange.
+        (WebCore::TextCheckingHelper::unifiedTextCheckerEnabled const): Updated for
+        different interface to get the document for a SimpleRange.
+        * editing/TextCheckingHelper.h: Change constructor to take a SimpleRange.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Use createLiveRange.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::firstRange const): Return a SimpleRange.
+        (WebCore::VisibleSelection::toNormalizedRange const): Ditto.
+        * editing/VisibleSelection.h: Updated for the above.
+
+        * editing/cocoa/DictionaryLookup.mm: Removed an uneeded check of the
+        selection range against null. Code already guards against null endpoints.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::selectionAsAttributedString): Added. Uses the attributedString
+        function with it's new argument and return value types. There's no longer
+        a special function for the selection in the HTMLConverter header, so we
+        put it here instead.
+        (WebCore::Editor::writeSelectionToPasteboard): Updated to use the function
+        above and to deal with RetainPtr.
+        (WebCore::Editor::writeSelection): Ditto.
+
+        * editing/cocoa/HTMLConverter.h: Removed attributedStringFromSelection and
+        attributedStringBetweenStartAndEnd. Renamed attributedStringFromRange to
+        just attributedString and renamed editingAttributedStringFromRange to
+        just editingAttributedString. Also renamed IncludeImagesInAttributedString
+        to just IncludeImages.
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::HTMLConverter): Use a SimpleRange rther than two Position
+        arguments to the constructor.
+        (HTMLConverter::convert): Use RetainPtr for the return value and the
+        optional out argument.
+        (WebCore::attributedStringFromSelection): Deleted.
+        (WebCore::attributedStringBetweenStartAndEnd): Deleted.
+        (WebCore::attributedString): Renamed the version that takes a range and
+        made it take a SimpleRange, not a live range.
+        (WebCore::editingAttributedString): Ditto.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::dataSelectionForPasteboard): Updated for changes to
+        attributedString.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent const):
+        Changed to not use live ranges any more.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Use createLiveRange.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt): Use createLiveRange.
+        (WebCore::DOMSelection::addRange): Use Ditto.
+        (WebCore::DOMSelection::deleteFromDocument): Ditto.
+
+        * page/DragController.cpp:
+        (WebCore::setSelectionToDragCaret): Removed in/out argument that was
+        used to update a range that was never looked at afterward.
+        (WebCore::DragController::concludeEditDrag): Use createLiveRange.
+        (WebCore::DragController::draggableElement const): Ditto.
+        (WebCore::DragController::startDrag): Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Use createLiveRange.
+        (WebCore::EventHandler::sendContextMenuEventForKey): Ditto.
+        (WebCore::EventHandler::didStartDrag): Remove use of live range.
+
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges): Use createLiveRange.
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange): Ditto.
+        (WebCore::TextIndicator::createWithSelectionInFrame): Ditto.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        Use createLiveRange.
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight):
+        Use createLiveRange.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::selectedText const): Remove use of
+        live range.
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         Remove unnecessary inlining and templates for URL decomposition DOM functions

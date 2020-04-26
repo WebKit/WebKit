@@ -87,15 +87,14 @@ public:
     void appendTrailingWhitespace();
 
     WEBCORE_EXPORT bool expandUsingGranularity(TextGranularity granularity);
-    
-    // We don't yet support multi-range selections, so we only ever have one range to return.
-    WEBCORE_EXPORT RefPtr<Range> firstRange() const;
 
-    // FIXME: Most callers probably don't want this function, but are using it
-    // for historical reasons.  toNormalizedRange contracts the range around
-    // text, and moves the caret upstream before returning the range.
-    WEBCORE_EXPORT RefPtr<Range> toNormalizedRange() const;
-    
+    // We don't yet support multi-range selections, so we only ever have one range to return.
+    WEBCORE_EXPORT Optional<SimpleRange> firstRange() const;
+
+    // FIXME: Most callers probably don't want this function, and should use firstRange instead.
+    // toNormalizedRange is like firstRange, but contracts the range around text and moves the caret upstream before returning the range.
+    WEBCORE_EXPORT Optional<SimpleRange> toNormalizedRange() const;
+
     WEBCORE_EXPORT Element* rootEditableElement() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     bool hasEditableStyle() const;

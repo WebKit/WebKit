@@ -177,16 +177,14 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
 {
     VisibleSelection selection = frame.selection().selection();
     selection.expandUsingGranularity(granularity);
-    RefPtr<Range> newRange = selection.toNormalizedRange();
-    if (!newRange)
+    auto newRange = selection.toNormalizedRange();
+    if (!newRange || newRange->collapsed())
         return false;
-    if (newRange->collapsed())
+    auto oldRange = selection.toNormalizedRange();
+    auto affinity = selection.affinity();
+    if (!frame.editor().client()->shouldChangeSelectedRange(createLiveRange(oldRange).get(), createLiveRange(newRange).get(), affinity, false))
         return false;
-    RefPtr<Range> oldRange = selection.toNormalizedRange();
-    EAffinity affinity = selection.affinity();
-    if (!frame.editor().client()->shouldChangeSelectedRange(oldRange.get(), newRange.get(), affinity, false))
-        return false;
-    frame.selection().setSelectedRange(newRange.get(), affinity, FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(createLiveRange(newRange).get(), affinity, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 
@@ -353,10 +351,10 @@ static bool executeDeleteToEndOfParagraph(Frame& frame, Event*, EditorCommandSou
 
 static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    RefPtr<Range> mark = frame.editor().mark().toNormalizedRange();
-    FrameSelection& selection = frame.selection();
+    auto mark = frame.editor().mark().toNormalizedRange();
+    auto& selection = frame.selection();
     if (mark && frame.editor().selectedRange()) {
-        bool selected = selection.setSelectedRange(unionDOMRanges(*mark, *frame.editor().selectedRange()).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+        bool selected = selection.setSelectedRange(unionDOMRanges(createLiveRange(*mark), *frame.editor().selectedRange()).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
         ASSERT(selected);
         if (!selected)
             return false;
@@ -1052,13 +1050,13 @@ static bool executeSelectSentence(Frame& frame, Event*, EditorCommandSource, con
 
 static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    RefPtr<Range> mark = frame.editor().mark().toNormalizedRange();
-    RefPtr<Range> selection = frame.editor().selectedRange();
+    auto mark = frame.editor().mark().toNormalizedRange();
+    auto selection = frame.editor().selectedRange();
     if (!mark || !selection) {
         PAL::systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionDOMRanges(*mark, *selection).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(unionDOMRanges(createLiveRange(*mark), createLiveRange(*selection)).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 
@@ -1572,7 +1570,7 @@ static String valueFormatBlock(Frame& frame, Event*)
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNoneOrOrphaned() || !selection.isContentEditable())
         return emptyString();
-    Element* formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(selection.firstRange().get());
+    auto* formatBlockElement = FormatBlockCommand::elementForFormatBlockCommand(createLiveRange(selection.firstRange()).get());
     if (!formatBlockElement)
         return emptyString();
     return formatBlockElement->localName();

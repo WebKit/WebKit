@@ -51,6 +51,7 @@ struct SimpleRange {
     SimpleRange(const Ref<Range>&);
 };
 
+WEBCORE_EXPORT Optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
@@ -66,39 +67,34 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 
 class IntersectingNodeIterator : public std::iterator<std::forward_iterator_tag, Node> {
 public:
-    IntersectingNodeIterator(RefPtr<Node>&&);
+    IntersectingNodeIterator(const SimpleRange&);
 
-    Node& operator*() const { ASSERT(m_node); return *m_node; }
+    Node& operator*() const { return *m_node; }
     Node* operator->() const { ASSERT(m_node); return m_node.get(); }
 
     operator bool() const { return m_node; }
     bool operator!() const { return !m_node; }
-    bool operator!=(const IntersectingNodeIterator& other) const { return m_node != other.m_node; }
+    bool operator!=(const std::nullptr_t) const { return m_node; }
 
-    IntersectingNodeIterator& operator++();
+    IntersectingNodeIterator& operator++() { advance(); return *this; }
+    void advance();
+    void advanceSkippingChildren();
 
 private:
     RefPtr<Node> m_node;
+    RefPtr<Node> m_pastLastNode;
 };
 
 class IntersectingNodeRange {
 public:
     IntersectingNodeRange(const SimpleRange&);
 
-    IntersectingNodeIterator begin() const { return first(); }
-    IntersectingNodeIterator end() const { return sentinel(); }
+    IntersectingNodeIterator begin() const { return m_range; }
+    static constexpr std::nullptr_t end() { return nullptr; }
 
 private:
-    RefPtr<Node> first() const;
-    RefPtr<Node> sentinel() const;
-
-    const SimpleRange& m_range;
+    SimpleRange m_range;
 };
-
-inline IntersectingNodeIterator::IntersectingNodeIterator(RefPtr<Node>&& node)
-    : m_node(WTFMove(node))
-{
-}
 
 inline IntersectingNodeRange::IntersectingNodeRange(const SimpleRange& range)
     : m_range(range)

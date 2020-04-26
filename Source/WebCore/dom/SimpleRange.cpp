@@ -55,6 +55,15 @@ bool operator==(const SimpleRange& a, const SimpleRange& b)
     return a.start == b.start && a.end == b.end;
 }
 
+Optional<SimpleRange> makeRangeSelectingNode(Node& node)
+{
+    auto parent = node.parentNode();
+    if (!parent)
+        return WTF::nullopt;
+    unsigned offset = node.computeNodeIndex();
+    return SimpleRange { { *parent, offset }, { *parent, offset + 1 } };
+}
+
 static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
 {
     return { node, node.length() };
@@ -65,35 +74,54 @@ SimpleRange makeRangeSelectingNodeContents(Node& node)
     return { makeBoundaryPointBeforeNodeContents(node), makeBoundaryPointAfterNodeContents(node) };
 }
 
-RefPtr<Node> IntersectingNodeRange::first() const
-{
-    if (m_range.start.container->isCharacterDataNode())
-        return m_range.start.container.ptr();
-    if (auto child = m_range.start.container->traverseToChildAt(m_range.start.offset))
-        return child;
-    return NodeTraversal::nextSkippingChildren(m_range.start.container);
-}
-
-RefPtr<Node> IntersectingNodeRange::sentinel() const
-{
-    if (m_range.end.container->isCharacterDataNode())
-        return NodeTraversal::nextSkippingChildren(m_range.end.container);
-    if (auto child = m_range.end.container->traverseToChildAt(m_range.end.offset))
-        return child;
-    return NodeTraversal::nextSkippingChildren(m_range.end.container);
-}
-
 OffsetRange characterDataOffsetRange(const SimpleRange& range, const Node& node)
 {
     return { &node == range.start.container.ptr() ? range.start.offset : 0,
         &node == range.end.container.ptr() ? range.end.offset : std::numeric_limits<unsigned>::max() };
 }
 
-IntersectingNodeIterator& IntersectingNodeIterator::operator++()
+static RefPtr<Node> firstIntersectingNode(const SimpleRange& range)
+{
+    if (range.start.container->isCharacterDataNode())
+        return range.start.container.ptr();
+    if (auto child = range.start.container->traverseToChildAt(range.start.offset))
+        return child;
+    return NodeTraversal::nextSkippingChildren(range.start.container);
+}
+
+static RefPtr<Node> nodePastLastIntersectingNode(const SimpleRange& range)
+{
+    if (range.end.container->isCharacterDataNode())
+        return NodeTraversal::nextSkippingChildren(range.end.container);
+    if (auto child = range.end.container->traverseToChildAt(range.end.offset))
+        return child;
+    return NodeTraversal::nextSkippingChildren(range.end.container);
+}
+
+IntersectingNodeIterator::IntersectingNodeIterator(const SimpleRange& range)
+    : m_node(firstIntersectingNode(range))
+    , m_pastLastNode(nodePastLastIntersectingNode(range))
+{
+}
+
+void IntersectingNodeIterator::advance()
 {
     ASSERT(m_node);
     m_node = NodeTraversal::next(*m_node);
-    return *this;
+    if (m_node == m_pastLastNode || !m_node) {
+        m_node = nullptr;
+        m_pastLastNode = nullptr;
+    }
+}
+
+void IntersectingNodeIterator::advanceSkippingChildren()
+{
+    ASSERT(m_node);
+    m_node = m_node->contains(m_pastLastNode.get()) ? nullptr : NodeTraversal::nextSkippingChildren(*m_node);
+    if (m_node == m_pastLastNode || !m_node) {
+        m_node = nullptr;
+        m_pastLastNode = nullptr;
+    }
 }
 
 }

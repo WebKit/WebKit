@@ -42,6 +42,8 @@ class RenderBlock;
 class VisiblePosition;
 class VisibleSelection;
 
+struct SimpleRange;
+
 // -------------------------------------------------------------------------
 // Node
 // -------------------------------------------------------------------------
@@ -105,7 +107,7 @@ bool areIdenticalElements(const Node&, const Node&);
 
 bool positionBeforeOrAfterNodeIsCandidate(Node&);
 
-WEBCORE_EXPORT HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const Range&);
+WEBCORE_EXPORT HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange&);
 
 // -------------------------------------------------------------------------
 // Position

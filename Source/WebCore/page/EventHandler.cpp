@@ -2674,8 +2674,8 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     // focused if the user does a mouseup over it, however, because the mouseup
     // will set a selection inside it, which will also set the focused element.
     if (element && m_frame.selection().isRange()) {
-        if (auto range = m_frame.selection().toNormalizedRange()) {
-            auto result = range->compareNode(*element);
+        if (auto range = m_frame.selection().selection().toNormalizedRange()) {
+            auto result = createLiveRange(*range)->compareNode(*element);
             if (!result.hasException() && result.releaseReturnValue() == Range::NODE_INSIDE && element->isDescendantOf(m_frame.document()->focusedElement()))
                 return true;
         }
@@ -3013,8 +3013,8 @@ bool EventHandler::sendContextMenuEventForKey()
     Position start = selection.start();
 
     if (start.deprecatedNode() && (selection.rootEditableElement() || selection.isRange())) {
-        RefPtr<Range> selectionRange = selection.toNormalizedRange();
-        IntRect firstRect = m_frame.editor().firstRectForRange(selectionRange.get());
+        auto selectionRange = selection.toNormalizedRange();
+        IntRect firstRect = m_frame.editor().firstRectForRange(createLiveRange(selectionRange).get());
 
         int x = rightAligned ? firstRect.maxX() : firstRect.x();
         // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.
@@ -3640,17 +3640,14 @@ void EventHandler::didStartDrag()
     if (!renderer)
         return;
 
-    RefPtr<Range> draggedContentRange;
+    Optional<SimpleRange> draggedContentRange;
     if (dragState().type & DragSourceActionSelection)
         draggedContentRange = m_frame.selection().selection().toNormalizedRange();
-    else {
-        Position startPosition(dragSource.get(), Position::PositionIsBeforeAnchor);
-        Position endPosition(dragSource.get(), Position::PositionIsAfterAnchor);
-        draggedContentRange = Range::create(dragSource->document(), startPosition, endPosition);
-    }
+    else
+        draggedContentRange = makeRangeSelectingNode(*dragSource);
 
     if (draggedContentRange) {
-        draggedContentRange->ownerDocument().markers().addDraggedContentMarker(*draggedContentRange);
+        draggedContentRange->start.document().markers().addDraggedContentMarker(*draggedContentRange);
         if (auto* renderer = m_frame.contentRenderer())
             renderer->repaintRootContents();
     }

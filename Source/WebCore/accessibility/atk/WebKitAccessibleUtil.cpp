@@ -158,7 +158,7 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     if (selection.isNone())
         return false;
 
-    RefPtr<Range> range = selection.toNormalizedRange();
+    auto range = selection.toNormalizedRange();
     if (!range)
         return false;
 
@@ -169,11 +169,11 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     auto& node = *coreObject->node();
     auto* lastDescendant = node.lastDescendant();
     unsigned lastOffset = lastDescendant->length();
-    auto intersectsResult = range->intersectsNode(node);
+    auto intersectsResult = createLiveRange(*range)->intersectsNode(node);
     return !intersectsResult.hasException()
         && intersectsResult.releaseReturnValue()
-        && (&range->endContainer() != &node || range->endOffset())
-        && (&range->startContainer() != lastDescendant || range->startOffset() != lastOffset);
+        && (range->end.container.ptr() != &node || range->end.offset)
+        && (range->start.container.ptr() != lastDescendant || range->start.offset != lastOffset);
 }
 
 AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject, int& offset)

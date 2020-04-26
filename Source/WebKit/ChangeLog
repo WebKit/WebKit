@@ -1,3 +1,56 @@
+2020-04-11  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in functions that return range of the selection
+        https://bugs.webkit.org/show_bug.cgi?id=210396
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection): Remove use of live range.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Updated for changes
+        to attributedString functions.
+        (WebKit::WebPage::getContentsAsAttributedString): Ditto.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll): Use createLiveRange.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getSelectedRangeAsync): Ditto.
+        (WebKit::WebPage::currentSelectionAsRange): Ditto.
+
+        * WebProcess/WebPage/WebPage.h: Change m_rangeForDropSnapshot
+        to use a SimpleRange instead of a live range.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::plainTextForContext): Overloaded for SimpleRange and
+        Optional<SimpleRange> as needed by code below.
+        (WebKit::plainTextForDisplay): Ditto.
+        (WebKit::WebPage::getPlatformEditorState const): Use createLiveRange.
+        (WebKit::WebPage::getSelectionContext): Remove use of live range.
+        (WebKit::WebPage::didConcludeDrop): Ditto.
+        (WebKit::WebPage::didConcludeEditDrag): Use createLiveRange.
+        (WebKit::WebPage::computeAndSendEditDragSnapshot): Ditto.
+        (WebKit::WebPage::startAutoscrollAtPosition): Remove use of
+        live range.
+        (WebKit::WebPage::requestEvasionRectsAboveSelection): Use
+        createLiveRange.
+        (WebKit::WebPage::requestDictationContext): Remove use of live range.
+        (WebKit::WebPage::replaceSelectedText): Use createLiveRange.
+        (WebKit::WebPage::applyAutocorrectionInternal): Ditto.
+        (WebKit::WebPage::autocorrectionContext): Remove use of live range.
+        (WebKit::WebPage::requestDocumentEditingContext): Use createLiveRange.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Remove use of
+        live range.
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+        Updated for change to HTMLConverter functions.
+        (WebKit::WebPage::handleSelectionServiceClick): Ditto.
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        Remove use of live range.
+
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal iOS build.

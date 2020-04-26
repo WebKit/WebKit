@@ -203,7 +203,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             Vector<IntRect> matchRects;
             if (auto range = m_webPage->corePage()->selection().firstRange()) {
                 matchRects = RenderObject::absoluteTextRects(*range);
-                m_findMatches.append(WTFMove(range));
+                m_findMatches.append(createLiveRange(*range));
             }
             m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes));
         }

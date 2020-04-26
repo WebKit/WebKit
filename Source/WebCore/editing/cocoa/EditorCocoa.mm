@@ -105,17 +105,23 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 
 #endif
 
+static RetainPtr<NSAttributedString> selectionAsAttributedString(const Frame& frame)
+{
+    auto range = frame.selection().selection().firstRange();
+    return range ? attributedString(*range) : adoptNS([[NSAttributedString alloc] initWithString:@""]);
+}
+
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    NSAttributedString *attributedString = attributedStringFromSelection(m_frame.selection().selection());
+    auto string = selectionAsAttributedString(m_frame);
 
     PasteboardWebContent content;
     content.contentOrigin = m_frame.document()->originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
     content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    content.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
-    content.dataInRTFFormat = dataInRTFFormat(attributedString);
-    content.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
+    content.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
+    content.dataInRTFFormat = dataInRTFFormat(string.get());
+    content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
     content.dataInHTMLFormat = selectionInHTMLFormat();
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
@@ -125,15 +131,15 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 
 void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 {
-    NSAttributedString *attributedString = attributedStringFromSelection(m_frame.selection().selection());
+    auto string = selectionAsAttributedString(m_frame);
 
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = m_frame.document()->originIdentifierForPasteboard();
     webContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
     webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    webContent.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
-    webContent.dataInRTFFormat = dataInRTFFormat(attributedString);
-    webContent.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
+    webContent.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
+    webContent.dataInRTFFormat = dataInRTFFormat(string.get());
+    webContent.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
     webContent.dataInHTMLFormat = selectionInHTMLFormat();
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), webContent.clientTypes, webContent.clientData);

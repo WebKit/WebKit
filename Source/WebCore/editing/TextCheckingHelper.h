@@ -22,12 +22,10 @@
 
 #include "EditorClient.h"
 #include "ExceptionOr.h"
+#include "SimpleRange.h"
 #include "TextChecking.h"
 
 namespace WebCore {
-
-class Position;
-class Range;
 
 struct TextCheckingResult;
 
@@ -78,7 +76,7 @@ private:
 class TextCheckingHelper {
     WTF_MAKE_NONCOPYABLE(TextCheckingHelper);
 public:
-    TextCheckingHelper(EditorClient&, Range&);
+    TextCheckingHelper(EditorClient&, const SimpleRange&);
     ~TextCheckingHelper();
 
     String findFirstMisspelling(uint64_t& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
@@ -93,7 +91,7 @@ public:
 
 private:
     EditorClient& m_client;
-    Ref<Range> m_range;
+    SimpleRange m_range;
 
     bool unifiedTextCheckerEnabled() const;
 #if USE(GRAMMAR_CHECKING)

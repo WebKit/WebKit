@@ -757,11 +757,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
     
-    if (!willAddTypingToOpenCommand(DeleteKey, granularity, { }, selectionToDelete.firstRange()))
+    if (!willAddTypingToOpenCommand(DeleteKey, granularity, { }, createLiveRange(*selectionToDelete.firstRange())))
         return;
 
     if (shouldAddToKillRing)
-        frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::PrependText);
+        frame.editor().addRangeToKillRing(createLiveRange(*selectionToDelete.toNormalizedRange()), Editor::KillRingInsertionMode::PrependText);
 
     // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
     postTextStateChangeNotificationForDeletion(selectionToDelete);
@@ -866,14 +866,14 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
 
-    if (!willAddTypingToOpenCommand(ForwardDeleteKey, granularity, { }, selectionToDelete.firstRange()))
+    if (!willAddTypingToOpenCommand(ForwardDeleteKey, granularity, { }, createLiveRange(selectionToDelete.firstRange())))
         return;
 
     // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
     postTextStateChangeNotificationForDeletion(selectionToDelete);
 
     if (shouldAddToKillRing)
-        frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::AppendText);
+        frame.editor().addRangeToKillRing(createLiveRange(*selectionToDelete.toNormalizedRange()), Editor::KillRingInsertionMode::AppendText);
     // make undo select what was deleted
     setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);

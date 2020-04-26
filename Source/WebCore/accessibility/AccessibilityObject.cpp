@@ -634,18 +634,19 @@ RefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Range*
     return closestStringRange;
 }
 
-// Returns the range of the entire document if there is no selection.
-RefPtr<Range> AccessibilityObject::selectionRange() const
+// Returns an collapsed range preceding the document contents if there is no selection.
+// FIXME: Why is that behavior more useful than returning null in that case?
+Optional<SimpleRange> AccessibilityObject::selectionRange() const
 {
-    Frame* frame = this->frame();
+    auto frame = this->frame();
     if (!frame)
-        return nullptr;
-    
-    const VisibleSelection& selection = frame->selection().selection();
-    if (!selection.isNone())
-        return selection.firstRange();
-    
-    return Range::create(*frame->document());
+        return WTF::nullopt;
+
+    if (auto range = frame->selection().selection().firstRange())
+        return *range;
+
+    auto& document = *frame->document();
+    return { { { document, 0 }, { document, 0 } } };
 }
 
 RefPtr<Range> AccessibilityObject::elementRange() const
@@ -684,7 +685,7 @@ Vector<RefPtr<Range>> AccessibilityObject::findTextRanges(AccessibilitySearchTex
     // Determine start range.
     RefPtr<Range> startRange;
     if (criteria.start == AccessibilitySearchTextStartFrom::Selection)
-        startRange = selectionRange();
+        startRange = createLiveRange(selectionRange());
     else
         startRange = elementRange();
 

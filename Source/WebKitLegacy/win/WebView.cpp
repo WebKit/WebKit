@@ -6190,10 +6190,8 @@ void WebView::releaseIMMContext(HIMC hIMC)
 void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext) 
 {
     IntRect caret;
-    if (RefPtr<Range> range = targetFrame->selection().selection().toNormalizedRange()) {
-        RefPtr<Range> tempRange = range->cloneRange();
-        caret = targetFrame->editor().firstRectForRange(tempRange.get());
-    }
+    if (auto range = targetFrame->selection().selection().toNormalizedRange())
+        caret = targetFrame->editor().firstRectForRange(createLiveRange(*range).ptr());
     caret = targetFrame->view()->contentsToWindow(caret);
     caret.scale(deviceScaleFactor());
 
@@ -6449,10 +6447,14 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
     if (charPos->dwCharPos && !targetFrame->editor().hasComposition())
         return 0;
     IntRect caret;
-    if (RefPtr<Range> range = targetFrame->editor().hasComposition() ? targetFrame->editor().compositionRange() : targetFrame->selection().selection().toNormalizedRange()) {
-        RefPtr<Range> tempRange = range->cloneRange();
-        tempRange->setStart(tempRange->startContainer(), tempRange->startOffset() + charPos->dwCharPos);
-        caret = targetFrame->editor().firstRectForRange(tempRange.get());
+    RefPtr<Range> range;
+    if (targetFrame->editor().hasComposition())
+        range = targetFrame->editor().compositionRange();
+    else
+        range = createLiveRange(targetFrame->selection().selection().toNormalizedRange());
+    if (range) {
+        range->setStart(range->startContainer(), range->startOffset() + charPos->dwCharPos);
+        caret = targetFrame->editor().firstRectForRange(range.get());
     }
     caret = targetFrame->view()->contentsToWindow(caret);
     caret.scale(deviceScaleFactor());
@@ -6466,8 +6468,10 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
 
 LRESULT WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING* reconvertString)
 {
-    RefPtr<Range> selectedRange = targetFrame->selection().toNormalizedRange();
-    String text = selectedRange->text();
+    auto selectedRange = targetFrame->selection().selection().toNormalizedRange();
+    String text;
+    if (selectedRange)
+        text = plainText(*selectedRange);
     if (!reconvertString)
         return sizeof(RECONVERTSTRING) + text.length() * sizeof(UChar);
 

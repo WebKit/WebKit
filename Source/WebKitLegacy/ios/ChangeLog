@@ -1,3 +1,17 @@
+2020-04-11  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in functions that return range of the selection
+        https://bugs.webkit.org/show_bug.cgi?id=210396
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame selectionRectsForCoreRange:]): Changed argument type to
+        not require a live range. Internally, use createLiveRange and also
+        use a range-for loop.
+        (-[WebFrame selectionRectsForRange:]): Remove use of live range.
+        (-[WebFrame selectionRects]): Ditto.
+
 2020-04-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] Use createNSArray in many more places that build NSArray objects from C++ collections

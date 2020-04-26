@@ -128,21 +128,21 @@ void VisibleSelection::setExtent(const VisiblePosition& visiblePosition)
     validate();
 }
 
-RefPtr<Range> VisibleSelection::firstRange() const
+Optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())
-        return nullptr;
+        return WTF::nullopt;
     Position start = m_start.parentAnchoredEquivalent();
     Position end = m_end.parentAnchoredEquivalent();
     if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
-        return nullptr;
-    return Range::create(start.anchorNode()->document(), start, end);
+        return WTF::nullopt;
+    return SimpleRange { *makeBoundaryPoint(start), *makeBoundaryPoint(end) };
 }
 
-RefPtr<Range> VisibleSelection::toNormalizedRange() const
+Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 {
     if (isNoneOrOrphaned())
-        return nullptr;
+        return WTF::nullopt;
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -152,7 +152,7 @@ RefPtr<Range> VisibleSelection::toNormalizedRange() const
 
     // Check again, because updating layout can clear the selection.
     if (isNoneOrOrphaned())
-        return nullptr;
+        return WTF::nullopt;
 
     Position s, e;
     if (isCaret()) {
@@ -187,12 +187,10 @@ RefPtr<Range> VisibleSelection::toNormalizedRange() const
         e = e.parentAnchoredEquivalent();
     }
 
-    if (!s.containerNode() || !e.containerNode())
-        return nullptr;
+    if (s.isNull() || e.isNull())
+        return WTF::nullopt;
 
-    // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
-    // if a valid range could not be created, which is fine for this callsite.
-    return Range::create(s.anchorNode()->document(), s, e);
+    return SimpleRange { *makeBoundaryPoint(s), *makeBoundaryPoint(e) };
 }
 
 bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)

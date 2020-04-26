@@ -1,3 +1,65 @@
+2020-04-11  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in functions that return range of the selection
+        https://bugs.webkit.org/show_bug.cgi?id=210396
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleRequestedCandidates): Remove use of live range.
+        * WebCoreSupport/WebSelectionServiceController.mm:
+        (WebSelectionServiceController::handleSelectionServiceClick): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _rangeByAlteringCurrentSelection:direction:granularity:]):
+        Use createLiveRange.
+        (-[WebFrame _convertToNSRange:]): Changed to take SimpleRange.
+        (-[WebFrame _convertDOMRangeToNSRange:]): Updated for the above.
+        (-[WebFrame _markDOMRange]): Use createLiveRange.
+        (-[WebFrame _selectionRangeForFirstPoint:secondPoint:]): Ditto.
+        (-[WebFrame _selectionRangeForPoint:]): Ditto.
+        (-[WebFrame _selectedNSRange]): Remove use of live range.
+        (-[WebFrame selectedDOMRange]): Use crateLiveRange.
+        (-[WebFrame elementRangeContainingCaretSelection]): Ditto.
+        (-[WebFrame expandSelectionToWordContainingCaretSelection]): Tweaked
+        coding style a little.
+        (-[WebFrame expandSelectionToStartOfWordContainingCaretSelection]): Ditto.
+        (-[WebFrame wordRangeContainingCaretSelection]): Use createLiveRange.
+        (-[WebFrame rangeByMovingCurrentSelection:]): Ditto.
+        (-[WebFrame rangeByExtendingCurrentSelection:]): Ditto.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:matchStyle:]):
+        Use createLiveRange.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]): Ditto.
+        (-[WebFrame _documentFragmentForText:]): Ditto.
+        * WebView/WebFrameInternal.h: Updated for changes above.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]):
+        Remove use of live range.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectedRange]): Use createLiveRange.
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]): Remove use of live range.
+        (-[WebHTMLView markedRange]): Updated for change to _convertToNSRange.
+        (-[WebHTMLView attributedSubstringFromRange:]): Ditto.
+        (-[WebHTMLView _attributedStringFromDOMRange:]): Updated for changes to
+        HTMLConverter.
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]): Remove
+        use of live range.
+        (-[WebHTMLView attributedString]): Ditto.
+        (-[WebHTMLView selectedAttributedString]): Ditto.
+
+        * WebView/WebImmediateActionController.h: Updated method to take a
+        SimpleRange instead of a live range.
+        * WebView/WebImmediateActionController.mm:
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        Remove use of live range.
+
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController doCompletion]): Use createLiveRange.
+        * WebView/WebView.mm:
+        (-[WebView _didConcludeEditDrag]): Ditto.
+
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Prepare to remove automatic URL->String conversion operators

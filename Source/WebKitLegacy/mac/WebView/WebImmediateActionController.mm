@@ -493,7 +493,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 #pragma mark Text action
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(WebCore::Range&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(WebCore::TextIndicatorOptions)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(WebCore::TextIndicatorOptions)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
     auto& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -501,12 +501,12 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
     // so bail out early to avoid that.
     WebCore::DictionaryPopupInfo popupInfo;
-    if (range.text().stripWhiteSpace().isEmpty()) {
+    if (plainText(range).stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }
 
-    auto style = range.startContainer().renderStyle();
+    auto style = range.start.container->renderStyle();
     float scaledDescent = style ? style->fontMetrics().descent() * frame->page()->pageScaleFactor() : 0;
 
     auto quads = WebCore::RenderObject::absoluteTextQuads(range);
@@ -520,25 +520,23 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
     popupInfo.options = lookupOptions;
 
-    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, WebCore::IncludeImagesInAttributedString::No);
-    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No);
+    auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+    [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
         if (font)
             font = [fontManager convertFont:font toSize:font.pointSize * frame->page()->pageScaleFactor()];
         if (font)
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
-
-        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
+        [scaledAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];
 
-    popupInfo.attributedString = scaledNSAttributedString.get();
+    popupInfo.attributedString = scaledAttributedString.get();
 
-    if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
+    if (auto textIndicator = WebCore::TextIndicator::createWithRange(createLiveRange(range), indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
 
     editor.setIsGettingDictionaryPopupInfo(false);

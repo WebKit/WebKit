@@ -35,6 +35,7 @@
 #import "WebTypesInternal.h"
 #import "WebView.h"
 #import <WebCore/Frame.h>
+#import <WebCore/SimpleRange.h>
 
 @interface NSWindow (WebNSWindowDetails)
 - (void)_setForceActiveControls:(BOOL)flag;
@@ -178,7 +179,7 @@ using namespace WebCore;
 
         // Get preceeding word stem
         WebFrame *frame = [_htmlView _frame];
-        DOMRange *selection = kit(core(frame)->selection().toNormalizedRange().get());
+        DOMRange *selection = kit(createLiveRange(core(frame)->selection().selection().toNormalizedRange()).get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::AlterationExtend
             direction:DirectionBackward granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];

@@ -77,6 +77,7 @@
 #include <WebCore/RenderingMode.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
+#include <WebCore/SimpleRange.h>
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
@@ -1918,7 +1919,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
     HashSet<RefPtr<WebCore::HTMLImageElement>> m_pendingImageElementsForDropSnapshot;
-    RefPtr<WebCore::Range> m_rangeForDropSnapshot;
+    Optional<WebCore::SimpleRange> m_rangeForDropSnapshot;
 #endif
 
     bool m_cachedMainFrameIsPinnedToLeftSide { true };

@@ -31,6 +31,7 @@
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/Range.h>
+#import <WebCore/SimpleRange.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
 
 using namespace WebCore;
@@ -46,24 +47,21 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
     if (!page)
         return;
 
-    RefPtr<Range> range = selection.selection().firstRange();
+    auto range = selection.selection().firstRange();
     if (!range)
         return;
 
-    RetainPtr<NSAttributedString> attributedSelection = attributedStringFromRange(*range);
+    auto attributedSelection = attributedString(*range);
     if (!attributedSelection)
         return;
 
-    NSArray *items = @[ attributedSelection.get() ];
-
+    auto items = @[ attributedSelection.get() ];
     bool isEditable = selection.selection().isContentEditable();
-    
+
     m_sharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithItems:items includeEditorServices:isEditable client:this style:NSSharingServicePickerStyleTextSelection]);
 
-    RetainPtr<NSMenu> menu = adoptNS([[m_sharingServicePickerController menu] copy]);
-
+    auto menu = adoptNS([[m_sharingServicePickerController menu] copy]);
     [menu setShowsStateColumn:YES];
-
     [menu popUpMenuPositioningItem:nil atLocation:[m_webView convertPoint:point toView:nil] inView:m_webView];
 }
 

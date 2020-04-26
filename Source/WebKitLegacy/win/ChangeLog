@@ -1,3 +1,16 @@
+2020-04-21  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in functions that return range of the selection
+        https://bugs.webkit.org/show_bug.cgi?id=210396
+
+        Reviewed by Sam Weinig.
+
+        * WebView.cpp:
+        (WebView::prepareCandidateWindow): Updated since toNormalizedRange
+        returns a SimpleRange.
+        (WebView::onIMERequestCharPosition): Ditto.
+        (WebView::onIMERequestReconvertString): Ditto.
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         Move URL to use StringView when returning substrings of the URL

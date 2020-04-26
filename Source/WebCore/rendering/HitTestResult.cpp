@@ -202,7 +202,7 @@ String HitTestResult::selectedText() const
     if (!frame)
         return emptyString();
 
-    auto range = frame->selection().toNormalizedRange();
+    auto range = frame->selection().selection().toNormalizedRange();
     if (!range)
         return emptyString();
 

@@ -358,7 +358,7 @@ public:
     // Text selection
 private:
     RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String> const&) const;
-    RefPtr<Range> selectionRange() const;
+    Optional<SimpleRange> selectionRange() const;
     RefPtr<Range> findTextRange(Vector<String> const& searchStrings, RefPtr<Range> const& start, AccessibilitySearchTextDirection) const;
 public:
     Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const override;

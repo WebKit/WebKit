@@ -188,14 +188,14 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))
-       return dataInRTFDFormat(attributedStringFromRange(*adjustedSelectionRange()));
+        return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).get());
 
     if (pasteboardType == String(legacyRTFPasteboardType())) {
-        NSAttributedString* attributedString = attributedStringFromRange(*adjustedSelectionRange());
-        // FIXME: Why is this attachment character stripping needed here, but not needed in writeSelectionToPasteboard?
-        if ([attributedString containsAttachments])
-            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
-        return dataInRTFFormat(attributedString);
+        auto string = attributedString(*adjustedSelectionRange());
+        // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
+        if ([string containsAttachments])
+            string = attributedStringByStrippingAttachmentCharacters(string.get());
+        return dataInRTFFormat(string.get());
     }
 
     return nullptr;

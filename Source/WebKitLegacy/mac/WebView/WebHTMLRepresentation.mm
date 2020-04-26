@@ -259,17 +259,21 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
     return [[_private->dataSource webFrame] DOMDocument];
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
+
 - (NSAttributedString *)attributedText
 {
-    // FIXME: Implement
     return nil;
 }
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    return editingAttributedStringFromRange(Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset));
+    if (!startNode || !endNode)
+        return [[[NSAttributedString alloc] initWithString:@""] autorelease];
+    auto range = SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
+    return editingAttributedString(range).autorelease();
 }
+
 #endif
 
 static HTMLFormElement* formElementFromDOMElement(DOMElement *element)

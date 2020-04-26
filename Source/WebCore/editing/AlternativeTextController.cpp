@@ -241,7 +241,7 @@ void AlternativeTextController::timerFired()
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         auto adjacentWordRange = adjacentWords.toNormalizedRange();
-        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange.copyRef(), adjacentWordRange.copyRef(), nullptr);
+        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, createLiveRange(adjacentWordRange), createLiveRange(adjacentWordRange), nullptr);
     }
         break;
     case AlternativeTextTypeReversion: {

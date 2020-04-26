@@ -546,8 +546,8 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
         else
             m_selection.setWithoutValidation(m_selection.end(), m_selection.start());
     } else if (isRange()) {
-        if (RefPtr<Range> range = m_selection.firstRange()) {
-            auto compareNodeResult = range->compareNode(node);
+        if (auto range = m_selection.firstRange()) {
+            auto compareNodeResult = createLiveRange(*range)->compareNode(node);
             if (!compareNodeResult.hasException()) {
                 auto compareResult = compareNodeResult.releaseReturnValue();
                 if (compareResult == Range::NODE_BEFORE_AND_AFTER || compareResult == Range::NODE_INSIDE) {
@@ -2300,7 +2300,7 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
     if (m_frame->selectionChangeCallbacksDisabled())
         return true;
 #endif
-    return m_frame->editor().client()->shouldDeleteRange(selection.toNormalizedRange().get());
+    return m_frame->editor().client()->shouldDeleteRange(createLiveRange(selection.toNormalizedRange()).get());
 }
 
 FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleContent) const
@@ -2328,7 +2328,7 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     if (!m_frame->contentRenderer())
         return;
 
-    RefPtr<Range> range = toNormalizedRange();
+    auto range = selection().toNormalizedRange();
     if (!range)
         return;
 
@@ -2511,44 +2511,29 @@ void FrameSelection::showTreeForThis() const
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+
 void FrameSelection::expandSelectionToElementContainingCaretSelection()
 {
-    RefPtr<Range> range = elementRangeContainingCaretSelection();
+    auto range = elementRangeContainingCaretSelection();
     if (!range)
         return;
-    VisibleSelection selection(*range, DOWNSTREAM);
-    setSelection(selection);
+    setSelection(VisibleSelection(*range, DOWNSTREAM));
 }
 
-RefPtr<Range> FrameSelection::elementRangeContainingCaretSelection() const
+Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() const
 {
-    if (m_selection.isNone())
-        return nullptr;
-
-    VisibleSelection selection = m_selection;
-    if (selection.isNone())
-        return nullptr;
-
-    VisiblePosition visiblePos(selection.start(), VP_DEFAULT_AFFINITY);
-    if (visiblePos.isNull())
-        return nullptr;
-
-    Node* node = visiblePos.deepEquivalent().deprecatedNode();
-    Element* element = deprecatedEnclosingBlockFlowElement(node);
+    auto element = deprecatedEnclosingBlockFlowElement(VisiblePosition(m_selection.start(), VP_DEFAULT_AFFINITY).deepEquivalent().deprecatedNode());
     if (!element)
-        return nullptr;
+        return WTF::nullopt;
 
-    Position startPos = createLegacyEditingPosition(element, 0);
-    Position endPos = createLegacyEditingPosition(element, element->countChildNodes());
-    
-    VisiblePosition startVisiblePos(startPos, VP_DEFAULT_AFFINITY);
-    VisiblePosition endVisiblePos(endPos, VP_DEFAULT_AFFINITY);
-    if (startVisiblePos.isNull() || endVisiblePos.isNull())
-        return nullptr;
+    auto start = VisiblePosition(createLegacyEditingPosition(element, 0), VP_DEFAULT_AFFINITY);
+    auto end = VisiblePosition(createLegacyEditingPosition(element, element->countChildNodes()), VP_DEFAULT_AFFINITY);
+    if (start.isNull() || end.isNull())
+        return WTF::nullopt;
 
-    selection.setBase(startVisiblePos);
-    selection.setExtent(endVisiblePos);
-
+    auto selection = m_selection;
+    selection.setBase(start);
+    selection.setExtent(end);
     return selection.toNormalizedRange();
 }
 
@@ -2559,7 +2544,7 @@ void FrameSelection::expandSelectionToWordContainingCaretSelection()
         setSelection(selection);
 }
 
-RefPtr<Range> FrameSelection::wordRangeContainingCaretSelection()
+Optional<SimpleRange> FrameSelection::wordRangeContainingCaretSelection()
 {
     return wordSelectionContainingCaretSelection(m_selection).toNormalizedRange();
 }
@@ -2711,12 +2696,12 @@ bool FrameSelection::selectionAtWordStart() const
     return result;
 }
 
-RefPtr<Range> FrameSelection::rangeByMovingCurrentSelection(int amount) const
+Optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationMove, amount);
 }
 
-RefPtr<Range> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
+Optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationExtend, amount);
 }
@@ -2878,20 +2863,20 @@ bool FrameSelection::actualSelectionAtSentenceStart(const VisibleSelection& sel)
     return result;
 }
 
-RefPtr<Range> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
+Optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
 {
     if (m_selection.isNone())
-        return nullptr;
+        return WTF::nullopt;
 
     if (!amount)
-        return toNormalizedRange();
+        return m_selection.toNormalizedRange();
 
     FrameSelection frameSelection;
     frameSelection.setSelection(m_selection);
     SelectionDirection direction = amount > 0 ? DirectionForward : DirectionBackward;
     for (int i = 0; i < abs(amount); i++)
         frameSelection.modify(alteration, direction, CharacterGranularity);
-    return frameSelection.toNormalizedRange();
+    return frameSelection.selection().toNormalizedRange();
 }
 
 void FrameSelection::clearCurrentSelection()

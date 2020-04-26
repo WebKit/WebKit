@@ -318,7 +318,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
-    auto selectionRange = focused() ? document().frame()->selection().selection().toNormalizedRange() : nullptr;
+    auto selectionRange = focused() ? document().frame()->selection().selection().toNormalizedRange() : WTF::nullopt;
     unsigned selectionLength = selectionRange ? computeLengthForSubmission(plainText(*selectionRange)) : 0;
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;

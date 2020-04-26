@@ -214,7 +214,7 @@ static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternal
 static void insertUnicodeCharacter(UChar character, Frame& frame)
 {
     String text(&character, 1);
-    if (!frame.editor().shouldInsertText(text, frame.selection().toNormalizedRange().get(), EditorInsertAction::Typed))
+    if (!frame.editor().shouldInsertText(text, createLiveRange(frame.selection().selection().toNormalizedRange()).get(), EditorInsertAction::Typed))
         return;
 
     ASSERT(frame.document());
@@ -231,7 +231,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         return;
     }
 
-    Frame* frame = m_context.hitTestResult().innerNonSharedNode()->document().frame();
+    auto& document = m_context.hitTestResult().innerNonSharedNode()->document();
+
+    auto* frame = document.frame();
     if (!frame)
         return;
 
@@ -370,7 +372,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
 #endif
     case ContextMenuItemTagSpellingGuess: {
         VisibleSelection selection = frame->selection().selection();
-        if (frame->editor().shouldInsertText(title, selection.toNormalizedRange().get(), EditorInsertAction::Pasted)) {
+        if (frame->editor().shouldInsertText(title, createLiveRange(selection.toNormalizedRange()).get(), EditorInsertAction::Pasted)) {
             OptionSet<ReplaceSelectionCommand::CommandOption> replaceOptions { ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting };
 
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
@@ -429,13 +431,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         // which may make this difficult to implement. Maybe a special case of text-shadow?
         break;
     case ContextMenuItemTagStartSpeaking: {
-        RefPtr<Range> selectedRange = frame->selection().toNormalizedRange();
-        if (!selectedRange || selectedRange->collapsed()) {
-            auto& document = m_context.hitTestResult().innerNonSharedNode()->document();
-            selectedRange = document.createRange();
-            if (auto* element = document.documentElement())
-                selectedRange->selectNode(*element);
-        }
+        auto selectedRange = frame->selection().selection().toNormalizedRange();
+        if (!selectedRange || selectedRange->collapsed())
+            selectedRange = makeRangeSelectingNodeContents(document);
         m_client.speak(plainText(*selectedRange));
         break;
     }

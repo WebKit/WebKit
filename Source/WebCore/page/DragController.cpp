@@ -30,7 +30,6 @@
 #include "SVGAElement.h"
 
 #if ENABLE(DRAG_SUPPORT)
-
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "DataTransfer.h"
@@ -87,17 +86,15 @@
 #include "VisiblePosition.h"
 #include "WebContentReader.h"
 #include "markup.h"
-
-#if ENABLE(DATA_INTERACTION)
-#include "SelectionRect.h"
-#endif
-
-#include <wtf/RefPtr.h>
 #include <wtf/SetForScope.h>
 #endif
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
+#endif
+
+#if ENABLE(DATA_INTERACTION)
+#include "SelectionRect.h"
 #endif
 
 namespace WebCore {
@@ -511,14 +508,13 @@ DragOperation DragController::operationForLoad(const DragData& dragData)
     return dragOperation(dragData);
 }
 
-static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
+static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, const IntPoint& point)
 {
     Ref<Frame> protector(*frame);
     frame->selection().setSelection(dragCaret);
     if (frame->selection().selection().isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
         frame->selection().setSelection(dragCaret);
-        range = dragCaret.toNormalizedRange();
     }
     return !frame->selection().isNone() && frame->selection().selection().isContentEditable();
 }
@@ -566,12 +562,12 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             return true;
         }
 #endif
-        auto innerRange = innerFrame->selection().toNormalizedRange();
+        auto innerRange = innerFrame->selection().selection().toNormalizedRange();
         if (!innerRange)
             return false;
         auto style = MutableStyleProperties::create();
         style->setProperty(CSSPropertyColor, color.serialized(), false);
-        if (!innerFrame->editor().shouldApplyStyle(style.ptr(), innerRange.get()))
+        if (!innerFrame->editor().shouldApplyStyle(style.ptr(), createLiveRange(innerRange).get()))
             return false;
         client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         innerFrame->editor().applyStyle(style.ptr(), EditAction::SetColor);
@@ -592,7 +588,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         return false;
 
     VisibleSelection dragCaret = m_page.dragCaretController().caretPosition();
-    RefPtr<Range> range = dragCaret.toNormalizedRange();
+    auto range = dragCaret.toNormalizedRange();
     RefPtr<Element> rootEditableElement = innerFrame->selection().selection().rootEditableElement();
 
     // For range to be null a WebKit client must have done something bad while
@@ -600,18 +596,18 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     if (!range)
         return false;
 
-    ResourceCacheValidationSuppressor validationSuppressor(range->ownerDocument().cachedResourceLoader());
+    ResourceCacheValidationSuppressor validationSuppressor(range->start.document().cachedResourceLoader());
     auto& editor = innerFrame->editor();
     bool isMove = dragIsMove(innerFrame->selection(), dragData);
     if (isMove || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
-        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);
-        if (!fragment || !editor.shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Dropped))
+        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, createLiveRange(*range), true, chosePlainText);
+        if (!fragment || !editor.shouldInsertFragment(*fragment, createLiveRange(range).get(), EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
 
-        if (editor.client() && editor.client()->performTwoStepDrop(*fragment, *range, isMove))
+        if (editor.client() && editor.client()->performTwoStepDrop(*fragment, createLiveRange(*range), isMove))
             return true;
 
         if (isMove) {
@@ -621,7 +617,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             bool smartInsert = smartDelete && innerFrame->selection().granularity() == WordGranularity && dragData.canSmartReplace();
             MoveSelectionCommand::create(fragment.releaseNonNull(), dragCaret.base(), smartInsert, smartDelete)->apply();
         } else {
-            if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point)) {
+            if (setSelectionToDragCaret(innerFrame.get(), dragCaret, point)) {
                 OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
                 if (dragData.canSmartReplace())
                     options.add(ReplaceSelectionCommand::SmartReplace);
@@ -632,19 +628,16 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         }
     } else {
         String text = dragData.asPlainText();
-        if (text.isEmpty() || !editor.shouldInsertText(text, range.get(), EditorInsertAction::Dropped))
+        if (text.isEmpty() || !editor.shouldInsertText(text, createLiveRange(*range).ptr(), EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(*range, text);
-        if (!fragment)
-            return false;
-
-        if (editor.client() && editor.client()->performTwoStepDrop(*fragment, *range, isMove))
+        auto fragment = createFragmentFromText(createLiveRange(*range), text);
+        if (editor.client() && editor.client()->performTwoStepDrop(fragment.get(), createLiveRange(*range), isMove))
             return true;
 
-        if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point))
-            ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.get(), { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::InsertFromDrop)->apply();
+        if (setSelectionToDragCaret(innerFrame.get(), dragCaret, point))
+            ReplaceSelectionCommand::create(*m_documentUnderMouse, WTFMove(fragment), { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::InsertFromDrop)->apply();
     }
 
     if (rootEditableElement) {
@@ -783,7 +776,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         bool isSingleAttachmentSelection = selection.start() == Position(attachment.get(), Position::PositionIsBeforeAnchor) && selection.end() == Position(attachment.get(), Position::PositionIsAfterAnchor);
         bool isAttachmentElementInCurrentSelection = false;
         if (auto selectedRange = selection.toNormalizedRange()) {
-            auto compareResult = selectedRange->compareNode(*attachment);
+            auto compareResult = createLiveRange(*selectedRange)->compareNode(*attachment);
             isAttachmentElementInCurrentSelection = !compareResult.hasException() && compareResult.releaseReturnValue() == Range::NODE_INSIDE;
         }
 
@@ -973,10 +966,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             }
 
             // FIXME: This entire block is almost identical to the code in Editor::copy, and the code should be shared.
-            RefPtr<Range> selectionRange = src.selection().toNormalizedRange();
+            auto selectionRange = src.selection().selection().toNormalizedRange();
             ASSERT(selectionRange);
 
-            src.editor().willWriteSelectionToPasteboard(selectionRange.get());
+            src.editor().willWriteSelectionToPasteboard(createLiveRange(*selectionRange).ptr());
 
             if (enclosingTextFormControl(src.selection().selection().start())) {
                 if (mustUseLegacyDragClient)
@@ -989,11 +982,11 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
                 }
             } else {
                 if (mustUseLegacyDragClient) {
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if !PLATFORM(WIN)
                     src.editor().writeSelectionToPasteboard(dataTransfer.pasteboard());
 #else
-                    // FIXME: Convert all other platforms to match Mac and delete this.
-                    dataTransfer.pasteboard().writeSelection(*selectionRange, src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
+                    // FIXME: Convert Windows to match the other platforms and delete this.
+                    dataTransfer.pasteboard().writeSelection(createLiveRange(*selectionRange), src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
 #endif
                 } else {
 #if PLATFORM(COCOA)
@@ -1140,15 +1133,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         PromisedAttachmentInfo promisedAttachment;
         if (hasData == HasNonDefaultPasteboardData::No) {
             promisedAttachment = promisedAttachmentInfo(src, attachment);
+#if PLATFORM(COCOA)
             auto& editor = src.editor();
             if (!promisedAttachment && editor.client()) {
-#if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
-                editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange().get());
+                editor.willWriteSelectionToPasteboard(createLiveRange(src.selection().selection().toNormalizedRange()).get());
                 editor.writeSelectionToPasteboard(dataTransfer.pasteboard());
                 editor.didWriteSelectionToPasteboard();
-#endif
             }
+#endif
         }
         
         client().willPerformDragSourceAction(DragSourceActionAttachment, dragOrigin, dataTransfer);

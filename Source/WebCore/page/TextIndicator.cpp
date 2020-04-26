@@ -89,7 +89,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     data.presentationTransition = presentationTransition;
     data.options = options;
 
-    bool indicatesCurrentSelection = areRangesEqual(&range, oldSelection.toNormalizedRange().get());
+    bool indicatesCurrentSelection = areRangesEqual(&range, createLiveRange(oldSelection.toNormalizedRange()).get());
 
     if (!initializeIndicator(data, *frame, range, margin, indicatesCurrentSelection))
         return nullptr;
@@ -99,7 +99,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
 
 RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
-    RefPtr<Range> range = frame.selection().toNormalizedRange();
+    auto range = frame.selection().selection().toNormalizedRange();
     if (!range)
         return nullptr;
 
@@ -108,7 +108,7 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
     data.presentationTransition = presentationTransition;
     data.options = options;
 
-    if (!initializeIndicator(data, frame, *range, margin, true))
+    if (!initializeIndicator(data, frame, createLiveRange(*range), margin, true))
         return nullptr;
 
     return TextIndicator::create(data);

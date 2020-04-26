@@ -143,7 +143,7 @@ void InsertListCommand::doApply()
             if (startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
                 bool forceCreateList = !selectionHasListOfType(selection, listTag);
 
-                RefPtr<Range> currentSelection = endingSelection().firstRange();
+                auto currentSelection = createLiveRange(endingSelection().firstRange());
                 VisiblePosition startOfCurrentParagraph = startOfSelection;
                 while (!startOfCurrentParagraph.isNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
                     // doApply() may operate on and remove the last paragraph of the selection from the document
@@ -192,7 +192,7 @@ void InsertListCommand::doApply()
         }
     }
 
-    doApplyForSingleParagraph(false, listTag, endingSelection().firstRange().get());
+    doApplyForSingleParagraph(false, listTag, createLiveRange(endingSelection().firstRange()).get());
 }
 
 EditAction InsertListCommand::editingAction() const

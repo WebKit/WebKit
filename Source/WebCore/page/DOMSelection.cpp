@@ -316,7 +316,7 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
     ASSERT(firstRange);
     if (!firstRange)
         return Exception { IndexSizeError };
-    return firstRange.releaseNonNull();
+    return createLiveRange(*firstRange);
 }
 
 void DOMSelection::removeAllRanges()
@@ -341,7 +341,7 @@ void DOMSelection::addRange(Range& range)
         return;
     }
 
-    auto normalizedRange = selection.selection().toNormalizedRange();
+    auto normalizedRange = createLiveRange(selection.selection().toNormalizedRange());
     if (!normalizedRange)
         return;
 
@@ -386,12 +386,14 @@ void DOMSelection::deleteFromDocument()
         return;
 
     auto selectedRange = selection.selection().toNormalizedRange();
-    if (!selectedRange || selectedRange->shadowRoot())
+    if (!selectedRange || createLiveRange(*selectedRange)->shadowRoot())
         return;
 
     Ref<Frame> protector(*frame);
-    selectedRange->deleteContents();
-    setBaseAndExtent(&selectedRange->startContainer(), selectedRange->startOffset(), &selectedRange->startContainer(), selectedRange->startOffset());
+    createLiveRange(*selectedRange)->deleteContents();
+    auto container = selectedRange->start.container.ptr();
+    auto offset = selectedRange->start.offset;
+    setBaseAndExtent(container, offset, container, offset);
 }
 
 bool DOMSelection::containsNode(Node& node, bool allowPartial) const

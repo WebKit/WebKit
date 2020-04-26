@@ -5362,7 +5362,7 @@ void WebPage::getMarkedRangeAsync(CallbackID callbackID)
 void WebPage::getSelectedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    auto editingRange = EditingRange::fromRange(frame, frame.selection().toNormalizedRange().get());
+    auto editingRange = EditingRange::fromRange(frame, createLiveRange(frame.selection().selection().toNormalizedRange()).get());
     send(Messages::WebPageProxy::EditingRangeCallback(editingRange, callbackID));
 }
 
@@ -6226,7 +6226,7 @@ RefPtr<Range> WebPage::currentSelectionAsRange()
     if (!frame)
         return nullptr;
 
-    return frame->selection().toNormalizedRange();
+    return createLiveRange(frame->selection().selection().toNormalizedRange());
 }
 
 void WebPage::reportUsedFeatures()

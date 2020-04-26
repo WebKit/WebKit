@@ -268,9 +268,6 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
     if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
 
-    if (!selection.toNormalizedRange())
-        return { nullptr, nil };
-
     // Since we already have the range we want, we just need to grab the returned options.
     auto selectionStart = selection.visibleStart();
     auto selectionEnd = selection.visibleEnd();

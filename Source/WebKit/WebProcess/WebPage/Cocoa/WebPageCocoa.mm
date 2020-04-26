@@ -146,22 +146,17 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     dictionaryPopupInfo.options = options;
 
 #if PLATFORM(MAC)
-    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
-    
-    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
-    
+    auto attributedString = editingAttributedString(range, IncludeImages::No);
+    auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    
-    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+    [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-        
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
         if (font)
             font = [fontManager convertFont:font toSize:font.pointSize * pageScaleFactor()];
         if (font)
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
-        
-        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+        [scaledAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 #endif // PLATFORM(MAC)
 
@@ -177,7 +172,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
 
     dictionaryPopupInfo.textIndicator = textIndicator->data();
 #if PLATFORM(MAC)
-    dictionaryPopupInfo.attributedString = scaledNSAttributedString;
+    dictionaryPopupInfo.attributedString = scaledAttributedString;
 #elif PLATFORM(MACCATALYST)
     dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:range.text()]);
 #endif
@@ -237,10 +232,9 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
         return;
     }
 
-    NSDictionary* documentAttributes = nil;
-    auto attributedString = attributedStringFromRange(rangeOfContents(*documentElement), &documentAttributes);
-
-    completionHandler({ WTFMove(attributedString), WTFMove(documentAttributes) });
+    RetainPtr<NSDictionary> documentAttributes;
+    auto string = attributedString(rangeOfContents(*documentElement), &documentAttributes);
+    completionHandler({ WTFMove(string), WTFMove(documentAttributes) });
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)

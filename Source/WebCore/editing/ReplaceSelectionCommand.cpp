@@ -190,7 +190,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
         return;
     }
     
-    RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
+    auto range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
     String text = range ? plainText(*range, static_cast<TextIteratorBehavior>(TextIteratorEmitsOriginalText | TextIteratorIgnoresStyleVisibility)) : emptyString();
 
     removeInterchangeNodes(holder.get());
@@ -203,11 +203,11 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
     if (text != event->text() || !editableRoot->hasRichlyEditableStyle()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
-        RefPtr<Range> range = selection.toNormalizedRange();
+        auto range = selection.toNormalizedRange();
         if (!range)
             return;
 
-        m_fragment = createFragmentFromText(*range, event->text());
+        m_fragment = createFragmentFromText(createLiveRange(*range), event->text());
         if (!m_fragment->firstChild())
             return;
 

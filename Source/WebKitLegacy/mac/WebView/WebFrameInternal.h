@@ -164,9 +164,10 @@ WebView *getWebView(WebFrame *webFrame);
 #if !PLATFORM(IOS_FAMILY)
 - (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
 #endif
-- (NSRange)_convertToNSRange:(WebCore::Range*)range;
-- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange;
-- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo;
+
+- (NSRange)_convertToNSRange:(const WebCore::SimpleRange&)range;
+- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)range;
+- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo;
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes;
