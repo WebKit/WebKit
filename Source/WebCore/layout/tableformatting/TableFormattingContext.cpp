@@ -492,15 +492,19 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     computeColumnWidths(ColumnWidthBalancingBase::MinimumWidth, horizontalSpaceToDistribute);
 }
 
-void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit>)
+void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> verticalConstraint)
 {
     auto& grid = formattingState().tableGrid();
     auto& columns = grid.columns().list();
     auto& rows = grid.rows();
 
-    Vector<LayoutUnit> rowsHeight;
+    Vector<float> rowsHeight;
     Vector<InlineLayoutUnit> rowsBaselineOffset;
+    Vector<bool> isFixedRowList(rows.size(), true);
+    float tableUsedHeight = 0;
+    size_t flexibleRowCount = 0;
     // 1. Collect initial row heights.
+    float flexibleSpace = 0;
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
@@ -518,9 +522,31 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
             maximumColumnDescent = std::max(maximumColumnDescent, geometryForBox(cellBox).height() - cell.baselineOffset());
         }
         // <tr style="height: 10px"> is considered as min height.
-        auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }).valueOr(LayoutUnit { });
-        rowsHeight.append(std::max(computedRowHeight, LayoutUnit { maximumColumnAscent + maximumColumnDescent }));
+        auto maximumRowHeight = maximumColumnAscent + maximumColumnDescent;
+        if (auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }))
+            maximumRowHeight = std::max(computedRowHeight->toFloat(), maximumRowHeight);
+        else {
+            flexibleSpace += maximumRowHeight;
+            ++flexibleRowCount;
+            isFixedRowList[rowIndex] = false;
+        }
+        tableUsedHeight += maximumRowHeight;
+        rowsHeight.append(maximumRowHeight);
         rowsBaselineOffset.append(maximumColumnAscent);
+    }
+
+    // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
+    auto minimumTableHeight = verticalConstraint;
+    if (!minimumTableHeight)
+        minimumTableHeight = geometry().fixedValue(root().style().logicalHeight());
+
+    if (minimumTableHeight && *minimumTableHeight > tableUsedHeight) {
+        float spaceToDistribute = std::max(0.0f, *minimumTableHeight - tableUsedHeight - ((rows.size() + 1) * grid.verticalSpacing()));
+        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+            if (isFixedRowList[rowIndex])
+                continue;
+            rowsHeight[rowIndex] += spaceToDistribute / flexibleSpace * rowsHeight[rowIndex];
+        }
     }
 
     auto rowLogicalTop = grid.verticalSpacing();
@@ -528,7 +554,7 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
         auto& row = grid.rows().list()[rowIndex];
         auto rowHeight = rowsHeight[rowIndex];
 
-        row.setLogicalHeight(rowHeight);
+        row.setLogicalHeight(LayoutUnit { rowHeight });
         row.setBaselineOffset(rowsBaselineOffset[rowIndex]);
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += rowHeight + grid.verticalSpacing();
