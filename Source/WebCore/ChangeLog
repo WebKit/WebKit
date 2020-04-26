@@ -1,3 +1,20 @@
+2020-04-26  Cathie Chen  <cathiechen@igalia.com>
+
+        fast/scrolling/scroll-behavior-invalidate-if-disabled.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=210917
+
+        Reviewed by Darin Adler.
+
+        The flaky failure is caused by reusing the CSSPropertyInfo value cached propertyInfoCache
+        after experimental flags changed. Add propertyInfoFromJavaScriptCSSPropertyName 
+        to perform disabled checking after parsing. If the property is disabled, it will return
+        an invalid CSSPropertyInfo instead.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName):
+        (WebCore::CSSStyleDeclaration::namedItem):
+        (WebCore::CSSStyleDeclaration::setNamedItem):
+
 2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] isCallable is redundant with isFunction
