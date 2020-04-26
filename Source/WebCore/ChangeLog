@@ -1,3 +1,16 @@
+2020-04-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] isCallable is redundant with isFunction
+        https://bugs.webkit.org/show_bug.cgi?id=211037
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/JSDOMConvertScheduledAction.h:
+        (WebCore::Converter<IDLScheduledAction>::convert):
+        * worklets/PaintWorkletGlobalScope.cpp:
+        (WebCore::PaintWorkletGlobalScope::registerPaint):
+        Don't use getCallData if you don't need CallData. 
+
 2020-04-25  Alex Christensen  <achristensen@webkit.org>
 
         Build fix.

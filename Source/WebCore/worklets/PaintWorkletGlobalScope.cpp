@@ -75,8 +75,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Validate that paintConstructor is a VoidFunction
-    CallData callData;
-    if (JSC::getCallData(vm, paintConstructor.get(), callData) == JSC::CallType::None)
+    if (!paintConstructor->isFunction(vm))
         return Exception { TypeError, "paintConstructor must be callable" };
 
     if (name.isEmpty())

@@ -231,8 +231,8 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
     if (m_replacer.isObject()) {
         JSObject* replacerObject = asObject(m_replacer);
 
-        m_replacerCallType = CallType::None;
-        if (!replacerObject->isCallable(vm, m_replacerCallType, m_replacerCallData)) {
+        m_replacerCallType = getCallData(vm, replacerObject, m_replacerCallData);
+        if (m_replacerCallType == CallType::None) {
             bool isArrayReplacer = JSC::isArray(globalObject, replacerObject);
             RETURN_IF_EXCEPTION(scope, );
             if (isArrayReplacer) {
@@ -304,9 +304,9 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     JSValue toJSONFunction = baseValue.get(m_globalObject, vm.propertyNames->toJSON);
     RETURN_IF_EXCEPTION(scope, { });
 
-    CallType callType;
     CallData callData;
-    if (!toJSONFunction.isCallable(vm, callType, callData))
+    CallType callType = getCallData(vm, toJSONFunction, callData);
+    if (callType == CallType::None)
         return baseValue;
 
     MarkedArgumentBuffer args;

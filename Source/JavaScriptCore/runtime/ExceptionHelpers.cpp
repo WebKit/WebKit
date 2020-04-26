@@ -94,9 +94,8 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
         return asSymbol(v)->descriptiveString();
     if (v.isObject()) {
         VM& vm = globalObject->vm();
-        CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
+        if (object->isFunction(vm))
             return vm.smallStrings.functionString()->value(globalObject);
         return JSObject::calculatedClassName(object);
     }

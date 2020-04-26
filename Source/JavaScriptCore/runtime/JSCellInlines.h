@@ -240,14 +240,6 @@ ALWAYS_INLINE bool JSCell::isFunction(VM& vm)
     return false;
 }
 
-inline bool JSCell::isCallable(VM& vm, CallType& callType, CallData& callData)
-{
-    if (type() != JSFunctionType && !(inlineTypeFlags() & OverridesGetCallData))
-        return false;
-    callType = methodTable(vm)->getCallData(this, callData);
-    return callType != CallType::None;
-}
-
 inline bool JSCell::isConstructor(VM& vm)
 {
     ConstructType constructType;

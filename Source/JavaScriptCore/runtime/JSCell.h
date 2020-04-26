@@ -108,7 +108,6 @@ public:
     bool isCustomGetterSetter() const;
     bool isProxy() const;
     bool isFunction(VM&);
-    bool isCallable(VM&, CallType&, CallData&);
     bool isConstructor(VM&);
     bool isConstructor(VM&, ConstructType&, ConstructData&);
     bool inherits(VM&, const ClassInfo*) const;
