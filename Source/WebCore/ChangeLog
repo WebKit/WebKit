@@ -1,3 +1,13 @@
+2020-04-26  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Enable TestWTF and TestWebCore
+        https://bugs.webkit.org/show_bug.cgi?id=208849
+
+        Reviewed by Don Olmstead.
+
+        * PlatformPlayStation.cmake:
+        Add WebCore_CopySharedLibs to install dependencies.
+
 2020-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rendering update steps should use Seconds for the timestamps
