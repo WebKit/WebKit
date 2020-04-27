@@ -1218,7 +1218,7 @@
         (apply-message-filter
             (allow mach-message-send (with report) (with telemetry))
             (allow mach-message-send (kernel-mig-routine
-                _mach_make_memory_entry
+                mach_make_memory_entry
                 host_get_clock_service
                 host_get_io_master
                 host_get_special_port
