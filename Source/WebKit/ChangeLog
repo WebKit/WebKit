@@ -1,3 +1,16 @@
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] about:gpu page is incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=211076
+
+        Reviewed by Adrian Perez de Castro.
+
+        ENABLE(OPENGL) was renamed to ENABLE(GRAPHICS_CONTEXT_GL) in
+        r254064 but not in all the code base...
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         Replace more uses of live ranges with SimpleRange
