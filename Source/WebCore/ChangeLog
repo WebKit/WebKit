@@ -1,3 +1,80 @@
+2020-04-27  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Rework WebKitWebSrc threading
+        https://bugs.webkit.org/show_bug.cgi?id=210284
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        WebKitWebSrc as it is in master has a number of race conditions
+        leading to occasional starvation (due to cancelling the wrong request)
+        or data corruption (due to pushing data from a cancelled request).
+
+        The threading situation wasn't easy to follow, as it wasn't clear
+        access to what members should be protected by what mutex, in what
+        circumstances. Also, some parts of the design were also introducing
+        addicional complexity, such as the first request being sent from the
+        main thread whereas the rest were being sent from the streaming thread
+        or basesrc async start.
+
+        In response, this patch reworks all the locking in WebKitWebSrc to use
+        WTF::DataMutex. This ensures all accesses to its (now explicit)
+        protected members are locked. The two mutexes and condition variables
+        have been simplified into one, as there was no obvious need or benefit
+        for two of each in this case.
+
+        Requests have been numbered, which allows to safely and atomically
+        ignore results from cancelled requests, avoiding data corruption
+        races, and makes following them in debug logs much easier.
+
+        The conditions for making and cancelling requests have been simplified
+        to a simpler and safer model: There is at most only one active request
+        at anytime, flushes cancel the request, and the first create() call
+        always makes the new request (both at startup and after a flush).
+        Debug asserts and notes about the flow of operations during basesrc
+        seeks have been provided.
+
+        As this effort needed a review of the entire WebKitWebSrc, cleanups,
+        corrections and documentation comments have been provided where
+        appropriate.
+
+        This patch introduces no visible behavior changes, just stability
+        improvements.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (WebKitWebSrcPrivate::~WebKitWebSrcPrivate):
+        (webkit_web_src_class_init):
+        (webkitWebSrcReset):
+        (webKitWebSrcConstructed):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcSetContext):
+        (webKitWebSrcSendEvent):
+        (restartLoaderIfNeeded):
+        (stopLoaderIfNeeded):
+        (webKitWebSrcCreate):
+        (webKitWebSrcStart):
+        (webKitWebSrcMakeRequest):
+        (webKitWebSrcStop):
+        (webKitWebSrcGetSize):
+        (webKitWebSrcIsSeekable):
+        (webKitWebSrcDoSeek):
+        (webKitWebSrcQuery):
+        (webKitWebSrcUnLock):
+        (webKitWebSrcUnLockStop):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcSetMediaPlayer):
+        (webKitSrcPassedCORSAccessCheck):
+        (CachedResourceStreamingClient::CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::checkUpdateBlocksize):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+        (webKitSrcWouldTaintOrigin):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h:
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         Replace more uses of live ranges with SimpleRange

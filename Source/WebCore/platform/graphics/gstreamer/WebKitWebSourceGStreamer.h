@@ -39,17 +39,15 @@ G_BEGIN_DECLS
 
 #define WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME  "webkit.media-player"
 
-typedef struct _WebKitWebSrc        WebKitWebSrc;
-typedef struct _WebKitWebSrcClass   WebKitWebSrcClass;
-typedef struct _WebKitWebSrcPrivate WebKitWebSrcPrivate;
+struct WebKitWebSrcPrivate;
 
-struct _WebKitWebSrc {
+struct WebKitWebSrc {
     GstPushSrc parent;
 
     WebKitWebSrcPrivate *priv;
 };
 
-struct _WebKitWebSrcClass {
+struct WebKitWebSrcClass {
     GstPushSrcClass parentClass;
 };
 
