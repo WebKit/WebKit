@@ -4761,7 +4761,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     clearSynchronousReasonsOnNodes();
 }
 
-ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollLayerID(ScrollingNodeID nodeID) const
+ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) const
 {
     if (!nodeID)
         return nullptr;

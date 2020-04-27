@@ -1,3 +1,24 @@
+2020-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename scrollableAreaForScrollLayerID to scrollableAreaForScrollingNodeID
+        https://bugs.webkit.org/show_bug.cgi?id=211091
+
+        Reviewed by Myles C. Maxfield.
+
+        The argument to scrollableAreaForScrollLayerID() is a ScrollingNodeID, not a layerID.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollableAreaForScrollingNodeID const):
+        (WebCore::FrameView::scrollableAreaForScrollLayerID const): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::setActiveScrollSnapIndices):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scrollableAreaForScrollingNodeID const):
+        (WebCore::RenderLayerCompositor::scrollableAreaForScrollLayerID const): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2020-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Cocoa] stop using out arguments for document attributes when converting to attributed strings

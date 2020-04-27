@@ -389,7 +389,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     }
 
     // Overflow-scroll area.
-    if (auto* scrollableArea = frameView.scrollableAreaForScrollLayerID(scrollingNodeID)) {
+    if (auto* scrollableArea = frameView.scrollableAreaForScrollingNodeID(scrollingNodeID)) {
         auto previousScrollType = scrollableArea->currentScrollType();
         scrollableArea->setCurrentScrollType(scrollType);
         scrollableArea->notifyScrollPositionChanged(roundedIntPoint(scrollPosition));
@@ -875,7 +875,7 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
     }
     
     // Overflow-scroll area.
-    if (auto* scrollableArea = frameView->scrollableAreaForScrollLayerID(scrollingNodeID)) {
+    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID)) {
         scrollableArea->setCurrentHorizontalSnapPointIndex(horizontalIndex);
         scrollableArea->setCurrentVerticalSnapPointIndex(verticalIndex);
     }

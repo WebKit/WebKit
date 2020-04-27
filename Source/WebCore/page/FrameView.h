@@ -160,7 +160,7 @@ public:
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
 
     ScrollingNodeID scrollingNodeID() const override;
-    ScrollableArea* scrollableAreaForScrollLayerID(uint64_t) const;
+    ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
     bool usesAsyncScrolling() const final;
 
     WEBCORE_EXPORT void enterCompositingMode();

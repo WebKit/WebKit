@@ -346,7 +346,7 @@ public:
     ScrollPositioningBehavior computeCoordinatedPositioningForLayer(const RenderLayer&, const RenderLayer* compositingAncestor) const;
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
 
-    ScrollableArea* scrollableAreaForScrollLayerID(ScrollingNodeID) const;
+    ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
 
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 

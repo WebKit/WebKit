@@ -880,13 +880,13 @@ ScrollingNodeID FrameView::scrollingNodeID() const
     return backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
-ScrollableArea* FrameView::scrollableAreaForScrollLayerID(uint64_t nodeID) const
+ScrollableArea* FrameView::scrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) const
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
         return nullptr;
 
-    return renderView->compositor().scrollableAreaForScrollLayerID(nodeID);
+    return renderView->compositor().scrollableAreaForScrollingNodeID(nodeID);
 }
 
 #if ENABLE(RUBBER_BANDING)
