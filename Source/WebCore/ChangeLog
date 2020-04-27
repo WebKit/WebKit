@@ -1,3 +1,16 @@
+2020-04-27  Darin Adler  <darin@apple.com>
+
+        Improve performance of commonInclusiveAncestor for deeply nested nodes
+        https://bugs.webkit.org/show_bug.cgi?id=211078
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Node.cpp:
+        (WebCore::depth): Added.
+        (WebCore::commonInclusiveAncestor): Replaced implementation that walks the
+        parent chain of the second node repeatedly with one that walks the parent
+        chain of each node twice.
+
 2020-04-27  Daniel Bates  <dabates@apple.com>
 
         Caret may be placed in the wrong spot for text input context that is a form control
