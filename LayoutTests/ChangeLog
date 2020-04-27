@@ -1,3 +1,20 @@
+2020-04-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening, skipping more inspector tests.
+
+        Some inspector tests (like from bug149916) had more specific
+        expectations than the gtk-global Skip from bug211035 and ended up
+        being executed. These expectations were not marked as timeout (only
+        Slow), and this caused the Debug bot to reach the test timeout limit.
+
+        As there is already at least three patches involved in this issue,
+        mark these expectations as Release only, allowing the Debug build to
+        use the generic expectation from bug2011035.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, temporarily skip WebInspector tests after r210942 and r260696
