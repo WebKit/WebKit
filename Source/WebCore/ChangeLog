@@ -1,3 +1,23 @@
+2020-04-27  Dean Jackson  <dino@apple.com>
+
+        getShaderPrecisionFormat returns the wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=211013
+        <rdar://problem/62378056>
+
+        Reviewed by Darin Adler.
+
+        Gregg pointed out that our code hardcodes values for
+        getShaderPrecisionFormat. The fix is simply to call into
+        the underlying GL function.
+
+        Covered by the existing test: webgl/1.0.3/conformance/misc/shader-precision-format.html
+
+        However, that just tests minimum values. Devices have different
+        actual results.
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getShaderPrecisionFormat):
+
 2020-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Rename scrollableAreaForScrollLayerID to scrollableAreaForScrollingNodeID
