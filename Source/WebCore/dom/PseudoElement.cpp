@@ -94,7 +94,7 @@ void PseudoElement::clearHostElement()
         timeline->elementWasRemoved(*this);
     
     if (auto* frame = document().frame())
-        frame->animation().cancelAnimations(*this);
+        frame->legacyAnimation().cancelAnimations(*this);
 
     m_hostElement = nullptr;
 }

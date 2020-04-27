@@ -536,7 +536,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     }
 
     auto& frameView = m_renderView.frameView();
-    AnimationUpdateBlock animationUpdateBlock(&frameView.frame().animation());
+    AnimationUpdateBlock animationUpdateBlock(&frameView.frame().legacyAnimation());
 
     ASSERT(!m_flushingLayers);
     {
@@ -776,7 +776,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     ++m_compositingUpdateCount;
 
-    AnimationUpdateBlock animationUpdateBlock(&m_renderView.frameView().frame().animation());
+    AnimationUpdateBlock animationUpdateBlock(&m_renderView.frameView().frame().legacyAnimation());
 
     SetForScope<bool> postLayoutChange(m_inPostLayoutUpdate, true);
 
@@ -2851,7 +2851,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return false;
 
-    auto& animController = renderer.animation();
+    auto& animController = renderer.legacyAnimation();
     return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
         && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
         || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter)
@@ -3401,7 +3401,7 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return false;
 
-    return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
+    return renderer.legacyAnimation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
 }
 
 // If an element has composited negative z-index children, those children render in front of the

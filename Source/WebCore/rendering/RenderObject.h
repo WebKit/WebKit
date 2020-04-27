@@ -693,7 +693,7 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    CSSAnimationController& animation() const;
+    CSSAnimationController& legacyAnimation() const;
     DocumentTimeline* documentTimeline() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
@@ -949,9 +949,9 @@ inline Page& RenderObject::page() const
     return *frame().page();
 }
 
-inline CSSAnimationController& RenderObject::animation() const
+inline CSSAnimationController& RenderObject::legacyAnimation() const
 {
-    return frame().animation();
+    return frame().legacyAnimation();
 }
 
 inline DocumentTimeline* RenderObject::documentTimeline() const

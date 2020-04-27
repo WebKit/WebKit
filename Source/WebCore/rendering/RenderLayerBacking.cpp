@@ -1172,7 +1172,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         if (auto* timeline = renderer().documentTimeline())
             isRunningAcceleratedTransformAnimation = timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
     } else
-        isRunningAcceleratedTransformAnimation = renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
+        isRunningAcceleratedTransformAnimation = renderer().legacyAnimation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform);
 
     updateTransform(style);
     updateOpacity(style);
@@ -3515,7 +3515,7 @@ void RenderLayerBacking::transitionFinished(CSSPropertyID property)
 void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, MonotonicTime time)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        renderer().animation().notifyAnimationStarted(renderer(), time);
+        renderer().legacyAnimation().notifyAnimationStarted(renderer(), time);
 }
 
 void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)

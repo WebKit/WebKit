@@ -1183,7 +1183,7 @@ HRESULT WebFrame::resumeAnimations()
     if (!frame)
         return E_UNEXPECTED;
 
-    frame->animation().resumeAnimations();
+    frame->legacyAnimation().resumeAnimations();
     return S_OK;
 }
 
@@ -1193,7 +1193,7 @@ HRESULT WebFrame::suspendAnimations()
     if (!frame)
         return E_UNEXPECTED;
 
-    frame->animation().suspendAnimations();
+    frame->legacyAnimation().suspendAnimations();
     return S_OK;
 }
 
@@ -1212,7 +1212,7 @@ HRESULT WebFrame::pauseAnimation(_In_ BSTR animationName, _In_opt_ IDOMNode* nod
     if (!domNode)
         return E_FAIL;
 
-    *animationWasRunning = frame->animation().pauseAnimationAtTime(downcast<Element>(*domNode->node()), String(animationName, SysStringLen(animationName)), secondsFromNow);
+    *animationWasRunning = frame->legacyAnimation().pauseAnimationAtTime(downcast<Element>(*domNode->node()), String(animationName, SysStringLen(animationName)), secondsFromNow);
     return S_OK;
 }
 
@@ -1231,7 +1231,7 @@ HRESULT WebFrame::pauseTransition(_In_ BSTR propertyName, _In_opt_ IDOMNode* nod
     if (!domNode)
         return E_FAIL;
 
-    *transitionWasRunning = frame->animation().pauseTransitionAtTime(downcast<Element>(*domNode->node()), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
+    *transitionWasRunning = frame->legacyAnimation().pauseTransitionAtTime(downcast<Element>(*domNode->node()), String(propertyName, SysStringLen(propertyName)), secondsFromNow);
     return S_OK;
 }
 
@@ -1264,7 +1264,7 @@ HRESULT WebFrame::numberOfActiveAnimations(_Out_ UINT* number)
     if (!frame)
         return E_UNEXPECTED;
 
-    *number = frame->animation().numberOfActiveAnimations(frame->document());
+    *number = frame->legacyAnimation().numberOfActiveAnimations(frame->document());
     return S_OK;
 }
 

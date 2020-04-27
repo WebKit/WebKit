@@ -558,7 +558,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
     auto& document = root.document();
     auto* timeline = document.existingTimeline();
-    auto& animationController = document.frame()->animation();    
+    auto& animationController = document.frame()->legacyAnimation();    
 
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {

@@ -1057,7 +1057,7 @@ unsigned Internals::numberOfActiveAnimations() const
 {
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return frame()->document()->timeline().numberOfActiveAnimationsForTesting();
-    return frame()->animation().numberOfActiveAnimations(frame()->document());
+    return frame()->legacyAnimation().numberOfActiveAnimations(frame()->document());
 }
 
 ExceptionOr<bool> Internals::animationsAreSuspended() const
@@ -1068,7 +1068,7 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return document->timeline().animationsAreSuspended();
-    return document->frame()->animation().animationsAreSuspendedForDocument(document);
+    return document->frame()->legacyAnimation().animationsAreSuspendedForDocument(document);
 }
 
 double Internals::animationsInterval() const
@@ -1085,7 +1085,7 @@ double Internals::animationsInterval() const
 
     if (!document->frame())
         return INFINITY;
-    return document->frame()->animation().animationInterval().value();
+    return document->frame()->legacyAnimation().animationInterval().value();
 }
 
 ExceptionOr<void> Internals::suspendAnimations() const
@@ -1101,11 +1101,11 @@ ExceptionOr<void> Internals::suspendAnimations() const
                 document->timeline().suspendAnimations();
         }
     } else {
-        document->frame()->animation().suspendAnimationsForDocument(document);
+        document->frame()->legacyAnimation().suspendAnimationsForDocument(document);
 
         for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
             if (Document* document = frame->document())
-                frame->animation().suspendAnimationsForDocument(document);
+                frame->legacyAnimation().suspendAnimationsForDocument(document);
         }
     }
 
@@ -1125,11 +1125,11 @@ ExceptionOr<void> Internals::resumeAnimations() const
                 document->timeline().resumeAnimations();
         }
     } else {
-        document->frame()->animation().resumeAnimationsForDocument(document);
+        document->frame()->legacyAnimation().resumeAnimationsForDocument(document);
 
         for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
             if (Document* document = frame->document())
-                frame->animation().resumeAnimationsForDocument(document);
+                frame->legacyAnimation().resumeAnimationsForDocument(document);
         }
     }
 
@@ -1140,7 +1140,7 @@ ExceptionOr<bool> Internals::pauseAnimationAtTimeOnElement(const String& animati
 {
     if (pauseTime < 0)
         return Exception { InvalidAccessError };
-    return frame()->animation().pauseAnimationAtTime(element, AtomString(animationName), pauseTime);
+    return frame()->legacyAnimation().pauseAnimationAtTime(element, AtomString(animationName), pauseTime);
 }
 
 ExceptionOr<bool> Internals::pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element& element, const String& pseudoId)
@@ -1155,14 +1155,14 @@ ExceptionOr<bool> Internals::pauseAnimationAtTimeOnPseudoElement(const String& a
     if (!pseudoElement)
         return Exception { InvalidAccessError };
 
-    return frame()->animation().pauseAnimationAtTime(*pseudoElement, AtomString(animationName), pauseTime);
+    return frame()->legacyAnimation().pauseAnimationAtTime(*pseudoElement, AtomString(animationName), pauseTime);
 }
 
 ExceptionOr<bool> Internals::pauseTransitionAtTimeOnElement(const String& propertyName, double pauseTime, Element& element)
 {
     if (pauseTime < 0)
         return Exception { InvalidAccessError };
-    return frame()->animation().pauseTransitionAtTime(element, propertyName, pauseTime);
+    return frame()->legacyAnimation().pauseTransitionAtTime(element, propertyName, pauseTime);
 }
 
 ExceptionOr<bool> Internals::pauseTransitionAtTimeOnPseudoElement(const String& property, double pauseTime, Element& element, const String& pseudoId)
@@ -1177,7 +1177,7 @@ ExceptionOr<bool> Internals::pauseTransitionAtTimeOnPseudoElement(const String& 
     if (!pseudoElement)
         return Exception { InvalidAccessError };
 
-    return frame()->animation().pauseTransitionAtTime(*pseudoElement, property, pauseTime);
+    return frame()->legacyAnimation().pauseTransitionAtTime(*pseudoElement, property, pauseTime);
 }
 
 Vector<Internals::AcceleratedAnimation> Internals::acceleratedAnimationsForElement(Element& element)

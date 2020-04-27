@@ -1487,7 +1487,7 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
                 timeline->updateThrottlingState();
         });
     } else
-        mainFrame().animation().updateThrottlingState();
+        mainFrame().legacyAnimation().updateThrottlingState();
     updateDOMTimerAlignmentInterval();
 }
 
@@ -2033,7 +2033,7 @@ void Page::setIsVisibleInternal(bool isVisible)
                         timeline->resumeAnimations();
                 });
             } else
-                mainFrame().animation().resumeAnimations();
+                mainFrame().legacyAnimation().resumeAnimations();
         }
 
         forEachDocument([] (Document& document) {
@@ -2057,7 +2057,7 @@ void Page::setIsVisibleInternal(bool isVisible)
                         timeline->suspendAnimations();
                 });
             } else
-                mainFrame().animation().suspendAnimations();
+                mainFrame().legacyAnimation().suspendAnimations();
         }
 
         forEachDocument([] (Document& document) {
@@ -2413,9 +2413,9 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
             });
         } else {
             if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-                mainFrame().animation().suspendAnimations();
+                mainFrame().legacyAnimation().suspendAnimations();
             else
-                mainFrame().animation().resumeAnimations();
+                mainFrame().legacyAnimation().resumeAnimations();
         }
     }
 }

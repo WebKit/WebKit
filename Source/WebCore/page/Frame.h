@@ -172,8 +172,8 @@ public:
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
     FrameTree& tree() const;
-    CSSAnimationController& animation() { return m_animationController; }
-    const CSSAnimationController& animation() const { return m_animationController; }
+    CSSAnimationController& legacyAnimation() { return m_animationController; }
+    const CSSAnimationController& legacyAnimation() const { return m_animationController; }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
 

@@ -320,7 +320,7 @@ void CSSAnimationControllerPrivate::updateThrottlingState()
     updateAnimationTimer();
 
     for (auto* childFrame = m_frame.tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
-        childFrame->animation().updateThrottlingState();
+        childFrame->legacyAnimation().updateThrottlingState();
 }
 
 Seconds CSSAnimationControllerPrivate::animationInterval() const
@@ -340,7 +340,7 @@ void CSSAnimationControllerPrivate::suspendAnimations()
 
     // Traverse subframes
     for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        child->animation().suspendAnimations();
+        child->legacyAnimation().suspendAnimations();
 
     m_isSuspended = true;
 }
@@ -354,7 +354,7 @@ void CSSAnimationControllerPrivate::resumeAnimations()
 
     // Traverse subframes
     for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        child->animation().resumeAnimations();
+        child->legacyAnimation().resumeAnimations();
 
     m_isSuspended = false;
 }

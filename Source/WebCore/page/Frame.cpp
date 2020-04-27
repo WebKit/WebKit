@@ -723,7 +723,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
             if (auto* timeline = document->existingTimeline())
                 timeline->suspendAnimations();
         } else
-            view->frame().animation().suspendAnimationsForDocument(document);
+            view->frame().legacyAnimation().suspendAnimationsForDocument(document);
         view->frame().eventHandler().stopAutoscrollTimer();
     }
 }
@@ -1018,7 +1018,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
         if (auto* timeline = m_doc->existingTimeline())
             timeline->resumeAnimations();
     } else
-        animation().resumeAnimationsForDocument(m_doc.get());
+        legacyAnimation().resumeAnimationsForDocument(m_doc.get());
     if (m_view)
         m_view->layoutContext().scheduleLayout();
 }

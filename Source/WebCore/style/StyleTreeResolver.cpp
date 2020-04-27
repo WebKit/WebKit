@@ -332,7 +332,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 
     // Old code path for CSS Animations and CSS Transitions.
     if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        auto& animationController = m_document.frame()->animation();
+        auto& animationController = m_document.frame()->legacyAnimation();
 
         auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
         animationImpact.add(animationUpdate.impact);

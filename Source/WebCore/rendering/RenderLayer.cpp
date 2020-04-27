@@ -1359,9 +1359,9 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
             }
         }
     } else {
-        if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
+        if (renderer().legacyAnimation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
             TransformationMatrix currTransform;
-            std::unique_ptr<RenderStyle> style = renderer().animation().animatedStyleForRenderer(renderer());
+            std::unique_ptr<RenderStyle> style = renderer().legacyAnimation().animatedStyleForRenderer(renderer());
             LayoutSize offsetFromRoot;
             auto computedReferenceBox = computeReferenceBox(renderer(), transformBoxToCSSBoxType(style->transformBox()), offsetFromRoot, box->borderBoxRect());
             FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor());
@@ -1376,7 +1376,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     if (applyOrigin == RenderStyle::ExcludeTransformOrigin) {
         TransformationMatrix currTransform;
         LayoutSize offsetFromRoot;
-        std::unique_ptr<RenderStyle> style = renderer().animation().animatedStyleForRenderer(renderer());
+        std::unique_ptr<RenderStyle> style = renderer().legacyAnimation().animatedStyleForRenderer(renderer());
         auto computedReferenceBox = computeReferenceBox(renderer(), transformBoxToCSSBoxType(style->transformBox()), offsetFromRoot, box->borderBoxRect());
         FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor());
         box->style().applyTransform(currTransform, pixelSnappedBorderRect, RenderStyle::ExcludeTransformOrigin);
@@ -6136,7 +6136,7 @@ bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimati
             }
         }
     } else {
-        if (renderer().animation().computeExtentOfAnimation(renderer(), animatedBounds)) {
+        if (renderer().legacyAnimation().computeExtentOfAnimation(renderer(), animatedBounds)) {
             bounds = animatedBounds;
             return true;
         }

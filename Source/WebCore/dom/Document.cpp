@@ -1941,7 +1941,7 @@ void Document::resolveStyle(ResolveStyleType type)
     TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
-    AnimationUpdateBlock animationUpdateBlock(&m_frame->animation());
+    AnimationUpdateBlock animationUpdateBlock(&m_frame->legacyAnimation());
 
     // FIXME: Do this update per tree scope.
     {
@@ -2403,7 +2403,7 @@ void Document::didBecomeCurrentDocumentInFrame()
             if (auto* timeline = existingTimeline())
                 timeline->suspendAnimations();
         } else
-            m_frame->animation().suspendAnimationsForDocument(this);
+            m_frame->legacyAnimation().suspendAnimationsForDocument(this);
         suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
     } else {
         resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
@@ -2411,7 +2411,7 @@ void Document::didBecomeCurrentDocumentInFrame()
             if (auto* timeline = existingTimeline())
                 timeline->resumeAnimations();
         } else
-            m_frame->animation().resumeAnimationsForDocument(this);
+            m_frame->legacyAnimation().resumeAnimationsForDocument(this);
     }
 }
 
@@ -2506,7 +2506,7 @@ void Document::prepareForDestruction()
         return;
 
     if (m_frame)
-        m_frame->animation().detachFromDocument(this);
+        m_frame->legacyAnimation().detachFromDocument(this);
 
 #if USE(LIBWEBRTC)
     // FIXME: This should be moved to Modules/mediastream.
@@ -3041,7 +3041,7 @@ void Document::implicitClose()
         if (auto* documentLoader = loader())
             documentLoader->startIconLoading();
 
-        f->animation().startAnimationsIfNotSuspended(this);
+        f->legacyAnimation().startAnimationsIfNotSuspended(this);
 
         // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
         // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
@@ -5369,7 +5369,7 @@ void Document::resume(ReasonForSuspension reason)
         if (auto* timeline = existingTimeline())
             timeline->resumeAnimations();  
     } else
-        m_frame->animation().resumeAnimationsForDocument(this);
+        m_frame->legacyAnimation().resumeAnimationsForDocument(this);
 
     resumeScheduledTasks(reason);
 

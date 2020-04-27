@@ -4776,7 +4776,7 @@ IGNORE_WARNINGS_END
 {
     auto* frame = core([self mainFrame]);
     if (frame)
-        return frame->animation().allowsNewAnimationsWhileSuspended();
+        return frame->legacyAnimation().allowsNewAnimationsWhileSuspended();
 
     return false;
 }
@@ -4785,7 +4785,7 @@ IGNORE_WARNINGS_END
 {
     auto* frame = core([self mainFrame]);
     if (frame)
-        frame->animation().setAllowsNewAnimationsWhileSuspended(allowed);
+        frame->legacyAnimation().setAllowsNewAnimationsWhileSuspended(allowed);
 }
 
 - (BOOL)cssAnimationsSuspended
@@ -4793,7 +4793,7 @@ IGNORE_WARNINGS_END
     // should ask the page!
     auto* frame = core([self mainFrame]);
     if (frame)
-        return frame->animation().isSuspended();
+        return frame->legacyAnimation().isSuspended();
 
     return false;
 }
@@ -4801,13 +4801,13 @@ IGNORE_WARNINGS_END
 - (void)setCSSAnimationsSuspended:(BOOL)suspended
 {
     auto* frame = core([self mainFrame]);
-    if (suspended == frame->animation().isSuspended())
+    if (suspended == frame->legacyAnimation().isSuspended())
         return;
 
     if (suspended)
-        frame->animation().suspendAnimations();
+        frame->legacyAnimation().suspendAnimations();
     else
-        frame->animation().resumeAnimations();
+        frame->legacyAnimation().resumeAnimations();
 }
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme

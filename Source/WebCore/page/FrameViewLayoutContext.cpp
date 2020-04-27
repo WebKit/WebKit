@@ -204,7 +204,7 @@ void FrameViewLayoutContext::layout()
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
     InspectorInstrumentation::willLayout(view().frame());
-    AnimationUpdateBlock animationUpdateBlock(&view().frame().animation());
+    AnimationUpdateBlock animationUpdateBlock(&view().frame().legacyAnimation());
     WeakPtr<RenderElement> layoutRoot;
     
     m_layoutTimer.stop();

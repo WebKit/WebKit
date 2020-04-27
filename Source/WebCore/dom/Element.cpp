@@ -2243,7 +2243,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         timeline->elementWasRemoved(*this);
 
     if (frame)
-        frame->animation().cancelAnimations(*this);
+        frame->legacyAnimation().cancelAnimations(*this);
 
 #if PLATFORM(MAC)
     if (frame && frame->page())
