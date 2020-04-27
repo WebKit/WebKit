@@ -50,8 +50,10 @@
 #include "RenderBlock.h"
 #include "RenderElement.h"
 #include "RenderTableCell.h"
+#include "RenderTextControlSingleLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <wtf/Assertions.h>
@@ -559,6 +561,33 @@ VisiblePosition visiblePositionAfterNode(Node& node)
     ASSERT(node.parentNode());
     ASSERT(!node.parentNode()->isShadowRoot());
     return positionInParentAfterNode(&node);
+}
+
+VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& element, const IntPoint& point)
+{
+    if (!element.isConnected() || !element.document().frame())
+        return { };
+
+    Ref<const Element> protectedElement { element };
+    auto frame = makeRef(*element.document().frame());
+
+    element.document().updateLayoutIgnorePendingStylesheets();
+
+    RenderObject* renderer = element.renderer();
+    // Look at the inner element of a form control, not the control itself, as it is the editable part.
+    if (is<HTMLTextFormControlElement>(element)) {
+        auto& formControlElement = downcast<HTMLTextFormControlElement>(element);
+        if (!formControlElement.isInnerTextElementEditable())
+            return { };
+        if (auto innerTextElement = formControlElement.innerTextElement())
+            renderer = innerTextElement->renderer();
+    }
+    if (!renderer)
+        return { };
+    auto absoluteBoundingBox = renderer->absoluteBoundingBoxRect();
+    auto constrainedPoint = point.constrainedBetween(absoluteBoundingBox.minXMinYCorner(), absoluteBoundingBox.maxXMaxYCorner());
+    auto visiblePosition = frame->visiblePositionForPoint(constrainedPoint);
+    return isEditablePosition(visiblePosition.deepEquivalent()) ? visiblePosition : VisiblePosition { };
 }
 
 bool isListHTMLElement(Node* node)

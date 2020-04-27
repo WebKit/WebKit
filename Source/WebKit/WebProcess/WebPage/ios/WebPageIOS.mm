@@ -99,7 +99,6 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLSummaryElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
-#import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/InputMode.h>
@@ -4350,6 +4349,8 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
         return;
     }
 
+    // FIXME: Do not focus an element if it moved or the caret point is outside its bounds
+    // because we only want to do so if the caret can be placed.
     UserGestureIndicator gestureIndicator { ProcessingUserGesture, &target->document() };
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
     m_page->focusController().setFocusedElement(target.get(), targetFrame);
@@ -4359,9 +4360,13 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
         completionHandler(false);
         return;
     }
-    // The function visiblePositionInFocusedNodeForPoint constrains the point to be inside
-    // the bounds of the target element.
-    auto position = visiblePositionInFocusedNodeForPoint(targetFrame, point, true /* isInteractingWithFocusedElement */);
+
+    ASSERT(targetFrame->view());
+    auto position = closestEditablePositionInElementForAbsolutePoint(*target, targetFrame->view()->rootViewToContents(point));
+    if (position.isNull()) {
+        completionHandler(false);
+        return;
+    }
     targetFrame->selection().setSelectedRange(Range::create(*targetFrame->document(), position, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     completionHandler(true);
 }

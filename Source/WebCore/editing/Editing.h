@@ -156,6 +156,8 @@ WEBCORE_EXPORT VisiblePosition visiblePositionForPositionWithOffset(const Visibl
 WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index); // FIXME: Why do we need this version?
 
+WEBCORE_EXPORT VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element&, const IntPoint&);
+
 // -------------------------------------------------------------------------
 // HTMLElement
 // -------------------------------------------------------------------------

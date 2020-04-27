@@ -1,3 +1,17 @@
+2020-04-27  Daniel Bates  <dabates@apple.com>
+
+        Caret may be placed in the wrong spot for text input context that is a form control
+        https://bugs.webkit.org/show_bug.cgi?id=210939
+        <rdar://problem/61943089>
+
+        Reviewed by Darin Adler.
+
+        Find the closest editable position in the element for the point using the
+        newly introduced closestEditablePositionInElementForAbsolutePoint().
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret):
+
 2020-04-27  Darin Adler  <darin@apple.com>
 
         Fix ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING) build
