@@ -70,7 +70,7 @@ private:
 
 class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
-    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
+    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
     ScriptFunctionCall(const ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler handler = nullptr);
     Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 

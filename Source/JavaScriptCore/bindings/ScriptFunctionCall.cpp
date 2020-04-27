@@ -114,17 +114,16 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
     if (UNLIKELY(scope.exception()))
         return makeUnexpected(scope.exception());
 
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None)
         return { };
 
     JSValue result;
     NakedPtr<Exception> exception;
     if (m_callHandler)
-        result = m_callHandler(m_globalObject, function, callType, callData, thisObject, m_arguments, exception);
+        result = m_callHandler(m_globalObject, function, callData, thisObject, m_arguments, exception);
     else
-        result = JSC::call(m_globalObject, function, callType, callData, thisObject, m_arguments, exception);
+        result = JSC::call(m_globalObject, function, callData, thisObject, m_arguments, exception);
 
     if (exception) {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.

@@ -1,3 +1,19 @@
+2020-04-27  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] CallData/ConstructData should include CallType/ConstructType
+        https://bugs.webkit.org/show_bug.cgi?id=211059
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getCallData):
+        (WebKit::JSNPObject::getConstructData):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::hasMethod):
+        (WebKit::NPJSObject::construct):
+        (WebKit::NPJSObject::invoke):
+
 2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, reverting r260672.

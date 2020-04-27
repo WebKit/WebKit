@@ -109,8 +109,7 @@ bool NPJSObject::hasMethod(NPIdentifier methodName)
     JSValue value = m_jsObject->get(lexicalGlobalObject, identifierFromIdentifierRep(lexicalGlobalObject, identifierRep));    
     scope.clearException();
 
-    CallData callData;
-    return getCallData(vm, value, callData) != CallType::None;
+    return value.isFunction(vm);
 }
 
 bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
@@ -277,9 +276,8 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(vm, m_jsObject.get(), constructData);
-    if (constructType == ConstructType::None)
+    auto constructData = getConstructData(vm, m_jsObject.get());
+    if (constructData.type == CallData::Type::None)
         return false;
 
     // Convert the passed in arguments.
@@ -288,7 +286,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
         argumentList.append(m_objectMap->convertNPVariantToJSValue(m_objectMap->globalObject(), arguments[i]));
     RELEASE_ASSERT(!argumentList.hasOverflowed());
 
-    JSValue value = JSC::construct(lexicalGlobalObject, m_jsObject.get(), constructType, constructData, argumentList);
+    JSValue value = JSC::construct(lexicalGlobalObject, m_jsObject.get(), constructData, argumentList);
     
     // Convert and return the new object.
     m_objectMap->convertJSValueToNPVariant(lexicalGlobalObject, value, *result);
@@ -302,9 +300,8 @@ bool NPJSObject::invoke(JSGlobalObject* lexicalGlobalObject, JSValue function, c
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None)
         return false;
 
     // Convert the passed in arguments.
@@ -313,7 +310,7 @@ bool NPJSObject::invoke(JSGlobalObject* lexicalGlobalObject, JSValue function, c
         argumentList.append(m_objectMap->convertNPVariantToJSValue(lexicalGlobalObject, arguments[i]));
     RELEASE_ASSERT(!argumentList.hasOverflowed());
 
-    JSValue value = JSC::call(lexicalGlobalObject, function, callType, callData, m_jsObject.get(), argumentList);
+    JSValue value = JSC::call(lexicalGlobalObject, function, callData, m_jsObject.get(), argumentList);
 
     if (UNLIKELY(scope.exception())) {
         scope.clearException();

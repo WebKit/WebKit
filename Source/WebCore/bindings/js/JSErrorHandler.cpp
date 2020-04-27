@@ -75,10 +75,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!globalObject)
         return;
 
-    CallData callData;
-    CallType callType = jsFunction->methodTable(vm)->getCallData(jsFunction, callData);
-
-    if (callType != CallType::None) {
+    auto callData = getCallData(vm, jsFunction);
+    if (callData.type != CallData::Type::None) {
         Ref<JSErrorHandler> protectedThis(*this);
 
         Event* savedEvent = globalObject->currentEvent();
@@ -97,10 +95,10 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
+        JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 
         NakedPtr<JSC::Exception> exception;
-        JSValue returnValue = JSExecState::profiledCall(globalObject, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);
+        JSValue returnValue = JSExecState::profiledCall(globalObject, JSC::ProfilingReason::Other, jsFunction, callData, globalObject, args, exception);
 
         InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 

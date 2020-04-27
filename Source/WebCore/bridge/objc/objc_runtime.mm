@@ -280,14 +280,18 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(JSGlobalObject* lexic
     return JSValue::encode(result);
 }
 
-CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
+CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
 {
+    CallData callData;
+
     ObjcFallbackObjectImp* thisObject = jsCast<ObjcFallbackObjectImp*>(cell);
     id targetObject = thisObject->_instance->getObject();
-    if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-        return CallType::None;
-    callData.native.function = callObjCFallbackObject;
-    return CallType::Host;
+    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]) {
+        callData.type = CallData::Type::Native;
+        callData.native.function = callObjCFallbackObject;
+    }
+
+    return callData;
 }
 
 bool ObjcFallbackObjectImp::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)

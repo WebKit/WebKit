@@ -49,10 +49,10 @@ public:
         return threadGlobalData().currentState();
     };
     
-    static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
         JSExecState currentState(lexicalGlobalObject);
-        return JSC::call(lexicalGlobalObject, functionObject, callType, callData, thisValue, args, returnedException);
+        return JSC::call(lexicalGlobalObject, functionObject, callData, thisValue, args, returnedException);
     };
 
     static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
@@ -67,10 +67,10 @@ public:
         return evaluate(lexicalGlobalObject, source, thisValue, unused);
     };
 
-    static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
         JSExecState currentState(lexicalGlobalObject);
-        return JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callType, callData, thisValue, args, returnedException);
+        return JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callData, thisValue, args, returnedException);
     }
 
     static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
@@ -118,8 +118,7 @@ public:
         return returnValue;
     }
 
-    static void instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
-    static void instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
+    static void instrumentFunction(ScriptExecutionContext*, const JSC::CallData&);
 
 private:
     explicit JSExecState(JSC::JSGlobalObject* lexicalGlobalObject)
@@ -148,8 +147,6 @@ private:
     {
         threadGlobalData().setCurrentState(lexicalGlobalObject);
     }
-
-    template<typename Type, Type jsType, typename DataType> static void instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
 
     JSC::JSGlobalObject* m_previousState;
     JSC::JSLockHolder m_lock;
@@ -182,7 +179,7 @@ private:
     CustomElementReactionStack m_customElementReactionStack;
 };
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 } // namespace WebCore

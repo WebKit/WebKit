@@ -79,9 +79,8 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(JSGlobalObject* globalObjec
     JSValue adderFunction = weakMap->JSObject::get(globalObject, vm.propertyNames->set);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    CallData adderFunctionCallData;
-    CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
-    if (adderFunctionCallType == CallType::None)
+    auto adderFunctionCallData = getCallData(vm, adderFunction);
+    if (adderFunctionCallData.type == CallData::Type::None)
         return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
@@ -103,7 +102,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(JSGlobalObject* globalObjec
         arguments.append(value);
         ASSERT(!arguments.hasOverflowed());
         scope.release();
-        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, weakMap, arguments);
+        call(globalObject, adderFunction, adderFunctionCallData, weakMap, arguments);
     });
 
     return JSValue::encode(weakMap);

@@ -79,9 +79,8 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObjec
     JSValue adderFunction = weakSet->JSObject::get(globalObject, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    CallData adderFunctionCallData;
-    CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
-    if (adderFunctionCallType == CallType::None)
+    auto adderFunctionCallData = getCallData(vm, adderFunction);
+    if (adderFunctionCallData.type == CallData::Type::None)
         return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
@@ -89,7 +88,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObjec
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());
-        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, weakSet, arguments);
+        call(globalObject, adderFunction, adderFunctionCallData, weakSet, arguments);
     });
 
     return JSValue::encode(weakSet);

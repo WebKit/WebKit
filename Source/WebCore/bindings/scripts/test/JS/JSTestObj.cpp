@@ -2609,10 +2609,12 @@ EncodedJSValue JSC_HOST_CALL callJSTestObj(JSGlobalObject* lexicalGlobalObject, 
     return throwVMTypeError(lexicalGlobalObject, throwScope);
 }
 
-CallType JSTestObj::getCallData(JSCell*, CallData& callData)
+CallData JSTestObj::getCallData(JSCell*)
 {
+    CallData callData;
+    callData.type = CallData::Type::Native;
     callData.native.function = callJSTestObj;
-    return CallType::Host;
+    return callData;
 }
 
 template<> inline JSTestObj* IDLAttribute<JSTestObj>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)

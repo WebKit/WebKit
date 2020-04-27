@@ -615,17 +615,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(JSGlobalObject* globalObject
         bool customJoinCase = false;
         if (!function.isCell())
             customJoinCase = true;
-        CallData callData;
-        CallType callType = getCallData(vm, function, callData);
-        if (callType == CallType::None)
+        auto callData = getCallData(vm, function);
+        if (callData.type == CallData::Type::None)
             customJoinCase = true;
 
         if (UNLIKELY(customJoinCase))
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]")));
 
         // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
-        if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)
-            RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callType, callData, thisObject, *vm.emptyList)));
+        if (!isJSArray(thisObject) || callData.type != CallData::Type::Native || callData.native.function != arrayProtoFuncJoin)
+            RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callData, thisObject, *vm.emptyList)));
     }
 
     ASSERT(isJSArray(thisValue));
@@ -706,10 +705,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(JSGlobalObject* global
         else {
             JSValue conversionFunction = element.get(globalObject, vm.propertyNames->toLocaleString);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            CallData callData;
-            CallType callType = getCallData(vm, conversionFunction, callData);
-            if (callType != CallType::None) {
-                element = call(globalObject, conversionFunction, callType, callData, element, arguments);
+            auto callData = getCallData(vm, conversionFunction);
+            if (callData.type != CallData::Type::None) {
+                element = call(globalObject, conversionFunction, callData, element, arguments);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
         }

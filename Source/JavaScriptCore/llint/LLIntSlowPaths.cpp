@@ -1520,12 +1520,10 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
     calleeFrame->clearReturnPC();
 
     if (kind == CodeForCall) {
-        CallData callData;
-        CallType callType = getCallData(vm, callee, callData);
-    
-        ASSERT(callType != CallType::JS);
-    
-        if (callType == CallType::Host) {
+        auto callData = getCallData(vm, callee);
+        ASSERT(callData.type != CallData::Type::JS);
+
+        if (callData.type == CallData::Type::Native) {
             SlowPathFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
@@ -1534,18 +1532,16 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
         
         slowPathLog("Call callee is not a function: ", callee, "\n");
 
-        ASSERT(callType == CallType::None);
+        ASSERT(callData.type == CallData::Type::None);
         LLINT_CALL_THROW(globalObject, createNotAFunctionError(globalObject, callee));
     }
 
     ASSERT(kind == CodeForConstruct);
-    
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(vm, callee, constructData);
-    
-    ASSERT(constructType != ConstructType::JS);
-    
-    if (constructType == ConstructType::Host) {
+
+    auto constructData = getConstructData(vm, callee);
+    ASSERT(constructData.type != CallData::Type::JS);
+
+    if (constructData.type == CallData::Type::Native) {
         SlowPathFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
@@ -1554,7 +1550,7 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
     
     slowPathLog("Constructor callee is not a function: ", callee, "\n");
 
-    ASSERT(constructType == ConstructType::None);
+    ASSERT(constructData.type == CallData::Type::None);
     LLINT_CALL_THROW(globalObject, createNotAConstructorError(globalObject, callee));
 }
 

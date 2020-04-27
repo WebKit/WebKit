@@ -2704,7 +2704,7 @@ sub GenerateHeader
     }
 
     if (InstanceOverridesGetCallData($interface)) {
-        push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
+        push(@headerContent, "    static JSC::CallData getCallData(JSC::JSCell*);\n\n");
         $headerIncludes{"<JavaScriptCore/CallData.h>"} = 1;
         $structureFlags{"JSC::OverridesGetCallData"} = 1;
     }
@@ -5619,12 +5619,12 @@ sub GeneratePluginCall
 
     AddToImplIncludes("JSPluginElementFunctions.h");
 
-    push(@$outputArray, "CallType ${className}::getCallData(JSCell* cell, CallData& callData)\n");
+    push(@$outputArray, "CallData ${className}::getCallData(JSCell* cell)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
 
-    push(@$outputArray, "    return pluginElementCustomGetCallData(thisObject, callData);\n");
+    push(@$outputArray, "    return pluginElementCustomGetCallData(thisObject);\n");
     push(@$outputArray, "}\n");
     push(@$outputArray, "\n");
 }
@@ -5654,10 +5654,12 @@ sub GenerateLegacyCallerDefinitions
         GenerateLegacyCallerDefinition($outputArray, $interface, $className, $legacyCallers[0]);
     }
 
-    push(@$outputArray, "CallType ${className}::getCallData(JSCell*, CallData& callData)\n");
+    push(@$outputArray, "CallData ${className}::getCallData(JSCell*)\n");
     push(@$outputArray, "{\n");
+    push(@$outputArray, "    CallData callData;\n");
+    push(@$outputArray, "    callData.type = CallData::Type::Native;\n");
     push(@$outputArray, "    callData.native.function = call${className};\n");
-    push(@$outputArray, "    return CallType::Host;\n");
+    push(@$outputArray, "    return callData;\n");
     push(@$outputArray, "}\n");
     push(@$outputArray, "\n");
 }

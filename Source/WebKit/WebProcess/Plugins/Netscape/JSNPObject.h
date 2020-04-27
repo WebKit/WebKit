@@ -87,8 +87,8 @@ private:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
+    static JSC::CallData getCallData(JSC::JSCell*);
+    static JSC::CallData getConstructData(JSC::JSCell*);
 
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);

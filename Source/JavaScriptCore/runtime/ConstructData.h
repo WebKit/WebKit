@@ -29,51 +29,27 @@
 #pragma once
 
 #include "CallData.h"
-#include "JSCJSValue.h"
-#include "NativeFunction.h"
 
 namespace JSC {
 
-class ArgList;
-class CallFrame;
-class FunctionExecutable;
 class JSObject;
-class JSScope;
 
-enum class ConstructType : unsigned {
-    None,
-    Host,
-    JS
-};
-
-struct ConstructData {
-    union {
-        struct {
-            TaggedNativeFunction function;
-        } native;
-        struct {
-            FunctionExecutable* functionExecutable;
-            JSScope* scope;
-        } js;
-    };
-};
-
-// Convenience wrapper so you don't need to deal with CallData and CallType unless you are going to use them.
+// Convenience wrapper so you don't need to deal with CallData unless you are going to use it.
 JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, const ArgList&, const char* errorMessage);
 JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, JSValue newTarget, const ArgList&, const char* errorMessage);
 
-JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
+JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue constructor, const CallData&, const ArgList&, JSValue newTarget);
 
-ALWAYS_INLINE JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+ALWAYS_INLINE JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, const CallData& callData, const ArgList& args)
 {
-    return construct(globalObject, constructorObject, constructType, constructData, args, constructorObject);
+    return construct(globalObject, constructorObject, callData, args, constructorObject);
 }
 
-JS_EXPORT_PRIVATE JSObject* profiledConstruct(JSGlobalObject*, ProfilingReason, JSValue constructor, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
+JS_EXPORT_PRIVATE JSObject* profiledConstruct(JSGlobalObject*, ProfilingReason, JSValue constructor, const CallData&, const ArgList&, JSValue newTarget);
 
-ALWAYS_INLINE JSObject* profiledConstruct(JSGlobalObject* globalObject, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+ALWAYS_INLINE JSObject* profiledConstruct(JSGlobalObject* globalObject, ProfilingReason reason, JSValue constructorObject, const CallData& callData, const ArgList& args)
 {
-    return profiledConstruct(globalObject, reason, constructorObject, constructType, constructData, args, constructorObject);
+    return profiledConstruct(globalObject, reason, constructorObject, callData, args, constructorObject);
 }
 
 } // namespace JSC

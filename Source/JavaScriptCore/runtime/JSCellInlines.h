@@ -233,17 +233,14 @@ ALWAYS_INLINE bool JSCell::isFunction(VM& vm)
 {
     if (type() == JSFunctionType)
         return true;
-    if (inlineTypeFlags() & OverridesGetCallData) {
-        CallData ignoredCallData;
-        return methodTable(vm)->getCallData(this, ignoredCallData) != CallType::None;
-    }
+    if (inlineTypeFlags() & OverridesGetCallData)
+        return methodTable(vm)->getCallData(this).type != CallData::Type::None;
     return false;
 }
 
 inline bool JSCell::isConstructor(VM& vm)
 {
-    ConstructData ignoredConstructData;
-    return methodTable(vm)->getConstructData(this, ignoredConstructData) != ConstructType::None;
+    return methodTable(vm)->getConstructData(this).type != CallData::Type::None;
 }
 
 inline bool JSCell::isAPIValueWrapper() const

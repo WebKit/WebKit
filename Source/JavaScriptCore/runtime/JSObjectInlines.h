@@ -511,27 +511,27 @@ inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject,
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
 }
 
-inline CallType getCallData(VM& vm, JSValue value, CallData& callData)
+inline CallData getCallData(VM& vm, JSValue value)
 {
     if (!value.isCell())
-        return CallType::None;
+        return { };
     JSCell* cell = value.asCell();
     if (cell->type() == JSFunctionType)
-        return JSFunction::getCallData(cell, callData);
-    CallType result = cell->methodTable(vm)->getCallData(cell, callData);
-    ASSERT(result == CallType::None || value.isValidCallee());
+        return JSFunction::getCallData(cell);
+    CallData result = cell->methodTable(vm)->getCallData(cell);
+    ASSERT(result.type == CallData::Type::None || value.isValidCallee());
     return result;
 }
 
-inline ConstructType getConstructData(VM& vm, JSValue value, ConstructData& constructData)
+inline CallData getConstructData(VM& vm, JSValue value)
 {
     if (!value.isCell())
-        return ConstructType::None;
+        return { };
     JSCell* cell = value.asCell();
     if (cell->type() == JSFunctionType)
-        return JSFunction::getConstructData(cell, constructData);
-    ConstructType result = cell->methodTable(vm)->getConstructData(cell, constructData);
-    ASSERT(result == ConstructType::None || value.isValidCallee());
+        return JSFunction::getConstructData(cell);
+    CallData result = cell->methodTable(vm)->getConstructData(cell);
+    ASSERT(result.type == CallData::Type::None || value.isValidCallee());
     return result;
 }
 

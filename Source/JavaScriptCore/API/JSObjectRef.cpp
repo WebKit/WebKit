@@ -735,12 +735,11 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
         return 0;
     }
 
-    CallData callData;
-    CallType callType = jsObject->methodTable(vm)->getCallData(jsObject, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, jsObject);
+    if (callData.type == CallData::Type::None)
         return 0;
 
-    JSValueRef result = toRef(globalObject, profiledCall(globalObject, ProfilingReason::API, jsObject, callType, callData, jsThisObject, argList));
+    JSValueRef result = toRef(globalObject, profiledCall(globalObject, ProfilingReason::API, jsObject, callData, jsThisObject, argList));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         result = 0;
     return result;
@@ -768,9 +767,8 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 
     JSObject* jsObject = toJS(object);
 
-    ConstructData constructData;
-    ConstructType constructType = jsObject->methodTable(vm)->getConstructData(jsObject, constructData);
-    if (constructType == ConstructType::None)
+    auto constructData = getConstructData(vm, jsObject);
+    if (constructData.type == CallData::Type::None)
         return 0;
 
     MarkedArgumentBuffer argList;
@@ -783,7 +781,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
         return 0;
     }
 
-    JSObjectRef result = toRef(profiledConstruct(globalObject, ProfilingReason::API, jsObject, constructType, constructData, argList));
+    JSObjectRef result = toRef(profiledConstruct(globalObject, ProfilingReason::API, jsObject, constructData, argList));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         result = 0;
     return result;

@@ -40,7 +40,7 @@ class VM;
 namespace Inspector {
 
 class ScriptDebugServer;
-typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
+typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 class InspectorEnvironment {

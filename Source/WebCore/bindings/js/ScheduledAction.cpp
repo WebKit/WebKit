@@ -95,9 +95,8 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CallData callData;
-    CallType callType = getCallData(vm, m_function.get(), callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, m_function.get());
+    if (callData.type == CallData::Type::None)
         return;
 
     JSGlobalObject* lexicalGlobalObject = globalObject;
@@ -112,10 +111,10 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         return;
     }
 
-    JSExecState::instrumentFunctionCall(&context, callType, callData);
+    JSExecState::instrumentFunction(&context, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
+    JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, m_function.get(), callData, thisValue, arguments, exception);
 
     InspectorInstrumentation::didCallFunction(&context);
 

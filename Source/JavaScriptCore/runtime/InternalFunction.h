@@ -88,8 +88,8 @@ protected:
     enum class NameAdditionMode { WithStructureTransition, WithoutStructureTransition };
     JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameAdditionMode = NameAdditionMode::WithStructureTransition);
 
-    JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
-    JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
+    JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
+    JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
 
     TaggedNativeFunction m_functionForCall;
     TaggedNativeFunction m_functionForConstruct;

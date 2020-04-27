@@ -254,15 +254,14 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
 
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
         JSC::JSValue function = obj->imp->get(lexicalGlobalObject, JSC::Bindings::identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
-        JSC::CallData callData;
-        JSC::CallType callType = getCallData(vm, function, callData);
-        if (callType == JSC::CallType::None)
+        auto callData = getCallData(vm, function);
+        if (callData.type == JSC::CallData::Type::None)
             return false;
 
         // Call the function object.
         JSC::MarkedArgumentBuffer argList;
         getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
-        JSC::JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, obj->imp, argList);
+        JSC::JSValue resultV = JSC::call(lexicalGlobalObject, function, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
         JSC::Bindings::convertValueToNPVariant(lexicalGlobalObject, resultV, result);

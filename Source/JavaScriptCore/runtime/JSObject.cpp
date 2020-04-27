@@ -767,10 +767,9 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
     args.append(value);
     ASSERT(!args.hasOverflowed());
 
-    CallData callData;
-    CallType callType = setterObject->methodTable(vm)->getCallData(setterObject, callData);
+    auto callData = getCallData(vm, setterObject);
     scope.release();
-    call(globalObject, setterObject, callType, callData, receiver, args);
+    call(globalObject, setterObject, callData, receiver, args);
 
     // 9.1.9.1-9 Return true.
     return true;
@@ -2117,9 +2116,8 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, scope.exception());
     if (function.isUndefinedOrNull() && mode == TypeHintMode::TakesHint)
         return JSValue();
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None) {
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None) {
         if (mode == TypeHintMode::TakesHint)
             throwTypeError(globalObject, scope, "Symbol.toPrimitive is not a function, undefined, or null"_s);
         return scope.exception();
@@ -2143,7 +2141,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     }
     ASSERT(!callArgs.hasOverflowed());
 
-    JSValue result = call(globalObject, function, callType, callData, const_cast<JSObject*>(object), callArgs);
+    JSValue result = call(globalObject, function, callData, const_cast<JSObject*>(object), callArgs);
     RETURN_IF_EXCEPTION(scope, scope.exception());
     ASSERT(!result.isGetterSetter());
     if (result.isObject())
@@ -2240,9 +2238,8 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!hasInstanceValue.isUndefinedOrNull() && hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction()) {
-        CallData callData;
-        CallType callType = JSC::getCallData(vm, hasInstanceValue, callData);
-        if (callType == CallType::None) {
+        auto callData = JSC::getCallData(vm, hasInstanceValue);
+        if (callData.type == CallData::Type::None) {
             throwException(globalObject, scope, createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(globalObject, this));
             return false;
         }
@@ -2250,7 +2247,7 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
         MarkedArgumentBuffer args;
         args.append(value);
         ASSERT(!args.hasOverflowed());
-        JSValue result = call(globalObject, hasInstanceValue, callType, callData, this, args);
+        JSValue result = call(globalObject, hasInstanceValue, callData, this, args);
         RETURN_IF_EXCEPTION(scope, false);
         return result.toBoolean(globalObject);
     }
@@ -3869,7 +3866,7 @@ void JSObject::getGenericPropertyNames(JSObject* object, JSGlobalObject* globalO
 
 // Implements GetMethod(O, P) in section 7.3.9 of the spec.
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod
-JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, CallType& callType, const Identifier& ident, const String& errorMessage)
+JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, const Identifier& ident, const String& errorMessage)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -3885,8 +3882,8 @@ JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, Ca
         return jsUndefined();
     }
 
-    callType = method.asCell()->methodTable(vm)->getCallData(method.asCell(), callData);
-    if (callType == CallType::None) {
+    callData = JSC::getCallData(vm, method);
+    if (callData.type == CallData::Type::None) {
         throwVMTypeError(globalObject, scope, errorMessage);
         return jsUndefined();
     }

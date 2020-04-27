@@ -83,10 +83,7 @@ using WriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unkno
 
 enum PreferredPrimitiveType : uint8_t { NoPreference, PreferNumber, PreferString };
 
-enum class CallType : unsigned;
 struct CallData;
-enum class ConstructType : unsigned;
-struct ConstructData;
 
 typedef int64_t EncodedJSValue;
     

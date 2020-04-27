@@ -430,16 +430,18 @@ bool JSCallbackObject<Parent>::deletePropertyByIndex(JSCell* cell, JSGlobalObjec
 }
 
 template <class Parent>
-ConstructType JSCallbackObject<Parent>::getConstructData(JSCell* cell, ConstructData& constructData)
+CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
 {
+    CallData constructData;
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
+            constructData.type = CallData::Type::Native;
             constructData.native.function = construct;
-            return ConstructType::Host;
+            break;
         }
     }
-    return ConstructType::None;
+    return constructData;
 }
 
 template <class Parent>
@@ -505,16 +507,18 @@ bool JSCallbackObject<Parent>::customHasInstance(JSObject* object, JSGlobalObjec
 }
 
 template <class Parent>
-CallType JSCallbackObject<Parent>::getCallData(JSCell* cell, CallData& callData)
+CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
 {
+    CallData callData;
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
+            callData.type = CallData::Type::Native;
             callData.native.function = call;
-            return CallType::Host;
+            break;
         }
     }
-    return CallType::None;
+    return callData;
 }
 
 template <class Parent>

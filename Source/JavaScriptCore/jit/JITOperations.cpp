@@ -1058,12 +1058,10 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
     calleeFrame->setCodeBlock(0);
 
     if (callLinkInfo->specializationKind() == CodeForCall) {
-        CallData callData;
-        CallType callType = getCallData(vm, callee, callData);
-    
-        ASSERT(callType != CallType::JS);
-    
-        if (callType == CallType::Host) {
+        auto callData = getCallData(vm, callee);
+        ASSERT(callData.type != CallData::Type::JS);
+
+        if (callData.type == CallData::Type::Native) {
             NativeCallFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
@@ -1078,7 +1076,7 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
     
-        ASSERT(callType == CallType::None);
+        ASSERT(callData.type == CallData::Type::None);
         throwException(globalObject, scope, createNotAFunctionError(globalObject, callee));
         return encodeResult(
             vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),
@@ -1086,13 +1084,11 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
     }
 
     ASSERT(callLinkInfo->specializationKind() == CodeForConstruct);
-    
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(vm, callee, constructData);
-    
-    ASSERT(constructType != ConstructType::JS);
-    
-    if (constructType == ConstructType::Host) {
+
+    auto constructData = getConstructData(vm, callee);
+    ASSERT(constructData.type != CallData::Type::JS);
+
+    if (constructData.type == CallData::Type::Native) {
         NativeCallFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
@@ -1104,8 +1100,8 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
 
         return encodeResult(tagCFunction<void*, JSEntryPtrTag>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
     }
-    
-    ASSERT(constructType == ConstructType::None);
+
+    ASSERT(constructData.type == CallData::Type::None);
     throwException(globalObject, scope, createNotAConstructorError(globalObject, callee));
     return encodeResult(
         vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),

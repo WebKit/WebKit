@@ -1,3 +1,173 @@
+2020-04-27  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] CallData/ConstructData should include CallType/ConstructType
+        https://bugs.webkit.org/show_bug.cgi?id=211059
+
+        Reviewed by Darin Adler.
+
+        getCallData/getConstructData return a CallType/ConstructType and have a CallData/ConstructData out param,
+        and then *both* of these are passed side-by-side to `call`/`construct`, which all seems a bit silly.
+
+        This patch merges CallType/ConstructType into CallData/ConstructData such that getCallData/getConstructData
+        no longer need an out param and `call`/`construct` require one less overt parameter.
+
+        In so doing, it also:
+        - removes ConstructData entirely as it's an exact duplicate of CallData
+        - renames enum value Host to Native in alignment with CallData's union
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::getConstructData):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getConstructData):
+        (JSC::JSCallbackObject<Parent>::getCallData):
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * bindings/ScriptFunctionCall.h:
+        * dfg/DFGOperations.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/InspectorEnvironment.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * interpreter/Interpreter.h:
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (functionDollarAgentReceiveBroadcast):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        (JSC::profiledCall):
+        * runtime/CallData.h:
+        * runtime/ClassInfo.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        (JSC::profiledConstruct):
+        * runtime/ConstructData.h:
+        (JSC::construct):
+        (JSC::profiledConstruct):
+        (): Deleted.
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToJSON):
+        * runtime/GetterSetter.cpp:
+        (JSC::callGetter):
+        (JSC::callSetter):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::getConstructData):
+        * runtime/InternalFunction.h:
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorNext):
+        (JSC::iteratorClose):
+        (JSC::hasIteratorMethod):
+        (JSC::iteratorMethod):
+        (JSC::iteratorForIterable):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallData):
+        (JSC::JSCell::getConstructData):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isFunction):
+        (JSC::JSCell::isConstructor):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::getConstructData):
+        * runtime/JSFunction.h:
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSMicrotask.cpp:
+        (JSC::JSMicrotask::run):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::dependencyKeysIfEvaluated):
+        (JSC::JSModuleLoader::provideFetch):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::isCallableReplacer const):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::Walker):
+        (JSC::Walker::callReviver):
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSObject.cpp:
+        (JSC::ordinarySetSlow):
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::getMethod):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::getCallData):
+        (JSC::getConstructData):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createDeferredData):
+        (JSC::JSPromise::resolvedPromise):
+        (JSC::callFunction):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToLocaleString):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::ProxyObject::getCallData):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::getConstructData):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/ProxyObject.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        (JSC::replaceUsingStringSearch):
+        * runtime/VM.cpp:
+        (JSC::VM::callPromiseRejectionCallback):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * tools/JSDollarVM.cpp:
+        (JSC::callWithStackSizeProbeFunction):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::callWebAssemblyWrapperFunction):
+
 2020-04-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Clearly distinguish isConstructor from getConstructData

@@ -95,20 +95,14 @@ const JSObject* JSCell::getObject() const
     return isObject() ? static_cast<const JSObject*>(this) : 0;
 }
 
-CallType JSCell::getCallData(JSCell*, CallData& callData)
+CallData JSCell::getCallData(JSCell*)
 {
-    callData.js.functionExecutable = nullptr;
-    callData.js.scope = nullptr;
-    callData.native.function = nullptr;
-    return CallType::None;
+    return { };
 }
 
-ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
+CallData JSCell::getConstructData(JSCell*)
 {
-    constructData.js.functionExecutable = nullptr;
-    constructData.js.scope = nullptr;
-    constructData.native.function = nullptr;
-    return ConstructType::None;
+    return { };
 }
 
 bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)

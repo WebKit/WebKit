@@ -44,26 +44,25 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CallData callData;
-    CallType callType = getCallData(vm, functionObject, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, functionObject);
+    if (callData.type == CallData::Type::None)
         return throwTypeError(globalObject, scope, errorMessage);
 
-    RELEASE_AND_RETURN(scope, call(globalObject, functionObject, callType, callData, thisValue, args));
+    RELEASE_AND_RETURN(scope, call(globalObject, functionObject, callData, thisValue, args));
 }
 
-JSValue call(JSGlobalObject* globalObject, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     VM& vm = globalObject->vm();
-    ASSERT(callType == CallType::JS || callType == CallType::Host);
-    return vm.interpreter->executeCall(globalObject, asObject(functionObject), callType, callData, thisValue, args);
+    ASSERT(callData.type == CallData::Type::JS || callData.type == CallData::Type::Native);
+    return vm.interpreter->executeCall(globalObject, asObject(functionObject), callData, thisValue, args);
 }
 
-JSValue call(JSGlobalObject* globalObject, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSValue result = call(globalObject, functionObject, callType, callData, thisValue, args);
+    JSValue result = call(globalObject, functionObject, callData, thisValue, args);
     if (UNLIKELY(scope.exception())) {
         returnedException = scope.exception();
         scope.clearException();
@@ -73,18 +72,18 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, CallType call
     return result;
 }
 
-JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     VM& vm = globalObject->vm();
     ScriptProfilingScope profilingScope(vm.deprecatedVMEntryGlobalObject(globalObject), reason);
-    return call(globalObject, functionObject, callType, callData, thisValue, args);
+    return call(globalObject, functionObject, callData, thisValue, args);
 }
 
-JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
+JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
     VM& vm = globalObject->vm();
     ScriptProfilingScope profilingScope(vm.deprecatedVMEntryGlobalObject(globalObject), reason);
-    return call(globalObject, functionObject, callType, callData, thisValue, args, returnedException);
+    return call(globalObject, functionObject, callData, thisValue, args, returnedException);
 }
 
 } // namespace JSC

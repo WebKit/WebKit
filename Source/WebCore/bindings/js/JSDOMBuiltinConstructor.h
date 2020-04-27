@@ -44,7 +44,7 @@ private:
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
+    static JSC::CallData getConstructData(JSC::JSCell*);
     static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
@@ -118,10 +118,12 @@ template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltin
     return castedThis->callConstructor(*lexicalGlobalObject, *callFrame, createJSObject(*castedThis));
 }
 
-template<typename JSClass> inline JSC::ConstructType JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
+template<typename JSClass> inline JSC::CallData JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*)
 {
+    CallData constructData;
+    constructData.type = JSC::CallData::Type::Native;
     constructData.native.function = construct;
-    return JSC::ConstructType::Host;
+    return constructData;
 }
 
 } // namespace WebCore

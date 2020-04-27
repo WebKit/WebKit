@@ -665,15 +665,14 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         }
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=205562
-        // Getting CallData/CallType shouldn't be required to call into JS.
-        CallData callData;
-        CallType callType = getCallData(world.vm(), functionObject, callData);
-        if (callType == CallType::None) {
+        // Getting CallData shouldn't be required to call into JS.
+        auto callData = getCallData(world.vm(), functionObject);
+        if (callData.type == CallData::Type::None) {
             optionalDetails = { { "Unable to prepare JavaScript async function to be called"_s } };
             break;
         }
 
-        returnValue = JSExecState::profiledCall(&globalObject, JSC::ProfilingReason::Other, functionObject, callType, callData, &proxy, markedArguments, evaluationException);
+        returnValue = JSExecState::profiledCall(&globalObject, JSC::ProfilingReason::Other, functionObject, callData, &proxy, markedArguments, evaluationException);
     } while (false);
 
     InspectorInstrumentation::didEvaluateScript(m_frame);
@@ -732,9 +731,8 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
         return;
     }
 
-    CallData callData;
-    CallType callType = asObject(thenFunction)->methodTable(world.vm())->getCallData(asObject(thenFunction), callData);
-    if (callType == CallType::None) {
+    auto callData = getCallData(world.vm(), thenFunction);
+    if (callData.type == CallData::Type::None) {
         resolveCompletionHandler(result);
         return;
     }
@@ -772,7 +770,7 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     arguments.append(fulfillHandler);
     arguments.append(rejectHandler);
 
-    call(&globalObject, thenFunction, callType, callData, result.value(), arguments);
+    call(&globalObject, thenFunction, callData, result.value(), arguments);
 }
 
 Expected<void, ExceptionDetails> ScriptController::shouldAllowUserAgentScripts(Document& document) const

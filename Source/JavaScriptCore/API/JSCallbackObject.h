@@ -208,8 +208,8 @@ private:
 
     static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
+    static CallData getConstructData(JSCell*);
+    static CallData getCallData(JSCell*);
 
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {

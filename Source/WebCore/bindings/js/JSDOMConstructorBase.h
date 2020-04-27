@@ -51,7 +51,7 @@ protected:
 
     static String className(const JSObject*, JSC::VM&);
     static String toStringName(const JSObject*, JSC::JSGlobalObject*);
-    static JSC::CallType getCallData(JSCell*, JSC::CallData&);
+    static JSC::CallData getCallData(JSC::JSCell*);
 };
 
 inline JSC::Structure* JSDOMConstructorBase::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

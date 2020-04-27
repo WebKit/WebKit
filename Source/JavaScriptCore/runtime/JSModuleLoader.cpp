@@ -131,14 +131,13 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject,
 
     JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().dependencyKeysIfEvaluatedPublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(key);
 
-    JSValue result = call(globalObject, function, callType, callData, this, arguments);
+    JSValue result = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return jsDynamicCast<JSArray*>(vm, result);
@@ -151,9 +150,8 @@ JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, 
 
     JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().provideFetchPublicName()));
     RETURN_IF_EXCEPTION(scope, { });
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     SourceCode source { sourceCode };
     MarkedArgumentBuffer arguments;
@@ -161,7 +159,7 @@ JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, 
     arguments.append(JSSourceCode::create(vm, WTFMove(source)));
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, call(globalObject, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
 }
 
 JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
@@ -171,9 +169,8 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalO
 
     JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
@@ -181,7 +178,7 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalO
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }
@@ -193,9 +190,8 @@ JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSVa
 
     JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().loadModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
@@ -203,7 +199,7 @@ JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSVa
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }
@@ -215,16 +211,15 @@ JSValue JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, JSVa
 
     JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName()));
     RETURN_IF_EXCEPTION(scope, { });
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(moduleKey);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, call(globalObject, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
 }
 
 JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher)
@@ -234,9 +229,8 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
 
     auto* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().requestImportModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
-    CallData callData;
-    auto callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(jsString(vm, moduleKey.impl()));
@@ -244,7 +238,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }

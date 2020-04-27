@@ -88,9 +88,8 @@ static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, C
     JSValue adderFunction = set->JSObject::get(globalObject, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    CallData adderFunctionCallData;
-    CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
-    if (UNLIKELY(adderFunctionCallType == CallType::None))
+    auto adderFunctionCallData = getCallData(vm, adderFunction);
+    if (UNLIKELY(adderFunctionCallData.type == CallData::Type::None))
         return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
@@ -98,7 +97,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, C
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());
-        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
+        call(globalObject, adderFunction, adderFunctionCallData, set, arguments);
     });
 
     return JSValue::encode(set);

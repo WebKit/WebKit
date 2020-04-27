@@ -118,8 +118,8 @@ public:
     TaggedNativeFunction nativeFunction();
     TaggedNativeFunction nativeConstructor();
 
-    JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
-    JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
+    JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
+    JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
 
     static inline ptrdiff_t offsetOfExecutableOrRareData()
     {

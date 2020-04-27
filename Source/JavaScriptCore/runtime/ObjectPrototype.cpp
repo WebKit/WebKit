@@ -299,13 +299,12 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject* globa
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // If IsCallable(toString) is false, throw a TypeError exception.
-    CallData callData;
-    CallType callType = getCallData(vm, toString, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, toString);
+    if (callData.type == CallData::Type::None)
         return throwVMTypeError(globalObject, scope);
 
     // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, toString, callType, callData, thisValue, *vm.emptyList)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, toString, callData, thisValue, *vm.emptyList)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)

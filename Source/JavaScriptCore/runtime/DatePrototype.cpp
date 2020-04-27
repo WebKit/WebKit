@@ -1167,12 +1167,11 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(JSGlobalObject* globalObject, C
     JSValue toISOValue = object->get(globalObject, vm.propertyNames->toISOString);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    CallData callData;
-    CallType callType = getCallData(vm, toISOValue, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, toISOValue);
+    if (callData.type == CallData::Type::None)
         return throwVMTypeError(globalObject, scope, "toISOString is not a function"_s);
 
-    JSValue result = call(globalObject, asObject(toISOValue), callType, callData, object, *vm.emptyList);
+    JSValue result = call(globalObject, asObject(toISOValue), callData, object, *vm.emptyList);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result);
 }

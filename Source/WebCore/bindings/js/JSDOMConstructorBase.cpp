@@ -38,10 +38,12 @@ static EncodedJSValue JSC_HOST_CALL callThrowTypeError(JSGlobalObject* globalObj
     return JSValue::encode(jsNull());
 }
 
-CallType JSDOMConstructorBase::getCallData(JSCell*, CallData& callData)
+CallData JSDOMConstructorBase::getCallData(JSCell*)
 {
+    CallData callData;
+    callData.type = CallData::Type::Native;
     callData.native.function = callThrowTypeError;
-    return CallType::Host;
+    return callData;
 }
 
 String JSDOMConstructorBase::className(const JSObject*, JSC::VM&)

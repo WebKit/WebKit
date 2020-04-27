@@ -44,7 +44,7 @@ public:
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
     static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
     static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
-    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
+    static JSC::CallData getCallData(JSC::JSCell*);
 
     static void destroy(JSC::JSCell*);
 

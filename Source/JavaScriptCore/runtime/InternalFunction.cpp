@@ -87,21 +87,26 @@ const String InternalFunction::displayName(VM& vm)
     return String();
 }
 
-CallType InternalFunction::getCallData(JSCell* cell, CallData& callData)
+CallData InternalFunction::getCallData(JSCell* cell)
 {
     auto* function = jsCast<InternalFunction*>(cell);
     ASSERT(function->m_functionForCall);
+
+    CallData callData;
+    callData.type = CallData::Type::Native;
     callData.native.function = function->m_functionForCall;
-    return CallType::Host;
+    return callData;
 }
 
-ConstructType InternalFunction::getConstructData(JSCell* cell, ConstructData& constructData)
+CallData InternalFunction::getConstructData(JSCell* cell)
 {
+    CallData constructData;
     auto* function = jsCast<InternalFunction*>(cell);
-    if (function->m_functionForConstruct == callHostFunctionAsConstructor)
-        return ConstructType::None;
-    constructData.native.function = function->m_functionForConstruct;
-    return ConstructType::Host;
+    if (function->m_functionForConstruct != callHostFunctionAsConstructor) {
+        constructData.type = CallData::Type::Native;
+        constructData.native.function = function->m_functionForConstruct;
+    }
+    return constructData;
 }
 
 const String InternalFunction::calculatedDisplayName(VM& vm)

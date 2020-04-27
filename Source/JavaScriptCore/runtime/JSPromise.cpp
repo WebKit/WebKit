@@ -107,14 +107,13 @@ JSPromise::DeferredData JSPromise::createDeferredData(JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
-    CallData callData;
-    CallType callType = JSC::getCallData(globalObject->vm(), newPromiseCapabilityFunction, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(globalObject->vm(), newPromiseCapabilityFunction);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(promiseConstructor);
     ASSERT(!arguments.hasOverflowed());
-    JSValue deferred = call(globalObject, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
+    JSValue deferred = call(globalObject, newPromiseCapabilityFunction, callData, jsUndefined(), arguments);
     RETURN_IF_EXCEPTION(scope, { });
 
     DeferredData result;
@@ -134,13 +133,12 @@ JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue valu
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* function = globalObject->promiseResolveFunction();
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);
-    auto result = call(globalObject, function, callType, callData, globalObject->promiseConstructor(), arguments);
+    auto result = call(globalObject, function, callData, globalObject->promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(result.inherits<JSPromise>(vm));
     return jsCast<JSPromise*>(result);
@@ -148,16 +146,15 @@ JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue valu
 
 static inline void callFunction(JSGlobalObject* globalObject, JSValue function, JSPromise* promise, JSValue value)
 {
-    CallData callData;
-    CallType callType = getCallData(globalObject->vm(), function, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = getCallData(globalObject->vm(), function);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(promise);
     arguments.append(value);
     ASSERT(!arguments.hasOverflowed());
 
-    call(globalObject, function, callType, callData, jsUndefined(), arguments);
+    call(globalObject, function, callData, jsUndefined(), arguments);
 }
 
 void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)

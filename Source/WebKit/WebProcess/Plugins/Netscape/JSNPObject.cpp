@@ -247,15 +247,16 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(JSGlobalObject* globalObject,
     return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(globalObject, callFrame));
 }
 
-JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
+CallData JSNPObject::getCallData(JSCell* cell)
 {
+    CallData callData;
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->invokeDefault)
-        return CallType::None;
-
-    callData.native.function = callNPJSObject;
-    return CallType::Host;
+    if (thisObject->m_npObject && thisObject->m_npObject->_class->invokeDefault) {
+        callData.type = CallData::Type::Native;
+        callData.native.function = callNPJSObject;
+    }
+    return callData;
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -266,15 +267,18 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(JSGlobalObject* glo
     return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(globalObject, callFrame));
 }
 
-ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
+CallData JSNPObject::getConstructData(JSCell* cell)
 {
+    CallData constructData;
+
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->construct)
-        return ConstructType::None;
+    if (thisObject->m_npObject && thisObject->m_npObject->_class->construct) {
+        constructData.type = CallData::Type::Native;
+        constructData.native.function = constructWithConstructor;
+    }
 
-    constructData.native.function = constructWithConstructor;
-    return ConstructType::Host;
+    return constructData;
 }
 
 bool JSNPObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)

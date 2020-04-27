@@ -55,9 +55,8 @@ JSValue callGetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSet
 
     JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
 
-    CallData callData;
-    CallType callType = getter->methodTable(vm)->getCallData(getter, callData);
-    RELEASE_AND_RETURN(scope, call(globalObject, getter, callType, callData, base, ArgList()));
+    auto callData = getCallData(vm, getter);
+    RELEASE_AND_RETURN(scope, call(globalObject, getter, callData, base, ArgList()));
 }
 
 bool callSetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
@@ -76,10 +75,9 @@ bool callSetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter
     args.append(value);
     ASSERT(!args.hasOverflowed());
 
-    CallData callData;
-    CallType callType = setter->methodTable(vm)->getCallData(setter, callData);
+    auto callData = getCallData(vm, setter);
     scope.release();
-    call(globalObject, setter, callType, callData, base, args);
+    call(globalObject, setter, callData, base, args);
     return true;
 }
 

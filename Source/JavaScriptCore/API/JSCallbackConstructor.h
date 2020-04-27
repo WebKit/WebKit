@@ -68,7 +68,7 @@ private:
 
     friend struct APICallbackFunction;
 
-    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallData getConstructData(JSCell*);
 
     JSObjectCallAsConstructorCallback constructCallback() { return m_callback; }
 

@@ -131,7 +131,7 @@ private:
     static void destroy(JSCell*);
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    static CallType getCallData(JSCell*, CallData&);
+    static CallData getCallData(JSCell*);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 

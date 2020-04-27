@@ -900,7 +900,7 @@ public:
         return &m_butterfly;
     }
 
-    JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, CallType&, const Identifier&, const String& errorMessage);
+    JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, const Identifier&, const String& errorMessage);
 
     bool canPerformFastPutInline(VM&, PropertyName);
     bool canPerformFastPutInlineExcludingProto(VM&);

@@ -1258,14 +1258,13 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 
     auto scope = DECLARE_CATCH_SCOPE(*this);
 
-    CallData callData;
-    CallType callType = getCallData(*this, callback, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = getCallData(*this, callback);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer args;
     args.append(promise.get());
     args.append(promise->result(*this));
-    call(promise->globalObject(), callback, callType, callData, jsNull(), args);
+    call(promise->globalObject(), callback, callData, jsNull(), args);
     scope.clearException();
 }
 

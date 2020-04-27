@@ -196,12 +196,12 @@ bool JSTestPluginInterface::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlob
     return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
 }
 
-CallType JSTestPluginInterface::getCallData(JSCell* cell, CallData& callData)
+CallData JSTestPluginInterface::getCallData(JSCell* cell)
 {
     auto* thisObject = jsCast<JSTestPluginInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    return pluginElementCustomGetCallData(thisObject, callData);
+    return pluginElementCustomGetCallData(thisObject);
 }
 
 EncodedJSValue jsTestPluginInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)

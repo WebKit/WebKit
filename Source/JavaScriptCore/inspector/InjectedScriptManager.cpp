@@ -158,9 +158,8 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
     if (evaluationException)
         return makeUnexpected(evaluationException);
 
-    CallData callData;
-    CallType callType = getCallData(vm, functionValue, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, functionValue);
+    if (callData.type == CallData::Type::None)
         return nullptr;
 
     MarkedArgumentBuffer args;
@@ -169,7 +168,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
     args.append(jsNumber(id));
     ASSERT(!args.hasOverflowed());
 
-    JSValue result = JSC::call(globalObject, functionValue, callType, callData, globalThisValue, args);
+    JSValue result = JSC::call(globalObject, functionValue, callData, globalThisValue, args);
     scope.clearException();
     return result.getObject();
 }

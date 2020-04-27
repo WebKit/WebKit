@@ -96,9 +96,8 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(JSGlobalObject* globalObject
     if (!target.isObject())
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(vm, target, constructData);
-    if (constructType == ConstructType::None)
+    auto constructData = getConstructData(vm, target);
+    if (constructData.type == CallData::Type::None)
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
     JSValue newTarget = target;
@@ -123,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(JSGlobalObject* globalObject
         return encodedJSValue();
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, target, constructType, constructData, arguments, newTarget)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, target, constructData, arguments, newTarget)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.defineproperty

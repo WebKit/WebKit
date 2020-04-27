@@ -233,18 +233,17 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeObject(JSGlobalObject* globalObje
     return JSValue::encode(result);
 }
 
-CallType RuntimeObject::getCallData(JSCell* cell, CallData& callData)
+CallData RuntimeObject::getCallData(JSCell* cell)
 {
+    CallData callData;
+
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
-    if (!thisObject->m_instance)
-        return CallType::None;
-    
-    RefPtr<Instance> instance = thisObject->m_instance;
-    if (!instance->supportsInvokeDefaultMethod())
-        return CallType::None;
-    
-    callData.native.function = callRuntimeObject;
-    return CallType::Host;
+    if (thisObject->m_instance && thisObject->m_instance->supportsInvokeDefaultMethod()) {
+        callData.type = CallData::Type::Native;
+        callData.native.function = callRuntimeObject;
+    }
+
+    return callData;
 }
 
 static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -261,18 +260,17 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeConstructor(JSGlobalObject* globa
     return JSValue::encode(result.isObject() ? jsCast<JSObject*>(result.asCell()) : constructor);
 }
 
-ConstructType RuntimeObject::getConstructData(JSCell* cell, ConstructData& constructData)
+CallData RuntimeObject::getConstructData(JSCell* cell)
 {
+    CallData constructData;
+
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
-    if (!thisObject->m_instance)
-        return ConstructType::None;
-    
-    RefPtr<Instance> instance = thisObject->m_instance;
-    if (!instance->supportsConstruct())
-        return ConstructType::None;
-    
-    constructData.native.function = callRuntimeConstructor;
-    return ConstructType::Host;
+    if (thisObject->m_instance && thisObject->m_instance->supportsConstruct()) {
+        constructData.type = CallData::Type::Native;
+        constructData.native.function = callRuntimeConstructor;
+    }
+
+    return constructData;
 }
 
 void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode)

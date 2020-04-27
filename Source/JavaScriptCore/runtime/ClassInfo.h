@@ -47,10 +47,10 @@ struct MethodTable {
     using VisitChildrenFunctionPtr = void (*)(JSCell*, SlotVisitor&);
     VisitChildrenFunctionPtr METHOD_TABLE_ENTRY(visitChildren);
 
-    using GetCallDataFunctionPtr = CallType (*)(JSCell*, CallData&);
+    using GetCallDataFunctionPtr = CallData (*)(JSCell*);
     GetCallDataFunctionPtr METHOD_TABLE_ENTRY(getCallData);
 
-    using GetConstructDataFunctionPtr = ConstructType (*)(JSCell*, ConstructData&);
+    using GetConstructDataFunctionPtr = CallData (*)(JSCell*);
     GetConstructDataFunctionPtr METHOD_TABLE_ENTRY(getConstructData);
 
     using PutFunctionPtr = bool (*)(JSCell*, JSGlobalObject*, PropertyName propertyName, JSValue, PutPropertySlot&);

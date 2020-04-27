@@ -412,12 +412,11 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         scope.clearException();
         return;
     }
-    JSC::CallData callData;
-    auto callType = overlay->methodTable(vm)->getCallData(overlay, callData);
-    if (callType == JSC::CallType::None)
+    auto callData = JSC::getCallData(vm, overlay);
+    if (callData.type == JSC::CallData::Type::None)
         return;
 
-    call(&lexicalGlobalObject, overlay, callType, callData, &globalObject, argList);
+    call(&lexicalGlobalObject, overlay, callData, &globalObject, argList);
     scope.clearException();
 }
 

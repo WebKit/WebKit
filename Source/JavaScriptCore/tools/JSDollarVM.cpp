@@ -2147,10 +2147,9 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
 
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
+    auto callData = getCallData(vm, function);
     MarkedArgumentBuffer args;
-    call(globalObject, function, callType, callData, jsUndefined(), args);
+    call(globalObject, function, callData, jsUndefined(), args);
 }
 #endif // ENABLE(MASM_PROBE)
 

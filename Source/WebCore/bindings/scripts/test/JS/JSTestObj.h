@@ -45,7 +45,7 @@ public:
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
     static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
-    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
+    static JSC::CallData getCallData(JSC::JSCell*);
 
     static void destroy(JSC::JSCell*);
 

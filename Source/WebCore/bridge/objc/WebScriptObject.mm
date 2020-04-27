@@ -58,7 +58,6 @@ using namespace JSC::Bindings;
 using namespace WebCore;
 
 using JSC::CallData;
-using JSC::CallType;
 using JSC::Identifier;
 using JSC::JSLockHolder;
 using JSC::JSObject;
@@ -347,9 +346,8 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     UNUSED_PARAM(scope);
 
     JSC::JSValue function = [self _imp]->get(lexicalGlobalObject, Identifier::fromString(vm, String(name)));
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None)
         return nil;
 
     MarkedArgumentBuffer argList;
@@ -360,7 +358,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         return nil;
 
     NakedPtr<JSC::Exception> exception;
-    JSC::JSValue result = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, function, callType, callData, [self _imp], argList, exception);
+    JSC::JSValue result = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, function, callData, [self _imp], argList, exception);
 
     if (exception) {
         addExceptionToConsole(lexicalGlobalObject, exception);

@@ -59,8 +59,8 @@ public:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
-    static CallType getCallData(JSCell*, CallData&);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallData getCallData(JSCell*);
+    static CallData getConstructData(JSCell*);
 
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 

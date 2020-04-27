@@ -42,16 +42,15 @@ JSValue iteratorNext(JSGlobalObject* globalObject, IterationRecord iterationReco
     JSValue iterator = iterationRecord.iterator;
     JSValue nextFunction = iterationRecord.nextMethod;
 
-    CallData nextFunctionCallData;
-    CallType nextFunctionCallType = getCallData(vm, nextFunction, nextFunctionCallData);
-    if (nextFunctionCallType == CallType::None)
+    auto nextFunctionCallData = getCallData(vm, nextFunction);
+    if (nextFunctionCallData.type == CallData::Type::None)
         return throwTypeError(globalObject, scope);
 
     MarkedArgumentBuffer nextFunctionArguments;
     if (!argument.isEmpty())
         nextFunctionArguments.append(argument);
     ASSERT(!nextFunctionArguments.hasOverflowed());
-    JSValue result = call(globalObject, nextFunction, nextFunctionCallType, nextFunctionCallData, iterator, nextFunctionArguments);
+    JSValue result = call(globalObject, nextFunction, nextFunctionCallData, iterator, nextFunctionArguments);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!result.isObject())
@@ -105,9 +104,8 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
         return;
     }
 
-    CallData returnFunctionCallData;
-    CallType returnFunctionCallType = getCallData(vm, returnFunction, returnFunctionCallData);
-    if (returnFunctionCallType == CallType::None) {
+    auto returnFunctionCallData = getCallData(vm, returnFunction);
+    if (returnFunctionCallData.type == CallData::Type::None) {
         if (exception)
             throwException(globalObject, throwScope, exception);
         else
@@ -117,7 +115,7 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
 
     MarkedArgumentBuffer returnFunctionArguments;
     ASSERT(!returnFunctionArguments.hasOverflowed());
-    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallType, returnFunctionCallData, iterationRecord.iterator, returnFunctionArguments);
+    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallData, iterationRecord.iterator, returnFunctionArguments);
 
     if (exception) {
         throwException(globalObject, throwScope, exception);
@@ -165,8 +163,7 @@ bool hasIteratorMethod(JSGlobalObject* globalObject, JSValue value)
 
     JSObject* object = asObject(value);
     CallData callData;
-    CallType callType;
-    JSValue applyMethod = object->getMethod(globalObject, callData, callType, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
+    JSValue applyMethod = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
 
     return !applyMethod.isUndefined();
@@ -178,8 +175,7 @@ JSValue iteratorMethod(JSGlobalObject* globalObject, JSObject* object)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
-    CallType callType;
-    JSValue method = object->getMethod(globalObject, callData, callType, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
+    JSValue method = object->getMethod(globalObject, callData, vm.propertyNames->iteratorSymbol, "Symbol.iterator property should be callable"_s);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     return method;
@@ -190,15 +186,14 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSObject* obje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CallData iteratorMethodCallData;
-    CallType iteratorMethodCallType = getCallData(vm, iteratorMethod, iteratorMethodCallData);
-    if (iteratorMethodCallType == CallType::None) {
+    auto iteratorMethodCallData = getCallData(vm, iteratorMethod);
+    if (iteratorMethodCallData.type == CallData::Type::None) {
         throwTypeError(globalObject, scope);
         return { };
     }
 
     ArgList iteratorMethodArguments;
-    JSValue iterator = call(globalObject, iteratorMethod, iteratorMethodCallType, iteratorMethodCallData, object, iteratorMethodArguments);
+    JSValue iterator = call(globalObject, iteratorMethod, iteratorMethodCallData, object, iteratorMethodArguments);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!iterator.isObject()) {
@@ -220,15 +215,14 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
     JSValue iteratorFunction = iterable.get(globalObject, vm.propertyNames->iteratorSymbol);
     RETURN_IF_EXCEPTION(scope, { });
     
-    CallData iteratorFunctionCallData;
-    CallType iteratorFunctionCallType = getCallData(vm, iteratorFunction, iteratorFunctionCallData);
-    if (iteratorFunctionCallType == CallType::None) {
+    auto iteratorFunctionCallData = getCallData(vm, iteratorFunction);
+    if (iteratorFunctionCallData.type == CallData::Type::None) {
         throwTypeError(globalObject, scope);
         return { };
     }
 
     ArgList iteratorFunctionArguments;
-    JSValue iterator = call(globalObject, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+    JSValue iterator = call(globalObject, iteratorFunction, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!iterator.isObject()) {

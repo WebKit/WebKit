@@ -39,6 +39,6 @@ namespace WebCore {
 
     bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     bool pluginElementCustomPut(JSHTMLElement*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
-    JSC::CallType pluginElementCustomGetCallData(JSHTMLElement*, JSC::CallData&);
+    JSC::CallData pluginElementCustomGetCallData(JSHTMLElement*);
 
 } // namespace WebCore

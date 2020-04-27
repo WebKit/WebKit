@@ -331,7 +331,6 @@
 #endif
 
 using JSC::CallData;
-using JSC::CallType;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
 using JSC::Identifier;
@@ -4650,16 +4649,15 @@ JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JS
     ASSERT(value.isFunction(vm));
 
     JSObject* function = value.getObject();
-    CallData callData;
-    CallType callType = JSC::getCallData(vm, function, callData);
-    ASSERT(callType != JSC::CallType::None);
+    auto callData = JSC::getCallData(vm, function);
+    ASSERT(callData.type != JSC::CallData::Type::None);
     MarkedArgumentBuffer arguments;
     arguments.append(buffer);
     arguments.append(srcByteOffset);
     arguments.append(srcLength);
     ASSERT(!arguments.hasOverflowed());
 
-    return JSC::call(&lexicalGlobalObject, function, callType, callData, JSC::jsUndefined(), arguments);
+    return JSC::call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
 }
 
 #endif

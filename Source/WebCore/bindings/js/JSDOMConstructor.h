@@ -42,7 +42,7 @@ private:
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
+    static JSC::CallData getConstructData(JSC::JSCell*);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
@@ -69,10 +69,12 @@ template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> inline JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
+template<typename JSClass> inline JSC::CallData JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*)
 {
+    JSC::CallData constructData;
+    constructData.type = JSC::CallData::Type::Native;
     constructData.native.function = construct;
-    return JSC::ConstructType::Host;
+    return constructData;
 }
 
 

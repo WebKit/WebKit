@@ -74,11 +74,10 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     VM& vm = lexicalGlobalObject->vm();
         
     JSValue function = m_customResolver->get(lexicalGlobalObject, Identifier::fromString(vm, "lookupNamespaceURI"));
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None) {
-        callType = m_customResolver->methodTable(vm)->getCallData(m_customResolver.get(), callData);
-        if (callType == CallType::None) {
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None) {
+        callData = getCallData(vm, m_customResolver.get());
+        if (callData.type == CallData::Type::None) {
             if (PageConsoleClient* console = m_globalObject->wrapped().console())
                 console->addMessage(MessageSource::JS, MessageLevel::Error, "XPathNSResolver does not have a lookupNamespaceURI method."_s);
             return String();
@@ -93,7 +92,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> exception;
-    JSValue retval = JSExecState::call(lexicalGlobalObject, function, callType, callData, m_customResolver.get(), args, exception);
+    JSValue retval = JSExecState::call(lexicalGlobalObject, function, callData, m_customResolver.get(), args, exception);
 
     String result;
     if (exception)

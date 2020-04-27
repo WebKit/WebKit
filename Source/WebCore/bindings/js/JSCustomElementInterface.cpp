@@ -117,17 +117,16 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ConstructData constructData;
-    ConstructType constructType = constructor->methodTable(vm)->getConstructData(constructor, constructData);
-    if (constructType == ConstructType::None) {
+    auto constructData = getConstructData(vm, constructor);
+    if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    JSExecState::instrumentFunctionConstruct(&document, constructType, constructData);
+    JSExecState::instrumentFunction(&document, constructData);
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    JSValue newElement = construct(&lexicalGlobalObject, constructor, constructType, constructData, args);
+    JSValue newElement = construct(&lexicalGlobalObject, constructor, constructData, args);
     InspectorInstrumentation::didCallFunction(&document);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
@@ -186,9 +185,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    ConstructData constructData;
-    ConstructType constructType = m_constructor->methodTable(vm)->getConstructData(m_constructor.get(), constructData);
-    if (constructType == ConstructType::None) {
+    auto constructData = getConstructData(vm, m_constructor.get());
+    if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -199,8 +197,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    JSExecState::instrumentFunctionConstruct(context, constructType, constructData);
-    JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructType, constructData, args);
+    JSExecState::instrumentFunction(context, constructData);
+    JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructData, args);
     InspectorInstrumentation::didCallFunction(context);
 
     m_constructionStack.removeLast();
@@ -240,18 +238,17 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
 
     JSObject* jsElement = asObject(toJS(lexicalGlobalObject, globalObject, element));
 
-    CallData callData;
-    CallType callType = callback->methodTable(vm)->getCallData(callback, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = getCallData(vm, callback);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer args;
     addArguments(lexicalGlobalObject, globalObject, args);
     RELEASE_ASSERT(!args.hasOverflowed());
 
-    JSExecState::instrumentFunctionCall(context, callType, callData);
+    JSExecState::instrumentFunction(context, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSExecState::call(lexicalGlobalObject, callback, callType, callData, jsElement, args, exception);
+    JSExecState::call(lexicalGlobalObject, callback, callData, jsElement, args, exception);
 
     InspectorInstrumentation::didCallFunction(context);
 

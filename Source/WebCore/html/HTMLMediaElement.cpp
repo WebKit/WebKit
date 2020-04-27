@@ -4362,14 +4362,13 @@ void HTMLMediaElement::updateCaptionContainer()
         if (!methodObject)
             return false;
 
-        JSC::CallData callData;
-        auto callType = methodObject->methodTable(vm)->getCallData(methodObject, callData);
-        if (callType == JSC::CallType::None)
+        auto callData = JSC::getCallData(vm, methodObject);
+        if (callData.type == JSC::CallData::Type::None)
             return false;
 
         JSC::MarkedArgumentBuffer noArguments;
         ASSERT(!noArguments.hasOverflowed());
-        JSC::call(&lexicalGlobalObject, methodObject, callType, callData, controllerObject, noArguments);
+        JSC::call(&lexicalGlobalObject, methodObject, callData, controllerObject, noArguments);
         scope.clearException();
 
         m_haveSetUpCaptionContainer = true;
@@ -7243,12 +7242,11 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
-        JSC::CallData callData;
-        auto callType = function->methodTable(vm)->getCallData(function, callData);
-        if (callType == JSC::CallType::None)
+        auto callData = JSC::getCallData(vm, function);
+        if (callData.type == JSC::CallData::Type::None)
             return false;
 
-        auto controllerValue = JSC::call(&lexicalGlobalObject, function, callType, callData, &globalObject, argList);
+        auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
         scope.clearException();
         auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, controllerValue);
         if (!controllerObject)
@@ -7321,14 +7319,13 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
-        JSC::CallData callData;
-        auto callType = function->methodTable(vm)->getCallData(function, callData);
-        if (callType == JSC::CallType::None)
+        auto callData = JSC::getCallData(vm, function);
+        if (callData.type == JSC::CallData::Type::None)
             return false;
 
         JSC::MarkedArgumentBuffer argList;
         ASSERT(!argList.hasOverflowed());
-        JSC::call(&lexicalGlobalObject, function, callType, callData, controllerObject, argList);
+        JSC::call(&lexicalGlobalObject, function, callData, controllerObject, argList);
 
         return true;
     });
@@ -7365,14 +7362,13 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
-        JSC::CallData callData;
-        auto callType = function->methodTable(vm)->getCallData(function, callData);
+        auto callData = JSC::getCallData(vm, function);
         JSC::MarkedArgumentBuffer argList;
         ASSERT(!argList.hasOverflowed());
-        if (callType == JSC::CallType::None)
+        if (callData.type == JSC::CallData::Type::None)
             return false;
 
-        auto outputValue = JSC::call(&lexicalGlobalObject, function, callType, callData, controllerObject, argList);
+        auto outputValue = JSC::call(&lexicalGlobalObject, function, callData, controllerObject, argList);
 
         RETURN_IF_EXCEPTION(scope, false);
 

@@ -32,8 +32,7 @@
 
 namespace WebCore {
 
-template<typename Type, Type jsType, class DataType>
-inline void JSExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
+inline void JSExecState::instrumentFunction(ScriptExecutionContext* context, const CallData& callData)
 {
     if (!InspectorInstrumentation::timelineAgentTracking(context))
         return;
@@ -41,23 +40,13 @@ inline void JSExecState::instrumentFunctionInternal(ScriptExecutionContext* cont
     String resourceName;
     int lineNumber = 1;
     int columnNumber = 1;
-    if (callType == jsType) {
+    if (callData.type == CallData::Type::JS) {
         resourceName = callData.js.functionExecutable->sourceURL();
         lineNumber = callData.js.functionExecutable->firstLine();
         columnNumber = callData.js.functionExecutable->startColumn();
     } else
         resourceName = "undefined";
     InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
-}
-
-inline void JSExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)
-{
-    instrumentFunctionInternal<JSC::CallType, JSC::CallType::JS, JSC::CallData>(context, type, data);
-}
-
-inline void JSExecState::instrumentFunctionConstruct(ScriptExecutionContext* context, JSC::ConstructType type, const JSC::ConstructData& data)
-{
-    instrumentFunctionInternal<JSC::ConstructType, JSC::ConstructType::JS, JSC::ConstructData>(context, type, data);
 }
 
 } // namespace WebCore

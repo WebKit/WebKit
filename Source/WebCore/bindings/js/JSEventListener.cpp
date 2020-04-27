@@ -134,11 +134,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     JSValue handleEventFunction = jsFunction;
 
-    CallData callData;
-    CallType callType = getCallData(vm, handleEventFunction, callData);
+    auto callData = getCallData(vm, handleEventFunction);
 
     // If jsFunction is not actually a function and this is an EventListener, see if it implements callback interface.
-    if (callType == CallType::None) {
+    if (callData.type == CallData::Type::None) {
         if (m_isAttribute)
             return;
 
@@ -150,8 +149,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             reportException(lexicalGlobalObject, exception);
             return;
         }
-        callType = getCallData(vm, handleEventFunction, callData);
-        if (callType == CallType::None) {
+        callData = getCallData(vm, handleEventFunction);
+        if (callData.type == CallData::Type::None) {
             event.target()->uncaughtExceptionInEventHandler();
             reportException(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "'handleEvent' property of event listener should be callable"_s));
             return;
@@ -173,11 +172,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-    JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
+    JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 
     JSValue thisValue = handleEventFunction == jsFunction ? toJS(lexicalGlobalObject, globalObject, event.currentTarget()) : jsFunction;
     NakedPtr<JSC::Exception> exception;
-    JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
+    JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callData, thisValue, args, exception);
 
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 

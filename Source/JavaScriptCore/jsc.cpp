@@ -1941,9 +1941,8 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(JSGlobalObject*
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue callback = callFrame->argument(0);
-    CallData callData;
-    CallType callType = getCallData(vm, callback, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, callback);
+    if (callData.type == CallData::Type::None)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected callback"_s)));
     
     RefPtr<Message> message;
@@ -1961,7 +1960,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(JSGlobalObject*
     args.append(jsNumber(message->index()));
     if (UNLIKELY(args.hasOverflowed()))
         return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, callback, callType, callData, jsNull(), args)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, callback, callData, jsNull(), args)));
 }
 
 EncodedJSValue JSC_HOST_CALL functionDollarAgentReport(JSGlobalObject* globalObject, CallFrame* callFrame)

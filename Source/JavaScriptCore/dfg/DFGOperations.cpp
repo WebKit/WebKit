@@ -3043,14 +3043,13 @@ JSCell* JIT_OPERATION operationSpreadGeneric(JSGlobalObject* globalObject, JSCel
     JSArray* array;
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
-        CallData callData;
-        CallType callType = JSC::getCallData(vm, iterationFunction, callData);
-        ASSERT(callType != CallType::None);
+        auto callData = getCallData(vm, iterationFunction);
+        ASSERT(callData.type != CallData::Type::None);
 
         MarkedArgumentBuffer arguments;
         arguments.append(iterable);
         ASSERT(!arguments.hasOverflowed());
-        JSValue arrayResult = call(globalObject, iterationFunction, callType, callData, jsNull(), arguments);
+        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), arguments);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
         array = jsCast<JSArray*>(arrayResult);
     }

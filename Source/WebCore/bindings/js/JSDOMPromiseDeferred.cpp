@@ -228,15 +228,14 @@ JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexi
     if (cause == RejectedPromiseWithTypeErrorCause::NativeGetter)
         rejectionValue->setNativeGetterTypeError();
 
-    CallData callData;
-    auto callType = getCallData(lexicalGlobalObject.vm(), rejectFunction, callData);
-    ASSERT(callType != CallType::None);
+    auto callData = getCallData(lexicalGlobalObject.vm(), rejectFunction);
+    ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(rejectionValue);
     ASSERT(!arguments.hasOverflowed());
 
-    return JSValue::encode(call(&lexicalGlobalObject, rejectFunction, callType, callData, promiseConstructor, arguments));
+    return JSValue::encode(call(&lexicalGlobalObject, rejectFunction, callData, promiseConstructor, arguments));
 }
 
 static inline JSC::JSValue parseAsJSON(JSC::JSGlobalObject* lexicalGlobalObject, const String& data)

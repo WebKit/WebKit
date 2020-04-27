@@ -523,10 +523,8 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
             auto setFallbackFrameType = [&] {
                 ASSERT(!alreadyHasExecutable);
                 FrameType result = FrameType::Unknown;
-                CallData callData;
-                CallType callType;
-                callType = getCallData(m_vm, calleeCell, callData);
-                if (callType == CallType::Host)
+                auto callData = getCallData(m_vm, calleeCell);
+                if (callData.type == CallData::Type::Native)
                     result = FrameType::Host;
 
                 stackFrame.frameType = result;

@@ -204,9 +204,8 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
     JSC::JSValue callback = callFrame.argument(0);
     JSC::JSValue thisValue = callFrame.argument(1);
 
-    JSC::CallData callData;
-    JSC::CallType callType = JSC::getCallData(JSC::getVM(&lexicalGlobalObject), callback, callData);
-    if (callType == JSC::CallType::None)
+    auto callData = JSC::getCallData(JSC::getVM(&lexicalGlobalObject), callback);
+    if (callData.type == JSC::CallData::Type::None)
         return throwTypeError(&lexicalGlobalObject, scope, "Cannot call callback"_s);
 
     auto iterator = thisObject.wrapped().createIterator();
@@ -218,7 +217,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
             throwOutOfMemoryError(&lexicalGlobalObject, scope);
             return { };
         }
-        JSC::call(&lexicalGlobalObject, callback, callType, callData, thisValue, arguments);
+        JSC::call(&lexicalGlobalObject, callback, callData, thisValue, arguments);
         if (UNLIKELY(scope.exception()))
             break;
     }

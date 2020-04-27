@@ -188,15 +188,14 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         
         // Call the function object.
         JSValue function = obj->imp;
-        CallData callData;
-        CallType callType = getCallData(vm, function, callData);
-        if (callType == CallType::None)
+        auto callData = getCallData(vm, function);
+        if (callData.type == CallData::Type::None)
             return false;
         
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, function, argList);
+        JSValue resultV = JSC::call(lexicalGlobalObject, function, callData, function, argList);
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(lexicalGlobalObject, resultV, result);
@@ -240,16 +239,15 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
 
         JSGlobalObject* lexicalGlobalObject = globalObject;
         JSValue function = obj->imp->get(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
-        CallData callData;
-        CallType callType = getCallData(vm, function, callData);
-        if (callType == CallType::None)
+        auto callData = getCallData(vm, function);
+        if (callData.type == CallData::Type::None)
             return false;
 
         // Call the function object.
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, obj->imp, argList);
+        JSValue resultV = JSC::call(lexicalGlobalObject, function, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(lexicalGlobalObject, resultV, result);
@@ -531,15 +529,14 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         
         // Call the constructor object.
         JSValue constructor = obj->imp;
-        ConstructData constructData;
-        ConstructType constructType = getConstructData(vm, constructor, constructData);
-        if (constructType == ConstructType::None)
+        auto constructData = getConstructData(vm, constructor);
+        if (constructData.type == CallData::Type::None)
             return false;
         
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::construct(lexicalGlobalObject, constructor, constructType, constructData, argList);
+        JSValue resultV = JSC::construct(lexicalGlobalObject, constructor, constructData, argList);
         
         // Convert and return the result.
         convertValueToNPVariant(lexicalGlobalObject, resultV, result);

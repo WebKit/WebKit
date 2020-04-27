@@ -920,16 +920,15 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
 
     JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
     JSValue function = object->get(lexicalGlobalObject, methodName);
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, function);
+    if (callData.type == CallData::Type::None)
         return false;
 
     MarkedArgumentBuffer argList;
     demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = call(lexicalGlobalObject, function, callType, callData, object, argList);
+    JSValue value = call(lexicalGlobalObject, function, callData, object, argList);
         
     marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
@@ -956,16 +955,15 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
-    CallData callData;
-    CallType callType = object->methodTable(vm)->getCallData(object, callData);
-    if (callType == CallType::None)
+    auto callData = getCallData(vm, object);
+    if (callData.type == CallData::Type::None)
         return false;
 
     MarkedArgumentBuffer argList;
     demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = call(lexicalGlobalObject, object, callType, callData, object, argList);
+    JSValue value = call(lexicalGlobalObject, object, callData, object, argList);
     
     marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
@@ -993,16 +991,15 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
 
     JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
 
-    ConstructData constructData;
-    ConstructType constructType = object->methodTable(vm)->getConstructData(object, constructData);
-    if (constructType == ConstructType::None)
+    auto constructData = getConstructData(vm, object);
+    if (constructData.type == CallData::Type::None)
         return false;
 
     MarkedArgumentBuffer argList;
     demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = JSC::construct(lexicalGlobalObject, object, constructType, constructData, argList);
+    JSValue value = JSC::construct(lexicalGlobalObject, object, constructData, argList);
     
     marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();

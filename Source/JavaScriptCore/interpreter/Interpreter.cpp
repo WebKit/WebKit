@@ -780,15 +780,14 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
             case JSONPPathEntryTypeCall: {
                 JSValue function = baseObject.get(globalObject, JSONPPath.last().m_pathEntryName);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
-                CallData callData;
-                CallType callType = getCallData(vm, function, callData);
-                if (callType == CallType::None)
+                auto callData = getCallData(vm, function);
+                if (callData.type == CallData::Type::None)
                     return throwException(globalObject, throwScope, createNotAFunctionError(globalObject, function));
                 MarkedArgumentBuffer jsonArg;
                 jsonArg.append(JSONPValue);
                 ASSERT(!jsonArg.hasOverflowed());
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined() : baseObject;
-                JSONPValue = JSC::call(globalObject, function, callType, callData, thisValue, jsonArg);
+                JSONPValue = JSC::call(globalObject, function, callData, thisValue, jsonArg);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
@@ -857,7 +856,7 @@ failedJSONP:
     return checkedReturn(result);
 }
 
-JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* function, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -867,7 +866,7 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
-    bool isJSCall = (callType == CallType::JS);
+    bool isJSCall = (callData.type == CallData::Type::JS);
     JSScope* scope = nullptr;
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
@@ -877,7 +876,7 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
         scope = callData.js.scope;
         globalObject = scope->globalObject(vm);
     } else {
-        ASSERT(callType == CallType::Host);
+        ASSERT(callData.type == CallData::Type::Native);
         globalObject = function->globalObject(vm);
     }
 
@@ -929,7 +928,7 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     return checkedReturn(result);
 }
 
-JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSObject* constructor, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
+JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSObject* constructor, const CallData& constructData, const ArgList& args, JSValue newTarget)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -943,7 +942,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         return nullptr;
     }
 
-    bool isJSConstruct = (constructType == ConstructType::JS);
+    bool isJSConstruct = (constructData.type == CallData::Type::JS);
     JSScope* scope = nullptr;
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
@@ -953,7 +952,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         scope = constructData.js.scope;
         globalObject = scope->globalObject(vm);
     } else {
-        ASSERT(constructType == ConstructType::Host);
+        ASSERT(constructData.type == CallData::Type::Native);
         globalObject = constructor->globalObject(vm);
     }
 

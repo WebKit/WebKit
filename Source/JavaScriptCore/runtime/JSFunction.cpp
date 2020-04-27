@@ -274,16 +274,21 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.appendUnbarriered(bitwise_cast<JSCell*>(bitwise_cast<uintptr_t>(thisObject->m_executableOrRareData) & ~rareDataTag));
 }
 
-CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
+CallData JSFunction::getCallData(JSCell* cell)
 {
+    CallData callData;
+
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
+        callData.type = CallData::Type::Native;
         callData.native.function = thisObject->nativeFunction();
-        return CallType::Host;
+    } else {
+        callData.type = CallData::Type::JS;
+        callData.js.functionExecutable = thisObject->jsExecutable();
+        callData.js.scope = thisObject->scope();
     }
-    callData.js.functionExecutable = thisObject->jsExecutable();
-    callData.js.scope = thisObject->scope();
-    return CallType::JS;
+
+    return callData;
 }
 
 class RetrieveArgumentsFunctor {
@@ -691,24 +696,26 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
 }
 
 // ECMA 13.2.2 [[Construct]]
-ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& constructData)
+CallData JSFunction::getConstructData(JSCell* cell)
 {
-    JSFunction* thisObject = jsCast<JSFunction*>(cell);
+    CallData constructData;
 
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
-        if (thisObject->nativeConstructor() == callHostFunctionAsConstructor)
-            return ConstructType::None;
-        constructData.native.function = thisObject->nativeConstructor();
-        return ConstructType::Host;
+        if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
+            constructData.type = CallData::Type::Native;
+            constructData.native.function = thisObject->nativeConstructor();
+        }
+    } else {
+        FunctionExecutable* functionExecutable = thisObject->jsExecutable();
+        if (functionExecutable->constructAbility() != ConstructAbility::CannotConstruct) {
+            constructData.type = CallData::Type::JS;
+            constructData.js.functionExecutable = functionExecutable;
+            constructData.js.scope = thisObject->scope();
+        }
     }
 
-    FunctionExecutable* functionExecutable = thisObject->jsExecutable();
-    if (functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
-        return ConstructType::None;
-
-    constructData.js.functionExecutable = functionExecutable;
-    constructData.js.scope = thisObject->scope();
-    return ConstructType::JS;
+    return constructData;
 }
 
 String getCalculatedDisplayName(VM& vm, JSObject* object)

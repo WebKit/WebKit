@@ -188,9 +188,8 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
         return false;
     JSC::JSObject* replacementObject = replacementFunction.toObject(lexicalGlobalObject);
     scope.assertNoException();
-    JSC::CallData callData;
-    JSC::CallType callType = replacementObject->methodTable(vm)->getCallData(replacementObject, callData);
-    if (callType == JSC::CallType::None)
+    auto callData = getCallData(vm, replacementObject);
+    if (callData.type == JSC::CallData::Type::None)
         return false;
 
     JSC::MarkedArgumentBuffer argList;
@@ -200,7 +199,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, *globalObject, m_names));
     argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, *globalObject, m_values));
     ASSERT(!argList.hasOverflowed());
-    JSC::JSValue replacement = call(lexicalGlobalObject, replacementObject, callType, callData, globalObject, argList);
+    JSC::JSValue replacement = call(lexicalGlobalObject, replacementObject, callData, globalObject, argList);
     if (UNLIKELY(scope.exception())) {
         scope.clearException();
         return false;
