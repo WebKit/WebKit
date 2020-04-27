@@ -1,3 +1,14 @@
+2020-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/events/wheel-event-outside-body.html sometimes fails
+        https://bugs.webkit.org/show_bug.cgi?id=211098
+
+        Reviewed by Tim Horton.
+
+        Remove the 100ms watchdog timer. We'll just let the test time out if it fails.
+
+        * fast/events/wheel-event-outside-body.html:
+
 2020-04-27  Antoine Quint  <graouts@apple.com>
 
         [ iOS ] REGRESSION: animations/change-keyframes-name.html is a flaky failure

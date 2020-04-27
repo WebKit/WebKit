@@ -31,7 +31,7 @@
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
-        
+
         function setResult(s)
         {
             document.getElementById('results').innerText = s;
@@ -51,15 +51,9 @@
                     eventSender.mouseMoveTo(50, 100);
                     eventSender.mouseScrollBy(-1, -2);
                 }
-                
-                // Watchdog timer in case of failure.
-                window.setTimeout(function() {
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                }, 100);
             }, 0);
         }
-        
+
         window.addEventListener('load', runTest, false);
     </script>
 </head>
