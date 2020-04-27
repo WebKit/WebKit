@@ -1,3 +1,16 @@
+2020-04-27  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: A suite running multiple times in a commit for a single configuration may pre-empt processing
+        https://bugs.webkit.org/show_bug.cgi?id=211094
+        <rdar://problem/62470170>
+
+        Reviewed by Aakash Jain.
+
+        Hash collision in processing key when results only differ by upload time.
+
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext.process_test_results): Include upload timestamp in the hashed key.
+
 2020-04-27  Zhifei Fang  <zhifei_fang@apple.com>
 
         Add some debug output for run-jsc-stress-tests

@@ -192,8 +192,7 @@ class UploadContext(object):
             return self.synchronously_process_test_results(configuration, commits, suite, test_results=test_results, timestamp=timestamp)
 
         for branch in self.commit_context.branch_keys_for_commits(commits):
-            hash_key = hash(configuration) ^ hash(branch) ^ hash(self.commit_context.uuid_for_commits(commits)) ^ hash(
-                suite)
+            hash_key = hash(configuration) ^ hash(branch) ^ hash(self.commit_context.uuid_for_commits(commits)) ^ hash(suite) ^ hash(timestamp)
             self.redis.set(
                 f'{self.QUEUE_NAME}:{hash_key}',
                 json.dumps(dict(started_processing=0, attempts=0)),
