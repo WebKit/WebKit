@@ -1,3 +1,14 @@
+2020-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix tests after r260764
+        https://bugs.webkit.org/show_bug.cgi?id=211093
+
+        Some tests were asserting in takeAsyncReplyHandler.
+        Calling addAsyncReplyHandler before sending the message fixes it.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+
 2020-04-27  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Drop "com.apple.WebKit.DatabaseActivity" UIKit background activity

@@ -159,11 +159,10 @@ bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, O
         return true;
 
     case State::Running:
-        if (connection()->sendMessage(WTFMove(encoder), sendOptions)) {
-            if (asyncReplyInfo)
-                IPC::addAsyncReplyHandler(*connection(), asyncReplyInfo->second, WTFMove(asyncReplyInfo->first));
+        if (asyncReplyInfo)
+            IPC::addAsyncReplyHandler(*connection(), asyncReplyInfo->second, WTFMove(asyncReplyInfo->first));
+        if (connection()->sendMessage(WTFMove(encoder), sendOptions))
             return true;
-        }
         break;
 
     case State::Terminated:
