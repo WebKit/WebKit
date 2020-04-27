@@ -1,3 +1,16 @@
+2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, reverting r260696.
+
+        Build fix after r260672, no needed since r260672 is also being reverted.
+
+        Reverted changeset:
+
+        "REGRESSION(210942): [GTK][WPE] Unreviewed, EWS build bots
+        fail in compile-webkit step"
+        https://bugs.webkit.org/show_bug.cgi?id=211014
+        https://trac.webkit.org/changeset/260696
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         [Cocoa] stop using out arguments for document attributes when converting to attributed strings
