@@ -1616,9 +1616,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion
 {
-    _page->executeEditCommand(command, argument, [capturedCompletionBlock = makeBlockPtr(completion)](WebKit::CallbackBase::Error error) {
+    _page->executeEditCommand(command, argument, [capturedCompletionBlock = makeBlockPtr(completion)] {
         if (capturedCompletionBlock)
-            capturedCompletionBlock(error == WebKit::CallbackBase::Error::None);
+            capturedCompletionBlock(YES);
     });
 }
 

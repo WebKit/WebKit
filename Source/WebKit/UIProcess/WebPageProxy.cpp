@@ -2165,15 +2165,16 @@ IntSize WebPageProxy::viewSize() const
     return pageClient().viewSize();
 }
 
-void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent, WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& keyboardEvent, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        callbackFunction();
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::setInitialFocus"_s));
-    send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent, callbackID));
+    sendWithAsyncReply(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent), [callbackFunction = WTFMove(callbackFunction), backgroundActivity = m_process->throttler().backgroundActivity("WebPageProxy::setInitialFocus"_s)] () mutable {
+        callbackFunction();
+    });
 }
 
 void WebPageProxy::clearSelection()
@@ -2299,18 +2300,19 @@ static bool isPasteCommandName(const String& commandName)
     return pasteCommandNames->contains(commandName);
 }
 
-void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, CompletionHandler<void()>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::Unknown);
+        callbackFunction();
         return;
     }
 
     if (isPasteCommandName(commandName))
         willPerformPasteCommand();
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s));
-    send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument, callbackID));
+    sendWithAsyncReply(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument), [callbackFunction = WTFMove(callbackFunction), backgroundActivity = m_process->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s)] () mutable {
+        callbackFunction();
+    });
 }
     
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument)

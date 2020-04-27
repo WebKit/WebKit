@@ -1836,7 +1836,7 @@ void WebPage::selectWordBackward()
         frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 }
 
-void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
+void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
@@ -1852,7 +1852,7 @@ void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
     }
     if (position.isNotNull() && startPosition != position)
         frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
     
 void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
@@ -2073,7 +2073,7 @@ VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame
     return frame.visiblePositionForPoint(constrainedPoint);
 }
 
-void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, CallbackID callbackID)
+void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
@@ -2084,10 +2084,10 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
     
     if (position.isNotNull())
         frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
-void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, CallbackID callbackID)
+void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
@@ -2097,10 +2097,10 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
         if (position.isNotNull())
             frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), UPSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     }
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
-void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CallbackID callbackID)
+void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CompletionHandler<void()>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
@@ -2111,7 +2111,7 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
         if (position.isNotNull())
             frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), isForward? UPSTREAM : DOWNSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     }
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
 RefPtr<Range> WebPage::rangeForGranularityAtPoint(Frame& frame, const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement)
@@ -2157,7 +2157,7 @@ void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point
         m_page->focusController().setFocusedFrame(result.innerNodeFrame());
 }
 
-void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID callbackID)
+void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
 {
     setFocusedFrameBeforeSelectingTextAtLocation(point);
 
@@ -2166,7 +2166,7 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     if (range)
         frame.selection().setSelectedRange(range.get(), UPSTREAM, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     m_initialSelection = range;
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
 void WebPage::beginSelectionInDirection(uint32_t direction, CallbackID callbackID)
@@ -3068,14 +3068,14 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
     return nextElement;
 }
 
-void WebPage::focusNextFocusedElement(bool isForward, CallbackID callbackID)
+void WebPage::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&& completionHandler)
 {
     Element* nextElement = nextAssistableElement(m_focusedElement.get(), *m_page, isForward);
     m_userIsInteracting = true;
     if (nextElement)
         nextElement->focus();
     m_userIsInteracting = false;
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
 void WebPage::getFocusedElementInformation(FocusedElementInformation& information)

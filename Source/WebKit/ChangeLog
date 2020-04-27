@@ -1,3 +1,51 @@
+2020-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce use of WebPageProxy::VoidCallback
+        https://bugs.webkit.org/show_bug.cgi?id=210944
+
+        Reviewed by Darin Adler.
+
+        Use sendWithAsyncReply and CompletionHandler<void()> instead.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _executeEditCommand:argument:completion:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setInitialFocus):
+        (WebKit::WebPageProxy::executeEditCommand):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::focusNextFocusedElement):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pasteWithCompletionHandler:]):
+        (-[WKContentView moveByOffset:]):
+        (-[WKContentView _selectPositionAtPoint:stayingWithinFocusedElement:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView moveSelectionAtBoundary:inDirection:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView executeEditCommandWithCallback:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::moveSelectionByOffset):
+        (WebKit::WebPageProxy::focusNextFocusedElement):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::executeEditCommandWithCallback):
+        (WebKit::WebPage::setInitialFocus):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::moveSelectionByOffset):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::focusNextFocusedElement):
+
 2020-04-27  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed sandbox compile fix.

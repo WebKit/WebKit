@@ -1119,10 +1119,10 @@ void WebPage::changeFont(WebCore::FontChanges&& changes)
         frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditAction::SetFont, Editor::ColorFilterMode::InvertColor);
 }
 
-void WebPage::executeEditCommandWithCallback(const String& commandName, const String& argument, CallbackID callbackID)
+void WebPage::executeEditCommandWithCallback(const String& commandName, const String& argument, CompletionHandler<void()>&& completionHandler)
 {
     executeEditCommand(commandName, argument);
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
 void WebPage::selectAll()
@@ -3142,10 +3142,10 @@ void WebPage::viewWillEndLiveResize()
         view->willEndLiveResize();
 }
 
-void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event, CallbackID callbackID)
+void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
-        return;
+        return completionHandler();
 
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3156,13 +3156,12 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
         PlatformKeyboardEvent platformEvent(platform(event));
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, &KeyboardEvent::create(platformEvent, &frame.windowProxy()).get());
-
-        send(Messages::WebPageProxy::VoidCallback(callbackID));
+        completionHandler();
         return;
     }
 
     m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, nullptr);
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    completionHandler();
 }
 
 void WebPage::setCanStartMediaTimerFired()

@@ -2832,7 +2832,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler
 {
-    _page->executeEditCommand("Paste"_s, { }, [completion = makeBlockPtr(completionHandler)] (auto) {
+    _page->executeEditCommand("Paste"_s, { }, [completion = makeBlockPtr(completionHandler)] {
         if (completion)
             completion();
     });
@@ -3920,7 +3920,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
-    _page->moveSelectionByOffset(offset, [view](WebKit::CallbackBase::Error) {
+    _page->moveSelectionByOffset(offset, [view] {
         [view endSelectionChange];
     });
 }
@@ -4011,7 +4011,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
 
-    _page->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view, selectionHandler]() {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -4024,7 +4024,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view, selectionHandler]() {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -4037,7 +4037,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
     
-    _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view, selectionHandler] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         [selectionHandler release];
@@ -4051,7 +4051,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
     RetainPtr<WKContentView> view = self;
 
-    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view, selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view, selectionHandler] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;
@@ -4272,7 +4272,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
 {
     constexpr bool isKeyboardEventValid = false;
-    _page->setInitialFocus(selectingForward, isKeyboardEventValid, { }, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (auto) {
+    _page->setInitialFocus(selectingForward, isKeyboardEventValid, { }, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler([protectedSelf becomeFirstResponder]);
     });
 }
@@ -4336,7 +4336,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     _isChangingFocusUsingAccessoryTab = YES;
     [self beginSelectionChange];
-    _page->focusNextFocusedElement(isNext, [protectedSelf = retainPtr(self)] (WebKit::CallbackBase::Error) {
+    _page->focusNextFocusedElement(isNext, [protectedSelf = retainPtr(self)] {
         [protectedSelf endSelectionChange];
         [protectedSelf reloadInputViews];
         protectedSelf->_isChangingFocusUsingAccessoryTab = NO;
@@ -5407,7 +5407,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     // or not to know whether to tell WebKit to treat this command as user initiated or not.
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
-    _page->executeEditCommand(commandName, { }, [view](WebKit::CallbackBase::Error) {
+    _page->executeEditCommand(commandName, { }, [view] {
         [view endSelectionChange];
     });
 }

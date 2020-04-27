@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPage LegacyReceiver {
-    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, WebKit::CallbackID callbackID)
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event) -> () Async
     SetActivityState(OptionSet<WebCore::ActivityState::Flag> activityState, WebKit::ActivityStateChangeID activityStateChangeID, Vector<WebKit::CallbackID> callbackIDs)
     SetLayerHostingMode(enum:uint8_t WebKit::LayerHostingMode layerHostingMode)
 
@@ -43,7 +43,7 @@ messages -> WebPage LegacyReceiver {
     ViewWillStartLiveResize()
     ViewWillEndLiveResize()
 
-    ExecuteEditCommandWithCallback(String name, String argument, WebKit::CallbackID callbackID)
+    ExecuteEditCommandWithCallback(String name, String argument) -> () Async
     KeyEvent(WebKit::WebKeyboardEvent event)
     MouseEvent(WebKit::WebMouseEvent event)
 #if PLATFORM(IOS_FAMILY)
@@ -68,11 +68,11 @@ messages -> WebPage LegacyReceiver {
     SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WebKit::CallbackID callbackID)
     ExtendSelection(uint32_t granularity)
     SelectWordBackward()
-    MoveSelectionByOffset(int32_t offset, WebKit::CallbackID callbackID)
-    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
-    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
-    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, WebKit::CallbackID callbackID)
-    SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    MoveSelectionByOffset(int32_t offset) -> () Async
+    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement) -> () Async
+    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement) -> () Async
+    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction) -> () Async
+    SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement) -> () Async
     BeginSelectionInDirection(uint32_t direction, WebKit::CallbackID callbackID)
     UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor, WebKit::CallbackID callbackID)
     UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
@@ -89,7 +89,7 @@ messages -> WebPage LegacyReceiver {
     StartInteractionWithElementContextOrPosition(Optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action)
-    FocusNextFocusedElement(bool isForward, WebKit::CallbackID callbackID)
+    FocusNextFocusedElement(bool isForward) -> () Async
     SetFocusedElementValue(String value)
     AutofillLoginCredentials(String username, String password)
     SetFocusedElementValueAsNumber(double value)
