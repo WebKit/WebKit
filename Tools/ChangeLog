@@ -1,3 +1,29 @@
+2020-04-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Make run-safari --ios-simulator work again
+        https://bugs.webkit.org/show_bug.cgi?id=211008
+
+        Reviewed by Darin Adler.
+
+        While at it, removed all direct uses of device.plist, and all use of Foundation.
+
+        * Scripts/webkitdirs.pm: Stopped exporting unused simulator related functions. New
+        code should be using webkitpy.
+        (simulatorDeviceFromJSON): Helper function for parsing simctl output.
+        (iOSSimulatorDevices): Use simctl instead of reading device.plist.
+        (createiOSSimulatorDevice): Device creation appears to be synchronous, I couldn't
+        find any reason for waiting and retrying.
+        (iosSimulatorApplicationsPath): This is part of the actual fix - runtime path built
+        here was incorrect; switched to one provided by simctl.
+        (shutDownIOSSimulatorDevice): Added an early return to avoid stderr spew.
+        (relaunchIOSSimulator): Another part of the actual fix: open Simulator.app before booting the
+        simulator to have it visible; CurrentDeviceUDID doesn't work.
+        (iosSimulatorDeviceByUDID): Stop using device.plist.
+        (runIOSWebKitAppInSimulator): Stop quitting Simulator.app, we only needed to shut down
+        the device.
+        (iOSSimulatorDevicesPath): Deleted.
+        (quitIOSSimulator): Deleted.
+
 2020-04-27  Daniel Bates  <dabates@apple.com>
 
         Text interaction tests should ensure view is not scroll instead of looking for a zoom change
