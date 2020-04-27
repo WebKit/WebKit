@@ -1233,7 +1233,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
 
 void PluginView::performJavaScriptURLRequest(URLRequest* request)
 {
-    ASSERT(request->request().url().protocolIs("javasript"));
+    ASSERT(request->request().url().protocolIsJavaScript());
 
     RefPtr<Frame> frame = m_pluginElement->document().frame();
     if (!frame)
