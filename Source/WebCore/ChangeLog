@@ -1,5 +1,17 @@
 2020-04-27  Antoine Quint  <graouts@apple.com>
 
+        Clean up some useless includes of CSSAnimationController.h
+        https://bugs.webkit.org/show_bug.cgi?id=211066
+
+        Reviewed by Antti Koivisto.
+
+        These files don't actually use any of the CSSAnimationController APIs.
+
+        * page/ios/FrameIOS.mm:
+        * rendering/RenderObject.cpp:
+
+2020-04-27  Antoine Quint  <graouts@apple.com>
+
         Rename CSSAnimationController accessors from animation() to legacyAnimation()
         https://bugs.webkit.org/show_bug.cgi?id=211082
 

@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "CSSAnimationController.h"
 #import "CommonVM.h"
 #import "ComposedTreeIterator.h"
 #import "DOMWindow.h"

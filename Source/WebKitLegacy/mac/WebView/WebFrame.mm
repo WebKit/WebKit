@@ -62,7 +62,6 @@
 #import <JavaScriptCore/JSObject.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/AccessibilityObject.h>
-#import <WebCore/CSSAnimationController.h>
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/CachedResourceLoader.h>
 #import <WebCore/Chrome.h>

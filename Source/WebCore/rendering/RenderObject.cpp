@@ -28,7 +28,6 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
-#include "CSSAnimationController.h"
 #include "Editing.h"
 #include "FloatQuad.h"
 #include "Frame.h"
