@@ -38,7 +38,11 @@ Color::operator GdkRGBA() const
     if (isExtended())
         return { asExtended().red(), asExtended().green(), asExtended().blue(), asExtended().alpha() };
 
+#if USE(GTK4)
+    float red, green, blue, alpha;
+#else
     double red, green, blue, alpha;
+#endif
     getRGBA(red, green, blue, alpha);
     return { red, green, blue, alpha };
 }

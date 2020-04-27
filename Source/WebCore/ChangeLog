@@ -1,3 +1,12 @@
+2020-04-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] GdkRGBA has float members instead of double
+
+        Unreviewed warning fix.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA const):
+
 2020-04-27  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] CallData/ConstructData should include CallType/ConstructType
