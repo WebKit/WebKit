@@ -124,7 +124,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/RuntimeEnabledFeatures.h>
-#import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
@@ -160,8 +159,6 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIApplication.h>
-#import <WebCore/WebBackgroundTaskController.h>
-#import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -402,8 +399,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
     _inspectorDelegate = makeUnique<WebKit::InspectorDelegate>(self);
 
-    [self _setUpSQLiteDatabaseTrackerClient];
-
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
 
@@ -533,27 +528,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     if (!linkedOnOrAfter(WebKit::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
-}
-
-- (void)_setUpSQLiteDatabaseTrackerClient
-{
-#if PLATFORM(IOS_FAMILY)
-    WebBackgroundTaskController *controller = [WebBackgroundTaskController sharedController];
-    if (controller.backgroundTaskStartBlock)
-        return;
-
-    controller.backgroundTaskStartBlock = ^NSUInteger (void (^expirationHandler)())
-    {
-        return [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.DatabaseActivity" expirationHandler:expirationHandler];
-    };
-    controller.backgroundTaskEndBlock = ^(UIBackgroundTaskIdentifier taskIdentifier)
-    {
-        [[UIApplication sharedApplication] endBackgroundTask:taskIdentifier];
-    };
-    controller.invalidBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
-
-    WebCore::SQLiteDatabaseTracker::setClient(&WebCore::WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
-#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
