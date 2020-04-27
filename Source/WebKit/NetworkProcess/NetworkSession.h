@@ -105,6 +105,7 @@ public:
     bool shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
+    void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 #endif
     
     virtual bool hasAppBoundSession() const { return false; }
@@ -146,7 +147,6 @@ protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void destroyResourceLoadStatistics();
     void forwardResourceLoadStatisticsSettings();
 #endif
 
