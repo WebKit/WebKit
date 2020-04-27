@@ -74,8 +74,13 @@ void Performance::contextDestroyed()
 
 DOMHighResTimeStamp Performance::now() const
 {
+    return nowInReducedResolutionSeconds().milliseconds();
+}
+
+ReducedResolutionSeconds Performance::nowInReducedResolutionSeconds() const
+{
     Seconds now = MonotonicTime::now() - m_timeOrigin;
-    return reduceTimeResolution(now).milliseconds();
+    return reduceTimeResolution(now);
 }
 
 Seconds Performance::reduceTimeResolution(Seconds seconds)

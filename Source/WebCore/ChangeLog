@@ -1,3 +1,51 @@
+2020-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rendering update steps should use Seconds for the timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=210990
+
+        Reviewed by Daniel Bates.
+
+        Make DOMWindow::nowTimestamp() return ReducedResolutionSeconds and change
+        the callers accordingly. ReducedResolutionSeconds is a new type but it's
+        just an alias of the type Seconds. It indicates that the returned value
+        is a web-safe seconds.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::suspendAnimations):
+        (WebCore::DocumentTimeline::liveCurrentTime const):
+        (WebCore::DocumentTimeline::cacheCurrentTime):
+        (WebCore::DocumentTimeline::documentWillUpdateAnimationsAndSendEvents):
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * animation/DocumentTimelinesController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::serviceRequestAnimationFrameCallbacks):
+        (WebCore::Document::updateIntersectionObservations):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * dom/ScriptedAnimationController.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::getVideoPlaybackQuality):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::nowTimestamp const):
+        * page/DOMWindow.h:
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::nowTimestamp const):
+        (WebCore::IntersectionObserver::createTimestamp const): Deleted.
+        * page/IntersectionObserver.h:
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        * page/Performance.cpp:
+        (WebCore::Performance::now const):
+        (WebCore::Performance::nowInReducedResolutionSeconds const):
+        * page/Performance.h:
+        * page/ReducedResolutionSeconds.h: Added.
+
 2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         InternalFunction::createSubclassStructure should use newTarget's globalObject

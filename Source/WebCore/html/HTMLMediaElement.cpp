@@ -7110,7 +7110,7 @@ void HTMLMediaElement::updateRateChangeRestrictions()
 RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 {
     RefPtr<DOMWindow> domWindow = document().domWindow();
-    double timestamp = domWindow ? 1000 * domWindow->nowTimestamp() : 0;
+    double timestamp = domWindow ? domWindow->nowTimestamp().milliseconds() : 0;
 
     auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : WTF::nullopt;
     if (!metrics)

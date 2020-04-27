@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMHighResTimeStamp.h"
+#include "ReducedResolutionSeconds.h"
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -44,7 +44,7 @@ public:
     void addTimeline(DocumentTimeline&);
     void removeTimeline(DocumentTimeline&);
     void detachFromDocument();
-    void updateAnimationsAndSendEvents(DOMHighResTimeStamp);
+    void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
 private:
     struct AnimationsToProcess {

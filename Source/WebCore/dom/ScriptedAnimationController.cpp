@@ -193,14 +193,14 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     }
 }
 
-void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
+void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds timestamp)
 {
     if (!m_callbacks.size() || m_suspendCount || !requestAnimationFrameEnabled())
         return;
 
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
-    auto highResNowMs = std::round(1000 * timestamp);
+    auto highResNowMs = timestamp.milliseconds();
     if (m_document && m_document->quirks().needsMillisecondResolutionForHighResTimeStamp())
         highResNowMs += 0.1;
 
@@ -273,7 +273,7 @@ void ScriptedAnimationController::scheduleAnimation()
         return;
 
     Seconds animationInterval = interval();
-    Seconds scheduleDelay = std::max(animationInterval - Seconds(m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0_s);
+    Seconds scheduleDelay = std::max(animationInterval - (m_document->domWindow()->nowTimestamp() - m_lastAnimationFrameTimestamp), 0_s);
 
     if (isThrottled()) {
         // FIXME: not ideal to snapshot time both in now() and nowTimestamp(), the latter of which also has reduced resolution.

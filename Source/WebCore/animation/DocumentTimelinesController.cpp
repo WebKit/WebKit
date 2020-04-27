@@ -61,7 +61,7 @@ void DocumentTimelinesController::detachFromDocument()
         m_timelines.begin()->detachFromDocument();
 }
 
-void DocumentTimelinesController::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
+void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
 {
     ASSERT(!m_timelines.hasNullReferences());
 

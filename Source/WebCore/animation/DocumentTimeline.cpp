@@ -232,7 +232,7 @@ void DocumentTimeline::suspendAnimations()
         return;
 
     if (!m_cachedCurrentTime)
-        m_cachedCurrentTime = Seconds(liveCurrentTime());
+        m_cachedCurrentTime = liveCurrentTime();
 
     for (const auto& animation : m_animations)
         animation->setSuspended(true);
@@ -274,7 +274,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
-DOMHighResTimeStamp DocumentTimeline::liveCurrentTime() const
+ReducedResolutionSeconds DocumentTimeline::liveCurrentTime() const
 {
     return m_document->domWindow()->nowTimestamp();
 }
@@ -297,11 +297,11 @@ Optional<Seconds> DocumentTimeline::currentTime()
     return m_cachedCurrentTime.value() - m_originTime;
 }
 
-void DocumentTimeline::cacheCurrentTime(DOMHighResTimeStamp newCurrentTime)
+void DocumentTimeline::cacheCurrentTime(ReducedResolutionSeconds newCurrentTime)
 {
     ASSERT(m_document);
 
-    m_cachedCurrentTime = Seconds(newCurrentTime);
+    m_cachedCurrentTime = newCurrentTime;
     // We want to be sure to keep this time cached until we've both finished running JS and finished updating
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
@@ -361,7 +361,7 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
+DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
 {
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and

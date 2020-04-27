@@ -28,6 +28,7 @@
 #include "AnimationTimeline.h"
 #include "DocumentTimelineOptions.h"
 #include "GenericTaskQueue.h"
+#include "ReducedResolutionSeconds.h"
 #include "Timer.h"
 #include <wtf/Markable.h>
 #include <wtf/Ref.h>
@@ -74,7 +75,7 @@ public:
     void enqueueAnimationEvent(AnimationEventBase&);
     
     enum class ShouldUpdateAnimationsAndSendEvents : uint8_t { Yes, No };
-    ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents(DOMHighResTimeStamp);
+    ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents(ReducedResolutionSeconds);
     void removeReplacedAnimations();
     AnimationEvents prepareForPendingAnimationEventsDispatch();
     void documentDidUpdateAnimationsAndSendEvents();
@@ -92,9 +93,9 @@ private:
     DocumentTimeline(Document&, Seconds);
 
     DocumentTimelinesController* controller() const;
-    DOMHighResTimeStamp liveCurrentTime() const;
+    ReducedResolutionSeconds liveCurrentTime() const;
     void applyPendingAcceleratedAnimations();
-    void cacheCurrentTime(DOMHighResTimeStamp);
+    void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
     void scheduleInvalidationTaskIfNeeded();
     void scheduleAnimationResolution();

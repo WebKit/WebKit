@@ -734,9 +734,9 @@ Performance& DOMWindow::performance() const
     return *m_performance;
 }
 
-double DOMWindow::nowTimestamp() const
+ReducedResolutionSeconds DOMWindow::nowTimestamp() const
 {
-    return performance().now() / 1000.;
+    return performance().nowInReducedResolutionSeconds();
 }
 
 Location& DOMWindow::location()

@@ -1358,7 +1358,7 @@ void Page::updateRendering()
     forEachDocument([] (Document& document) {
         if (!document.domWindow())
             return;
-        DOMHighResTimeStamp timestamp = document.domWindow()->nowTimestamp();
+        auto timestamp = document.domWindow()->nowTimestamp();
         if (auto* timelinesController = document.timelinesController())
             timelinesController->updateAnimationsAndSendEvents(timestamp);
         // FIXME: Run the fullscreen steps.

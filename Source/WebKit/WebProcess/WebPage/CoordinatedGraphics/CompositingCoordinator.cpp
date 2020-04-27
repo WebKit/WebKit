@@ -180,7 +180,7 @@ double CompositingCoordinator::timestamp() const
     auto* document = m_page.corePage()->mainFrame().document();
     if (!document)
         return 0;
-    return document->domWindow() ? document->domWindow()->nowTimestamp() : document->monotonicTimestamp();
+    return document->domWindow() ? document->domWindow()->nowTimestamp().seconds() : document->monotonicTimestamp();
 }
 
 void CompositingCoordinator::syncDisplayState()

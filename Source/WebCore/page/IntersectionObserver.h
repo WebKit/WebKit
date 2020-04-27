@@ -94,7 +94,7 @@ public:
     bool hasObservationTargets() const { return m_observationTargets.size(); }
     void rootDestroyed();
 
-    bool createTimestamp(DOMHighResTimeStamp&) const;
+    Optional<ReducedResolutionSeconds> nowTimestamp() const;
 
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();

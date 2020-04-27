@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "GenericTaskQueue.h"
+#include "ReducedResolutionSeconds.h"
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -58,6 +59,7 @@ public:
     ~Performance();
 
     DOMHighResTimeStamp now() const;
+    ReducedResolutionSeconds nowInReducedResolutionSeconds() const;
 
     PerformanceNavigation* navigation();
     PerformanceTiming* timing();

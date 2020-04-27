@@ -1080,7 +1080,7 @@ public:
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
 
-    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp);
+    void serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds);
 
     void windowScreenDidChange(PlatformDisplayID);
 

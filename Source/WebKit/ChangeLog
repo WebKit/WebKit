@@ -1,3 +1,13 @@
+2020-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rendering update steps should use Seconds for the timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=210990
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::timestamp const):
+
 2020-04-26  Peng Liu  <peng.liu6@apple.com>
 
         Remove unused class PlaybackSessionInterface

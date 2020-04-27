@@ -53,7 +53,7 @@ public:
 
     CallbackId registerCallback(Ref<RequestAnimationFrameCallback>&&);
     void cancelCallback(CallbackId);
-    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
+    void serviceRequestAnimationFrameCallbacks(ReducedResolutionSeconds);
 
     void suspend();
     void resume();
@@ -86,7 +86,7 @@ private:
     int m_suspendCount { 0 };
 
     Timer m_animationTimer;
-    double m_lastAnimationFrameTimestamp { 0 };
+    ReducedResolutionSeconds m_lastAnimationFrameTimestamp { 0 };
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     OptionSet<ThrottlingReason> m_throttlingReasons;

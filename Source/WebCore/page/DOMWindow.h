@@ -34,6 +34,7 @@
 #include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
 #include "PostMessageOptions.h"
+#include "ReducedResolutionSeconds.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "Supplementable.h"
@@ -349,7 +350,7 @@ public:
 #endif
 
     Performance& performance() const;
-    WEBCORE_EXPORT double nowTimestamp() const;
+    WEBCORE_EXPORT ReducedResolutionSeconds nowTimestamp() const;
 
 #if PLATFORM(IOS_FAMILY)
     void incrementScrollEventListenersCount();

@@ -244,21 +244,21 @@ void IntersectionObserver::rootDestroyed()
     m_root = nullptr;
 }
 
-bool IntersectionObserver::createTimestamp(DOMHighResTimeStamp& timestamp) const
+Optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
 {
     if (!m_callback)
-        return false;
+        return WTF::nullopt;
 
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
-        return false;
+        return WTF::nullopt;
+
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
-    if (auto* window = document.domWindow()) {
-        timestamp =  window->performance().now();
-        return true;
-    }
-    return false;
+    if (auto* window = document.domWindow())
+        return window->nowTimestamp();
+    
+    return WTF::nullopt;
 }
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)
