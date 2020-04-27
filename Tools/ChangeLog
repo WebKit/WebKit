@@ -1,3 +1,15 @@
+2020-04-27  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Add some debug output for run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=210999
+        <rdar://problem/61353156>
+
+        This will help to address where the script get stucked
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should not aggregate text from different navigation anchor elements

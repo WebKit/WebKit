@@ -2085,9 +2085,9 @@ end
 
 def detectFailures
     raise if $bundle
-
+    puts "Detecting Failures..."
     failures = []
-    
+    start_time = Time.now
     if $remote
         $remoteHosts.each_with_index {
             | host, remoteIndex |
@@ -2115,6 +2115,7 @@ def detectFailures
     }
 
     familyMap = {}
+    puts "#{Time.now}: Writing to #{$outputDir + "results, pass, failed"}"
     $runlist.each_with_index {
         | plan, index |
         unless familyMap[plan.family]
@@ -2131,6 +2132,7 @@ def detectFailures
         appendPass(plan)
     }
 
+    puts "#{Time.now}: Writing to #{$outputDir + "resultsByFamily"}"
     File.open($outputDir + "resultsByFamily", "w") {
         | outp |
         first = true
@@ -2165,6 +2167,7 @@ def detectFailures
             end
         }
     }
+    puts "Detacted failures in #{Time.now - start_time}"
 end
 
 def compressBundle
