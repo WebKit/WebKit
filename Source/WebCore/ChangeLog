@@ -1,3 +1,24 @@
+2020-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should not aggregate text from different navigation anchor elements
+        https://bugs.webkit.org/show_bug.cgi?id=211081
+        <rdar://problem/59553658>
+
+        Reviewed by Megan Gardner.
+
+        Tweak the item boundary heuristic in `TextManipulationController::observeParagraphs` to separate text in
+        links and list items under navigation elements (either nav elements, or elements with the "navigation"
+        accessibility role) into separate paragraphs.
+
+        Also, extend the item boundary rule for button elements to apply to elements with the "button"
+        accessibility role as well.
+
+        Test:   TextManipulation.StartTextManipulationTreatsInlineBlockLinksAndButtonsAsParagraphs
+                TextManipulation.StartTextManipulationTreatsLinksInNavigationElementsAsParagraphs
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+
 2020-04-27  Antoine Quint  <graouts@apple.com>
 
         Clean up some useless includes of CSSAnimationController.h

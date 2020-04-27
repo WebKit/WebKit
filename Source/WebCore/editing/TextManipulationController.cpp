@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextManipulationController.h"
 
+#include "AccessibilityObject.h"
 #include "CharacterData.h"
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
@@ -281,12 +282,22 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         if (!renderer)
             return false;
 
-        if (element.hasTagName(HTMLNames::buttonTag))
+        auto role = [](const Element& element) -> AccessibilityRole {
+            return AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr));
+        };
+
+        if (element.hasTagName(HTMLNames::buttonTag) || role(element) == AccessibilityRole::Button)
             return true;
 
         if (element.hasTagName(HTMLNames::liTag) || element.hasTagName(HTMLNames::aTag)) {
             auto displayType = renderer->style().display();
-            return displayType == DisplayType::Block || displayType == DisplayType::InlineBlock;
+            if (displayType == DisplayType::Block || displayType == DisplayType::InlineBlock)
+                return true;
+
+            for (auto parent = makeRefPtr(element.parentElement()); parent; parent = parent->parentElement()) {
+                if (parent->hasTagName(HTMLNames::navTag) || role(*parent) == AccessibilityRole::LandmarkNavigation)
+                    return true;
+            }
         }
 
         return false;
