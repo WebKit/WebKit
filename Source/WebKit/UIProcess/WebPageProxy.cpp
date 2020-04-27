@@ -2392,12 +2392,18 @@ void WebPageProxy::layerTreeCommitComplete()
 #if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName)
 {
+#if PLATFORM(COCOA)
+    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_process.get(), dragStorageName);
+#endif
     launchInitialProcessIfNecessary();
     performDragControllerAction(DragControllerAction::Entered, dragData, dragStorageName, { }, { });
 }
 
 void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
 {
+#if PLATFORM(COCOA)
+    WebPasteboardProxy::singleton().grantAccessToCurrentTypes(m_process.get(), dragStorageName);
+#endif
     performDragControllerAction(DragControllerAction::Updated, dragData, dragStorageName, { }, { });
 }
 
@@ -7671,7 +7677,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     pageClient().clearAllEditCommands();
 
 #if PLATFORM(COCOA)
-    WebPasteboardProxy::singleton().revokeAccessToAllData(m_process.get());
+    WebPasteboardProxy::singleton().revokeAccess(m_process.get());
 #endif
 
     auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;

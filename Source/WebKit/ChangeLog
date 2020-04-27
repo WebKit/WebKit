@@ -1,3 +1,103 @@
+2020-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Prevent WebPasteboardProxy IPC messages from unconditionally requesting pasteboard types
+        https://bugs.webkit.org/show_bug.cgi?id=211061
+        <rdar://problem/62088185>
+
+        Reviewed by Tim Horton.
+
+        Tighten IPC message handling in WebPasteboardProxy, such that a web content process is unable to arbitrarily
+        request pasteboard types (and other metadata that depends on pasteboard types, such as the number of files
+        on the pasteboard).
+
+        This extends the mechanisms added in r259151 by distinguishing between allowing the web process to request
+        type information from the pasteboard, and allowing the web process to request both types and data. In the
+        case of drag and drop, the former is required by the web process from the moment the drag session enters
+        the platform web view; however, the latter is required only after a drop is performed.
+
+        We utilize this new check, `canAccessPasteboardTypes`, in seven existing IPC message handlers that either
+        directly return the list of types, or return metadata from which pasteboard types may be deduced.
+
+        See below for more details; covered by existing API and layout tests.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::grantAccessToCurrentTypes):
+        (WebKit::WebPasteboardProxy::grantAccessToCurrentData):
+
+        Split the pasteboard access check into two helpers: one to determine whether the web process is allowed to
+        request pasteboard types, and another to determine whether the web process is allowed to request pasteboard
+        data (in addition to types).
+
+        (WebKit::WebPasteboardProxy::grantAccess):
+        (WebKit::WebPasteboardProxy::revokeAccess):
+
+        Refactor these to use `PasteboardAccessInformation`; see below for more details.
+
+        (WebKit::WebPasteboardProxy::canAccessPasteboardTypes const):
+
+        Return true as long as the accessType is nonnull; this is because either `Types` or `TypesAndData` is
+        sufficient for access to pasteboard types.
+
+        (WebKit::WebPasteboardProxy::canAccessPasteboardData const):
+        (WebKit::WebPasteboardProxy::accessType const):
+
+        Add a private helper method to return the access type (`nullopt` for no access, `PasteboardAccessType::Types`
+        for access to types only, and `PasteboardAccessType::TypesAndData` for access to data in addition to types)
+        for the given named pasteboard.
+
+        (WebKit::WebPasteboardProxy::didModifyContentsOfPasteboard):
+
+        Refactor this to use `PasteboardAccessInformation`.
+
+        (WebKit::WebPasteboardProxy::getPasteboardTypes):
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+
+        Adopt canAccessPasteboardTypes here, and update the FIXME to state that we should really be using
+        canAccessPasteboardData instead. This is blocked on refactoring some more drag and drop code, such
+        that accessing the list of file names on the pasteboard isn't necessary before the drop is handled.
+
+        (WebKit::WebPasteboardProxy::containsURLStringSuitableForLoading):
+        (WebKit::WebPasteboardProxy::getNumberOfFiles):
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::containsStringSafeForDOMToReadForType):
+
+        Adopt the canAccessPasteboardTypes check in various places.
+
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::grantAccess):
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::revokeAccess):
+        (WebKit::WebPasteboardProxy::PasteboardAccessInformation::accessType const):
+
+        Introduce PasteboardAccessInformation, which replaces the current `std::pair<uint64_t, WeakHashSet<WebProcessProxy>>`
+        that is used to represent which web processes are allowed to access certain changeCounts, for a given pasteboard name.
+        Instead of maintaining a changeCount and set of processes, we now maintain a changeCount and list of (process, access
+        type) pairs. Each item in this list tracks whether the process that has been granted access should be allowed to read
+        only pasteboard types, or both types and data.
+
+        (WebKit::WebPasteboardProxy::revokeAccessToAllData): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+
+        When updating the drag session (i.e. as the user drags over the web view), ensure that the web content
+        process is able to request pasteboard types.
+
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::allPasteboardItemInfo):
+        (WebKit::WebPasteboardProxy::informationForItemAtIndex):
+        (WebKit::WebPasteboardProxy::getPasteboardItemsCount):
+        (WebKit::WebPasteboardProxy::containsStringSafeForDOMToReadForType):
+        (WebKit::WebPasteboardProxy::containsURLStringSuitableForLoading):
+
+        Update these method signatures.
+
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+
+        Mark more IPC messages as `WantsConnection` so that we can use the `IPC::Connection` argument in the message handlers.
+
 2020-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Stop waiting for a BinarySemaphore on the main thread in the NetworkProcess
