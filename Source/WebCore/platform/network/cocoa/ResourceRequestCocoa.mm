@@ -146,7 +146,7 @@ static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, N
     case ResourceRequest::SameSiteDisposition::SameSite:
         return url;
     case ResourceRequest::SameSiteDisposition::CrossSite:
-        static NSURL *emptyURL = [[NSURL alloc] init];
+        static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
         return emptyURL;
     }
 }

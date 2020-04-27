@@ -1,3 +1,13 @@
+2020-04-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Cocoa] stop using out arguments for document attributes when converting to attributed strings
+        https://bugs.webkit.org/show_bug.cgi?id=211048
+
+        Unreviewed partial revert of r260739 to remove unexpected logging that broke Catalina-Release-WK2-Perf tests.
+
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::createCFURL const):
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         [Cocoa] stop using out arguments for document attributes when converting to attributed strings
