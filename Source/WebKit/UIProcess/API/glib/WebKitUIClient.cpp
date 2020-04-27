@@ -41,6 +41,7 @@
 
 #if PLATFORM(GTK)
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #endif
 
 using namespace WebKit;
@@ -160,12 +161,12 @@ private:
         RunLoop::current().stop();
         return FALSE;
     }
+#endif // PLATFORM(GTK) && !USE(GTK4)
 
     void setWindowFrameTimerFired()
     {
         RunLoop::current().stop();
     }
-#endif // PLATFORM(GTK) && !USE(GTK4)
 
     void setWindowFrame(WebPageProxy&, const WebCore::FloatRect& frame) final
     {
@@ -215,7 +216,9 @@ private:
             timer->startOneShot(200_ms);
             RunLoop::run();
             timer = nullptr;
+#if !USE(GTK4)
             g_signal_handler_disconnect(window, signalID);
+#endif
         } else
             webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
 #endif // PLATFORM(GTK)

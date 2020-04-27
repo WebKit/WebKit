@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BrowserSettingsDialog_h
-#define BrowserSettingsDialog_h
+#include "BrowserMain.h"
 
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
-
-#if !GTK_CHECK_VERSION(3, 98, 0)
-
-G_BEGIN_DECLS
-
-#define BROWSER_TYPE_SETTINGS_DIALOG            (browser_settings_dialog_get_type())
-#define BROWSER_SETTINGS_DIALOG(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), BROWSER_TYPE_SETTINGS_DIALOG, BrowserSettingsDialog))
-#define BROWSER_SETTINGS_DIALOG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  BROWSER_TYPE_SETTINGS_DIALOG, BrowserSettingsDialogClass))
-#define BROWSER_IS_SETTINGS_DIALOG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), BROWSER_TYPE_SETTINGS_DIALOG))
-#define BROWSER_IS_SETTINGS_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  BROWSER_TYPE_SETTINGS_DIALOG))
-#define BROWSER_SETTINGS_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  BROWSER_TYPE_SETTINGS_DIALOG, BrowserSettingsDialogClass))
-
-typedef struct _BrowserSettingsDialog        BrowserSettingsDialog;
-typedef struct _BrowserSettingsDialogClass   BrowserSettingsDialogClass;
-
-GType browser_settings_dialog_get_type(void);
-
-GtkWidget* browser_settings_dialog_new(WebKitSettings *settings);
-
-G_END_DECLS
-
+#if GTK_CHECK_VERSION(3, 98, 0)
+static GMainLoop *mainLoop;
 #endif
 
+void browser_main()
+{
+#if GTK_CHECK_VERSION(3, 98, 0)
+    mainLoop = g_main_loop_new(NULL, TRUE);
+    g_main_loop_run(mainLoop);
+#else
+    gtk_main();
 #endif
+}
+
+void browser_main_quit()
+{
+#if GTK_CHECK_VERSION(3, 98, 0)
+    g_main_loop_quit(mainLoop);
+    g_main_loop_unref(mainLoop);
+#else
+    gtk_main_quit();
+#endif
+}

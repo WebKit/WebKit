@@ -1,3 +1,14 @@
+2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make it possible to build with GTK4 without errors
+        https://bugs.webkit.org/show_bug.cgi?id=210967
+
+        Reviewed by Adrian Perez de Castro.
+
+        Disable API tests and GObject introspection when building with GTK4.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, reverting r260672.

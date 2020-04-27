@@ -29,7 +29,9 @@
 #if PLATFORM(X11)
 
 #include "WebPageProxy.h"
+#if !USE(GTK4)
 #include <gdk/gdkx.h>
+#endif
 #include <gtk/gtk.h>
 
 namespace WebKit {
@@ -42,6 +44,7 @@ PointerLockManagerX11::PointerLockManagerX11(WebPageProxy& webPage, const GdkEve
 
 void PointerLockManagerX11::didReceiveMotionEvent(const GdkEvent* event)
 {
+#if !USE(GTK4)
     double currentX, currentY;
     gdk_event_get_root_coords(event, &currentX, &currentY);
     double initialX, initialY;
@@ -51,6 +54,7 @@ void PointerLockManagerX11::didReceiveMotionEvent(const GdkEvent* event)
 
     handleMotion(IntPoint(currentX - initialX, currentY - initialY));
     gdk_device_warp(m_device, gtk_widget_get_screen(m_webPage.viewWidget()), initialX, initialY);
+#endif
 }
 
 } // namespace WebKit

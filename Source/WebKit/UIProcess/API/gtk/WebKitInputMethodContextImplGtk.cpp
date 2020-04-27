@@ -168,7 +168,11 @@ static void webkitInputMethodContextImplGtkGetPreedit(WebKitInputMethodContext* 
         *cursorOffset = clampTo<unsigned>(offset);
 }
 
+#if USE(GTK4)
+static gboolean webkitInputMethodContextImplGtkFilterKeyEvent(WebKitInputMethodContext* context, GdkEvent* keyEvent)
+#else
 static gboolean webkitInputMethodContextImplGtkFilterKeyEvent(WebKitInputMethodContext* context, GdkEventKey* keyEvent)
+#endif
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(context)->priv;
     return gtk_im_context_filter_keypress(priv->context.get(), keyEvent);
@@ -229,5 +233,7 @@ WebKitInputMethodContext* webkitInputMethodContextImplGtkNew()
 
 void webkitInputMethodContextImplGtkSetClientWindow(WebKitInputMethodContextImplGtk* context, GdkWindow* window)
 {
+#if !USE(GTK4)
     gtk_im_context_set_client_window(context->priv->context.get(), window);
+#endif
 }

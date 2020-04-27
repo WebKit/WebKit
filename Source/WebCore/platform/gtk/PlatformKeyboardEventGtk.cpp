@@ -1374,6 +1374,7 @@ bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
     // the same here. This will also return true in Wayland if there's a caps lock key, so it's not worth it
     // checking the actual display here.
     static bool lockMaskIsCapsLock = false;
+#if !USE(GTK4)
     static bool initialized = false;
     if (!initialized) {
         GUniqueOutPtr<GdkKeymapKey> keys;
@@ -1384,6 +1385,7 @@ bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
         lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(gdk_display_get_default()), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
 #endif
     }
+#endif
     return lockMaskIsCapsLock;
 }
 

@@ -50,7 +50,7 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
 #if PLATFORM(IOS_FAMILY)
     return DisplayRefreshMonitorIOS::create(displayID);
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     return DisplayRefreshMonitorGtk::create(displayID);
 #endif
     UNUSED_PARAM(displayID);

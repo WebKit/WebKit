@@ -39,7 +39,7 @@ NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, int eventClickCount, O
 
 NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& event)
     : WebMouseEvent(WebEventFactory::createWebMouseEvent(event.nativeEvent(), event.clickCount(), WebCore::IntPoint(event.deltaX(), event.deltaY())))
-    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+    , m_nativeEvent(gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())))
 {
 }
 

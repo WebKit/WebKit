@@ -42,7 +42,9 @@ struct _BrowserTab {
     GtkBox parent;
 
     WebKitWebView *webView;
+#if !GTK_CHECK_VERSION(3, 98, 0)
     BrowserSearchBar *searchBar;
+#endif
     GtkWidget *statusLabel;
     gboolean wasSearchingWhenEnteredFullscreen;
     gboolean inspectorIsVisible;
@@ -95,7 +97,7 @@ static gchar *getWebViewOrigin(WebKitWebView *webView)
 
     return originStr;
 }
-
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static void titleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserTab *tab)
 {
     const char *title = webkit_web_view_get_title(webView);
@@ -343,6 +345,7 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
 
     return TRUE;
 }
+#endif
 
 static gboolean inspectorOpenedInWindow(WebKitWebInspector *inspector, BrowserTab *tab)
 {
@@ -392,6 +395,7 @@ static void browserTabConstructed(GObject *gObject)
 
     G_OBJECT_CLASS(browser_tab_parent_class)->constructed(gObject);
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     tab->searchBar = BROWSER_SEARCH_BAR(browser_search_bar_new(tab->webView));
     gtk_box_pack_start(GTK_BOX(tab), GTK_WIDGET(tab->searchBar), FALSE, FALSE, 0);
 
@@ -422,7 +426,11 @@ static void browserTabConstructed(GObject *gObject)
 
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));
+#else
+    gtk_container_add(GTK_CONTAINER(tab), GTK_WIDGET(tab->webView));
+#endif
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     tab->titleBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
@@ -460,6 +468,7 @@ static void browserTabConstructed(GObject *gObject)
     g_signal_connect(tab->webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSerrors), tab);
     g_signal_connect(tab->webView, "permission-request", G_CALLBACK(decidePermissionRequest), tab);
     g_signal_connect(tab->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), tab);
+#endif
 
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(tab->webView);
     g_signal_connect(inspector, "open-window", G_CALLBACK(inspectorOpenedInWindow), tab);
@@ -562,19 +571,22 @@ void browser_tab_toggle_inspector(BrowserTab *tab)
 void browser_tab_start_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
-
+#if !GTK_CHECK_VERSION(3, 98, 0)
     if (!gtk_widget_get_visible(GTK_WIDGET(tab->searchBar)))
         browser_search_bar_open(tab->searchBar);
+#endif
 }
 
 void browser_tab_stop_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
-
+#if !GTK_CHECK_VERSION(3, 98, 0)
     if (gtk_widget_get_visible(GTK_WIDGET(tab->searchBar)))
         browser_search_bar_close(tab->searchBar);
+#endif
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 void browser_tab_add_accelerators(BrowserTab *tab, GtkAccelGroup *accelGroup)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
@@ -582,6 +594,7 @@ void browser_tab_add_accelerators(BrowserTab *tab, GtkAccelGroup *accelGroup)
 
     browser_search_bar_add_accelerators(tab->searchBar, accelGroup);
 }
+#endif
 
 static gboolean fullScreenMessageTimeoutCallback(BrowserTab *tab)
 {
@@ -607,8 +620,10 @@ void browser_tab_enter_fullscreen(BrowserTab *tab)
     tab->fullScreenMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)fullScreenMessageTimeoutCallback, tab);
     g_source_set_name_by_id(tab->fullScreenMessageLabelId, "[WebKit] fullScreenMessageTimeoutCallback");
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     tab->wasSearchingWhenEnteredFullscreen = gtk_widget_get_visible(GTK_WIDGET(tab->searchBar));
     browser_tab_stop_search(tab);
+#endif
 }
 
 void browser_tab_leave_fullscreen(BrowserTab *tab)
@@ -622,6 +637,7 @@ void browser_tab_leave_fullscreen(BrowserTab *tab)
 
     gtk_widget_hide(tab->fullScreenMessageLabel);
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     if (tab->wasSearchingWhenEnteredFullscreen) {
         /* Opening the search bar steals the focus. Usually, we want
          * this but not when coming back from fullscreen.
@@ -631,6 +647,7 @@ void browser_tab_leave_fullscreen(BrowserTab *tab)
         browser_tab_start_search(tab);
         gtk_window_set_focus(window, focusWidget);
     }
+#endif
 }
 
 void browser_tab_set_background_color(BrowserTab *tab, GdkRGBA *rgba)

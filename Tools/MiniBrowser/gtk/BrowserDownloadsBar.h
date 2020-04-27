@@ -29,6 +29,8 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 G_BEGIN_DECLS
 
 #define BROWSER_TYPE_DOWNLOADS_BAR            (browser_downloads_bar_get_type())
@@ -47,5 +49,7 @@ GtkWidget *browser_downloads_bar_new(void);
 void browser_downloads_bar_add_download(BrowserDownloadsBar *, WebKitDownload *);
 
 G_END_DECLS
+
+#endif
 
 #endif

@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitAuthenticationDialog.h"
 
+#if !USE(GTK4)
+
 #include "AuthenticationDecisionListener.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitCredentialPrivate.h"
@@ -235,3 +237,5 @@ GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest* request, C
     webkitAuthenticationDialogInitialize(authDialog);
     return GTK_WIDGET(authDialog);
 }
+
+#endif

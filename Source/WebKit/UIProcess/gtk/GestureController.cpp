@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GestureController.h"
 
+#if !USE(GTK4)
+
 #include <WebCore/Scrollbar.h>
 #include <gtk/gtk.h>
 
@@ -270,3 +272,5 @@ GestureController::LongPressGesture::LongPressGesture(GtkWidget* widget, Gesture
 }
 
 } // namespace WebKit
+
+#endif

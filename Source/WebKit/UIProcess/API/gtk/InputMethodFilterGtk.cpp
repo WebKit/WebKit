@@ -38,7 +38,7 @@ IntRect InputMethodFilter::platformTransformCursorRectToViewCoordinates(const In
 
 bool InputMethodFilter::platformEventKeyIsKeyPress(PlatformEventKey* event) const
 {
-    return event->type == GDK_KEY_PRESS;
+    return gdk_event_get_event_type(event) == GDK_KEY_PRESS;
 }
 
 } // namespace WebKit

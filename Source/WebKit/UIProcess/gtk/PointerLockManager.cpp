@@ -71,6 +71,7 @@ bool PointerLockManager::lock()
 {
     RELEASE_ASSERT(!m_device);
 
+#if !USE(GTK4)
     auto* viewWidget = m_webPage.viewWidget();
     m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
     GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name(gtk_widget_get_display(viewWidget), "none"));
@@ -80,6 +81,7 @@ bool PointerLockManager::lock()
         m_device = nullptr;
         return false;
     }
+#endif
 
     return true;
 }
@@ -89,8 +91,10 @@ bool PointerLockManager::unlock()
     if (!m_device)
         return false;
 
+#if !USE(GTK4)
     gdk_seat_ungrab(gdk_device_get_seat(m_device));
     m_device = nullptr;
+#endif
     return true;
 }
 

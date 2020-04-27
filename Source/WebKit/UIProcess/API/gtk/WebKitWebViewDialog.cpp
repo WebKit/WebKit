@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitWebViewDialog.h"
 
+#if !USE(GTK4)
+
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -89,3 +91,5 @@ static void webkit_web_view_dialog_class_init(WebKitWebViewDialogClass* klass)
 
     gtk_widget_class_set_css_name(widgetClass, "messagedialog");
 }
+
+#endif

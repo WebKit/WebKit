@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPopupMenuProxyGtk.h"
 
+#if !USE(GTK4)
+
 #include "NativeWebMouseEvent.h"
 #include "WebPopupItem.h"
 #include <WebCore/GtkUtilities.h>
@@ -441,3 +443,5 @@ bool WebPopupMenuProxyGtk::typeAheadFind(GdkEventKey* event)
 }
 
 } // namespace WebKit
+
+#endif

@@ -29,8 +29,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if !USE(GTK4)
 typedef struct _GtkAction GtkAction;
 typedef struct _GAction GAction;
+#endif
 
 namespace WebKit {
 
@@ -41,7 +43,7 @@ public:
     WebContextMenuItemGlib(const WebContextMenuItemData&);
     WebContextMenuItemGlib(const WebContextMenuItemGlib&, Vector<WebContextMenuItemGlib>&& submenu);
     WebContextMenuItemGlib(GAction*, const String& title, GVariant* target = nullptr);
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     WebContextMenuItemGlib(GtkAction*);
 #endif
     ~WebContextMenuItemGlib();
@@ -52,7 +54,7 @@ public:
     GVariant* gActionTarget() const { return m_gActionTarget.get(); }
     const Vector<WebContextMenuItemGlib>& submenuItems() const { return m_submenuItems; }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     GtkAction* gtkAction() const { return m_gtkAction; }
 #endif
 
@@ -63,7 +65,7 @@ private:
     GRefPtr<GAction> m_gAction;
     GRefPtr<GVariant> m_gActionTarget;
     Vector<WebContextMenuItemGlib> m_submenuItems;
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     GtkAction* m_gtkAction { nullptr };
 #endif
 };

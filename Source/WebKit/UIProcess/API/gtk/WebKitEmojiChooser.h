@@ -21,7 +21,7 @@
 
 #include <gtk/gtk.h>
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)
 
 G_BEGIN_DECLS
 
@@ -51,4 +51,4 @@ GtkWidget* webkitEmojiChooserNew();
 
 G_END_DECLS
 
-#endif // GTK_CHECK_VERSION(3, 24, 0)
+#endif // GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)

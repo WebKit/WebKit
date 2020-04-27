@@ -31,7 +31,11 @@
 #include "WebPageProxy.h"
 #include "pointer-constraints-unstable-v1-client-protocol.h"
 #include <WebCore/WlUniquePtr.h>
+#if USE(GTK4)
+#include <gdk/wayland/gdkwayland.h>
+#else
 #include <gdk/gdkwayland.h>
+#endif
 #include <gtk/gtk.h>
 
 namespace WebKit {
@@ -91,9 +95,11 @@ bool PointerLockManagerWayland::lock()
     m_relativePointer = zwp_relative_pointer_manager_v1_get_relative_pointer(m_relativePointerManager, pointer);
     zwp_relative_pointer_v1_add_listener(m_relativePointer, &s_relativePointerListener, this);
 
+#if !USE(GTK4)
     RELEASE_ASSERT(!m_lockedPointer);
     auto* surface = gdk_wayland_window_get_wl_surface(gtk_widget_get_window(m_webPage.viewWidget()));
     m_lockedPointer = zwp_pointer_constraints_v1_lock_pointer(m_pointerConstraints, surface, pointer, nullptr, ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
+#endif
     return true;
 }
 

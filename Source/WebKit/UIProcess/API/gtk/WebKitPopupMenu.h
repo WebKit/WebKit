@@ -26,7 +26,11 @@ typedef struct _WebKitOptionMenu WebKitOptionMenu;
 
 namespace WebKit {
 
+#if USE(GTK4)
+class WebKitPopupMenu final : public WebPopupMenuProxy {
+#else
 class WebKitPopupMenu final : public WebPopupMenuProxyGtk {
+#endif
 public:
     static Ref<WebKitPopupMenu> create(GtkWidget* webView, WebPopupMenuProxy::Client& client)
     {
@@ -34,7 +38,12 @@ public:
     }
     ~WebKitPopupMenu() = default;
 
+#if USE(GTK4)
+    void selectItem(unsigned) { };
+    void activateItem(Optional<unsigned>) { };
+#else
     void activateItem(Optional<unsigned> itemIndex) override;
+#endif
 
 private:
     WebKitPopupMenu(GtkWidget*, WebPopupMenuProxy::Client&);
@@ -43,7 +52,10 @@ private:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
+#if !USE(GTK4)
     GRefPtr<WebKitOptionMenu> m_menu;
+#endif
 };
 
 } // namespace WebKit
+

@@ -8,6 +8,8 @@ set(MiniBrowser_SOURCES
     BrowserCellRendererVariant.h
     BrowserDownloadsBar.c
     BrowserDownloadsBar.h
+    BrowserMain.c
+    BrowserMain.h
     BrowserSearchBar.c
     BrowserSearchBar.h
     BrowserSettingsDialog.c
@@ -24,6 +26,7 @@ set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${MiniBrowser_DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}
     ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
+    ${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}
     ${FORWARDING_HEADERS_DIR}
     ${CMAKE_SOURCE_DIR}/Source
 )
@@ -56,7 +59,12 @@ add_custom_command(
     COMMAND glib-genmarshal --prefix=browser_marshal ${MiniBrowser_DIR}/browser-marshal.list --header > ${MiniBrowser_DERIVED_SOURCES_DIR}/BrowserMarshal.h
     VERBATIM)
 
-set(MiniBrowser_PRIVATE_DEFINITIONS GDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_6)
+if (USE_GTK4)
+    set(MiniBrowser_PRIVATE_DEFINITIONS GDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_92)
+else ()
+    set(MiniBrowser_PRIVATE_DEFINITIONS GDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_22)
+endif ()
+
 if (DEVELOPER_MODE)
     list(APPEND MiniBrowser_PRIVATE_DEFINITIONS -DWEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 endif ()

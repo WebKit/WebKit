@@ -29,7 +29,7 @@
 #include "APIObject.h"
 #include <gio/gio.h>
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 #include <gtk/gtk.h>
 #endif
 
@@ -54,7 +54,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemGlib& dat
 {
     m_gAction = data.gAction();
     m_submenuItems = WTFMove(submenu);
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     m_gtkAction = data.gtkAction();
 #endif
 }
@@ -77,7 +77,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& ti
     createActionIfNeeded();
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
     : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
@@ -95,7 +95,7 @@ WebContextMenuItemGlib::~WebContextMenuItemGlib()
 
 GUniquePtr<char> WebContextMenuItemGlib::buildActionName() const
 {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_gtkAction)
         return GUniquePtr<char>(g_strdup(gtk_action_get_name(m_gtkAction)));
@@ -120,7 +120,7 @@ void WebContextMenuItemGlib::createActionIfNeeded()
         g_simple_action_set_enabled(G_SIMPLE_ACTION(m_gAction.get()), enabled());
     }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {

@@ -29,6 +29,8 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 G_BEGIN_DECLS
 
 #define BROWSER_TYPE_SEARCH_BAR            (browser_search_bar_get_type())
@@ -53,5 +55,7 @@ void browser_search_bar_open(BrowserSearchBar *);
 void browser_search_bar_close(BrowserSearchBar *);
 
 G_END_DECLS
+
+#endif
 
 #endif

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DisplayRefreshMonitorGtk.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !USE(GTK4)
 
 #include <gtk/gtk.h>
 #include <wtf/RunLoop.h>
@@ -94,4 +94,4 @@ void DisplayRefreshMonitorGtk::displayLinkFired()
 
 } // namespace WebCore
 
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !USE(GTK4)

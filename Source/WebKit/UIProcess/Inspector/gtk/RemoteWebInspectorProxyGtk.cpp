@@ -120,7 +120,9 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         GTK_WINDOW(m_window), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
 
     GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+#if !USE(GTK4)
     gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+#endif
 
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL

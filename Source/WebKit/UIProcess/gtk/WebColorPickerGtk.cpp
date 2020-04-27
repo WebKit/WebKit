@@ -30,8 +30,8 @@
 
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <glib/gi18n-lib.h>
-#include <gtk/gtk.h>
 
 namespace WebKit {
 using namespace WebCore;

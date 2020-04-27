@@ -26,6 +26,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>

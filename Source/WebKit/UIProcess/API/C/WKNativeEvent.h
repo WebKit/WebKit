@@ -44,7 +44,6 @@ struct NSEvent;
 #endif
 typedef NSEvent *WKNativeEventPtr;
 #elif defined(BUILDING_GTK__)
-typedef union _GdkEvent GdkEvent;
 typedef const GdkEvent* WKNativeEventPtr;
 #elif defined(WIN32)
 typedef const struct tagMSG* WKNativeEventPtr;

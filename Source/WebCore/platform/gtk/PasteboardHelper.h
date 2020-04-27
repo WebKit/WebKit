@@ -22,8 +22,9 @@
  *
  */
 
-#ifndef PasteboardHelper_h
-#define PasteboardHelper_h
+#pragma once
+
+#if !USE(GTK4)
 
 #include "GRefPtrGtk.h"
 #include <wtf/Function.h>
@@ -58,6 +59,6 @@ private:
     GRefPtr<GtkTargetList> m_targetList;
 };
 
-}
+} // namespace WebCore
 
-#endif // PasteboardHelper_h
+#endif // !USE(GTK4)

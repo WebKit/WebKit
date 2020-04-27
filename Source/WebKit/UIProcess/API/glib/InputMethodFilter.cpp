@@ -105,7 +105,11 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
     m_filteringContext.preeditChanged = false;
     m_compositionResult = { };
 
+#if PLATFORM(WPE) || USE(GTK4)
     bool handled = webkit_input_method_context_filter_key_event(m_context.get(), keyEvent);
+#else
+    bool handled = webkit_input_method_context_filter_key_event(m_context.get(), reinterpret_cast<GdkEventKey*>(keyEvent));
+#endif
     if (!handled)
         return { };
 

@@ -49,13 +49,16 @@ public:
     }
     ~WebContextMenuProxyGtk();
 
+#if !USE(GTK4)
     void populate(const Vector<WebContextMenuItemGlib>&);
     GtkMenu* gtkMenu() const { return m_menu; }
+#endif
 
 private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
     void show() override;
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
+#if !USE(GTK4)
     void append(GMenu*, const WebContextMenuItemGlib&);
     GRefPtr<GMenu> buildMenu(const Vector<WebContextMenuItemGlib>&);
     void populate(const Vector<Ref<WebContextMenuItem>>&);
@@ -67,6 +70,7 @@ private:
     GtkMenu* m_menu;
     WebCore::IntPoint m_popupPosition;
     HashMap<unsigned long, void*> m_signalHandlers;
+#endif
 };
 
 

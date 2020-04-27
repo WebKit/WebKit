@@ -39,8 +39,11 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/UserAgent.h>
-#include <gtk/gtkx.h>
 #include <wtf/NeverDestroyed.h>
+
+#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#include <gtk/gtkx.h>
+#endif
 
 namespace WebKit {
 
@@ -93,7 +96,7 @@ void WebPageProxy::updateEditorState(const EditorState& editorState)
     pageClient().selectionDidChange();
 }
 
-#if PLATFORM(X11)
+#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
 static PluginWindowMap& pluginWindowMap()
 {
@@ -147,7 +150,7 @@ void WebPageProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t wi
     else
         gtk_widget_hide(plugin);
 }
-#endif // PLATFORM(X11)
+#endif // PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 
 void WebPageProxy::setInputMethodState(Optional<InputMethodState>&& state)
 {

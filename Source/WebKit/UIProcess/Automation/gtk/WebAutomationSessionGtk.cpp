@@ -30,12 +30,12 @@
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
-#include <gtk/gtk.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+#if !USE(GTK4)
 static unsigned modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
 {
     unsigned state = 0;
@@ -102,9 +102,11 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
     event->motion.y_root = yRoot;
     gtk_main_do_event(event.get());
 }
+#endif
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
 {
+#if !USE(GTK4)
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);
     unsigned state = modifiersToEventState(keyModifiers) | m_currentModifiers;
@@ -132,10 +134,12 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state | modifier);
         break;
     }
+#endif
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+#if !USE(GTK4)
 static void doKeyStrokeEvent(GdkEventType type, GtkWidget* widget, unsigned keyVal, unsigned state, bool doReleaseAfterPress = false)
 {
     ASSERT(type == GDK_KEY_PRESS || type == GDK_KEY_RELEASE);
@@ -304,9 +308,11 @@ static unsigned modifiersForKeyCode(unsigned keyCode)
     }
     return 0;
 }
+#endif
 
 void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, WTF::Variant<VirtualKey, CharKey>&& key)
 {
+#if !USE(GTK4)
     unsigned keyCode;
     WTF::switchOn(key,
         [&] (VirtualKey virtualKey) {
@@ -331,16 +337,19 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         doKeyStrokeEvent(GDK_KEY_PRESS, page.viewWidget(), keyCode, m_currentModifiers, true);
         break;
     }
+#endif
 }
 
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
+#if !USE(GTK4)
     CString keySequenceUTF8 = keySequence.utf8();
     const char* p = keySequenceUTF8.data();
     do {
         doKeyStrokeEvent(GDK_KEY_PRESS, page.viewWidget(), gdk_unicode_to_keyval(g_utf8_get_char(p)), m_currentModifiers, true);
         p = g_utf8_next_char(p);
     } while (*p);
+#endif
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 

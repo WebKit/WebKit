@@ -20,6 +20,7 @@
 #pragma once
 
 #include "WebPopupMenuProxy.h"
+#if !USE(GTK4)
 #include <WebCore/GUniquePtrGtk.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -87,3 +88,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif

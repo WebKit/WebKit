@@ -38,10 +38,12 @@ namespace WebCore {
 
 const cairo_font_options_t* getDefaultCairoFontOptions()
 {
+#if !USE(GTK4)
     if (auto* screen = gdk_screen_get_default()) {
         if (auto* options = gdk_screen_get_font_options(screen))
             return options;
     }
+#endif
 
     static cairo_font_options_t* options;
     static std::once_flag flag;

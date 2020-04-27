@@ -41,7 +41,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(GdkEvent* event, Vector<WebPlatformTouc
 
 NativeWebTouchEvent::NativeWebTouchEvent(const NativeWebTouchEvent& event)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event.nativeEvent(), Vector<WebPlatformTouchPoint>(event.touchPoints())))
-    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+    , m_nativeEvent(gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())))
 {
 }
 

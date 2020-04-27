@@ -1,3 +1,193 @@
+2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make it possible to build with GTK4 without errors
+        https://bugs.webkit.org/show_bug.cgi?id=210967
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add ifdefs when needed to make it possible to complete a build with GTK4. This way we can continue working on
+        every feature individually and checking it actually works. Move public headers containing API specific to GTK3
+        and GTK4 into their own gtk3 and gtk4 directory.
+
+        * PlatformGTK.cmake:
+        * Shared/API/glib/WebKitContextMenuItem.cpp:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/glib/WebContextMenuItemGlib.cpp:
+        (WebKit::WebContextMenuItemGlib::WebContextMenuItemGlib):
+        (WebKit::WebContextMenuItemGlib::buildActionName const):
+        (WebKit::WebContextMenuItemGlib::createActionIfNeeded):
+        * Shared/glib/WebContextMenuItemGlib.h:
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::buttonForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * SourcesGTK.txt:
+        * UIProcess/API/C/WKNativeEvent.h:
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        * UIProcess/API/glib/InputMethodFilter.h:
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp:
+        (createGstInstallPluginsContext):
+        * UIProcess/API/glib/WebKitPrivate.cpp:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::setWindowFrameTimerFired):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkit_web_context_class_init):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunAsModal):
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/API/gtk/InputMethodFilterGtk.cpp:
+        (WebKit::InputMethodFilter::platformEventKeyIsKeyPress const):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createDataListSuggestionsDropdown):
+        (WebKit::PageClientImpl::startDrag):
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h:
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        * UIProcess/API/gtk/WebKitEmojiChooser.h:
+        * UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp:
+        (webkit_input_method_context_filter_key_event):
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (webkitInputMethodContextImplGtkFilterKeyEvent):
+        (webkitInputMethodContextImplGtkSetClientWindow):
+        * UIProcess/API/gtk/WebKitPopupMenu.cpp:
+        (WebKit::WebKitPopupMenu::WebKitPopupMenu):
+        (WebKit::WebKitPopupMenu::showPopupMenu):
+        (WebKit::WebKitPopupMenu::hidePopupMenu):
+        (WebKit::WebKitPopupMenu::cancelTracking):
+        * UIProcess/API/gtk/WebKitPopupMenu.h:
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        * UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:
+        (webkitScriptDialogAccept):
+        (webkitScriptDialogDismiss):
+        (webkitScriptDialogSetUserInput):
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (ClickCounter::currentClickCountForGdkButtonEvent):
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseContainerForall):
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewBaseSizeAllocate):
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkitWebViewBaseSetEnableBackForwardNavigationGesture):
+        (webkitWebViewBaseBeginBackSwipeForTesting):
+        (webkitWebViewBaseCompleteBackSwipeForTesting):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseWillSwapWebProcess):
+        (webkitWebViewBaseDidExitWebProcess):
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        (webkitWebViewBaseTakeViewSnapshot):
+        (webkitWebViewBaseDidStartProvisionalLoadForMainFrame):
+        (webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame):
+        (webkitWebViewBaseDidFinishLoadForMainFrame):
+        (webkitWebViewBaseDidFailLoadForMainFrame):
+        (webkitWebViewBaseDidSameDocumentNavigationForMainFrame):
+        (webkitWebViewBaseDidRestoreScrollPosition):
+        (webkitWebViewBaseShowEmojiChooser):
+        (webkitWebViewBaseRequestPointerLock):
+        (webkitWebViewBaseDidLosePointerLock):
+        (webkitWebViewBaseSynthesizeCompositionKeyPress):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp:
+        * UIProcess/API/gtk/WebKitWebViewDialog.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewAuthenticate):
+        (webkitWebViewScriptDialog):
+        (webkitWebViewRunFileChooser):
+        (webkitWebViewMaximizeWindow):
+        (webkitWebViewMinimizeWindow):
+        (webkitWebViewRestoreWindow):
+        * UIProcess/API/gtk3/WebKitContextMenuItem.h: Copied from Source/WebKit/UIProcess/API/gtk/WebKitContextMenuItem.h.
+        * UIProcess/API/gtk3/WebKitInputMethodContext.h: Copied from Source/WebKit/UIProcess/API/gtk/WebKitInputMethodContext.h.
+        * UIProcess/API/gtk4/WebKitContextMenuItem.h: Renamed from Source/WebKit/UIProcess/API/gtk/WebKitContextMenuItem.h.
+        * UIProcess/API/gtk4/WebKitInputMethodContext.h: Renamed from Source/WebKit/UIProcess/API/gtk/WebKitInputMethodContext.h.
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:
+        (webkit_inspector_window_init):
+        (webkitInspectorWindowNew):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureGLContext):
+        (WebKit::AcceleratedBackingStoreWayland::paint):
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11):
+        (WebKit::AcceleratedBackingStoreX11::update):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        * UIProcess/gtk/DragAndDropHandler.h:
+        * UIProcess/gtk/GestureController.cpp:
+        * UIProcess/gtk/GestureController.h:
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        (WebKit::KeyBindingTranslator::KeyBindingTranslator):
+        (WebKit::KeyBindingTranslator::commandsForKeyEvent):
+        * UIProcess/gtk/KeyBindingTranslator.h:
+        * UIProcess/gtk/PointerLockManager.cpp:
+        (WebKit::PointerLockManager::lock):
+        (WebKit::PointerLockManager::unlock):
+        * UIProcess/gtk/PointerLockManager.h:
+        * UIProcess/gtk/PointerLockManagerWayland.cpp:
+        (WebKit::PointerLockManagerWayland::lock):
+        * UIProcess/gtk/PointerLockManagerX11.cpp:
+        (WebKit::PointerLockManagerX11::didReceiveMotionEvent):
+        * UIProcess/gtk/WebColorPickerGtk.cpp:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::show):
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp:
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::AcceleratedSurfaceX11):
+        (WebKit::AcceleratedSurfaceX11::createPixmap):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::print):
+
 2020-04-27  Rob Buis  <rbuis@igalia.com>
 
         Make loadURLIntoChildFrame private and non-exported

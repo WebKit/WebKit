@@ -24,6 +24,11 @@
 
 #if USE(GTK4)
 
+#define GDK_MOD1_MASK GDK_ALT_MASK
+
+typedef GdkKeyEvent GdkEventKey;
+typedef GdkFocusEvent GdkEventFocus;
+
 static inline gboolean
 gtk_widget_is_toplevel(GtkWidget* widget)
 {
@@ -57,59 +62,77 @@ gtk_init_check(int*, char***)
     return gtk_init_check();
 }
 
-#define GDK_MOD1_MASK GDK_ALT_MASK
+static inline GdkEvent*
+gdk_event_copy(GdkEvent* event)
+{
+    return gdk_event_ref(event);
+}
+
+static inline void
+gtk_widget_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
+{
+    gtk_widget_size_allocate(widget, allocation, -1);
+}
+
+static inline void
+gtk_widget_queue_resize_no_redraw(GtkWidget* widget)
+{
+    gtk_widget_queue_resize(widget);
+}
 
 static inline gboolean
-gdk_event_get_state(GdkEvent *event, GdkModifierType *state)
+gdk_event_get_state(const GdkEvent *event, GdkModifierType *state)
 {
-    *state = gdk_event_get_modifier_state(event);
+    *state = gdk_event_get_modifier_state(const_cast<GdkEvent*>(event));
     // The GTK3 method returns TRUE if there is a state, otherwise
     // FALSE.
     return !!*state;
 }
 
 static inline gboolean
-gdk_event_get_coords(GdkEvent *event, double *x, double *y)
+gdk_event_get_coords(const GdkEvent *event, double *x, double *y)
 {
-    return gdk_event_get_position(event, x, y);
+    return gdk_event_get_position(const_cast<GdkEvent*>(event), x, y);
 }
 
 static inline gboolean
-gdk_event_get_root_coords(GdkEvent *event, double *x, double *y)
+gdk_event_get_root_coords(const GdkEvent *event, double *x, double *y)
 {
     // GTK4 does not provide a way of obtaining screen-relative event coordinates, and even
     // on Wayland GTK3 cannot know where a surface is and will return the surface-relative
     // coordinates anyway, so do the same here.
-    return gdk_event_get_position(event, x, y);
+    return gdk_event_get_position(const_cast<GdkEvent*>(event), x, y);
 }
 
 static inline gboolean
-gdk_event_is_scroll_stop_event(GdkEvent* event)
+gdk_event_is_scroll_stop_event(const GdkEvent* event)
 {
-    return gdk_scroll_event_is_stop(event);
+    return gdk_scroll_event_is_stop(const_cast<GdkEvent*>(event));
 }
 
 static inline gboolean
-gdk_event_get_scroll_direction(GdkEvent* event, GdkScrollDirection* direction)
+gdk_event_get_scroll_direction(const GdkEvent* event, GdkScrollDirection* direction)
 {
-    *direction = gdk_scroll_event_get_direction(event);
+    *direction = gdk_scroll_event_get_direction(const_cast<GdkEvent*>(event));
     // The GTK3 method returns TRUE if the scroll direction is not
     // GDK_SCROLL_SMOOTH, so do the same here.
     return *direction != GDK_SCROLL_SMOOTH;
 }
 
 static inline gboolean
-gdk_event_get_scroll_deltas(GdkEvent* event, gdouble *x, gdouble *y)
+gdk_event_get_scroll_deltas(const GdkEvent* event, gdouble *x, gdouble *y)
 {
-    gdk_scroll_event_get_deltas(event, x, y);
+    gdk_scroll_event_get_deltas(const_cast<GdkEvent*>(event), x, y);
     // The GTK3 method returns TRUE if the event is a smooth scroll
     // event, so do the same here.
-    return gdk_scroll_event_get_direction(event) == GDK_SCROLL_SMOOTH;
+    return gdk_scroll_event_get_direction(const_cast<GdkEvent*>(event)) == GDK_SCROLL_SMOOTH;
 }
 
 static inline gboolean
-gdk_event_get_button(GdkEvent* event)
+gdk_event_get_button(const GdkEvent* event, guint* button)
 {
-    return gdk_button_event_get_button(event);
+    if (button)
+        *button = gdk_button_event_get_button(const_cast<GdkEvent*>(event));
+    return true;
 }
 #endif // USE(GTK4)

@@ -27,7 +27,7 @@
 #include "NativeWebWheelEvent.h"
 
 #include "WebEventFactory.h"
-#include <gdk/gdk.h>
+#include <WebCore/GtkVersioning.h>
 
 namespace WebKit {
 

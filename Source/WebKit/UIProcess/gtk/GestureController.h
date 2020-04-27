@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !USE(GTK4)
+
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
@@ -34,6 +36,7 @@ typedef union _GdkEvent GdkEvent;
 typedef struct _GdkEventTouch GdkEventTouch;
 typedef struct _GdkEventSequence GdkEventSequence;
 typedef struct _GtkGesture GtkGesture;
+
 
 namespace WebKit {
 
@@ -158,3 +161,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif

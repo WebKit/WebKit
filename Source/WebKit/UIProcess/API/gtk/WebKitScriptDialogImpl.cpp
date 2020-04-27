@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitScriptDialogImpl.h"
 
+#if !USE(GTK4)
+
 #include "WebKitScriptDialogPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
@@ -272,3 +274,5 @@ void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl* dialog, const St
 
     gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), text.utf8().data());
 }
+
+#endif

@@ -27,6 +27,8 @@
 #include "BrowserMarshal.h"
 #include <errno.h>
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 enum {
     PROP_0,
 
@@ -344,3 +346,4 @@ GtkCellRenderer *browser_cell_renderer_variant_new(void)
     return GTK_CELL_RENDERER(g_object_new(BROWSER_TYPE_CELL_RENDERER_VARIANT, NULL));
 }
 
+#endif

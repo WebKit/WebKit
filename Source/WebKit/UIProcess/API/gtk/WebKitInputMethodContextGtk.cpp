@@ -60,7 +60,11 @@ void webkit_input_method_underline_set_color(WebKitInputMethodUnderline* underli
  *
  * Since: 2.28
  */
+#if USE(GTK4)
+gboolean webkit_input_method_context_filter_key_event(WebKitInputMethodContext* context, GdkEvent* keyEvent)
+#else
 gboolean webkit_input_method_context_filter_key_event(WebKitInputMethodContext* context, GdkEventKey* keyEvent)
+#endif
 {
     g_return_val_if_fail(WEBKIT_IS_INPUT_METHOD_CONTEXT(context), FALSE);
     g_return_val_if_fail(keyEvent, FALSE);

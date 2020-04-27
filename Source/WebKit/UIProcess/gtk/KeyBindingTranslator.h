@@ -23,7 +23,12 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(GTK4)
+typedef struct _GdkKeyEvent GdkKeyEvent;
+typedef GdkKeyEvent GdkEventKey;
+#else
 typedef struct _GdkEventKey GdkEventKey;
+#endif
 
 namespace WebKit {
 

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "WebKitEmojiChooser.h"
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)
 
 #include <glib/gi18n-lib.h>
 #include <wtf/HashSet.h>
@@ -637,4 +637,4 @@ GtkWidget* webkitEmojiChooserNew()
     return GTK_WIDGET(authDialog);
 }
 
-#endif // GTK_CHECK_VERSION(3, 24, 0)
+#endif // GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)

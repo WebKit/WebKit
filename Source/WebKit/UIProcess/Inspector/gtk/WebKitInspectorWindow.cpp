@@ -52,14 +52,19 @@ static void webkit_inspector_window_init(WebKitInspectorWindow* window)
 {
     window->headerBar = gtk_header_bar_new();
     gtk_header_bar_set_title(GTK_HEADER_BAR(window->headerBar), _("Web Inspector"));
+#if !USE(GTK4)
     gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(window->headerBar), TRUE);
+#endif
     gtk_window_set_titlebar(GTK_WINDOW(window), window->headerBar);
     gtk_widget_show(window->headerBar);
 }
 
 GtkWidget* webkitInspectorWindowNew()
 {
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_INSPECTOR_WINDOW, "type", GTK_WINDOW_TOPLEVEL,
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_INSPECTOR_WINDOW,
+#if !USE(GTK4)
+        "type", GTK_WINDOW_TOPLEVEL,
+#endif
         "default-width", WebInspectorProxy::initialWindowWidth, "default-height", WebInspectorProxy::initialWindowHeight, nullptr));
 }
 

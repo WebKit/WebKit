@@ -19,6 +19,8 @@
 
 #pragma once
 
+#if !USE(GTK4)
+
 #include "WebKitAuthenticationRequest.h"
 #include "WebKitWebViewDialog.h"
 #include <gtk/gtk.h>
@@ -56,3 +58,4 @@ GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest*, Credentia
 
 G_END_DECLS
 
+#endif

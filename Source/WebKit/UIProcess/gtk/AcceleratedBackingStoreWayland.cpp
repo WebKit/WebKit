@@ -32,7 +32,11 @@
 #include "WebPageProxy.h"
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and eglplatform.h, included by egl.h, checks that to decide whether it's Wayland platform.
+#if USE(GTK4)
+#include <gdk/wayland/gdkwayland.h>
+#else
 #include <gdk/gdkwayland.h>
+#endif
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <WebCore/CairoUtilities.h>
@@ -211,6 +215,7 @@ void AcceleratedBackingStoreWayland::tryEnsureGLContext()
 
     m_glContextInitialized = true;
 
+#if !USE(GTK4)
     GUniqueOutPtr<GError> error;
     m_gdkGLContext = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(m_webPage.viewWidget()), &error.outPtr()));
     if (m_gdkGLContext) {
@@ -221,6 +226,7 @@ void AcceleratedBackingStoreWayland::tryEnsureGLContext()
     }
 
     g_warning("GDK is not able to create a GL context, falling back to glReadPixels (slow!): %s", error->message);
+#endif
 
     m_glContext = GLContext::createOffscreenContext();
 }
@@ -313,11 +319,13 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 
     cairo_save(cr);
 
+#if !USE(GTK4)
     if (m_gdkGLContext) {
         gdk_cairo_draw_from_gl(cr, gtk_widget_get_window(m_webPage.viewWidget()), texture, GL_TEXTURE, m_webPage.deviceScaleFactor(), 0, 0, textureSize.width(), textureSize.height());
         cairo_restore(cr);
         return true;
     }
+#endif
 
     ASSERT(m_glContext);
 

@@ -1812,7 +1812,7 @@ private:
     UniqueRef<TextCheckingControllerProxy> m_textCheckingControllerProxy;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || (PLATFORM(GTK) && !USE(GTK4))
     std::unique_ptr<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
 #endif
 

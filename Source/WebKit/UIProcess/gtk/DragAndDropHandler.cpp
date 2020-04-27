@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DragAndDropHandler.h"
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && !USE(GTK4)
 
 #include "WebPageProxy.h"
 #include <WebCore/DragData.h>

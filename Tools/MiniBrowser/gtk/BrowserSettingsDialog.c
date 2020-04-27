@@ -26,6 +26,8 @@
 #include "BrowserSettingsDialog.h"
 #include "BrowserCellRendererVariant.h"
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 enum {
     PROP_0,
 
@@ -236,3 +238,4 @@ GtkWidget *browser_settings_dialog_new(WebKitSettings *settings)
     return GTK_WIDGET(g_object_new(BROWSER_TYPE_SETTINGS_DIALOG, "settings", settings, NULL));
 }
 
+#endif

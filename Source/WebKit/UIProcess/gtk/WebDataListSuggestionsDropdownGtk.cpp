@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 
-#if ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT) && !USE(GTK4)
 
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>

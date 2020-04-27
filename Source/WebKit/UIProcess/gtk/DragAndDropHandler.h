@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT) && !USE(GTK4)
 
 #include <WebCore/DragActions.h>
 #include <WebCore/IntPoint.h>

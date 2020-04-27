@@ -1,3 +1,56 @@
+2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make it possible to build with GTK4 without errors
+        https://bugs.webkit.org/show_bug.cgi?id=210967
+
+        Reviewed by Adrian Perez de Castro.
+
+        * MiniBrowser/gtk/BrowserCellRendererVariant.c:
+        * MiniBrowser/gtk/BrowserCellRendererVariant.h:
+        * MiniBrowser/gtk/BrowserDownloadsBar.c:
+        * MiniBrowser/gtk/BrowserDownloadsBar.h:
+        * MiniBrowser/gtk/BrowserMain.c: Added.
+        (browser_main):
+        (browser_main_quit):
+        * MiniBrowser/gtk/BrowserMain.h: Added.
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        * MiniBrowser/gtk/BrowserSearchBar.h:
+        * MiniBrowser/gtk/BrowserSettingsDialog.c:
+        * MiniBrowser/gtk/BrowserSettingsDialog.h:
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browserTabConstructed):
+        (browser_tab_start_search):
+        (browser_tab_stop_search):
+        (browser_tab_enter_fullscreen):
+        (browser_tab_leave_fullscreen):
+        * MiniBrowser/gtk/BrowserTab.h:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewURIChanged):
+        (resetEntryProgress):
+        (webViewLoadProgressChanged):
+        (downloadStarted):
+        (browserWindowUpdateNavigationActions):
+        (webViewReadyToShow):
+        (browserWindowUpdateZoomActions):
+        (webViewZoomLevelChanged):
+        (updateUriEntryIcon):
+        (webViewIsLoadingChanged):
+        (browserWindowFinalize):
+        (browserWindowSetupEditorToolbar):
+        (browserWindowSwitchTab):
+        (browser_window_init):
+        (browser_window_class_init):
+        (browser_window_new):
+        (browser_window_append_view):
+        (browser_window_set_background_color):
+        (browser_window_get_or_create_web_view_for_automation):
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * PlatformGTK.cmake:
+        * Scripts/webkitpy/style/checker.py:
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+
 2020-04-27  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Regenerate toolchains only if new updates were downloaded

@@ -737,7 +737,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
     m_xDPI = xDPI;
     m_yDPI = yDPI;
     m_cairoContext = adoptRef(cairo_create(surface));
-
+#if !USE(GTK4)
     // Make sure the print pages idle has more priority than IPC messages comming from
     // the IO thread, so that the EndPrinting message is always handled once the print
     // operation has finished. See https://bugs.webkit.org/show_bug.cgi?id=122801.
@@ -748,6 +748,7 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
         ASSERT(mainLoop);
         g_main_loop_run(mainLoop);
     }
+#endif
 }
 
 }

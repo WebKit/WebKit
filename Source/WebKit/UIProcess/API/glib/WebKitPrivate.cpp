@@ -25,7 +25,7 @@
 #include "WebKitError.h"
 
 #if PLATFORM(GTK)
-#include <gdk/gdk.h>
+#include <WebCore/GtkVersioning.h>
 #elif PLATFORM(WPE)
 #include <wpe/wpe.h>
 #endif

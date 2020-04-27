@@ -37,7 +37,11 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xdamage.h>
 #include <cairo-xlib.h>
+#if USE(GTK4)
+#include <gdk/x11/gdkx.h>
+#else
 #include <gdk/gdkx.h>
+#endif
 #include <gtk/gtk.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -48,6 +52,7 @@ using namespace WebCore;
 static Optional<int> s_damageEventBase;
 static Optional<int> s_damageErrorBase;
 
+#if !USE(GTK4)
 class XDamageNotifier {
     WTF_MAKE_NONCOPYABLE(XDamageNotifier);
     friend NeverDestroyed<XDamageNotifier>;
@@ -102,6 +107,7 @@ private:
 
     HashMap<Damage, WTF::Function<void()>> m_notifyFunctions;
 };
+#endif
 
 bool AcceleratedBackingStoreX11::checkRequirements()
 {
@@ -131,6 +137,7 @@ AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11()
     if (!m_surface && !m_damage)
         return;
 
+#if !USE(GTK4)
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
     if (m_damage) {
@@ -138,6 +145,7 @@ AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11()
         m_damage.reset();
         XSync(display, False);
     }
+#endif
 }
 
 void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext)
@@ -149,12 +157,14 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
 
     if (m_surface) {
+#if !USE(GTK4)
         XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
         if (m_damage) {
             XDamageNotifier::singleton().remove(m_damage.get());
             m_damage.reset();
             XSync(display, False);
         }
+#endif
         m_surface = nullptr;
     }
 
@@ -168,7 +178,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     IntSize size = drawingArea->size();
     float deviceScaleFactor = m_webPage.deviceScaleFactor();
     size.scale(deviceScaleFactor);
-
+#if !USE(GTK4)
     XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, xDamageErrorCode(BadDamage) });
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
     GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default());
@@ -182,6 +192,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
             gtk_widget_queue_draw(m_webPage.viewWidget());
     });
     XSync(display, False);
+#endif
 }
 
 bool AcceleratedBackingStoreX11::paint(cairo_t* cr, const IntRect& clipRect)

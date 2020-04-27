@@ -19,6 +19,8 @@
 
 #pragma once
 
+#if !USE(GTK4)
+
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -47,3 +49,5 @@ struct _WebKitWebViewDialogClass {
 GType webkit_web_view_dialog_get_type();
 
 G_END_DECLS
+
+#endif

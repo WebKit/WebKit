@@ -28,21 +28,31 @@
 
 namespace WebCore {
 
+#if USE(GTK4)
+PlatformPasteboard::PlatformPasteboard(const String&)
+{
+}
+#else
 PlatformPasteboard::PlatformPasteboard(const String& pasteboardName)
     : m_clipboard(gtk_clipboard_get(gdk_atom_intern(pasteboardName.utf8().data(), TRUE)))
 {
     ASSERT(m_clipboard);
 }
+#endif
 
 void PlatformPasteboard::writeToClipboard(const SelectionData& selection, WTF::Function<void()>&& primarySelectionCleared)
 {
+#if !USE(GTK4)
     PasteboardHelper::singleton().writeClipboardContents(m_clipboard, selection, gtk_clipboard_get(GDK_SELECTION_PRIMARY) == m_clipboard ? WTFMove(primarySelectionCleared) : nullptr);
+#endif
 }
 
 Ref<SelectionData> PlatformPasteboard::readFromClipboard()
 {
     Ref<SelectionData> selection(SelectionData::create());
+#if !USE(GTK4)
     PasteboardHelper::singleton().getClipboardContents(m_clipboard, selection.get());
+#endif
     return selection;
 }
 

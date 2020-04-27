@@ -26,6 +26,8 @@
 #include "cmakeconfig.h"
 #include "BrowserSearchBar.h"
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 static const char *searchEntryFailedStyle = "GtkEntry#searchEntry {background-color: #ff6666;}";
 
 struct _BrowserSearchBar {
@@ -291,3 +293,5 @@ void browser_search_bar_close(BrowserSearchBar *searchBar)
     WebKitFindController *controller = webkit_web_view_get_find_controller(searchBar->webView);
     webkit_find_controller_search_finish(controller);
 }
+
+#endif

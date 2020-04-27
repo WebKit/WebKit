@@ -47,6 +47,7 @@ static const char* gContextMenuItemGroup = "webkitContextMenu";
 namespace WebKit {
 using namespace WebCore;
 
+#if !USE(GTK4)
 static void contextMenuItemActivatedCallback(GAction* action, GVariant*, WebPageProxy* page)
 {
     auto* stateType = g_action_get_state_type(action);
@@ -158,9 +159,11 @@ void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& ite
     }
     gtk_menu_shell_bind_model(GTK_MENU_SHELL(m_menu), G_MENU_MODEL(menu.get()), nullptr, TRUE);
 }
+#endif
 
 void WebContextMenuProxyGtk::show()
 {
+#if !USE(GTK4)
     Vector<Ref<WebContextMenuItem>> proposedAPIItems;
     for (auto& item : m_context.menuItems()) {
         if (item.action() != ContextMenuItemTagShareMenu)
@@ -168,10 +171,12 @@ void WebContextMenuProxyGtk::show()
     }
 
     m_page->contextMenuClient().getContextMenuFromProposedMenu(*m_page, WTFMove(proposedAPIItems), WebContextMenuListenerProxy::create(this).get(), m_context.webHitTestResultData(), m_page->process().transformHandlesToObjects(m_userData.object()).get());
+#endif
 }
 
 void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&& items)
 {
+#if !USE(GTK4)
     if (!items.isEmpty())
         populate(items);
 
@@ -187,21 +192,27 @@ void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : 0;
     gtk_menu_attach_to_widget(m_menu, GTK_WIDGET(m_webView), nullptr);
     gtk_menu_popup(m_menu, nullptr, nullptr, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
+#endif
 }
 
 WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     : WebContextMenuProxy(WTFMove(context), userData)
+#if !USE(GTK4)
     , m_webView(webView)
     , m_page(&page)
     , m_menu(GTK_MENU(gtk_menu_new()))
+#endif
 {
+#if !USE(GTK4)
     GRefPtr<GSimpleActionGroup> group = adoptGRef(g_simple_action_group_new());
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(group.get()));
     webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), this);
+#endif
 }
 
 WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 {
+#if !USE(GTK4)
     gtk_menu_popdown(m_menu);
 
     for (auto& handler : m_signalHandlers)
@@ -210,8 +221,10 @@ WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, nullptr);
     gtk_widget_destroy(GTK_WIDGET(m_menu));
+#endif
 }
 
+#if !USE(GTK4)
 void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, WebContextMenuProxyGtk* popupMenu)
 {
     GtkRequisition menuSize;
@@ -228,6 +241,7 @@ void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* 
 
     *pushIn = FALSE;
 }
+#endif
 
 } // namespace WebKit
 #endif // ENABLE(CONTEXT_MENUS)

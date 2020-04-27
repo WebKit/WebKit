@@ -34,7 +34,11 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
 #include <cairo-xlib.h>
+#if USE(GTK4)
+#include <gdk/x11/gdkx.h>
+#else
 #include <gdk/gdkx.h>
+#endif
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -47,17 +51,20 @@ std::unique_ptr<AcceleratedSurfaceX11> AcceleratedSurfaceX11::create(WebPage& we
     return std::unique_ptr<AcceleratedSurfaceX11>(new AcceleratedSurfaceX11(webPage, client));
 }
 
+#if !USE(GTK4)
 static GdkVisual* defaultVisual()
 {
     if (GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default()))
         return visual;
     return gdk_screen_get_system_visual(gdk_screen_get_default());
 }
+#endif
 
 AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
     , m_display(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native())
 {
+#if !USE(GTK4)
     Screen* screen = DefaultScreenOfDisplay(m_display);
 
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == m_display);
@@ -110,6 +117,7 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
     XSelectInput(m_display, m_window.get(), NoEventMask);
     XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
     createPixmap();
+#endif
 }
 
 AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
@@ -125,12 +133,14 @@ AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
 
 void AcceleratedSurfaceX11::createPixmap()
 {
+#if !USE(GTK4)
     m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap.get(), GDK_VISUAL_XVISUAL(defaultVisual()), m_size.width(), m_size.height()));
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
     cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
     cairo_paint(cr.get());
     XSync(m_display, False);
+#endif
 }
 
 bool AcceleratedSurfaceX11::hostResize(const IntSize& size)

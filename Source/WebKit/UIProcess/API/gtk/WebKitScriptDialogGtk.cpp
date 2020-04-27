@@ -25,22 +25,28 @@
 
 void webkitScriptDialogAccept(WebKitScriptDialog* scriptDialog)
 {
+#if !USE(GTK4)
     if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
         return;
     webkitScriptDialogImplConfirm(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog));
+#endif
 }
 
 void webkitScriptDialogDismiss(WebKitScriptDialog* scriptDialog)
 {
+#if !USE(GTK4)
     if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
         return;
     webkitScriptDialogImplCancel(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog));
+#endif
 }
 
 void webkitScriptDialogSetUserInput(WebKitScriptDialog* scriptDialog, const String& userInput)
 {
+#if !USE(GTK4)
     if (!WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog))
         return;
 
     webkitScriptDialogImplSetEntryText(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog), userInput);
+#endif
 }

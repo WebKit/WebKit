@@ -28,7 +28,11 @@
 
 #include "WebEvent.h"
 
+#if USE(GTK4)
+typedef struct _GdkEvent GdkEvent;
+#else
 typedef union _GdkEvent GdkEvent;
+#endif
 
 namespace WebKit {
 

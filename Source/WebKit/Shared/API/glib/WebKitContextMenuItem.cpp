@@ -124,7 +124,7 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
     return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), item->priv->menuItem->checked());
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_context_menu_item_new:
  * @action: a #GtkAction
@@ -261,7 +261,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
     return item;
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 /**
  * webkit_context_menu_item_get_action:
  * @item: a #WebKitContextMenuItem

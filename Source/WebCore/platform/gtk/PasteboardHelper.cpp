@@ -23,6 +23,8 @@
 #include "config.h"
 #include "PasteboardHelper.h"
 
+#if !USE(GTK4)
+
 #include "BitmapImage.h"
 #include "SelectionData.h"
 #include <gtk/gtk.h>
@@ -314,5 +316,7 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const Sel
         gtk_target_table_free(table, numberOfTargets);
 }
 
-}
+} // namespace WebCore
+
+#endif // !USE(GTK4)
 

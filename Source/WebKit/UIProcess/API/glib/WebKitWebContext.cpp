@@ -121,7 +121,9 @@ enum {
     PROP_WEBSITE_DATA_MANAGER,
 #if PLATFORM(GTK)
     PROP_PSON_ENABLED,
+#if !USE(GTK4)
     PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS
+#endif
 #endif
 };
 
@@ -337,9 +339,11 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_PSON_ENABLED:
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
+#if !USE(GTK4)
     case PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS:
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
         break;
+#endif
 #endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -365,9 +369,11 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     case PROP_PSON_ENABLED:
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
+#if !USE(GTK4)
     case PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS:
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
         break;
+#endif
 #endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -533,6 +539,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
+#if !USE(GTK4)
     /**
      * WebKitWebContext:use-system-appearance-for-scrollbars:
      *
@@ -553,6 +560,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             _("Whether to use system appearance for rendering scrollbars"),
             TRUE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+#endif
 #endif
 
     /**

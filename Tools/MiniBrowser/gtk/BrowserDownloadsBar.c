@@ -26,6 +26,8 @@
 #include "cmakeconfig.h"
 #include "BrowserDownloadsBar.h"
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
+
 #include <glib/gi18n.h>
 
 #define BROWSER_TYPE_DOWNLOAD (browser_download_get_type())
@@ -275,3 +277,5 @@ void browser_downloads_bar_add_download(BrowserDownloadsBar *downloadsBar, WebKi
     gtk_box_pack_start(GTK_BOX(contentBox), browserDownload, FALSE, TRUE, 0);
     gtk_widget_show(browserDownload);
 }
+
+#endif

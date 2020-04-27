@@ -2350,7 +2350,7 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
 
     webView->priv->modalLoop = adoptGRef(g_main_loop_new(0, FALSE));
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 // This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     gdk_threads_leave();
@@ -2358,7 +2358,7 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
 
     g_main_loop_run(webView->priv->modalLoop.get());
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     gdk_threads_enter();
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
@@ -2580,13 +2580,16 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
 }
 
 #if PLATFORM(GTK)
+#if !USE(GTK4)
 static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
 }
+#endif
 
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)
 {
+#if !USE(GTK4)
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
     ASSERT(contextMenuProxy);
@@ -2610,6 +2613,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
 
     // Clear the menu to make sure it's useless after signal emission.
     webkit_context_menu_remove_all(contextMenu.get());
+#endif
 }
 #elif PLATFORM(WPE)
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)

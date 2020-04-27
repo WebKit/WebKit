@@ -166,6 +166,9 @@ void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
 
 GdkMonitor* getCurrentScreenMonitor()
 {
+#if USE(GTK4)
+    return nullptr;
+#else
     GdkDisplay* display = gdk_display_get_default();
     if (!display)
         return nullptr;
@@ -175,6 +178,7 @@ GdkMonitor* getCurrentScreenMonitor()
         return nullptr;
 
     return gdk_display_get_monitor_at_window(display, rootWindow);
+#endif
 }
 
 

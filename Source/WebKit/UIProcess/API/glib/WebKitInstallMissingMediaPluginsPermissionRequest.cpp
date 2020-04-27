@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 #include <WebCore/PlatformDisplay.h>
-#if PLATFORM(X11)
+#if PLATFORM(X11) && !USE(GTK4)
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #endif
@@ -70,7 +70,7 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(
 #if ENABLE(VIDEO)
 static GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext(WebPageProxy& page)
 {
-#if PLATFORM(X11)
+#if PLATFORM(X11) && !USE(GTK4)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         GUniquePtr<GstInstallPluginsContext> context(gst_install_plugins_context_new());
         gst_install_plugins_context_set_xid(context.get(), GDK_WINDOW_XID(gtk_widget_get_window(page.viewWidget())));

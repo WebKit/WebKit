@@ -19,8 +19,8 @@
 #include "config.h"
 #include "KeyBindingTranslator.h"
 
+#include <WebCore/GtkVersioning.h>
 #include <gdk/gdkkeysyms.h>
-#include <gtk/gtk.h>
 
 namespace WebKit {
 
@@ -68,6 +68,7 @@ static void insertEmojiCallback(GtkWidget* widget, KeyBindingTranslator* transla
 }
 #endif
 
+#if !USE(GTK4)
 // GTK+ will still send these signals to the web view. So we can safely stop signal
 // emission without breaking accessibility.
 static void popupMenuCallback(GtkWidget* widget, KeyBindingTranslator*)
@@ -79,6 +80,7 @@ static void showHelpCallback(GtkWidget* widget, KeyBindingTranslator*)
 {
     g_signal_stop_emission_by_name(widget, "show-help");
 }
+#endif
 
 static const char* const gtkDeleteCommands[][2] = {
     { "DeleteBackward",               "DeleteForward"                        }, // Characters
@@ -179,8 +181,10 @@ KeyBindingTranslator::KeyBindingTranslator()
     g_signal_connect(m_nativeWidget.get(), "move-cursor", G_CALLBACK(moveCursorCallback), this);
     g_signal_connect(m_nativeWidget.get(), "delete-from-cursor", G_CALLBACK(deleteFromCursorCallback), this);
     g_signal_connect(m_nativeWidget.get(), "toggle-overwrite", G_CALLBACK(toggleOverwriteCallback), this);
+#if !USE(GTK4)
     g_signal_connect(m_nativeWidget.get(), "popup-menu", G_CALLBACK(popupMenuCallback), this);
     g_signal_connect(m_nativeWidget.get(), "show-help", G_CALLBACK(showHelpCallback), this);
+#endif
 #if GTK_CHECK_VERSION(3, 24, 0)
     g_signal_connect(m_nativeWidget.get(), "insert-emoji", G_CALLBACK(insertEmojiCallback), this);
 #endif
@@ -213,10 +217,15 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 
     guint keyval;
     GdkModifierType state;
+#if USE(GTK4)
+    keyval = 0;
+    state = static_cast<GdkModifierType>(0);
+#else
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
     gdk_event_get_state(reinterpret_cast<GdkEvent*>(event), &state);
 
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
+#endif
     if (!m_pendingEditorCommands.isEmpty())
         return WTFMove(m_pendingEditorCommands);
 

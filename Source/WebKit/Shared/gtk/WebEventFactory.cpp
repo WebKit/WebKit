@@ -29,12 +29,12 @@
 #include "WebEventFactory.h"
 
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <gtk/gtk.h>
 #include <wtf/ASCIICType.h>
 
 namespace WebKit {
@@ -72,7 +72,7 @@ static inline OptionSet<WebEvent::Modifier> modifiersForEvent(const GdkEvent* ev
 static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
 {
     unsigned button = 0;
-    GdkEventType type = gdk_event_get_event_type(event);
+    GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (type) {
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
@@ -89,8 +89,10 @@ static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
         break;
     }
     case GDK_BUTTON_PRESS:
+#if !USE(GTK4)
     case GDK_2BUTTON_PRESS:
     case GDK_3BUTTON_PRESS:
+#endif
     case GDK_BUTTON_RELEASE: {
         guint eventButton;
         gdk_event_get_button(event, &eventButton);
@@ -150,7 +152,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
     IntPoint movementDelta;
 
-    GdkEventType eventType = gdk_event_get_event_type(event);
+    GdkEventType eventType = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (eventType) {
     case GDK_MOTION_NOTIFY:
     case GDK_ENTER_NOTIFY:
@@ -159,9 +161,11 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
         if (delta)
             movementDelta = delta.value();
         break;
-    case GDK_BUTTON_PRESS:
+#if !USE(GTK4)
     case GDK_2BUTTON_PRESS:
-    case GDK_3BUTTON_PRESS: {
+    case GDK_3BUTTON_PRESS:
+#endif
+    case GDK_BUTTON_PRESS: {
         type = WebEvent::MouseDown;
         auto modifier = stateModifierForGdkButton(eventButton);
         state = static_cast<GdkModifierType>(state | modifier);
@@ -254,11 +258,16 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, Optional<Vector<CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
 {
+#if USE(GTK4)
+    guint keyval = 0;
+    guint16 keycode = 0;
+#else
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
     guint16 keycode;
     gdk_event_get_keycode(event, &keycode);
-    GdkEventType type = gdk_event_get_event_type(event);
+#endif
+    GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
 
     return WebKeyboardEvent(
         type == GDK_KEY_RELEASE ? WebEvent::KeyUp : WebEvent::KeyDown,
@@ -281,7 +290,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
     WebEvent::Type type = WebEvent::NoType;
-    GdkEventType eventType = gdk_event_get_event_type(event);
+    GdkEventType eventType = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (eventType) {
     case GDK_TOUCH_BEGIN:
         type = WebEvent::TouchStart;

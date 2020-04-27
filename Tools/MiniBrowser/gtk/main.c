@@ -27,6 +27,7 @@
 
 #include "cmakeconfig.h"
 
+#include "BrowserMain.h"
 #include "BrowserWindow.h"
 #include <errno.h>
 #if ENABLE_WEB_AUDIO || ENABLE_VIDEO
@@ -504,11 +505,17 @@ int main(int argc, char *argv[])
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
 
+#if GTK_CHECK_VERSION(3, 98, 0)
+    gtk_init();
+#else
     gtk_init(&argc, &argv);
+#endif
 
     GOptionContext *context = g_option_context_new(NULL);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
+#if !GTK_CHECK_VERSION(3, 98, 0)
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
+#endif
 #if ENABLE_WEB_AUDIO || ENABLE_VIDEO
     g_option_context_add_group(context, gst_init_get_option_group());
 #endif
@@ -543,7 +550,10 @@ int main(int argc, char *argv[])
 
     WebKitWebsiteDataManager *manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(NULL);
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE,
-        "use-system-appearance-for-scrollbars", FALSE, NULL);
+#if !GTK_CHECK_VERSION(3, 98, 0)
+        "use-system-appearance-for-scrollbars", FALSE,
+#endif
+        NULL);
     g_object_unref(manager);
 
     if (cookiesPolicy) {
@@ -611,8 +621,10 @@ int main(int argc, char *argv[])
         g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
     if (fullScreen)
         gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+#if !GTK_CHECK_VERSION(3, 98, 0)
     else if (geometry)
         gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
+#endif
 
     if (backgroundColor)
         browser_window_set_background_color(mainWindow, backgroundColor);
@@ -647,7 +659,7 @@ int main(int argc, char *argv[])
     g_clear_object(&webkitSettings);
     g_clear_object(&userContentManager);
 
-    gtk_main();
+    browser_main();
 
     if (privateMode)
         g_object_unref(webContext);

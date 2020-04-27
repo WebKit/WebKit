@@ -126,7 +126,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_pasteboard;
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     GtkClipboard* m_clipboard;
 #endif
 #if USE(LIBWPE)
