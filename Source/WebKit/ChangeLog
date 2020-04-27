@@ -1,3 +1,11 @@
+2020-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed MacCatalyst build fix after r260739.
+
+        * UIProcess/Cocoa/TextCheckingController.mm:
+        (WebKit::TextCheckingController::replaceRelativeToSelection):
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+
 2020-04-27  Darin Adler  <darin@apple.com>
 
         Another try at fixing the ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING) build
