@@ -41,7 +41,7 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     : m_canUseHardwareAcceleration(true)
     , m_forceHardwareAcceleration(false)
 {
-#if !ENABLE(OPENGL)
+#if !ENABLE(GRAPHICS_CONTEXT_GL)
     m_canUseHardwareAcceleration = false;
     return;
 #endif

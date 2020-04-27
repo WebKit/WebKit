@@ -1,3 +1,16 @@
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] ENABLE(OPENGL) remmants...
+        https://bugs.webkit.org/show_bug.cgi?id=211077
+
+        Reviewed by Adrian Perez de Castro.
+
+        ENABLE(OPENGL) was renamed to ENABLE(GRAPHICS_CONTEXT_GL) in
+        r254064 but not in all the code base...
+        
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager):
+
 2020-04-27  Daniel Bates  <dabates@apple.com>
 
         Caret may be placed in the wrong spot for text input context that is a form control

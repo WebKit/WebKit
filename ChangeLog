@@ -1,3 +1,16 @@
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] ENABLE(OPENGL) remmants...
+        https://bugs.webkit.org/show_bug.cgi?id=211077
+
+        Reviewed by Adrian Perez de Castro.
+
+        ENABLE(OPENGL) was renamed to ENABLE(GRAPHICS_CONTEXT_GL) in
+        r254064 but not in all the code base...
+
+        * Source/cmake/GStreamerDependencies.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make it possible to build with GTK4 without errors
