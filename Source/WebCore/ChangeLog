@@ -1,3 +1,11 @@
+2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, GTK LTS build fix after r260744
+        https://bugs.webkit.org/show_bug.cgi?id=211069
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::getConstructData):
+
 2020-04-27  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] GdkRGBA has float members instead of double

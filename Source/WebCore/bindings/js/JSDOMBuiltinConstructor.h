@@ -120,7 +120,7 @@ template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltin
 
 template<typename JSClass> inline JSC::CallData JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*)
 {
-    CallData constructData;
+    JSC::CallData constructData;
     constructData.type = JSC::CallData::Type::Native;
     constructData.native.function = construct;
     return constructData;
