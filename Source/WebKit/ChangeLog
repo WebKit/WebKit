@@ -1,3 +1,42 @@
+2020-04-27  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62377357
+
+    2020-04-27  Alex Christensen  <achristensen@webkit.org>
+
+            Stop waiting for a BinarySemaphore on the main thread in the NetworkProcess
+            https://bugs.webkit.org/show_bug.cgi?id=211080
+            <rdar://problem/62377357>
+
+            Reviewed by Darin Adler and Chris Dumez.
+
+            There was an out-of-date comment suggesting we needed to use a semaphore, but we've since added these in the destructor:
+            RELEASE_ASSERT(!m_statisticsStore);
+            RELEASE_ASSERT(!m_persistentStorage);
+            This indicates that flushAndDestroyPersistentStore is called before the destructor, at which time it is safe to add a reference to keep it alive.
+            WebResourceLoadStatisticsStore is also marked as WTF::DestructionThread::Main so this should do everything we need.
+            We also flush these databases to disk before closing like we did cookies.
+
+            In order to keep tests working as they are, I needed to make recreateResourceLoadStatisticStore have a CompletionHandler and have all
+            WebResourceLoadStatisticsStores share the same queue to serialize background tasks between WebResourceLoadStatisticsStores with and without database stores
+            sequentially to avoid opening a SQLiteDatabase before the previous WebResourceLoadStatisticsStore had closed it.
+
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::sharedStatisticsQueue):
+            (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+            (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+            (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate): Deleted.
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::didClose):
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::~NetworkSession):
+            (WebKit::NetworkSession::destroyResourceLoadStatistics):
+            (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+            (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+            * NetworkProcess/NetworkSession.h:
+
 2020-04-23  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/62272256

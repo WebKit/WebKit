@@ -122,17 +122,17 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 NetworkSession::~NetworkSession()
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    destroyResourceLoadStatistics();
+    destroyResourceLoadStatistics([] { });
 #endif
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void NetworkSession::destroyResourceLoadStatistics()
+void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     if (!m_resourceLoadStatistics)
-        return;
+        return completionHandler();
 
-    m_resourceLoadStatistics->didDestroyNetworkSession();
+    m_resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
     m_resourceLoadStatistics = nullptr;
 }
 #endif
@@ -157,7 +157,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (auto* storageSession = networkStorageSession())
         storageSession->setResourceLoadStatisticsEnabled(enable);
     if (!enable) {
-        destroyResourceLoadStatistics();
+        destroyResourceLoadStatistics([] { });
         return;
     }
 
@@ -181,10 +181,13 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 
 void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
 {
-    destroyResourceLoadStatistics();
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
-    m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
-    forwardResourceLoadStatisticsSettings();
+    destroyResourceLoadStatistics([this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis)
+            return completionHandler();
+        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
+        m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
+        forwardResourceLoadStatisticsSettings();
+    });
 }
 
 void NetworkSession::forwardResourceLoadStatisticsSettings()
