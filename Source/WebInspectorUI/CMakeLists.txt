@@ -45,8 +45,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 # expected in DerivedSources/WebInspectorUI/UserInterface/Protocol/.
 add_custom_command(
     OUTPUT ${WebInspectorUI_DERIVED_SOURCES_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
-    DEPENDS JavaScriptCore
-            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+    DEPENDS ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
     COMMAND ${CMAKE_COMMAND} -E copy ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js ${WebInspectorUI_DERIVED_SOURCES_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
     VERBATIM
 )
