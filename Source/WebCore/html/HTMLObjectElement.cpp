@@ -206,7 +206,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // if we know that resource points to a plug-in.
 
     if (url.isEmpty() && !urlParameter.isEmpty()) {
-        SubframeLoader& loader = document().frame()->loader().subframeLoader();
+        auto& loader = document().frame()->loader().subframeLoader();
         if (loader.resourceWillUsePlugin(urlParameter, serviceType))
             url = urlParameter;
     }

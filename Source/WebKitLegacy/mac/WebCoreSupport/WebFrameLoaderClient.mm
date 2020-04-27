@@ -1618,8 +1618,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, WebCore::HTMLFrameOwnerElement& ownerElement,
-    const String& referrer)
+RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -1639,12 +1638,6 @@ RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const URL& url, const S
     if (!result->page())
         return nullptr;
  
-    core(m_webFrame.get())->loader().loadURLIntoChildFrame(url, referrer, result.get());
-
-    // The frame's onload handler may have removed it from the document.
-    if (!result->tree().parent())
-        return nullptr;
-
     return result;
 
     END_BLOCK_OBJC_EXCEPTIONS;

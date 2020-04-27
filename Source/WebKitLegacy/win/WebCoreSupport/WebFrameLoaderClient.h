@@ -177,8 +177,7 @@ public:
 
     bool canCachePage() const override;
 
-    RefPtr<WebCore::Frame> createFrame(const URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement&,
-        const WTF::String& referrer) override;
+    RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) override;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
     void redirectDataToPlugin(WebCore::Widget&) override;
 

@@ -84,7 +84,6 @@ class ResourceRequest;
 class ResourceResponse;
 class SerializedScriptValue;
 class SharedBuffer;
-class SubframeLoader;
 class SubstituteData;
 
 enum class NewLoadInProgress : bool;
@@ -115,13 +114,14 @@ public:
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier& notifier() const { return m_notifier; }
+
+    class SubframeLoader;
     SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
     MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
-    WEBCORE_EXPORT void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
     WEBCORE_EXPORT void loadFrameRequest(FrameLoadRequest&&, Event*, RefPtr<FormState>&&, Optional<AdClickAttribution>&& = WTF::nullopt); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(FrameLoadRequest&&);
@@ -424,6 +424,8 @@ private:
 
     enum class LoadContinuingState : uint8_t { NotContinuing, ContinuingWithRequest, ContinuingWithHistoryItem };
     bool shouldTreatCurrentLoadAsContinuingLoad() const { return m_currentLoadContinuingState != LoadContinuingState::NotContinuing; }
+
+    void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
 
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;

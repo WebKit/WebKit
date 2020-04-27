@@ -1,3 +1,54 @@
+2020-04-27  Rob Buis  <rbuis@igalia.com>
+
+        Make loadURLIntoChildFrame private and non-exported
+        https://bugs.webkit.org/show_bug.cgi?id=211051
+
+        Reviewed by Darin Adler.
+
+        Make loadURLIntoChildFrame private and non-exported to reduce the amount of public API functions
+        that start loads. In order to do this loadURLIntoChildFrame is being called from SubframeLoader
+        and SubframeLoader is made an inner class of FrameLoader. Because this simplifies createFrame (and
+        makes createFrame behave strictly like its name) url and referrer do not have to be passed.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::createFrame):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::SubframeLoader):
+        (WebCore::FrameLoader::SubframeLoader::clear):
+        (WebCore::FrameLoader::SubframeLoader::requestFrame):
+        (WebCore::FrameLoader::SubframeLoader::resourceWillUsePlugin):
+        (WebCore::FrameLoader::SubframeLoader::pluginIsLoadable):
+        (WebCore::FrameLoader::SubframeLoader::requestPlugin):
+        (WebCore::FrameLoader::SubframeLoader::requestObject):
+        (WebCore::FrameLoader::SubframeLoader::createJavaAppletWidget):
+        (WebCore::FrameLoader::SubframeLoader::loadOrRedirectSubframe):
+        (WebCore::FrameLoader::SubframeLoader::loadSubframe):
+        (WebCore::FrameLoader::SubframeLoader::shouldUsePlugin):
+        (WebCore::FrameLoader::SubframeLoader::loadPlugin):
+        (WebCore::FrameLoader::SubframeLoader::completeURL const):
+        (WebCore::FrameLoader::SubframeLoader::shouldConvertInvalidURLsToBlank const):
+        (WebCore::SubframeLoader::SubframeLoader): Deleted.
+        (WebCore::SubframeLoader::clear): Deleted.
+        (WebCore::SubframeLoader::requestFrame): Deleted.
+        (WebCore::SubframeLoader::resourceWillUsePlugin): Deleted.
+        (WebCore::SubframeLoader::pluginIsLoadable): Deleted.
+        (WebCore::SubframeLoader::requestPlugin): Deleted.
+        (WebCore::SubframeLoader::requestObject): Deleted.
+        (WebCore::SubframeLoader::createJavaAppletWidget): Deleted.
+        (WebCore::SubframeLoader::loadOrRedirectSubframe): Deleted.
+        (WebCore::SubframeLoader::loadSubframe): Deleted.
+        (WebCore::SubframeLoader::shouldUsePlugin): Deleted.
+        (WebCore::SubframeLoader::loadPlugin): Deleted.
+        (WebCore::SubframeLoader::completeURL const): Deleted.
+        (WebCore::SubframeLoader::shouldConvertInvalidURLsToBlank const): Deleted.
+        * loader/SubframeLoader.h:
+        (WebCore::SubframeLoader::containsPlugins const): Deleted.
+
 2020-04-27  Alberto Garcia  <berto@igalia.com>
 
         [GTK] [2.28.0] The Yelp build crashes if DISPLAY is not set

@@ -985,8 +985,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement& ownerElement,
-    const String& referrer)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const String& name, HTMLFrameOwnerElement& ownerElement)
 {
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);
@@ -998,12 +997,6 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& na
     childFrame->tree().setName(name);
     coreFrame->tree().appendChild(*childFrame);
     childFrame->init();
-
-    coreFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
-
-    // The frame's onload handler may have removed it from the document.
-    if (!childFrame->tree().parent())
-        return nullptr;
 
     return childFrame;
 }

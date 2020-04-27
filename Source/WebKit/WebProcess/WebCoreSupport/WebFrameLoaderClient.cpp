@@ -1571,8 +1571,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *doc
     m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement& ownerElement,
-    const String& referrer)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const String& name, HTMLFrameOwnerElement& ownerElement)
 {
     auto* webPage = m_frame->page();
 
@@ -1583,15 +1582,6 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& na
 
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!coreSubframe->page())
-        return nullptr;
-
-    m_frame->coreFrame()->loader().loadURLIntoChildFrame(url, referrer, coreSubframe);
-
-    // The frame's onload handler may have removed it from the document.
-    if (!subframe->coreFrame())
-        return nullptr;
-    ASSERT(subframe->coreFrame() == coreSubframe);
-    if (!coreSubframe->tree().parent())
         return nullptr;
 
     return coreSubframe;

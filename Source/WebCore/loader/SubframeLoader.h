@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
+#include "FrameLoader.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +48,7 @@ class IntSize;
 class Widget;
 
 // This is a slight misnomer. It handles the higher level logic of loading both subframes and plugins.
-class SubframeLoader {
+class FrameLoader::SubframeLoader {
     WTF_MAKE_NONCOPYABLE(SubframeLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SubframeLoader(Frame&);
@@ -78,7 +78,7 @@ private:
 
     bool shouldConvertInvalidURLsToBlank() const;
 
-    bool m_containsPlugins;
+    bool m_containsPlugins { false };
     Frame& m_frame;
 };
 
