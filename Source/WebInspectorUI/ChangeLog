@@ -1,3 +1,17 @@
+2020-04-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r258730): Web Inspector: Sidebar tabs have incorrect tabIndex
+        https://bugs.webkit.org/show_bug.cgi?id=211072
+        <rdar://problem/62445067>
+
+        Reviewed by Brian Burg.
+
+        Only selected radio button should be focusable. This matches native macOS radio buttons.
+
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WI.RadioButtonNavigationItem.prototype.get tabbable):
+        This getter was incorrectly returning -1 or 0 instead of a boolean value.
+
 2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, reverting r260672.

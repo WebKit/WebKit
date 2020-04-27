@@ -69,7 +69,7 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
 
     get tabbable()
     {
-        return this.selected ? 0 : -1;
+        return this.selected;
     }
 };
 
