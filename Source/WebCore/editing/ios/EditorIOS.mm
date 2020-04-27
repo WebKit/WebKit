@@ -38,7 +38,6 @@
 #import "Editing.h"
 #import "EditorClient.h"
 #import "Frame.h"
-#import "HTMLConverter.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"

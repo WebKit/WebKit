@@ -28,7 +28,6 @@
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
-#import "AttributedString.h"
 #import "TextCheckingControllerProxyMessages.h"
 #import "WebProcessProxy.h"
 

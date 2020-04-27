@@ -93,7 +93,7 @@ Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProx
     return { { createLiveRange(resolveCharacterRange(scope, adjustedSelectionCharacterRange)), adjustedSelectionCharacterRange.location } };
 }
 
-void TextCheckingControllerProxy::replaceRelativeToSelection(const AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
+void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
     Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
     FrameSelection& frameSelection = frame.selection();
@@ -173,7 +173,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     }, types);
 }
 
-AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
+WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
 {
     auto startBoundary = makeBoundaryPoint(start);
     auto endBoundary = makeBoundaryPoint(end);

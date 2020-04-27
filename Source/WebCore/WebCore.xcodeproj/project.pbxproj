@@ -2719,6 +2719,7 @@
 		93D9D53C0DA27E180077216C /* RangeBoundaryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E2A307123E9DC0009FE12A /* HTMLParserIdioms.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93E5B2652455E96F005C52D0 /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E5B2632455E96F005C52D0 /* AttributedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* TextResourceDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10943,6 +10944,7 @@
 		93E2A304123E9DC0009FE12A /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
 		93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserIdioms.h; sourceTree = "<group>"; };
 		93E5B25424536B1E005C52D0 /* URLDecomposition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLDecomposition.cpp; sourceTree = "<group>"; };
+		93E5B2632455E96F005C52D0 /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseEventWithHitTestResults.cpp; sourceTree = "<group>"; };
 		93EEC1E509C2877700C515D1 /* Attr.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Attr.idl; sourceTree = "<group>"; };
 		93EEC1E609C2877700C515D1 /* CharacterData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CharacterData.idl; sourceTree = "<group>"; };
@@ -21583,6 +21585,7 @@
 				CE45946524121A050078019F /* AlternativeTextContextController.mm */,
 				CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */,
 				CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */,
+				93E5B2632455E96F005C52D0 /* AttributedString.h */,
 				5CCC270722D53B6900964FA0 /* AutofillElements.cpp */,
 				5CCC270622D53B6800964FA0 /* AutofillElements.h */,
 				C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */,
@@ -29545,6 +29548,7 @@
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */,
+				93E5B2652455E96F005C52D0 /* AttributedString.h in Headers */,
 				FD31607A12B026F700C1A359 /* AudioArray.h in Headers */,
 				FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */,
 				FD315FF712B0267600C1A359 /* AudioBasicProcessorNode.h in Headers */,

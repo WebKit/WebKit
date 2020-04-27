@@ -50,7 +50,6 @@
 #import "RenderImage.h"
 #import "RuntimeApplicationChecks.h"
 #import "RuntimeEnabledFeatures.h"
-#import "SimpleRange.h"
 #import "StyleProperties.h"
 #import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
@@ -188,10 +187,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))
-        return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).get());
+        return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).string.get());
 
     if (pasteboardType == String(legacyRTFPasteboardType())) {
-        auto string = attributedString(*adjustedSelectionRange());
+        auto string = attributedString(*adjustedSelectionRange()).string;
         // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
         if ([string containsAttachments])
             string = attributedStringByStrippingAttachmentCharacters(string.get());

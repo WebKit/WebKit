@@ -32,7 +32,6 @@
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
 #import "AppKitSPI.h"
-#import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
@@ -82,6 +81,7 @@
 #import <Carbon/Carbon.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
+#import <WebCore/AttributedString.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CompositionHighlight.h>
 #import <WebCore/DictionaryLookup.h>
@@ -4951,16 +4951,15 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
     auto completionHandler = adoptNS([completionHandlerPtr copy]);
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", proposedRange.location, proposedRange.length);
-    m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler](const AttributedString& string, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
+    m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler](const WebCore::AttributedString& string, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
         void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
         if (error != WebKit::CallbackBase::Error::None) {
             LOG(TextInput, "    ...attributedSubstringFromRange failed.");
             completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
             return;
         }
-        NSAttributedString *attributedString = string;
-        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", [attributedString string]);
-        completionHandlerBlock([[attributedString retain] autorelease], actualRange);
+        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", string.string.get());
+        completionHandlerBlock(string.string.get(), actualRange);
     });
 }
 

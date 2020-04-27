@@ -205,6 +205,7 @@ enum class StorageAccessWasGranted : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
 enum class WritingDirection : uint8_t;
 
+struct AttributedString;
 struct BackForwardItemIdentifier;
 struct CompositionHighlight;
 struct CompositionUnderline;
@@ -279,7 +280,6 @@ enum FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
 
-struct AttributedString;
 struct BackForwardListItemState;
 struct DataDetectionResult;
 struct DocumentEditingContext;
@@ -1503,7 +1503,7 @@ private:
 
     void getContentsAsString(ContentAsStringIncludesChildFrames, CallbackID);
 #if PLATFORM(COCOA)
-    void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
+    void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CallbackID);

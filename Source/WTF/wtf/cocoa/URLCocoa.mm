@@ -65,7 +65,7 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 
     if (isEmpty()) {
         // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
-        return (__bridge CFURLRef)adoptNS([[NSURL alloc] initWithString:@""]).get();
+        return (__bridge CFURLRef)adoptNS([[NSURL alloc] init]).get();
     }
 
     RetainPtr<CFURLRef> cfURL;

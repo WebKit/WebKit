@@ -30,7 +30,6 @@
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
-#import "AttributedString.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
@@ -116,6 +115,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/AttributedString.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>

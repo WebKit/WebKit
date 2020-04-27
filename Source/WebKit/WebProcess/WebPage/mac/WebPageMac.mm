@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "AttributedString.h"
 #import "ContextMenuContextData.h"
 #import "DataReference.h"
 #import "EditingRange.h"
@@ -339,7 +338,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    auto attributedString = editingAttributedString(*range, IncludeImages::No);
+    auto attributedString = editingAttributedString(*range, IncludeImages::No).string;
 
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -354,11 +353,11 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString.get(), EditingRange(), callbackID));
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ WTFMove(attributedString), nil }, EditingRange(), callbackID));
         return;
     }
 
-    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString.get(), rangeToSend, callbackID));
+    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ WTFMove(attributedString), nil }, rangeToSend, callbackID));
 }
 
 void WebPage::fontAtSelection(CallbackID callbackID)
@@ -810,7 +809,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range);
+    auto attributedSelection = attributedString(*range).string;
     if (!attributedSelection)
         return;
 

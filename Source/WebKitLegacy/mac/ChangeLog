@@ -1,3 +1,27 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        [Cocoa] stop using out arguments for document attributes when converting to attributed strings
+        https://bugs.webkit.org/show_bug.cgi?id=211048
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebSelectionServiceController.mm:
+        (WebSelectionServiceController::handleSelectionServiceClick): Updated since
+        attributedString returns a struct.
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation attributedStringFrom:startOffset:to:endOffset:]): Ditto.
+        Also use init instead of initWithString:@"".
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView textStorage]): DItto.
+        (-[WebHTMLView attributedSubstringFromRange:]): Ditto.
+        (-[WebHTMLView _attributedStringFromDOMRange:]): Ditto.
+        (-[WebHTMLView _legacyAttributedStringFrom:offset:to:offset:]): Ditto.
+        (-[WebHTMLView attributedString]): Ditto.
+        (-[WebHTMLView selectedAttributedString]): Ditto.
+        * WebView/WebImmediateActionController.mm:
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        Updated.
+
 2020-04-11  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in functions that return range of the selection

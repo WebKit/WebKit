@@ -4262,22 +4262,22 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
     }
 
-    auto makeString = [] (const VisiblePosition& start, const VisiblePosition& end) -> RetainPtr<NSAttributedString> {
+    auto makeString = [] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
         auto startBoundary = makeBoundaryPoint(start.deepEquivalent());
         auto endBoundary = makeBoundaryPoint(end.deepEquivalent());
         if (!startBoundary || !endBoundary || *startBoundary == *endBoundary)
-            return nil;
+            return { };
         // FIXME: This should return editing-offset-compatible attributed strings if that option is requested.
-        return adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace({ WTFMove(*startBoundary), WTFMove(*endBoundary) })]);
+        return { adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace({ WTFMove(*startBoundary), WTFMove(*endBoundary) })]), nil };
     };
 
-    context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection).get();
-    context.selectedText = makeString(startOfRangeOfInterestInSelection, endOfRangeOfInterestInSelection).get();
-    context.contextAfter = makeString(endOfRangeOfInterestInSelection, contextAfterEnd).get();
+    context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection);
+    context.selectedText = makeString(startOfRangeOfInterestInSelection, endOfRangeOfInterestInSelection);
+    context.contextAfter = makeString(endOfRangeOfInterestInSelection, contextAfterEnd);
     if (compositionRange && rangesOverlap(rangeOfInterest.get(), compositionRange.get())) {
         VisiblePosition compositionStart(compositionRange->startPosition());
         VisiblePosition compositionEnd(compositionRange->endPosition());
-        context.markedText = makeString(compositionStart, compositionEnd).get();
+        context.markedText = makeString(compositionStart, compositionEnd);
         context.selectedRangeInMarkedText.location = distanceBetweenPositions(startOfRangeOfInterestInSelection, compositionStart);
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
     }

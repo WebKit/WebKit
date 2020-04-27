@@ -108,7 +108,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 static RetainPtr<NSAttributedString> selectionAsAttributedString(const Frame& frame)
 {
     auto range = frame.selection().selection().firstRange();
-    return range ? attributedString(*range) : adoptNS([[NSAttributedString alloc] initWithString:@""]);
+    return range ? attributedString(*range).string : adoptNS([[NSAttributedString alloc] init]);
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)

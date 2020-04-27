@@ -269,9 +269,9 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
     if (!startNode || !endNode)
-        return [[[NSAttributedString alloc] initWithString:@""] autorelease];
+        return [[[NSAttributedString alloc] init] autorelease];
     auto range = SimpleRange { { *core(startNode), static_cast<unsigned>(startOffset) }, { *core(endNode), static_cast<unsigned>(endOffset) } };
-    return editingAttributedString(range).autorelease();
+    return editingAttributedString(range).string.autorelease();
 }
 
 #endif

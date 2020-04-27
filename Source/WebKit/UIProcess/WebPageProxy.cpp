@@ -200,7 +200,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "AttributedString.h"
 #include "InsertTextOptions.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
@@ -208,6 +207,7 @@
 #include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
+#include <WebCore/AttributedString.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <wtf/MachSendRight.h>
@@ -4115,10 +4115,10 @@ void WebPageProxy::getContentsAsString(ContentAsStringIncludesChildFrames includ
 }
 
 #if PLATFORM(COCOA)
-void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&& completionHandler)
+void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
-        completionHandler(AttributedString());
+        completionHandler({ });
         return;
     }
 

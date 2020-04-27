@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebPage.h"
 
-#import "AttributedString.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
@@ -51,7 +50,6 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)
 
@@ -146,7 +144,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     dictionaryPopupInfo.options = options;
 
 #if PLATFORM(MAC)
-    auto attributedString = editingAttributedString(range, IncludeImages::No);
+    auto attributedString = editingAttributedString(range, IncludeImages::No).string;
     auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
@@ -224,17 +222,9 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 }
 #endif
 
-void WebPage::getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&& completionHandler)
+void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    auto* documentElement = m_page->mainFrame().document()->documentElement();
-    if (!documentElement) {
-        completionHandler({ });
-        return;
-    }
-
-    RetainPtr<NSDictionary> documentAttributes;
-    auto string = attributedString(rangeOfContents(*documentElement), &documentAttributes);
-    completionHandler({ WTFMove(string), WTFMove(documentAttributes) });
+    completionHandler(attributedString(makeRangeSelectingNodeContents(*m_page->mainFrame().document())));
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)

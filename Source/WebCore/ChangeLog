@@ -1,3 +1,41 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        [Cocoa] stop using out arguments for document attributes when converting to attributed strings
+        https://bugs.webkit.org/show_bug.cgi?id=211048
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources-input.xcfilelist: Building modified this file automatically. Uploading
+        the new version.
+
+        * WebCore.xcodeproj/project.pbxproj: Added AttributedString.h.
+        * editing/cocoa/AttributedString.h: Added. Moved this from WebKit, but removed a lot of
+        inessentials.
+        * editing/cocoa/DictionaryLookup.mm: Removed unneeded include.
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::selectionAsAttributedString): Updated for change to the return value of the
+        attributedString function, and use init instead of initWithString:@"".
+
+        * editing/cocoa/HTMLConverter.h: Changed to an Objective-C-only header, omitting things
+        like #pramga once. Return the AttributedString struct from the functions instead of
+        using an out argument for document attributes.
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::convert): Return an AttributedString and drop the out argument.
+        (WebCore::attributedString): Ditto.
+        (WebCore::editingAttributedString): Ditto. Also refactor a little bit.
+
+        * editing/ios/EditorIOS.mm: Removed unneeded include.
+        * editing/mac/DictionaryLookupLegacy.mm: Removed unneeded include.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::dataSelectionForPasteboard): Updated since attributedString
+        now returns a structure.
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::policyProperties): Use init instead of initWithString:@"".
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::siteForCookies): Use init instead of initWithString:@"".
+
 2020-04-26  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Enable TestWTF and TestWebCore

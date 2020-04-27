@@ -27,6 +27,7 @@
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCocoa.h"
+#import <WebCore/AttributedString.h>
 #import <WebCore/DictionaryPopupInfo.h>
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
@@ -43,6 +44,22 @@
 
 namespace IPC {
 using namespace WebCore;
+
+void ArgumentCoder<WebCore::AttributedString>::encode(Encoder& encoder, const WebCore::AttributedString& attributedString)
+{
+    encoder << attributedString.string << attributedString.documentAttributes;
+}
+
+Optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::decode(Decoder& decoder)
+{
+    RetainPtr<NSAttributedString> attributedString;
+    if (!IPC::decode(decoder, attributedString))
+        return WTF::nullopt;
+    RetainPtr<NSDictionary> documentAttributes;
+    if (!IPC::decode(decoder, documentAttributes))
+        return WTF::nullopt;
+    return { { WTFMove(attributedString), WTFMove(documentAttributes) } };
+}
 
 #if ENABLE(APPLE_PAY)
 

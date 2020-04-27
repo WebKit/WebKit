@@ -1,3 +1,62 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        [Cocoa] stop using out arguments for document attributes when converting to attributed strings
+        https://bugs.webkit.org/show_bug.cgi?id=211048
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::updateTaskWithFirstPartyForSameSiteCookies): Use init instead of initWithString:@"".
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::AttributedString>::encode): Moved here from AttributedString.mm.
+        (IPC::ArgumentCoder<WebCore::AttributedString>::decode): Ditto.
+
+        * Shared/DocumentEditingContext.h: Updated to use WebCore::AttributeString.
+        * Shared/DocumentEditingContext.mm:
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext>::decode): Ditto.
+
+        * Shared/WebCoreArgumentCoders.h: Added coder for WebCore::AttributedString.
+
+        * Shared/mac/AttributedString.h: Removed.
+        * Shared/mac/AttributedString.mm: Removed.
+
+        * SourcesCocoa.txt: Removed AttributedString.mm.
+
+        * UIProcess/API/Cocoa/WKWebView.mm: Updated to use WebCore::AttributedString.
+        * UIProcess/Cocoa/TextCheckingController.mm: Ditto.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::attributedSubstringForProposedRange): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getContentsAsAttributedString): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync): Ditto.
+        (WebKit::WebPageProxy::attributedStringForCharacterRangeCallback): Ditto.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed AttributedString.h and AttributedString.mm.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h: Updated to use WebCore::AttributedString.
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in: Ditto.
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection): Ditto.
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions): Ditto.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Updated since editingAttributedString
+        returns a struct.
+        (WebKit::WebPage::getContentsAsAttributedString): Updated to use SimpleRange and
+        since attributedString returns a struct.
+
+        * WebProcess/WebPage/WebPage.h: Updated to use WebCore::AttributedString.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext): Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync): Ditto.
+        (WebKit::WebPage::handleSelectionServiceClick): Ditto.
+
 2020-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rendering update steps should use Seconds for the timestamps

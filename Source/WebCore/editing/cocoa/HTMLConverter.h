@@ -23,25 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import <wtf/Forward.h>
-
-OBJC_CLASS NSAttributedString;
+#import "AttributedString.h"
+#import "SimpleRange.h"
 
 namespace WebCore {
 
-struct SimpleRange;
-
-WEBCORE_EXPORT RetainPtr<NSAttributedString> attributedString(const SimpleRange&, RetainPtr<NSDictionary>* documentAttributes = nullptr);
+WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&);
 
 #if PLATFORM(MAC)
-// This alternate implementation of HTML conversion doesn't handle as many
-// advanced features, such as tables, but it does use TextIterator so the
+// This alternate implementation of HTML conversion doesn't handle as many advanced features,
+// such as tables, and doesn't produce document attributes, but it does use TextIterator so
 // text offsets will exactly match plain text and other editing machinery.
 // FIXME: This function and the one above should be merged.
 enum class IncludeImages { Yes, No };
-WEBCORE_EXPORT RetainPtr<NSAttributedString> editingAttributedString(const SimpleRange&, IncludeImages = IncludeImages::Yes);
+WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, IncludeImages = IncludeImages::Yes);
 #endif
 
 } // namespace WebCore

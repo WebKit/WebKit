@@ -31,7 +31,6 @@
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/Range.h>
-#import <WebCore/SimpleRange.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
 
 using namespace WebCore;
@@ -51,7 +50,7 @@ void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSe
     if (!range)
         return;
 
-    auto attributedSelection = attributedString(*range);
+    auto attributedSelection = attributedString(*range).string;
     if (!attributedSelection)
         return;
 

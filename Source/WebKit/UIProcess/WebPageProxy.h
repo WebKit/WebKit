@@ -232,6 +232,7 @@ enum class ShouldTreatAsContinuingLoad : bool;
 enum class WritingDirection : uint8_t;
 
 struct ApplicationManifest;
+struct AttributedString;
 struct BackForwardItemIdentifier;
 struct CompositionHighlight;
 struct ContentRuleListResults;
@@ -253,7 +254,7 @@ struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 
-template <typename> class RectEdges;
+template<typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 }
 
@@ -323,7 +324,6 @@ class WebViewDidMoveToWindowObserver;
 class WebWheelEvent;
 class WebsiteDataStore;
 
-struct AttributedString;
 struct WebBackForwardListCounts;
 struct ColorSpaceData;
 struct DataDetectionResult;
@@ -395,7 +395,7 @@ typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> Applicati
 #endif
 
 #if PLATFORM(MAC)
-typedef GenericCallback<const AttributedString&, const EditingRange&> AttributedStringForCharacterRangeCallback;
+typedef GenericCallback<const WebCore::AttributedString&, const EditingRange&> AttributedStringForCharacterRangeCallback;
 typedef GenericCallback<const FontInfo&, double, bool> FontAtSelectionCallback;
 #endif
 
@@ -881,7 +881,7 @@ public:
     void changeFont(WebCore::FontChanges&&);
 
 #if PLATFORM(MAC)
-    void attributedSubstringForCharacterRangeAsync(const EditingRange&, WTF::Function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>&&);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, Function<void(const WebCore::AttributedString&, const EditingRange&, CallbackBase::Error)>&&);
     void fontAtSelection(Function<void(const FontInfo&, double, bool, CallbackBase::Error)>&&);
 
     void startWindowDrag();
@@ -1103,7 +1103,7 @@ public:
 
     void getContentsAsString(ContentAsStringIncludesChildFrames, WTF::Function<void(const String&, CallbackBase::Error)>&&);
 #if PLATFORM(COCOA)
-    void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
+    void getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&&);
 #endif
     void getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&&);
     void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
@@ -2079,7 +2079,7 @@ private:
 #endif
     void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, CallbackID);
 #if PLATFORM(MAC)
-    void attributedStringForCharacterRangeCallback(const AttributedString&, const EditingRange&, CallbackID);
+    void attributedStringForCharacterRangeCallback(const WebCore::AttributedString&, const EditingRange&, CallbackID);
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)

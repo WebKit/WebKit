@@ -182,7 +182,7 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
     if (request.isSameSiteUnspecified())
         return;
 #if HAVE(FOUNDATION_WITH_SAME_SITE_COOKIE_SUPPORT)
-    static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
+    static NSURL *emptyURL = [[NSURL alloc] init];
     task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
     task._isTopLevelNavigation = request.isTopSite();
 #else

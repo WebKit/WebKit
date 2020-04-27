@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,15 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include <wtf/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSAttributedString;
 
-namespace WebKit {
+namespace WebCore {
 
 struct AttributedString {
     RetainPtr<NSAttributedString> string;
     RetainPtr<NSDictionary> documentAttributes;
-
-    AttributedString() = default;
-
-#if defined(__OBJC__)
-    AttributedString(NSAttributedString *attributedString, NSDictionary *documentAttributes = nil)
-        : string(attributedString)
-        , documentAttributes(documentAttributes)
-    {
-    }
-
-    AttributedString(RetainPtr<NSAttributedString>&& attributedString, RetainPtr<NSDictionary>&& documentAttributes = { })
-        : string(WTFMove(attributedString))
-        , documentAttributes(WTFMove(documentAttributes))
-    {
-    }
-
-    operator NSAttributedString *() const
-    {
-        return string.get();
-    }
-#endif
 };
 
-}
-
-namespace IPC {
-
-template<> struct ArgumentCoder<WebKit::AttributedString> {
-    static void encode(Encoder&, const WebKit::AttributedString&);
-    static Optional<WebKit::AttributedString> decode(Decoder&);
-};
-
-}
+} // namespace WebCore

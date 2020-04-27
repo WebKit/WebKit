@@ -1796,7 +1796,6 @@
 		E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */; };
 		E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */ = {isa = PBXBuildFile; fileRef = E19582D2153CBFD700B60875 /* PDFKitImports.h */; };
 		E19BDA86193665E300B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = E19BDA8419365F4B00B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb */; };
-		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */; };
 		E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B78470163F24690007B692 /* RemoteNetworkingContext.h */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
@@ -5275,8 +5274,6 @@
 		E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = DerivedSources/WebKit2/com.apple.WebProcess.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E19BDA8419365F4B00B97F57 /* com.apple.appstore.CodeRedeemerNetscapePlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.appstore.CodeRedeemerNetscapePlugin.sb; sourceTree = "<group>"; };
 		E19BDA88193686A400B97F57 /* SandboxUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxUtilities.h; sourceTree = "<group>"; };
-		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
-		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
 		E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
 		E1B78470163F24690007B692 /* RemoteNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNetworkingContext.h; sourceTree = "<group>"; };
@@ -9398,8 +9395,6 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
-				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
 				9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */,
 				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
 				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
@@ -10718,7 +10713,6 @@
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
 				AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
-				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,

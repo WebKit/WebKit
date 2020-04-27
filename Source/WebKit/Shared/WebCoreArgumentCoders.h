@@ -116,6 +116,7 @@ class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
 
+struct AttributedString;
 struct CacheQueryOptions;
 struct CharacterRange;
 struct CompositionUnderline;
@@ -207,6 +208,11 @@ namespace IPC {
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(Encoder&, const WebCore::AffineTransform&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::AffineTransform&);
+};
+
+template<> struct ArgumentCoder<WebCore::AttributedString> {
+    static void encode(Encoder&, const WebCore::AttributedString&);
+    static Optional<WebCore::AttributedString> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::CacheQueryOptions> {

@@ -28,7 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
-#include "AttributedString.h"
+#include <WebCore/AttributedString.h>
 #include <WebCore/ElementContext.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/TextGranularity.h>
@@ -63,11 +63,11 @@ struct DocumentEditingContextRequest {
 struct DocumentEditingContext {
     UIWKDocumentContext *toPlatformContext(OptionSet<WebKit::DocumentEditingContextRequest::Options>);
 
-    AttributedString contextBefore;
-    AttributedString selectedText;
-    AttributedString contextAfter;
-    AttributedString markedText;
-    AttributedString annotatedText;
+    WebCore::AttributedString contextBefore;
+    WebCore::AttributedString selectedText;
+    WebCore::AttributedString contextAfter;
+    WebCore::AttributedString markedText;
+    WebCore::AttributedString annotatedText;
 
     struct Range {
         uint64_t location { 0 };

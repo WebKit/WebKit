@@ -131,31 +131,31 @@ Optional<WebKit::DocumentEditingContext> ArgumentCoder<WebKit::DocumentEditingCo
 {
     WebKit::DocumentEditingContext context;
 
-    Optional<WebKit::AttributedString> contextBefore;
+    Optional<WebCore::AttributedString> contextBefore;
     decoder >> contextBefore;
     if (!contextBefore)
         return WTF::nullopt;
     context.contextBefore = *contextBefore;
 
-    Optional<WebKit::AttributedString> selectedText;
+    Optional<WebCore::AttributedString> selectedText;
     decoder >> selectedText;
     if (!selectedText)
         return WTF::nullopt;
     context.selectedText = *selectedText;
 
-    Optional<WebKit::AttributedString> contextAfter;
+    Optional<WebCore::AttributedString> contextAfter;
     decoder >> contextAfter;
     if (!contextAfter)
         return WTF::nullopt;
     context.contextAfter = *contextAfter;
 
-    Optional<WebKit::AttributedString> markedText;
+    Optional<WebCore::AttributedString> markedText;
     decoder >> markedText;
     if (!markedText)
         return WTF::nullopt;
     context.markedText = *markedText;
 
-    Optional<WebKit::AttributedString> annotatedText;
+    Optional<WebCore::AttributedString> annotatedText;
     decoder >> annotatedText;
     if (!annotatedText)
         return WTF::nullopt;

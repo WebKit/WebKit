@@ -175,7 +175,7 @@ messages -> WebPageProxy {
     ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(MAC)
-    AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
+    AttributedStringForCharacterRangeCallback(struct WebCore::AttributedString string, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
     FontAtSelectionCallback(struct WebKit::FontInfo fontInfo, double fontSize, bool selectionHasMultipleFonts, WebKit::CallbackID callbackID)
 #endif
     FontAttributesCallback(struct WebCore::FontAttributes attributes, WebKit::CallbackID callbackID)

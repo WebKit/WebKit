@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
-#import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "Connection.h"
 #import "DataReference.h"
@@ -50,6 +49,7 @@
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/AttributedString.h>
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
@@ -186,10 +186,10 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     process().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_webPageID);
 }
 
-void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, WTF::Function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, Function<void(const WebCore::AttributedString&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction(AttributedString(), EditingRange(), CallbackBase::Error::Unknown);
+        callbackFunction({ }, EditingRange(), CallbackBase::Error::Unknown);
         return;
     }
 
@@ -198,7 +198,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
     process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_webPageID);
 }
 
-void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedString& string, const EditingRange& actualRange, CallbackID callbackID)
+void WebPageProxy::attributedStringForCharacterRangeCallback(const WebCore::AttributedString& string, const EditingRange& actualRange, CallbackID callbackID)
 {
     MESSAGE_CHECK(actualRange.isValid());
 

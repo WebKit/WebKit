@@ -36,7 +36,6 @@
 #import "Frame.h"
 #import "FrameSelection.h"
 #import "GraphicsContextCG.h"
-#import "HTMLConverter.h"
 #import "HitTestResult.h"
 #import "NotImplemented.h"
 #import "Page.h"

@@ -1180,3 +1180,5 @@ $(PROJECT_DIR)/xml/XPathResult.idl
 $(PROJECT_DIR)/xml/XSLTProcessor.idl
 $(PROJECT_DIR)/xml/xmlattrs.in
 $(PROJECT_DIR)/xml/xmlnsattrs.in
+ApplePaySetup.idl
+ApplePaySetupFeature.idl
