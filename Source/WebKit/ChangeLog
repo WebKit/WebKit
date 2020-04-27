@@ -1,3 +1,10 @@
+2020-04-27  Darin Adler  <darin@apple.com>
+
+        Fix ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING) build
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h:
+        Change "class AttributedString" to "struct AttributedString".
+
 2020-04-27  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] about:gpu page is incomplete

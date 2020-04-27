@@ -38,8 +38,8 @@ class Encoder;
 }
 
 namespace WebCore {
-class AttributedString;
 class VisiblePosition;
+struct AttributedString;
 }
 
 namespace WebKit {
