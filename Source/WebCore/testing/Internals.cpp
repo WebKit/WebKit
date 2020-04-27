@@ -119,7 +119,6 @@
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Location.h"
-#include "MIMETypeRegistry.h"
 #include "MallocStatistics.h"
 #include "MediaDevices.h"
 #include "MediaEngineConfigurationFactory.h"
@@ -5632,11 +5631,6 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
     return false;
 }
 #endif
-
-String Internals::mediaMIMETypeForExtension(const String& extension)
-{
-    return MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
-}
 
 bool Internals::supportsPictureInPicture()
 {

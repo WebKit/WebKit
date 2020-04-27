@@ -51,7 +51,6 @@
 #import <WebCore/AGXCompilerService.h>
 #import <WebCore/Color.h>
 #import <WebCore/LocalizedDeviceModel.h>
-#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PictureInPictureSupport.h>
@@ -414,7 +413,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.neSessionManagerExtensionHandle = WTFMove(managerHandle);
     }
     parameters.systemHasBattery = systemHasBattery();
-    parameters.mimeTypesMap = commonMimeTypesMap();
 
     SandboxExtension::Handle mapDBHandle;
     if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb", WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))

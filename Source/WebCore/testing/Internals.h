@@ -993,8 +993,6 @@ public:
     int readPreferenceInteger(const String& domain, const String& key);
     String encodedPreferenceValue(const String& domain, const String& key);
 
-    String mediaMIMETypeForExtension(const String& extension);
-
     String getUTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);
 
     bool supportsPictureInPicture();

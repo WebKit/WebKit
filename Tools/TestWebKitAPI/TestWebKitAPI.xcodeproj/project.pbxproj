@@ -889,7 +889,6 @@
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C13D82D92416F13200A62793 /* EnableAccessibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = C13D82D82416F13200A62793 /* EnableAccessibility.mm */; };
-		C145CC0C23DA5A1F003A5EEB /* MimeTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */; };
 		C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C149D54F242E9844003EBB12 /* SleepDisabler.mm */; };
 		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */; };
@@ -2484,7 +2483,6 @@
 		C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor.mm; sourceTree = "<group>"; };
 		C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetBackingScaleFactor_Bundle.mm; sourceTree = "<group>"; };
 		C13D82D82416F13200A62793 /* EnableAccessibility.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnableAccessibility.mm; sourceTree = "<group>"; };
-		C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypes.mm; sourceTree = "<group>"; };
 		C149D54F242E9844003EBB12 /* SleepDisabler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SleepDisabler.mm; sourceTree = "<group>"; };
 		C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BacklightLevelNotification.mm; sourceTree = "<group>"; };
 		C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceChanges.mm; sourceTree = "<group>"; };
@@ -2954,7 +2952,6 @@
 				E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */,
 				E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */,
 				E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */,
-				C145CC0B23DA5A0F003A5EEB /* MimeTypes.mm */,
 				E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */,
 				C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */,
 				C149D54F242E9844003EBB12 /* SleepDisabler.mm */,
@@ -4988,7 +4985,6 @@
 				5C0BF8941DD599C900B00328 /* MenuTypesForMouseEvents.mm in Sources */,
 				5165FE04201EE620009F7EC3 /* MessagePortProviders.mm in Sources */,
 				A5B149DE1F5A19EA00C6DAFF /* MIMETypeRegistry.cpp in Sources */,
-				C145CC0C23DA5A1F003A5EEB /* MimeTypes.mm in Sources */,
 				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,
 				7C83E0B61D0A64B300FEBCF3 /* ModalAlertsSPI.cpp in Sources */,
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,
