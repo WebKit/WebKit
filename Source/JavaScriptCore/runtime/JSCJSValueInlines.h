@@ -889,13 +889,6 @@ inline bool JSValue::isConstructor(VM& vm) const
     return asCell()->isConstructor(vm);
 }
 
-inline bool JSValue::isConstructor(VM& vm, ConstructType& constructType, ConstructData& constructData) const
-{
-    if (!isCell())
-        return false;
-    return asCell()->isConstructor(vm, constructType, constructData);
-}
-
 // this method is here to be after the inline declaration of JSCell::inherits
 inline bool JSValue::inherits(VM& vm, const ClassInfo* classInfo) const
 {

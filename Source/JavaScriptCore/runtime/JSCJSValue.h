@@ -235,7 +235,6 @@ public:
     bool isEmpty() const;
     bool isFunction(VM&) const;
     bool isConstructor(VM&) const;
-    bool isConstructor(VM&, ConstructType&, ConstructData&) const;
     bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;

@@ -205,9 +205,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     }
 
     bool isJSFunction = getJSFunction(targetFunction);
-    ConstructData constructData;
-    ConstructType constructType = JSC::getConstructData(vm, targetFunction, constructData);
-    bool canConstruct = constructType != ConstructType::None;
+    bool canConstruct = targetFunction->isConstructor(vm);
 
     NativeExecutable* executable = vm.getBoundFunction(isJSFunction, canConstruct);
     Structure* structure = getBoundFunctionStructure(vm, globalObject, targetFunction);

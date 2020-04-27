@@ -242,15 +242,8 @@ ALWAYS_INLINE bool JSCell::isFunction(VM& vm)
 
 inline bool JSCell::isConstructor(VM& vm)
 {
-    ConstructType constructType;
-    ConstructData constructData;
-    return isConstructor(vm, constructType, constructData);
-}
-
-inline bool JSCell::isConstructor(VM& vm, ConstructType& constructType, ConstructData& constructData)
-{
-    constructType = methodTable(vm)->getConstructData(this, constructData);
-    return constructType != ConstructType::None;
+    ConstructData ignoredConstructData;
+    return methodTable(vm)->getConstructData(this, ignoredConstructData) != ConstructType::None;
 }
 
 inline bool JSCell::isAPIValueWrapper() const

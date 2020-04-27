@@ -109,7 +109,6 @@ public:
     bool isProxy() const;
     bool isFunction(VM&);
     bool isConstructor(VM&);
-    bool isConstructor(VM&, ConstructType&, ConstructData&);
     bool inherits(VM&, const ClassInfo*) const;
     template<typename Target> bool inherits(VM&) const;
     bool isAPIValueWrapper() const;

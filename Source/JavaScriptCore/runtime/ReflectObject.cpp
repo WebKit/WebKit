@@ -97,8 +97,8 @@ EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(JSGlobalObject* globalObject
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
     ConstructData constructData;
-    ConstructType constructType;
-    if (!target.isConstructor(vm, constructType, constructData))
+    ConstructType constructType = getConstructData(vm, target, constructData);
+    if (constructType == ConstructType::None)
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the first argument be a constructor"_s));
 
     JSValue newTarget = target;

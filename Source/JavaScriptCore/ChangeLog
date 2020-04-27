@@ -1,3 +1,32 @@
+2020-04-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Clearly distinguish isConstructor from getConstructData
+        https://bugs.webkit.org/show_bug.cgi?id=211053
+
+        Reviewed by Sam Weinig.
+
+        Follow-up to r260722. Remove the isConstructor overload that duplicates getConstructData
+        and clearly distinguish the usage of these two functions.
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isConstructor):
+        Remove isConstructor overload.
+
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        Don't use getConstructData if you don't need ConstructData.
+
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        Use getConstructData if you need ConstructData.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        Use isFunction (leftover spot from last patch).
+
 2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Symbol should have [[Construct]] internal method
