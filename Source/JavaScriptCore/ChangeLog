@@ -1,3 +1,16 @@
+2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add $vm.assertEnabled() to suppress Debug crash expected tests in release+assert build
+        https://bugs.webkit.org/show_bug.cgi?id=211089
+
+        Reviewed by Keith Miller.
+
+        Expose ASSERT_ENABLED condition to the shell to control crash expected tests.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionAssertEnabled):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-04-27  Keith Miller  <keith_miller@apple.com>
 
         OSR Exit compiler should know and print the exiting DFG node's index

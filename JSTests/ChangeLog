@@ -1,3 +1,30 @@
+2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add $vm.assertEnabled() to suppress Debug crash expected tests in release+assert build
+        https://bugs.webkit.org/show_bug.cgi?id=211089
+
+        Reviewed by Keith Miller.
+
+        We have ASSERT which only fires when DOM object is wrongly implemented to catch wrong ones.
+        We are using ASSERT in JSC side since we don't know all the DOM objects are correctly implemented.
+        If it is not correctly implemented, in Release build, JSC is returning sub-optimal but right results.
+        But in Debug build, we can catch the wrong ones, which allows us to fix the wrong things while avoiding
+        catastrophic crashes in release build.
+
+        However, the test is assuming that ASSERT is not enabled if it is not Debug build. Release & Debug builds
+        work, but Release+Assert does not meet this assumption.
+
+        So, skip this based on `$vm.assertEnabled()`.
+
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js:
+        (vm.assertEnabled.putter):
+        (vm.assertEnabled):
+        (putter): Deleted.
+        (not_string.toString): Deleted.
+        * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten.js:
+        (vm.assertEnabled):
+        (not_string.toString): Deleted.
+
 2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Symbol should have [[Construct]] internal method

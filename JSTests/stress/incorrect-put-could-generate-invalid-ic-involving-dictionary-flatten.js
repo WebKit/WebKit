@@ -1,5 +1,8 @@
 //@ skip if $buildType == "debug"
 
+if ($vm.assertEnabled())
+    quit();
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);

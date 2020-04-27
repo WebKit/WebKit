@@ -2984,6 +2984,11 @@ static EncodedJSValue JSC_HOST_CALL functionICUVersion(JSGlobalObject*, CallFram
     return JSValue::encode(jsNumber(versionInfo[0]));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionAssertEnabled(JSGlobalObject*, CallFrame*)
+{
+    return JSValue::encode(jsBoolean(ASSERT_ENABLED));
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -3122,6 +3127,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "setUserPreferredLanguages", functionSetUserPreferredLanguages, 1);
     addFunction(vm, "icuVersion", functionICUVersion, 0);
+
+    addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
