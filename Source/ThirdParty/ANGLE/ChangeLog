@@ -1,3 +1,23 @@
+2020-04-27  Dean Jackson  <dino@apple.com>
+
+        Temporarily skip GL_DEPTH_COMPONENT32_OES requirement for depth textures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211055
+        <rdar://problem/62410499>
+
+        Reviewed by Darin Adler.
+
+        ANGLE requires GL_DEPTH_COMPONENT32_OES be available in order to expose the
+        depth texture extension. However, this format is not supported on iOS.
+        Temporarily remove this restriction while investigating other bugs.
+
+        This also allows us to see the failing results in
+        fast/canvas/webgl/webgl-depth-texture.html
+        webgl/1.0.3/conformance/extensions/webgl-depth-texture.html
+
+        * src/libANGLE/Caps.cpp:
+        (gl::DetermineDepthTextureANGLESupport):
+        (gl::DetermineDepthTextureOESSupport):
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks

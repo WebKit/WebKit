@@ -814,11 +814,10 @@ void WebGLRenderingContextBase::setupFlags()
     } else {
 #if USE(ANGLE)
         m_isGLES2NPOTStrict = true;
-        m_isDepthStencilSupported = true;
 #else
         m_isGLES2NPOTStrict = !m_context->getExtensions().isEnabled("GL_ARB_texture_non_power_of_two");
-        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
 #endif
+        m_isDepthStencilSupported = m_context->getExtensions().isEnabled("GL_EXT_packed_depth_stencil") || m_context->getExtensions().isEnabled("GL_ANGLE_depth_texture");
     }
     m_isRobustnessEXTSupported = m_context->getExtensions().isEnabled("GL_EXT_robustness");
 }

@@ -1,3 +1,18 @@
+2020-04-27  Dean Jackson  <dino@apple.com>
+
+        Temporarily skip GL_DEPTH_COMPONENT32_OES requirement for depth textures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211055
+        <rdar://problem/62410499>
+
+        Reviewed by Darin Adler.
+
+        Unskip the fast/canvas/webgl/webgl-depth-texture.html now that
+        the extension is "supported". It has failing results.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/canvas/webgl/webgl-depth-texture-expected.txt: new results.
+        * platform/ios/webgl/1.0.3/conformance/extensions/webgl-depth-texture-expected.txt: new results.
+
 2020-04-27  Jason Lawrence  <lawrence.j@apple.com>
 
         storage/indexeddb/value-cursor-cycle.html is flaky failing because it incorrectly thinks our JS GC is precise.
