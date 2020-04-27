@@ -4772,22 +4772,6 @@ IGNORE_WARNINGS_END
     [CATransaction synchronize];
 }
 
-- (BOOL)allowsNewCSSAnimationsWhileSuspended
-{
-    auto* frame = core([self mainFrame]);
-    if (frame)
-        return frame->legacyAnimation().allowsNewAnimationsWhileSuspended();
-
-    return false;
-}
-
-- (void)setAllowsNewCSSAnimationsWhileSuspended:(BOOL)allowed
-{
-    auto* frame = core([self mainFrame]);
-    if (frame)
-        frame->legacyAnimation().setAllowsNewAnimationsWhileSuspended(allowed);
-}
-
 - (BOOL)cssAnimationsSuspended
 {
     // should ask the page!
