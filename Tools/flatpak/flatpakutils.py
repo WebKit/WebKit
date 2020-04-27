@@ -156,22 +156,31 @@ class FlatpakObject:
     def flatpak(self, command, *args, **kwargs):
         show_output = kwargs.pop("show_output", False)
         comment = kwargs.pop("comment", None)
+        gather_output = kwargs.get("gather_output", False)
         if comment:
             Console.message(comment)
 
         command = ["flatpak", command]
-        res = subprocess.check_output(command + ["--help"]).decode("utf-8")
-        if self.user and "--user" in res:
+        help_output = subprocess.check_output(command + ["--help"]).decode("utf-8")
+        if self.user and "--user" in help_output:
             command.append("--user")
-        if "--assumeyes" in res:
+        if "--assumeyes" in help_output:
             command.append("--assumeyes")
+        if "--noninteractive" and gather_output:
+            command.append("--noninteractive")
+
         command.extend(args)
 
         _log.debug("Executing %s" % ' '.join(command))
         if not show_output:
             return subprocess.check_output(command).decode("utf-8")
 
-        return subprocess.check_call(command)
+        if not gather_output:
+            return subprocess.check_call(command)
+        else:
+            p = subprocess.Popen(command, stdout=subprocess.PIPE)
+            output = p.communicate()
+            return output
 
 
 class FlatpakPackages(FlatpakObject):
@@ -272,11 +281,9 @@ class FlatpakRepo(FlatpakObject):
             assert url
 
         self._app_registry = {}
-        output = self.flatpak("list", "--columns=application,branch,origin")
+        output = self.flatpak("list", "--columns=application,branch", "-a")
         for line in output.splitlines():
-            name, branch, origin = line.split("\t")
-            if origin != self.name:
-                continue
+            name, branch = line.split("\t")
             self._app_registry[name] = branch
 
     def is_app_installed(self, name, branch=None):
@@ -761,16 +768,28 @@ class WebkitFlatpak:
 
         if self.update:
             repo = self.sdk_repo
-            repo.flatpak("update", show_output=True, comment="Updating Flatpak %s environment" % self.build_type)
+            update_output = repo.flatpak("update", gather_output=True, comment="Updating Flatpak %s environment" % self.build_type)
+            regenerate_toolchains = update_output.find("Nothing to do") == -1
+
             for package in self._get_packages():
                 if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
                    and not repo.is_app_installed(package.name, branch=self.sdk_branch):
                     Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
                     shutil.rmtree(self.flatpak_build_path)
                     self._reset_repository()
+                    regenerate_toolchains = True
                     break
                 elif not repo.is_app_installed(package.name):
                     package.install()
+                    regenerate_toolchains = True
+        else:
+            regenerate_toolchains = self.regenerate_toolchains
+
+        if regenerate_toolchains:
+            self.icc_version = {}
+            self.setup_icecc("gcc")
+            self.setup_icecc("clang")
+            self.save_config()
 
         return self.setup_dev_env()
 
@@ -809,15 +828,6 @@ class WebkitFlatpak:
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:
             self.install_all()
-            regenerate_toolchains = True
-        else:
-            regenerate_toolchains = self.regenerate_toolchains
-
-        if regenerate_toolchains:
-            self.icc_version = {}
-            self.setup_icecc("gcc")
-            self.setup_icecc("clang")
-            self.save_config()
 
         if not self.update:
             for package in self._get_packages():
@@ -833,7 +843,7 @@ class WebkitFlatpak:
                 self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
 
             return self.run_in_sandbox(*self.user_command)
-        elif not self.update and not self.build_gst:
+        elif not self.update and not self.build_gst and not self.regenerate_toolchains:
             return self.run_in_sandbox()
 
         return 0

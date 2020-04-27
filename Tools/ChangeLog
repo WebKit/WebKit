@@ -1,5 +1,24 @@
 2020-04-27  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Regenerate toolchains only if new updates were downloaded
+        https://bugs.webkit.org/show_bug.cgi?id=210804
+
+        Reviewed by Žan Doberšek.
+
+        The SDK toolchain archives are now regenerated only if an actual
+        update was downloaded from the Flatpak repository. Some redundant
+        flatpak calls were removed as well, such as the GL extension and
+        Debug reinstalls that were happening during webkit-flatpak
+        updates.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakObject.flatpak):
+        (FlatpakRepo.__init__):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.setup_dev_env):
+
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
         unable to build from tot - linux - flatpakutils.py - TypeError: not enough arguments for format string
         https://bugs.webkit.org/show_bug.cgi?id=210941
 
