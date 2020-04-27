@@ -64,11 +64,6 @@ Optional<SimpleRange> makeRangeSelectingNode(Node& node)
     return SimpleRange { { *parent, offset }, { *parent, offset + 1 } };
 }
 
-static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
-{
-    return { node, node.length() };
-}
-
 SimpleRange makeRangeSelectingNodeContents(Node& node)
 {
     return { makeBoundaryPointBeforeNodeContents(node), makeBoundaryPointAfterNodeContents(node) };

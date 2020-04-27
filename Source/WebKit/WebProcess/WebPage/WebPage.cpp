@@ -3731,9 +3731,7 @@ void WebPage::detectDataInAllFrames(uint64_t types, CompletionHandler<void(const
         auto document = makeRefPtr(frame->document());
         if (!document)
             continue;
-
-        RefPtr<Range> range = Range::create(*document, Position { document.get(), Position::PositionIsBeforeChildren }, Position { document.get(), Position::PositionIsAfterChildren });
-        frame->setDataDetectionResults(DataDetection::detectContentInRange(range, dataDetectorTypes, m_dataDetectionContext.get()));
+        frame->setDataDetectionResults(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
     }
     completionHandler({ m_page->mainFrame().dataDetectionResults() });
 }

@@ -63,15 +63,16 @@
 }
 
 #if TARGET_OS_IPHONE
+
 - (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context
 {
 #if ENABLE(DATA_DETECTION)
-    RefPtr<WebCore::Range> coreRange = &_rangeHandle->coreRange();
-    return WebCore::DataDetection::detectContentInRange(coreRange, fromWKDataDetectorTypes(types), context);
+    return WebCore::DataDetection::detectContentInRange(_rangeHandle->coreRange(), fromWKDataDetectorTypes(types), context);
 #else
     return nil;
 #endif
 }
+
 #endif
 
 - (WebKit::InjectedBundleRangeHandle&)_rangeHandle

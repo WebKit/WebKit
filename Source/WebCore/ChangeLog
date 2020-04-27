@@ -1,3 +1,138 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        Replace more uses of live ranges with SimpleRange
+        https://bugs.webkit.org/show_bug.cgi?id=211058
+
+        Reviewed by Antti Koivisto.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement const): Use SimpleRange.
+
+        * dom/BoundaryPoint.h: Moved makeBoundaryPointAfterNodeContents here so it
+        can be used more places.
+
+        * dom/Node.cpp:
+        (WebCore::commonInclusiveAncestor): Moved the commonAncestorContainer function
+        here from Range, decided to use the "inclusive ancestor" naming from the
+        DOM specification, and used RefPtr for the result since it's part of our modern
+        safer design to always use smart pointers for return values.
+        * dom/Node.h: Added commonInclusiveAncestor.
+
+        * dom/Position.cpp:
+        (WebCore::commonShadowIncludingAncestor): Call commonInclusiveAncestor.
+
+        * dom/Range.cpp:
+        (WebCore::Range::commonAncestorContainer): Deleted.
+        (WebCore::Range::isPointInRange): Call commonInclusiveAncestor.
+        (WebCore::Range::comparePoint const): Ditto.
+        (WebCore::Range::compareBoundaryPoints): Ditto.
+        (WebCore::Range::collectSelectionRectsWithoutUnionInteriorLines const): Ditto.
+        * dom/Range.h:
+        (WebCore::Range::commonAncestorContainer const): Call commonInclusiveAncestor.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::makeBoundaryPointAfterNodeContents): Moved to BoundaryPoint.h.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection): Use
+        SimpleRange instead of live range.
+        (WebCore::AlternativeTextController::respondToUnappliedEditing): Ditto.
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand): Ditto.
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult): Ditto.
+
+        * editing/ChangeListTypeCommand.cpp:
+        (WebCore::listConversionTypeForSelection): use commonInclusiveAncestor.
+
+        * editing/Editing.cpp:
+        (WebCore::isNodeVisiblyContainedWithin): Take a SimpleRange argument.
+        * editing/Editing.h: Updated for the above.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::addRangeToKillRing): Take a SimpleRange argument.
+        (WebCore::Editor::shouldDetectTelephoneNumbers const): Made this const and
+        tweaked coding style a bit.
+        (WebCore::scanForTelephoneNumbers): Moved this, made it a non-member function,
+        renamed from scanRangeForTelephoneNumbers, use SimpleRange.
+        (WebCore::extendSelection): Added. Factored out some logic from the function below.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Use SimpleRange. Removed
+        some unnecessary code that subtracts 1 and then adds 1 again.
+        * editing/Editor.h: Updated for the above.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace): Use commonInclusiveAncestor.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::makeSearchRange): Return a SimpleRange.
+        (WebCore::VisibleSelection::appendTrailingWhitespace): Use SimpleRange.
+
+        * editing/WebContentReader.h: Use SimpleRange instead of a live range.
+
+        * editing/cocoa/DataDetection.h: Use a struct, DetectedItem, for the return value
+        from the detection functions. Also changed DataDetectorTypes to an enum class so
+        it can be forward-declared instead of having to include this header.
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItem): Renamed from detectItemAtPositionWithRange. Return the
+        DetectedItem struct, with a SimpleRange rather than an out argument live range.
+        (WebCore::DataDetection::detectItemAroundHitTestResult): Ditto.
+        (WebCore::contains): Added a helper function for testing bits in the
+        DataDetectorType enum. Later we can make this better using OptionSet.
+        (WebCore::constructURLStringForResult): Refactored a bit, updated for the new
+        DataDetectorTypes enum class, and to use CFEqual instead of CFStringCompare.
+        (WebCore::DataDetection::detectContentInRange): Ditto.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::webContentFromPasteboard): Use SimpleRange.
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readPlainText): Updated since context is SimpleRange.
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::createFragmentFromPasteboardData): Use SimpleRange.
+        (WebCore::Editor::webContentFromPasteboard): Use SimpleRange.
+        * editing/win/EditorWin.cpp:
+        (WebCore::Editor::webContentFromPasteboard): Use SimpleRange.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::replaceNodeFromPasteboard): Use SimpleRange.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Use SimpleRange.
+        * page/EventHandler.cpp:
+        (WebCore::targetNodeForClickEvent): Use commonInclusiveAncestor. Also updated
+        to return a RefPtr.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Updated for the above.
+
+        * page/Settings.yaml: Changed the default for DataDetectorTypes to be the empty
+        string rather than a named constant.
+        * page/SettingsBase.h: Forward-declare DataDetectorTypes instead of including
+        the DataDetection.h header.
+
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange): Take a SimpleRange.
+        (WebCore::TextIndicator::createWithSelectionInFrame): Ditto.
+        (WebCore::hasNonInlineOrReplacedElements): Ditto.
+        (WebCore::selectionRects): Ditto. Also renamed from getSelectionRectsForRange.
+        (WebCore::styleContainsComplexBackground): Tweaked implementation.
+        (WebCore::estimatedTextColorsForRange): Take a SimpleRange.
+        (WebCore::absoluteBoundingRectForRange): Ditto.
+        (WebCore::estimatedBackgroundColorForRange): Ditto.
+        (WebCore::containsOnlyWhiteSpaceText): Ditto.
+        (WebCore::initializeIndicator): Ditto.
+        * page/TextIndicator.h: Updated for the above.
+
+        * page/mac/ServicesOverlayController.h: Use SimpleRange instead of a live
+        range for highlights.
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::createForSelection): Take SimpleRange.
+        (WebCore::ServicesOverlayController::Highlight::createForTelephoneNumber): Ditto.
+        (WebCore::ServicesOverlayController::Highlight::Highlight): Ditto.
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights): Ditto.
+        (WebCore::ServicesOverlayController::buildSelectionHighlight): Ditto.
+        (WebCore::ServicesOverlayController::telephoneNumberRangesForFocusedFrame): Ditto.
+        (WebCore::ServicesOverlayController::highlightsAreEquivalent): Ditto.
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight): Ditto.
+        (WebCore::ServicesOverlayController::handleClick): Ditto.
+
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForLink): Use SimpleRange.
+        (WebCore::createDragImageForSelection): Tweaked a bit.
+
 2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make it possible to build with GTK4 without errors

@@ -633,10 +633,10 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         // If possible, use a text iterator to get the text, so that whitespace
         // is handled consistently.
         Document* nodeDocument = nullptr;
-        RefPtr<Range> textRange;
+        Optional<SimpleRange> textRange;
         if (Node* node = m_renderer->node()) {
             nodeDocument = &node->document();
-            textRange = rangeOfContents(*node);
+            textRange = makeRangeSelectingNodeContents(*node);
         } else {
             // For anonymous blocks, we work around not having a direct node to create a range from
             // defining one based in the two external positions defining the boundaries of the subtree.
@@ -650,7 +650,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 Position endPosition = positionInParentAfterNode(lastChildRenderer->node());
 
                 nodeDocument = &firstNodeInBlock->document();
-                textRange = Range::create(*nodeDocument, startPosition, endPosition);
+                textRange = { { *makeBoundaryPoint(startPosition), *makeBoundaryPoint(endPosition) } };
             }
         }
 

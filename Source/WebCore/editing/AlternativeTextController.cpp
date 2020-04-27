@@ -217,18 +217,20 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 
 void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
 {
-    if (AlternativeTextClient* client = alternativeTextClient())
+    if (auto client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, corrected, correction);
 
     Ref<Frame> protector(m_frame);
     m_frame.document()->updateLayout();
-    m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);
-    auto range = Range::create(*m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());
 
+    m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);
+    auto range = m_frame.selection().selection().firstRange();
+    if (!range)
+        return;
     auto& markers = m_frame.document()->markers();
-    markers.removeMarkers(range, OptionSet<DocumentMarker::MarkerType> { DocumentMarker::Spelling, DocumentMarker::Autocorrected }, DocumentMarkerController::RemovePartiallyOverlappingMarker);
-    markers.addMarker(range, DocumentMarker::Replacement);
-    markers.addMarker(range, DocumentMarker::SpellCheckingExemption);
+    markers.removeMarkers(*range, OptionSet<DocumentMarker::MarkerType> { DocumentMarker::Spelling, DocumentMarker::Autocorrected }, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+    markers.addMarker(*range, DocumentMarker::Replacement);
+    markers.addMarker(*range, DocumentMarker::SpellCheckingExemption);
 }
 
 void AlternativeTextController::timerFired()
@@ -395,10 +397,12 @@ void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition
 {
     if (!command->wasCreateLinkCommand())
         return;
-    auto range = Range::create(*m_frame.document(), command->startingSelection().start(), command->startingSelection().end());
+    auto range = command->startingSelection().firstRange();
+    if (!range)
+        return;
     auto& markers = m_frame.document()->markers();
-    markers.addMarker(range, DocumentMarker::Replacement);
-    markers.addMarker(range, DocumentMarker::SpellCheckingExemption);
+    markers.addMarker(*range, DocumentMarker::Replacement);
+    markers.addMarker(*range, DocumentMarker::SpellCheckingExemption);
 }
 
 EditorClient* AlternativeTextController::editorClient()
@@ -471,7 +475,7 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
     if (endOfSelection == precedingCharacterPosition)
         return;
 
-    auto precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, endOfSelection);
+    auto precedingCharacterRange = SimpleRange { *makeBoundaryPoint(precedingCharacterPosition), *makeBoundaryPoint(endOfSelection) };
     String string = plainText(precedingCharacterRange);
     if (string.isEmpty() || !deprecatedIsEditingWhitespace(string[string.length() - 1]))
         return;
@@ -484,25 +488,25 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
 
 bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const TextCheckingResult& result, Range& rangeWithAlternative, const String& stringToBeReplaced)
 {
-    DocumentMarkerController& markerController = m_frame.document()->markers();
-    if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::Replacement)) {
+    auto& markers = m_frame.document()->markers();
+    if (markers.hasMarkers(rangeWithAlternative, DocumentMarker::Replacement)) {
         if (result.type == TextCheckingType::Correction)
             recordSpellcheckerResponseForModifiedCorrection(rangeWithAlternative, stringToBeReplaced, result.replacement);
         return false;
     }
 
-    if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::RejectedCorrection))
+    if (markers.hasMarkers(rangeWithAlternative, DocumentMarker::RejectedCorrection))
         return false;
 
-    if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::AcceptedCandidate))
+    if (markers.hasMarkers(rangeWithAlternative, DocumentMarker::AcceptedCandidate))
         return false;
 
     Position beginningOfRange = rangeWithAlternative.startPosition();
     Position precedingCharacterPosition = beginningOfRange.previous();
-    auto precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, beginningOfRange);
 
-    Vector<RenderedDocumentMarker*> markers = markerController.markersInRange(precedingCharacterRange, DocumentMarker::DeletedAutocorrection);
-    for (const auto* marker : markers) {
+    auto precedingCharacterRange = SimpleRange { *makeBoundaryPoint(precedingCharacterPosition), *makeBoundaryPoint(beginningOfRange) };
+
+    for (auto& marker : markers.markersInRange(precedingCharacterRange, DocumentMarker::DeletedAutocorrection)) {
         if (marker->description() == stringToBeReplaced)
             return false;
     }

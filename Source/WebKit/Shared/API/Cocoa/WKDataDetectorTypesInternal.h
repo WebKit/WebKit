@@ -31,27 +31,21 @@
 
 static inline WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 {
-    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeNone)
-        return WebCore::DataDetectorTypeNone;
-    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeAll)
-        return WebCore::DataDetectorTypeAll;
-
-    uint32_t value = WebCore::DataDetectorTypeNone;
+    uint32_t value = 0;
     if (types & WKDataDetectorTypePhoneNumber)
-        value |= WebCore::DataDetectorTypePhoneNumber;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::PhoneNumber);
     if (types & WKDataDetectorTypeLink)
-        value |= WebCore::DataDetectorTypeLink;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::Link);
     if (types & WKDataDetectorTypeAddress)
-        value |= WebCore::DataDetectorTypeAddress;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::Address);
     if (types & WKDataDetectorTypeCalendarEvent)
-        value |= WebCore::DataDetectorTypeCalendarEvent;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::CalendarEvent);
     if (types & WKDataDetectorTypeTrackingNumber)
-        value |= WebCore::DataDetectorTypeTrackingNumber;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::TrackingNumber);
     if (types & WKDataDetectorTypeFlightNumber)
-        value |= WebCore::DataDetectorTypeFlightNumber;
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::FlightNumber);
     if (types & WKDataDetectorTypeLookupSuggestion)
-        value |= WebCore::DataDetectorTypeLookupSuggestion;
-
+        value |= static_cast<uint32_t>(WebCore::DataDetectorTypes::LookupSuggestion);
     return static_cast<WebCore::DataDetectorTypes>(value);
 }
 

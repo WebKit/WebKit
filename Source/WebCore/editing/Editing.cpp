@@ -1140,19 +1140,22 @@ static bool isVisiblyAdjacent(const Position& first, const Position& second)
 
 // Determines whether a node is inside a range or visibly starts and ends at the boundaries of the range.
 // Call this function to determine whether a node is visibly fit inside selectedRange
-bool isNodeVisiblyContainedWithin(Node& node, const Range& range)
+bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
 {
     // If the node is inside the range, then it surely is contained within.
-    auto comparisonResult = range.compareNode(node);
+    auto comparisonResult = createLiveRange(range)->compareNode(node);
     if (!comparisonResult.hasException() && comparisonResult.releaseReturnValue() == Range::NODE_INSIDE)
         return true;
 
-    bool startIsVisuallySame = visiblePositionBeforeNode(node) == range.startPosition();
-    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(&node), range.endPosition()) < 0)
+    auto startPosition = createLegacyEditingPosition(range.start);
+    auto endPosition = createLegacyEditingPosition(range.end);
+
+    bool startIsVisuallySame = visiblePositionBeforeNode(node) == startPosition;
+    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(&node), endPosition) < 0)
         return true;
 
-    bool endIsVisuallySame = visiblePositionAfterNode(node) == range.endPosition();
-    if (endIsVisuallySame && comparePositions(range.startPosition(), positionInParentBeforeNode(&node)) < 0)
+    bool endIsVisuallySame = visiblePositionAfterNode(node) == endPosition;
+    if (endIsVisuallySame && comparePositions(startPosition, positionInParentBeforeNode(&node)) < 0)
         return true;
 
     return startIsVisuallySame && endIsVisuallySame;

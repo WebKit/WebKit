@@ -1570,7 +1570,7 @@ RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
     ASSERT(nodeA);
     auto* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
     ASSERT(nodeB);
-    return Range::commonAncestorContainer(nodeA, nodeB);
+    return commonInclusiveAncestor(*nodeA, *nodeB);
 }
 
 Position positionInParentBeforeNode(Node* node)

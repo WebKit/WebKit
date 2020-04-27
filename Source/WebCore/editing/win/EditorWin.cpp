@@ -66,7 +66,7 @@ static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData&
     return nullptr;
 }
 
-RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, const SimpleRange&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
 {
     if (COMPtr<IDataObject> platformDragData = pasteboard.dataObject())
         return createFragmentFromPlatformData(*platformDragData, m_frame);

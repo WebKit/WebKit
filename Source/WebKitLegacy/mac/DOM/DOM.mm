@@ -523,10 +523,8 @@ id <DOMEventTarget> kit(EventTarget* target)
 
     auto& node = *core(self);
 
-    auto range = rangeOfContents(node);
-
     const float margin = 4 / node.document().page()->pageScaleFactor();
-    auto textIndicator = TextIndicator::createWithRange(range, TextIndicatorOptionTightlyFitContent |
+    auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), TextIndicatorOptionTightlyFitContent |
         TextIndicatorOptionRespectTextColor |
         TextIndicatorOptionPaintBackgrounds |
         TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |

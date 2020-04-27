@@ -156,13 +156,12 @@ Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLeg
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    auto documentRange = Range::create(*document, {{ document->documentElement(), Position::PositionIsBeforeAnchor }}, {{ document->documentElement(), Position::PositionIsAfterAnchor }});
     HashSet<Node*> allTextNodes;
     HashMap<unsigned, unsigned> fontSizeToCountMap;
     unsigned numberOfIterations = 0;
     unsigned totalSampledTextLength = 0;
 
-    for (TextIterator documentTextIterator { documentRange.get(), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
+    for (TextIterator documentTextIterator { makeRangeSelectingNodeContents(*document), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
         if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
             break;
 

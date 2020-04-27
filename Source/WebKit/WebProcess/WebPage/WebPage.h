@@ -129,10 +129,6 @@ typedef struct _AtkObject AtkObject;
 #include <WebCore/PlatformTouchEvent.h>
 #endif
 
-#if ENABLE(DATA_DETECTION)
-#include <WebCore/DataDetection.h>
-#endif
-
 #if ENABLE(MAC_GESTURE_EVENTS)
 #include <WebKitAdditions/PlatformGestureEventMac.h>
 #endif

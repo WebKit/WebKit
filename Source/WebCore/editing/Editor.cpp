@@ -3211,7 +3211,7 @@ void Editor::transpose()
     replaceSelectionWithText(transposed, SelectReplacement::No, SmartReplace::No, EditAction::Insert);
 }
 
-void Editor::addRangeToKillRing(const Range& range, KillRingInsertionMode mode)
+void Editor::addRangeToKillRing(const SimpleRange& range, KillRingInsertionMode mode)
 {
     addTextToKillRing(plainText(range), mode);
 }
@@ -3685,97 +3685,72 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
     scheduleEditorUIUpdate();
 }
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-bool Editor::shouldDetectTelephoneNumbers()
+bool Editor::shouldDetectTelephoneNumbers() const
 {
-    if (!m_frame.document())
-        return false;
-    return document().isTelephoneNumberParsingEnabled() && TelephoneNumberDetector::isSupported();
+    return m_frame.document() && document().isTelephoneNumberParsingEnabled() && TelephoneNumberDetector::isSupported();
+}
+
+static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
+{
+    // Don't scan for phone numbers inside editable regions.
+    auto& startNode = range.startContainer();
+    if (startNode.hasEditableStyle())
+        return { };
+    auto text = plainText(range);
+    Vector<SimpleRange> result;
+    unsigned length = text.length();
+    unsigned scannerPosition = 0;
+    int relativeStartPosition = 0;
+    int relativeEndPosition = 0;
+    auto characters = StringView { text }.upconvertedCharacters();
+    while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
+        ASSERT(scannerPosition + relativeEndPosition <= length);
+        result.append(resolveCharacterRange(range, CharacterRange(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition)));
+        scannerPosition += relativeEndPosition;
+    }
+    return result;
+}
+
+static SimpleRange extendSelection(const SimpleRange& range, unsigned charactersToExtend)
+{
+    auto start = createLegacyEditingPosition(range.start);
+    auto end = createLegacyEditingPosition(range.end);
+    for (unsigned i = 0; i < charactersToExtend; ++i) {
+        start = start.previous(Character);
+        end = end.next(Character);
+    }
+    return { *makeBoundaryPoint(start), *makeBoundaryPoint(end)};
 }
 
 void Editor::scanSelectionForTelephoneNumbers()
 {
+    // FIXME: Why is it helpful here to check client for null?
     if (!shouldDetectTelephoneNumbers() || !client())
         return;
 
     m_detectedTelephoneNumberRanges.clear();
 
-    Vector<RefPtr<Range>> markedRanges;
+    auto& selection = m_frame.selection();
+    if (selection.isRange()) {
+        if (auto selectedRange = selection.selection().firstRange()) {
+            // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
+            constexpr unsigned charactersToExtend = 15;
+            auto selectedLiveRange = createLiveRange(*selectedRange);
+            for (auto& range : scanForTelephoneNumbers(extendSelection(*selectedRange, charactersToExtend))) {
+                // FIXME: Why do we do this unconditionally and the code below this only when it overlaps the selection?
+                document().markers().addMarker(range, DocumentMarker::TelephoneNumber);
 
-    FrameSelection& frameSelection = m_frame.selection();
-    if (!frameSelection.isRange()) {
-        if (auto* page = m_frame.page())
-            page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
-        return;
-    }
-    auto selectedRange = createLiveRange(frameSelection.selection().toNormalizedRange());
-
-    // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
-    static const int charactersToExtend = 15;
-    const VisibleSelection& visibleSelection = frameSelection.selection();
-    Position start = visibleSelection.start();
-    Position end = visibleSelection.end();
-    for (int i = 0; i < charactersToExtend; ++i) {
-        start = start.previous(Character);
-        end = end.next(Character);
-    }
-
-    FrameSelection extendedSelection;
-    extendedSelection.setStart(start);
-    extendedSelection.setEnd(end);
-    auto extendedRange = extendedSelection.selection().toNormalizedRange();
-
-    if (!extendedRange) {
-        if (auto* page = m_frame.page())
-            page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
-        return;
-    }
-
-    scanRangeForTelephoneNumbers(createLiveRange(*extendedRange), plainText(*extendedRange), markedRanges);
-
-    // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
-    for (auto& range : markedRanges) {
-        if (rangesOverlap(range.get(), selectedRange.get()))
-            m_detectedTelephoneNumberRanges.append(range);
+                // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
+                if (rangesOverlap(createLiveRange(range).ptr(), selectedLiveRange.ptr()))
+                    m_detectedTelephoneNumberRanges.append(range);
+            }
+        }
     }
 
     if (auto* page = m_frame.page())
         page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
-}
-
-void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
-{
-    // Don't scan for phone numbers inside editable regions.
-    Node& startNode = range.startContainer();
-    if (startNode.hasEditableStyle())
-        return;
-
-    // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,
-    // relative to the scannerPosition
-    unsigned length = stringView.length();
-    unsigned scannerPosition = 0;
-    int relativeStartPosition = 0;
-    int relativeEndPosition = 0;
-
-    auto characters = stringView.upconvertedCharacters();
-
-    while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
-        // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
-        // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So subtract 1 to get the same
-        // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
-        // to the old parser).
-        --relativeEndPosition;
-
-        ASSERT(scannerPosition + relativeEndPosition < length);
-
-        auto subrange = resolveCharacterRange(range, CharacterRange(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
-
-        markedRanges.append(createLiveRange(subrange));
-        range.ownerDocument().markers().addMarker(subrange, DocumentMarker::TelephoneNumber);
-
-        scannerPosition += relativeEndPosition + 1;
-    }
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)

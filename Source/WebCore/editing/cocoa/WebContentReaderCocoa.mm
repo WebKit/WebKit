@@ -675,7 +675,7 @@ bool WebContentReader::readPlainText(const String& text)
     if (!allowPlainText)
         return false;
 
-    addFragment(createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]));
+    addFragment(createFragmentFromText(createLiveRange(context), [text precomposedStringWithCanonicalMapping]));
 
     madeFragmentFromPlainText = true;
     return true;

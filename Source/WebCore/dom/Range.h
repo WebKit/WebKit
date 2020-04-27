@@ -60,8 +60,7 @@ public:
     unsigned endOffset() const { return m_end.offset(); }
     bool collapsed() const { return m_start == m_end; }
 
-    Node* commonAncestorContainer() const { return commonAncestorContainer(&startContainer(), &endContainer()); }
-    WEBCORE_EXPORT static Node* commonAncestorContainer(Node* containerA, Node* containerB);
+    Node* commonAncestorContainer() const { return commonInclusiveAncestor(startContainer(), endContainer()).get(); }
     WEBCORE_EXPORT ExceptionOr<void> setStart(Ref<Node>&& container, unsigned offset);
     WEBCORE_EXPORT ExceptionOr<void> setEnd(Ref<Node>&& container, unsigned offset);
     WEBCORE_EXPORT void collapse(bool toStart);

@@ -202,26 +202,16 @@ bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
-static RefPtr<Range> makeSearchRange(const Position& position)
+static Optional<SimpleRange> makeSearchRange(const Position& position)
 {
-    auto* node = position.deprecatedNode();
-    if (!node)
-        return nullptr;
-    auto* boundary = deprecatedEnclosingBlockFlowElement(node);
-    if (!boundary)
-        return nullptr;
-
-    auto searchRange = Range::create(node->document());
-
-    auto result = searchRange->selectNodeContents(*boundary);
-    if (result.hasException())
-        return nullptr;
-    Position start { position.parentAnchoredEquivalent() };
-    result = searchRange->setStart(*start.containerNode(), start.offsetInContainerNode());
-    if (result.hasException())
-        return nullptr;
-
-    return searchRange;
+    auto node = position.deprecatedNode();
+    auto scope = deprecatedEnclosingBlockFlowElement(node);
+    if (!scope)
+        return { };
+    auto start = makeBoundaryPoint(position.parentAnchoredEquivalent());
+    if (!start)
+        return { };
+    return { { WTFMove(*start), makeBoundaryPointAfterNodeContents(*scope) } };
 }
 
 bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
@@ -231,7 +221,7 @@ bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
 
 void VisibleSelection::appendTrailingWhitespace()
 {
-    RefPtr<Range> searchRange = makeSearchRange(m_end);
+    auto searchRange = makeSearchRange(m_end);
     if (!searchRange)
         return;
 

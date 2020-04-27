@@ -1,3 +1,21 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        Replace more uses of live ranges with SimpleRange
+        https://bugs.webkit.org/show_bug.cgi?id=211058
+
+        Reviewed by Antti Koivisto.
+
+        * DOM/DOM.mm:
+        (-[DOMNode getPreviewSnapshotImage:andRects:]): Use SimpleRange.
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::imageForCurrentSharingServicePickerItem): Ditto.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        Updated to use DetectedItem and SimpleRange.
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        Ditto.
+
 2020-04-27  Rob Buis  <rbuis@igalia.com>
 
         Make loadURLIntoChildFrame private and non-exported

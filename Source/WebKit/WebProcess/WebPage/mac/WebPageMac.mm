@@ -857,7 +857,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
     Element* URLElement = hitTestResult.URLElement();
     if (!absoluteLinkURL.isEmpty() && URLElement)
-        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(rangeOfContents(*URLElement), TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(*URLElement), TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
 
     auto lookupResult = lookupTextAtLocation(locationInViewCoordinates);
     if (auto* lookupRange = std::get<RefPtr<Range>>(lookupResult).get()) {
@@ -895,12 +895,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && (hitTestResult.innerNode()->isTextNode() || hitTestResult.isOverTextInsideFormControlElement())) {
-        FloatRect detectedDataBoundingBox;
-        RefPtr<Range> detectedDataRange;
-        immediateActionResult.detectedDataActionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
-        if (immediateActionResult.detectedDataActionContext && detectedDataRange) {
-            immediateActionResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+        if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
+            immediateActionResult.detectedDataActionContext = WTFMove(result->actionContext);
+            immediateActionResult.detectedDataBoundingBox = result->boundingBox;
+            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(result->range,
+                TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 

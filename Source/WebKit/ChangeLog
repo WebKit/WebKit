@@ -1,3 +1,29 @@
+2020-04-26  Darin Adler  <darin@apple.com>
+
+        Replace more uses of live ranges with SimpleRange
+        https://bugs.webkit.org/show_bug.cgi?id=211058
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/API/Cocoa/WKDataDetectorTypesInternal.h:
+        (fromWKDataDetectorTypes): Updated since DataDetectorTypes
+        is now an enum class. Also got rid of special "none" and "all" values.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle detectDataWithTypes:context:]): Updated
+        since DataDetection now takes a SimpleRange.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+        Use SimpleRange.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::detectDataInAllFrames): Ditto.
+
+        * WebProcess/WebPage/WebPage.h: Removed unneeded include of DataDetection.h.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation): Use SimpleRange.
+
 2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make it possible to build with GTK4 without errors

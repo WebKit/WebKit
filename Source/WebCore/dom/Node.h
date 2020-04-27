@@ -670,6 +670,8 @@ private:
     std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
+WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(Node&, Node&);
+
 #if ASSERT_ENABLED
 
 inline void adopted(Node* node)

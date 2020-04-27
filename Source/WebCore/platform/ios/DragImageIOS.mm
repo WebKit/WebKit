@@ -40,6 +40,7 @@
 #import "NotImplemented.h"
 #import "Page.h"
 #import "Range.h"
+#import "SimpleRange.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "TextRun.h"
@@ -135,8 +136,8 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
 
     CGRect imageRect = CGRectMake(0, 0, textWidth + 2 * dragImagePadding, textHeight + 2 * dragImagePadding);
 
-    RetainPtr<UIGraphicsImageRenderer> render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size]);
-    UIImage *image = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    auto renderer = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size]);
+    auto image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContext context(rendererContext.CGContext);
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
@@ -146,8 +147,7 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
             urlFontCascade.get().drawText(context, TextRun(truncatedBottomString), FloatPoint(dragImagePadding, 40 + dragImagePadding));
     }];
 
-    auto linkRange = rangeOfContents(linkElement);
-    if (auto textIndicator = TextIndicator::createWithRange(linkRange, defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize()))
+    if (auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(linkElement), defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize()))
         indicatorData = textIndicator->data();
 
     return image.CGImage;
@@ -191,17 +191,15 @@ DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indica
         imageRect.scale(1 / page->deviceScaleFactor());
 
 
-    RetainPtr<UIGraphicsImageRenderer> render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
-    UIImage *finalImage = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    auto renderer = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
+    return [renderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContext context(rendererContext.CGContext);
         // FIXME: The context flip here should not be necessary, and suggests that somewhere else in the regular
         // drag initiation flow, we unnecessarily flip the graphics context.
         context.translate(0, imageRect.height());
         context.scale({ 1, -1 });
         context.drawImage(*image, imageRect);
-    }];
-
-    return finalImage.CGImage;
+    }].CGImage;
 }
 
 DragImageRef dissolveDragImageToFraction(DragImageRef image, float)

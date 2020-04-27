@@ -140,8 +140,9 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
         return;
 
     Ref<Frame> protector(m_frame);
-    auto range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
-    m_frame.selection().setSelection(VisibleSelection(range.get()), FrameSelection::DoNotSetFocus);
+
+    auto range = makeRangeSelectingNodeContents(*node);
+    m_frame.selection().setSelection(VisibleSelection(range), FrameSelection::DoNotSetFocus);
 
     Pasteboard pasteboard(pasteboardName);
 
@@ -156,9 +157,9 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     bool chosePlainText;
-    if (RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, range.get(), true, chosePlainText)) {
+    if (auto fragment = webContentFromPasteboard(pasteboard, range, true, chosePlainText)) {
         maybeCopyNodeAttributesToFragment(*node, *fragment);
-        if (shouldInsertFragment(*fragment, range.ptr(), EditorInsertAction::Pasted))
+        if (shouldInsertFragment(*fragment, createLiveRange(range).ptr(), EditorInsertAction::Pasted))
             pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
     }
 

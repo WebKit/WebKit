@@ -43,14 +43,12 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
-#if ENABLE(DATA_DETECTION)
-#include "DataDetection.h"
-#endif
-
 namespace WebCore {
 
 class FontGenericFamilies;
 class Page;
+
+enum class DataDetectorTypes : uint32_t;
 
 enum EditableLinkBehavior {
     EditableLinkDefaultBehavior,

@@ -28,13 +28,12 @@
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "Pasteboard.h"
-#include "Range.h"
+#include "SimpleRange.h"
 #include "markup.h"
 
 namespace WebCore {
 
 class ArchiveResource;
-class Blob;
 
 class FrameWebContentReader : public PasteboardWebContentReader {
 public:
@@ -52,13 +51,13 @@ protected:
 
 class WebContentReader final : public FrameWebContentReader {
 public:
-    Range& context;
+    const SimpleRange context;
     const bool allowPlainText;
 
     RefPtr<DocumentFragment> fragment;
     bool madeFragmentFromPlainText;
 
-    WebContentReader(Frame& frame, Range& context, bool allowPlainText)
+    WebContentReader(Frame& frame, const SimpleRange& context, bool allowPlainText)
         : FrameWebContentReader(frame)
         , context(context)
         , allowPlainText(allowPlainText)

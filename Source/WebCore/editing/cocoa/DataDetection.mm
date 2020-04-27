@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014-2020 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
-#import "Node.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "Range.h"
@@ -56,8 +55,7 @@
 #import "DataDetectorsCoreSoftLink.h"
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-template <>
-struct WTF::CFTypeTrait<DDResultRef> {
+template<> struct WTF::CFTypeTrait<DDResultRef> {
     static inline CFTypeID typeID(void) { return DDResultGetCFTypeID(); }
 };
 #endif
@@ -68,25 +66,24 @@ using namespace HTMLNames;
 
 #if PLATFORM(MAC)
 
-static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
+static Optional<DetectedItem> detectItem(const VisiblePosition& position, const SimpleRange& contextRange)
 {
-    auto start = contextRange->startPosition();
-    if (start.isNull() || position.isNull())
-        return nil;
-    String fullPlainTextString = plainText(*contextRange);
-    CFIndex hitLocation = characterCount({ *makeBoundaryPoint(start), *makeBoundaryPoint(position) });
+    if (position.isNull())
+        return { };
+    String fullPlainTextString = plainText(contextRange);
+    CFIndex hitLocation = characterCount({ contextRange.start, *makeBoundaryPoint(position) });
 
     auto scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     auto scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
 
     if (!DDScannerScanQuery(scanner.get(), scanQuery.get()))
-        return nil;
+        return { };
 
     auto results = adoptCF(DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
 
     // Find the DDResultRef that intersects the hitTestResult's VisiblePosition.
     DDResultRef mainResult = nullptr;
-    RefPtr<Range> mainResultRange;
+    Optional<SimpleRange> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
@@ -97,39 +94,40 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
         CFRange resultRangeInContext = DDResultGetRange(result);
         if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
             mainResult = result;
-            mainResultRange = createLiveRange(resolveCharacterRange(*contextRange, resultRangeInContext));
+            mainResultRange = resolveCharacterRange(contextRange, resultRangeInContext);
             break;
         }
     }
 
     if (!mainResult)
-        return nil;
+        return { };
 
-    auto view = mainResultRange->ownerDocument().view();
+    auto view = mainResultRange->start.document().view();
     if (!view)
-        return nil;
+        return { };
 
     auto actionContext = adoptNS([allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
-    detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*mainResultRange))));
-    detectedDataRange = mainResultRange;
-
-    return actionContext;
+    return { {
+        WTFMove(actionContext),
+        view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*mainResultRange)))),
+        *mainResultRange,
+    } };
 }
 
-RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
+Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
 {
     if (!DataDetectorsLibrary())
-        return nullptr;
+        return { };
 
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)
-        return nullptr;
+        return { };
     auto renderer = node->renderer();
     if (!renderer)
-        return nullptr;
+        return { };
 
     VisiblePosition position;
     RefPtr<Range> contextRange;
@@ -140,27 +138,26 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
             position = firstPositionInOrBeforeNode(node);
 
         contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
-        if (!contextRange)
-            return nullptr;
     } else {
         Frame* frame = node->document().frame();
         if (!frame)
-            return nullptr;
+            return { };
 
         IntPoint framePoint = hitTestResult.roundedPointInInnerNodeFrame();
         if (!frame->rangeForPoint(framePoint))
-            return nullptr;
+            return { };
 
-        VisiblePosition position = frame->visiblePositionForPoint(framePoint);
+        position = frame->visiblePositionForPoint(framePoint);
         if (position.isNull())
-            return nullptr;
+            return { };
 
         contextRange = enclosingTextUnitOfGranularity(position, LineGranularity, DirectionForward);
-        if (!contextRange)
-            return nullptr;
     }
 
-    return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
+    if (!contextRange)
+        return { };
+
+    return detectItem(position, *contextRange);
 }
 
 #endif // PLATFORM(MAC)
@@ -223,25 +220,30 @@ static BOOL resultIsURL(DDResultRef result)
     return [urlTypes containsObject:(NSString *)softLink_DataDetectorsCore_DDResultGetType(result)];
 }
 
+// Poor man's OptionSet.
+static bool contains(DataDetectorTypes types, DataDetectorTypes singleType)
+{
+    return static_cast<uint32_t>(types) & static_cast<uint32_t>(singleType);
+}
+
 static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, DataDetectorTypes detectionTypes)
 {
     if (!softLink_DataDetectorsCore_DDResultHasProperties(currentResult, DDResultPropertyPassiveDisplay))
         return nil;
-    
-    DDURLifierPhoneNumberDetectionTypes phoneTypes = (detectionTypes & DataDetectorTypePhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
-    DDResultCategory category = softLink_DataDetectorsCore_DDResultGetCategory(currentResult);
-    CFStringRef type = softLink_DataDetectorsCore_DDResultGetType(currentResult);
-    
-    if (((detectionTypes & DataDetectorTypeAddress) && (DDResultCategoryAddress == category))
-        || ((detectionTypes & DataDetectorTypeTrackingNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type, 0) == kCFCompareEqualTo))
-        || ((detectionTypes & DataDetectorTypeFlightNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderFlightInformationKey(), type, 0) == kCFCompareEqualTo))
-        || ((detectionTypes & DataDetectorTypeLookupSuggestion) && (CFStringCompare(get_DataDetectorsCore_DDBinderParsecSourceKey(), type, 0) == kCFCompareEqualTo))
-        || ((detectionTypes & DataDetectorTypePhoneNumber) && (DDResultCategoryPhoneNumber == category))
-        || ((detectionTypes & DataDetectorTypeLink) && resultIsURL(currentResult))) {
-        
+
+    auto phoneTypes = contains(detectionTypes, DataDetectorTypes::PhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
+    auto category = softLink_DataDetectorsCore_DDResultGetCategory(currentResult);
+    auto type = softLink_DataDetectorsCore_DDResultGetType(currentResult);
+
+    if ((contains(detectionTypes, DataDetectorTypes::Address) && DDResultCategoryAddress == category)
+        || (contains(detectionTypes, DataDetectorTypes::TrackingNumber) && CFEqual(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type))
+        || (contains(detectionTypes, DataDetectorTypes::FlightNumber) && CFEqual(get_DataDetectorsCore_DDBinderFlightInformationKey(), type))
+        || (contains(detectionTypes, DataDetectorTypes::LookupSuggestion) && CFEqual(get_DataDetectorsCore_DDBinderParsecSourceKey(), type))
+        || (contains(detectionTypes, DataDetectorTypes::PhoneNumber) && DDResultCategoryPhoneNumber == category)
+        || (contains(detectionTypes, DataDetectorTypes::Link) && resultIsURL(currentResult))) {
         return softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
     }
-    if ((detectionTypes & DataDetectorTypeCalendarEvent) && (DDResultCategoryCalendarEvent == category)) {
+    if (contains(detectionTypes, DataDetectorTypes::CalendarEvent) && DDResultCategoryCalendarEvent == category) {
         if (!softLink_DataDetectorsCore_DDResultIsPastDate(currentResult, (CFDateRef)referenceDate, (CFTimeZoneRef)referenceTimeZone))
             return softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
     }
@@ -443,28 +445,24 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
         removeResultLinksFromAnchor(anchor.get());
 }
 
-NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types, NSDictionary *context)
+NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, DataDetectorTypes types, NSDictionary *context)
 {
-    if (!contextRange)
-        return nil;
-
-    RetainPtr<DDScannerRef> scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-    RetainPtr<DDScanQueryRef> scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
-    buildQuery(scanQuery.get(), *contextRange);
+    auto scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+    auto scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
+    buildQuery(scanQuery.get(), contextRange);
     
-    if (types & DataDetectorTypeLookupSuggestion)
+    if (contains(types, DataDetectorTypes::LookupSuggestion))
         softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
 
     // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
     if (!softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get()))
         return nil;
 
-    RetainPtr<CFArrayRef> scannerResults = adoptCF(softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), get_DataDetectorsCore_DDScannerCopyResultsOptionsForPassiveUse() | DDScannerCopyResultsOptionsCoalesceSignatures));
+    auto scannerResults = adoptCF(softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), get_DataDetectorsCore_DDScannerCopyResultsOptionsForPassiveUse() | DDScannerCopyResultsOptionsCoalesceSignatures));
     if (!scannerResults)
         return nil;
 
-    CFIndex resultCount = CFArrayGetCount(scannerResults.get());
-    if (!resultCount)
+    if (!CFArrayGetCount(scannerResults.get()))
         return nil;
 
     Vector<RetainPtr<DDResultRef>> allResults;
@@ -476,7 +474,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     for (id resultObject in (NSArray *)scannerResults.get()) {
         DDResultRef result = (DDResultRef)resultObject;
         NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:currentTopLevelIndex];
-        if (CFStringCompare(softLink_DataDetectorsCore_DDResultGetType(result), get_DataDetectorsCore_DDBinderSignatureBlockKey(), 0) == kCFCompareEqualTo) {
+        if (CFEqual(softLink_DataDetectorsCore_DDResultGetType(result), get_DataDetectorsCore_DDBinderSignatureBlockKey())) {
             NSArray *subresults = (NSArray *)softLink_DataDetectorsCore_DDResultGetSubResults(result);
             
             for (NSUInteger subResultIndex = 0 ; subResultIndex < [subresults count] ; subResultIndex++) {
@@ -491,7 +489,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     }
 
     Vector<Vector<SimpleRange>> allResultRanges;
-    TextIterator iterator(*contextRange);
+    TextIterator iterator(contextRange);
     CFIndex iteratorCount = 0;
 
     // Iterate through the array of the expanded results to create a vector of Range objects that indicate
@@ -536,16 +534,15 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 
     auto tz = adoptCF(CFTimeZoneCopyDefault());
     NSDate *referenceDate = [context objectForKey:getkDataDetectorsReferenceDateKey()] ?: [NSDate date];
-    Text* lastTextNodeToUpdate = nullptr;
+    RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
-    size_t contentOffset = 0;
+    unsigned contentOffset = 0;
     DDQueryOffset lastModifiedQueryOffset = { -1, 0 };
-    
+
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
     // we are about to process a different text node.
-    resultCount = allResults.size();
-    
+    CFIndex resultCount = allResults.size();
     for (CFIndex resultIndex = 0; resultIndex < resultCount; ++resultIndex) {
         DDResultRef coreResult = allResults[resultIndex].get();
         DDQueryRange queryRange = softLink_DataDetectorsCore_DDResultGetQueryRangeForURLification(coreResult);
@@ -578,7 +575,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
             ASSERT(resultRanges.size() == rangeBoundaries.size());
             resultRanges.shrink(0); // Keep capacity as we are going to repopulate the Vector right away with the same number of items.
             for (auto& rangeBoundary : rangeBoundaries)
-                resultRanges.uncheckedAppend(Range::create(*rangeBoundary.first.document(), rangeBoundary.first, rangeBoundary.second));
+                resultRanges.uncheckedAppend({ *makeBoundaryPoint(rangeBoundary.first), *makeBoundaryPoint(rangeBoundary.second) });
         }
         
         lastModifiedQueryOffset = queryRange.end;
@@ -612,7 +609,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 
             // Create the actual anchor node and insert it before the current node.
             textNodeData = currentTextNode.data().substring(range.start.offset, range.end.offset - range.start.offset);
-            Ref<Text> newTextNode = Text::create(document, textNodeData);
+            auto newTextNode = Text::create(document, textNodeData);
             parentNode->insertBefore(newTextNode.copyRef(), &currentTextNode);
             
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
@@ -659,13 +656,13 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 
     if (lastTextNodeToUpdate)
         lastTextNodeToUpdate->setData(lastNodeContent);
-    
+
     return [getDDScannerResultClass() resultsFromCoreResults:scannerResults.get()];
 }
 
 #else
 
-NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes, NSDictionary *)
+NSArray *DataDetection::detectContentInRange(const SimpleRange&, DataDetectorTypes, NSDictionary *)
 {
     return nil;
 }

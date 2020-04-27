@@ -2066,7 +2066,7 @@ void EventHandler::invalidateClick()
     m_clickNode = nullptr;
 }
 
-static Node* targetNodeForClickEvent(Node* mousePressNode, Node* mouseReleaseNode)
+static RefPtr<Node> targetNodeForClickEvent(Node* mousePressNode, Node* mouseReleaseNode)
 {
     if (!mousePressNode || !mouseReleaseNode)
         return nullptr;
@@ -2076,17 +2076,18 @@ static Node* targetNodeForClickEvent(Node* mousePressNode, Node* mouseReleaseNod
 
     // If mousePressNode and mouseReleaseNode differ, we should fire the event at their common ancestor if there is one.
     if (&mousePressNode->document() == &mouseReleaseNode->document()) {
-        if (auto* commonAncestor = Range::commonAncestorContainer(mousePressNode, mouseReleaseNode))
+        if (auto commonAncestor = commonInclusiveAncestor(*mousePressNode, *mouseReleaseNode))
             return commonAncestor;
     }
 
-    Element* mouseReleaseShadowHost = mouseReleaseNode->shadowHost();
+    auto mouseReleaseShadowHost = mouseReleaseNode->shadowHost();
     if (mouseReleaseShadowHost && mouseReleaseShadowHost == mousePressNode->shadowHost()) {
         // We want to dispatch the click to the shadow tree host element to give listeners the illusion that the
         // shadom tree is a single element. For example, we want to give the illusion that <input type="range">
         // is a single element even though it is a composition of multiple shadom tree elements.
         return mouseReleaseShadowHost;
     }
+
     return nullptr;
 }
 
@@ -2159,8 +2160,8 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 
-    Node* nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick, true, m_clickCount, platformMouseEvent, true);
+    auto nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), true, m_clickCount, platformMouseEvent, true);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);

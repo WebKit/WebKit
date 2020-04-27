@@ -596,7 +596,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             if (!commonAncestor)
                 commonAncestor = parent;
             else if (!parent->isDescendantOf(commonAncestor.get())) {
-                commonAncestor = Range::commonAncestorContainer(commonAncestor.get(), parent.get());
+                commonAncestor = commonInclusiveAncestor(*commonAncestor, *parent);
                 ASSERT(commonAncestor);
             }
         }

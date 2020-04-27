@@ -143,17 +143,6 @@ void Range::setDocument(Document& document)
     m_ownerDocument->attachRange(*this);
 }
 
-Node* Range::commonAncestorContainer(Node* containerA, Node* containerB)
-{
-    for (Node* parentA = containerA; parentA; parentA = parentA->parentNode()) {
-        for (Node* parentB = containerB; parentB; parentB = parentB->parentNode()) {
-            if (parentA == parentB)
-                return parentA;
-        }
-    }
-    return nullptr;
-}
-
 static inline bool checkForDifferentRootContainer(const RangeBoundaryPoint& start, const RangeBoundaryPoint& end)
 {
     Node* endRootContainer = end.container();
@@ -239,7 +228,7 @@ ExceptionOr<bool> Range::isPointInRange(Node& refNode, unsigned offset)
     if (checkNodeResult.hasException()) {
         // DOM4 spec requires us to check whether refNode and start container have the same root first
         // but we do it in the reverse order to avoid O(n) operation here in common case.
-        if (!commonAncestorContainer(&refNode, &startContainer()))
+        if (!commonInclusiveAncestor(refNode, startContainer()))
             return false;
         return checkNodeResult.releaseException();
     }
@@ -263,7 +252,7 @@ ExceptionOr<short> Range::comparePoint(Node& refNode, unsigned offset) const
     if (checkNodeResult.hasException()) {
         // DOM4 spec requires us to check whether refNode and start container have the same root first
         // but we do it in the reverse order to avoid O(n) operation here in common case.
-        if (!refNode.isConnected() && !commonAncestorContainer(&refNode, &startContainer()))
+        if (!refNode.isConnected() && !commonInclusiveAncestor(refNode, startContainer()))
             return Exception { WrongDocumentError };
         return checkNodeResult.releaseException();
     }
@@ -421,19 +410,19 @@ ExceptionOr<short> Range::compareBoundaryPoints(Node* containerA, unsigned offse
 
     // case 4: containers A & B are siblings, or children of siblings
     // ### we need to do a traversal here instead
-    auto* commonAncestor = commonAncestorContainer(containerA, containerB);
+    auto commonAncestor = commonInclusiveAncestor(*containerA, *containerB);
     if (!commonAncestor)
         return Exception { WrongDocumentError };
     Node* childA = containerA;
     while (childA && childA->parentNode() != commonAncestor)
         childA = childA->parentNode();
     if (!childA)
-        childA = commonAncestor;
+        childA = commonAncestor.get();
     Node* childB = containerB;
     while (childB && childB->parentNode() != commonAncestor)
         childB = childB->parentNode();
     if (!childB)
-        childB = commonAncestor;
+        childB = commonAncestor.get();
 
     if (childA == childB)
         return 0; // A is equal to B
@@ -1290,10 +1279,10 @@ int Range::collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>&
         }
     }
 
-    // The range could span over nodes with different writing modes.
+    // The range could span nodes with different writing modes.
     // If this is the case, we use the writing mode of the common ancestor.
     if (containsDifferentWritingModes) {
-        if (Node* ancestor = commonAncestorContainer(&startContainer, &endContainer))
+        if (auto ancestor = commonInclusiveAncestor(startContainer, endContainer))
             hasFlippedWritingMode = ancestor->renderer()->style().isFlippedBlocksWritingMode();
     }
 

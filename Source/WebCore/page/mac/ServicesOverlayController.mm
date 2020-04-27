@@ -55,17 +55,17 @@ const float highlightFadeAnimationDuration = 0.3;
 
 namespace WebCore {
 
-Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForSelection(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, Ref<Range>&& range)
+Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForSelection(ServicesOverlayController& controller, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
-    return adoptRef(*new Highlight(controller, Highlight::SelectionType, ddHighlight, WTFMove(range)));
+    return adoptRef(*new Highlight(controller, Highlight::SelectionType, WTFMove(ddHighlight), WTFMove(range)));
 }
 
-Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForTelephoneNumber(ServicesOverlayController& controller, RetainPtr<DDHighlightRef> ddHighlight, Ref<Range>&& range)
+Ref<ServicesOverlayController::Highlight> ServicesOverlayController::Highlight::createForTelephoneNumber(ServicesOverlayController& controller, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
-    return adoptRef(*new Highlight(controller, Highlight::TelephoneNumberType, ddHighlight, WTFMove(range)));
+    return adoptRef(*new Highlight(controller, Highlight::TelephoneNumberType, WTFMove(ddHighlight), WTFMove(range)));
 }
 
-ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& controller, Type type, RetainPtr<DDHighlightRef> ddHighlight, Ref<WebCore::Range>&& range)
+ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& controller, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
     : m_controller(&controller)
     , m_range(WTFMove(range))
     , m_graphicsLayer(GraphicsLayer::create(controller.page().chrome().client().graphicsLayerFactory(), *this))
@@ -474,7 +474,7 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(Highlight::Ty
 
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
-    Vector<RefPtr<Range>> phoneNumberRanges;
+    Vector<SimpleRange> phoneNumberRanges;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         phoneNumberRanges.appendVector(frame->editor().detectedTelephoneNumberRanges());
 
@@ -492,26 +492,25 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
-        auto rect = enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*range)));
+        auto rect = enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));
 
         // Convert to the main document's coordinate space.
         // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
         // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
         // not equivalent to what we need when you have a topContentInset or a header banner.
-        auto* viewForRange = range->ownerDocument().view();
+        auto* viewForRange = range.start.document().view();
         if (!viewForRange)
             continue;
 
         rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
         CGRect cgRect = rect;
-        
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-        RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
+        auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-        RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
+        auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, ddHighlight, range.releaseNonNull()));
+        newPotentialHighlights.add(Highlight::createForTelephoneNumber(*this, WTFMove(ddHighlight), WTFMove(range)));
     }
 
     replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, Highlight::TelephoneNumberType);
@@ -544,17 +543,17 @@ void ServicesOverlayController::buildSelectionHighlight()
         for (auto& rect : m_currentSelectionRects) {
             IntRect currentRect = snappedIntRect(rect);
             currentRect.setLocation(mainFrameView->windowToContents(viewForRange->contentsToWindow(currentRect.location())));
-            cgRects.append((CGRect)currentRect);
+            cgRects.append(currentRect);
         }
 
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES, 0));
+            auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
+            auto ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightStyleBubbleNone | DDHighlightStyleStandardIconArrow | DDHighlightStyleButtonShowAlways, YES, NSWritingDirectionNatural, NO, YES));
 #endif
-            newPotentialHighlights.add(Highlight::createForSelection(*this, ddHighlight, createLiveRange(*selectionRange)));
+            newPotentialHighlights.add(Highlight::createForSelection(*this, WTFMove(ddHighlight), WTFMove(*selectionRange)));
         }
     }
 
@@ -607,7 +606,7 @@ void ServicesOverlayController::createOverlayIfNeeded()
     m_page.pageOverlayController().installPageOverlay(WTFMove(overlay), PageOverlay::FadeMode::DoNotFade);
 }
 
-Vector<RefPtr<Range>> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
+Vector<SimpleRange> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
 {
     return m_page.focusController().focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
 }
@@ -618,7 +617,7 @@ bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, cons
         return true;
     if (!a || !b)
         return false;
-    return a->type() == b->type() && areRangesEqual(&a->range(), &b->range());
+    return a->type() == b->type() && a->range() == b->range();
 }
 
 ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(Highlight& selectionHighlight)
@@ -631,7 +630,7 @@ ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNu
         return nullptr;
 
     for (auto& highlight : m_potentialHighlights) {
-        if (highlight->type() == Highlight::TelephoneNumberType && highlight->range().contains(createLiveRange(*selectionRange)))
+        if (highlight->type() == Highlight::TelephoneNumberType && createLiveRange(highlight->range())->contains(createLiveRange(*selectionRange)))
             return highlight.get();
     }
 
@@ -787,11 +786,11 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, Highligh
         Vector<String> selectedTelephoneNumbers;
         selectedTelephoneNumbers.reserveCapacity(telephoneNumberRanges.size());
         for (auto& range : telephoneNumberRanges)
-            selectedTelephoneNumbers.append(range->text());
+            selectedTelephoneNumbers.append(plainText(range));
 
         m_page.chrome().client().handleSelectionServiceClick(m_page.focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     } else if (highlight.type() == Highlight::TelephoneNumberType)
-        m_page.chrome().client().handleTelephoneNumberClick(highlight.range().text(), windowPoint);
+        m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint);
 }
 
 Frame& ServicesOverlayController::mainFrame() const

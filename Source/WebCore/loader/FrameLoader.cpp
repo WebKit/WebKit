@@ -2598,14 +2598,12 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             } else {
                 FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load");
 #if ENABLE(DATA_DETECTION)
-                auto* document = m_frame.document();
-                if (m_frame.settings().dataDetectorTypes() != DataDetectorTypeNone && document) {
-                    if (auto* documentElement = document->documentElement()) {
-                        RefPtr<Range> documentRange = makeRange(firstPositionInNode(documentElement), lastPositionInNode(documentElement));
-                        m_frame.setDataDetectionResults(DataDetection::detectContentInRange(documentRange, m_frame.settings().dataDetectorTypes(), m_client->dataDetectionContext()));
-                        if (m_frame.isMainFrame())
-                            m_client->dispatchDidFinishDataDetection(m_frame.dataDetectionResults());
-                    }
+                auto document = m_frame.document();
+                auto types = m_frame.settings().dataDetectorTypes();
+                if (document && static_cast<uint32_t>(types)) {
+                    m_frame.setDataDetectionResults(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionContext()));
+                    if (m_frame.isMainFrame())
+                        m_client->dispatchDidFinishDataDetection(m_frame.dataDetectionResults());
                 }
 #endif
                 m_client->dispatchDidFinishLoad();

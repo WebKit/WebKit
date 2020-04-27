@@ -37,7 +37,6 @@ class HTMLElement;
 class HTMLImageElement;
 class HTMLSpanElement;
 class HTMLTextFormControlElement;
-class Range;
 class RenderBlock;
 class VisiblePosition;
 class VisibleSelection;
@@ -101,7 +100,7 @@ bool isNodeRendered(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
 bool isNonTableCellHTMLBlockElement(const Node*);
 
-bool isNodeVisiblyContainedWithin(Node&, const Range&);
+bool isNodeVisiblyContainedWithin(Node&, const SimpleRange&);
 
 bool areIdenticalElements(const Node&, const Node&);
 

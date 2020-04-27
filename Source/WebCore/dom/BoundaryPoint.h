@@ -47,6 +47,7 @@ struct BoundaryPoint {
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);
 
 BoundaryPoint makeBoundaryPointBeforeNodeContents(Node&);
+BoundaryPoint makeBoundaryPointAfterNodeContents(Node&);
 
 inline BoundaryPoint::BoundaryPoint(Ref<Node>&& container, unsigned offset)
     : container(WTFMove(container))
@@ -80,6 +81,11 @@ inline bool operator==(const BoundaryPoint& a, const BoundaryPoint& b)
 inline BoundaryPoint makeBoundaryPointBeforeNodeContents(Node& node)
 {
     return { node, 0 };
+}
+
+inline BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node)
+{
+    return { node, node.length() };
 }
 
 }

@@ -34,7 +34,8 @@ namespace WebCore {
 
 class Frame;
 class GraphicsContext;
-class Range;
+
+struct SimpleRange;
 
 // FIXME: Move PresentationTransition to TextIndicatorWindow, because it's about presentation.
 enum class TextIndicatorPresentationTransition : uint8_t {
@@ -123,7 +124,7 @@ public:
 
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorOptions, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorOptions, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const SimpleRange&, TextIndicatorOptions, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
 
     WEBCORE_EXPORT ~TextIndicator();
 

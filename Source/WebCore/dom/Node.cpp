@@ -2612,6 +2612,17 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
+RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
+{
+    for (auto ancestorA = &a; ancestorA; ancestorA = ancestorA->parentNode()) {
+        for (auto ancestorB = &b; ancestorB; ancestorB = ancestorB->parentNode()) {
+            if (ancestorA == ancestorB)
+                return ancestorA;
+        }
+    }
+    return nullptr;
+}
+
 TextStream& operator<<(TextStream& ts, const Node& node)
 {
     ts << "node " << &node << " " << node.debugDescription();

@@ -411,35 +411,37 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!DataDetectorsLibrary())
         return nil;
 
-    RefPtr<WebCore::Range> detectedDataRange;
-    WebCore::FloatRect detectedDataBoundingBox;
-    RetainPtr<DDActionContext> actionContext;
+    Optional<WebCore::DetectedItem> detectedItem;
 
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
-        RetainPtr<WebElementDictionary> hitTestDictionary = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
-
         DOMRange *customDataDetectorsRange;
-        actionContext = [(id)[_webView UIDelegate] _webView:_webView actionContextForHitTestResult:hitTestDictionary.get() range:&customDataDetectorsRange];
-
-        if (actionContext && customDataDetectorsRange)
-            detectedDataRange = core(customDataDetectorsRange);
+        auto actionContext = [(id)[_webView UIDelegate] _webView:_webView
+            actionContextForHitTestResult:adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]).get()
+            range:&customDataDetectorsRange];
+        if (actionContext && customDataDetectorsRange) {
+            detectedItem = { {
+                actionContext,
+                { }, // FIXME: Seems like an empty rect isn't really OK.
+                *core(customDataDetectorsRange)
+            } };
+        }
     }
 
     // If the client didn't give us an action context, try to scan around the hit point.
-    if (!actionContext || !detectedDataRange)
-        actionContext = WebCore::DataDetection::detectItemAroundHitTestResult(_hitTestResult, detectedDataBoundingBox, detectedDataRange);
+    if (!detectedItem)
+        detectedItem = WebCore::DataDetection::detectItemAroundHitTestResult(_hitTestResult);
 
-    if (!actionContext || !detectedDataRange)
+    if (!detectedItem)
         return nil;
 
-    [actionContext setAltMode:YES];
-    [actionContext setImmediate:YES];
-    if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[actionContext mainResult] actionContext:actionContext.get()])
+    [detectedItem->actionContext setAltMode:YES];
+    [detectedItem->actionContext setImmediate:YES];
+    if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
         return nil;
 
-    auto indicator = WebCore::TextIndicator::createWithRange(*detectedDataRange, WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(createLiveRange(detectedItem->range), WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
-    _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = [detectedItem->actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (indicator)
             [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
@@ -447,7 +449,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
     }];
 
-    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
+    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedItem->boundingBox]];
 
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
     if (menuItems.count != 1)
@@ -536,7 +538,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     popupInfo.attributedString = scaledAttributedString.get();
 
-    if (auto textIndicator = WebCore::TextIndicator::createWithRange(createLiveRange(range), indicatorOptions, presentationTransition))
+    if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
 
     editor.setIsGettingDictionaryPopupInfo(false);
