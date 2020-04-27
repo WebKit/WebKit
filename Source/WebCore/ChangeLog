@@ -1,3 +1,16 @@
+2020-04-27  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] [2.28.0] The Yelp build crashes if DISPLAY is not set
+        https://bugs.webkit.org/show_bug.cgi?id=209431
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't create a PlatformDisplayLibWPE as a fallback when using
+        Wayland or X11.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+
 2020-04-27  Claudio Saavedra  <csaavedra@igalia.com>
 
         Unreviewed compile-warning fix.
