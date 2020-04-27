@@ -1884,7 +1884,7 @@ GENERATE_BINDINGS(WebCoreBindings
         --serviceWorkerGlobalScopeConstructorsFile ${SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
         --workletGlobalScopeConstructorsFile ${WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE}
         --paintWorkletGlobalScopeConstructorsFile ${PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE})
-list(APPEND WebCore_DEPENDENCIES WebCoreBindings WebInspectorUI)
+list(APPEND WebCore_DEPENDENCIES WebCoreBindings)
 
 GENERATE_BINDINGS(WebCoreTestSupportBindings
     OUTPUT_SOURCE WebCoreTestSupport_SOURCES

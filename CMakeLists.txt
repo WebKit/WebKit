@@ -31,10 +31,6 @@ if (NOT DEFINED ENABLE_TOOLS AND EXISTS "${CMAKE_SOURCE_DIR}/Tools")
     set(ENABLE_TOOLS ON)
 endif ()
 
-if (NOT DEFINED ENABLE_WEBINSPECTORUI)
-    set(ENABLE_WEBINSPECTORUI ON)
-endif ()
-
 # -----------------------------------------------------------------------------
 # Determine which port will be built
 # -----------------------------------------------------------------------------
