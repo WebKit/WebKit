@@ -666,7 +666,9 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
         GCGLsizei levelHeight = height;
 
         unsigned size;
-        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, nullptr);
+        GraphicsContextGLOpenGL::PixelStoreParams params;
+        params.alignment = m_unpackAlignment;
+        GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, 1, params, &size, nullptr, nullptr);
         if (error != GraphicsContextGL::NO_ERROR) {
             synthesizeGLError(error, "texStorage2D", "bad dimensions");
             return;

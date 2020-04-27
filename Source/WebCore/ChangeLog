@@ -1,3 +1,16 @@
+2020-04-27  Kenneth Russell  <kbr@chromium.org>
+
+        Build failure in WebGL2RenderingContext after r260588
+        https://bugs.webkit.org/show_bug.cgi?id=211057
+
+        Reviewed by Darin Adler.
+
+        Fix non-ANGLE build failure in WebGL2RenderingContext after
+        r260588.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texStorage2D):
+
 2020-04-26  Darin Adler  <darin@apple.com>
 
         [Cocoa] stop using out arguments for document attributes when converting to attributed strings
