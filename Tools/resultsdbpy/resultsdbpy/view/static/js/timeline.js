@@ -645,7 +645,7 @@ class TimelineFromEndpoint {
                     `<div class="content">
                         ${data.start_time ? `<a href="/urls/build?${paramsToQuery(buildParams)}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}<br>` : ''}
                         ${data.start_time && ArchiveRouter.hasArchive(self.suite, data.actual) ? `<a href="/archive/${ArchiveRouter.pathFor(self.suite, data.actual, self.test)}?${paramsToQuery(buildParams)}" target="_blank">${ArchiveRouter.labelFor(self.suite, data.actual)}</a><br>` : ''}
-                        Commits: ${CommitBank.commitsDuringUuid(data.uuid).map((commit) => {
+                        Commits: ${CommitBank.commitsDuring(data.uuid).map((commit) => {
                             let params = {
                                 branch: commit.branch ? [commit.branch] : branch,
                                 uuid: [commit.uuid],
@@ -658,7 +658,7 @@ class TimelineFromEndpoint {
                         <br>
                         ${partialConfiguration}
                         <br>
-
+                        ${data.stats ? `<a href="/investigate?${paramsToQuery(buildParams)}" target="_blank">Investigate failures</a><br>` : ''}
                         ${data.expected ? `Expected: ${data.expected}<br>` : ''}
                         ${data.actual ? `Actual: ${data.actual}<br>` : ''}
                     </div>`,
@@ -894,8 +894,9 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
                         willFilterExpected = false;
                     updateLabelEvents.add(willFilterExpected);
                     InvestigateDrawer.willFilterExpected = willFilterExpected;
+                    InvestigateDrawer.dispatch();
                     InvestigateDrawer.select(InvestigateDrawer.selected);
-                    callback();
+                    callback(willFilterExpected);
                 };
             },
         });

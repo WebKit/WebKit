@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,6 +70,36 @@ class SuiteView(HasCommitContext):
         return self.environment.get_template('suite_results.html').render(
             title=self.site_menu.title,
             suites=json.dumps(self._suites_for_configuration()),
+            **kwargs)
+
+    @query_as_kwargs()
+    @uuid_range_for_query()
+    @limit_for_query(DEFAULT_LIMIT)
+    @configuration_for_query()
+    @time_range_for_query()
+    def _suites_for_investigation(
+        self, suite=None, configurations=None, recent=None,
+        branch=None, begin=None, end=None,
+        begin_query_time=None, end_query_time=None,
+        unexpected=None,
+        limit=None, **kwargs
+    ):
+        AssertRequest.is_type(['GET'])
+        AssertRequest.query_kwargs_empty(**kwargs)
+
+        with self.upload_controller.upload_context:
+            suites_by_configuration = self.upload_controller.upload_context.find_suites(configurations=configurations, recent=boolean_query(*recent)[0] if recent else True)
+            candidate_suites = set()
+            for suites_for_config in suites_by_configuration.values():
+                for s in suites_for_config:
+                    candidate_suites.add(s)
+            return sorted([s for s in candidate_suites if not suite or s in suite])
+
+    @SiteMenu.render_with_site_menu()
+    def investigate(self, **kwargs):
+        return self.environment.get_template('investigate.html').render(
+            title=self.site_menu.title,
+            suites=json.dumps(self._suites_for_investigation()),
             **kwargs)
 
     @query_as_kwargs()

@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -85,7 +85,9 @@ class ViewRoutes(AuthedBlueprint):
         self.add_url_rule('/commit/previous', 'commit_previous', self.commits.previous, methods=('GET',))
         self.add_url_rule('/commit/next', 'commit_next', self.commits.next, methods=('GET',))
         self.add_url_rule('/commits', 'commits', self.commits.commits, methods=('GET',))
+
         self.add_url_rule('/suites', 'suites', self.suites.results, methods=('GET',))
+        self.add_url_rule('/investigate', 'investigate', self.suites.investigate, methods=('GET',))
 
         self.add_url_rule('/urls/queue', 'urls-queue', self.ci.queue, methods=('GET',))
         self.add_url_rule('/urls/worker', 'urls-worker', self.ci.worker, methods=('GET',))
@@ -107,6 +109,7 @@ class ViewRoutes(AuthedBlueprint):
 
         self.site_menu.add_endpoint('Main', self.name + '.main', parameters=['branch'])
         self.site_menu.add_endpoint('Suites', self.name + '.suites', parameters=['branch'])
+        self.site_menu.add_endpoint('Investigate', self.name + '.investigate', parameters=['branch'])
         self.site_menu.add_endpoint('Documentation', self.name + '.documentation')
         self.site_menu.add_endpoint('Commits', self.name + '.commits', parameters=['branch'])
 

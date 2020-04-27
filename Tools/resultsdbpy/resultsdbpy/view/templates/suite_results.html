@@ -184,6 +184,7 @@ ${Drawer([
     ConfigurationSelectors(() => {view.reload()}),
 ], () => onLayoutChange.add())}
 <div class="main right-sidebar under-topbar-with-actions">
+    <br>
     <div class="content" ref=${REF.createRef({
             onElementMount: (element) => {
                 for (let suite in view.children) {

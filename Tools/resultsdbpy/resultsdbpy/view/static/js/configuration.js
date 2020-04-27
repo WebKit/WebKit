@@ -91,6 +91,20 @@ class Configuration {
         return result.join('.');
     }
 
+    static combine()
+    {
+        if (!arguments.length)
+            return new Configuration();
+        const combined = new Configuration(arguments[0]);
+        for (let i = 1; i < arguments.length; ++i) {
+            Configuration.members().forEach(member => {
+                if (arguments[i][member] !== combined[member])
+                    combined[member] = null;
+            });
+        }
+        return combined;
+    }
+
     constructor(json = {}) {
         this.platform = json.platform ? json.platform : null;
         this.version = json.version ? Configuration.versionToInteger(json.version) : null;

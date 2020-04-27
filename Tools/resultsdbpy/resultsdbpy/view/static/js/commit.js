@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -98,12 +98,21 @@ function CommitTable(commits, repositoryIds = [], oneLine = false) {
                     if (cell.timestamp)
                         return `<td rowspan="${cell.rowspan}">${new Date(cell.timestamp * 1000).toLocaleString()}</td>`;
 
-                    var commit_args = 'repository_id=' + cell.commit.repository_id + '&branch=' + cell.commit.branch + '&id=' + cell.commit.id;
+                    let commitArgs = paramsToQuery({
+                        repository_id: [cell.commit.repository_id],
+                        branch: [cell.commit.branch],
+                        id: [cell.commit.id],
+                    });
+                    let investigateArgs = {id: [cell.commit.id]};
+                    if (!['master', 'trunk'].includes(cell.commit.branch))
+                        investigateArgs.branch = [cell.commit.branch];
+
                     return `<td rowspan="${cell.rowspan}">
-                        <a href="/commit?${commit_args}">${cell.commit.id}</a> <br>
+                        <a href="/commit?${commitArgs}">${cell.commit.id}</a> <br>
                         Branch: ${cell.commit.branch} <br>
                         Committer: ${escapeHTML(cell.commit.committer)} <br>
-                        <a href="/commit/info?${commit_args}">More Info</a>
+                        <a href="/commit/info?${commitArgs}">More Info</a><br>
+                        <a href="/investigate?${paramsToQuery(investigateArgs)}">Test results for commit</a>
                         ${function() {
                             if (!cell.commit.message)
                                 return '';
@@ -147,6 +156,59 @@ class _CommitBank {
         this.callbacks = [];
 
     }
+    latest(params) {
+        this._branches = new Set(params.branch);
+        this._repositories = new Set(params.repository_id);
+        this._beginUuid = null;
+        this._endUuid = null;
+
+        // Only provide the latest commits
+        const self = this;
+        return new Promise(function(resolve, reject) {
+            fetch(Object.keys(params).length ? `api/commits?${paramsToQuery(params)}` : 'api/commits').then(response => {
+                response.json().then(json => {
+                    self._beginUuid = Math.floor(Date.now() / 1000);
+                    self._endUuid = 0;
+
+                    const oldestIdForRepo = {};
+                    const candidates = [];
+                    json.forEach(datum =>{
+                        const commit = new Commit(datum);
+                        candidates.push(commit);
+
+                        if (oldestIdForRepo[commit.repository_id])
+                            oldestIdForRepo[commit.repository_id] = Math.min(commit.uuid, oldestIdForRepo[commit.repository_id]);
+                        else
+                            oldestIdForRepo[commit.repository_id] = commit.uuid;
+                    });
+
+                    let oldestValidUuid = 0;
+                    Object.keys(oldestIdForRepo).forEach(id => {
+                        oldestValidUuid = Math.max(oldestValidUuid, id);
+                    });
+
+                    candidates.forEach(commit => {
+                        if (commit.uuid <= oldestValidUuid)
+                            return;
+                        self.commits.push(commit);
+                        self._beginUuid = Math.min(commit.uuid, self._beginUuid);
+                        self._endUuid = Math.max(commit.uuid, self._endUuid);
+                    });
+
+                    if (self._beginUuid > self._endUuid) {
+                        self._beginUuid = null;
+                        self._endUuid = null;
+                    }
+
+                    resolve(this);
+                });
+            }).catch(error => {
+                // If the load fails, log the error and continue
+                console.error(JSON.stringify(error, null, 4));
+                reject(error);
+            });
+        });
+    }
     commitByUuid(uuid) {
         let begin = 0;
         let end = this.commits.length - 1;
@@ -162,23 +224,39 @@ class _CommitBank {
         }
         return null;
     }
-    commitsDuringUuid(uuid) {
+    commitsDuring(minUuid, maxUuid = 0) {
         let commits = [];
         let begin = 0;
         let end = this.commits.length - 1;
+        let counter = 0;
         let index = this.commits.length - 1;
+
+        if (maxUuid == 0)
+            maxUuid = minUuid;
+        if (maxUuid < minUuid) {
+            console.error('Invalid uuid range');
+            return commits;
+        }
+
         while (begin <= end) {
-            const mid = Math.ceil((begin + end) / 2);
-            const candidate = this.commits[mid];
-            if (candidate.uuid === uuid) {
-                commits.push(candidate);
-                index = mid - 1;
+            counter = Math.ceil((begin + end) / 2);
+            const candidate = this.commits[counter];
+            if (minUuid <= candidate.uuid && candidate.uuid <= maxUuid) {
+                index = counter - 1;
                 break;
             }
-            if (candidate.uuid < uuid)
-                begin = mid + 1;
+
+            if (candidate.uuid < minUuid)
+                begin = counter + 1;
             else
-                end = mid - 1;
+                end = counter - 1;
+        }
+        while (counter < this.commits.length) {
+            const candidate = this.commits[counter];
+            if (minUuid > candidate.uuid || candidate.uuid > maxUuid)
+                break
+            commits.push(candidate);
+            ++counter;
         }
 
         let repositories = new Set();
@@ -195,14 +273,14 @@ class _CommitBank {
                 continue;
             }
 
-            commits.push(this.commits[index]);
+            commits.unshift(this.commits[index]);
             repositories.add(this.commits[index].repository_id);
             if (repositories.length == this._repositories.length)
                 break;
 
             --index;
         }
-        return commits.sort(function(a, b) {return a.repository_id.localeCompare(b.repository_id)});
+        return commits;
     }
     _loadSiblings(commit) {
         const query = paramsToQuery({
@@ -245,7 +323,7 @@ class _CommitBank {
         });
     }
     _load(beginUuid, endUuid) {
-        if (endUuid <= beginUuid)
+        if (endUuid < beginUuid)
             return;
 
         const limit = 2500;
@@ -366,4 +444,4 @@ class _CommitBank {
 
 const CommitBank = new _CommitBank();
 
-export {Commit, CommitBank, CommitTable};
+export {Commit, CommitBank, CommitTable, TIMESTAMP_TO_UUID_MULTIPLIER};

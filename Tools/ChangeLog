@@ -1,3 +1,61 @@
+2020-04-27  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.og: Add investigation endpoint
+        https://bugs.webkit.org/show_bug.cgi?id=209562
+
+        Rubber-stamped by Aakash Jain.
+
+        Add an endpoint that allows users to list all test failures given some criteria, and
+        provide a partial list of failures in the investigation drawer.
+
+        * resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (CommitTable): Link commit to investigation endpoint.
+        (_CommitBank.prototype.latest): Populate the CommitBank with the last x commits.
+        (_CommitBank.prototype.commitsDuringUuid): Renamed commitsDuring.
+        (_CommitBank.prototype. commitsDuring): Accept a range Uuids instead of a single Uuid.
+        (_CommitBank.prototype._load): Load a single commit if the before and after uuid match.
+        * resultsdbpy/resultsdbpy/view/static/js/common.js:
+        (paramsToQuery): False should be added as a parameter, if provided.
+        (percentage): Moved from investigate.js.
+        (elapsedTime): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/configuration.js:
+        (Configuration.combine): Allow configurations to be combined to a single, more general, configuration.
+        * resultsdbpy/resultsdbpy/view/static/js/failures.js: Added.
+        (Failures.prototype.fromEndpoint): Construct a failure object from the failures endpoint.
+        (Failures.combine): Combine two failure objects together.
+        (Failures):
+        (Failures.prototype.toParams): Convert object to parameters for other results database queries.
+        * resultsdbpy/resultsdbpy/view/static/js/investigate.js:
+        (elapsed): Used shared time elapsed function.
+        (percentage): Moved to common.js.
+        (prioritizedFailures): Return a div with a truncated list of tests which failed.
+        (resultsForData): Include some number of prioritized test failures based on how many bubbles are
+        already displayed.
+        (_InvestigateDrawer.prototype.expand): Dispatch failure request.
+        (_InvestigateDrawer.prototype.dispatch): Start request to failures endpoint.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory): Add link to investigation endpoint.
+        (Legend): When search parameters change, we need to re-dispatch failure requests.
+        * resultsdbpy/resultsdbpy/view/suite_view.py:
+        (SuiteView._suites_for_investigation): Filter parameters for investigation endpoint.
+        (SuiteView.investigate): Return investigation endpoint html template.
+        * resultsdbpy/resultsdbpy/view/templates/investigate.html: Added.
+        (willFilterExpected): Check if the query parameters indicate that expected failures are to be ignored.
+        (commitsForRange): Return a list of commits for a uuid range.
+        (SuiteFailuresView.constructor): Abstraction to hold the investigation data for a single suite.
+        (SuiteFailuresView.reload): Dispatch requests to the results and failures endpoint to populate
+        investigation data.
+        (SuiteFailuresView.select): By default, failures for different configurations are collapsed into a single
+        view. Allows the user to iterate through each configuration that comprises the view.
+        (SuiteFailuresView.toString):
+        (populateRanges): Either convert the provided arguments to a range to search for failures and results
+        in, or use the most recent commit.
+        (reload): Force all suite views to re-dispatch results and failures requests.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Add space between suite content and
+        top bar.
+        * resultsdbpy/resultsdbpy/view/view_routes.py:
+        (ViewRoutes.__init__): Add investigate endpoint.
+
 2020-04-27  Tim Horton  <timothy_horton@apple.com>
 
         WebKit.ResizeReversePaginatedWebView is failing (21 pages instead of 20)

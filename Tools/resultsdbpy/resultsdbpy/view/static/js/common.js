@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ function paramsToQuery(json) {
             continue;
         }
         json[parameter].forEach((value) => {
-            if (!value)
+            if (value === null || value === undefined)
                 return;
             result += (result ? '&' : '') + encodeURIComponent(parameter) + '=' + encodeURIComponent(value);
         });
@@ -165,4 +165,28 @@ function deepCompare(a, b) {
     return true;
 }
 
-export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML};
+function percentage(value, max)
+{
+    if (value === max)
+        return '100 %';
+    if (!value)
+        return '0 %';
+    const result = Math.round(value / max * 100);
+    if (!result)
+        return '<1 %';
+    if (result === 100)
+        return '99 %';
+    return `${result} %`
+}
+
+function elapsedTime(startTimestamp, endTimestamp)
+{
+    const time = new Date((endTimestamp - startTimestamp) * 1000);
+    let result = '';
+    if (time.getMinutes())
+        result += `${time.getMinutes()} minute${time.getMinutes() == 1 ? '' : 's'} and `;
+    result += `${time.getSeconds()} second${time.getSeconds() == 1 ? '' : 's'} to run`;
+    return result;
+}
+
+export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, percentage, elapsedTime};

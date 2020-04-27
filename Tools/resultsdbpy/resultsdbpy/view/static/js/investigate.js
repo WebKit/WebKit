@@ -24,12 +24,13 @@
 import {ArchiveRouter} from '/assets/js/archiveRouter.js';
 import {DOM, REF} from '/library/js/Ref.js';
 import {CommitBank} from '/assets/js/commit.js';
-import {queryToParams, paramsToQuery, QueryModifier, } from '/assets/js/common.js';
+import {queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js'
 import {Expectations} from '/assets/js/expectations.js';
+import {Failures} from '/assets/js/failures.js';
 
 function commitsForUuid(uuid) {
-    return `Commits: ${CommitBank.commitsDuringUuid(uuid).map((commit) => {
+    return `Commits: ${CommitBank.commitsDuring(uuid).map((commit) => {
             const params = {
                 branch: commit.branch ? [commit.branch] : branch,
                 uuid: [commit.uuid],
@@ -72,33 +73,60 @@ function elapsed(data)
 {
     if (data.time)
         return `Took ${data.time / 1000} seconds`;
-    if (data.stats && data.stats.start_time && data.stats.end_time) {
-        const time = new Date((data.stats.end_time - data.stats.start_time) * 1000);
-        let result = 'Suite took ';
-        if (time.getMinutes())
-            result += `${time.getMinutes()}:`;
-        result += `${time.getSeconds() <= 9 && time.getMinutes() ? '0' : ''}${time.getSeconds()}.${time.getMilliseconds() <= 99 ? '0' : ''}${time.getMilliseconds() <= 9 ? '0' : ''}${time.getMilliseconds()} `;
-        if (time.getMinutes())
-            result += 'minutes to run';
-        else
-            result += 'seconds to run';
-        return result;
-    }
+    if (data.stats && data.stats.start_time && data.stats.end_time)
+        return `Suite took ${elapsedTime(data.stats.start_time, data.stats.end_time)}`;
     return '';
 }
 
-function percentage(value, max)
+function prioritizedFailures(failures, max = 0, willFilterExpected = false)
 {
-    if (value === max)
-        return '100 %';
-    if (!value)
-        return '0 %';
-    const result = Math.round(value / max * 100);
-    if (!result)
-        return '<1 %';
-    if (result === 100)
-        return '99 %';
-    return `${result} %`
+    if (failures === undefined)
+        return '';
+
+    if (failures === null)
+        return `<div class="loader">
+                <div class="spinner"></div>
+            </div>`;
+    let failuresToDisplay = [];
+    Expectations.failureTypes.forEach(type => {
+        for (let testName in failures[type]) {
+            failuresToDisplay.push({
+                failure: type,
+                test: testName,
+                count: failures.aggregating,
+                failureCount: failures[type][testName],
+            });
+        }
+    });
+    failuresToDisplay.sort(function(a, b) {
+        const typeCompare = Expectations.stringToStateId(Expectations.failureTypeMap[a.failure]) - Expectations.stringToStateId(Expectations.failureTypeMap[b.failure]);
+        if (typeCompare)
+            return typeCompare;
+        if (a.failureCount - b.failureCount)
+            return a.failureCount - b.failureCount;
+        return (a.test).localeCompare(b.test);
+    });
+
+    if (max && failuresToDisplay.length > max) {
+        failuresToDisplay = failuresToDisplay.splice(0, max);
+        failuresToDisplay[max - 1] = null;
+    }
+
+
+
+    return `<div>${failuresToDisplay.map(failure => {
+        if (failure === null) {
+            const params = failures.toParams();
+            params.unexpected = [willFilterExpected];
+            return `<a style="margin-left: calc(var(--mediumSize) + 16px)" target="_blank" href="/investigate?${paramsToQuery(params)}">More...</a>`;
+        }
+        return `<div>
+                <div class="dot ${failure.failure} small">
+                    <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[failure.failure]}</div>
+                </div>
+                <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" href="/?suite=${failures.suite}&test=${failure.test}">${failure.test}</a>
+            </div>`;
+    }).join('')}</div>`;
 }
 
 function resultsForData(data, willFilterExpected = false)
@@ -110,34 +138,33 @@ function resultsForData(data, willFilterExpected = false)
         testsRan = data.stats.tests_run;
         totalTests = data.stats.tests_run + (data.stats.tests_skipped ? data.stats.tests_skipped : 0);
     }
-    result.push(`Ran ${testsRan.toLocaleString()} of ${totalTests.toLocaleString()} tests`);
+    let dotsDisplayed = 0;
+    result.push(`<div>Ran ${testsRan.toLocaleString()} of ${totalTests.toLocaleString()} tests`);
     if (data.actual) {
         const type = Expectations.typeForId(data.actual);
-        result.push(`<div>
-                Actual: ${data.actual}
-                <div class="dot ${type} small">
-                    <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
-                </div>
+        ++dotsDisplayed;
+        result.push(`Actual: ${data.actual}
+            <div class="dot ${type} small">
+                <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
             </div>`);
     }
     if (data.expected) {
         const type = Expectations.typeForId(data.expected);
-        result.push(`<div>
-                Expected: ${data.expected}
-                <div class="dot ${type} small">
-                    <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
-                </div>
+        ++dotsDisplayed;
+        result.push(`Expected: ${data.expected}
+            <div class="dot ${type} small">
+                <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
             </div>`);
     }
     if (data.stats && data.stats.tests_run) {
         const succeeded = data.stats.tests_run - data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
-        if (succeeded)
-            result.push(`<div>
-                    <div class="dot success small">
-                        <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap.success}</div>
-                    </div>
-                    ${data.start_time ? succeeded.toLocaleString() : percentage(succeeded, data.stats.tests_run)} passed
-                </div>`);
+        if (succeeded) {
+            ++dotsDisplayed;
+            result.push(`<div class="dot success small">
+                    <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap.success}</div>
+                </div>
+                ${data.start_time ? succeeded.toLocaleString() : percentage(succeeded, data.stats.tests_run)} passed`);
+        }
     }
     for (let i = 0; i < Expectations.failureTypes.length; i++) {
         if (!data.stats)
@@ -148,13 +175,14 @@ function resultsForData(data, willFilterExpected = false)
             value -= data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${Expectations.failureTypes[i + 1]}`];
         if (!value)
             continue;
-        result.push(`<div>
-                <div class="dot ${type} small">
-                    <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
-                </div>
-                ${data.start_time ? value.toLocaleString() : percentage(value, data.stats.tests_run)} ${type}
-            </div>`);
+        ++dotsDisplayed;
+        result.push(`<div class="dot ${type} small">
+                <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
+            </div>
+            ${data.start_time ? value.toLocaleString() : percentage(value, data.stats.tests_run)} ${type}`);
     }
+    result.push('</div>');
+    result.push(prioritizedFailures(data.failures, Math.max(6 - dotsDisplayed, 1), willFilterExpected));
     return result;
 }
 
@@ -300,7 +328,49 @@ class _InvestigateDrawer {
         this.suite = suite;
         this.agregate = agregateData;
         this.data = allData;
+        this.dispatch();
         this.select(0);
+    }
+    dispatch() {
+        if (!this.data.length)
+            return;
+        for (let i = 0; i < this.data.length; i++) {
+            if (!this.data[i].stats)
+                return;
+        }
+
+        this.data.forEach(datum => {
+            datum.failures = null;
+        });
+        this.agregate.failures = null;
+
+        const branch = queryToParams(document.URL.split('?')[1]).branch;
+        const params = {
+            unexpected: [this.willFilterExpected],
+            uuid: [this.agregate.uuid],
+        }
+        if (this.agregate.start_time) {
+            params.before_time = [this.agregate.start_time];
+            params.after_time = [this.agregate.start_time];
+        }
+        if (branch)
+            params.branch = [branch];
+
+        Failures.fromEndpoint(
+            this.suite,
+            this.agregate.configuration,
+            params,
+        ).then(failures => {
+            this.agregate.failures = Failures.combine(...failures);
+            this.data.forEach(datum => {
+                datum.failures = new Failures(this.suite, datum.configuration);
+                failures.forEach(failure => {
+                    if (datum.configuration.compare(failure.configuration) === 0)
+                        datum.failures = Failures.combine(datum.failures, failure);
+                });
+            });
+            this.select(this.selected);
+        });
     }
     collapse() {
         if (!this.isRendered())
@@ -312,6 +382,9 @@ class _InvestigateDrawer {
         this.select(0);
     }
     select(index) {
+        if (!this.ref)
+            return;
+
         let candidates = this.data.length;
         if (this.agregate && this.data.length > 1)
             candidates += 1;
