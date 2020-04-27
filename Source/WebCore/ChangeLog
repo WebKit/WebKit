@@ -1,3 +1,10 @@
+2020-04-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed compile-warning fix.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+
 2020-04-27  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, GTK LTS build fix after r260744

@@ -508,6 +508,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (type == "webgl2")
         return nullptr;
 #endif
+#else
+    UNUSED_PARAM(type);
 #endif
 
     bool isPendingPolicyResolution = false;
