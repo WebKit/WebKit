@@ -63,6 +63,23 @@ private:
 
 } // namespace TestWebKitAPI
 
+static bool didScroll;
+
+@interface TextInteractionScrollDelegate : NSObject <UIScrollViewDelegate>
+@end
+
+// Ideally this would ensure that the focused element is actually in view.
+// For the purposes of the tests in this file it is enough to know whether
+// a scroll occurred.
+@implementation TextInteractionScrollDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    didScroll = true;
+}
+
+@end
+
 @implementation TestWKWebView (SynchronousTextInputContext)
 
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
@@ -551,7 +568,7 @@ TEST(RequestTextInputContext, FocusingAssistedElementShouldNotScrollPage)
     EXPECT_EQ(2000, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementChangesZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementShouldScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -565,15 +582,20 @@ TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementChangesZoom
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView stringByEvaluatingJavaScript:@"input.readOnly = true"];
-    [webView scrollView].zoomScale = 2;
 
-    // Focus the field using -focusTextInputContext; zoom scale of scroll view should change to reveal the focused element.
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
+
+    // Focus the field using -focusTextInputContext; scroll view should scroll to reveal the focused element.
     {
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_FALSE(didScroll);
     }
+
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_LT([webView scrollView].zoomScale, 2);
+    EXPECT_TRUE(didScroll);
 }
 
 TEST(RequestTextInputContext, TextInteraction_FocusElementInDetachedDocument)
@@ -590,7 +612,10 @@ TEST(RequestTextInputContext, TextInteraction_FocusElementInDetachedDocument)
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
+
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
 
     // Save a reference to the framed document (to prevent its destruction when its frame is removed)
     // and remove the frame.
@@ -599,11 +624,12 @@ TEST(RequestTextInputContext, TextInteraction_FocusElementInDetachedDocument)
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
     }
+
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"g_framedDocument.activeElement.tagName"]);
-    EXPECT_EQ(2, [webView scrollView].zoomScale);
+    EXPECT_FALSE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingElementChangesZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusingElementShouldScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -616,18 +642,23 @@ TEST(RequestTextInputContext, TextInteraction_FocusingElementChangesZoomScale)
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
 
-    // Zoom scale of scroll view should change to reveal the focused element.
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
+
+    // Scroll view should scroll to reveal the focused element.
     {
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_FALSE(didScroll);
     }
+
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_LT([webView scrollView].zoomScale, 2);
+    EXPECT_TRUE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingElementMultipleTimesChangesZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusingElementMultipleTimesShouldScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -640,20 +671,25 @@ TEST(RequestTextInputContext, TextInteraction_FocusingElementMultipleTimesChange
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
 
-    // Zoom scale of scroll view should change to reveal the focused element.
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
+
+    // Scroll view should scroll to reveal the focused element.
     {
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
         EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_FALSE(didScroll);
     }
+
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_LT([webView scrollView].zoomScale, 2);
+    EXPECT_TRUE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusDefocusDisableFocusAgainShouldNotChangeZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusDefocusDisableFocusAgainShouldNotScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -666,7 +702,10 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusDisableFocusAgainShoul
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
+
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
 
     {
         TextInteractionForScope scope { webView, inputElement };
@@ -681,14 +720,15 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusDisableFocusAgainShoul
         // 3. Disable
         [webView stringByEvaluatingJavaScript:@"input.disabled = true"];
 
-        // 4. Focus again; focused element and zoom scale of scroll view should be unchanged.
+        // 4. Focus again; focused element should be unchanged and scroll view should not scroll.
         EXPECT_NULL([webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
         EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     }
-    EXPECT_EQ(2, [webView scrollView].zoomScale);
+
+    EXPECT_FALSE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldChangeZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -701,7 +741,10 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldChange
     RetainPtr<_WKTextInputContext> inputElement = contexts[0];
 
     EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
+
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
 
     {
         TextInteractionForScope scope { webView, inputElement };
@@ -713,14 +756,16 @@ TEST(RequestTextInputContext, TextInteraction_FocusDefocusFocusAgainShouldChange
         [webView stringByEvaluatingJavaScript:@"input.blur()"];
         EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
 
-        // 3. Focus again; focused element and zoom scale of scroll view should change.
+        // 3. Focus again; focused element should change and scroll view should scroll to reveal focused element.
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
         EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+        EXPECT_FALSE(didScroll);
     }
-    EXPECT_LT([webView scrollView].zoomScale, 2);
+
+    EXPECT_TRUE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldNotChangeZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldNotScrollToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -737,18 +782,22 @@ TEST(RequestTextInputContext, TextInteraction_FocusingAssistedElementShouldNotCh
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.focus()"];
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
 
-    // Focus the field using -focusTextInputContext; zoom scale of scroll view should be unchanged.
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
+
+    // Focus the field using -focusTextInputContext; scroll view should not scroll to reveal focused element.
     {
         TextInteractionForScope scope { webView, inputElement };
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
     }
+
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_EQ(2, [webView scrollView].zoomScale);
+    EXPECT_FALSE(didScroll);
 }
 
-TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementChangesZoomScale)
+TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementScrollsToReveal)
 {
     IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
 
@@ -765,17 +814,22 @@ TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementC
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyDisallow; }];
     [webView stringByEvaluatingJavaScript:@"input.focus()"]; // Will not start input assistance
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView scrollView].zoomScale = 2;
 
-    // Focus the field using -focusTextInputContext; zoom scale of scroll view should change to reveal the focused element.
+    didScroll = false;
+    auto scrollDelegate = adoptNS([[TextInteractionScrollDelegate alloc] init]);
+    [webView scrollView].delegate = scrollDelegate.get();
+
+    // Focus the field using -focusTextInputContext; scroll view should scroll to reveal the focused element.
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
     {
         TextInteractionForScope scope { webView, inputElement };
         // Will start input assistance
         EXPECT_EQ((UIResponder<UITextInput> *)[webView textInputContentView], [webView synchronouslyFocusTextInputContext:inputElement.get() placeCaretAt:[inputElement boundingRect].origin]);
+        EXPECT_FALSE(didScroll);
     }
+
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_LT([webView scrollView].zoomScale, 2);
+    EXPECT_TRUE(didScroll);
 }
 
 } // namespace TestWebKitAPI
