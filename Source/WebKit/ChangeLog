@@ -1,3 +1,12 @@
+2020-04-27  Darin Adler  <darin@apple.com>
+
+        Another try at fixing the ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING) build
+
+        * UIProcess/Cocoa/TextCheckingController.mm:
+        (WebKit::TextCheckingController::replaceRelativeToSelection):
+        Convert an NSAttributedString to a WebCore::AttributedString using
+        argument list syntax.
+
 2020-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion after r260709
