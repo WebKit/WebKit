@@ -571,29 +571,6 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-#if !PLATFORM(IOS_FAMILY)
-    if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "SetExceptionPort") {
-        if (m_isServer) {
-            // Server connections aren't supposed to have their exception ports overridden. Treat this as an invalid message.
-            StringReference messageReceiverNameReference = decoder->messageReceiverName();
-            String messageReceiverName(String(messageReceiverNameReference.data(), messageReceiverNameReference.size()));
-            StringReference messageNameReference = decoder->messageName();
-            String messageName(String(messageNameReference.data(), messageNameReference.size()));
-
-            RunLoop::main().dispatch([protectedThis = makeRef(*this), messageReceiverName = WTFMove(messageReceiverName), messageName = WTFMove(messageName)]() mutable {
-                protectedThis->dispatchDidReceiveInvalidMessage(messageReceiverName.utf8(), messageName.utf8());
-            });
-            return;
-        }
-        MachPort exceptionPort;
-        if (!decoder->decode(exceptionPort))
-            return;
-
-        setMachExceptionPort(exceptionPort.port());
-        return;
-    }
-#endif
-
     processIncomingMessage(WTFMove(decoder));
 }    
 

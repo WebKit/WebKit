@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,5 @@
 #include <mach/mach_port.h>
 
 void setMachPortQueueLength(mach_port_t, mach_port_msgcount_t queueLength);
-
-mach_port_t machExceptionPort();
-void setMachExceptionPort(mach_port_t exceptionPort);
 
 #endif // MachUtilities_h

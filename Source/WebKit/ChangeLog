@@ -1,3 +1,20 @@
+2020-04-27  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r219050): Remove more code only needed for building with OS X Yosemite
+        <https://webkit.org/b/211088>
+        <rdar://problem/62452487>
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/mac/MachUtilities.cpp:
+        (setMachPortQueueLength):
+        (machExceptionPort): Deleted.
+        (setMachExceptionPort): Deleted.
+        * Platform/mac/MachUtilities.h:
+        - Delete unused code.
+
 2020-04-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] After r258891, r255119 can be reverted
