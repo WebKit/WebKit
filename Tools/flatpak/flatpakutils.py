@@ -130,7 +130,7 @@ def check_flatpak(verbose=True):
                                       " to be able to use the '%s' script.\n\n"
                                       "You can find some informations about"
                                       " how to install it for your distribution at:\n"
-                                      "    * https://flatpak.org/%s\n", app, required_version,
+                                      "    * https://flatpak.org/\n", app, required_version,
                                       sys.argv[0])
             return False
 

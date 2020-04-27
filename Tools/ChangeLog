@@ -1,3 +1,13 @@
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        unable to build from tot - linux - flatpakutils.py - TypeError: not enough arguments for format string
+        https://bugs.webkit.org/show_bug.cgi?id=210941
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (check_flatpak): Fix error message formating.
+
 2020-04-26  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Enable TestWTF and TestWebCore
