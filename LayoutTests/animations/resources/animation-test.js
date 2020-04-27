@@ -72,10 +72,13 @@ class AnimationTest
         const targetTime = animation.currentTime + delay;
         await this._tickUntil(elapsedTime => animation.currentTime >= targetTime);
 
+        const value = this.value;
         this._records.push({
             currentTime: animation.currentTime,
-            value: this.value
+            value: value
         });
+
+        return value;
     }
 
     // Check that all requested values recorded using recordValueAfterRunningFor() match the same values

@@ -1,3 +1,18 @@
+2020-04-27  Antoine Quint  <graouts@apple.com>
+
+        [ iOS ] REGRESSION: animations/change-keyframes-name.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211079
+        <rdar://problem/61486093>
+
+        Reviewed by Simon Fraser.
+
+        Rewrite this test to use the new AnimationTest helper that will non-flakily check animated values while an animation is running.
+
+        * animations/change-keyframes-name-expected.txt:
+        * animations/change-keyframes-name.html:
+        * animations/resources/animation-test.js:
+        (AnimationTest.prototype.async recordValueAfterRunningFor):
+
 2020-04-27  Dean Jackson  <dino@apple.com>
 
         Temporarily skip GL_DEPTH_COMPONENT32_OES requirement for depth textures on iOS
