@@ -610,6 +610,8 @@ private:
     void startObservingPreferenceChanges();
 #endif
 
+    static void registerHighDynamicRangeChangeCallback();
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;

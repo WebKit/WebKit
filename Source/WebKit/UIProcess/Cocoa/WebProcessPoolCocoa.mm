@@ -59,6 +59,8 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
 #import <objc/runtime.h>
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
@@ -897,6 +899,38 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 {
     for (auto process : m_processes)
         process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
+}
+#endif
+
+#if PLATFORM(MAC)
+static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
+{
+    auto screenProperties = WebCore::collectScreenProperties();
+    for (auto& processPool : WebProcessPool::allProcessPools())
+        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+}
+
+void WebProcessPool::registerHighDynamicRangeChangeCallback()
+{
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+        if (!PAL::isMediaToolboxFrameworkAvailable()
+            || !PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo()
+            || !PAL::canLoad_MediaToolbox_MT_GetShouldPlayHDRVideoNotificationSingleton()
+            || !PAL::canLoad_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged())
+            return;
+
+        auto center = PAL::softLink_CoreMedia_CMNotificationCenterGetDefaultLocalCenter();
+        auto notification = PAL::get_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged();
+        auto object = PAL::softLinkMediaToolboxMT_GetShouldPlayHDRVideoNotificationSingleton();
+
+        // Note: CMNotificationCenterAddListener requires a non-null listener pointer. Just use the singleton
+        // object itself as the "listener", since the notification method is a static global and doesn't need
+        // the listener pointer at all.
+        PAL::softLink_CoreMedia_CMNotificationCenterAddListener(center, object, webProcessPoolHighDynamicRangeDidChangeCallback, notification, object, 0);
+    });
 }
 #endif
 

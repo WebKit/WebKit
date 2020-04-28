@@ -167,10 +167,10 @@
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, suffix) \
+#define SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, suffix, export) \
     namespace functionNamespace { \
-    HMODULE framework##Library(bool isOptional = false); \
-    HMODULE framework##Library(bool isOptional) \
+    export HMODULE framework##Library(bool isOptional = false); \
+    export HMODULE framework##Library(bool isOptional) \
     { \
         static HMODULE library = LoadLibraryW(L###framework suffix); \
         ASSERT_WITH_MESSAGE_UNUSED(isOptional, isOptional || library, "Could not load %s", L###framework suffix); \
@@ -178,14 +178,18 @@
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK(functionNamespace, framework) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L".dll")
-#define SOFT_LINK_DEBUG_FRAMEWORK(functionNamespace, framework) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L"_debug.dll")
+#define SOFT_LINK_FRAMEWORK(functionNamespace, framework) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L".dll", )
+#define SOFT_LINK_DEBUG_FRAMEWORK(functionNamespace, framework) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L"_debug.dll", )
 
 #ifdef DEBUG_ALL
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) SOFT_LINK_DEBUG_FRAMEWORK(functionNamespace, framework)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_DEBUG_FRAMEWORK_HELPER(functionNamespace, framework, L".dll", export)
 #else
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) SOFT_LINK_FRAMEWORK(functionNamespace, framework)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L"_debug.dll", export)
 #endif
+
+
 
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
@@ -253,10 +257,10 @@
     } \
     }
 
-#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     namespace functionNamespace { \
     static resultType __cdecl init##framework##functionName parameterDeclarations; \
-    resultType(__cdecl*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
+    export resultType(__cdecl*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
     static resultType __cdecl init##framework##functionName parameterDeclarations \
     { \
         softLink##framework##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #functionName)); \
@@ -264,6 +268,9 @@
         return softLink##framework##functionName parameterNames; \
     } \
     }
+
+#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
