@@ -1716,7 +1716,7 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
         if (node->isBinaryUseKind(Int32Use))
             compilePeepHoleInt32Branch(node, branchNode, condition);
 #if USE(BIGINT32)
-        else if (node->isBinaryUseKind(BigInt32Use) && (condition == MacroAssembler::Equal || condition == MacroAssembler::NotEqual))
+        else if (node->isBinaryUseKind(BigInt32Use))
             compilePeepHoleBigInt32Branch(node, branchNode, condition);
 #endif
 #if USE(JSVALUE64)

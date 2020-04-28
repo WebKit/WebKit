@@ -1767,9 +1767,6 @@ void SpeculativeJIT::compileBigInt32Compare(Node* node, MacroAssembler::Relation
 
 void SpeculativeJIT::compilePeepHoleBigInt32Branch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
-    // Other conditions would require unboxing the BigInt32 to get correct results on negative numbers.
-    ASSERT(condition == MacroAssembler::Equal || condition == MacroAssembler::NotEqual);
-
     BasicBlock* taken = branchNode->branchData()->taken.block;
     BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
 
@@ -1777,16 +1774,28 @@ void SpeculativeJIT::compilePeepHoleBigInt32Branch(Node* node, Node* branchNode,
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
     if (taken == nextBlock()) {
         condition = JITCompiler::invert(condition);
-        BasicBlock* tmp = taken;
-        taken = notTaken;
-        notTaken = tmp;
+        std::swap(taken, notTaken);
     }
 
     SpeculateBigInt32Operand op1(this, node->child1());
     SpeculateBigInt32Operand op2(this, node->child2());
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
 
-    branch64(condition, op1.gpr(), op2.gpr(), taken);
-    jump(notTaken);
+    if (condition == MacroAssembler::Equal || condition == MacroAssembler::NotEqual) {
+        branch64(condition, op1GPR, op2GPR, taken);
+        jump(notTaken);
+    } else {
+        GPRTemporary lhs(this, Reuse, op1);
+        GPRTemporary rhs(this, Reuse, op2);
+        GPRReg lhsGPR = lhs.gpr();
+        GPRReg rhsGPR = rhs.gpr();
+        m_jit.unboxBigInt32(op1GPR, lhsGPR);
+        m_jit.unboxBigInt32(op2GPR, rhsGPR);
+        branch32(condition, lhsGPR, rhsGPR, taken);
+        jump(notTaken);
+    }
+
 }
 #endif // USE(BIGINT32)
 

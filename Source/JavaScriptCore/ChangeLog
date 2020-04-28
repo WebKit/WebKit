@@ -1,3 +1,24 @@
+2020-04-27  Saam Barati  <sbarati@apple.com>
+
+        compilePeepHoleBigInt32Branch needs to handle all conditions
+        https://bugs.webkit.org/show_bug.cgi?id=211096
+        <rdar://problem/62469971>
+
+        Reviewed by Yusuke Suzuki.
+
+        We were falling through to the generic path for all conditions which
+        weren't Equal/NotEqual. The generic path does not do speculation, so
+        it was leading to potential miscompiles because we omitted a type check.
+        Defining compilePeepHoleBigInt32Branch for other conditions is trivial,
+        so this patch just implements that.
+
+        This failure is caught by microbenchmarks/sunspider-sha1-big-int.js
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBigInt32Branch):
+
 2020-04-27  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r260772.
