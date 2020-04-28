@@ -1,3 +1,31 @@
+2020-04-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Introduce FormattingContext::ConstraintsForInFlowContent
+        https://bugs.webkit.org/show_bug.cgi?id=211113
+
+        Reviewed by Antti Koivisto.
+
+        This makes the layoutInFlowContent() related code look simpler.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/FormattingContext.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/tableformatting/TableFormattingContext.h:
+
 2020-04-28  Philippe Normand  <pnormand@igalia.com>
 
         media/track/track-load-error-readyState.html passes only when accompanied by some other tests

@@ -48,27 +48,26 @@ class BlockFormattingContext final : public FormattingContext {
 public:
     BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
+    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
 
 private:
 
-    template<typename T>
     struct ConstraintsPair {
-        const T root;
-        const T containingBlock;
+        const ConstraintsForInFlowContent formattingContextRoot;
+        const ConstraintsForInFlowContent containingBlock;
     };
     void placeInFlowPositionedChildren(const ContainerBox&, const HorizontalConstraints&);
 
-    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void computeHeightAndMargin(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair&);
+    void computeHeightAndMargin(const Box&, const ConstraintsForInFlowContent&);
 
     void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
     void computeStaticVerticalPosition(const Box&, const VerticalConstraints&);
-    void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair&);
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
 
-    void precomputeVerticalPositionForAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
-    void precomputeVerticalPositionForBoxAndAncestors(const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    void precomputeVerticalPositionForAncestors(const Box&, const ConstraintsPair&);
+    void precomputeVerticalPositionForBoxAndAncestors(const Box&, const ConstraintsPair&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, const VerticalConstraints&) const;
@@ -167,7 +166,7 @@ private:
     };
     BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
 
-    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair<HorizontalConstraints>&, const ConstraintsPair<VerticalConstraints>&);
+    Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair&);
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }

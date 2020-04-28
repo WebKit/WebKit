@@ -110,7 +110,7 @@ void LineLayout::layout()
     auto horizontalConstraints = Layout::HorizontalConstraints { m_flow.borderAndPaddingStart(), m_flow.contentSize().width() };
     auto verticalConstraints = Layout::VerticalConstraints { m_flow.borderAndPaddingBefore(), { } };
 
-    inlineFormattingContext.layoutInFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
+    inlineFormattingContext.layoutInFlowContent(invalidationState, { horizontalConstraints, verticalConstraints });
     m_inlineFormattingState.shrinkDisplayInlineContent();
 }
 

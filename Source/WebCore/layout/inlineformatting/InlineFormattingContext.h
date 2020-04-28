@@ -43,7 +43,7 @@ class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) override;
+    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
 
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -77,7 +77,7 @@ private:
     };
     InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
-    void lineLayout(InlineItems&, LineLayoutContext::InlineItemRange, const HorizontalConstraints&, const VerticalConstraints&);
+    void lineLayout(InlineItems&, LineLayoutContext::InlineItemRange, const ConstraintsForInFlowContent&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const;

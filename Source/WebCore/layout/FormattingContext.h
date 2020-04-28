@@ -65,7 +65,11 @@ public:
     FormattingContext(const ContainerBox& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(InvalidationState&, const HorizontalConstraints&, const VerticalConstraints&) = 0;
+    struct ConstraintsForInFlowContent {
+        HorizontalConstraints horizontal;
+        VerticalConstraints vertical;
+    };
+    virtual void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) = 0;
     void layoutOutOfFlowContent(InvalidationState&, const OutOfFlowHorizontalConstraints&, const VerticalConstraints&);
 
     struct IntrinsicWidthConstraints {
@@ -148,8 +152,7 @@ protected:
 
         static OutOfFlowHorizontalConstraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
         static VerticalConstraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
-        static HorizontalConstraints horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
-        static VerticalConstraints verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry);
+        static FormattingContext::ConstraintsForInFlowContent constraintsForInFlowContent(const Display::Box& containingBlockGeometry);
 
     protected:
         friend class FormattingContext;

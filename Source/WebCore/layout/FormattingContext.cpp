@@ -170,10 +170,8 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
             auto& containerDisplayBox = geometryForBox(containerBox);
 
             if (containerBox.hasInFlowOrFloatingChild()) {
-                auto horizontalConstraintsForInFlowContent = Geometry::horizontalConstraintsForInFlow(containerDisplayBox);
-                auto verticalConstraintsForInFlowContent = Geometry::verticalConstraintsForInFlow(containerDisplayBox);
                 auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                formattingContext->layoutInFlowContent(invalidationState, horizontalConstraintsForInFlowContent, verticalConstraintsForInFlowContent);
+                formattingContext->layoutInFlowContent(invalidationState, Geometry::constraintsForInFlowContent(containerDisplayBox));
             }
             computeOutOfFlowVerticalGeometry(containerBox, horizontalConstraints, verticalConstraints);
             if (containerBox.hasChild()) {

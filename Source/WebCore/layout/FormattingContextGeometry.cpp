@@ -1110,14 +1110,9 @@ VerticalConstraints FormattingContext::Geometry::verticalConstraintsForOutOfFlow
     return VerticalConstraints { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() };
 }
 
-HorizontalConstraints FormattingContext::Geometry::horizontalConstraintsForInFlow(const Display::Box& containingBlockGeometry)
+FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const Display::Box& containingBlockGeometry)
 {
-    return HorizontalConstraints { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxWidth() };
-}
-
-VerticalConstraints FormattingContext::Geometry::verticalConstraintsForInFlow(const Display::Box& containingBlockGeometry)
-{
-    return VerticalConstraints { containingBlockGeometry.contentBoxTop(), { } };
+    return { { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxWidth() }, { containingBlockGeometry.contentBoxTop(), { } } };
 }
 
 }

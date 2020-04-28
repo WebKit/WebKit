@@ -48,17 +48,19 @@ TableFormattingContext::TableFormattingContext(const ContainerBox& formattingCon
 {
 }
 
-void TableFormattingContext::layoutInFlowContent(InvalidationState&, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints)
+void TableFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent& constraints)
 {
+    auto availableHorizontalSpace = constraints.horizontal.logicalWidth;
+    auto availableVerticalSpace = constraints.vertical.logicalHeight;
     // 1. Compute width and height for the grid.
-    computeAndDistributeExtraHorizontalSpace(horizontalConstraints.logicalWidth);
-    computeAndDistributeExtraVerticalSpace(horizontalConstraints.logicalWidth, verticalConstraints.logicalHeight);
+    computeAndDistributeExtraHorizontalSpace(availableHorizontalSpace);
+    computeAndDistributeExtraVerticalSpace(availableHorizontalSpace, availableVerticalSpace);
     // 2. Finalize cells.
-    setUsedGeometryForCells(horizontalConstraints.logicalWidth);
+    setUsedGeometryForCells(availableHorizontalSpace);
     // 3. Finalize rows.
-    setUsedGeometryForRows(horizontalConstraints.logicalWidth);
+    setUsedGeometryForRows(availableHorizontalSpace);
     // 4. Finalize sections.
-    setUsedGeometryForSections(horizontalConstraints.logicalWidth);
+    setUsedGeometryForSections(availableHorizontalSpace);
 }
 
 void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizontalSpace)
@@ -174,10 +176,10 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellDisplayBox.setContentBoxWidth(availableSpaceForContent);
 
     if (cellBox.hasInFlowOrFloatingChild()) {
-        auto horizontalConstraintsForCellContent = Geometry::horizontalConstraintsForInFlow(cellDisplayBox);
-        auto verticalConstraintsForCellContent = VerticalConstraints { cellDisplayBox.contentBoxTop(), usedCellHeight };
         auto invalidationState = InvalidationState { };
-        LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, horizontalConstraintsForCellContent, verticalConstraintsForCellContent);
+        auto constraintsForCellContent = Geometry::constraintsForInFlowContent(cellDisplayBox);
+        constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
+        LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }
     cellDisplayBox.setContentBoxHeight(geometry().cellHeigh(cellBox));
 }
