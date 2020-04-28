@@ -336,8 +336,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    if (parameters.preferencesExtensionHandle) {
-        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandle);
+    if (parameters.preferencesExtensionHandles) {
+        for (size_t i = 0; i < parameters.preferencesExtensionHandles->size(); ++i) {
+            bool ok = SandboxExtension::consumePermanently(parameters.preferencesExtensionHandles->at(i));
+            ASSERT_UNUSED(ok, ok);
+        }
+
         _CFPrefsSetDirectModeEnabled(false);
     }
 #endif
@@ -945,10 +949,13 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
     [defaults setObject:object forKey:key];
 }
 
-void WebProcess::unblockPreferenceService(const SandboxExtension::Handle& handle)
+void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handleArray)
 {
-    bool ok = SandboxExtension::consumePermanently(handle);
-    ASSERT_UNUSED(ok, ok);
+    for (size_t i = 0; i < handleArray.size(); ++i) {
+        bool ok = SandboxExtension::consumePermanently(handleArray[i]);
+        ASSERT_UNUSED(ok, ok);
+    }
+
     _CFPrefsSetDirectModeEnabled(false);
 }
 #endif

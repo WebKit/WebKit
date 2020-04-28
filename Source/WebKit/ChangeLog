@@ -1,3 +1,41 @@
+2020-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [MacCatalyst] Dynamic access to accessibility services is incomplete 
+        https://bugs.webkit.org/show_bug.cgi?id=211100
+        <rdar://problem/62133491>
+
+        Reviewed by Darin Adler.
+
+        Testing of MacCatalyst-based apps shows that using dynamic sandbox extensions to support accessibility
+        features is incomplete. In addition to the 'com.apple.cfprefsd.daemon' process needed on macOS and iOS,
+        we also need access to 'com.apple.cfprefsd.agent'.
+
+        This can only be tested manually in a MacCatlyst build, though existing accessibility tests will
+        confirm no regressions in iOS and macOS.
+
+        The changes are as follows:
+        1. Change WebProcessCreationParameters::preferencesExtensionHandle to a handle array.
+        2. Register (and unregister) for the accessibility enabled notification in MacCatalyst.
+        3. Open a connection 'com.apple.cfprefsd.agent' (in addition to the existing 'com.apple.cfprefsd.daemon')
+           in MacCatalyst builds.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockPreferenceServiceIfNeeded):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::unblockPreferenceService):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Prevent WebPasteboardProxy IPC messages from unconditionally requesting pasteboard types

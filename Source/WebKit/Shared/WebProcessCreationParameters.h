@@ -230,7 +230,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     SandboxExtension::HandleArray mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    Optional<SandboxExtension::Handle> preferencesExtensionHandle;
+    Optional<SandboxExtension::HandleArray> preferencesExtensionHandles;
 #endif
 #endif
 

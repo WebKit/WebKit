@@ -301,7 +301,7 @@ public:
     void unblockAccessibilityServer(const SandboxExtension::Handle&);
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
-    void unblockPreferenceService(const SandboxExtension::Handle&);
+    void unblockPreferenceService(SandboxExtension::HandleArray&&);
 #endif
 #endif
 

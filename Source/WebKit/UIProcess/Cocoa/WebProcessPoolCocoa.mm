@@ -102,7 +102,7 @@ NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
 NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKey";
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 #endif
 
@@ -454,9 +454,20 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)
     if (_AXSApplicationAccessibilityEnabled()) {
-        SandboxExtension::Handle preferencesExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", WTF::nullopt, preferencesExtensionHandle);
-        parameters.preferencesExtensionHandle = WTFMove(preferencesExtensionHandle);
+        SandboxExtension::HandleArray preferencesExtensionHandles;
+        
+        static constexpr const char* services[] = {
+            "com.apple.cfprefsd.agent",
+            "com.apple.cfprefsd.daemon"
+        };
+        auto size = std::size(services);
+        preferencesExtensionHandles.allocate(size);
+        for (size_t i = 0; i < size; ++i) {
+            bool ok = SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, preferencesExtensionHandles[i]);
+            ASSERT_UNUSED(ok, ok);
+        }
+        
+        parameters.preferencesExtensionHandles = WTFMove(preferencesExtensionHandles);
     }
 #endif
 }
@@ -683,6 +694,9 @@ void WebProcessPool::registerNotificationObservers()
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, remoteWebInspectorEnabledCallback, static_cast<CFStringRef>(CFSTR(WIRServiceEnabledNotification)), nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif
 #endif // PLATFORM(IOS)
+#endif // !PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(IOS_FAMILY)
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         for (size_t i = 0; i < m_processes.size(); ++i) {
 #if ENABLE(CFPREFS_DIRECT_MODE)
@@ -696,7 +710,7 @@ void WebProcessPool::registerNotificationObservers()
         startObservingPreferenceChanges();
     }];
 #endif
-#endif // !PLATFORM(IOS_FAMILY)
+#endif
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -719,8 +733,12 @@ void WebProcessPool::unregisterNotificationObservers()
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, CFSTR(WIRServiceEnabledNotification), nullptr);
 #endif
 #endif // PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 #endif // !PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(IOS_FAMILY)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+#endif
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
 }
 

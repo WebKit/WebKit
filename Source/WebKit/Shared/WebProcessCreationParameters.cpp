@@ -193,7 +193,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     // FIXME(207716): The following should be removed when the GPU process is complete.
     encoder << mediaExtensionHandles;
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    encoder << preferencesExtensionHandle;
+    encoder << preferencesExtensionHandles;
 #endif
 #endif
 
@@ -537,11 +537,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     // FIXME(207716): End region to remove.
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    Optional<Optional<SandboxExtension::Handle>> preferencesExtensionHandle;
-    decoder >> preferencesExtensionHandle;
-    if (!preferencesExtensionHandle)
+    Optional<Optional<SandboxExtension::HandleArray>> preferencesExtensionHandles;
+    decoder >> preferencesExtensionHandles;
+    if (!preferencesExtensionHandles)
         return false;
-    parameters.preferencesExtensionHandle = WTFMove(*preferencesExtensionHandle);
+    parameters.preferencesExtensionHandles = WTFMove(*preferencesExtensionHandles);
 #endif
 #endif
 

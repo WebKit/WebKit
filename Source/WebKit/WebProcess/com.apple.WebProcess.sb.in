@@ -912,6 +912,7 @@
             "com.apple.nesessionmanager"
 #endif
             "com.apple.webinspector"
+            "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
             "com.apple.tccd"
             "com.apple.lsd.mapdb"

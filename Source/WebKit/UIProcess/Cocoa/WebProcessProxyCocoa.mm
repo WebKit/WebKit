@@ -239,11 +239,19 @@ void WebProcessProxy::unblockPreferenceServiceIfNeeded()
     if (!canSendMessage())
         return;
 
-    SandboxExtension::Handle handle;
-    if (!SandboxExtension::createHandleForMachLookup("com.apple.cfprefsd.daemon", connection() ? connection()->getAuditToken() : WTF::nullopt, handle))
-        return;
-
-    send(Messages::WebProcess::UnblockPreferenceService(handle), 0);
+    SandboxExtension::HandleArray handleArray;
+    static constexpr const char* services[] = {
+        "com.apple.cfprefsd.agent",
+        "com.apple.cfprefsd.daemon"
+    };
+    auto size = std::size(services);
+    handleArray.allocate(size);
+    for (size_t i = 0; i < size; ++i) {
+        if (!SandboxExtension::createHandleForMachLookup(services[i], connection() ? connection()->getAuditToken() : WTF::nullopt, handleArray[i]))
+            return;
+    }
+    
+    send(Messages::WebProcess::UnblockPreferenceService(handleArray), 0);
     m_hasSentMessageToUnblockPreferenceService = true;
 }
 #endif
