@@ -70,7 +70,14 @@ public:
         VerticalConstraints vertical;
     };
     virtual void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&, const OutOfFlowHorizontalConstraints&, const VerticalConstraints&);
+
+    struct ConstraintsForOutOfFlowContent {
+        HorizontalConstraints horizontal;
+        VerticalConstraints vertical;
+        // Borders and paddings are resolved against the containing block's content box as if the box was an in-flow box.
+        LayoutUnit borderAndPaddingConstraints;
+    };
+    void layoutOutOfFlowContent(InvalidationState&, const ConstraintsForOutOfFlowContent&);
 
     struct IntrinsicWidthConstraints {
         void expand(LayoutUnit horizontalValue);
@@ -150,9 +157,8 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
-        static OutOfFlowHorizontalConstraints horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
-        static VerticalConstraints verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry);
-        static FormattingContext::ConstraintsForInFlowContent constraintsForInFlowContent(const Display::Box& containingBlockGeometry);
+        static ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const Display::Box& containingBlockGeometry);
+        static ConstraintsForInFlowContent constraintsForInFlowContent(const Display::Box& containingBlockGeometry);
 
     protected:
         friend class FormattingContext;
@@ -204,8 +210,8 @@ protected:
 
 private:
     void collectOutOfFlowDescendantsIfNeeded();
-    void computeOutOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
-    void computeOutOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&);
+    void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
+    void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
 
     WeakPtr<const ContainerBox> m_root;
     FormattingState& m_formattingState;

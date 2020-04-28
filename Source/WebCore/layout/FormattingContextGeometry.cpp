@@ -1098,16 +1098,12 @@ FormattingContext::IntrinsicWidthConstraints FormattingContext::Geometry::constr
     return intrinsicWidth;
 }
 
-OutOfFlowHorizontalConstraints FormattingContext::Geometry::horizontalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry)
+FormattingContext::ConstraintsForOutOfFlowContent FormattingContext::Geometry::constraintsForOutOfFlowContent(const Display::Box& containingBlockGeometry)
 {
-    return OutOfFlowHorizontalConstraints {
-        HorizontalConstraints { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() },
+    return {
+        { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() },
+        { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() },
         containingBlockGeometry.contentBoxWidth() };
-}
-
-VerticalConstraints FormattingContext::Geometry::verticalConstraintsForOutOfFlow(const Display::Box& containingBlockGeometry)
-{
-    return VerticalConstraints { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() };
 }
 
 FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const Display::Box& containingBlockGeometry)

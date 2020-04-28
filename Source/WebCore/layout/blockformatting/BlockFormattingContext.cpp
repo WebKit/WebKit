@@ -152,10 +152,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                 // Now that we computed the root's height, we can layout the out-of-flow descendants.
                 if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasChild()) {
                     auto& containerBox = downcast<ContainerBox>(layoutBox);
-                    auto& rootDisplayBox = geometryForBox(containerBox);
-                    auto horizontalConstraintsForOutOfFlowContent =  Geometry::horizontalConstraintsForOutOfFlow(rootDisplayBox);
-                    auto verticalConstraintsForOutOfFlowContent = Geometry::verticalConstraintsForOutOfFlow(rootDisplayBox);
-                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlowContent, verticalConstraintsForOutOfFlowContent);
+                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(invalidationState, Geometry::constraintsForOutOfFlowContent(geometryForBox(containerBox)));
                 }
             }
             // Resolve final positions.

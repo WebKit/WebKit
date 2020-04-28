@@ -107,9 +107,9 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
     // It constructs an FC for descendant boxes and runs layout on them. The formattingContextRoot is laid out in the FC in which it lives (parent formatting context).
     // It also means that the formattingContextRoot has to have a valid/clean geometry at this point.
     {
-        auto horizontalConstraints = OutOfFlowHorizontalConstraints { HorizontalConstraints { displayBox.paddingBoxLeft(), displayBox.paddingBoxWidth() }, displayBox.contentBoxWidth() };
-        auto verticalConstraints = VerticalConstraints { displayBox.paddingBoxTop(), displayBox.paddingBoxHeight() };
-        formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraints, verticalConstraints);
+        auto constraints = FormattingContext::ConstraintsForOutOfFlowContent { { displayBox.paddingBoxLeft(), displayBox.paddingBoxWidth() },
+            { displayBox.paddingBoxTop(), displayBox.paddingBoxHeight() }, displayBox.contentBoxWidth() };
+        formattingContext->layoutOutOfFlowContent(invalidationState, constraints);
     }
 }
 

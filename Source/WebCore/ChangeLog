@@ -1,5 +1,31 @@
 2020-04-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Introduce FormattingContext::ConstraintsForOutOfFlowContent
+        https://bugs.webkit.org/show_bug.cgi?id=211125
+
+        Reviewed by Antti Koivisto.
+
+        Horizontal and vertical out-of-flow constraints are always computed and used in pairs.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::constraintsForOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::Geometry::horizontalConstraintsForOutOfFlow): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::verticalConstraintsForOutOfFlow): Deleted.
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+
+2020-04-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Introduce FormattingContext::ConstraintsForInFlowContent
         https://bugs.webkit.org/show_bug.cgi?id=211113
 

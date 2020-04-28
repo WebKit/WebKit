@@ -103,10 +103,8 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 }
                 computeHeightAndMargin(containerBox, constraints.horizontal);
                 if (containerBox.hasChild()) {
-                    auto horizontalConstraintsForOutOfFlow = Geometry::horizontalConstraintsForOutOfFlow(formattingRootDisplayBox);
-                    auto verticalConstraintsForOutOfFlow = Geometry::verticalConstraintsForOutOfFlow(formattingRootDisplayBox);
                     auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                    formattingContext->layoutOutOfFlowContent(invalidationState, horizontalConstraintsForOutOfFlow, verticalConstraintsForOutOfFlow);
+                    formattingContext->layoutOutOfFlowContent(invalidationState, Geometry::constraintsForOutOfFlowContent(formattingRootDisplayBox));
                 }
             } else {
                 // Replaced and other type of leaf atomic inline boxes.
