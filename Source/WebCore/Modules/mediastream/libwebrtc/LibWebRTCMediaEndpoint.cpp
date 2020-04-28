@@ -368,11 +368,6 @@ void LibWebRTCMediaEndpoint::addPendingTrackEvent(Ref<RTCRtpReceiver>&& receiver
     m_remoteStreamsFromRemoteTrack.add(&track, WTFMove(streamIds));
 
     m_peerConnectionBackend.addPendingTrackEvent({ WTFMove(receiver), makeRef(track), WTFMove(streams), WTFMove(transceiver) });
-
-    // FIXME: We should unmute tracks when receiving the first packet, for now we simulate this by unmuting asynchronously here.
-    callOnMainThread([source = makeRef(track.source())] {
-        source->setMuted(false);
-    });
 }
 
 void LibWebRTCMediaEndpoint::collectTransceivers()

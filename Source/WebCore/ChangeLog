@@ -1,3 +1,17 @@
+2020-04-28  Youenn Fablet  <youenn@apple.com>
+
+        Ensure remote track event gets unmuted after the track event is fired
+        https://bugs.webkit.org/show_bug.cgi?id=211071
+
+        Reviewed by Alex Christensen.
+
+        This code was made obsolete by the setMuted(false) call done just after firing the track event.
+        Given the setMuted(false) in addPendingTrackEvent was done asynchronously and was triggering firing the muted event asynchronously,
+        this change should not be observable from JS.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addPendingTrackEvent):
+
 2020-04-28  Rob Buis  <rbuis@igalia.com>
 
         Make HistoryController an inner class of FrameLoader
