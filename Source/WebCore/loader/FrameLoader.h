@@ -72,7 +72,6 @@ class FormSubmission;
 class FrameLoadRequest;
 class FrameLoaderClient;
 class FrameNetworkingContext;
-class HistoryController;
 class HistoryItem;
 class NavigationAction;
 class NetworkingContext;
@@ -112,6 +111,8 @@ public:
     Frame& frame() const { return m_frame; }
 
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
+
+    class HistoryController;
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
@@ -139,8 +140,6 @@ public:
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);
-    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
-    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     void retryAfterFailedCacheOnlyMainResourceLoad();
 
@@ -298,8 +297,6 @@ public:
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
     WEBCORE_EXPORT bool shouldClose();
-    
-    void started();
 
     enum class PageDismissalType { None, BeforeUnload, PageHide, Unload };
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
@@ -425,7 +422,13 @@ private:
     enum class LoadContinuingState : uint8_t { NotContinuing, ContinuingWithRequest, ContinuingWithHistoryItem };
     bool shouldTreatCurrentLoadAsContinuingLoad() const { return m_currentLoadContinuingState != LoadContinuingState::NotContinuing; }
 
+    // HistoryController specific.
+    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
+    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
+
+    // SubframeLoader specific.
     void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
+    void started();
 
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;
