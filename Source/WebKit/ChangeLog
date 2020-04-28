@@ -1,3 +1,42 @@
+2020-04-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: find dialog does not populate search string from system find pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=113588
+        <rdar://problem/19281466>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/Inspector/mac/WKInspectorWKWebView.h:
+        * UIProcess/Inspector/mac/WKInspectorWKWebView.mm:
+        (-[WKInspectorWKWebView dealloc]): Added.
+        (-[WKInspectorWKWebView setInspectorWKWebViewDelegate:]):
+        (-[WKInspectorWKWebView becomeFirstResponder]): Added.
+        (-[WKInspectorWKWebView _handleWindowDidBecomeKey:]): Added.
+        * UIProcess/Inspector/mac/WKInspectorViewController.h:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController inspectorWKWebViewDidBecomeActive:]): Added.
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewControllerDidBecomeActive:]): Added.
+        (WebKit::WebInspectorProxy::didBecomeActive): Added.
+        * UIProcess/Inspector/RemoteWebInspectorProxy.h:
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (-[WKRemoteWebInspectorProxyObjCAdapter inspectorWKWebViewDidBecomeActive:]): Added.
+        (WebKit::RemoteWebInspectorProxy::didBecomeActive): Added.
+        Add a new delegate call chain that notifies the inspector proxy about when the inspector web
+        view becomes active, at which point the inspector proxy can get the current find string and
+        sent it to the inspector page.
+
+        * WebProcess/Inspector/WebInspectorUI.messages.in:
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateFindString): Added.
+        * WebProcess/Inspector/RemoteWebInspectorUI.messages.in:
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::updateFindString): Added.
+        Pass along the new find string to the frontend via `InspectorFrontendAPI.updateFindString`.
+
 2020-04-28  Daniel Bates  <dabates@apple.com>
 
         Remove unused WebPage::focusTextInputContext()

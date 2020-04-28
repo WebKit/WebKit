@@ -35,6 +35,7 @@
 
 @protocol WKInspectorWKWebViewDelegate
 @required
+- (void)inspectorWKWebViewDidBecomeActive:(WKInspectorWKWebView *)webView;
 - (void)inspectorWKWebViewReload:(WKInspectorWKWebView *)webView;
 - (void)inspectorWKWebViewReloadFromOrigin:(WKInspectorWKWebView *)webView;
 - (void)inspectorWKWebView:(WKInspectorWKWebView *)webView willMoveToWindow:(NSWindow *)newWindow;

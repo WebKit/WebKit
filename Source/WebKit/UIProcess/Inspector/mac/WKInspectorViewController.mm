@@ -235,6 +235,12 @@
 
 // MARK: WKInspectorWKWebViewDelegate methods
 
+- (void)inspectorWKWebViewDidBecomeActive:(WKInspectorWKWebView *)webView
+{
+    if ([_delegate respondsToSelector:@selector(inspectorViewControllerDidBecomeActive:)])
+        [_delegate inspectorViewControllerDidBecomeActive:self];
+}
+
 - (void)inspectorWKWebViewReload:(WKInspectorWKWebView *)webView
 {
     if (!_inspectedPage)

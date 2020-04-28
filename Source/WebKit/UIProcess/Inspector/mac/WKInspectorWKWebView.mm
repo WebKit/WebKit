@@ -35,6 +35,13 @@
     WeakObjCPtr<id <WKInspectorWKWebViewDelegate>> _inspectorWKWebViewDelegate;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+
+    [super dealloc];
+}
+
 - (NSRect)_opaqueRectForWindowMoveWhenInTitlebar
 {
     // This convinces AppKit to allow window moves when clicking anywhere in the titlebar (top 22pt)
@@ -54,7 +61,13 @@
 
 - (void)setInspectorWKWebViewDelegate:(id <WKInspectorWKWebViewDelegate>)delegate
 {
+    if (!!_inspectorWKWebViewDelegate)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+
     _inspectorWKWebViewDelegate = delegate;
+
+    if (!!_inspectorWKWebViewDelegate)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleWindowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
 }
 
 - (IBAction)reload:(id)sender
@@ -77,6 +90,19 @@
 {
     [super viewDidMoveToWindow];
     [self.inspectorWKWebViewDelegate inspectorWKWebViewDidMoveToWindow:self];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL result = [super becomeFirstResponder];
+    [self.inspectorWKWebViewDelegate inspectorWKWebViewDidBecomeActive:self];
+    return result;
+}
+
+- (void)_handleWindowDidBecomeKey:(NSNotification *)notification
+{
+    if (notification.object == self.window)
+        [self.inspectorWKWebViewDelegate inspectorWKWebViewDidBecomeActive:self];
 }
 
 @end

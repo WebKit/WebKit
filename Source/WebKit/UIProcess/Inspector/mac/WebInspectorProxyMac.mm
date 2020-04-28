@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "GlobalFindInPageState.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKViewInternal.h"
@@ -163,6 +164,12 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 // MARK: WKInspectorViewControllerDelegate methods
 
+- (void)inspectorViewControllerDidBecomeActive:(WKInspectorViewController *)inspectorViewController
+{
+    if (_inspectorProxy)
+        _inspectorProxy->didBecomeActive();
+}
+
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
     if (_inspectorProxy)
@@ -190,6 +197,11 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 namespace WebKit {
 using namespace WebCore;
+
+void WebInspectorProxy::didBecomeActive()
+{
+    m_inspectorPage->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()));
+}
 
 void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
 {

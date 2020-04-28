@@ -30,6 +30,7 @@ messages -> WebInspectorUI {
     Detached()
     SetDockingUnavailable(bool unavailable)
     SetIsVisible(bool visible)
+    UpdateFindString(String findString)
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     SetDiagnosticLoggingAvailable(bool available)

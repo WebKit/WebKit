@@ -113,6 +113,8 @@ public:
     enum class InspectionTargetType { Local, Remote };
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType);
 
+    void didBecomeActive();
+
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);
     void windowFrameDidChange();

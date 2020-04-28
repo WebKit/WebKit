@@ -91,6 +91,11 @@ InspectorFrontendAPI = {
         WI.updateVisibilityState(visible);
     },
 
+    updateFindString: function(findString)
+    {
+        WI.updateFindString(findString);
+    },
+
     setDiagnosticLoggingAvailable: function(available)
     {
         if (WI.diagnosticController)

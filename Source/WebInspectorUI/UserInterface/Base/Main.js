@@ -290,7 +290,7 @@ WI.contentLoaded = function()
 
     WI.clearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "K", WI._clear);
 
-    // FIXME: <https://webkit.org/b/151310> Web Inspector: Command-E should propagate to other search fields (including the system)
+    WI.findString = "";
     WI.populateFindKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "E", WI._populateFind);
     WI.populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
     WI.findNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", WI._findNext);
@@ -1043,6 +1043,26 @@ WI.updateVisibilityState = function(visible)
 {
     WI.visible = visible;
     WI.notifications.dispatchEventToListeners(WI.Notification.VisibilityStateDidChange);
+};
+
+WI.updateFindString = function(findString)
+{
+    if (WI.findString === findString)
+        return;
+
+    WI.findString = findString;
+
+    let focusedContentView = WI._focusedContentView();
+    if (focusedContentView && focusedContentView.supportsCustomFindBanner) {
+        focusedContentView.handleFindStringUpdated();
+        return;
+    }
+
+    let contentBrowser = WI._focusedOrVisibleContentBrowser();
+    if (contentBrowser) {
+        contentBrowser.handleFindStringUpdated();
+        return;
+    }
 };
 
 WI.handlePossibleLinkClick = function(event, frame, options = {})
@@ -2610,55 +2630,52 @@ WI._clear = function(event)
 WI._populateFind = function(event)
 {
     let focusedContentView = WI._focusedContentView();
-    if (!focusedContentView)
-        return;
-
-    if (focusedContentView.supportsCustomFindBanner) {
-        focusedContentView.handlePopulateFindShortcut();
+    if (focusedContentView && focusedContentView.supportsCustomFindBanner) {
+        let string = focusedContentView.handlePopulateFindShortcut();
+        if (string)
+            WI.findString = string;
+        focusedContentView.handleFindStringUpdated();
         return;
     }
 
     let contentBrowser = WI._focusedOrVisibleContentBrowser();
-    if (!contentBrowser)
+    if (contentBrowser) {
+        let string = contentBrowser.handlePopulateFindShortcut();
+        if (string)
+            WI.findString = string;
+        contentBrowser.handleFindStringUpdated();
         return;
-
-    contentBrowser.handlePopulateFindShortcut();
+    }
 };
 
 WI._findNext = function(event)
 {
     let focusedContentView = WI._focusedContentView();
-    if (!focusedContentView)
-        return;
-
-    if (focusedContentView.supportsCustomFindBanner) {
+    if (focusedContentView?.supportsCustomFindBanner) {
         focusedContentView.handleFindNextShortcut();
         return;
     }
 
     let contentBrowser = WI._focusedOrVisibleContentBrowser();
-    if (!contentBrowser)
+    if (contentBrowser) {
+        contentBrowser.handleFindNextShortcut();
         return;
-
-    contentBrowser.handleFindNextShortcut();
+    }
 };
 
 WI._findPrevious = function(event)
 {
     let focusedContentView = WI._focusedContentView();
-    if (!focusedContentView)
-        return;
-
-    if (focusedContentView.supportsCustomFindBanner) {
+    if (focusedContentView?.supportsCustomFindBanner) {
         focusedContentView.handleFindPreviousShortcut();
         return;
     }
 
     let contentBrowser = WI._focusedOrVisibleContentBrowser();
-    if (!contentBrowser)
+    if (contentBrowser) {
+        contentBrowser.handleFindPreviousShortcut();
         return;
-
-    contentBrowser.handleFindPreviousShortcut();
+    }
 };
 
 WI._copy = function(event)

@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
 
+#import "GlobalFindInPageState.h"
 #import "RemoteWebInspectorProxyMessages.h"
 #import "RemoteWebInspectorUIMessages.h"
 #import "WKFrameInfo.h"
@@ -68,6 +69,11 @@
     return self;
 }
 
+- (void)inspectorWKWebViewDidBecomeActive:(WKInspectorViewController *)inspectorViewController
+{
+    _inspectorProxy->didBecomeActive();
+}
+
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
     _inspectorProxy->closeFromCrash();
@@ -86,6 +92,11 @@ using namespace WebCore;
 WKWebView *RemoteWebInspectorProxy::webView() const
 {
     return m_inspectorView.get().webView;
+}
+
+void RemoteWebInspectorProxy::didBecomeActive()
+{
+    m_inspectorPage->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()));
 }
 
 WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()

@@ -23,6 +23,8 @@
 messages -> RemoteWebInspectorUI {
     Initialize(struct WebKit::DebuggableInfoData debuggableInfo, String backendCommandsURL)
 
+    UpdateFindString(String findString)
+
 #if ENABLE(INSPECTOR_TELEMETRY)
     SetDiagnosticLoggingAvailable(bool available)
 #endif

@@ -177,6 +177,7 @@ WI.resolvedLayoutDirection = () => { return InspectorFrontendHost.userInterfaceL
 WI.updateDockedState = () => {};
 WI.updateDockingAvailability = () => {};
 WI.updateVisibilityState = () => {};
+WI.updateFindString = () => {};
 
 // FIXME: <https://webkit.org/b/201149> Web Inspector: replace all uses of `window.*Agent` with a target-specific call
 (function() {

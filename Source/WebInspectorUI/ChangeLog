@@ -1,3 +1,36 @@
+2020-04-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: find dialog does not populate search string from system find pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=113588
+        <rdar://problem/19281466>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.updateFindString): Added.
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.updateFindString): Added.
+        (WI._populateFind):
+        (WI._findNext):
+        (WI._findPrevious):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.handleFindStringUpdated): Added.
+        (WI.ContentBrowser.prototype.handlePopulateFindShortcut):
+        (WI.ContentBrowser.prototype.handleFindNextShortcut):
+        (WI.ContentBrowser.prototype.handleFindPreviousShortcut):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.handleFindStringUpdated): Added.
+        (WI.LogContentView.prototype.handlePopulateFindShortcut):
+        (WI.LogContentView.prototype.handleFindNextShortcut):
+        (WI.LogContentView.prototype.handleFindPreviousShortcut):
+        When the find string gets updated, tell the active view. The `findNextKeyboardShortcut` and
+        `findPreviousKeyboardShortcut` will also update the related `WI.FindBanner` when invoked if
+        the current search query does not match the find string.
+
+        * UserInterface/Test/Test.js:
+        (WI.updateFindString): Added.
+
 2020-04-28  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds

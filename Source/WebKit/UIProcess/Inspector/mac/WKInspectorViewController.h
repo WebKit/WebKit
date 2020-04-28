@@ -51,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol WKInspectorViewControllerDelegate <NSObject>
 @optional
+- (void)inspectorViewControllerDidBecomeActive:(WKInspectorViewController *)inspectorViewController;
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController;
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController;
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow;

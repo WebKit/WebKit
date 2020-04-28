@@ -79,6 +79,8 @@ public:
 
     void setIsVisible(bool);
 
+    void updateFindString(const String&);
+
     void didSave(const String& url);
     void didAppend(const String& url);
 

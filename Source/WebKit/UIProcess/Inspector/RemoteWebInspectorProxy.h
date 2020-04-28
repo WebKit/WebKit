@@ -90,6 +90,8 @@ public:
     WKWebView *webView() const;
 
     const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
+
+    void didBecomeActive();
 #endif
 
 #if PLATFORM(GTK)

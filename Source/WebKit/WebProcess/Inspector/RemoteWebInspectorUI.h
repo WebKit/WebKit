@@ -50,6 +50,7 @@ public:
 
     // Called by RemoteWebInspectorUI messages
     void initialize(DebuggableInfoData&&, const String& backendCommandsURL);
+    void updateFindString(const String&);
     void didSave(const String& url);
     void didAppend(const String& url);
     void sendMessageToFrontend(const String&);
