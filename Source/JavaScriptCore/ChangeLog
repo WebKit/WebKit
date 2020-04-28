@@ -1,3 +1,25 @@
+2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Throw OutOfMemoryError instead of RangeError if BigInt is too big
+        https://bugs.webkit.org/show_bug.cgi?id=211111
+
+        Reviewed by Saam Barati.
+
+        Currently, we are throwing a RangeError if we detect that JSBigInt becomes too large. But this is not consistent with our JSString's policy.
+        We should throw OutOfMemoryError in this case. This also makes DFG simple since DFG allows throwing OutOfMemoryError in any places which node
+        is even removed.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::throwOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::tryCreateWithLength):
+        (JSC::JSBigInt::exponentiateHeap):
+        (JSC::JSBigInt::leftShiftByAbsolute):
+        (JSC::JSBigInt::allocateFor):
+
 2020-04-27  Saam Barati  <sbarati@apple.com>
 
         BigInt math runtime shouldn't convert BigInt32 input operands to a heap cell when doing math

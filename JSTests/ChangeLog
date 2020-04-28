@@ -1,3 +1,21 @@
+2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Throw OutOfMemoryError instead of RangeError if BigInt is too big
+        https://bugs.webkit.org/show_bug.cgi?id=211111
+
+        Reviewed by Saam Barati.
+
+        * stress/big-int-constructor-oom.js:
+        (catch):
+        * stress/big-int-left-shift-range-error.js:
+        (assertThrowRangeError):
+        * stress/big-int-out-of-memory-tests.js:
+        (catch):
+        * stress/bigint-exponential-oom.js: Added.
+        (shouldThrow):
+        * stress/bigint-int32-min-shift.js:
+        (shouldThrow):
+
 2020-04-27  Keith Miller  <keith_miller@apple.com>
 
         stress/generator-containing-for-of-on-map.js and stress/generator-containing-for-of-on-set.js timing out on debug JSC bot

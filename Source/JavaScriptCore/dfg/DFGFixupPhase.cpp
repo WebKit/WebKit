@@ -325,16 +325,7 @@ private:
                 fixEdge<HeapBigIntUse>(node->child1());
                 fixEdge<HeapBigIntUse>(node->child2());
 #endif
-                // Shift can throw RangeError.
-                switch (node->op()) {
-                case ValueBitXor:
-                case ValueBitOr:
-                case ValueBitAnd:
-                    node->clearFlags(NodeMustGenerate);
-                    break;
-                default:
-                    break;
-                }
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
 

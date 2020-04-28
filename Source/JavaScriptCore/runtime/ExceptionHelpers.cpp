@@ -333,6 +333,11 @@ Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope
     return throwException(globalObject, scope, createOutOfMemoryError(globalObject));
 }
 
+Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope, const String& message)
+{
+    return throwException(globalObject, scope, createOutOfMemoryError(globalObject, message));
+}
+
 Exception* throwStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
 {
     VM& vm = globalObject->vm();

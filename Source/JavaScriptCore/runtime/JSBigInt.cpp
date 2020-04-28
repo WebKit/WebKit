@@ -95,7 +95,7 @@ JSBigInt* JSBigInt::tryCreateWithLength(JSGlobalObject* globalObject, unsigned l
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(length > maxLength)) {
-        throwOutOfMemoryError(globalObject, scope);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -364,7 +364,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     // results.
     static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit::max()");
     if (exponent.length() > 1) {
-        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -372,7 +372,7 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
     if (expValue == 1)
         return base;
     if (expValue >= maxLengthBits) {
-        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -1791,7 +1791,7 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
 
     auto optionalShift = toShiftAmount(y);
     if (!optionalShift) {
-        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -1802,7 +1802,7 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
     bool grow = bitsShift && (x.digit(length - 1) >> (digitBits - bitsShift));
     int resultLength = length + digitShift + grow;
     if (static_cast<unsigned>(resultLength) > maxLength) {
-        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -2158,7 +2158,7 @@ JSBigInt* JSBigInt::allocateFor(JSGlobalObject* globalObject, VM& vm, unsigned r
 
     if (globalObject) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwOutOfMemoryError(globalObject, scope);
+        throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
     }
     return nullptr;
 }

@@ -10,7 +10,7 @@ function assertThrowRangeError(a, b, message) {
         let n = a << b;
         assert(false, message + ": Should throw RangeError, but executed without exception");
     } catch (e) {
-        assert(e instanceof RangeError, message + ": expected RangeError, got: " + e);
+        assert(e instanceof Error, message + ": expected Error , got: " + e);
     }
 }
 

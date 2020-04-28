@@ -56,6 +56,7 @@ JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject*, const String&);
 String errorDescriptionForValue(JSGlobalObject*, JSValue);
 
 JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&, const String&);
 JS_EXPORT_PRIVATE Exception* throwStackOverflowError(JSGlobalObject*, ThrowScope&);
 JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(JSGlobalObject*, ThrowScope&);
 
