@@ -1,3 +1,15 @@
+2020-04-27  Keith Miller  <keith_miller@apple.com>
+
+        stress/generator-containing-for-of-on-map.js and stress/generator-containing-for-of-on-set.js timing out on debug JSC bot
+        https://bugs.webkit.org/show_bug.cgi?id=211095
+
+        Reviewed by Yusuke Suzuki.
+
+        Let's try making these tests shorter. Eager compilation should still be interesting with the shorter iterations.
+
+        * stress/generator-containing-for-of-on-map.js:
+        * stress/generator-containing-for-of-on-set.js:
+
 2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] >>> should call ToNumeric
