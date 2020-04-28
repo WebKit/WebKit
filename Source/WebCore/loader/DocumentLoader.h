@@ -397,8 +397,7 @@ public:
     void setAllowsDataURLsForMainFrame(bool allowsDataURLsForMainFrame) { m_allowsDataURLsForMainFrame = allowsDataURLsForMainFrame; }
     bool allowsDataURLsForMainFrame() const { return m_allowsDataURLsForMainFrame; }
 
-    void setDownloadAttribute(const String& attribute) { m_downloadAttribute = attribute; }
-    const String& downloadAttribute() const { return m_downloadAttribute; }
+    const AtomString& downloadAttribute() const { return m_triggeringAction.downloadAttribute(); }
 
     WEBCORE_EXPORT void applyPoliciesToSettings();
 
@@ -645,7 +644,6 @@ private:
 
     bool m_allowsWebArchiveForMainFrame { false };
     bool m_allowsDataURLsForMainFrame { false };
-    String m_downloadAttribute;
 };
 
 inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)
