@@ -106,6 +106,10 @@
     -webkit-appearance: none;
 }
 
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:focus {
+    outline-offset: var(--focus-ring-outline-offset);
+}
+
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle::before {
     position: absolute;
     content: "";

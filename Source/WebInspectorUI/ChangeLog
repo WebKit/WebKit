@@ -1,3 +1,16 @@
+2020-04-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Elements: Classes toggle button has wrong outline on focus
+        https://bugs.webkit.org/show_bug.cgi?id=211104
+        <rdar://problem/62475340>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:focus):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2020-04-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r258730): Web Inspector: Sidebar tabs have incorrect tabIndex

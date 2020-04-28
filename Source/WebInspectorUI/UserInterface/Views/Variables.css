@@ -183,6 +183,8 @@
     --odd-zebra-stripe-row-background-color: white;
     --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
 
+    --focus-ring-outline-offset: -2px;
+
     --undocked-title-area-height: 0px;
     --tab-bar-height: var(--navigation-bar-height);
     --navigation-bar-height: 29px;
