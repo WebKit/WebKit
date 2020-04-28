@@ -532,8 +532,8 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer, OSRExitPtrTag,
-        "FTL OSR exit #%u (%s, %s) from %s, with operands = %s",
-            exitID, toCString(exit.m_codeOrigin).data(),
+        "FTL OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
+            exitID, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
             toCString(ignoringContext<DumpContext>(exit.m_descriptor->m_values)).data()
         );

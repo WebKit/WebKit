@@ -49,7 +49,7 @@
 namespace JSC { namespace DFG {
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
-    : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic, jit->m_origin.wasHoisted)
+    : OSRExitBase(kind, jit->m_origin.forExit, jit->m_origin.semantic, jit->m_origin.wasHoisted, jit->m_currentNode ? jit->m_currentNode->index() : 0)
     , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_recoveryIndex(recoveryIndex)
@@ -209,8 +209,8 @@ void JIT_OPERATION operationCompileOSRExit(CallFrame* callFrame)
         exit.m_code = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
             patchBuffer, OSRExitPtrTag,
-            "DFG OSR exit #%u (%s, %s) from %s, with operands = %s",
-                exitIndex, toCString(exit.m_codeOrigin).data(),
+            "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
+                exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
     }

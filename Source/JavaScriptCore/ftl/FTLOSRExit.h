@@ -92,7 +92,7 @@ struct OSRExitDescriptor {
     // this call, the OSRExit is simply ready to go.
     Ref<OSRExitHandle> emitOSRExit(
         State&, ExitKind, const DFG::NodeOrigin&, CCallHelpers&, const B3::StackmapGenerationParams&,
-        unsigned offset = 0);
+        uint32_t dfgNodeIndex, unsigned offset);
 
     // In some cases you want an OSRExit to come into existence, but you don't want to emit it right now.
     // This will emit the OSR exit in a late path. You can't be sure exactly when that will happen, but
@@ -104,7 +104,7 @@ struct OSRExitDescriptor {
     // eventually gets access to its label.
     Ref<OSRExitHandle> emitOSRExitLater(
         State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
-        unsigned offset = 0);
+        uint32_t dfgNodeIndex, unsigned offset);
 
 private:
     // This is the low-level interface. It will create a handle representing the desire to emit code for
@@ -112,11 +112,11 @@ private:
     // that the above two APIs are written in terms of this and OSRExitHandle::emitExitThunk().
     Ref<OSRExitHandle> prepareOSRExitHandle(
         State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
-        unsigned offset = 0);
+        uint32_t dfgNodeIndex, unsigned offset);
 };
 
 struct OSRExit : public DFG::OSRExitBase {
-    OSRExit(OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted);
+    OSRExit(OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex);
 
     OSRExitDescriptor* m_descriptor;
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;

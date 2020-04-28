@@ -1,3 +1,31 @@
+2020-04-27  Keith Miller  <keith_miller@apple.com>
+
+        OSR Exit compiler should know and print the exiting DFG node's index
+        https://bugs.webkit.org/show_bug.cgi?id=210998
+
+        Reviewed by Mark Lam.
+
+        The only interesting thing here is that we set the node to index 0 if there is no node.
+        AFAICT, we only don't have a node when we are checking arguments.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::operationCompileOSRExit):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::blessSpeculation):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::emitOSRExit):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExitLater):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2020-04-27  Saam Barati  <sbarati@apple.com>
 
         compilePeepHoleBigInt32Branch needs to handle all conditions
