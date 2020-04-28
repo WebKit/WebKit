@@ -140,21 +140,29 @@ static inline short pressedMouseButtons(GdkModifierType state)
 
 WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int currentClickCount, Optional<IntPoint> delta)
 {
-    double x, y, xRoot, yRoot;
+    double x, y;
     gdk_event_get_coords(event, &x, &y);
+    double xRoot, yRoot;
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
+
+    return createWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, { clampToInteger(xRoot), clampToInteger(yRoot) }, currentClickCount, delta);
+}
+
+WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const IntPoint& position, const IntPoint& globalPosition, int currentClickCount, Optional<IntPoint> delta)
+{
+#if USE(GTK4)
+    // This can happen when a NativeWebMouseEvent representing a crossing event is copied.
+    if (!event)
+        return createWebMouseEvent(position);
+#endif
 
     GdkModifierType state = static_cast<GdkModifierType>(0);
     gdk_event_get_state(event, &state);
 
-    guint eventButton;
-    gdk_event_get_button(event, &eventButton);
-
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
     IntPoint movementDelta;
 
-    GdkEventType eventType = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
-    switch (eventType) {
+    switch (gdk_event_get_event_type(const_cast<GdkEvent*>(event))) {
     case GDK_MOTION_NOTIFY:
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
@@ -168,12 +176,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 #endif
     case GDK_BUTTON_PRESS: {
         type = WebEvent::MouseDown;
+        guint eventButton;
+        gdk_event_get_button(event, &eventButton);
         auto modifier = stateModifierForGdkButton(eventButton);
         state = static_cast<GdkModifierType>(state | modifier);
         break;
     }
     case GDK_BUTTON_RELEASE: {
         type = WebEvent::MouseUp;
+        guint eventButton;
+        gdk_event_get_button(event, &eventButton);
         auto modifier = stateModifierForGdkButton(eventButton);
         state = static_cast<GdkModifierType>(state & ~modifier);
         break;
@@ -185,14 +197,20 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
     return WebMouseEvent(type,
         buttonForEvent(event),
         pressedMouseButtons(state),
-        IntPoint(x, y),
-        IntPoint(xRoot, yRoot),
+        position,
+        globalPosition,
         movementDelta.x(),
         movementDelta.y(),
         0 /* deltaZ */,
         currentClickCount,
         modifiersForEvent(event),
         wallTimeForEvent(event));
+}
+
+WebMouseEvent WebEventFactory::createWebMouseEvent(const IntPoint& position)
+{
+    // Mouse events without GdkEvent are crossing events, handled as a mouse move.
+    return WebMouseEvent(WebEvent::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, { }, WallTime::now());
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)

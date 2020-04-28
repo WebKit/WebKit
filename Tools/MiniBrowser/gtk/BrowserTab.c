@@ -398,38 +398,42 @@ static void browserTabConstructed(GObject *gObject)
 #if !GTK_CHECK_VERSION(3, 98, 0)
     tab->searchBar = BROWSER_SEARCH_BAR(browser_search_bar_new(tab->webView));
     gtk_box_pack_start(GTK_BOX(tab), GTK_WIDGET(tab->searchBar), FALSE, FALSE, 0);
+#endif
 
     GtkWidget *overlay = gtk_overlay_new();
-    gtk_box_pack_start(GTK_BOX(tab), overlay, TRUE, TRUE, 0);
+    gtk_container_add(GTK_CONTAINER(tab), overlay);
     gtk_widget_show(overlay);
 
     tab->statusLabel = gtk_label_new(NULL);
     gtk_widget_set_halign(tab->statusLabel, GTK_ALIGN_START);
     gtk_widget_set_valign(tab->statusLabel, GTK_ALIGN_END);
+#if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_widget_set_margin_left(tab->statusLabel, 1);
     gtk_widget_set_margin_right(tab->statusLabel, 1);
     gtk_widget_set_margin_top(tab->statusLabel, 1);
     gtk_widget_set_margin_bottom(tab->statusLabel, 1);
+#endif
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->statusLabel);
 
     tab->fullScreenMessageLabel = gtk_label_new(NULL);
     gtk_widget_set_halign(tab->fullScreenMessageLabel, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(tab->fullScreenMessageLabel, GTK_ALIGN_CENTER);
+#if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_widget_set_no_show_all(tab->fullScreenMessageLabel, TRUE);
+#endif
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->fullScreenMessageLabel);
 
     tab->pointerLockMessageLabel = gtk_label_new(NULL);
     gtk_widget_set_halign(tab->pointerLockMessageLabel, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(tab->pointerLockMessageLabel, GTK_ALIGN_START);
+#if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_widget_set_no_show_all(tab->pointerLockMessageLabel, TRUE);
+#endif
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->pointerLockMessageLabel);
 
+    gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));
-#else
-    gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
-    gtk_container_add(GTK_CONTAINER(tab), GTK_WIDGET(tab->webView));
-#endif
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
     tab->titleBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);

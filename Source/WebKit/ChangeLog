@@ -1,3 +1,24 @@
+2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support for motion events
+        https://bugs.webkit.org/show_bug.cgi?id=211073
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle enter, leave and motion events using a GtkEventControllerMotion.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEnter):
+        (webkitWebViewBaseMotion):
+        (webkitWebViewBaseLeave):
+        (webkitWebViewBaseConstructed):
+
 2020-04-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late April 2020 edition

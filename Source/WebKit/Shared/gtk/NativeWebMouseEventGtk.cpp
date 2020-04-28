@@ -37,9 +37,20 @@ NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, int eventClickCount, O
 {
 }
 
+NativeWebMouseEvent::NativeWebMouseEvent(GdkEvent* event, const WebCore::IntPoint& position, int eventClickCount, Optional<WebCore::IntPoint> delta)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position, position, eventClickCount, delta))
+    , m_nativeEvent(gdk_event_copy(event))
+{
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::IntPoint& position)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(position))
+{
+}
+
 NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& event)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event.nativeEvent(), event.clickCount(), WebCore::IntPoint(event.deltaX(), event.deltaY())))
-    , m_nativeEvent(gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())))
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event.nativeEvent(), event.position(), event.globalPosition(), event.clickCount(), WebCore::IntPoint(event.deltaX(), event.deltaY())))
+    , m_nativeEvent(event.nativeEvent() ? gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())) : nullptr)
 {
 }
 

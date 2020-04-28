@@ -1111,6 +1111,51 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
 }
 #endif
 
+#if USE(GTK4)
+static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, double y, GdkCrossingMode, GtkEventController*)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+#if ENABLE(DEVELOPER_MODE)
+    // Do not send mouse move events to the WebProcess for crossing events during testing.
+    // WTR never generates crossing events and they can confuse tests.
+    // https://bugs.webkit.org/show_bug.cgi?id=185072.
+    if (UNLIKELY(priv->pageProxy->process().processPool().configuration().fullySynchronousModeIsAllowedForTesting()))
+        return;
+#endif
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ clampToInteger(x), clampToInteger(y) }));
+}
+
+static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController* controller)
+{
+    // FIXME: Forward event to dialog.
+    // FIXME: Pointer lock.
+    webViewBase->priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_event_controller_get_current_event(controller), { clampToInteger(x), clampToInteger(y) }, 0, WTF::nullopt));
+
+    return GDK_EVENT_PROPAGATE;
+}
+
+static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMode, GtkEventController*)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+#if ENABLE(DEVELOPER_MODE)
+    // Do not send mouse move events to the WebProcess for crossing events during testing.
+    // WTR never generates crossing events and they can confuse tests.
+    // https://bugs.webkit.org/show_bug.cgi?id=185072.
+    if (UNLIKELY(priv->pageProxy->process().processPool().configuration().fullySynchronousModeIsAllowedForTesting()))
+        return;
+#endif
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ -1, -1 }));
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS) && !USE(GTK4)
 static void appendTouchEvent(Vector<WebPlatformTouchPoint>& touchPoints, const GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
 {
@@ -1520,6 +1565,12 @@ static void webkitWebViewBaseConstructed(GObject* object)
 #if USE(GTK4)
     auto* controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
     g_signal_connect_object(controller, "scroll", G_CALLBACK(webkitWebViewBaseScroll), viewWidget, G_CONNECT_SWAPPED);
+    gtk_widget_add_controller(viewWidget, controller);
+
+    controller = gtk_event_controller_motion_new();
+    g_signal_connect_object(controller, "enter", G_CALLBACK(webkitWebViewBaseEnter), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(controller, "motion", G_CALLBACK(webkitWebViewBaseMotion), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(controller, "leave", G_CALLBACK(webkitWebViewBaseLeave), viewWidget, G_CONNECT_SWAPPED);
     gtk_widget_add_controller(viewWidget, controller);
 #endif
 }

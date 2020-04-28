@@ -1,3 +1,15 @@
+2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support for motion events
+        https://bugs.webkit.org/show_bug.cgi?id=211073
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the GtkOverlay in GTK4 too so that status label is shown when hovering elements.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browserTabConstructed):
+
 2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4][Wayland] Add support for rendering web view contents
