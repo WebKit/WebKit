@@ -549,14 +549,10 @@ SLOW_PATH_DECL(slow_path_negate)
 
 #if USE(BIGINT32)
     if (primValue.isBigInt32()) {
-        int32_t value = primValue.bigInt32AsInt32();
-        if (value != INT_MIN) {
-            auto result = jsBigInt32(-value);
-            RETURN_WITH_PROFILING(result, {
-                updateArithProfileForUnaryArithOp(metadata, result, operand);
-            });
-        } else
-            primValue = JSBigInt::createFrom(vm, value);
+        JSValue result = JSBigInt::unaryMinus(vm, primValue.bigInt32AsInt32());
+        RETURN_WITH_PROFILING(result, {
+            updateArithProfileForUnaryArithOp(metadata, result, operand);
+        });
     }
 #endif
 

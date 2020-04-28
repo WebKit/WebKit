@@ -71,20 +71,12 @@ NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSV
     auto doubleOp = [] (double left, double right) -> double {
         return left + right;
     };
-    auto bigInt32Op = [] (int32_t left, int32_t right) -> JSValue {
-#if USE(BIGINT32)
-        CheckedInt32 result = left;
-        result += right;
-        if (UNLIKELY(result.hasOverflowed()))
-            return JSValue();
-        return jsBigInt32(result.unsafeGet());
-#else
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::add(globalObject, left, right);
     };
-    RELEASE_AND_RETURN(scope, arithmeticBinaryOp(globalObject, p1, p2, JSBigInt::add, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in addition."_s));
+
+    RELEASE_AND_RETURN(scope, arithmeticBinaryOp(globalObject, p1, p2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in addition."_s));
 }
 
 JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)

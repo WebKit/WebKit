@@ -244,21 +244,14 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt(JSValue left, JSValue rig
     ASSERT(right.isBigInt());
 #if USE(BIGINT32)
     if (left.isBigInt32()) {
-        if (right.isBigInt32()) {
-            int32_t leftInt32 = left.bigInt32AsInt32();
-            int32_t rightInt32 = right.bigInt32AsInt32();
-            if (leftInt32 == rightInt32)
-                return JSBigInt::ComparisonResult::Equal;
-            if (leftInt32 < rightInt32)
-                return JSBigInt::ComparisonResult::LessThan;
-            return JSBigInt::ComparisonResult::GreaterThan;
-        }
+        if (right.isBigInt32())
+            return JSBigInt::compare(left.bigInt32AsInt32(), right.bigInt32AsInt32());
         ASSERT(right.isHeapBigInt());
-        return invertBigIntCompareResult(right.asHeapBigInt()->compareToInt32(left.bigInt32AsInt32()));
+        return JSBigInt::compare(left.bigInt32AsInt32(), right.asHeapBigInt());
     }
     if (right.isBigInt32()) {
         ASSERT(left.isHeapBigInt());
-        return left.asHeapBigInt()->compareToInt32(right.bigInt32AsInt32());
+        return JSBigInt::compare(left.asHeapBigInt(), right.bigInt32AsInt32());
     }
 #endif
     return JSBigInt::compare(left.asHeapBigInt(), right.asHeapBigInt());
@@ -317,7 +310,7 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt32ToOtherPrimitive(JSGloba
             return JSBigInt::ComparisonResult::Undefined;
 
         if (bigIntValue.isHeapBigInt())
-            return invertBigIntCompareResult(bigIntValue.asHeapBigInt()->compareToInt32(v1));
+            return JSBigInt::compare(v1, bigIntValue.asHeapBigInt());
 
         ASSERT(bigIntValue.isBigInt32());
 #if USE(BIGINT32)
@@ -534,9 +527,8 @@ ALWAYS_INLINE JSValue jsAdd(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     return jsAddNonNumber(globalObject, v1, v2);
 }
 
-// BigInt32Op expects its operands unboxed, and returns its result unboxed as well
-template<typename HeapBigIntOperation, typename DoubleOperation, typename BigInt32Op>
-ALWAYS_INLINE JSValue arithmeticBinaryOp(JSGlobalObject* globalObject, JSValue v1, JSValue v2, HeapBigIntOperation&& heapBigIntOp, DoubleOperation&& doubleOp, BigInt32Op&& bigInt32Op, const char* errorMessage)
+template<typename DoubleOperation, typename BigIntOp>
+ALWAYS_INLINE JSValue arithmeticBinaryOp(JSGlobalObject* globalObject, JSValue v1, JSValue v2, DoubleOperation&& doubleOp, BigIntOp&& bigIntOp, const char* errorMessage)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -551,28 +543,19 @@ ALWAYS_INLINE JSValue arithmeticBinaryOp(JSGlobalObject* globalObject, JSValue v
 
 #if USE(BIGINT32)
     if (leftNumeric.isBigInt32()) {
-        if (rightNumeric.isBigInt32()) {
-            if (JSValue result = bigInt32Op(leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()))
-                return result;
-            JSBigInt* leftHeapBigInt = JSBigInt::createFrom(vm, leftNumeric.bigInt32AsInt32());
-            JSBigInt* rightHeapBigInt = JSBigInt::createFrom(vm, rightNumeric.bigInt32AsInt32());
-            RELEASE_AND_RETURN(scope, heapBigIntOp(globalObject, leftHeapBigInt, rightHeapBigInt));
-        }
-        if (rightNumeric.isHeapBigInt()) {
-            JSBigInt* leftHeapBigInt = JSBigInt::createFrom(vm, leftNumeric.bigInt32AsInt32());
-            RELEASE_AND_RETURN(scope, heapBigIntOp(globalObject, leftHeapBigInt, rightNumeric.asHeapBigInt()));
-        }
+        if (rightNumeric.isBigInt32())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
+        if (rightNumeric.isHeapBigInt())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.asHeapBigInt()));
     } else if (leftNumeric.isHeapBigInt()) {
-        if (rightNumeric.isBigInt32()) {
-            JSBigInt* rightHeapBigInt = JSBigInt::createFrom(vm, rightNumeric.bigInt32AsInt32());
-            RELEASE_AND_RETURN(scope, heapBigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightHeapBigInt));
-        } else if (rightNumeric.isHeapBigInt())
-            RELEASE_AND_RETURN(scope, heapBigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+        if (rightNumeric.isBigInt32())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.bigInt32AsInt32()));
+        else if (rightNumeric.isHeapBigInt())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
     }
 #else
-    UNUSED_PARAM(bigInt32Op);
     if (leftNumeric.isHeapBigInt() && rightNumeric.isHeapBigInt())
-        RELEASE_AND_RETURN(scope, heapBigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+        RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
 #endif
 
     return throwTypeError(globalObject, scope, errorMessage);
@@ -583,21 +566,12 @@ ALWAYS_INLINE JSValue jsSub(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     auto doubleOp = [] (double left, double right) -> double {
         return left - right;
     };
-    auto bigInt32Op = [] (int32_t left, int32_t right) -> JSValue {
-#if USE(BIGINT32)
-        CheckedInt32 result = left;
-        result -= right;
-        if (UNLIKELY(result.hasOverflowed()))
-            return JSValue();
-        return jsBigInt32(result.unsafeGet());
-#else
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::sub(globalObject, left, right);
     };
 
-    return arithmeticBinaryOp(globalObject, v1, v2, JSBigInt::sub, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in subtraction."_s);
+    return arithmeticBinaryOp(globalObject, v1, v2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in subtraction."_s);
 }
 
 ALWAYS_INLINE JSValue jsMul(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -605,21 +579,12 @@ ALWAYS_INLINE JSValue jsMul(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     auto doubleOp = [] (double left, double right) -> double {
         return left * right;
     };
-    auto bigInt32Op = [] (int32_t left, int32_t right) -> JSValue {
-#if USE(BIGINT32)
-        CheckedInt32 result = left;
-        result *= right;
-        if (result.hasOverflowed())
-            return JSValue();
-        return jsBigInt32(result.unsafeGet());
-#else
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::multiply(globalObject, left, right);
     };
 
-    return arithmeticBinaryOp(globalObject, v1, v2, JSBigInt::multiply, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in multiplication."_s);
+    return arithmeticBinaryOp(globalObject, v1, v2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in multiplication."_s);
 }
 
 ALWAYS_INLINE JSValue jsDiv(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -627,19 +592,12 @@ ALWAYS_INLINE JSValue jsDiv(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     auto doubleOp = [] (double left, double right) -> double {
         return left / right;
     };
-    auto bigInt32Op = [] (int32_t left, int32_t right) -> JSValue {
-#if USE(BIGINT32)
-        if (!right)
-            return JSValue();
-        return jsBigInt32(left / right);
-#else
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::divide(globalObject, left, right);
     };
 
-    return arithmeticBinaryOp(globalObject, v1, v2, JSBigInt::divide, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in division."_s);
+    return arithmeticBinaryOp(globalObject, v1, v2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in division."_s);
 }
 
 ALWAYS_INLINE JSValue jsRemainder(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -647,12 +605,12 @@ ALWAYS_INLINE JSValue jsRemainder(JSGlobalObject* globalObject, JSValue v1, JSVa
     auto doubleOp = [] (double left, double right) -> double {
         return jsMod(left, right);
     };
-    auto bigInt32Op = [] (int32_t, int32_t) -> JSValue {
-        // FIXME: do something more clever here.
-        return JSValue();
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::remainder(globalObject, left, right);
     };
 
-    return arithmeticBinaryOp(globalObject, v1, v2, JSBigInt::remainder, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in remainder."_s);
+    return arithmeticBinaryOp(globalObject, v1, v2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in remainder."_s);
 }
 
 ALWAYS_INLINE JSValue jsPow(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -660,13 +618,12 @@ ALWAYS_INLINE JSValue jsPow(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     auto doubleOp = [] (double left, double right) -> double {
         return operationMathPow(left, right);
     };
-    auto bigInt32Op = [] (int32_t, int32_t) -> JSValue {
-        // Exponentiation on integers is both somewhat slow in the best case, and very likely to overflow.
-        // So don't bother trying to avoid a heap allocation in that case.
-        return JSValue();
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::exponentiate(globalObject, left, right);
     };
 
-    return arithmeticBinaryOp(globalObject, v1, v2, JSBigInt::exponentiate, doubleOp, bigInt32Op, "Invalid mix of BigInt and other type in exponentiation."_s);
+    return arithmeticBinaryOp(globalObject, v1, v2, doubleOp, bigIntOp, "Invalid mix of BigInt and other type in exponentiation."_s);
 }
 
 ALWAYS_INLINE JSValue jsInc(JSGlobalObject* globalObject, JSValue v)
@@ -681,13 +638,8 @@ ALWAYS_INLINE JSValue jsInc(JSGlobalObject* globalObject, JSValue v)
         return jsNumber(operandNumeric.asNumber() + 1);
 
 #if USE(BIGINT32)
-    if (operandNumeric.isBigInt32()) {
-        int64_t newValue = static_cast<int64_t>(operandNumeric.bigInt32AsInt32()) + 1;
-        // FIXME: the following next few lines might benefit from being made into a helper function
-        if (newValue > INT_MAX)
-            return JSBigInt::createFrom(vm, newValue);
-        return jsBigInt32(static_cast<int32_t>(newValue));
-    }
+    if (operandNumeric.isBigInt32())
+        return JSBigInt::inc(globalObject, operandNumeric.bigInt32AsInt32());
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
@@ -706,13 +658,8 @@ ALWAYS_INLINE JSValue jsDec(JSGlobalObject* globalObject, JSValue v)
         return jsNumber(operandNumeric.asNumber() - 1);
 
 #if USE(BIGINT32)
-    if (operandNumeric.isBigInt32()) {
-        int64_t newValue = static_cast<int64_t>(operandNumeric.bigInt32AsInt32()) - 1;
-        // FIXME: the following next few lines might benefit from being made into a helper function
-        if (newValue < INT_MIN)
-            return JSBigInt::createFrom(vm, newValue);
-        return jsBigInt32(static_cast<int32_t>(newValue));
-    }
+    if (operandNumeric.isBigInt32())
+        return JSBigInt::dec(globalObject, operandNumeric.bigInt32AsInt32());
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
@@ -732,14 +679,15 @@ ALWAYS_INLINE JSValue jsBitwiseNot(JSGlobalObject* globalObject, JSValue v)
 
 #if USE(BIGINT32)
     if (operandNumeric.isBigInt32())
-        return jsBigInt32(~operandNumeric.bigInt32AsInt32());
+        return JSBigInt::bitwiseNot(globalObject, operandNumeric.bigInt32AsInt32());
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
     RELEASE_AND_RETURN(scope, JSBigInt::bitwiseNot(globalObject, operandNumeric.asHeapBigInt()));
 }
 
-ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2, bool isLeft)
+template <bool isLeft>
+ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -757,70 +705,50 @@ ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     }
 
 #if USE(BIGINT32)
-    if (leftNumeric.isBigInt32() && rightNumeric.isBigInt32()) {
-        int32_t leftInt32 = leftNumeric.bigInt32AsInt32();
-        int32_t rightInt32 = rightNumeric.bigInt32AsInt32();
-        if (rightInt32 < 0) {
-            isLeft = !isLeft;
-            if (rightInt32 == INT32_MIN)
-                rightInt32 = INT32_MAX; // Shifts one less than requested, but makes no observable difference.
-            else
-                rightInt32 = -rightInt32;
+    if (leftNumeric.isBigInt32()) {
+        if (rightNumeric.isBigInt32()) {
+            if (isLeft)
+                RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
+            RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
         }
-        ASSERT(rightInt32 >= 0);
-
-        // This std::min is a bit hacky, but required because in C++ it is undefined behavior to do a shift where the right operand is greater or equal to the bit-width of the left operand.
-        if (!isLeft)
-            return jsBigInt32(leftInt32 >> std::min(rightInt32, 31));
-
-        // Do some checks to detect overflow of left-shift. But this is much cheaper compared to allocating two JSBigInt and perform shift operations in JSBigInt.
-        if (!leftInt32)
-            return jsBigInt32(0);
-        if (rightInt32 < 32) {
-            int64_t result64 = static_cast<int64_t>(leftInt32) << rightInt32;
-            if (static_cast<int64_t>(static_cast<int32_t>(result64)) == result64)
-                return jsBigInt32(static_cast<int32_t>(result64));
+        if (rightNumeric.isHeapBigInt()) {
+            if (isLeft)
+                RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.asHeapBigInt()));
+            RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.asHeapBigInt()));
         }
-
-        // In the case of a left shift we can overflow. I deal with this by allocating HeapBigInts.
-        // FIXME: it might be possible to do something smarter, trying to do the left shift and detecting somehow if it overflowed.
-        JSBigInt* leftHeapBigInt = JSBigInt::createFrom(vm, leftInt32);
-        JSBigInt* rightHeapBigInt = JSBigInt::createFrom(vm, rightInt32);
-        if (isLeft)
-            RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftHeapBigInt, rightHeapBigInt));
-        RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftHeapBigInt, rightHeapBigInt));
+    } else if (leftNumeric.isHeapBigInt()) {
+        if (rightNumeric.isBigInt32()) {
+            if (isLeft)
+                RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.bigInt32AsInt32()));
+            RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.bigInt32AsInt32()));
+        } else if (rightNumeric.isHeapBigInt()) {
+            if (isLeft)
+                RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+            RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+        }
     }
-#endif
-
-    if (UNLIKELY(!(leftNumeric.isBigInt() && rightNumeric.isBigInt()))) {
-        auto errorMessage = isLeft ? "Invalid mix of BigInt and other type in left shift operation." : "Invalid mix of BigInt and other type in signed right shift operation.";
-        return throwTypeError(globalObject, scope, errorMessage);
-    }
-
-    // FIXME: we should have a case for left is HeapBigInt and right is BigInt32, it seems fairly likely to occur frequently.
-#if USE(BIGINT32)
-    JSBigInt* leftHeapBigInt = leftNumeric.isBigInt32() ? JSBigInt::createFrom(vm, leftNumeric.bigInt32AsInt32()) : leftNumeric.asHeapBigInt();
-    JSBigInt* rightHeapBigInt = rightNumeric.isBigInt32() ? JSBigInt::createFrom(vm, rightNumeric.bigInt32AsInt32()) : rightNumeric.asHeapBigInt();
 #else
-    JSBigInt* leftHeapBigInt = leftNumeric.asHeapBigInt();
-    JSBigInt* rightHeapBigInt = rightNumeric.asHeapBigInt();
+    if (leftNumeric.isHeapBigInt() && rightNumeric.isHeapBigInt()) {
+        if (isLeft)
+            RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+        RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+    }
 #endif
 
-    if (isLeft)
-        RELEASE_AND_RETURN(scope, JSBigInt::leftShift(globalObject, leftHeapBigInt, rightHeapBigInt));
-    RELEASE_AND_RETURN(scope, JSBigInt::signedRightShift(globalObject, leftHeapBigInt, rightHeapBigInt));
+    auto errorMessage = isLeft ? "Invalid mix of BigInt and other type in left shift operation." : "Invalid mix of BigInt and other type in signed right shift operation.";
+    return throwTypeError(globalObject, scope, errorMessage);
 }
 
 ALWAYS_INLINE JSValue jsLShift(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    bool isLeft = true;
-    return shift(globalObject, v1, v2, isLeft);
+    constexpr bool isLeft = true;
+    return shift<isLeft>(globalObject, v1, v2);
 }
 
 ALWAYS_INLINE JSValue jsRShift(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    bool isLeft = false;
-    return shift(globalObject, v1, v2, isLeft);
+    constexpr bool isLeft = false;
+    return shift<isLeft>(globalObject, v1, v2);
 }
 
 ALWAYS_INLINE JSValue jsURShift(JSGlobalObject* globalObject, JSValue left, JSValue right)
@@ -841,8 +769,8 @@ ALWAYS_INLINE JSValue jsURShift(JSGlobalObject* globalObject, JSValue left, JSVa
     return jsNumber(static_cast<int32_t>(leftUint32.value() >> (rightUint32.value() & 31)));
 }
 
-template<typename HeapBigIntOperation, typename Int32Operation>
-ALWAYS_INLINE JSValue bitwiseBinaryOp(JSGlobalObject* globalObject, JSValue v1, JSValue v2, HeapBigIntOperation&& bigIntOp, Int32Operation&& int32Op, const char* errorMessage)
+template<typename Int32Operation, typename BigIntOp>
+ALWAYS_INLINE JSValue bitwiseBinaryOp(JSGlobalObject* globalObject, JSValue v1, JSValue v2, Int32Operation&& int32Op, BigIntOp&& bigIntOp, const char* errorMessage)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -856,25 +784,23 @@ ALWAYS_INLINE JSValue bitwiseBinaryOp(JSGlobalObject* globalObject, JSValue v1, 
         return jsNumber(int32Op(leftNumeric.asInt32(), rightNumeric.asInt32()));
 
 #if USE(BIGINT32)
-    if (leftNumeric.isBigInt32() && rightNumeric.isBigInt32())
-        return jsBigInt32(int32Op(leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
-    // FIXME: add fast path for BigInt32 / HeapBigInt, and for HeapBigInt / BigInt32
-    // In many cases these could be made more efficient than heap-allocating the small big-int and going through the generic path.
-    // But it is quite tricky, not least because HeapBigInt use a sign bit whereas BigInt32 use 2-complement representation.
-#endif
-
-    if (!(leftNumeric.isBigInt() && rightNumeric.isBigInt()))
-        return throwTypeError(globalObject, scope, errorMessage);
-
-#if USE(BIGINT32)
-    JSBigInt* leftHeapBigInt = leftNumeric.isBigInt32() ? JSBigInt::createFrom(vm, leftNumeric.bigInt32AsInt32()) : leftNumeric.asHeapBigInt();
-    JSBigInt* rightHeapBigInt = rightNumeric.isBigInt32() ? JSBigInt::createFrom(vm, rightNumeric.bigInt32AsInt32()) : rightNumeric.asHeapBigInt();
+    if (leftNumeric.isBigInt32()) {
+        if (rightNumeric.isBigInt32())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.bigInt32AsInt32()));
+        if (rightNumeric.isHeapBigInt())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.bigInt32AsInt32(), rightNumeric.asHeapBigInt()));
+    } else if (leftNumeric.isHeapBigInt()) {
+        if (rightNumeric.isBigInt32())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.bigInt32AsInt32()));
+        else if (rightNumeric.isHeapBigInt())
+            RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
+    }
 #else
-    JSBigInt* leftHeapBigInt = leftNumeric.asHeapBigInt();
-    JSBigInt* rightHeapBigInt = rightNumeric.asHeapBigInt();
+    if (leftNumeric.isHeapBigInt() && rightNumeric.isHeapBigInt())
+        RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftNumeric.asHeapBigInt(), rightNumeric.asHeapBigInt()));
 #endif
 
-    RELEASE_AND_RETURN(scope, bigIntOp(globalObject, leftHeapBigInt, rightHeapBigInt));
+    return throwTypeError(globalObject, scope, errorMessage);
 }
 
 ALWAYS_INLINE JSValue jsBitwiseAnd(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -883,9 +809,13 @@ ALWAYS_INLINE JSValue jsBitwiseAnd(JSGlobalObject* globalObject, JSValue v1, JSV
         return left & right;
     };
 
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::bitwiseAnd(globalObject, left, right);
+    };
+
     // FIXME: currently, for pairs of BigInt32, we unbox them, do the "and" and re-box them.
     // We could do it directly on the JSValue.
-    return bitwiseBinaryOp(globalObject, v1, v2, JSBigInt::bitwiseAnd, int32Op, "Invalid mix of BigInt and other type in bitwise 'and' operation."_s);
+    return bitwiseBinaryOp(globalObject, v1, v2, int32Op, bigIntOp, "Invalid mix of BigInt and other type in bitwise 'and' operation."_s);
 }
 
 ALWAYS_INLINE JSValue jsBitwiseOr(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -896,7 +826,12 @@ ALWAYS_INLINE JSValue jsBitwiseOr(JSGlobalObject* globalObject, JSValue v1, JSVa
 
     // FIXME: currently, for pairs of BigInt32, we unbox them, do the "or" and re-box them.
     // We could do it directly on the JSValue.
-    return bitwiseBinaryOp(globalObject, v1, v2, JSBigInt::bitwiseOr, int32Op, "Invalid mix of BigInt and other type in bitwise 'or' operation."_s);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::bitwiseOr(globalObject, left, right);
+    };
+
+    return bitwiseBinaryOp(globalObject, v1, v2, int32Op, bigIntOp, "Invalid mix of BigInt and other type in bitwise 'or' operation."_s);
 }
 
 ALWAYS_INLINE JSValue jsBitwiseXor(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
@@ -907,7 +842,11 @@ ALWAYS_INLINE JSValue jsBitwiseXor(JSGlobalObject* globalObject, JSValue v1, JSV
 
     // FIXME: currently, for pairs of BigInt32, we unbox them, do the "xor" and re-box them.
     // We could do it directly on the JSValue, and just remember to do an or with 0x12 at the end to restore the tag
-    return bitwiseBinaryOp(globalObject, v1, v2, JSBigInt::bitwiseXor, int32Op, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
+    auto bigIntOp = [] (JSGlobalObject* globalObject, auto left, auto right) {
+        return JSBigInt::bitwiseXor(globalObject, left, right);
+    };
+
+    return bitwiseBinaryOp(globalObject, v1, v2, int32Op, bigIntOp, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
 }
 
 ALWAYS_INLINE EncodedJSValue getByValWithIndex(JSGlobalObject* globalObject, JSCell* base, uint32_t index)

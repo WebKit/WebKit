@@ -27,7 +27,9 @@
 #pragma once
 
 #include "CPU.h"
+#include "Error.h"
 #include "ExceptionHelpers.h"
+#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include <wtf/CagedUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -35,6 +37,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
+
+class Int32BigIntImpl;
+class HeapBigIntImpl;
 
 class JSBigInt final : public JSCell {
 public:
@@ -121,39 +126,20 @@ public:
         LessThan
     };
 
-    static ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt* bigInt)
-    {
-#if USE(BIGINT32)
-        if (UNLIKELY(!bigInt))
-            return JSValue();
-
-        if (bigInt->length() <= 1) {
-            if (!bigInt->length())
-                return jsBigInt32(0);
-            Digit digit = bigInt->digit(0);
-            if (bigInt->sign()) {
-                static constexpr uint64_t maxValue = -static_cast<int64_t>(std::numeric_limits<int32_t>::min());
-                if (digit <= maxValue)
-                    return jsBigInt32(static_cast<int32_t>(-static_cast<int64_t>(digit)));
-            } else {
-                static constexpr uint64_t maxValue = static_cast<uint64_t>(std::numeric_limits<int32_t>::max());
-                if (digit <= maxValue)
-                    return jsBigInt32(static_cast<int32_t>(digit));
-            }
-        }
-#endif
-
-        return bigInt;
-    }
-
-    
     JS_EXPORT_PRIVATE static bool equals(JSBigInt*, JSBigInt*);
     bool equalsToNumber(JSValue);
     JS_EXPORT_PRIVATE bool equalsToInt32(int32_t);
-    JS_EXPORT_PRIVATE ComparisonResult compareToInt32(int32_t);
-    JS_EXPORT_PRIVATE bool lessThanInt32(int32_t);
-    JS_EXPORT_PRIVATE bool lessThanEqualInt32(int32_t);
     static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
+    static ComparisonResult compare(int32_t x, JSBigInt* y);
+    static ComparisonResult compare(JSBigInt* x, int32_t y);
+    static ComparisonResult compare(int32_t x, int32_t y)
+    {
+        if (x == y)
+            return JSBigInt::ComparisonResult::Equal;
+        if (x < y)
+            return JSBigInt::ComparisonResult::LessThan;
+        return JSBigInt::ComparisonResult::GreaterThan;
+    }
 
     bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue& result) const;
     double toNumber(JSGlobalObject*) const;
@@ -163,95 +149,249 @@ public:
 
     ComparisonResult static compareToDouble(JSBigInt* x, double y);
 
-    static JSBigInt* exponentiateHeap(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
-    static JSValue exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
+    ALWAYS_INLINE static JSValue asInt32OrHeapCell(VM& vm, int64_t value)
     {
-        return tryConvertToBigInt32(exponentiateHeap(globalObject, base, exponent));
+#if USE(BIGINT32)
+        if (static_cast<int64_t>(static_cast<int32_t>(value)) == value)
+            return jsBigInt32(static_cast<int32_t>(value));
+#endif
+        return createFrom(vm, value);
+    }
+    ALWAYS_INLINE static JSValue asInt32OrHeapCell(JSGlobalObject* globalObject, int64_t value)
+    {
+        return asInt32OrHeapCell(globalObject->vm(), value);
     }
 
-    static JSBigInt* multiplyHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+private:
+    friend class HeapBigIntImpl;
+public:
+    struct ImplResult {
+        ImplResult(HeapBigIntImpl&);
+        ImplResult(JSBigInt*);
+#if USE(BIGINT32)
+        ImplResult(Int32BigIntImpl&);
+#endif
+        ImplResult(JSValue);
+        JSValue payload;
+    };
+private:
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult exponentiateImpl(JSGlobalObject*, BigIntImpl1 base, BigIntImpl2 exponent);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult multiplyImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult incImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl>
+    static ImplResult decImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult addImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult subImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult divideImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult remainderImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult unaryMinusImpl(VM&, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseAndImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseOrImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult bitwiseXorImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl>
+    static ImplResult bitwiseNotImpl(JSGlobalObject*, BigIntImpl x);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult leftShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult signedRightShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ComparisonResult compareImpl(BigIntImpl1 x, BigIntImpl2 y);
+
+public:
+    static JSValue exponentiate(JSGlobalObject*, JSBigInt* base, JSBigInt* exponent);
+#if USE(BIGINT32)
+    static JSValue exponentiate(JSGlobalObject*, JSBigInt* base, int32_t exponent);
+    static JSValue exponentiate(JSGlobalObject*, int32_t base, JSBigInt* exponent);
+    static JSValue exponentiate(JSGlobalObject*, int32_t base, int32_t exponent);
+#endif
+
+    static JSValue multiply(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue multiply(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue multiply(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue multiply(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(multiplyHeap(globalObject, x, y));
+        int64_t result = static_cast<int64_t>(x) * static_cast<int64_t>(y); 
+        return asInt32OrHeapCell(globalObject, result);
     }
+#endif
     
-    static JSBigInt* incHeap(JSGlobalObject*, JSBigInt* x);
-    static JSValue inc(JSGlobalObject* globalObject, JSBigInt* x)
+    static JSValue inc(JSGlobalObject*, JSBigInt* x);
+#if USE(BIGINT32)
+    static JSValue inc(JSGlobalObject* globalObject, int32_t x)
     {
-        return tryConvertToBigInt32(incHeap(globalObject, x));
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) + 1);
     }
+#endif
 
-    static JSBigInt* decHeap(JSGlobalObject*, JSBigInt* x);
-    static JSValue dec(JSGlobalObject* globalObject, JSBigInt* x)
+    static JSValue dec(JSGlobalObject*, JSBigInt* x);
+#if USE(BIGINT32)
+    static JSValue dec(JSGlobalObject* globalObject, int32_t x)
     {
-        return tryConvertToBigInt32(decHeap(globalObject, x));
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) - 1);
     }
+#endif
 
-    static JSBigInt* addHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue add(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue add(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue add(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue add(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(addHeap(globalObject, x, y));
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) + static_cast<int64_t>(y));
     }
+#endif
 
-    static JSBigInt* subHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue sub(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue sub(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue sub(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue sub(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return subHeap(globalObject, x, y);
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) - static_cast<int64_t>(y));
     }
+#endif
 
-    static JSBigInt* divideHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue divide(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue divide(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue divide(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue divide(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(divideHeap(globalObject, x, y));
+        if (!y) {
+            auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+            throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
+            return JSValue();
+        }
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) / static_cast<int64_t>(y));
     }
+#endif
 
-    static JSBigInt* remainderHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue remainder(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue remainder(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue remainder(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue remainder(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(remainderHeap(globalObject, x, y));
+        if (!y) {
+            auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+            throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
+            return JSValue();
+        }
+        return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) % static_cast<int64_t>(y));
     }
+#endif
 
-    static JSBigInt* unaryMinusHeap(VM&, JSBigInt* x);
-    static JSValue unaryMinus(VM& vm, JSBigInt* x)
+    static JSValue unaryMinus(VM&, JSBigInt* x);
+#if USE(BIGINT32)
+    static JSValue unaryMinus(VM& vm, int32_t x)
     {
-        return tryConvertToBigInt32(unaryMinusHeap(vm, x));
+        return asInt32OrHeapCell(vm, -static_cast<int64_t>(x));
     }
+#endif
 
-    static JSBigInt* bitwiseAndHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue bitwiseAnd(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue bitwiseAnd(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue bitwiseAnd(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue bitwiseAnd(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(bitwiseAndHeap(globalObject, x, y));
+        return asInt32OrHeapCell(globalObject, x & y);
     }
+#endif
 
-    static JSBigInt* bitwiseOrHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue bitwiseOr(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue bitwiseOr(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue bitwiseOr(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue bitwiseOr(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(bitwiseOrHeap(globalObject, x, y));
+        return asInt32OrHeapCell(globalObject, x | y);
     }
+#endif
 
-    static JSBigInt* bitwiseXorHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue bitwiseXor(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue bitwiseXor(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue bitwiseXor(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue bitwiseXor(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(bitwiseXorHeap(globalObject, x, y));
+        return asInt32OrHeapCell(globalObject, x ^ y);
     }
+#endif
 
-    static JSBigInt* bitwiseNotHeap(JSGlobalObject*, JSBigInt* x);
-    static JSValue bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
+    static JSValue bitwiseNot(JSGlobalObject*, JSBigInt* x);
+#if USE(BIGINT32)
+    static JSValue bitwiseNot(JSGlobalObject* globalObject, int32_t x)
     {
-        return tryConvertToBigInt32(bitwiseNotHeap(globalObject, x));
+        return asInt32OrHeapCell(globalObject, ~x);
     }
+#endif
 
-    static JSBigInt* leftShiftHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
+    static JSValue leftShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue leftShift(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue leftShift(JSGlobalObject*, int32_t x, JSBigInt* y);
+private:
+    static JSValue leftShiftSlow(JSGlobalObject*, int32_t x, int32_t y);
+public:
+    static JSValue leftShift(JSGlobalObject* globalObject, int32_t x, int32_t y)
     {
-        return tryConvertToBigInt32(leftShiftHeap(globalObject, x, y));
-    }
+        if (y < 0) {
+            // Shifts one less than requested, but doesn't matter since lhs is int32
+            return signedRightShift(globalObject, x, y == INT32_MIN ? INT32_MAX : -y);
+        }
 
-    static JSBigInt* signedRightShiftHeap(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSValue signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
-    {
-        return tryConvertToBigInt32(signedRightShiftHeap(globalObject, x, y));
+        // Do some checks to detect overflow of left-shift. But this is much cheaper compared to allocating two JSBigInt and perform shift operations in JSBigInt.
+        if (!x)
+            return jsBigInt32(0);
+        if (y < 32)
+            return asInt32OrHeapCell(globalObject, static_cast<int64_t>(x) << y);
+        return leftShiftSlow(globalObject, x, y);
     }
+#endif
+
+    static JSValue signedRightShift(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+#if USE(BIGINT32)
+    static JSValue signedRightShift(JSGlobalObject*, JSBigInt* x, int32_t y);
+    static JSValue signedRightShift(JSGlobalObject*, int32_t x, JSBigInt* y);
+    static JSValue signedRightShift(JSGlobalObject* globalObject, int32_t x, int32_t y)
+    {
+        if (y < 0) {
+            // Shifts one less than requested, but doesn't matter since lhs is int32
+            return leftShift(globalObject, x, y == INT32_MIN ? INT32_MAX : -y);
+        }
+
+        return jsBigInt32(x >> std::min(y, 31));
+    }
+#endif
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
@@ -275,18 +415,24 @@ private:
     
     static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
     
-    static ComparisonResult absoluteCompare(JSBigInt* x, JSBigInt* y);
-    static void absoluteDivWithDigitDivisor(VM&, JSBigInt* x, Digit divisor, JSBigInt** quotient, Digit& remainder);
-    static void internalMultiplyAdd(JSBigInt* source, Digit factor, Digit summand, unsigned, JSBigInt* result);
-    static void multiplyAccumulate(JSBigInt* multiplicand, Digit multiplier, JSBigInt* accumulator, unsigned accumulatorIndex);
-    static void absoluteDivWithBigIntDivisor(JSGlobalObject*, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ComparisonResult absoluteCompare(BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl>
+    static void absoluteDivWithDigitDivisor(VM&, BigIntImpl x, Digit divisor, JSBigInt** quotient, Digit& remainder);
+    template <typename BigIntImpl>
+    static void internalMultiplyAdd(BigIntImpl source, Digit factor, Digit summand, unsigned, JSBigInt* result);
+    template <typename BigIntImpl>
+    static void multiplyAccumulate(BigIntImpl multiplicand, Digit multiplier, JSBigInt* accumulator, unsigned accumulatorIndex);
+    template <typename BigIntImpl1>
+    static void absoluteDivWithBigIntDivisor(JSGlobalObject*, BigIntImpl1 dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder);
     
     enum class LeftShiftMode {
         SameSizeResult,
         AlwaysAddOneDigit
     };
     
-    static JSBigInt* absoluteLeftShiftAlwaysCopy(JSGlobalObject*, JSBigInt* x, unsigned shift, LeftShiftMode);
+    template <typename BigIntImpl>
+    static JSBigInt* absoluteLeftShiftAlwaysCopy(JSGlobalObject*, BigIntImpl x, unsigned shift, LeftShiftMode);
     static bool productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low);
 
     Digit absoluteInplaceAdd(JSBigInt* summand, unsigned startIndex);
@@ -298,26 +444,27 @@ private:
         Skip
     };
 
-    enum class SymmetricOp {
-        Symmetric,
-        NotSymmetric
-    };
+    template<typename BigIntImpl1, typename BigIntImpl2, typename BitwiseOp>
+    static JSBigInt* absoluteBitwiseOp(VM&, BigIntImpl1 x, BigIntImpl2 y, ExtraDigitsHandling, BitwiseOp&&);
 
-    template<typename BitwiseOp>
-    static JSBigInt* absoluteBitwiseOp(VM&, JSBigInt* x, JSBigInt* y, ExtraDigitsHandling, SymmetricOp, BitwiseOp&&);
-
-    static JSBigInt* absoluteAnd(VM&, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* absoluteOr(VM&, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* absoluteAndNot(VM&, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* absoluteXor(VM&, JSBigInt* x, JSBigInt* y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static JSBigInt* absoluteAnd(VM&, BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static JSBigInt* absoluteOr(VM&, BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static JSBigInt* absoluteAndNot(VM&, BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static JSBigInt* absoluteXor(VM&, BigIntImpl1 x, BigIntImpl2 y);
 
     enum class SignOption {
         Signed,
         Unsigned
     };
 
-    static JSBigInt* absoluteAddOne(JSGlobalObject*, JSBigInt* x, SignOption);
-    static JSBigInt* absoluteSubOne(JSGlobalObject*, JSBigInt* x, unsigned resultLength);
+    template <typename BigIntImpl>
+    static JSBigInt* absoluteAddOne(JSGlobalObject*, BigIntImpl x, SignOption);
+    template <typename BigIntImpl>
+    static JSBigInt* absoluteSubOne(JSGlobalObject*, BigIntImpl x, unsigned resultLength);
 
     // Digit arithmetic helpers.
     static Digit digitAdd(Digit a, Digit b, Digit& carry);
@@ -343,18 +490,24 @@ private:
 
     static JSBigInt* allocateFor(JSGlobalObject*, VM&, unsigned radix, unsigned charcount);
 
-    static JSBigInt* copy(VM&, JSBigInt* x);
+    template <typename BigIntImpl>
+    static JSBigInt* copy(VM&, BigIntImpl x);
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
-    static JSBigInt* absoluteAdd(JSGlobalObject*, JSBigInt* x, JSBigInt* y, bool resultSign);
-    static JSBigInt* absoluteSub(VM&, JSBigInt* x, JSBigInt* y, bool resultSign);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult absoluteAdd(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y, bool resultSign);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult absoluteSub(VM&, BigIntImpl1 x, BigIntImpl2 y, bool resultSign);
 
-    static JSBigInt* leftShiftByAbsolute(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
-    static JSBigInt* rightShiftByAbsolute(JSGlobalObject*, JSBigInt* x, JSBigInt* y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult leftShiftByAbsolute(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    template <typename BigIntImpl1, typename BigIntImpl2>
+    static ImplResult rightShiftByAbsolute(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
-    static JSBigInt* rightShiftByMaximum(VM&, bool sign);
+    static ImplResult rightShiftByMaximum(VM&, bool sign);
 
-    static Optional<Digit> toShiftAmount(JSBigInt* x);
+    template <typename BigIntImpl>
+    static Optional<Digit> toShiftAmount(BigIntImpl x);
 
     inline static size_t offsetOfData()
     {

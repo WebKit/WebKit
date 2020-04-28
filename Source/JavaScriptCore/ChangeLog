@@ -1,3 +1,147 @@
+2020-04-27  Saam Barati  <sbarati@apple.com>
+
+        BigInt math runtime shouldn't convert BigInt32 input operands to a heap cell when doing math
+        https://bugs.webkit.org/show_bug.cgi?id=210978
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds support in the runtime for doing alomst all BigInt math
+        operations on the inputs either being Int32, HeapBigInt, or a mixing
+        of both. Before, if we detected a binary operation on an Int32 and a
+        HeapBigInt, this would lead us to convert the Int32 operand into a HeapBigInt.
+        
+        This is especially bad because we'd repeat this for all math ops. For example,
+        if x is a BigInt32, and all rhs are a HeapBigInt, we'd repeatedly convert x
+        to a HeapBigInt for each operation:
+        ```
+        x + y
+        x * y
+        x - y
+        x >> y
+        x << y
+        etc
+        ```
+        
+        To teach the runtime how to operate both over a BigInt32 and a HeapBigInt, I
+        templatized the runtime math operations to work both over BigInt32 and
+        HeapBigInt wrapper classes that expose the same interface.
+        
+        This is a ~28% speedup on microbenchmarks/sunspider-sha1-big-int.js
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::HeapBigIntImpl::HeapBigIntImpl):
+        (JSC::HeapBigIntImpl::isZero):
+        (JSC::HeapBigIntImpl::sign):
+        (JSC::HeapBigIntImpl::length):
+        (JSC::HeapBigIntImpl::digit):
+        (JSC::HeapBigIntImpl::toHeapBigInt):
+        (JSC::Int32BigIntImpl::Int32BigIntImpl):
+        (JSC::Int32BigIntImpl::isZero):
+        (JSC::Int32BigIntImpl::sign):
+        (JSC::Int32BigIntImpl::length):
+        (JSC::Int32BigIntImpl::digit):
+        (JSC::Int32BigIntImpl::toHeapBigInt):
+        (JSC::JSBigInt::ImplResult::ImplResult):
+        (JSC::tryConvertToBigInt32):
+        (JSC::JSBigInt::inplaceMultiplyAdd):
+        (JSC::JSBigInt::exponentiateImpl):
+        (JSC::JSBigInt::exponentiate):
+        (JSC::JSBigInt::multiplyImpl):
+        (JSC::JSBigInt::multiply):
+        (JSC::JSBigInt::divideImpl):
+        (JSC::JSBigInt::divide):
+        (JSC::JSBigInt::copy):
+        (JSC::JSBigInt::unaryMinusImpl):
+        (JSC::JSBigInt::unaryMinus):
+        (JSC::JSBigInt::remainderImpl):
+        (JSC::JSBigInt::remainder):
+        (JSC::JSBigInt::incImpl):
+        (JSC::JSBigInt::inc):
+        (JSC::JSBigInt::decImpl):
+        (JSC::JSBigInt::dec):
+        (JSC::JSBigInt::addImpl):
+        (JSC::JSBigInt::add):
+        (JSC::JSBigInt::subImpl):
+        (JSC::JSBigInt::sub):
+        (JSC::JSBigInt::bitwiseAndImpl):
+        (JSC::JSBigInt::bitwiseAnd):
+        (JSC::JSBigInt::bitwiseOrImpl):
+        (JSC::JSBigInt::bitwiseOr):
+        (JSC::JSBigInt::bitwiseXorImpl):
+        (JSC::JSBigInt::bitwiseXor):
+        (JSC::JSBigInt::leftShiftImpl):
+        (JSC::JSBigInt::leftShift):
+        (JSC::JSBigInt::leftShiftSlow):
+        (JSC::JSBigInt::signedRightShiftImpl):
+        (JSC::JSBigInt::signedRightShift):
+        (JSC::JSBigInt::bitwiseNotImpl):
+        (JSC::JSBigInt::bitwiseNot):
+        (JSC::JSBigInt::internalMultiplyAdd):
+        (JSC::JSBigInt::multiplyAccumulate):
+        (JSC::JSBigInt::absoluteCompare):
+        (JSC::JSBigInt::compareImpl):
+        (JSC::JSBigInt::compare):
+        (JSC::JSBigInt::absoluteAdd):
+        (JSC::JSBigInt::absoluteSub):
+        (JSC::JSBigInt::absoluteDivWithDigitDivisor):
+        (JSC::JSBigInt::absoluteDivWithBigIntDivisor):
+        (JSC::JSBigInt::absoluteLeftShiftAlwaysCopy):
+        (JSC::JSBigInt::absoluteBitwiseOp):
+        (JSC::JSBigInt::absoluteAnd):
+        (JSC::JSBigInt::absoluteOr):
+        (JSC::JSBigInt::absoluteAndNot):
+        (JSC::JSBigInt::absoluteXor):
+        (JSC::JSBigInt::absoluteAddOne):
+        (JSC::JSBigInt::absoluteSubOne):
+        (JSC::JSBigInt::leftShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByMaximum):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::toShiftAmount):
+        (JSC::JSBigInt::exponentiateHeap): Deleted.
+        (JSC::JSBigInt::multiplyHeap): Deleted.
+        (JSC::JSBigInt::divideHeap): Deleted.
+        (JSC::JSBigInt::unaryMinusHeap): Deleted.
+        (JSC::JSBigInt::remainderHeap): Deleted.
+        (JSC::JSBigInt::incHeap): Deleted.
+        (JSC::JSBigInt::decHeap): Deleted.
+        (JSC::JSBigInt::addHeap): Deleted.
+        (JSC::JSBigInt::subHeap): Deleted.
+        (JSC::JSBigInt::bitwiseAndHeap): Deleted.
+        (JSC::JSBigInt::bitwiseOrHeap): Deleted.
+        (JSC::JSBigInt::bitwiseXorHeap): Deleted.
+        (JSC::JSBigInt::leftShiftHeap): Deleted.
+        (JSC::JSBigInt::signedRightShiftHeap): Deleted.
+        (JSC::JSBigInt::bitwiseNotHeap): Deleted.
+        (JSC::JSBigInt::compareToInt32): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::compareBigInt):
+        (JSC::compareBigInt32ToOtherPrimitive):
+        (JSC::arithmeticBinaryOp):
+        (JSC::jsSub):
+        (JSC::jsMul):
+        (JSC::jsDiv):
+        (JSC::jsRemainder):
+        (JSC::jsPow):
+        (JSC::jsInc):
+        (JSC::jsDec):
+        (JSC::jsBitwiseNot):
+        (JSC::shift):
+        (JSC::jsLShift):
+        (JSC::jsRShift):
+        (JSC::bitwiseBinaryOp):
+        (JSC::jsBitwiseAnd):
+        (JSC::jsBitwiseOr):
+        (JSC::jsBitwiseXor):
+
 2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] >>> should call ToNumeric

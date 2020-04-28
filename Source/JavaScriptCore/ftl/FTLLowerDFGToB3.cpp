@@ -13572,12 +13572,14 @@ private:
             return;
         }
 
+#if USE(BIGINT32)
         if (m_node->isBinaryUseKind(BigInt32Use)) {
             LValue left = lowBigInt32(m_node->child1());
             LValue right = lowBigInt32(m_node->child2());
             setBoolean(intFunctor(unboxBigInt32(left), unboxBigInt32(right)));
             return;
         }
+#endif
 
         if (m_node->isBinaryUseKind(StringIdentUse)) {
             LValue left = lowStringIdent(m_node->child1());
