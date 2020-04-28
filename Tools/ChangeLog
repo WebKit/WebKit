@@ -1,3 +1,22 @@
+2020-04-28  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: A suite running multiple times in a commit for a single configuration may overwrite upload metadata
+        https://bugs.webkit.org/show_bug.cgi?id=211097
+        <rdar://problem/62474538>
+
+        Rubber-stamped by Aakash Jain.
+
+        Create a new table for uploads which is indexed by both uuid and timestamp so that uploads which share
+        a configuration and uuid but not a timestamp do not collide.
+
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext):
+        (UploadContext.UploadsByConfigurationLegacy): Renamed from UploadContext.UploadsByConfiguration.
+        (UploadContext.UploadsByConfiguration): New database table indexed by both timestamp and uuid.
+        (UploadContext.UploadsByConfiguration.unpack):
+        (UploadContext.__init__):
+        (UploadContext.find_test_results): Search both versions of the UploadsByConfiguration table.
+
 2020-04-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [Linux] Replace --geometry with --fullscreen when using MiniBrowser for WebDriver tests

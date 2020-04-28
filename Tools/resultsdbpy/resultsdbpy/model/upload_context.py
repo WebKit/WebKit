@@ -47,7 +47,8 @@ class UploadContext(object):
         suite = columns.Text(primary_key=True, required=True)
         branch = columns.Text(primary_key=True, required=True)
 
-    class UploadsByConfiguration(ClusteredByConfiguration):
+    # FIXME: Remove the UploadsByConfigurationLegacy once results in it are sufficently old in Spring 2021
+    class UploadsByConfigurationLegacy(ClusteredByConfiguration):
         __table_name__ = 'uploads_by_configuration_01'
         suite = columns.Text(partition_key=True, required=True)
         branch = columns.Text(partition_key=True, required=True)
@@ -67,6 +68,26 @@ class UploadContext(object):
                 version=self.upload_version,
             )
 
+    class UploadsByConfiguration(ClusteredByConfiguration):
+        __table_name__ = 'uploads_by_configuration_02'
+        suite = columns.Text(partition_key=True, required=True)
+        branch = columns.Text(partition_key=True, required=True)
+        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
+        time_uploaded = columns.DateTime(primary_key=True, required=True)
+        sdk = columns.Text(primary_key=True, required=True)
+        commits = columns.Blob(required=True)
+        test_results = columns.Blob(required=True)
+        upload_version = columns.Integer(required=True)
+
+        def unpack(self):
+            return dict(
+                commits=[Commit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
+                sdk=None if self.sdk == '?' else self.sdk,
+                test_results=json.loads(UploadContext.from_zip(bytearray(self.test_results))),
+                timestamp=calendar.timegm(self.time_uploaded.timetuple()),
+                version=self.upload_version,
+            )
+
     def __init__(self, configuration_context, commit_context, ttl_seconds=None, async_processing=False):
         self.ttl_seconds = ttl_seconds
         self.configuration_context = configuration_context
@@ -75,6 +96,7 @@ class UploadContext(object):
         self._process_upload_callbacks = defaultdict(dict)
         with self:
             self.cassandra.create_table(self.SuitesByConfiguration)
+            self.cassandra.create_table(self.UploadsByConfigurationLegacy)
             self.cassandra.create_table(self.UploadsByConfiguration)
 
         self._async_processing = async_processing
@@ -252,6 +274,15 @@ class UploadContext(object):
         with self:
             result = {}
             for configuration in configurations:
+                # FIXME: Remove the UploadsByConfigurationLegacy once results in it are sufficently old in Spring 2021
+                # We don't need to ignore duplicates because we never reported to both databases
+                result.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
+                    self.UploadsByConfigurationLegacy.__table_name__, configurations=[configuration], recent=recent,
+                    suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
+                    uuid__gte=CommitContext.convert_to_uuid(begin),
+                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()), limit=limit,
+                ).items()})
+
                 result.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
                     self.UploadsByConfiguration.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
