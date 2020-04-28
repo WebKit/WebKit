@@ -6932,16 +6932,6 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
     completionHandler(contexts);
 }
 
-void WebPage::focusTextInputContext(const WebCore::ElementContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
-{
-    auto element = elementForContext(textInputContext);
-
-    if (element)
-        element->focus();
-
-    completionHandler(element);
-}
-
 void WebPage::setCanShowPlaceholder(const WebCore::ElementContext& elementContext, bool canShowPlaceholder)
 {
     RefPtr<Element> element = elementForContext(elementContext);

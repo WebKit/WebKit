@@ -1,3 +1,19 @@
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
+        Remove unused WebPage::focusTextInputContext()
+        https://bugs.webkit.org/show_bug.cgi?id=211135
+
+        Reviewed by Anders Carlsson.
+
+        I accidentally forgot to remove the WebPage message and WebPage implementation that
+        backed -_focusTextInputContext when I removed it in r260225. Now the implementation
+        is unused. Let's remove it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::focusTextInputContext): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-04-28  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds
