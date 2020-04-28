@@ -204,6 +204,12 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     LayoutRect contentRect = contentBoxRect();
     contentRect.moveBy(paintOffset);
     GraphicsContext& context = paintInfo.context();
+
+    if (context.detectingContentfulPaint()) {
+        context.setContentfulPaintDetected();
+        return;
+    }
+
     bool clip = !contentRect.contains(rect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)

@@ -1,3 +1,54 @@
+2020-04-28  Noam Rosenthal  <noam@webkit.org>
+
+        Implement FCP (first contentful paint)
+        https://bugs.webkit.org/show_bug.cgi?id=208499
+
+        Reviewed by Simon Fraser.
+
+        Added tests for some first-contentful-paint (FCP) use-cases.
+        Ensure that FCP works well with VNE (first paint delay until contents are visually non-empty).
+
+        * platform/win/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+                Disable paint timing for WebKit1.
+
+        * TestExpectations:
+                Disable of the WPT tests.
+        
+        * http/tests/performance/paint-timing: Added.
+        * http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars-expected.txt: Added.
+        * http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html: Added.
+                If VNE due to number of characters blocks painting, make sure FCP is reported only after painting is unblocked.
+
+        * http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style-expected.txt: Added.
+        * http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html: Added.
+                If a pending stylesheet blocks painting, make sure FCP is reported only after stylesheet has loaded.
+
+        * http/tests/performance/paint-timing/resources: Added.
+        * http/tests/performance/paint-timing/resources/slowscript.php: Added.
+        * http/tests/performance/paint-timing/resources/slowstyle.php: Added.
+        * http/tests/performance/paint-timing/resources/style.css: Added.
+        (body):
+        * performance-api/paint-timing: Added.
+        * performance-api/paint-timing/paint-timing-apis-expected.txt: Added.
+        * performance-api/paint-timing/paint-timing-apis.html: Added.
+        * performance-api/paint-timing/paint-timing-frames-expected.txt: Added.
+        * performance-api/paint-timing/paint-timing-frames.html: Added.
+        * performance-api/paint-timing/paint-timing-with-worker-expected.txt: Added.
+        * performance-api/paint-timing/paint-timing-with-worker.html: Added.
+                Test that FCP is not available for cross-origin frames and workers.
+
+        * performance-api/paint-timing/performance-observer-first-contentful-paint-expected.txt: Added.
+        * performance-api/paint-timing/performance-observer-first-contentful-paint.html: Added.
+                Test that performance observers are called for FCP.
+
+        * performance-api/paint-timing/resources: Added.
+        * performance-api/paint-timing/resources/fcp-subframe.html: Added.
+        * performance-api/paint-timing/resources/paint-api-utils.js: Added.
+        (async waitForFCP):
+        * performance-api/paint-timing/resources/paint-timing-api.js: Added.
+        * performance-api/paint-timing/resources/worker.html: Added.
+
 2020-04-28  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r260822): Broke media/track/track-in-band-metadata-display-order.html on Mac

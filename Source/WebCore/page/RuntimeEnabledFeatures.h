@@ -62,6 +62,9 @@ public:
     void setUserTimingEnabled(bool isEnabled) { m_isUserTimingEnabled = isEnabled; }
     bool userTimingEnabled() const { return m_isUserTimingEnabled; }
 
+    void setPaintTimingEnabled(bool isEnabled) { m_isPaintTimingEnabled = isEnabled; }
+    bool paintTimingEnabled() const { return m_isPaintTimingEnabled; }
+
     bool performanceTimelineEnabled() const { return resourceTimingEnabled() || userTimingEnabled(); }
 
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
@@ -424,6 +427,7 @@ private:
     bool m_isLinkPreloadEnabled { true };
     bool m_isLinkPrefetchEnabled { false };
     bool m_isMediaPreloadingEnabled { false };
+    bool m_isPaintTimingEnabled { false };
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };

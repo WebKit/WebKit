@@ -557,6 +557,11 @@ http/tests/inspector/network/har/har-page.html [ Failure ]
 [ Release ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
 [ Debug ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Slow Failure ]
 
+# Paint Timing is not available in WebKit1
+imported/w3c/web-platform-tests/paint-timing [ Skip ]
+performance-api/paint-timing [ Skip ]
+http/tests/performance/paint-timing [ Skip ]
+
 # Local Overrides not available in WebKit1
 http/tests/inspector/network/local-resource-override-basic.html [ Failure ]
 http/tests/inspector/network/local-resource-override-main-resource.html [ Failure ]

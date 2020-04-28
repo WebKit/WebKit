@@ -3703,6 +3703,11 @@ http/wpt/webrtc [ Skip ]
 http/wpt/resource-timing/rt-nextHopProtocol.html [ Skip ]
 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Skip ]
 
+# TODO Paint Timing is not enabled for WK1.
+http/tests/performance/paint-timing [ Skip ]
+imported/w3c/web-platform-tests/paint-timing [ Skip ]
+performance-api/paint-timing [ Skip ]
+
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]
 webkit.org/b/165090 http/wpt/crypto [ Skip ]

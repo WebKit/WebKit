@@ -4540,6 +4540,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
+    if (context.detectingContentfulPaint() && context.contenfulPaintDetected())
+        return;
+
     auto localPaintFlags = paintFlags - PaintLayerAppliedTransform;
     bool haveTransparency = localPaintFlags.contains(PaintLayerHaveTransparency);
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();

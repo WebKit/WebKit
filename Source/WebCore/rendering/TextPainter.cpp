@@ -27,6 +27,7 @@
 #include "DisplayRun.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
+#include "HTMLParserIdioms.h"
 #include "InlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
@@ -105,6 +106,13 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     float emphasisMarkOffset, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(startOffset < endOffset);
+
+    if (m_context.detectingContentfulPaint()) {
+        if (!textRun.text().toStringWithoutCopying().isAllSpecialCharacters<isHTMLSpace>())
+            m_context.setContentfulPaintDetected();
+        return;
+    }
+
     if (!emphasisMark.isEmpty())
         m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
     else if (startOffset || endOffset < textRun.length() || !m_glyphDisplayList)

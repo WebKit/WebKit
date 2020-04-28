@@ -500,6 +500,10 @@ WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef);
 
 // Defaults to false
+WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef);
+
+// Defaults to false
 WK_EXPORT void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef);
 

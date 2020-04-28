@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "Page.h"
+#include "RenderChildIterator.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
@@ -211,7 +212,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
         return;
 
     // Don't paint, if the context explicitly disabled it.
-    if (paintInfo.context().paintingDisabled())
+    if (paintInfo.context().paintingDisabled() && !paintInfo.context().detectingContentfulPaint())
         return;
 
     // SVG outlines are painted during PaintPhase::Foreground.
@@ -222,6 +223,17 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     // (http://www.w3.org/TR/SVG/coords.html#ViewBoxAttribute)
     if (svgSVGElement().hasEmptyViewBox())
         return;
+
+    GraphicsContext& context = paintInfo.context();
+    if (context.detectingContentfulPaint()) {
+        for (auto& current : childrenOfType<RenderObject>(*this)) {
+            if (!current.isSVGHiddenContainer()) {
+                context.setContentfulPaintDetected();
+                return;
+            }
+        }
+        return;
+    }
 
     // Don't paint if we don't have kids, except if we have filters we should paint those.
     if (!firstChild()) {

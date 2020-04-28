@@ -113,15 +113,21 @@ void PerformanceObserver::deliver()
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
-Vector<String> PerformanceObserver::supportedEntryTypes()
+Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& context)
 {
-    return {
+    Vector<String> entryTypes = {
         // FIXME: <https://webkit.org/b/184363> Add support for Navigation Timing Level 2
         // "navigation"_s,
         "mark"_s,
-        "measure"_s,
-        "resource"_s
+        "measure"_s
     };
+
+    if (is<Document>(context) && downcast<Document>(context).supportsPaintTiming())
+        entryTypes.append("paint"_s);
+
+    entryTypes.append("resource"_s);
+
+    return entryTypes;
 }
 
 } // namespace WebCore

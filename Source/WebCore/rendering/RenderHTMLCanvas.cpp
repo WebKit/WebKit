@@ -71,6 +71,13 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     GraphicsContext& context = paintInfo.context();
 
     LayoutRect contentBoxRect = this->contentBoxRect();
+
+    if (context.detectingContentfulPaint()) {
+        if (!context.contenfulPaintDetected() && canvasElement().renderingContext())
+            context.setContentfulPaintDetected();
+        return;
+    }
+
     contentBoxRect.moveBy(paintOffset);
     LayoutRect replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);

@@ -2125,6 +2125,7 @@ rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/ClipRect.cpp
 rendering/ComplexLineLayout.cpp
+rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp
 rendering/EventRegion.cpp
@@ -3203,6 +3204,7 @@ JSPerformanceNavigation.cpp
 JSPerformanceObserver.cpp
 JSPerformanceObserverCallback.cpp
 JSPerformanceObserverEntryList.cpp
+JSPerformancePaintTiming.cpp
 JSPerformanceResourceTiming.cpp
 JSPerformanceServerTiming.cpp
 JSPerformanceTiming.cpp

@@ -64,6 +64,11 @@ Optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const St
             return Optional<Type>(Type::Resource);
     }
 
+    if (RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled()) {
+        if (entryType == "paint")
+            return Optional<Type>(Type::Paint);
+    }
+
     return WTF::nullopt;
 }
 

@@ -1,0 +1,4 @@
+INVISIBLE
+
+PASS First contentful paint fires due to pseudo-element becoming visible. 
+

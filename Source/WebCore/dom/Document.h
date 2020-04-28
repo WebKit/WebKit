@@ -1040,6 +1040,8 @@ public:
 
     bool shouldDeferAsynchronousScriptsUntilParsingFinishes() const;
 
+    bool supportsPaintTiming() const;
+
 #if ENABLE(XSLT)
     void scheduleToApplyXSLTransforms();
     void applyPendingXSLTransformsNowIfScheduled();
@@ -1579,6 +1581,7 @@ public:
 
     void setHasVisuallyNonEmptyCustomContent() { m_hasVisuallyNonEmptyCustomContent = true; }
     bool hasVisuallyNonEmptyCustomContent() const { return m_hasVisuallyNonEmptyCustomContent; }
+    void enqueuePaintTimingEntryIfNeeded();
 
     Editor& editor() { return m_editor; }
     const Editor& editor() const { return m_editor; }
@@ -2045,6 +2048,9 @@ private:
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
     bool m_userDidInteractWithPage { false };
+
+    bool m_didEnqueueFirstContentfulPaint { false };
+
 #if ASSERT_ENABLED
     bool m_inHitTesting { false };
 #endif

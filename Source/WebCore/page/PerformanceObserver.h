@@ -49,7 +49,7 @@ public:
         return adoptRef(*new PerformanceObserver(context, WTFMove(callback)));
     }
 
-    static Vector<String> supportedEntryTypes();
+    static Vector<String> supportedEntryTypes(ScriptExecutionContext&);
 
     void disassociate();
 

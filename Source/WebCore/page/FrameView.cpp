@@ -4252,6 +4252,9 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
+        // Integrate paint timing with LFC later on.
+        if (context.detectingContentfulPaint())
+            return;
         if (auto* layoutState = layoutContext().layoutFormattingState())
             Layout::LayoutContext::paint(*layoutState, context, dirtyRect);
         return;

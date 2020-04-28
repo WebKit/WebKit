@@ -1,3 +1,79 @@
+2020-04-28  Noam Rosenthal  <noam@webkit.org>
+
+        Implement FCP (first contentful paint)
+        https://bugs.webkit.org/show_bug.cgi?id=208499
+
+        Reviewed by Simon Fraser.
+
+        Imported paint timing tests that don't require first-paint.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/paint-timing: Added.
+        * web-platform-tests/paint-timing/fcp-only: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-background-size-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-background-size.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-set-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-set.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-two-steps-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-bg-image-two-steps.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-canvas-context-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-canvas-context.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-gradient-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-gradient.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-transition-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-transition.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-text-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-invisible-text.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity-descendant-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity-descendant.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-opacity.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-translate-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-translate.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-display-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-display.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-image-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-image.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-opacity-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-opacity.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-text-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-text.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibility-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibility.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-svg-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-svg.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-text-input-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-text-input.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-typographic-pseudo-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-typographic-pseudo.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-frame-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-poster-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-video-poster.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-whitespace-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-whitespace.html: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-with-rtl-expected.txt: Added.
+        * web-platform-tests/paint-timing/fcp-only/fcp-with-rtl.html: Added.
+        * web-platform-tests/paint-timing/resources: Added.
+        * web-platform-tests/paint-timing/resources/circle.svg: Added.
+        * web-platform-tests/paint-timing/resources/circles.png: Added.
+        * web-platform-tests/paint-timing/resources/subframe-painting.html: Added.
+        * web-platform-tests/paint-timing/resources/subframe-sending-paint.html: Added.
+        * web-platform-tests/paint-timing/resources/utils.js: Added.
+        (waitForAnimationFrames):
+        (async assertNoFirstContentfulPaint):
+        (async assertFirstContentfulPaint.return.new.Promise):
+        (async assertFirstContentfulPaint):
+        (async test_fcp):
+
 2020-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         InternalFunction::createSubclassStructure should use newTarget's globalObject

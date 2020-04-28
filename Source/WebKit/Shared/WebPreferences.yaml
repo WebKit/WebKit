@@ -825,6 +825,14 @@ ModernMediaControlsEnabled:
   humanReadableDescription: "Use modern media controls look"
   webcoreBinding: RuntimeEnabledFeatures
 
+PaintTimingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Paint Timing"
+  humanReadableDescription: "Enable PaintTiming API"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 ResourceTimingEnabled:
   type: bool
   defaultValue: true

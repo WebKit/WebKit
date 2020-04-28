@@ -1,3 +1,128 @@
+2020-04-28  Noam Rosenthal  <noam@webkit.org>
+
+        Implement FCP (first contentful paint)
+        https://bugs.webkit.org/show_bug.cgi?id=208499
+
+        Reviewed by Simon Fraser.
+
+        Added the necessary interface, extensions to the performance interface and observer, new runtime flag.
+        Detecting contentfulness after layout and before actual paint, by running a "dummy" paint, similar to 
+        invalidateControlTints() / invalidateImagesWithAsyncDecodes(). Save the result to the GraphicsContext and then to the document.
+        This would run for every paint until we detect a contentful one.
+
+        Note that it paints the entire frame contents, as FCP is not viewport-dependent.
+        Also, paint timing is currently disabled for LFC (layout formatting context), and will be dealt with later.
+
+        Tests: http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html
+               http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-background-size.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-bg-image-set.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-bg-image-two-steps.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-canvas-context.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-gradient.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate-descendant.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-3d-rotate.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale-transition.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-scale.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-invisible-text.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-opacity-descendant.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-opacity.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-translate.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-display.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-image.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-opacity.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-text.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibility.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-svg.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-text-input.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-typographic-pseudo.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-video-frame.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-video-poster.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-whitespace.html
+               imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-with-rtl.html
+               performance-api/paint-timing/paint-timing-apis.html
+               performance-api/paint-timing/paint-timing-frames.html
+               performance-api/paint-timing/paint-timing-with-worker.html
+               performance-api/paint-timing/performance-observer-first-contentful-paint.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/WebCoreBuiltinNames.h:
+                Add PerformancePaintTiming interface. https://w3c.github.io/paint-timing/#sec-PerformancePaintTiming
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        (WebCore::Document::supportsPaintTiming const):
+                We only report paint timing for document that can access the top level security origin, to avoid leakage of information to sandboxed iframes.
+
+        (WebCore::Document::enqueuePaintTimingEntryIfNeeded):
+                Enqueue a paint timing entry, according to https://w3c.github.io/paint-timing/#sec-reporting-paint-timing
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+                Disable FCP fake-paint in LFC mode.
+
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+        * page/Performance.cpp:
+        (WebCore::Performance::getEntries const):
+        (WebCore::Performance::getEntriesByType const):
+        (WebCore::Performance::getEntriesByName const):
+        (WebCore::Performance::reportFirstContentfulPaint):
+        * page/Performance.h:
+                Support first-contentful-paint reporting.
+
+        * page/PerformanceEntry.cpp:
+        (WebCore::PerformanceEntry::parseEntryTypeString):
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::isPaint const):
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::supportedEntryTypes):
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.idl:
+        * page/PerformancePaintTiming.h: Added.
+        (isType):
+        * page/PerformancePaintTiming.idl: Added.
+                Add paint performance entry type.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setPaintTimingEnabled):
+        (WebCore::RuntimeEnabledFeatures::paintTimingEnabled const):
+                New runtime flag for paint timing.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::detectingContentfulPaint const):
+        (WebCore::GraphicsContext::setContentfulPaintDetected):
+        (WebCore::GraphicsContext::contenfulPaintDetected const):
+                Add a flag in GraphicsContext where different render operations can report if they're contentful.
+
+        * rendering/ContentfulPaintChecker.cpp: Added.
+        (WebCore::ContentfulPaintChecker::qualifiesForContentfulPaint):
+        * rendering/ContentfulPaintChecker.h: Added.
+                Run a "dummy" paint of the FrameView, to detect contentful elements. 
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextOrEmphasisMarks):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+                Report contentfulness when we reach anything that qualifies as contentful,
+                based on https://w3c.github.io/paint-timing/#contentful.
+
 2020-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin log with no error

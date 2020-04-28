@@ -1820,6 +1820,16 @@ bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->userTimingEnabled();
 }
 
+void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setPaintTimingEnabled(flag);
+}
+
+bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->paintTimingEnabled();
+}
+
 void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setResourceTimingEnabled(flag);

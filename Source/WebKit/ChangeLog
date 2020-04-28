@@ -1,3 +1,20 @@
+2020-04-28  Noam Rosenthal  <noam@webkit.org>
+
+        Implement FCP (first contentful paint)
+        https://bugs.webkit.org/show_bug.cgi?id=208499
+
+        Reviewed by Simon Fraser.
+
+        Add an experimental runtime flag for paint-timing (paintTimingEnabled).
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPaintTimingEnabled):
+        (WKPreferencesGetPaintTimingEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferencesStore):
+
 2020-04-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Align upon the name isCallable instead of isFunction

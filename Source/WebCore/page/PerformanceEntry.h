@@ -48,10 +48,11 @@ public:
     double duration() const { return m_duration; }
 
     enum class Type {
-        Navigation = 1 << 0,
-        Mark = 1 << 1,
-        Measure = 1 << 2,
-        Resource = 1 << 3,
+        Navigation  = 1 << 0,
+        Mark        = 1 << 1,
+        Measure     = 1 << 2,
+        Resource    = 1 << 3,
+        Paint       = 1 << 4
     };
 
     virtual Type type() const = 0;
@@ -62,6 +63,7 @@ public:
     bool isResource() const { return type() == Type::Resource; }
     bool isMark() const { return type() == Type::Mark; }
     bool isMeasure() const { return type() == Type::Measure; }
+    bool isPaint() const { return type() == Type::Paint; }
 
     static bool startTimeCompareLessThan(const RefPtr<PerformanceEntry>& a, const RefPtr<PerformanceEntry>& b)
     {

@@ -716,7 +716,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
 {
     GraphicsContext& context = paintInfo.context();
-    if (context.paintingDisabled() || rect.isEmpty())
+
+    if ((context.paintingDisabled() && !context.detectingContentfulPaint()) || rect.isEmpty())
         return;
 
     bool includeLeftEdge = box ? box->includeLogicalLeftEdge() : true;
@@ -731,6 +732,14 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     StyleImage* bgImage = bgLayer.image();
     bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style().effectiveZoom());
     
+    if (context.detectingContentfulPaint()) {
+        if (!context.contenfulPaintDetected() && shouldPaintBackgroundImage && bgImage->cachedImage()) {
+            if (style().backgroundSizeType() != FillSizeType::Size || !style().backgroundSizeLength().isEmpty())
+                context.setContentfulPaintDetected();
+            return;
+        }
+    }
+
     if (context.invalidatingImagesWithAsyncDecodes()) {
         if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(*this))
             bgImage->cachedImage()->removeAllClientsWaitingForAsyncDecoding();

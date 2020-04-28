@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="./resources/paint-api-utils.js"></script>
+</head>
+<body>
+<div class="spacer"></div>
+    <iframe width="100" height="100" id="nonSandboxed" src="./resources/fcp-subframe.html"></iframe>
+<div class="spacer"></div>
+<iframe id="sandboxed" src="./resources/fcp-subframe.html" sandbox="allow-scripts"></iframe>
+<div class="spacer"></div>
+
+    TEXT
+
+<script>
+description("Paint API should be available for same-origin frames but not to cross-origin/sandboxed frames.");
+window.jsTestIsAsync = true;
+window.didReceiveMessage = false;
+
+window.onload = async () => {
+    const sandboxed = document.getElementById('sandboxed');
+    const nonSandboxed = document.getElementById('nonSandboxed');
+    const fcpMessagePromise = new Promise(resolve => {
+        window.onmessage = event => {
+            window.receivedEvent = event;
+            const isFromSandboxed = event.source === sandboxed.contentWindow;
+            const message = JSON.parse(event.data);
+            switch (message.type) {
+                case 'supported':
+                    if (isFromSandboxed)
+                        window.sandboxSupportedTypes = message.supported;
+                    else
+                        window.nonSandboxSupportedTypes = message.supported;
+                    break;
+                case 'received':
+                    window.didReceiveMessageFromSandboxedIframe = isFromSandboxed;
+                    window.receivedEntry = message.entry;
+                    didReceiveMessage = true;
+                    shouldBe('receivedEvent.source', "document.getElementById('nonSandboxed').contentWindow");
+                    shouldBe('receivedEntry.name', "'first-contentful-paint'");
+                    resolve();
+                    break;
+            }
+        };
+    });
+
+    sandboxed.contentWindow.postMessage("paint", "*");
+    await waitForFCP();
+    nonSandboxed.contentWindow.postMessage("paint", "*");
+    await waitForFCP();
+    await fcpMessagePromise;
+    shouldBeFalse('didReceiveMessageFromSandboxedIframe');
+    shouldBeTrue('Array.isArray(nonSandboxSupportedTypes)');
+    shouldBeTrue('Array.isArray(sandboxSupportedTypes)');
+    shouldBeTrue('didReceiveMessage');
+    shouldBeTrue('nonSandboxSupportedTypes.includes("paint")');
+    shouldBeFalse('sandboxSupportedTypes.includes("paint")');
+    testPassed("PerformanceObserver first-contentful-paint callback was fired for same-origin frame but not for cross-origin frame");
+    finishJSTest();
+};
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

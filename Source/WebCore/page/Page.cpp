@@ -1408,6 +1408,10 @@ void Page::doAfterUpdateRendering()
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
 
     forEachDocument([] (Document& document) {
+        document.enqueuePaintTimingEntryIfNeeded();
+    });
+
+    forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
 

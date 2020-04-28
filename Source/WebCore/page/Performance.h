@@ -46,6 +46,7 @@ class LoadTiming;
 class PerformanceEntry;
 class PerformanceNavigation;
 class PerformanceObserver;
+class PerformancePaintTiming;
 class PerformanceTiming;
 class ResourceResponse;
 class ResourceTiming;
@@ -78,6 +79,8 @@ public:
     void clearMeasures(const String& measureName);
 
     void addResourceTiming(ResourceTiming&&);
+
+    void reportFirstContentfulPaint();
 
     void removeAllObservers();
     void registerPerformanceObserver(PerformanceObserver&);
@@ -123,6 +126,7 @@ private:
 
     MonotonicTime m_timeOrigin;
 
+    RefPtr<PerformancePaintTiming> m_firstContentfulPaint;
     std::unique_ptr<UserTiming> m_userTiming;
 
     GenericTaskQueue<ScriptExecutionContext> m_performanceTimelineTaskQueue;
