@@ -1,3 +1,14 @@
+2020-04-28  Philippe Normand  <pnormand@igalia.com>
+
+        media/track/track-load-error-readyState.html passes only when accompanied by some other tests
+        https://bugs.webkit.org/show_bug.cgi?id=210976
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Reset caption
+        display mode, which might have been overriden by a previous test.
+
 2020-04-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes late April 2020 edition

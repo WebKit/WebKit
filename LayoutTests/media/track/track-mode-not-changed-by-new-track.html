@@ -78,6 +78,9 @@
 
             function start()
             {
+                if (window.internals)
+                    run("internals.setCaptionDisplayMode('Automatic')");
+
                 consoleWrite("<br>EVENT(load) -- &lt;body&gt;");
                 findMediaElement();
 

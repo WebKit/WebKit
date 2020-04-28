@@ -513,6 +513,7 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::DeprecatedGlobalSettings::setUsesMockScrollAnimator(false);
 #if ENABLE(VIDEO_TRACK)
     page.group().captionPreferences().setTestingMode(true);
+    page.group().captionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
     page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
     page.group().captionPreferences().setTestingMode(false);
 #endif

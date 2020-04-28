@@ -1,6 +1,7 @@
 Tests that a track appended after the initial track configuration does not change other tracks.
 
 
+RUN(internals.setCaptionDisplayMode('Automatic'))
 
 EVENT(load) -- <body>
 EXPECTED (track1.readyState == '0') OK
