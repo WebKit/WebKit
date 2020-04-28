@@ -43,8 +43,14 @@ NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, WebWheelEvent::Phase p
 {
 }
 
+NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, position, WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone))
+    , m_nativeEvent(gdk_event_copy(event))
+{
+}
+
 NativeWebWheelEvent::NativeWebWheelEvent(const NativeWebWheelEvent& event)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event.nativeEvent(), event.phase(), event.momentumPhase()))
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event.nativeEvent(), event.position(), event.globalPosition(), event.phase(), event.momentumPhase()))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
 {
 }

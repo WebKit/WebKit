@@ -1,3 +1,17 @@
+2020-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support for scroll events
+        https://bugs.webkit.org/show_bug.cgi?id=211045
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use an event controller to connect to scroll signal and get the GdkEvent.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseHandleWheelEvent):
+        (webkitWebViewBaseScroll):
+        (webkitWebViewBaseConstructed):
+
 2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4][Wayland] Add support for rendering web view contents

@@ -60,6 +60,7 @@ public:
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*);
     NativeWebWheelEvent(GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    NativeWebWheelEvent(GdkEvent*, const WebCore::IntPoint&);
 #elif USE(LIBWPE)
     NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #elif PLATFORM(WIN)

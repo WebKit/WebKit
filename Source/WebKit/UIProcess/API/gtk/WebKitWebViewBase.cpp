@@ -69,6 +69,7 @@
 #include <pal/system/SleepDisabler.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
@@ -597,23 +598,6 @@ static void webkitWebViewBaseDispose(GObject* gobject)
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
-static void webkitWebViewBaseConstructed(GObject* object)
-{
-    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->constructed(object);
-
-    GtkWidget* viewWidget = GTK_WIDGET(object);
-    gtk_widget_set_can_focus(viewWidget, TRUE);
-#if !USE(GTK4)
-    gtk_drag_dest_set(viewWidget, static_cast<GtkDestDefaults>(0), nullptr, 0,
-        static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
-    gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::singleton().targetList());
-#endif
-
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
-    priv->pageClient = makeUnique<PageClientImpl>(viewWidget);
-    priv->dialog = nullptr;
-}
-
 #if USE(GTK4)
 void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 {
@@ -1025,7 +1009,22 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
 
     return GDK_EVENT_STOP;
 }
+#endif
 
+#if USE(GTK4)
+static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController* controller)
+{
+    if (webViewBase->priv->dialog)
+        return GDK_EVENT_PROPAGATE;
+
+    // FIXME: invert axis in case of SHIFT.
+    webViewBase->priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(gtk_event_controller_get_current_event(controller), { clampToInteger(x), clampToInteger(y) }));
+
+    return GDK_EVENT_STOP;
+}
+#endif
+
+#if !USE(GTK4)
 static gboolean webkitWebViewBasePopupMenu(GtkWidget* widget)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
@@ -1501,6 +1500,28 @@ static void webkitWebViewBaseDestroy(GtkWidget* widget)
         gtk_widget_destroy(priv->dialog);
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->destroy(widget);
+}
+
+static void webkitWebViewBaseConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->constructed(object);
+
+    GtkWidget* viewWidget = GTK_WIDGET(object);
+    gtk_widget_set_can_focus(viewWidget, TRUE);
+#if !USE(GTK4)
+    gtk_drag_dest_set(viewWidget, static_cast<GtkDestDefaults>(0), nullptr, 0,
+        static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
+    gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::singleton().targetList());
+#endif
+
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
+    priv->pageClient = makeUnique<PageClientImpl>(viewWidget);
+
+#if USE(GTK4)
+    auto* controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
+    g_signal_connect_object(controller, "scroll", G_CALLBACK(webkitWebViewBaseScroll), viewWidget, G_CONNECT_SWAPPED);
+    gtk_widget_add_controller(viewWidget, controller);
+#endif
 }
 
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)

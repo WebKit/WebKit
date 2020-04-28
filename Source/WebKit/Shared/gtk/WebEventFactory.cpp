@@ -36,6 +36,7 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/MathExtras.h>
 
 namespace WebKit {
 
@@ -204,12 +205,17 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
 {
-    FloatSize wheelTicks = FloatSize(0, 0);
     double x, y;
     gdk_event_get_coords(event, &x, &y);
     double xRoot, yRoot;
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
 
+    return createWebWheelEvent(event, { clampToInteger(x), clampToInteger(y) }, { clampToInteger(xRoot), clampToInteger(yRoot) }, phase, momentumPhase);
+}
+
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const IntPoint& position, const IntPoint& globalPosition, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+{
+    Optional<FloatSize> wheelTicks;
     GdkScrollDirection direction;
     if (!gdk_event_get_scroll_direction(event, &direction)) {
         direction = GDK_SCROLL_SMOOTH;
@@ -218,7 +224,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
             wheelTicks = FloatSize(-deltaX, -deltaY);
     }
 
-    if (wheelTicks.isZero()) {
+    if (!wheelTicks) {
         switch (direction) {
         case GDK_SCROLL_UP:
             wheelTicks = FloatSize(0, 1);
@@ -233,22 +239,21 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
             wheelTicks = FloatSize(-1, 0);
             break;
         case GDK_SCROLL_SMOOTH:
+            wheelTicks = FloatSize(0, 0);
             break;
-        default:
-            ASSERT_NOT_REACHED();
         }
     }
 
     // FIXME: [GTK] Add a setting to change the pixels per line used for scrolling
     // https://bugs.webkit.org/show_bug.cgi?id=54826
     float step = static_cast<float>(Scrollbar::pixelsPerLineStep());
-    FloatSize delta(wheelTicks.width() * step, wheelTicks.height() * step);
+    FloatSize delta(wheelTicks->width() * step, wheelTicks->height() * step);
 
     return WebWheelEvent(WebEvent::Wheel,
-        IntPoint(x, y),
-        IntPoint(xRoot, yRoot),
+        position,
+        globalPosition,
         delta,
-        wheelTicks,
+        wheelTicks.value(),
         phase,
         momentumPhase,
         WebWheelEvent::ScrollByPixelWheelEvent,
