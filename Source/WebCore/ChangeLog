@@ -1,3 +1,24 @@
+2020-04-28  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Fix build failures for ANGLE_WEBGL after r259589
+        https://bugs.webkit.org/show_bug.cgi?id=211116
+
+        Reviewed by Alex Christensen.
+
+        The compiler is unhappy with coverting GCGLint64 (long long int) to GLInt64 (long int).
+        Passing GCGLuint62 as GLuint64 is a similar issue.
+
+        No new tests since no new functionalities.
+
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        (WebCore::ExtensionsGLANGLE::getInteger64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getInteger64i_vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getBufferParameteri64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjecti64vRobustANGLE):
+        (WebCore::ExtensionsGLANGLE::getQueryObjectui64vRobustANGLE):
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp:
+        (Nicosia::GC3DLayer::swapBuffersIfNeeded): Unaccelerated -> RenderingMode::Unaccelerated
+
 2020-04-28  Noam Rosenthal  <noam@webkit.org>
 
         Implement FCP (first contentful paint)

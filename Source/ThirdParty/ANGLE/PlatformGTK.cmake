@@ -18,8 +18,10 @@ if (USE_ANGLE_EGL)
     list(APPEND ANGLE_SOURCES
         ${angle_system_utils_sources_linux}
         ${angle_system_utils_sources_posix}
-        ${libangle_gl_sources}
+        ${libangle_gl_egl_dl_sources}
+        ${libangle_gl_egl_sources}
         ${libangle_gl_glx_sources}
+        ${libangle_gl_sources}
     )
 
     list(APPEND ANGLE_DEFINITIONS

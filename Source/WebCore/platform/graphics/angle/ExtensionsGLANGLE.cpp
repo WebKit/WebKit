@@ -425,17 +425,17 @@ void ExtensionsGLANGLE::getActiveUniformBlockivRobustANGLE(GCGLuint program, GCG
 
 void ExtensionsGLANGLE::getInteger64vRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
 {
-    gl::GetInteger64vRobustANGLE(pname, bufSize, length, data);
+    gl::GetInteger64vRobustANGLE(pname, bufSize, length, reinterpret_cast<GLint64*>(data));
 }
 
 void ExtensionsGLANGLE::getInteger64i_vRobustANGLE(GCGLenum target, GCGLuint index, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *data)
 {
-    gl::GetInteger64i_vRobustANGLE(target, index, bufSize, length, data);
+    gl::GetInteger64i_vRobustANGLE(target, index, bufSize, length, reinterpret_cast<GLint64*>(data));
 }
 
 void ExtensionsGLANGLE::getBufferParameteri64vRobustANGLE(GCGLenum target, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params)
 {
-    gl::GetBufferParameteri64vRobustANGLE(target, pname, bufSize, length, params);
+    gl::GetBufferParameteri64vRobustANGLE(target, pname, bufSize, length, reinterpret_cast<GLint64*>(params));
 }
 
 void ExtensionsGLANGLE::samplerParameterivRobustANGLE(GCGLuint sampler, GCGLenum pname, GCGLsizei bufSize, const GCGLint *param)
@@ -601,12 +601,12 @@ void ExtensionsGLANGLE::getQueryObjectivRobustANGLE(GCGLuint id, GCGLenum pname,
 
 void ExtensionsGLANGLE::getQueryObjecti64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLint64 *params)
 {
-    gl::GetQueryObjecti64vRobustANGLE(id, pname, bufSize, length, params);
+    gl::GetQueryObjecti64vRobustANGLE(id, pname, bufSize, length, reinterpret_cast<GLint64*>(params));
 }
 
 void ExtensionsGLANGLE::getQueryObjectui64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint64 *params)
 {
-    gl::GetQueryObjectui64vRobustANGLE(id, pname, bufSize, length, params);
+    gl::GetQueryObjectui64vRobustANGLE(id, pname, bufSize, length, reinterpret_cast<GLuint64*>(params));
 }
 
 

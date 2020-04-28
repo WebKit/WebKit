@@ -1,3 +1,15 @@
+2020-04-28  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Fix build failures for ANGLE_WEBGL after r259589
+        https://bugs.webkit.org/show_bug.cgi?id=211116
+
+        Reviewed by Alex Christensen.
+
+        The ANGLE_WEBGL is broken after ANGLE is updated in r259589. Missing sources
+        should be added to the build target.
+
+        * PlatformGTK.cmake: Add libangle_gl_egl_sources and libangle_gl_egl_dl_sources.
+
 2020-04-27  Dean Jackson  <dino@apple.com>
 
         Temporarily skip GL_DEPTH_COMPONENT32_OES requirement for depth textures on iOS
