@@ -29,6 +29,10 @@ if (USE_LIBWEBRTC)
     add_subdirectory(ThirdParty/libwebrtc)
 endif ()
 
+if (ENABLE_WEBINSPECTORUI)
+    add_subdirectory(WebInspectorUI)
+endif ()
+
 if (ENABLE_WEBCORE)
     add_subdirectory(WebCore)
 endif ()

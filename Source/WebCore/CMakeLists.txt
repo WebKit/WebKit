@@ -1886,6 +1886,10 @@ GENERATE_BINDINGS(WebCoreBindings
         --paintWorkletGlobalScopeConstructorsFile ${PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE})
 list(APPEND WebCore_DEPENDENCIES WebCoreBindings)
 
+if (ENABLE_WEBINSPECTORUI)
+    list(APPEND WebCore_DEPENDENCIES WebInspectorUI)
+endif ()
+
 GENERATE_BINDINGS(WebCoreTestSupportBindings
     OUTPUT_SOURCE WebCoreTestSupport_SOURCES
     INPUT_FILES ${WebCoreTestSupport_IDL_FILES}

@@ -1,3 +1,17 @@
+2020-04-28  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Bundle Inspector Resources in Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=210942
+
+        Reviewed by Fujii Hironori.
+
+        Move CMake logic for the inspector resource copy script to
+        Source/WebInspectorUI so it can be shared with Win and other platforms.
+
+        * InspectorGResources.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+
 2020-04-28  David Kilzer  <ddkilzer@apple.com>
 
         [MacCatalyst] Add missing symlinks to WebKit.frameworks

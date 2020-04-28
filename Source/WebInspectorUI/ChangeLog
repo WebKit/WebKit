@@ -1,3 +1,16 @@
+2020-04-28  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Bundle Inspector Resources in Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=210942
+
+        Reviewed by Fujii Hironori.
+
+        Add CMake files for copying inspector resources
+
+        * CMakeLists.txt: Added.
+        * PlatformGTK.cmake: Added.
+        * PlatformWin.cmake: Added.
+
 2020-04-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Elements: Classes toggle button has wrong outline on focus

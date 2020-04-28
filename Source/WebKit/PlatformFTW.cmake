@@ -90,14 +90,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/win/WebProcessWin.cpp
 )
 
-# DerivedSources/JavaScriptCore/inspector/InspectorBackendCommands.js is
-# expected in DerivedSources/WebInspectorUI/UserInterface/Protocol/.
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
-    DEPENDS ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
-    COMMAND cp ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
-)
-
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/PluginProcess/win"
