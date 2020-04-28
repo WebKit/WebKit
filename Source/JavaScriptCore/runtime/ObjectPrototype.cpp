@@ -154,7 +154,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue get = callFrame->argument(1);
-    if (!get.isFunction(vm))
+    if (!get.isCallable(vm))
         return throwVMTypeError(globalObject, scope, "invalid getter usage"_s);
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
@@ -181,7 +181,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue set = callFrame->argument(1);
-    if (!set.isFunction(vm))
+    if (!set.isCallable(vm))
         return throwVMTypeError(globalObject, scope, "invalid setter usage"_s);
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);

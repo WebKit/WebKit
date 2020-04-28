@@ -262,7 +262,7 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
     JSLockHolder locker(vm);
 
     JSObject* object = toJS(function);
-    if (!object->isFunction(vm)) {
+    if (!object->isCallable(vm)) {
         *exception = toRef(createTypeError(globalObject));
         return;
     }

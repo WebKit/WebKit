@@ -6972,7 +6972,7 @@ private:
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowPath));
+        m_out.branch(isCallable(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowPath));
 
         LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
         LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
@@ -7017,7 +7017,7 @@ private:
         m_out.branch(m_out.equal(callee, weakPointer(m_node->isInternalPromise() ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())), unsure(fastAllocationCase), unsure(derivedCase));
 
         LBasicBlock lastNext = m_out.appendTo(derivedCase, isFunctionBlock);
-        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
+        m_out.branch(isCallable(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
 
         m_out.appendTo(isFunctionBlock, hasRareData);
         LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
@@ -7072,7 +7072,7 @@ private:
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isFunction(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
+        m_out.branch(isCallable(callee, provenType(m_node->child1())), usually(isFunctionBlock), rarely(slowCase));
 
         LBasicBlock lastNext = m_out.appendTo(isFunctionBlock, hasRareData);
         LValue rareDataTags = m_out.loadPtr(callee, m_heaps.JSFunction_executableOrRareData);
@@ -11568,7 +11568,7 @@ private:
         LBasicBlock lastNext = m_out.appendTo(cellCase, notFunctionCase);
         ValueFromBlock isFunctionResult = m_out.anchor(m_out.booleanFalse);
         m_out.branch(
-            isFunction(value, provenType(child)),
+            isCallable(value, provenType(child)),
             unsure(continuation), unsure(notFunctionCase));
         
         m_out.appendTo(notFunctionCase, objectCase);
@@ -11625,7 +11625,7 @@ private:
         LBasicBlock lastNext = m_out.appendTo(cellCase, notFunctionCase);
         ValueFromBlock functionResult = m_out.anchor(m_out.booleanTrue);
         m_out.branch(
-            isFunction(value, provenType(child)),
+            isCallable(value, provenType(child)),
             unsure(continuation), unsure(notFunctionCase));
         
         m_out.appendTo(notFunctionCase, slowPath);
@@ -16194,7 +16194,7 @@ private:
         
         m_out.appendTo(objectCase, functionCase);
         m_out.branch(
-            isFunction(value, provenType(child) & SpecObject),
+            isCallable(value, provenType(child) & SpecObject),
             unsure(functionCase), unsure(notFunctionCase));
         
         m_out.appendTo(functionCase, notFunctionCase);
@@ -17899,7 +17899,7 @@ private:
         }
     }
     
-    LValue isFunction(LValue cell, SpeculatedType type = SpecFullTop)
+    LValue isCallable(LValue cell, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type & SpecCell, SpecFunction))
             return proven;

@@ -188,7 +188,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
         case Wasm::ExternalKind::Function: {
             // 4. If i is a function import:
             // i. If IsCallable(v) is false, throw a WebAssembly.LinkError.
-            if (!value.isFunction(vm))
+            if (!value.isCallable(vm))
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "import function", "must be callable")));
 
             Wasm::Instance* calleeInstance = nullptr;
@@ -392,7 +392,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             wrapper = function;
         }
 
-        ASSERT(wrapper.isFunction(vm));
+        ASSERT(wrapper.isCallable(vm));
         m_instance->instance().setFunctionWrapper(index, wrapper);
 
         return wrapper;
@@ -412,7 +412,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                 initialBits = m_instance->instance().loadI64Global(global.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
-                ASSERT(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber).isFunction(vm));
+                ASSERT(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber).isCallable(vm));
                 initialBits = JSValue::encode(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber));
             } else
                 initialBits = global.initialBitsOrImportNumber;
@@ -444,7 +444,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
         switch (exp.kind) {
         case Wasm::ExternalKind::Function: {
             exportedValue = makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex);
-            ASSERT(exportedValue.isFunction(vm));
+            ASSERT(exportedValue.isCallable(vm));
             ASSERT(makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex) == exportedValue);
             break;
         }

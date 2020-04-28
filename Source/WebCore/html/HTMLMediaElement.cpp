@@ -7147,7 +7147,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
         auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "createControls"));
-        if (functionValue.isFunction(vm))
+        if (functionValue.isCallable(vm))
             return true;
 
 #ifndef NDEBUG

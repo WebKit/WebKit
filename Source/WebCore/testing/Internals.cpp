@@ -2273,7 +2273,7 @@ String Internals::parserMetaData(JSC::JSValue code)
         callFrame->iterate(vm, iter);
         CodeBlock* codeBlock = iter.codeBlock();
         executable = codeBlock->ownerExecutable();
-    } else if (code.isFunction(vm)) {
+    } else if (code.isCallable(vm)) {
         JSFunction* funcObj = JSC::jsCast<JSFunction*>(code.toObject(globalObject));
         executable = funcObj->jsExecutable();
     } else
@@ -4646,7 +4646,7 @@ JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JS
     PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
     lexicalGlobalObject.methodTable(vm)->getOwnPropertySlot(&lexicalGlobalObject, &lexicalGlobalObject, privateName, propertySlot);
     value = propertySlot.getValue(&lexicalGlobalObject, privateName);
-    ASSERT(value.isFunction(vm));
+    ASSERT(value.isCallable(vm));
 
     JSObject* function = value.getObject();
     auto callData = JSC::getCallData(vm, function);

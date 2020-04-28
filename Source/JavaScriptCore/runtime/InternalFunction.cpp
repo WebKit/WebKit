@@ -157,7 +157,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 // https://tc39.es/ecma262/#sec-getfunctionrealm
 JSGlobalObject* getFunctionRealm(VM& vm, JSObject* object)
 {
-    ASSERT(object->isFunction(vm));
+    ASSERT(object->isCallable(vm));
 
     if (object->inherits<JSBoundFunction>(vm))
         return getFunctionRealm(vm, jsCast<JSBoundFunction*>(object)->targetFunction());

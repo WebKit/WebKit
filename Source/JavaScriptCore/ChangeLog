@@ -1,3 +1,78 @@
+2020-04-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Align upon the name isCallable instead of isFunction
+        https://bugs.webkit.org/show_bug.cgi?id=211140
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r260722. Usage is now cleanly separated between isFunction / getCallData,
+        but the name isCallable is still clearer than isFunction so let's flip that after all.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextSetUnhandledRejectionCallback):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::isCallable):
+        (JSC::FTL::DFG::LowerDFGToB3::isFunction): Deleted.
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationTypeOfObjectAsTypeofType):
+        * jsc.cpp:
+        (functionSetUnhandledRejectionCallback):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/InternalFunction.cpp:
+        (JSC::getFunctionRealm):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isCallable const):
+        (JSC::JSValue::isFunction const): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isCallable):
+        (JSC::JSCell::isFunction): Deleted.
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectTypeOrNull):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::structureForTarget):
+        (JSC::ProxyObject::finishCreation):
+        * runtime/RuntimeType.cpp:
+        (JSC::runtimeTypeForValue):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCallWithStackSize):
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+        (JSC::functionHasBasicBlockExecuted):
+        (JSC::functionBasicBlockExecutionCount):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::setFunctionWrapper):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationIterateResults):
+        (JSC::Wasm::operationWasmRefFunc):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::finishCreation):
+
 2020-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] NumberConstructor should accept BigInt

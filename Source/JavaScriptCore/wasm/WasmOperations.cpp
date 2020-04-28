@@ -539,7 +539,7 @@ void JIT_OPERATION operationIterateResults(CallFrame* callFrame, Instance* insta
                 unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
                 break;
             case Funcref:
-                if (!value.isFunction(vm)) {
+                if (!value.isCallable(vm)) {
                     throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                     return;
                 }
@@ -728,7 +728,7 @@ bool JIT_OPERATION operationWasmTableFill(Instance* instance, unsigned tableInde
 EncodedJSValue JIT_OPERATION operationWasmRefFunc(Instance* instance, uint32_t index)
 {
     JSValue value = instance->getFunctionWrapper(index);
-    ASSERT(value.isFunction(instance->owner<JSObject>()->vm()));
+    ASSERT(value.isCallable(instance->owner<JSObject>()->vm()));
     return JSValue::encode(value);
 }
 

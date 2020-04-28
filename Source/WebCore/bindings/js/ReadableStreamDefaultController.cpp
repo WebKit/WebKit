@@ -56,7 +56,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::JSGlobalObject& lexica
     auto function = object.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, propertyName));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
-    if (!function.isFunction(vm)) {
+    if (!function.isCallable(vm)) {
         if (!function.isUndefined())
             throwTypeError(&lexicalGlobalObject, scope, "ReadableStream trying to call a property that is not callable"_s);
         return JSC::jsUndefined();

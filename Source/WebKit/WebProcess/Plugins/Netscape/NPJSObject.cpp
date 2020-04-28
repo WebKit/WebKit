@@ -109,7 +109,7 @@ bool NPJSObject::hasMethod(NPIdentifier methodName)
     JSValue value = m_jsObject->get(lexicalGlobalObject, identifierFromIdentifierRep(lexicalGlobalObject, identifierRep));    
     scope.clearException();
 
-    return value.isFunction(vm);
+    return value.isCallable(vm);
 }
 
 bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)

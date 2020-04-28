@@ -230,7 +230,7 @@ public:
 
     // Querying the type.
     bool isEmpty() const;
-    bool isFunction(VM&) const;
+    bool isCallable(VM&) const;
     bool isConstructor(VM&) const;
     bool isUndefined() const;
     bool isNull() const;

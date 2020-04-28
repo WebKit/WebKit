@@ -153,7 +153,7 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
     
     JSC::JSValue replacementFunction = globalObject->get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "createPluginReplacement"));
-    if (replacementFunction.isFunction(vm))
+    if (replacementFunction.isCallable(vm))
         return true;
     
     scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(quickTimePluginReplacementScript()), world);

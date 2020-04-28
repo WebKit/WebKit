@@ -61,7 +61,7 @@ void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     if (scope.exception())
         return;
 
-    ASSERT(thenFunction.isFunction(vm));
+    ASSERT(thenFunction.isCallable(vm));
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);

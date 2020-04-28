@@ -99,7 +99,7 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
         // as null when doing comparisons.
         if (object->structure(vm)->masqueradesAsUndefined(globalObject))
             return vm.smallStrings.undefinedString();
-        if (object->isFunction(vm))
+        if (object->isCallable(vm))
             return vm.smallStrings.functionString();
     }
     return vm.smallStrings.objectString();
@@ -123,7 +123,7 @@ bool jsIsObjectTypeOrNull(JSGlobalObject* globalObject, JSValue v)
         if (asObject(v)->structure(vm)->masqueradesAsUndefined(globalObject))
             return false;
         JSObject* object = asObject(v);
-        if (object->isFunction(vm))
+        if (object->isCallable(vm))
             return false;
     }
     return true;

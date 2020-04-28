@@ -832,7 +832,7 @@ SLOW_PATH_DECL(slow_path_is_function)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsFunction>();
-    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isFunction(vm)));
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable(vm)));
 }
 
 SLOW_PATH_DECL(slow_path_in_by_val)

@@ -149,7 +149,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject* globalObj
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
         Integrity::auditStructureID(vm, object->structureID());
-        if (object->isFunction(vm))
+        if (object->isCallable(vm))
             RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
     }
 

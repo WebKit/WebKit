@@ -384,7 +384,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailed;
 
     JSObject* object = asObject(value);
-    if (object->isFunction(vm)) {
+    if (object->isCallable(vm)) {
         if (holder.isArray()) {
             builder.appendLiteral("null");
             return StringifySucceeded;

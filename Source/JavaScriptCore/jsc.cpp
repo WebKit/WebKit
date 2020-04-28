@@ -2485,7 +2485,7 @@ EncodedJSValue JSC_HOST_CALL functionSetUnhandledRejectionCallback(JSGlobalObjec
     JSObject* object = callFrame->argument(0).getObject();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!object || !object->isFunction(vm))
+    if (!object || !object->isCallable(vm))
         return throwVMTypeError(globalObject, scope);
 
     globalObject->setUnhandledRejectionCallback(vm, object);

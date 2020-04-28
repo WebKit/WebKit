@@ -887,18 +887,14 @@ inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
     return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
 }
 
-inline bool JSValue::isFunction(VM& vm) const
+inline bool JSValue::isCallable(VM& vm) const
 {
-    if (!isCell())
-        return false;
-    return asCell()->isFunction(vm);
+    return isCell() && asCell()->isCallable(vm);
 }
 
 inline bool JSValue::isConstructor(VM& vm) const
 {
-    if (!isCell())
-        return false;
-    return asCell()->isConstructor(vm);
+    return isCell() && asCell()->isConstructor(vm);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

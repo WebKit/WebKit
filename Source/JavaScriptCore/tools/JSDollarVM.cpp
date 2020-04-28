@@ -2178,7 +2178,7 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
         return throwVMError(globalObject, throwScope, "Invalid number of arguments");
     JSValue arg0 = callFrame->argument(0);
     JSValue arg1 = callFrame->argument(1);
-    if (!arg0.isFunction(vm))
+    if (!arg0.isCallable(vm))
         return throwVMError(globalObject, throwScope, "arg0 should be a function");
     if (!arg1.isNumber())
         return throwVMError(globalObject, throwScope, "arg1 should be a number");
@@ -2591,7 +2591,7 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(JSGlobalObject
     vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionFindTypeForExpression"_s);
 
     JSValue functionValue = callFrame->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction(vm));
+    RELEASE_ASSERT(functionValue.isCallable(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
@@ -2611,7 +2611,7 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(JSGlobalObject* global
     vm.typeProfilerLog()->processLogEntries(vm, "jsc Testing API: functionReturnTypeFor"_s);
 
     JSValue functionValue = callFrame->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction(vm));
+    RELEASE_ASSERT(functionValue.isCallable(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     unsigned offset = executable->typeProfilingStartOffset(vm);
@@ -2645,7 +2645,7 @@ static EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(JSGlobalObject
     RELEASE_ASSERT(vm.controlFlowProfiler());
 
     JSValue functionValue = callFrame->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction(vm));
+    RELEASE_ASSERT(functionValue.isCallable(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
@@ -2665,7 +2665,7 @@ static EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(JSGlobalObj
     RELEASE_ASSERT(vm.controlFlowProfiler());
 
     JSValue functionValue = callFrame->argument(0);
-    RELEASE_ASSERT(functionValue.isFunction(vm));
+    RELEASE_ASSERT(functionValue.isCallable(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());

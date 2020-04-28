@@ -532,7 +532,7 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
     if (hasProperty) {
         JSValue get = description->get(globalObject, vm.propertyNames->get);
         RETURN_IF_EXCEPTION(scope, false);
-        if (!get.isUndefined() && !get.isFunction(vm)) {
+        if (!get.isUndefined() && !get.isCallable(vm)) {
             throwTypeError(globalObject, scope, "Getter must be a function."_s);
             return false;
         }
@@ -545,7 +545,7 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
     if (hasProperty) {
         JSValue set = description->get(globalObject, vm.propertyNames->set);
         RETURN_IF_EXCEPTION(scope, false);
-        if (!set.isUndefined() && !set.isFunction(vm)) {
+        if (!set.isUndefined() && !set.isCallable(vm)) {
             throwTypeError(globalObject, scope, "Setter must be a function."_s);
             return false;
         }

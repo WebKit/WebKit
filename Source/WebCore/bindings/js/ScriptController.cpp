@@ -659,7 +659,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         if (evaluationException)
             break;
 
-        if (!functionObject || !functionObject.isFunction(world.vm())) {
+        if (!functionObject || !functionObject.isCallable(world.vm())) {
             optionalDetails = { { "Unable to create JavaScript async function to call"_s } };
             break;
         }

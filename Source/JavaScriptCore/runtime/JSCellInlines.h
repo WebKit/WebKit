@@ -229,7 +229,7 @@ inline bool JSCell::isProxy() const
     return m_type == ImpureProxyType || m_type == PureForwardingProxyType || m_type == ProxyObjectType;
 }
 
-ALWAYS_INLINE bool JSCell::isFunction(VM& vm)
+ALWAYS_INLINE bool JSCell::isCallable(VM& vm)
 {
     if (type() == JSFunctionType)
         return true;

@@ -72,7 +72,7 @@ String ProxyObject::toStringName(const JSObject* object, JSGlobalObject* globalO
 Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
 {
     VM& vm = globalObject->vm();
-    return target.isFunction(vm) ? globalObject->callableProxyObjectStructure() : globalObject->proxyObjectStructure();
+    return target.isCallable(vm) ? globalObject->callableProxyObjectStructure() : globalObject->proxyObjectStructure();
 }
 
 void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue target, JSValue handler)
@@ -91,7 +91,7 @@ void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue t
 
     JSObject* targetAsObject = jsCast<JSObject*>(target);
 
-    m_isCallable = targetAsObject->isFunction(vm);
+    m_isCallable = targetAsObject->isCallable(vm);
     if (m_isCallable) {
         TypeInfo info = structure(vm)->typeInfo();
         RELEASE_ASSERT(info.implementsHasInstance() && info.implementsDefaultHasInstance());

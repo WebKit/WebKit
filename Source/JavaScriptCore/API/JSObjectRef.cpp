@@ -706,7 +706,7 @@ bool JSObjectIsFunction(JSContextRef ctx, JSObjectRef object)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     JSCell* cell = toJS(object);
-    return cell->isFunction(vm);
+    return cell->isCallable(vm);
 }
 
 JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

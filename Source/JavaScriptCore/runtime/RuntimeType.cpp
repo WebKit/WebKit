@@ -51,7 +51,7 @@ RuntimeType runtimeTypeForValue(VM& vm, JSValue value)
         return TypeBoolean;
     if (value.isObject())
         return TypeObject;
-    if (value.isFunction(vm))
+    if (value.isCallable(vm))
         return TypeFunction;
     if (value.isSymbol())
         return TypeSymbol;

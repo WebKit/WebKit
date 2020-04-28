@@ -2143,7 +2143,7 @@ size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject* globalObject, JSCel
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
-    if (object->isFunction(vm))
+    if (object->isCallable(vm))
         return false;
     return true;
 }
@@ -2158,7 +2158,7 @@ size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject* globalObject, JSC
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return false;
-    if (object->isFunction(vm))
+    if (object->isCallable(vm))
         return true;
     return false;
 }
@@ -2173,7 +2173,7 @@ JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject* globalObject, JSCell
     
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return vm.smallStrings.undefinedString();
-    if (object->isFunction(vm))
+    if (object->isCallable(vm))
         return vm.smallStrings.functionString();
     return vm.smallStrings.objectString();
 }

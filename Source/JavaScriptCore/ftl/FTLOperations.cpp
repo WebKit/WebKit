@@ -721,7 +721,7 @@ extern "C" int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObjec
 
     if (object->structure(vm)->masqueradesAsUndefined(globalObject))
         return static_cast<int32_t>(TypeofType::Undefined);
-    if (object->isFunction(vm))
+    if (object->isCallable(vm))
         return static_cast<int32_t>(TypeofType::Function);
     return static_cast<int32_t>(TypeofType::Object);
 }
