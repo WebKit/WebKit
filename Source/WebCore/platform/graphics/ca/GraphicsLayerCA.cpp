@@ -1971,48 +1971,68 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         m_layer->setSublayers(PlatformCALayerList());
         return;
     }
-    
-    const PlatformCALayerList* customSublayers = m_layer->customSublayers();
 
-    PlatformCALayerList structuralLayerChildren;
-    PlatformCALayerList primaryLayerChildren;
-
-    PlatformCALayerList& childListForSublayers = m_structuralLayer ? structuralLayerChildren : primaryLayerChildren;
-
-    if (customSublayers)
-        primaryLayerChildren.appendVector(*customSublayers);
-
-    if (m_structuralLayer) {
+    auto appendStructuralLayerChildren = [&](PlatformCALayerList& list) {
         if (m_backdropLayer)
-            structuralLayerChildren.append(m_backdropLayer);
+            list.append(m_backdropLayer);
 
         if (m_replicaLayer)
-            structuralLayerChildren.append(downcast<GraphicsLayerCA>(*m_replicaLayer).primaryLayer());
+            list.append(downcast<GraphicsLayerCA>(*m_replicaLayer).primaryLayer());
     
-        structuralLayerChildren.append(m_layer);
-    }
+        list.append(m_layer);
+    };
 
-    if (m_contentsLayer && m_contentsVisible) {
-        // FIXME: add the contents layer in the correct order with negative z-order children.
-        // This does not cause visible rendering issues because currently contents layers are only used
-        // for replaced elements that don't have children.
-        primaryLayerChildren.append(m_contentsClippingLayer ? m_contentsClippingLayer : m_contentsLayer);
-    }
-    
-    for (const auto& layer : children()) {
-        const auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
-        PlatformCALayer* childLayer = currentChild.layerForSuperlayer();
-        childListForSublayers.append(childLayer);
-    }
+    auto appendClippingLayers = [&](PlatformCALayerList& list) {
+        if (!m_contentsVisible)
+            return;
 
+        if (m_contentsClippingLayer) {
+            list.append(m_contentsClippingLayer);
+            return;
+        }
+
+        if (m_contentsLayer)
+            list.append(m_contentsLayer);
+    };
+
+    auto appendCustomAndClippingLayers = [&](PlatformCALayerList& list) {
+        if (auto* customSublayers = m_layer->customSublayers())
+            list.appendVector(*customSublayers);
+
+        appendClippingLayers(list);
+    };
+
+    auto appendLayersFromChildren = [&](PlatformCALayerList& list) {
+        for (const auto& layer : children()) {
+            const auto& currentChild = downcast<GraphicsLayerCA>(layer.get());
+            PlatformCALayer* childLayer = currentChild.layerForSuperlayer();
+            list.append(childLayer);
+        }
+    };
+
+    auto appendDebugLayers = [&](PlatformCALayerList& list) {
 #ifdef VISIBLE_TILE_WASH
-    if (m_visibleTileWashLayer)
-        childListForSublayers.append(m_visibleTileWashLayer);
+        if (m_visibleTileWashLayer)
+            list.append(m_visibleTileWashLayer);
+#else
+        UNUSED_PARAM(list);
 #endif
+    };
 
-    if (m_structuralLayer)
-        m_structuralLayer->setSublayers(structuralLayerChildren);
-    
+    PlatformCALayerList primaryLayerChildren;
+    appendCustomAndClippingLayers(primaryLayerChildren);
+
+    if (m_structuralLayer) {
+        PlatformCALayerList layerList;
+        appendStructuralLayerChildren(layerList);
+        appendLayersFromChildren(layerList);
+        appendDebugLayers(layerList);
+        m_structuralLayer->setSublayers(layerList);
+    } else {
+        appendLayersFromChildren(primaryLayerChildren);
+        appendDebugLayers(primaryLayerChildren);
+    }
+
     m_layer->setSublayers(primaryLayerChildren);
 }
 
