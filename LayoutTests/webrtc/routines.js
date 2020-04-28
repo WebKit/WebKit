@@ -78,6 +78,16 @@ function onAddIceCandidateError(error)
     assert_unreached();
 }
 
+async function renegotiate(pc1, pc2)
+{
+    let d = await pc1.createOffer();
+    await pc1.setLocalDescription(d);
+    await pc2.setRemoteDescription(d);
+    d = await pc2.createAnswer();
+    await pc1.setRemoteDescription(d);
+    await pc2.setLocalDescription(d);
+}
+
 function analyseAudio(stream, duration, context)
 {
     return new Promise((resolve, reject) => {

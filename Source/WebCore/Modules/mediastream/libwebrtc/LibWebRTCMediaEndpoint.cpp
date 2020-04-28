@@ -481,22 +481,6 @@ std::unique_ptr<LibWebRTCRtpTransceiverBackend> LibWebRTCMediaEndpoint::transcei
     return nullptr;
 }
 
-void LibWebRTCMediaEndpoint::removeRemoteStream(webrtc::MediaStreamInterface& rtcStream)
-{
-    bool removed = m_remoteStreamsById.remove(fromStdString(rtcStream.id()));
-    ASSERT_UNUSED(removed, removed);
-}
-
-void LibWebRTCMediaEndpoint::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
-{
-    callOnMainThread([protectedThis = makeRef(*this), stream = WTFMove(stream)] {
-        if (protectedThis->isStopped())
-            return;
-        ASSERT(stream);
-        protectedThis->removeRemoteStream(*stream.get());
-    });
-}
-
 void LibWebRTCMediaEndpoint::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver)
 {
     callOnMainThread([protectedThis = makeRef(*this), transceiver = WTFMove(transceiver)]() mutable {

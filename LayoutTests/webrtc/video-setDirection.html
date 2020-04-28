@@ -44,15 +44,6 @@ function testImage()
 }
 
 var pc1, pc2;
-async function renegotiate()
-{
-    let d = await pc1.createOffer();
-    await pc1.setLocalDescription(d);
-    await pc2.setRemoteDescription(d);
-    d = await pc2.createAnswer();
-    await pc1.setRemoteDescription(d);
-    await pc2.setLocalDescription(d);
-}
 
 promise_test(async (t) => {
     if (window.testRunner)
@@ -80,7 +71,7 @@ promise_test(async (t) => {
     });
 
     pc1.getTransceivers()[0].direction = "inactive";
-    await renegotiate();
+    await renegotiate(pc1, pc2);
     await promise;
 
     promise = new Promise((resolve) => {
@@ -92,7 +83,7 @@ promise_test(async (t) => {
         pc2.ontrack = (trackEvent) => { resolve (trackEvent.streams[0]); };
     });
 
-    await renegotiate();
+    await renegotiate(pc1, pc2);
     video.srcObject = await streamPromise;
     await promise;
 
