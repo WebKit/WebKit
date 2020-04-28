@@ -1,3 +1,22 @@
+2020-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        [MacCatalyst] Add missing symlinks to WebKit.frameworks
+        <https://webkit.org/b/211102>
+        <rdar://problem/62137758>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (Make Frameworks Symbolic Link):
+        - Update logic to run for macOS and macCatalyst builds.
+        - Add output path.
+        (Check For Inappropriate Objective-C Class Names):
+        - Let Xcode have its way with the project file by adding a
+          newline to the end of the script.
+        (Check For Weak VTables and Externals): Ditto.
+        (Add XPCServices symlink):
+        - Update logic to run for macOS and macCatalyst builds.
+
 2020-04-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Create a mechanism to add missing ITP Database tables when the schema is updated
