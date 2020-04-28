@@ -301,7 +301,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     VisiblePosition newBase = base;
     VisiblePosition extent = newSelection.visibleExtent();
     VisiblePosition newExtent = extent;
-    if (endpointsAdjustmentMode == AdjustEndpointsAtBidiBoundary)
+    if (endpointsAdjustmentMode == EndPointsAdjustmentMode::AdjustAtBidiBoundary)
         adjustEndpointsAtBidiBoundary(newBase, newExtent);
 
     if (newBase != base || newExtent != extent) {

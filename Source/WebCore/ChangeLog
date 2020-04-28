@@ -1,5 +1,25 @@
 2020-04-28  Daniel Bates  <dabates@apple.com>
 
+        Modernize EndPointsAdjustmentMode enumeration and fix misspelled enumerator
+        https://bugs.webkit.org/show_bug.cgi?id=211141
+
+        Reviewed by Eric Carlson.
+
+        Fix the misspelled enumerator DoNotAdjsutEndpoints. While I am here, make
+        EndPointsAdjustmentMode an enum class sized as a bool and simplify the naming
+        of its enumerators now that they have to be qualified. I also re-ordered them
+        so that DoNotAdjust is the first enumerator (it will have value 0). This doesn't
+        really matter, but I like it because it makes it so that this enumeration behaves
+        more like an equivalent boolean should casts be involved.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent):
+        * editing/FrameSelection.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
         [WebKitLegacy] Implement -hidePlaceholder and -showPlaceholderIfNecessary in terms of setCanShowPlaceholder()
         https://bugs.webkit.org/show_bug.cgi?id=211139
 

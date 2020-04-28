@@ -1035,7 +1035,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection.expandUsingGranularity(m_frame.selection().granularity());
 
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
-        FrameSelection::AdjustEndpointsAtBidiBoundary);
+        FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
