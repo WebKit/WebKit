@@ -1,3 +1,14 @@
+2020-04-28  Peng Liu  <peng.liu6@apple.com>
+
+        Remove the WebKit.plist for Feature Flags
+        https://bugs.webkit.org/show_bug.cgi?id=210534
+
+        Unreviewed project file clean-up.
+
+        A follow-up patch for r260599. Remove the reference to the WebKit.plist from project.pbxproj.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API tests after r260790

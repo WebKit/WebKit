@@ -2740,7 +2740,6 @@
 		1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorUIMessageReceiver.cpp; path = DerivedSources/WebKit2/WebInspectorUIMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorUIMessages.h; path = DerivedSources/WebKit2/WebInspectorUIMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
-		1D12CC27240EDF6D00FDA0A3 /* WebKit.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1D32F89823A8465A00B1EA6A /* RemoteMediaResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResource.h; sourceTree = "<group>"; };
 		1D32F89923A8468000B1EA6A /* RemoteMediaResource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResource.cpp; sourceTree = "<group>"; };
 		1D32F89B23A84BA600B1EA6A /* RemoteMediaResourceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceProxy.h; sourceTree = "<group>"; };
@@ -5637,7 +5636,6 @@
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */,
 				1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */,
-				1D12CC26240EDF1B00FDA0A3 /* FeatureFlags */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
 				BC032DC310F438260058C15A /* UIProcess */,
@@ -6485,14 +6483,6 @@
 				1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		1D12CC26240EDF1B00FDA0A3 /* FeatureFlags */ = {
-			isa = PBXGroup;
-			children = (
-				1D12CC27240EDF6D00FDA0A3 /* WebKit.plist */,
-			);
-			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1DAF5A4D23EC9F7900B7B518 /* cocoa */ = {
