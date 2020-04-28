@@ -1,3 +1,15 @@
+2020-04-28  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WebGL] compositing/clipping/border-radius-on-webgl.html is failing since added
+        https://bugs.webkit.org/show_bug.cgi?id=211121
+
+        Also removed fast/mediastream/getDisplayMedia-max-constraints.html
+        from TestExpectations, it was removed from the repository in r260638.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-04-28  Antti Koivisto  <antti@apple.com>
 
         msn.com: Header flickers when scrolling articles

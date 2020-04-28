@@ -1578,7 +1578,6 @@ webkit.org/b/209533 http/tests/contentextensions/video-element-resource-type.htm
 webkit.org/b/209533 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Crash Pass ]
 webkit.org/b/209533 media/track/track-automatic-subtitles.html [ Crash Pass ]
 
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints.html [ Crash ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Crash ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Crash ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Crash ]
@@ -4477,6 +4476,7 @@ webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
 webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
+webkit.org/b/211121 compositing/clipping/border-radius-on-webgl.html [ ImageOnlyFailure ]
 
 webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
 
