@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ using namespace WebCore;
 
 void EditorState::encode(IPC::Encoder& encoder) const
 {
+    encoder << originIdentifierForPasteboard;
     encoder << shouldIgnoreSelectionChanges;
     encoder << selectionIsNone;
     encoder << selectionIsRange;
@@ -43,21 +44,15 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << isInPlugin;
     encoder << hasComposition;
     encoder << isMissingPostLayoutData;
-
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
-
-#if PLATFORM(IOS_FAMILY)
-    encoder << firstMarkedRect;
-    encoder << lastMarkedRect;
-    encoder << markedText;
-#endif
-
-    encoder << originIdentifierForPasteboard;
 }
 
 bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 {
+    if (!decoder.decode(result.originIdentifierForPasteboard))
+        return false;
+
     if (!decoder.decode(result.shouldIgnoreSelectionChanges))
         return false;
 
@@ -89,18 +84,6 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
         if (!PostLayoutData::decode(decoder, result.postLayoutData()))
             return false;
     }
-
-#if PLATFORM(IOS_FAMILY)
-    if (!decoder.decode(result.firstMarkedRect))
-        return false;
-    if (!decoder.decode(result.lastMarkedRect))
-        return false;
-    if (!decoder.decode(result.markedText))
-        return false;
-#endif
-
-    if (!decoder.decode(result.originIdentifierForPasteboard))
-        return false;
 
     return true;
 }
@@ -136,6 +119,9 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << atStartOfSentence;
     encoder << selectionStartIsAtParagraphBoundary;
     encoder << selectionEndIsAtParagraphBoundary;
+    encoder << firstMarkedRect;
+    encoder << lastMarkedRect;
+    encoder << markedText;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -208,6 +194,12 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
     if (!decoder.decode(result.selectionEndIsAtParagraphBoundary))
         return false;
+    if (!decoder.decode(result.firstMarkedRect))
+        return false;
+    if (!decoder.decode(result.lastMarkedRect))
+        return false;
+    if (!decoder.decode(result.markedText))
+        return false;
 #endif
 #if PLATFORM(MAC)
     if (!decoder.decode(result.candidateRequestStartPosition))
@@ -247,15 +239,6 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
 
 TextStream& operator<<(TextStream& ts, const EditorState& editorState)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (editorState.firstMarkedRect != IntRect())
-        ts.dumpProperty("firstMarkedRect", editorState.firstMarkedRect);
-    if (editorState.lastMarkedRect != IntRect())
-        ts.dumpProperty("lastMarkedRect", editorState.lastMarkedRect);
-    if (editorState.markedText.length())
-        ts.dumpProperty("markedText", editorState.markedText);
-#endif
-
     if (editorState.shouldIgnoreSelectionChanges)
         ts.dumpProperty("shouldIgnoreSelectionChanges", editorState.shouldIgnoreSelectionChanges);
     if (!editorState.selectionIsNone)
@@ -301,6 +284,12 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData().baseWritingDirection));
 #endif // PLATFORM(COCOA)
 #if PLATFORM(IOS_FAMILY)
+    if (editorState.postLayoutData().firstMarkedRect != IntRect())
+        ts.dumpProperty("firstMarkedRect", editorState.postLayoutData().firstMarkedRect);
+    if (editorState.postLayoutData().lastMarkedRect != IntRect())
+        ts.dumpProperty("lastMarkedRect", editorState.postLayoutData().lastMarkedRect);
+    if (editorState.postLayoutData().markedText.length())
+        ts.dumpProperty("markedText", editorState.postLayoutData().markedText);
     if (editorState.postLayoutData().caretRectAtEnd != IntRect())
         ts.dumpProperty("caretRectAtEnd", editorState.postLayoutData().caretRectAtEnd);
     if (editorState.postLayoutData().selectionRects.size())

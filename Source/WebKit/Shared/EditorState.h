@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,8 @@ enum ListType {
 };
 
 struct EditorState {
+    String originIdentifierForPasteboard;
     bool shouldIgnoreSelectionChanges { false };
-
     bool selectionIsNone { true }; // This will be false when there is a caret selection.
     bool selectionIsRange { false };
     bool isContentEditable { false };
@@ -75,14 +75,6 @@ struct EditorState {
     bool isInPlugin { false };
     bool hasComposition { false };
     bool isMissingPostLayoutData { true };
-
-#if PLATFORM(IOS_FAMILY)
-    WebCore::IntRect firstMarkedRect;
-    WebCore::IntRect lastMarkedRect;
-    String markedText;
-#endif
-
-    String originIdentifierForPasteboard;
 
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
@@ -114,6 +106,9 @@ struct EditorState {
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
+        WebCore::IntRect firstMarkedRect;
+        WebCore::IntRect lastMarkedRect;
+        String markedText;
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

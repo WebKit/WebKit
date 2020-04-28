@@ -1353,8 +1353,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void updateViewportSizeForCSSViewportUnits();
 
-    static void convertSelectionRectsToRootView(WebCore::FrameView*, Vector<WebCore::SelectionRect>&);
-
     void getFocusedElementInformation(FocusedElementInformation&);
     void platformInitializeAccessibility();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);

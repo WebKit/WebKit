@@ -4118,12 +4118,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (CGRect)textFirstRect
 {
-    return (_page->editorState().hasComposition) ? _page->editorState().firstMarkedRect : _autocorrectionData.textFirstRect;
+    return _page->editorState().hasComposition ? _page->editorState().postLayoutData().firstMarkedRect : _autocorrectionData.textFirstRect;
 }
 
 - (CGRect)textLastRect
 {
-    return (_page->editorState().hasComposition) ? _page->editorState().lastMarkedRect : _autocorrectionData.textLastRect;
+    return _page->editorState().hasComposition ? _page->editorState().postLayoutData().lastMarkedRect : _autocorrectionData.textLastRect;
 }
 
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
@@ -6522,12 +6522,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)_updateChangedSelection:(BOOL)force
 {
-    auto& state = _page->editorState();
-    if (state.isMissingPostLayoutData)
+    auto& editorState = _page->editorState();
+    if (editorState.isMissingPostLayoutData)
         return;
 
-    auto& postLayoutData = state.postLayoutData();
-    WebKit::WKSelectionDrawingInfo selectionDrawingInfo(state);
+    auto& postLayoutData = editorState.postLayoutData();
+    WebKit::WKSelectionDrawingInfo selectionDrawingInfo { editorState };
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
         LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
@@ -6535,7 +6535,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
         // FIXME: We need to figure out what to do if the selection is changed by Javascript.
         if (_textInteractionAssistant) {
-            _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
+            _markedText = editorState.hasComposition ? postLayoutData.markedText : String { };
             [_textInteractionAssistant selectionChanged];
         }
 

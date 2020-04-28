@@ -1,3 +1,44 @@
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Marked text editor state only needs to be set when layout is up-to-date
+        https://bugs.webkit.org/show_bug.cgi?id=211087
+
+        Reviewed by Darin Adler.
+
+        Organize the code to reflect reality: editor state only has marked text rects if layout is
+        up-to-date. So, move these fields to from EditorState to EditorState::PostLayoutData.
+
+        While I am in this area of the code I also moved the editor state originIdentifierForPasteboard
+        to the top of the struct as it is aesthetically more pleasing to me to have the post layout
+        data last. It likely also produces better bit packing though this wasn't my primary motivation.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        (WebKit::EditorState::PostLayoutData::encode const): 
+        (WebKit::EditorState::PostLayoutData::decode):
+        Move encoding and decoding of marked test fields from EditorState to EditorState::PostLayoutData.
+
+        (WebKit::operator<<): Fix up code now that marked text fields are in PostLayoutData.
+        * Shared/EditorState.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textFirstRect]): Update code now that this data is in the post layout data struct.
+        (-[WKContentView textLastRect]): Ditto.
+        (-[WKContentView _updateChangedSelection:]): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::convertContentToRootViewSelectionRects): Added.
+        (WebKit::WebPage::getPlatformEditorState const): Update now that marked text fields are in the
+        post layout data struct. Simplify the early return as well: only continue if we're not missing post
+        layout data. If we're missing post layout data then we either do not have a frame view or layout is
+        not up-to-data. Either way we don't want to do anything. I also stored the FrameView in a Ref<> to
+        future proof the code should future code cause view detachment and destruction. Note that layout
+        could cause this, but the code currently covers this case. So, taking a Ref<> is about future proofing.
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset): Update to use convertContentToRootViewSelectionRects().
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText): Ditto.
+        (WebKit::WebPage::requestAutocorrectionData): Use Vector::map() to convert the selection rects to
+        from content to root view FloatRects.
+        (WebKit::WebPage::convertSelectionRectsToRootView): Deleted.
+
 2020-04-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violation when uploading a file

@@ -245,37 +245,37 @@ bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
     return needsLayout;
 }
 
+static void convertContentToRootViewSelectionRects(const FrameView& view, Vector<SelectionRect>& rects)
+{
+    for (auto& rect : rects)
+        rect.setRect(view.contentsToRootView(rect.rect()));
+}
+
 void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 {
     getPlatformEditorStateCommon(frame, result);
 
-    FrameView* view = frame.view();
-    if (!view) {
-        result.isMissingPostLayoutData = true;
+    if (result.isMissingPostLayoutData)
         return;
-    }
+    ASSERT(frame.view());
+    auto& postLayoutData = result.postLayoutData();
+    auto view = makeRef(*frame.view());
 
     if (frame.editor().hasComposition()) {
-        RefPtr<Range> compositionRange = frame.editor().compositionRange();
+        auto compositionRange = frame.editor().compositionRange();
         Vector<WebCore::SelectionRect> compositionRects;
         if (compositionRange) {
             compositionRange->collectSelectionRects(compositionRects);
             if (compositionRects.size())
-                result.firstMarkedRect = view->contentsToRootView(compositionRects[0].rect());
+                postLayoutData.firstMarkedRect = view->contentsToRootView(compositionRects[0].rect());
             if (compositionRects.size() > 1)
-                result.lastMarkedRect = view->contentsToRootView(compositionRects.last().rect());
+                postLayoutData.lastMarkedRect = view->contentsToRootView(compositionRects.last().rect());
             else
-                result.lastMarkedRect = result.firstMarkedRect;
-            result.markedText = plainTextForContext(compositionRange.get());
+                postLayoutData.lastMarkedRect = postLayoutData.firstMarkedRect;
+            postLayoutData.markedText = plainTextForContext(compositionRange.get());
         }
     }
 
-    // We only set the remaining EditorState entries if layout is done as a performance optimization
-    // to avoid the need to force a synchronous layout here to compute these entries.
-    if (view->needsLayout() || result.isMissingPostLayoutData)
-        return;
-
-    auto& postLayoutData = result.postLayoutData();
     const auto& selection = frame.selection().selection();
     postLayoutData.isStableStateUpdate = m_isInStableState;
     bool startNodeIsInsideFixedPosition = false;
@@ -296,7 +296,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         String selectedText;
         if (selectedRange) {
             createLiveRange(*selectedRange)->collectSelectionRects(postLayoutData.selectionRects);
-            convertSelectionRectsToRootView(view, postLayoutData.selectionRects);
+            convertContentToRootViewSelectionRects(view, postLayoutData.selectionRects);
             selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
@@ -2004,7 +2004,7 @@ void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, in
 
     Vector<WebCore::SelectionRect> selectionRects;
     range->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
-    convertSelectionRectsToRootView(frame.view(), selectionRects);
+    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
 
@@ -2062,7 +2062,7 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
 
     Vector<WebCore::SelectionRect> selectionRects;
     range->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
-    convertSelectionRectsToRootView(frame.view(), selectionRects);
+    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
 
@@ -2257,14 +2257,6 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }
 
-void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionRect>& selectionRects)
-{
-    for (size_t i = 0; i < selectionRects.size(); ++i) {
-        SelectionRect& currentRect = selectionRects[i];
-        currentRect.setRect(view->contentsToRootView(currentRect.rect()));
-    }
-}
-
 void WebPage::requestDictationContext(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -2377,19 +2369,14 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
     if (textForRange == textForAutocorrection)
         range->collectSelectionRects(selectionRects);
 
-    Vector<FloatRect> rectsForText;
-    rectsForText.grow(selectionRects.size());
-
-    convertSelectionRectsToRootView(frame.view(), selectionRects);
-    for (size_t i = 0; i < selectionRects.size(); i++)
-        rectsForText[i] = selectionRects[i].rect();
+    auto rootViewSelectionRects = selectionRects.map([&](const auto& selectionRect) -> FloatRect { return frame.view()->contentsToRootView(selectionRect.rect()); });
 
     bool multipleFonts = false;
     CTFontRef font = nil;
     if (auto* coreFont = frame.editor().fontForSelection(multipleFonts))
         font = coreFont->getCTFont();
 
-    reply({ WTFMove(rectsForText), (__bridge UIFont *)font });
+    reply({ WTFMove(rootViewSelectionRects) , (__bridge UIFont *)font });
 }
 
 void WebPage::applyAutocorrection(const String& correction, const String& originalText, CallbackID callbackID)
