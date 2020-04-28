@@ -155,7 +155,7 @@ static void webkitInputMethodContextImplGtkGetPreedit(WebKitInputMethodContext* 
                 auto* underline = webkit_input_method_underline_new(clampTo<unsigned>(start), clampTo<unsigned>(end));
                 if (auto* colorAttribute = pango_attr_iterator_get(iter, PANGO_ATTR_UNDERLINE_COLOR)) {
                     PangoColor* color = &(reinterpret_cast<PangoAttrColor*>(colorAttribute))->color;
-                    GdkRGBA rgba = { color->red / 65535., color->green / 65535., color->blue / 65535., 1. };
+                    GdkRGBA rgba = { color->red / 65535.f, color->green / 65535.f, color->blue / 65535.f, 1.f };
                     webkit_input_method_underline_set_color(underline, &rgba);
                 }
 

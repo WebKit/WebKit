@@ -1,3 +1,13 @@
+2020-04-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Unreviewed build fix for Clang 10
+
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (webkitInputMethodContextImplGtkGetPreedit): Use the "f" suffix to make constants float to
+        prevent a narrowing double-to-float narrowing issue which Clang 10 considers an error. This
+        only happens with GTK4 because GdkRGBA now has float members. Using float constants is fine
+        with GTK3, because promoting floats to doubles never loses precision.
+
 2020-04-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] Marked text editor state only needs to be set when layout is up-to-date
