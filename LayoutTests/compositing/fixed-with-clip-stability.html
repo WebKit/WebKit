@@ -1,0 +1,21 @@
+<style>
+body { height: 10000px; }
+.fixed { position:fixed; background-color: green; width: 200px; height:200px; left: 100px;}
+.clipped-fixed { position: fixed; top: 50px; left: 40px; width: 200px; height:20px; clip:rect(0,0,0,0)}
+</style>
+<div class=fixed><div class=clipped-fixed>text</div></div>
+<pre id=results></pre>
+<script>
+if (window.internals) {
+    testRunner.dumpAsText();
+
+    const result1 = internals.layerTreeAsText(document);
+    document.querySelector('.fixed').style.color = "blue";
+    const result2 = internals.layerTreeAsText(document);
+
+    const pass = result1 == result2;
+    results.textContent = pass ? "PASS" : "FAIL";
+    if (!pass)
+        results.textContent +=  "\n" + result1 + "\n" + result2;
+}
+</script>

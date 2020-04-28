@@ -1,3 +1,25 @@
+2020-04-28  Antti Koivisto  <antti@apple.com>
+
+        msn.com: Header flickers when scrolling articles
+        https://bugs.webkit.org/show_bug.cgi?id=211126
+        <rdar://problem/56439177>
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/fixed-with-clip-stability.html
+
+        In case of fixed positioned elements the decision to create backing depends on clip rect.
+        However RenderLayer::localClipRect() tests for backing in call to clippingRootForPainting(). This creates
+        instability since clipping depends on backing decision, and backing decision depends on clipping.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::localClipRect const):
+
+        Specifically the result of clipExceedsBounds test here is affected by computed offsetFromRoot:
+        "clipRect.contains(cssClipRect)" test fails for zero sized clips with different offsets.
+
+        Compute clipExceedsBounds by looking at the clip sizes only and ignoring the position (which should match).
+
 2020-04-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Introduce FormattingContext::ConstraintsForOutOfFlowContent
