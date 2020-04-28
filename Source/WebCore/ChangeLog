@@ -1,3 +1,20 @@
+2020-04-28  Charlie Turner  <cturner@igalia.com>
+
+        [EME][CDMProxy] Default initialize m_numDecryptorsWaitingForKey member
+        https://bugs.webkit.org/show_bug.cgi?id=210970
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This was causing non-deterministic reads of the
+        m_numDecryptorsWaitingForKey member. Sometimes a waiting for key
+        event would fail to fire and cause test failures. I thought
+        std::atomic<int> would default initialize to zero, but after
+        spec-diving I realise now I was wrong about that.
+
+        Test: encrypted-media/clearkey-mp4-waiting-for-a-key.https.html
+
+        * platform/encryptedmedia/CDMProxy.h:
+
 2020-04-28  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection should not remove its created remote MediaStream objects until getting close

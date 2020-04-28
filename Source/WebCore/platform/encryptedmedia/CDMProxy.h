@@ -194,7 +194,7 @@ private:
     // As a CDMProxy, we ***should*** be turned off before this pointer ever goes bad.
     MediaPlayer* m_player { nullptr }; // FIXME: MainThread<T>?
 
-    std::atomic<int> m_numDecryptorsWaitingForKey;
+    std::atomic<int> m_numDecryptorsWaitingForKey { 0 };
     Vector<RefPtr<CDMInstanceSession>> m_sessions;
 
     KeyStore m_keyStore;
