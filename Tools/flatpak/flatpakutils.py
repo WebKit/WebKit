@@ -659,6 +659,13 @@ class WebkitFlatpak:
                 "--talk-name=org.freedesktop.Flatpak"
             ])
 
+            try:
+                with open(os.devnull, 'w') as devnull:
+                    uid = subprocess.check_output(("id", "-u"), stderr=devnull).strip()
+                    flatpak_command.append("--bind-mount=/run/user/{uid}/doc=/run/user/{uid}/doc".format(uid=uid))
+            except subprocess.CalledProcessError:
+                pass
+
             forwarded.update({
                 "TZ": "PST8PDT",
                 "LANG": "en_US.UTF-8"

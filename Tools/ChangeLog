@@ -1,3 +1,15 @@
+2020-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WebInspector] platformSave broken when running within the Flatpak runtime
+        https://bugs.webkit.org/show_bug.cgi?id=209473
+
+        Reviewed by Adrian Perez de Castro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): White-list the user document
+        folder into the sandbox. This seems needed by the file-chooser
+        popup, somehow.
+
 2020-04-27  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: A suite running multiple times in a commit for a single configuration may pre-empt processing
