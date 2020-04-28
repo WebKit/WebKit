@@ -636,15 +636,15 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
     if (!is<RenderBox>(renderer()))
         return;
 
-    auto& renderer = downcast<RenderBox>(this->renderer());
-    LayoutRect boxRect = renderer.borderBoxRect();
-    if (renderer.hasClip())
-        boxRect.intersect(renderer.clipRect(LayoutPoint(), nullptr));
+    auto& renderBox = downcast<RenderBox>(this->renderer());
+    LayoutRect boxRect = renderBox.borderBoxRect();
+    if (renderBox.hasClip())
+        boxRect.intersect(renderBox.clipRect(LayoutPoint(), nullptr));
     boxRect.move(contentOffsetInCompositingLayer());
 
     FloatRoundedRect backdropFiltersRect;
-    if (renderer.style().hasBorderRadius() && !renderer.hasClip())
-        backdropFiltersRect = renderer.style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+    if (renderBox.style().hasBorderRadius() && !renderBox.hasClip())
+        backdropFiltersRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
     else
         backdropFiltersRect = FloatRoundedRect(snapRectToDevicePixels(boxRect, deviceScaleFactor()));
 
@@ -879,8 +879,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     if (usesCompositedScrolling) {
         // If it's scrollable, it has to be a box.
-        auto& renderBox = downcast<RenderBox>(renderer());
-        FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(renderBox.borderBoxRect()).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        FloatRoundedRect contentsClippingRect = downcast<RenderBox>(renderer()).roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
         needsDescendantsClippingLayer = contentsClippingRect.isRounded();
     } else
         needsDescendantsClippingLayer = RenderLayerCompositor::clipsCompositingDescendants(m_owningLayer);
@@ -948,8 +947,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
         m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
-        // Requires layout.
-        resetContentsRect();
+        updateContentsRects();
     }
 #endif
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(WEBGPU)
@@ -1271,8 +1269,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
         if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
-            LayoutRect boxRect({ }, renderBox.size());
-            FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+            FloatRoundedRect contentsClippingRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
             contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
             clipLayer->setMasksToBoundsRect(contentsClippingRect);
         }
@@ -1585,17 +1582,20 @@ void RenderLayerBacking::updateInternalHierarchy()
     }
 }
 
-void RenderLayerBacking::resetContentsRect()
+void RenderLayerBacking::updateContentsRects()
 {
     m_graphicsLayer->setContentsRect(snapRectToDevicePixels(contentsBox(), deviceScaleFactor()));
     
-    if (is<RenderBox>(renderer())) {
-        LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
-        boxRect.move(contentOffsetInCompositingLayer());
-        FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+    if (is<RenderReplaced>(renderer())) {
+        FloatRoundedRect contentsClippingRect = downcast<RenderReplaced>(renderer()).roundedContentBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        contentsClippingRect.move(contentOffsetInCompositingLayer());
         m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
     }
+}
 
+void RenderLayerBacking::resetContentsRect()
+{
+    updateContentsRects();
     m_graphicsLayer->setContentsTileSize(IntSize());
     m_graphicsLayer->setContentsTilePhase(IntSize());
 }
@@ -2040,8 +2040,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
     if (hasClippingLayer() && needsDescendantsClippingLayer) {
         if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
             auto* clipLayer = clippingLayer();
-            LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
-            FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+            FloatRoundedRect contentsClippingRect = downcast<RenderBox>(renderer()).roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
             contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
             // Note that we have to set this rounded rect again during the geometry update (clipLayer->offsetFromRenderer() may be stale here).
             if (clipLayer->setMasksToBoundsRect(contentsClippingRect)) {
@@ -2323,7 +2322,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
 
     auto& style = renderer().style();
     if (!contentsInfo.isSimpleContainer() || !style.hasBackgroundImage()) {
-        m_graphicsLayer->setContentsToImage(0);
+        m_graphicsLayer->setContentsToImage(nullptr);
         return;
     }
 
@@ -2687,14 +2686,7 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
     if (!cachedImage->isLoaded())
         return;
 
-    // This is a no-op if the layer doesn't have an inner layer for the image.
-    m_graphicsLayer->setContentsRect(snapRectToDevicePixels(contentsBox(), deviceScaleFactor()));
-
-    LayoutRect boxRect(LayoutPoint(), imageRenderer.size());
-    boxRect.move(contentOffsetInCompositingLayer());
-    FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-    m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
-
+    updateContentsRects();
     m_graphicsLayer->setContentsToImage(image);
     
     updateDrawsContent(contentsInfo);
@@ -2760,7 +2752,7 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
     }
 
     ASSERT_NOT_REACHED();
-    return LayoutRect();
+    return { };
 }
 
 FloatRect RenderLayerBacking::backgroundBoxForSimpleContainerPainting() const

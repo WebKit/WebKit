@@ -363,6 +363,7 @@ private:
     void updateDirectlyCompositedBackgroundImage(PaintedContentsInfo&, bool& didUpdateContentsRect);
 
     void resetContentsRect();
+    void updateContentsRects();
 
     bool isPaintDestinationForDescendantLayers(RenderLayer::PaintedContentRequest&) const;
     bool hasVisibleNonCompositedDescendants() const;

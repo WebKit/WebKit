@@ -41,6 +41,8 @@ public:
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
     LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
+    
+    RoundedRect roundedContentBoxRect() const;
 
 protected:
     RenderReplaced(Element&, RenderStyle&&);

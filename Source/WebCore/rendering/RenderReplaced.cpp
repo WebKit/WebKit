@@ -426,6 +426,13 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
     return finalRect;
 }
 
+RoundedRect RenderReplaced::roundedContentBoxRect() const
+{
+    return style().getRoundedInnerBorderFor(borderBoxRect(),
+        borderTop() + paddingTop(), borderBottom() + paddingBottom(),
+        borderLeft() + paddingLeft(), borderRight() + paddingRight());
+}
+
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
