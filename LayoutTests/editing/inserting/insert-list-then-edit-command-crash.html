@@ -1,0 +1,19 @@
+<body><image></image><form id=form contentEditable=true><object data=? onload=objectOnLoad()></object></form><dialog open="true">a</dialog>
+<script>
+    document.getSelection().empty();
+    document.execCommand("selectAll", false);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function objectOnLoad() {
+        document.execCommand("insertUnorderedList", false);
+        document.execCommand("italic", false);
+        requestAnimationFrame(function () {
+            document.body.innerHTML = "<p> Tests inserting list followed by an edit command. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }
+</script>

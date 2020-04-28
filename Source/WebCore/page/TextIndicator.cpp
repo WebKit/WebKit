@@ -72,7 +72,11 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, T
     if (!frame)
         return nullptr;
 
-    bool indicatesCurrentSelection = range == frame->selection().selection().toNormalizedRange();
+    auto document = makeRefPtr(frame->document());
+    if (!document)
+        return nullptr;
+
+    bool indicatesCurrentSelection = range == document->selection().selection().toNormalizedRange();
 
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
     temporarySelectionOptions.add(TemporarySelectionOption::DoNotSetFocus);
@@ -80,7 +84,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, T
     temporarySelectionOptions.add(TemporarySelectionOption::IgnoreSelectionChanges);
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
-    TemporarySelectionChange selectionChange(*frame, { range }, temporarySelectionOptions);
+    TemporarySelectionChange selectionChange(*document, { range }, temporarySelectionOptions);
 
     TextIndicatorData data;
 

@@ -35,11 +35,11 @@
 namespace WebCore {
 
 class CompositeEditCommand;
+class Document;
 class EditCommand;
 class EditCommandComposition;
 class EditorClient;
 class Event;
-class Frame;
 class Range;
 class TextCheckerClient;
 class VisibleSelection;
@@ -61,7 +61,7 @@ class AlternativeTextController {
     WTF_MAKE_NONCOPYABLE(AlternativeTextController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AlternativeTextController(Frame& frame) UNLESS_ENABLED( : m_frame(frame) { })
+    explicit AlternativeTextController(Document& document) UNLESS_ENABLED(: m_document(document) { })
     ~AlternativeTextController() UNLESS_ENABLED({ })
 
     void startAlternativeTextUITimer(AlternativeTextType) UNLESS_ENABLED({ })
@@ -145,7 +145,7 @@ private:
     AlternativeTextClient* alternativeTextClient();
 #endif
 
-    Frame& m_frame;
+    Document& m_document;
 };
 
 #undef UNLESS_ENABLED

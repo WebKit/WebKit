@@ -146,7 +146,7 @@ void InsertTextCommand::doApply()
         // anything other than NoSelection. The rest of this function requires a real endingSelection, so bail out.
         if (endingSelection().isNone())
             return;
-    } else if (frame().editor().isOverwriteModeEnabled()) {
+    } else if (document().editor().isOverwriteModeEnabled()) {
         if (performOverwrite(m_text, m_selectInsertedText))
             return;
     }
@@ -222,7 +222,7 @@ void InsertTextCommand::doApply()
     setEndingSelectionWithoutValidation(startPosition, endPosition);
 
     // Handle the case where there is a typing style.
-    if (RefPtr<EditingStyle> typingStyle = frame().selection().typingStyle()) {
+    if (RefPtr<EditingStyle> typingStyle = document().selection().typingStyle()) {
         typingStyle->prepareToApplyAt(endPosition, EditingStyle::PreserveWritingDirection);
         if (!typingStyle->isEmpty())
             applyStyle(typingStyle.get());

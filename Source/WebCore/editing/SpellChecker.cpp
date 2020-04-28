@@ -98,8 +98,8 @@ void SpellCheckRequest::requesterDestroyed()
     m_checker = nullptr;
 }
 
-SpellChecker::SpellChecker(Frame& frame)
-    : m_frame(frame)
+SpellChecker::SpellChecker(Document& document)
+    : m_document(document)
     , m_timerToProcessQueuedRequest(*this, &SpellChecker::timerFiredToProcessQueuedRequest)
 {
 }
@@ -114,7 +114,7 @@ SpellChecker::~SpellChecker()
 
 TextCheckerClient* SpellChecker::client() const
 {
-    Page* page = m_frame.page();
+    Page* page = m_document.page();
     if (!page)
         return nullptr;
     return page->editorClient().textChecker();
@@ -131,7 +131,7 @@ void SpellChecker::timerFiredToProcessQueuedRequest()
 
 bool SpellChecker::isAsynchronousEnabled() const
 {
-    return m_frame.settings().asynchronousSpellCheckingEnabled();
+    return m_document.settings().asynchronousSpellCheckingEnabled();
 }
 
 bool SpellChecker::canCheckAsynchronously(Range& range) const
@@ -174,7 +174,7 @@ void SpellChecker::invokeRequest(Ref<SpellCheckRequest>&& request)
     if (!client())
         return;
     m_processingRequest = WTFMove(request);
-    client()->requestCheckingOfString(*m_processingRequest, m_frame.selection().selection());
+    client()->requestCheckingOfString(*m_processingRequest, m_document.selection().selection());
 }
 
 void SpellChecker::enqueueRequest(Ref<SpellCheckRequest>&& request)
@@ -199,7 +199,7 @@ void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vect
         return;
     }
 
-    m_frame.editor().markAndReplaceFor(*m_processingRequest, results);
+    m_document.editor().markAndReplaceFor(*m_processingRequest, results);
 
     if (m_lastProcessedIdentifier.toUInt64() < identifier.toUInt64())
         m_lastProcessedIdentifier = identifier;
@@ -219,7 +219,7 @@ void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, con
         if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
             markerTypes.add(DocumentMarker::Grammar);
         if (!markerTypes.isEmpty())
-            m_frame.document()->markers().removeMarkers(m_processingRequest->checkingRange(), markerTypes);
+            m_document.markers().removeMarkers(m_processingRequest->checkingRange(), markerTypes);
     }
     didCheck(identifier, results);
 }

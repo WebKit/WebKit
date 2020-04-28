@@ -65,9 +65,9 @@ public:
     static void insertLineBreak(Document&, Options);
     static void insertParagraphSeparator(Document&, Options);
     static void insertParagraphSeparatorInQuotedContent(Document&);
-    static void closeTyping(Frame*);
+    static void closeTyping(Document&);
 #if PLATFORM(IOS_FAMILY)
-    static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame*, const VisibleSelection&);
+    static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Document&, const VisibleSelection&);
 #endif
 
     void insertText(const String &text, bool selectInsertedText);
@@ -103,7 +103,7 @@ private:
     bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
-    static RefPtr<TypingCommand> lastTypingCommandIfStillOpenForTyping(Frame&);
+    static RefPtr<TypingCommand> lastTypingCommandIfStillOpenForTyping(Document&);
 
     void doApply() final;
     bool isTypingCommand() const final;
@@ -122,7 +122,7 @@ private:
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool isBeforeInputEventCancelable() const final;
 
-    static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
+    static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Document&);
 
     void updatePreservesTypingStyle(ETypingCommand);
     bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString(), RefPtr<Range>&& = nullptr);

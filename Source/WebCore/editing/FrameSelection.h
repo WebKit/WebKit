@@ -140,7 +140,7 @@ public:
         return options;
     }
 
-    WEBCORE_EXPORT explicit FrameSelection(Frame* = nullptr);
+    WEBCORE_EXPORT explicit FrameSelection(Document* = nullptr);
 
     WEBCORE_EXPORT Element* rootEditableElementOrDocumentElement() const;
      
@@ -158,7 +158,7 @@ public:
     WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, ShouldCloseTyping, EUserTriggered = NotUserTriggered);
     WEBCORE_EXPORT void selectAll();
     WEBCORE_EXPORT void clear();
-    void prepareForDestruction();
+    void willBeRemovedFromFrame();
 
     void updateAppearanceAfterLayout();
     void scheduleAppearanceUpdateAfterStyleChange();
@@ -336,6 +336,7 @@ private:
     Optional<SimpleRange> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
 #endif
 
+    Document* m_document;
     Frame* m_frame;
 
     LayoutUnit m_xPosForVerticalArrowNavigation;

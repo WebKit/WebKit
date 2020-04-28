@@ -102,7 +102,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
     Pasteboard pasteboard(pasteboardName);
-    if (m_frame.selection().selection().isContentRichlyEditable())
+    if (m_document.selection().selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
     else
         pasteAsPlainTextWithPasteboard(pasteboard);
@@ -136,17 +136,17 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
 {
     ASSERT(node);
 
-    if (&node->document() != m_frame.document())
+    if (node->document() != m_document)
         return;
 
-    Ref<Frame> protector(m_frame);
+    Ref<Document> protector(m_document);
 
     auto range = makeRangeSelectingNodeContents(*node);
-    m_frame.selection().setSelection(VisibleSelection(range), FrameSelection::DoNotSetFocus);
+    m_document.selection().setSelection(VisibleSelection(range), FrameSelection::DoNotSetFocus);
 
     Pasteboard pasteboard(pasteboardName);
 
-    if (!m_frame.selection().selection().isContentRichlyEditable()) {
+    if (!m_document.selection().selection().isContentRichlyEditable()) {
         pasteAsPlainTextWithPasteboard(pasteboard);
         return;
     }
@@ -220,7 +220,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
 
 void Editor::selectionWillChange()
 {
-    if (!hasComposition() || ignoreSelectionChanges() || m_frame.selection().isNone())
+    if (!hasComposition() || ignoreSelectionChanges() || m_document.selection().isNone())
         return;
 
     cancelComposition();

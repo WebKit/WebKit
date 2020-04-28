@@ -76,7 +76,7 @@ class SpellChecker {
 public:
     friend class SpellCheckRequest;
 
-    explicit SpellChecker(Frame&);
+    explicit SpellChecker(Document&);
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
@@ -106,7 +106,7 @@ private:
     void didCheckCancel(TextCheckingRequestIdentifier);
     void didCheck(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&);
 
-    Frame& m_frame;
+    Document& m_document;
     TextCheckingRequestIdentifier m_lastRequestIdentifier;
     TextCheckingRequestIdentifier m_lastProcessedIdentifier;
 

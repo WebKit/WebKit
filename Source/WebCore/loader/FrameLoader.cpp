@@ -548,11 +548,14 @@ void FrameLoader::stop()
 void FrameLoader::willTransitionToCommitted()
 {
     // This function is called when a frame is still fully in place (not cached, not detached), but will be replaced.
+    Document* document = m_frame.document();
+    if (!document)
+        return;
 
-    if (m_frame.editor().hasComposition()) {
+    if (document->editor().hasComposition()) {
         // The text was already present in DOM, so it's better to confirm than to cancel the composition.
-        m_frame.editor().confirmComposition();
-        if (EditorClient* editorClient = m_frame.editor().client()) {
+        document->editor().confirmComposition();
+        if (EditorClient* editorClient = document->editor().client()) {
             editorClient->respondToChangedSelection(&m_frame);
             editorClient->discardedComposition(&m_frame);
         }
@@ -563,7 +566,7 @@ void FrameLoader::closeURL()
 {
     history().saveDocumentState();
 
-    Document* currentDocument = m_frame.document();
+    RefPtr<Document> currentDocument = m_frame.document();
     UnloadEventPolicy unloadEventPolicy;
     if (m_frame.page() && m_frame.page()->chrome().client().isSVGImageChromeClient()) {
         // If this is the SVGDocument of an SVGImage, no need to dispatch events or recalcStyle.
@@ -575,7 +578,8 @@ void FrameLoader::closeURL()
 
     stopLoading(unloadEventPolicy);
     
-    m_frame.editor().clearUndoRedoOperations();
+    if (currentDocument)
+        currentDocument->editor().clearUndoRedoOperations();
 }
 
 bool FrameLoader::didOpenURL()
@@ -587,7 +591,6 @@ bool FrameLoader::didOpenURL()
     }
 
     m_frame.navigationScheduler().cancel();
-    m_frame.editor().clearLastEditCommand();
 
     m_isComplete = false;
     m_didCallImplicitClose = false;
@@ -650,8 +653,6 @@ static inline bool shouldClearWindowName(const Frame& frame, const Document& new
 
 void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView, WTF::Function<void()>&& handleDOMWindowCreation)
 {
-    m_frame.editor().clear();
-
     bool neededClear = m_needsClear;
     m_needsClear = false;
 
@@ -659,7 +660,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
         m_frame.document()->cancelParsing();
         m_frame.document()->stopActiveDOMObjects();
         bool hadLivingRenderTree = m_frame.document()->hasLivingRenderTree();
-        m_frame.document()->prepareForDestruction();
+        m_frame.document()->willBeRemovedFromFrame();
         if (hadLivingRenderTree)
             m_frame.document()->adjustFocusedNodeOnNodeRemoval(*m_frame.document());
     }
@@ -680,7 +681,6 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
             m_frame.tree().setName(nullAtom());
     }
 
-    m_frame.selection().prepareForDestruction();
     m_frame.eventHandler().clear();
 
     if (clearFrameView && m_frame.view())

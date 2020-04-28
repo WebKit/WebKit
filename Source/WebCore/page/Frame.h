@@ -29,6 +29,7 @@
 
 #include "AbstractFrame.h"
 #include "AdjustViewSizeOrNot.h"
+#include "Document.h"
 #include "FrameIdentifier.h"
 #include "FrameTree.h"
 #include "PageIdentifier.h"
@@ -163,14 +164,14 @@ public:
     Document* document() const;
     FrameView* view() const;
 
-    Editor& editor() { return m_editor; }
-    const Editor& editor() const { return m_editor; }
+    Editor& editor() { return document()->editor(); }
+    const Editor& editor() const { return document()->editor(); }
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }
     FrameLoader& loader() const;
     NavigationScheduler& navigationScheduler() const;
-    FrameSelection& selection() { return m_selection; }
-    const FrameSelection& selection() const { return m_selection; }
+    FrameSelection& selection() { return document()->selection(); }
+    const FrameSelection& selection() const { return document()->selection(); }
     FrameTree& tree() const;
     CSSAnimationController& legacyAnimation() { return m_animationController; }
     const CSSAnimationController& legacyAnimation() const { return m_animationController; }
@@ -338,8 +339,6 @@ private:
     RefPtr<Document> m_doc;
 
     UniqueRef<ScriptController> m_script;
-    UniqueRef<Editor> m_editor;
-    UniqueRef<FrameSelection> m_selection;
     UniqueRef<CSSAnimationController> m_animationController;
 
 #if ENABLE(DATA_DETECTION)

@@ -65,7 +65,7 @@ private:
     void doUnapply() override
     {
         if (!m_hasBeenUndone) {
-            frame().editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
+            document().editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         
@@ -103,7 +103,7 @@ void SpellingCorrectionCommand::doApply()
     if (!m_corrected.length())
         return;
 
-    if (!frame().selection().shouldChangeSelection(m_selectionToBeCorrected))
+    if (!document().selection().shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
     applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered));

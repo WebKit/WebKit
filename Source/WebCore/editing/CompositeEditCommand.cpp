@@ -228,17 +228,17 @@ void EditCommandComposition::unapply()
     // up the composition will leave a stale, invalid composition, as in <rdar://problem/6831637>.
     // Desktop handles this in -[WebHTMLView _updateSelectionForInputManager], but the phone
     // goes another route.
-    frame->editor().cancelComposition();
+    m_document->editor().cancelComposition();
 #endif
 
-    if (!frame->editor().willUnapplyEditing(*this))
+    if (!m_document->editor().willUnapplyEditing(*this))
         return;
 
     size_t size = m_commands.size();
     for (size_t i = size; i; --i)
         m_commands[i - 1]->doUnapply();
 
-    frame->editor().unappliedEditing(*this);
+    m_document->editor().unappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
@@ -258,13 +258,13 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
-    if (!frame->editor().willReapplyEditing(*this))
+    if (!m_document->editor().willReapplyEditing(*this))
         return;
 
     for (auto& command : m_commands)
         command->doReapply();
 
-    frame->editor().reappliedEditing(*this);
+    m_document->editor().reappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
@@ -319,7 +319,7 @@ CompositeEditCommand::~CompositeEditCommand()
 
 bool CompositeEditCommand::willApplyCommand()
 {
-    return frame().editor().willApplyEditing(*this, targetRangesForBindings());
+    return document().editor().willApplyEditing(*this, targetRangesForBindings());
 }
 
 void CompositeEditCommand::apply()
@@ -378,13 +378,13 @@ void CompositeEditCommand::apply()
 
 void CompositeEditCommand::didApplyCommand()
 {
-    frame().editor().appliedEditing(*this);
+    document().editor().appliedEditing(*this);
 }
 
 Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
 {
     ASSERT(!isEditingTextAreaOrTextInput());
-    auto firstRange = frame().selection().selection().firstRange();
+    auto firstRange = document().selection().selection().firstRange();
     if (!firstRange)
         return { };
 
@@ -1468,7 +1468,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" and call shouldInsertFragment here.
 
     setEndingSelection(VisibleSelection(start, end, DOWNSTREAM));
-    frame().editor().clearMisspellingsAndBadGrammar(endingSelection());
+    document().editor().clearMisspellingsAndBadGrammar(endingSelection());
     deleteSelection(false, false, false, false);
 
     ASSERT(destination.deepEquivalent().anchorNode()->isConnected());
@@ -1504,7 +1504,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         options.add(ReplaceSelectionCommand::MatchStyle);
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), options));
 
-    frame().editor().markMisspellingsAndBadGrammar(endingSelection());
+    document().editor().markMisspellingsAndBadGrammar(endingSelection());
 
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
     bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());

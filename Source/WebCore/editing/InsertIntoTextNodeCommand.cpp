@@ -50,7 +50,7 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned 
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    bool passwordEchoEnabled = frame().settings().passwordEchoEnabled();
+    bool passwordEchoEnabled = document().settings().passwordEchoEnabled();
     if (passwordEchoEnabled)
         document().updateLayoutIgnorePendingStylesheets();
 

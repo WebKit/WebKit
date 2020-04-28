@@ -33,6 +33,7 @@
 #include "EditingStyle.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
+#include "Frame.h"
 #include "FrameSelection.h"
 #include "PasteboardWriterData.h"
 #include "TextChecking.h"
@@ -119,13 +120,13 @@ enum class TemporarySelectionOption : uint8_t {
 
 class TemporarySelectionChange {
 public:
-    WEBCORE_EXPORT TemporarySelectionChange(Frame&, Optional<VisibleSelection> = WTF::nullopt, OptionSet<TemporarySelectionOption> = { });
+    WEBCORE_EXPORT TemporarySelectionChange(Document&, Optional<VisibleSelection> = WTF::nullopt, OptionSet<TemporarySelectionOption> = { });
     WEBCORE_EXPORT ~TemporarySelectionChange();
 
 private:
     void setSelection(const VisibleSelection&);
 
-    Ref<Frame> m_frame;
+    RefPtr<Document> m_document;
     OptionSet<TemporarySelectionOption> m_options;
     bool m_wasIgnoringSelectionChanges;
 #if PLATFORM(IOS_FAMILY)
@@ -137,7 +138,7 @@ private:
 class IgnoreSelectionChangeForScope {
 public:
     IgnoreSelectionChangeForScope(Frame& frame)
-        : m_selectionChange(frame, WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
+        : m_selectionChange(*frame.document(), WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
     {
     }
 
@@ -150,7 +151,7 @@ private:
 class Editor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit Editor(Frame&);
+    explicit Editor(Document&);
     ~Editor();
 
     enum class PasteOption : uint8_t {
@@ -271,7 +272,7 @@ public:
     class Command {
     public:
         WEBCORE_EXPORT Command();
-        Command(const EditorInternalCommand*, EditorCommandSource, Frame&);
+        Command(const EditorInternalCommand*, EditorCommandSource, Document&);
 
         WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = nullptr) const;
         WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;
@@ -288,6 +289,7 @@ public:
     private:
         const EditorInternalCommand* m_command { nullptr };
         EditorCommandSource m_source;
+        RefPtr<Document> m_document;
         RefPtr<Frame> m_frame;
     };
     WEBCORE_EXPORT Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
@@ -568,7 +570,7 @@ public:
     WEBCORE_EXPORT void removeTextPlaceholder(TextPlaceholderElement&);
 
 private:
-    Document& document() const;
+    Document& document() const { return m_document; }
 
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);
@@ -619,7 +621,7 @@ private:
 
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
-    Frame& m_frame;
+    Document& m_document;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;

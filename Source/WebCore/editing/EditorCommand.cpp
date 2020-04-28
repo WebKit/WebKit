@@ -1107,6 +1107,7 @@ static bool executeSuperscript(Frame& frame, Event*, EditorCommandSource source,
 
 static bool executeSwapWithMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
+    RefPtr<Document> protection(frame.document());
     Ref<Frame> protector(frame);
     const VisibleSelection& mark = frame.editor().mark();
     const VisibleSelection& selection = frame.selection().selection();
@@ -1834,12 +1835,12 @@ static const EditorInternalCommand* internalCommand(const String& commandName)
 
 Editor::Command Editor::command(const String& commandName)
 {
-    return Command(internalCommand(commandName), CommandFromMenuOrKeyBinding, m_frame);
+    return Command(internalCommand(commandName), CommandFromMenuOrKeyBinding, m_document);
 }
 
 Editor::Command Editor::command(const String& commandName, EditorCommandSource source)
 {
-    return Command(internalCommand(commandName), source, m_frame);
+    return Command(internalCommand(commandName), source, m_document);
 }
 
 bool Editor::commandIsSupportedFromMenuOrKeyBinding(const String& commandName)
@@ -1851,12 +1852,13 @@ Editor::Command::Command()
 {
 }
 
-Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSource source, Frame& frame)
+Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSource source, Document& document)
     : m_command(command)
     , m_source(source)
-    , m_frame(command ? &frame : nullptr)
+    , m_document(command ? &document : nullptr)
+    , m_frame(command ? document.frame() : nullptr)
 {
-    ASSERT(command || !m_frame);
+    ASSERT(command || !m_document);
 }
 
 bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) const
@@ -1866,9 +1868,9 @@ bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) c
         if (!allowExecutionWhenDisabled())
             return false;
     }
-    auto document = m_frame->document();
-    document->updateLayoutIgnorePendingStylesheets();
-    if (m_frame->document() != document)
+
+    m_document->updateLayoutIgnorePendingStylesheets();
+    if (m_document->frame() != m_frame)
         return false;
 
     return m_command->execute(*m_frame, triggeringEvent, m_source, parameter);

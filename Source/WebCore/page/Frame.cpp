@@ -156,8 +156,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
-    , m_editor(makeUniqueRef<Editor>(*this))
-    , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_animationController(makeUniqueRef<CSSAnimationController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
@@ -234,7 +232,7 @@ void Frame::setView(RefPtr<FrameView>&& view)
     // notified. If we wait until the view is destroyed, then things won't be hooked up enough for
     // these calls to work.
     if (!view && m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache)
-        m_doc->prepareForDestruction();
+        m_doc->willBeRemovedFromFrame();
     
     if (m_view)
         m_view->layoutContext().unscheduleLayout();
@@ -279,7 +277,7 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
 #endif
 
     if (m_doc && m_doc->backForwardCacheState() != Document::InBackForwardCache)
-        m_doc->prepareForDestruction();
+        m_doc->willBeRemovedFromFrame();
 
     m_doc = newDocument.copyRef();
     ASSERT(!m_doc || m_doc->domWindow());
@@ -554,7 +552,7 @@ bool Frame::requestDOMPasteAccess()
     case DOMPasteAccessPolicy::Denied:
         return false;
     case DOMPasteAccessPolicy::NotRequestedYet: {
-        auto* client = m_editor->client();
+        auto* client = editor().client();
         if (!client)
             return false;
 
@@ -937,7 +935,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (!document)
         return;
 
-    m_editor->dismissCorrectionPanelAsIgnored();
+    editor().dismissCorrectionPanelAsIgnored();
 
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.

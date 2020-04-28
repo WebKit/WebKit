@@ -582,6 +582,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_orientationNotifier(currentOrientation(frame))
     , m_identifier(DocumentIdentifier::generate())
     , m_undoManager(UndoManager::create(*this))
+    , m_editor(makeUniqueRef<Editor>(*this))
+    , m_selection(makeUniqueRef<FrameSelection>(this))
 {
     auto addResult = allDocumentsMap().add(m_identifier, this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -2499,7 +2501,7 @@ void Document::destroyRenderTree()
         view()->didDestroyRenderTree();
 }
 
-void Document::prepareForDestruction()
+void Document::willBeRemovedFromFrame()
 {
     if (m_hasPreparedForDestruction)
         return;
@@ -2592,6 +2594,8 @@ void Document::prepareForDestruction()
         page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
     }
 
+    editor().clear();
+    selection().willBeRemovedFromFrame();
     detachFromFrame();
 
 #if ENABLE(CSS_PAINTING_API)

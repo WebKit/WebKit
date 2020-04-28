@@ -1,3 +1,307 @@
+2020-04-28  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in EditCommand::EditCommand via CompositeEditCommand::removeNode
+        https://bugs.webkit.org/show_bug.cgi?id=207600
+        <rdar://problem/56969450>
+
+        Reviewed by Geoffrey Garen.
+
+        Move FrameSelection and Editor objects from Frame to Document so when a document is detached
+        in nested command executions, the next EditCommand would not fail in constructor.
+
+        Test: editing/inserting/insert-list-then-edit-command-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::m_selection):
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::m_undoManager): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::editor):
+        (WebCore::Document::editor const):
+        (WebCore::Document::selection):
+        (WebCore::Document::selection const):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate const):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::AlternativeTextController):
+        (WebCore::AlternativeTextController::stopPendingCorrection):
+        (WebCore::AlternativeTextController::isSpellingMarkerAllowed const):
+        (WebCore::AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate):
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        (WebCore::AlternativeTextController::timerFired):
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult):
+        (WebCore::AlternativeTextController::rootViewRectForRange const):
+        (WebCore::AlternativeTextController::respondToChangedSelection):
+        (WebCore::AlternativeTextController::respondToAppliedEditing):
+        (WebCore::AlternativeTextController::respondToUnappliedEditing):
+        (WebCore::AlternativeTextController::editorClient):
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord):
+        (WebCore::AlternativeTextController::alternativeTextClient):
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        (WebCore::AlternativeTextController::insertDictatedText):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/AlternativeTextController.h:
+        (WebCore::AlternativeTextController::UNLESS_ENABLED):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::EditCommandComposition::reapply):
+        (WebCore::CompositeEditCommand::willApplyCommand):
+        (WebCore::CompositeEditCommand::didApplyCommand):
+        (WebCore::CompositeEditCommand::targetRanges const):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand):
+        (WebCore::EditCommand::isEditingTextAreaOrTextInput const):
+        (WebCore::EditCommand::postTextStateChangeNotification):
+        (WebCore::EditCommand::frame): Deleted.
+        (WebCore::EditCommand::frame const): Deleted.
+        * editing/EditCommand.h:
+        * editing/Editing.cpp:
+        (WebCore::createDefaultParagraphElement):
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::StyleChange):
+        * editing/Editor.cpp:
+        (WebCore::ClearTextCommand::CreateAndApply):
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::TemporarySelectionChange::~TemporarySelectionChange):
+        (WebCore::TemporarySelectionChange::setSelection):
+        (WebCore::Editor::selectionForCommand):
+        (WebCore::Editor::behavior const):
+        (WebCore::Editor::client const):
+        (WebCore::Editor::canEdit const):
+        (WebCore::Editor::canEditRichly const):
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canCopy const):
+        (WebCore::Editor::canPaste const):
+        (WebCore::Editor::canDelete const):
+        (WebCore::Editor::shouldSmartDelete):
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::deleteSelectionWithSmartDelete):
+        (WebCore::Editor::clearText):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::selectedRange):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::shouldInsertText const):
+        (WebCore::Editor::hasBidiSelection const):
+        (WebCore::Editor::selectionUnorderedListState const):
+        (WebCore::Editor::selectionOrderedListState const):
+        (WebCore::Editor::increaseSelectionListLevel):
+        (WebCore::Editor::increaseSelectionListLevelOrdered):
+        (WebCore::Editor::increaseSelectionListLevelUnordered):
+        (WebCore::Editor::decreaseSelectionListLevel):
+        (WebCore::Editor::findEventTargetFromSelection const):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::applyStyleToSelection):
+        (WebCore::Editor::applyParagraphStyleToSelection):
+        (WebCore::Editor::selectionStartHasStyle const):
+        (WebCore::Editor::selectionHasStyle const):
+        (WebCore::Editor::selectionStartCSSPropertyValue):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::clear):
+        (WebCore::Editor::insertText):
+        (WebCore::Editor::insertTextForConfirmedComposition):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::insertLineBreak):
+        (WebCore::Editor::insertParagraphSeparator):
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::pasteAsQuotation):
+        (WebCore::Editor::renderLayerDidScroll):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::baseWritingDirectionForSelectionStart const):
+        (WebCore::Editor::selectComposition):
+        (WebCore::SetCompositionScope::SetCompositionScope):
+        (WebCore::SetCompositionScope::~SetCompositionScope):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::misspelledWordAtCaretOrRange const):
+        (WebCore::Editor::isSelectionUngrammatical):
+        (WebCore::Editor::guessesForMisspelledWord const):
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::isSpellCheckingEnabledInFocusedNode const):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::rangeForPoint):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        (WebCore::Editor::setIgnoreSelectionChanges):
+        (WebCore::Editor::getCompositionSelection const):
+        (WebCore::Editor::transpose):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::selectedText const):
+        (WebCore::Editor::selectedTextForDataTransfer const):
+        (WebCore::Editor::insertTextPlaceholder):
+        (WebCore::Editor::removeTextPlaceholder):
+        (WebCore::Editor::shouldChangeSelection const):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        (WebCore::Editor::findString):
+        (WebCore::Editor::countMatchesForText):
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::shouldDetectTelephoneNumbers):
+        (WebCore::Editor::scanSelectionForTelephoneNumbers):
+        (WebCore::Editor::editorUIUpdateTimerFired):
+        (WebCore::Editor::selectionStartHasMarkerFor const):
+        (WebCore::candidateRangeForSelection):
+        (WebCore::Editor::stringForCandidateRequest const):
+        (WebCore::Editor::contextRangeForCandidateRequest const):
+        (WebCore::Editor::fontAttributesAtSelectionStart const):
+        (WebCore::Editor::notifyClientOfAttachmentUpdates):
+        (WebCore::Editor::handleAcceptedCandidate):
+        (WebCore::Editor::unifiedTextCheckerEnabled const):
+        (WebCore::Editor::toggleOverwriteModeEnabled):
+        (WebCore::Editor::fontForSelection const):
+        (WebCore::Editor::canCopyExcludingStandaloneImages const):
+        (WebCore::Editor::document const): Deleted.
+        * editing/Editor.h:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::IgnoreSelectionChangeForScope::IgnoreSelectionChangeForScope):
+        (WebCore::Editor::document const):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeSwapWithMark):
+        (WebCore::Editor::command):
+        (WebCore::Editor::Command::Command):
+        (WebCore::Editor::Command::execute const):
+        * editing/FrameSelection.cpp:
+        (WebCore::shouldAlwaysUseDirectionalSelection):
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::rootEditableElementOrDocumentElement const):
+        (WebCore::FrameSelection::setSelectionByMouseIfDifferent):
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::updateSelectionByUpdatingLayoutOrStyle):
+        (WebCore::FrameSelection::setNeedsSelectionUpdate):
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        (WebCore::FrameSelection::updateDataDetectorsForSelection):
+        (WebCore::FrameSelection::positionForPlatform const):
+        (WebCore::FrameSelection::nextWordPositionForPlatform):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::prepareForDestruction):
+        (WebCore::FrameSelection::absoluteCaretBounds):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::contains const):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::isFocusedAndActive const):
+        (WebCore::shouldStopBlinkingDueToTypingCommand):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::setCaretVisibility):
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+        (WebCore::FrameSelection::shouldDeleteSelection const):
+        (WebCore::FrameSelection::selectionBounds const):
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles const):
+        (WebCore::FrameSelection::currentForm const):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        (WebCore::FrameSelection::shouldChangeSelection const):
+        (WebCore::FrameSelection::setShouldShowBlockCursor):
+        (WebCore::FrameSelection::appearanceUpdateTimerFired):
+        (WebCore::FrameSelection::updateAppearanceAfterLayoutOrStyleChange):
+        (WebCore::FrameSelection::selectRangeOnElement):
+        (WebCore::FrameSelection::setCaretBlinks):
+        * editing/FrameSelection.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/SetSelectionCommand.cpp:
+        (WebCore::SetSelectionCommand::doApply):
+        (WebCore::SetSelectionCommand::doUnapply):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::client const):
+        (WebCore::SpellChecker::isAsynchronousEnabled const):
+        (WebCore::SpellChecker::invokeRequest):
+        (WebCore::SpellChecker::didCheck):
+        (WebCore::SpellChecker::didCheckSucceed):
+        * editing/SpellChecker.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::updateSelectionIfDifferentFromCurrentSelection):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        (WebCore::TypingCommand::closeTyping):
+        (WebCore::TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping):
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        (WebCore::TypingCommand::insertTextAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertLineBreakAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertParagraphSeparatorAndNotifyAccessibility):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibility):
+        * editing/TypingCommand.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::writeSelection):
+        (WebCore::Editor::selectionInWebArchiveFormat):
+        (WebCore::Editor::replaceSelectionWithAttributedString):
+        (WebCore::Editor::webContentFromPasteboard):
+        (WebCore::Editor::takeFindStringFromSelection):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::webContentFromPasteboard):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        (WebCore::Editor::removeUnchangeableStyles):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::insertDictationPhrases):
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement):
+        (WebCore::Editor::setTextAsChildOfElement):
+        (WebCore::Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping):
+        * editing/libwpe/EditorLibWPE.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::readSelectionFromPasteboard):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+        (WebCore::Editor::selectionWillChange):
+        * editing/win/EditorWin.cpp:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::webContentFromPasteboard):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willTransitionToCommitted):
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::clear):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::requestDOMPasteAccess):
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/Frame.h:
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+
 2020-04-28  Antti Koivisto  <antti@apple.com>
 
         msn.com: Header flickers when scrolling articles

@@ -60,7 +60,7 @@ void ReplaceRangeWithTextCommand::doApply()
     if (!m_rangeToBeReplaced)
         return;
 
-    if (!frame().selection().shouldChangeSelection(selection))
+    if (!document().selection().shouldChangeSelection(selection))
         return;
 
     if (!characterCount(*m_rangeToBeReplaced))

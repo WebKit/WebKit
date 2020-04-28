@@ -1686,7 +1686,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
         getPropertiesNotIn(*style->style(), computedStyle) : MutableStyleProperties::create();
 
     reconcileTextDecorationProperties(mutableStyle.get());
-    bool shouldStyleWithCSS = document->frame()->editor().shouldStyleWithCSS();
+    bool shouldStyleWithCSS = document->editor().shouldStyleWithCSS();
     if (!shouldStyleWithCSS)
         extractTextStyles(*document, *mutableStyle, computedStyle.useFixedFontDefaultSize());
 

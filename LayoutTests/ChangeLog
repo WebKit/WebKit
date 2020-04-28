@@ -1,3 +1,21 @@
+2020-04-28  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in EditCommand::EditCommand via CompositeEditCommand::removeNode
+        https://bugs.webkit.org/show_bug.cgi?id=207600
+        <rdar://problem/56969450>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test for the crash.
+
+        * editing/inserting/insert-list-then-edit-command-crash-expected.txt: Added.
+        * editing/inserting/insert-list-then-edit-command-crash.html: Added.
+
+        Modify the test result. FrameSelection is being destructed along with
+        document so an additional selection change notification is expected.
+
+        * platform/mac/editing/pasteboard/drag-drop-dead-frame-expected.txt:
+
 2020-04-28  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WebGL] compositing/clipping/border-radius-on-webgl.html is failing since added

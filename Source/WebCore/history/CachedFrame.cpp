@@ -286,7 +286,7 @@ void CachedFrame::destroy()
     m_document->removeAllEventListeners();
 
     m_document->setBackForwardCacheState(Document::NotInBackForwardCache);
-    m_document->prepareForDestruction();
+    m_document->willBeRemovedFromFrame();
 
     clear();
 }
