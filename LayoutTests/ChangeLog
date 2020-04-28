@@ -1,3 +1,12 @@
+2020-04-27  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening timing out host invalid values test
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Timestamps should be the same for all rendering update steps

@@ -1521,6 +1521,8 @@ webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 
 webkit.org/b/208934 inspector/console/console-screenshot.html [ Timeout ]
 
+webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
