@@ -1,3 +1,16 @@
+2020-04-28  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [Linux] Replace --geometry with --fullscreen when using MiniBrowser for WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=211123
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        MiniBrowser's --geometry is on its way out, so use --fullscreen
+        instead as it does the job.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowsergtk_driver.py:
+        (GTKMiniBrowserDriver.launch_url):
+
 2020-04-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for motion events
