@@ -273,7 +273,8 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
-        WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %d", error);
+        if (error)
+            WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %d", error);
 #endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());
