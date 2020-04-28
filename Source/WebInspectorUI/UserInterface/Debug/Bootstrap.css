@@ -23,8 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+body.focus-debug [tabindex="0"] {
+    outline: 1px solid hsla(300, 100%, 50%, 0.4) !important;
+    outline-offset: -2px !important;
+}
+
 body.focus-debug *:focus {
-    outline: 2px solid fuchsia !important;
+    outline: 2px solid hsl(300, 100%, 50%) !important;
     outline-offset: -1px !important;
 }
 

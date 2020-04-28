@@ -1,3 +1,14 @@
+2020-04-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Debug: "Outline focused element" should also outline elements with tabIndex=0
+        https://bugs.webkit.org/show_bug.cgi?id=211109
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Debug/Bootstrap.css:
+        (body.focus-debug [tabindex="0"]):
+        (body.focus-debug *:focus):
+
 2020-04-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: find dialog does not populate search string from system find pasteboard
