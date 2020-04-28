@@ -1,3 +1,18 @@
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
+        [WebKitLegacy] Implement -hidePlaceholder and -showPlaceholderIfNecessary in terms of setCanShowPlaceholder()
+        https://bugs.webkit.org/show_bug.cgi?id=211139
+
+        Reviewed by Simon Fraser.
+
+        Remove hidePlaceholder() and showPlaceholderIfNecessary() as they are no longer needed.
+        Callers should use setCanShowPlaceholder() instead.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::hidePlaceholder): Deleted.
+        (WebCore::HTMLTextFormControlElement::showPlaceholderIfNecessary): Deleted.
+        * html/HTMLTextFormControlElement.h:
+
 2020-04-28  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Fix build failures for ANGLE_WEBGL after r259589

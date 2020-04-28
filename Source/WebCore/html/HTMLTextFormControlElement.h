@@ -99,10 +99,6 @@ public:
     String directionForFormData() const;
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
-#if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT void hidePlaceholder();
-    WEBCORE_EXPORT void showPlaceholderIfNecessary();
-#endif
 
     WEBCORE_EXPORT virtual bool isInnerTextElementEditable() const;
 

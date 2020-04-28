@@ -48,6 +48,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
+#import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformWheelEvent.h>
@@ -97,6 +98,7 @@ using namespace JSC;
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 - (BOOL)isHorizontalWritingMode
 {
     Node* node = core(self);
@@ -112,24 +114,16 @@ using namespace JSC;
 
 - (void)hidePlaceholder
 {
-    if (![self isKindOfClass:[DOMHTMLInputElement class]]
-        && ![self isKindOfClass:[DOMHTMLTextAreaElement class]])
-        return;
-    
-    Node *node = core(self);
-    HTMLTextFormControlElement *formControl = static_cast<HTMLTextFormControlElement *>(node);
-    formControl->hidePlaceholder();
+    if (auto node = core(self); is<HTMLTextFormControlElement>(node))
+        downcast<HTMLTextFormControlElement>(*node).setCanShowPlaceholder(false);
 }
 
 - (void)showPlaceholderIfNecessary
 {
-    if (![self isKindOfClass:[DOMHTMLInputElement class]]
-        && ![self isKindOfClass:[DOMHTMLTextAreaElement class]])
-        return;
-    
-    HTMLTextFormControlElement *formControl = static_cast<HTMLTextFormControlElement *>(core(self));
-    formControl->showPlaceholderIfNecessary();
+    if (auto node = core(self); is<HTMLTextFormControlElement>(node))
+        downcast<HTMLTextFormControlElement>(*node).setCanShowPlaceholder(true);
 }
+
 #endif
 
 @end

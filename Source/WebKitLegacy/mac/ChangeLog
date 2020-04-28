@@ -1,3 +1,26 @@
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
+        [WebKitLegacy] Implement -hidePlaceholder and -showPlaceholderIfNecessary in terms of setCanShowPlaceholder()
+        https://bugs.webkit.org/show_bug.cgi?id=211139
+
+        Reviewed by Simon Fraser.
+
+        Implement -hidePlaceholder and -showPlaceholderIfNecessary in terms of setCanShowPlaceholder()
+        because:
+
+            1. Unlike -hidePlaceholder and -showPlaceholderIfNecessary, setCanShowPlaceholder() does NOT of
+               reach into the guts of the control and mutate its CSS.
+
+            2. Because of (1), it works correctly should future code be written that modifies the structure
+               of the guts or the CSS of the placeholder element (which is inside the guts of the control).
+
+            3. Unlike -hidePlaceholder and -showPlaceholderIfNecessary, there is test coverage for setCanShowPlaceholder()
+               to ensure (2).
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMNode hidePlaceholder]):
+        (-[DOMNode showPlaceholderIfNecessary]):
+
 2020-04-27  Antoine Quint  <graouts@apple.com>
 
         Clean up some useless includes of CSSAnimationController.h

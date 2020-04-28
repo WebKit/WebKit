@@ -677,20 +677,6 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     return index;
 }
 
-#if PLATFORM(IOS_FAMILY)
-void HTMLTextFormControlElement::hidePlaceholder()
-{
-    if (RefPtr<HTMLElement> placeholder = placeholderElement())
-        placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, true);
-}
-
-void HTMLTextFormControlElement::showPlaceholderIfNecessary()
-{
-    if (RefPtr<HTMLElement> placeholder = placeholderElement())
-        placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueVisible, true);
-}
-#endif
-
 static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
 {
     RootInlineBox* next;
