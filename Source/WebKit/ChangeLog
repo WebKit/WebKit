@@ -1,3 +1,33 @@
+2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4][Wayland] Add support for rendering web view contents
+        https://bugs.webkit.org/show_bug.cgi?id=211021
+
+        Reviewed by Adrian Perez de Castro.
+
+        Implement GtkWidgetClass::snapshot and GtkWidgetClass::measure instead of GtkWidgetClass::draw and
+        GtkWidgetClass::get_preferred_width|height. Add AcceleratedBackingStore::snapshot() pure virtual to be used with
+        GTK4 instead of AcceleratedBackingStore::paint(), and implement it for Wayland.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSnapshot): Call AcceleratedBackingStore::snapshot().
+        (webkitWebViewBaseMeasure): Return the natural width/height for the WebView.
+        (webkit_web_view_base_class_init): Add implementations for snapshot and measure vfuncs.
+        * UIProcess/gtk/AcceleratedBackingStore.h:
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureGLContext): Always try to realize the context here, since that
+        can fail too.
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureTexture): Helper to share the code to prepare the texture.
+        (WebKit::AcceleratedBackingStoreWayland::downloadTexture): Helper to share the code to download the texture.
+        (WebKit::AcceleratedBackingStoreWayland::snapshot): Use gtk_snapshot_append_texture().
+        (WebKit::AcceleratedBackingStoreWayland::paint): Use new helpers.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::snapshot):
+        * UIProcess/gtk/AcceleratedBackingStoreX11.h:
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager): Force accelerated compositing mode for GTK4.
+
 2020-04-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: can see third-party cookies

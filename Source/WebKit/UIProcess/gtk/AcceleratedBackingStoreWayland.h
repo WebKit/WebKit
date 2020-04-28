@@ -43,6 +43,7 @@ struct wpe_fdo_egl_exported_image;
 
 namespace WebCore {
 class GLContext;
+class IntSize;
 }
 
 namespace WebKit {
@@ -63,8 +64,14 @@ private:
 #if USE(WPE_RENDERER)
     void displayBuffer(struct wpe_fdo_egl_exported_image*);
 #endif
+    bool tryEnsureTexture(unsigned&, WebCore::IntSize&);
+    void downloadTexture(unsigned, const WebCore::IntSize&);
 
+#if USE(GTK4)
+    void snapshot(GtkSnapshot*) override;
+#else
     bool paint(cairo_t*, const WebCore::IntRect&) override;
+#endif
     void realize() override;
     void unrealize() override;
     bool makeContextCurrent() override;

@@ -195,6 +195,12 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
 #endif
 }
 
+#if USE(GTK4)
+void AcceleratedBackingStoreX11::snapshot(GtkSnapshot*)
+{
+    // FIXME: Implement this.
+}
+#else
 bool AcceleratedBackingStoreX11::paint(cairo_t* cr, const IntRect& clipRect)
 {
     if (!m_surface)
@@ -216,6 +222,7 @@ bool AcceleratedBackingStoreX11::paint(cairo_t* cr, const IntRect& clipRect)
 
     return true;
 }
+#endif
 
 } // namespace WebKit
 

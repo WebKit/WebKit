@@ -1,3 +1,15 @@
+2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4][Wayland] Add support for rendering web view contents
+        https://bugs.webkit.org/show_bug.cgi?id=211021
+
+        Reviewed by Adrian Perez de Castro.
+
+        Set vertical expand of web view to TRUE.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browserTabConstructed):
+
 2020-04-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WebInspector] platformSave broken when running within the Flatpak runtime

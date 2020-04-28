@@ -29,6 +29,11 @@
 
 typedef struct _cairo cairo_t;
 
+#if USE(GTK4)
+typedef struct _GdkSnapshot GdkSnapshot;
+typedef GdkSnapshot GtkSnapshot;
+#endif
+
 namespace WebCore {
 class IntRect;
 }
@@ -46,7 +51,11 @@ public:
     virtual ~AcceleratedBackingStore() = default;
 
     virtual void update(const LayerTreeContext&) { }
+#if USE(GTK4)
+    virtual void snapshot(GtkSnapshot*) = 0;
+#else
     virtual bool paint(cairo_t*, const WebCore::IntRect&) = 0;
+#endif
     virtual void realize() { };
     virtual void unrealize() { };
     virtual bool makeContextCurrent() { return false; }

@@ -427,6 +427,7 @@ static void browserTabConstructed(GObject *gObject)
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));
 #else
+    gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
     gtk_container_add(GTK_CONTAINER(tab), GTK_WIDGET(tab->webView));
 #endif
 

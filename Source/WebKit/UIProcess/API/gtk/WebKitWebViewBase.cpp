@@ -614,7 +614,24 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->dialog = nullptr;
 }
 
-#if !USE(GTK4)
+#if USE(GTK4)
+void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
+{
+    int scaleFactor = gtk_widget_get_scale_factor(widget);
+    int width = gtk_widget_get_width(widget) * scaleFactor;
+    int height = gtk_widget_get_height(widget) * scaleFactor;
+    if (!width || !height)
+        return;
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
+    if (!drawingArea)
+        return;
+
+    ASSERT(drawingArea->isInAcceleratedCompositingMode());
+    webViewBase->priv->acceleratedBackingStore->snapshot(snapshot);
+}
+#else
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
@@ -720,7 +737,22 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
         drawingArea->setSize(viewRect.size());
 }
 
-#if !USE(GTK4)
+#if USE(GTK4)
+static void webkitWebViewBaseMeasure(GtkWidget* widget, GtkOrientation orientation, int, int* minimumSize, int* naturalSize, int*, int*)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+    switch (orientation) {
+    case GTK_ORIENTATION_HORIZONTAL:
+        *naturalSize = priv->contentsSize.width();
+        break;
+    case GTK_ORIENTATION_VERTICAL:
+        *naturalSize = priv->contentsSize.height();
+        break;
+    }
+
+    *minimumSize = 0;
+}
+#else
 static void webkitWebViewBaseGetPreferredWidth(GtkWidget* widget, gint* minimumSize, gint* naturalSize)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
@@ -1476,11 +1508,15 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
     widgetClass->realize = webkitWebViewBaseRealize;
     widgetClass->unrealize = webkitWebViewBaseUnrealize;
-#if !USE(GTK4)
+#if USE(GTK4)
+    widgetClass->snapshot = webkitWebViewBaseSnapshot;
+#else
     widgetClass->draw = webkitWebViewBaseDraw;
 #endif
     widgetClass->size_allocate = webkitWebViewBaseSizeAllocate;
-#if !USE(GTK4)
+#if USE(GTK4)
+    widgetClass->measure = webkitWebViewBaseMeasure;
+#else
     widgetClass->get_preferred_width = webkitWebViewBaseGetPreferredWidth;
     widgetClass->get_preferred_height = webkitWebViewBaseGetPreferredHeight;
 #endif
