@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DOMHighResTimeStamp.h"
+#include "ReducedResolutionSeconds.h"
 #include "Timer.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>

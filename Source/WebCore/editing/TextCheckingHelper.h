@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class Position;
 struct TextCheckingResult;
 
 class TextCheckingParagraph {

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

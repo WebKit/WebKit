@@ -1,3 +1,23 @@
+2020-04-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes late April 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=211099
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * Modules/cache/DOMCacheStorage.cpp: Sprinkle DOMCacheEngine:: namespace prefixes as needed.
+        (WebCore::DOMCacheStorage::findCacheOrCreate):
+        (WebCore::DOMCacheStorage::retrieveCaches):
+        (WebCore::DOMCacheStorage::doOpen):
+        (WebCore::DOMCacheStorage::doRemove):
+        * bindings/js/JSExecStateInstrumentation.h: Ditto for JSC:: namespace prefixes.
+        (WebCore::JSExecState::instrumentFunction):
+        * dom/ScriptedAnimationController.h: Add missing ReducedResolutionSeconds.h header.
+        * editing/TextCheckingHelper.h: Add missing forward declaration for Position.
+        * html/URLSearchParams.h: Add missing ExceptionOr.h header.
+
 2020-04-28  Charlie Turner  <cturner@igalia.com>
 
         [EME][CDMProxy] Default initialize m_numDecryptorsWaitingForKey member

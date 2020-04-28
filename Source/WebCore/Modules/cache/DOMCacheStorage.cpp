@@ -133,7 +133,7 @@ void DOMCacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
     });
 }
 
-Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(CacheInfo&& info)
+Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(DOMCacheEngine::CacheInfo&& info)
 {
    auto position = m_caches.findMatching([&] (const auto& cache) { return info.identifier == cache->identifier(); });
    if (position != notFound)
@@ -149,7 +149,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&
         return;
     }
 
-    m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](CacheInfosOrError&& result) mutable {
+    m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](DOMCacheEngine::CacheInfosOrError&& result) mutable {
         if (m_isStopped) {
             callback(DOMCacheEngine::convertToException(DOMCacheEngine::Error::Stopped));
             return;
@@ -164,7 +164,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&
         if (m_updateCounter != cachesInfo.updateCounter) {
             m_updateCounter = cachesInfo.updateCounter;
 
-            m_caches = WTF::map(WTFMove(cachesInfo.infos), [this] (CacheInfo&& info) {
+            m_caches = WTF::map(WTFMove(cachesInfo.infos), [this] (DOMCacheEngine::CacheInfo&& info) {
                 return findCacheOrCreate(WTFMove(info));
             });
         }
@@ -199,7 +199,7 @@ void DOMCacheStorage::doOpen(const String& name, DOMPromiseDeferred<IDLInterface
         return;
     }
 
-    m_connection->open(*origin(), name, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const CacheIdentifierOrError& result) mutable {
+    m_connection->open(*origin(), name, [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
         if (!result.has_value())
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
         else {
@@ -232,7 +232,7 @@ void DOMCacheStorage::doRemove(const String& name, DOMPromiseDeferred<IDLBoolean
         return;
     }
 
-    m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const CacheIdentifierOrError& result) mutable {
+    m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
         if (!result.has_value())
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
         else {
