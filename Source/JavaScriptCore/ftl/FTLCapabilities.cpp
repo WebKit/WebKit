@@ -219,6 +219,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToObject:
     case CallObjectConstructor:
     case CallStringConstructor:
+    case CallNumberConstructor:
     case ObjectCreate:
     case ObjectKeys:
     case MakeRope:

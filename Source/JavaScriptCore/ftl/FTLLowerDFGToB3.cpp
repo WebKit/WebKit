@@ -1134,6 +1134,9 @@ private:
         case ToNumeric:
             compileToNumeric();
             break;
+        case CallNumberConstructor:
+            compileCallNumberConstructor();
+            break;
         case ToString:
         case CallStringConstructor:
         case StringValueOf:
@@ -7590,6 +7593,35 @@ private:
         } else
             setJSValue(vmCall(Int64, operationToNumeric, weakPointer(globalObject), value));
     }
+
+    void compileCallNumberConstructor()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+#if USE(BIGINT32)
+        if (m_node->child1().useKind() == BigInt32Use) {
+            LValue value = lowBigInt32(m_node->child1());
+            setInt32(unboxBigInt32(value));
+            return;
+        }
+#endif
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock notNumber = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock fastResult = m_out.anchor(value);
+        m_out.branch(isNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notNumber));
+
+        // notNumber case.
+        LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationCallNumberConstructor, weakPointer(globalObject), value));
+        m_out.jump(continuation);
+
+        // continuation case.
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, fastResult, slowResult));
+    }
+
     
     void compileToStringOrCallStringConstructorOrStringValueOf()
     {

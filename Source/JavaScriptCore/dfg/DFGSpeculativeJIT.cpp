@@ -13336,7 +13336,8 @@ void SpeculativeJIT::compileToNumeric(Node* node)
     JSValueRegs argumentRegs = argument.jsValueRegs();
     JSValueRegs resultRegs = result.regs();
     GPRReg scratch = temp.gpr();
-    // FIXME: add a fast path for BigInt32 here (and for typeOf, and for boolify or whatever it is called in this file).
+    // FIXME: add a fast path for BigInt32 here.
+    // https://bugs.webkit.org/show_bug.cgi?id=211064
 
     MacroAssembler::JumpList slowCases;
 
@@ -13353,6 +13354,41 @@ void SpeculativeJIT::compileToNumeric(Node* node)
     addSlowPathGenerator(slowPathCall(slowCases, this, operationToNumeric, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs));
 
     jsValueResult(resultRegs, node, DataFormatJS);
+}
+
+void SpeculativeJIT::compileCallNumberConstructor(Node* node)
+{
+#if USE(BIGINT32)
+    if (node->child1().useKind() == BigInt32Use) {
+        SpeculateBigInt32Operand operand(this, node->child1());
+        GPRTemporary result(this);
+
+        GPRReg operandGPR = operand.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.unboxBigInt32(operandGPR, resultGPR);
+        strictInt32Result(resultGPR, node);
+        return;
+    }
+#endif
+
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+    JSValueOperand argument(this, node->child1());
+    JSValueRegsTemporary result(this);
+    GPRTemporary temp(this);
+
+    JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+    GPRReg tempGPR = temp.gpr();
+    // FIXME: add a fast path for BigInt32 here.
+    // https://bugs.webkit.org/show_bug.cgi?id=211064
+
+    CCallHelpers::JumpList slowCases;
+    slowCases.append(m_jit.branchIfNotNumber(argumentRegs, tempGPR));
+    m_jit.moveValueRegs(argumentRegs, resultRegs);
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationCallNumberConstructor, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), argumentRegs));
+
+    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileLogShadowChickenPrologue(Node* node)

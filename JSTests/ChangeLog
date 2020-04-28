@@ -1,3 +1,17 @@
+2020-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] NumberConstructor should accept BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=210835
+
+        Reviewed by Mark Lam.
+
+        * stress/number-constructor-bigint-dfg.js: Added.
+        (shouldBe):
+        (convert):
+        * stress/number-constructor-bigint.js: Added.
+        (shouldBe):
+        * test262/expectations.yaml:
+
 2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Throw OutOfMemoryError instead of RangeError if BigInt is too big

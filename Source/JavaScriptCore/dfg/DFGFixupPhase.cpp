@@ -1536,16 +1536,13 @@ private:
             break;
         }
 
-        case ToNumber: {
-            fixupToNumber(node);
+        case ToNumber:
+        case ToNumeric:
+        case CallNumberConstructor: {
+            fixupToNumberOrToNumericOrCallNumberConstructor(node);
             break;
         }
 
-        case ToNumeric: {
-            fixupToNumeric(node);
-            break;
-        }
-            
         case ToString:
         case CallStringConstructor: {
             fixupToStringOrCallStringConstructor(node);
@@ -3090,29 +3087,37 @@ private:
         }
     }
 
-    void fixupToNumeric(Node* node)
+    void fixupToNumberOrToNumericOrCallNumberConstructor(Node* node)
     {
-        // If the prediction of the child is BigInt, we attempt to convert ToNumeric to Identity, since it can only return a BigInt when fed a BigInt.
-        if (node->child1()->shouldSpeculateBigInt()) {
 #if USE(BIGINT32)
-            if (node->child1()->shouldSpeculateBigInt32())
+        if (node->op() == CallNumberConstructor) {
+            if (node->child1()->shouldSpeculateBigInt32()) {
                 fixEdge<BigInt32Use>(node->child1());
-            else if (node->child1()->shouldSpeculateHeapBigInt())
-                fixEdge<HeapBigIntUse>(node->child1());
-            else
-                fixEdge<AnyBigIntUse>(node->child1());
-#else
-            fixEdge<HeapBigIntUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                node->setResult(NodeResultInt32);
+                return;
+            }
+        }
 #endif
-            node->convertToIdentity();
-            return;
+
+        // If the prediction of the child is BigInt, we attempt to convert ToNumeric to Identity, since it can only return a BigInt when fed a BigInt.
+        if (node->op() == ToNumeric) {
+            if (node->child1()->shouldSpeculateBigInt()) {
+#if USE(BIGINT32)
+                if (node->child1()->shouldSpeculateBigInt32())
+                    fixEdge<BigInt32Use>(node->child1());
+                else if (node->child1()->shouldSpeculateHeapBigInt())
+                    fixEdge<HeapBigIntUse>(node->child1());
+                else
+                    fixEdge<AnyBigIntUse>(node->child1());
+#else
+                fixEdge<HeapBigIntUse>(node->child1());
+#endif
+                node->convertToIdentity();
+                return;
+            }
         }
 
-        fixupToNumber(node);
-    }
-
-    void fixupToNumber(Node* node)
-    {
         // At first, attempt to fold Boolean or Int32 to Int32.
         if (node->child1()->shouldSpeculateInt32OrBoolean()) {
             if (isInt32Speculation(node->getHeapPrediction())) {

@@ -3151,6 +3151,10 @@ void SpeculativeJIT::compile(Node* node)
         compileToNumeric(node);
         break;
     }
+
+    case CallNumberConstructor:
+        compileCallNumberConstructor(node);
+        break;
         
     case ToString:
     case CallStringConstructor:

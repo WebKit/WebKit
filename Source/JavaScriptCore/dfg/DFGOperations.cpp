@@ -1531,6 +1531,22 @@ EncodedJSValue JIT_OPERATION operationToNumeric(JSGlobalObject* globalObject, En
     return JSValue::encode(JSValue::decode(value).toNumeric(globalObject));
 }
 
+EncodedJSValue JIT_OPERATION operationCallNumberConstructor(JSGlobalObject* globalObject, EncodedJSValue encodedValue)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue numeric = value.toNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (numeric.isNumber())
+        return JSValue::encode(numeric);
+    ASSERT(numeric.isBigInt());
+    return JSValue::encode(JSBigInt::toNumber(numeric));
+}
+
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)
 {
     VM& vm = globalObject->vm();

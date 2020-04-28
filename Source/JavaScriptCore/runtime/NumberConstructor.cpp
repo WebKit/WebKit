@@ -90,8 +90,19 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* g
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    double n = callFrame->argumentCount() ? callFrame->uncheckedArgument(0).toNumber(globalObject) : 0;
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    double n = 0;
+    if (callFrame->argumentCount()) {
+        JSValue numeric = callFrame->uncheckedArgument(0).toNumeric(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (numeric.isNumber())
+            n = numeric.asNumber();
+        else {
+            ASSERT(numeric.isBigInt());
+            numeric = JSBigInt::toNumber(numeric);
+            ASSERT(numeric.isNumber());
+            n = numeric.asNumber();
+        }
+    }
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = newTarget == callFrame->jsCallee()
@@ -107,7 +118,16 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* g
 // ECMA 15.7.2
 static EncodedJSValue JSC_HOST_CALL callNumberConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(!callFrame->argumentCount() ? 0 : callFrame->uncheckedArgument(0).toNumber(globalObject)));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!callFrame->argumentCount())
+        return JSValue::encode(jsNumber(0));
+    JSValue numeric = callFrame->uncheckedArgument(0).toNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (numeric.isNumber())
+        return JSValue::encode(numeric);
+    ASSERT(numeric.isBigInt());
+    return JSValue::encode(JSBigInt::toNumber(numeric));
 }
 
 // ECMA-262 20.1.2.3

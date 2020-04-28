@@ -415,7 +415,8 @@ private:
             
         case ToPrimitive:
         case ToNumber:
-        case ToNumeric: {
+        case ToNumeric:
+        case CallNumberConstructor: {
             node->child1()->mergeFlags(flags);
             break;
         }

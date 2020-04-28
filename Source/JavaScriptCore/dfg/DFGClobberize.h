@@ -692,6 +692,19 @@ SUPPRESS_ASAN void clobberize(Graph& graph, Node* node, const ReadFunctor& read,
         write(Heap);
         return;
 
+    case CallNumberConstructor:
+        switch (node->child1().useKind()) {
+        case BigInt32Use:
+            def(PureValue(node));
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            DFG_CRASH(graph, node, "Bad use kind");
+        }
+
     case Inc:
     case Dec:
         switch (node->child1().useKind()) {

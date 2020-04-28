@@ -2547,4 +2547,118 @@ Optional<JSBigInt::Digit> JSBigInt::toShiftAmount(BigIntImpl x)
     return value;
 }
 
+JSBigInt::RoundingResult JSBigInt::decideRounding(JSBigInt* bigInt, int32_t mantissaBitsUnset, int32_t digitIndex, uint64_t currentDigit)
+{
+    if (mantissaBitsUnset > 0)
+        return RoundingResult::RoundDown;
+    int32_t topUnconsumedBit = 0;
+    if (mantissaBitsUnset < 0) {
+        // There are unconsumed bits in currentDigit.
+        topUnconsumedBit = -mantissaBitsUnset - 1;
+    } else {
+        ASSERT(mantissaBitsUnset == 0);
+        // currentDigit fit the mantissa exactly; look at the next digit.
+        if (digitIndex == 0)
+            return RoundingResult::RoundDown;
+        digitIndex--;
+        currentDigit = static_cast<uint64_t>(bigInt->digit(digitIndex));
+        topUnconsumedBit = digitBits - 1;
+    }
+    // If the most significant remaining bit is 0, round down.
+    uint64_t bitmask = static_cast<uint64_t>(1) << topUnconsumedBit;
+    if ((currentDigit & bitmask) == 0)
+        return RoundingResult::RoundDown;
+    // If any other remaining bit is set, round up.
+    bitmask -= 1;
+    if ((currentDigit & bitmask) != 0)
+        return RoundingResult::RoundUp;
+    while (digitIndex > 0) {
+        digitIndex--;
+        if (bigInt->digit(digitIndex) != 0)
+            return RoundingResult::RoundUp;
+    }
+    return RoundingResult::Tie;
+}
+
+JSValue JSBigInt::toNumberHeap(JSBigInt* bigInt)
+{
+    if (bigInt->isZero())
+        return jsNumber(0);
+    ASSERT(bigInt->length());
+
+    // Conversion mechanism is the following.
+    //
+    // 1. Get exponent bits.
+    // 2. Collect mantissa 52 bits.
+    // 3. Add rounding result of unused bits to mantissa and adjust mantissa & exponent bits.
+    // 4. Generate double by combining (1) and (3).
+
+    const unsigned length = bigInt->length();
+    const bool sign = bigInt->sign();
+    const Digit msd = bigInt->digit(length - 1);
+    const unsigned msdLeadingZeros = clz(msd);
+    const size_t bitLength = length * digitBits - msdLeadingZeros;
+    // Double's exponent bits overflow.
+    if (bitLength > 1024)
+        return jsDoubleNumber(sign ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity());
+    uint64_t exponent = bitLength - 1;
+    uint64_t currentDigit = msd;
+    int32_t digitIndex = length - 1;
+    int32_t shiftAmount = msdLeadingZeros + 1 + (64 - digitBits);
+    ASSERT(1 <= shiftAmount);
+    ASSERT(shiftAmount <= 64);
+    uint64_t mantissa = (shiftAmount == 64) ? 0 : currentDigit << shiftAmount;
+
+    // unsetBits = 64 - setBits - 12 // 12 for non-mantissa bits
+    //     setBits = 64 - (msdLeadingZeros + 1 + bitsNotAvailableDueToDigitSize);  // 1 for hidden mantissa bit.
+    //                 = 64 - (msdLeadingZeros + 1 + (64 - digitBits))
+    //                 = 64 - shiftAmount
+    // Hence, unsetBits = 64 - (64 - shiftAmount) - 12 = shiftAmount - 12
+
+    mantissa >>= 12; // (12 = 64 - 52), we shift 12 bits to put 12 zeros in uint64_t mantissa.
+    int32_t mantissaBitsUnset = shiftAmount - 12;
+
+    // If not all mantissa bits are defined yet, get more digits as needed.
+    // Collect mantissa 52bits from several digits.
+
+    if constexpr (digitBits < 64) {
+        if (mantissaBitsUnset >= static_cast<int32_t>(digitBits) && digitIndex > 0) {
+            digitIndex--;
+            currentDigit = static_cast<uint64_t>(bigInt->digit(digitIndex));
+            mantissa |= (currentDigit << (mantissaBitsUnset - digitBits));
+            mantissaBitsUnset -= digitBits;
+        }
+    }
+
+    if (mantissaBitsUnset > 0 && digitIndex > 0) {
+        ASSERT(mantissaBitsUnset < static_cast<int32_t>(digitBits));
+        digitIndex--;
+        currentDigit = static_cast<uint64_t>(bigInt->digit(digitIndex));
+        mantissa |= (currentDigit >> (digitBits - mantissaBitsUnset));
+        mantissaBitsUnset -= digitBits;
+    }
+
+    // If there are unconsumed digits left, we may have to round.
+    RoundingResult rounding = decideRounding(bigInt, mantissaBitsUnset, digitIndex, currentDigit);
+    if (rounding == RoundingResult::RoundUp || (rounding == RoundingResult::Tie && (mantissa & 1) == 1)) {
+        ++mantissa;
+        // Incrementing the mantissa can overflow the mantissa bits. In that case the new mantissa will be all zero (plus hidden bit).
+        if ((mantissa >> doublePhysicalMantissaSize) != 0) {
+            mantissa = 0;
+            exponent++;
+            // Incrementing the exponent can overflow too.
+            if (exponent > 1023)
+                return jsDoubleNumber(sign ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity());
+        }
+    }
+
+    uint64_t signBit = sign ? (static_cast<uint64_t>(1) << 63) : 0;
+    exponent = (exponent + 0x3ff) << doublePhysicalMantissaSize; // 0x3ff is double exponent bias.
+    uint64_t doubleBits = signBit | exponent | mantissa;
+    ASSERT((doubleBits & (static_cast<uint64_t>(1) << 63)) == signBit);
+    ASSERT((doubleBits & (static_cast<uint64_t>(0x7ff) << 52)) == exponent);
+    ASSERT((doubleBits & ((static_cast<uint64_t>(1) << 52) - 1)) == mantissa);
+    return jsNumber(bitwise_cast<double>(doubleBits));
+}
+
 } // namespace JSC

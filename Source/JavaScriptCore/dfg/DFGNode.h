@@ -1795,6 +1795,7 @@ public:
         case ToNumber:
         case ToNumeric:
         case ToObject:
+        case CallNumberConstructor:
         case ValueBitAnd:
         case ValueBitOr:
         case ValueBitXor:

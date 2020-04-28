@@ -393,6 +393,17 @@ public:
     }
 #endif
 
+    static JSValue toNumberHeap(JSBigInt*);
+    static JSValue toNumber(JSValue bigInt)
+    {
+        ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+        if (bigInt.isBigInt32())
+            return jsNumber(bigInt.bigInt32AsInt32());
+#endif
+        return toNumberHeap(jsCast<JSBigInt*>(bigInt));
+    }
+
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(VM&);
@@ -405,6 +416,8 @@ private:
     static constexpr unsigned halfDigitBits = digitBits / 2;
     static constexpr Digit halfDigitMask = (1ull << halfDigitBits) - 1;
     static constexpr int maxInt = 0x7FFFFFFF;
+
+    static constexpr unsigned doublePhysicalMantissaSize = 52;
     
     // The maximum length that the current implementation supports would be
     // maxInt / digitBits. However, we use a lower limit for now, because
@@ -438,6 +451,14 @@ private:
     Digit absoluteInplaceAdd(JSBigInt* summand, unsigned startIndex);
     Digit absoluteInplaceSub(JSBigInt* subtrahend, unsigned startIndex);
     void inplaceRightShift(unsigned shift);
+
+    enum class RoundingResult {
+        RoundDown,
+        Tie,
+        RoundUp
+    };
+
+    static RoundingResult decideRounding(JSBigInt*, int32_t mantissaBitsUnset, int32_t digitIndex, uint64_t currentDigit);
 
     enum class ExtraDigitsHandling {
         Copy,

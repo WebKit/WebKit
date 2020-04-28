@@ -1068,9 +1068,6 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
-test/built-ins/Number/bigint-conversion.js:
-  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
-  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/built-ins/Object/entries/order-after-define-property.js:
   default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
   strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '

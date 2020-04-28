@@ -1,3 +1,70 @@
+2020-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] NumberConstructor should accept BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=210835
+
+        Reviewed by Mark Lam.
+
+        This patch fixes our Number constructor behavior to accept BigInt. According to the spec[1],
+        Number constructor should accept BigInt and should generate numbers from that.
+
+        We port V8's BigInt to double conversion code as we did for the other HeapBigInt runtime functions.
+
+        And we introduce CallNumberConstructor DFG node and handle Number constructor call with BigInt correctly
+        in DFG and FTL. Previously we were emitting ToNumber DFG node for Number constructor. But this is wrong
+        now since ToNumber does not accept BigInt and throws an error, and Number constructor should not use
+        ToNumber to implement its implementation. So we should introduce slightly different semantics: CallNumberConstructor
+        as we introduced CallStringConstructor in addition to ToString DFG node. And we add appropriate BigInt32 path
+        to emit efficient CallNumberConstructor machine code.
+
+        [1]: https://tc39.es/ecma262/#sec-number-constructor-number-value
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToNumberOrToNumericOrCallNumberConstructor):
+        (JSC::DFG::FixupPhase::fixupToNumeric): Deleted.
+        (JSC::DFG::FixupPhase::fixupToNumber): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToNumeric):
+        (JSC::DFG::SpeculativeJIT::compileCallNumberConstructor):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallNumberConstructor):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::decideRounding):
+        (JSC::JSBigInt::toNumberHeap):
+        * runtime/JSBigInt.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructNumberConstructor):
+        (JSC::callNumberConstructor):
+
 2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Throw OutOfMemoryError instead of RangeError if BigInt is too big

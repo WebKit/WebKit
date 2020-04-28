@@ -94,6 +94,7 @@ EncodedJSValue JIT_OPERATION operationToPrimitive(JSGlobalObject*, EncodedJSValu
 EncodedJSValue JIT_OPERATION operationToPropertyKey(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToNumeric(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationCallNumberConstructor(JSGlobalObject*, EncodedJSValue);
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;

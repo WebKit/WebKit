@@ -1474,6 +1474,7 @@ public:
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
     void compileToNumeric(Node*);
+    void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
     void compileHasIndexedProperty(Node*);

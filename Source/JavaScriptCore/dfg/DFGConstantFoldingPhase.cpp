@@ -951,7 +951,8 @@ private:
                 break;
             }
 
-            case ToNumber: {
+            case ToNumber:
+            case CallNumberConstructor: {
                 if (m_state.forNode(node->child1()).m_type & ~SpecBytecodeNumber)
                     break;
 
