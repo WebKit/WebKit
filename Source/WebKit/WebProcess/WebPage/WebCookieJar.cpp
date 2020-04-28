@@ -58,9 +58,6 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
     if (!WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
         return false;
 
-    if (frame && frame->isMainFrame())
-        return false;
-
     RegistrableDomain firstPartyDomain { firstPartyForCookies };
     if (firstPartyDomain.isEmpty())
         return false;

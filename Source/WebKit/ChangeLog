@@ -1,3 +1,21 @@
+2020-04-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: can see third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=211092
+        <rdar://problem/62469078>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/inspector/page/get-cookies.html
+
+        After r259649, Web Inspector no longer incorrectly bails when attempting to get cookies if
+        the last resource loaded by a given frame does not have cookie access. We also need to check
+        whether the resource we're attempting to get cookies for is first-party or third-party so as
+        to reflect the current cookie policy.
+
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::shouldBlockCookies):
+
 2020-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         Follow-up change after r260798.

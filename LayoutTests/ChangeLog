@@ -1,3 +1,15 @@
+2020-04-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: can see third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=211092
+        <rdar://problem/62469078>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/inspector/page/get-cookies.html:
+        * http/tests/inspector/page/get-cookies-expected.txt:
+        * http/tests/inspector/page/resources/set-cookie.php:
+
 2020-04-27  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening timing out host invalid values test
