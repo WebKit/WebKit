@@ -146,22 +146,6 @@ constexpr auto observedDomainsExistsQuery = "SELECT EXISTS (SELECT * FROM Observ
 // DELETE Queries
 constexpr auto removeAllDataQuery = "DELETE FROM ObservedDomains WHERE domainID = ?"_s;
 
-const char* tables[] = {
-    "ObservedDomains",
-    "TopLevelDomains",
-    "StorageAccessUnderTopFrameDomains",
-    "TopFrameUniqueRedirectsTo",
-    "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement",
-    "TopFrameUniqueRedirectsFrom",
-    "TopFrameLinkDecorationsFrom",
-    "TopFrameLoadedThirdPartyScripts",
-    "SubframeUnderTopFrameDomains",
-    "SubresourceUnderTopFrameDomains",
-    "SubresourceUniqueRedirectsTo",
-    "SubresourceUniqueRedirectsFrom"
-};
-
-// CREATE TABLE Queries
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
     "hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, "
@@ -267,6 +251,27 @@ static bool needsNewCreateTableSchema(const String& schema)
     return schema.contains("REFERENCES TopLevelDomains");
 }
 
+static const HashMap<String, String>& createTableQueries()
+{
+    static auto createTableQueries = makeNeverDestroyed(HashMap<String, String> {
+        { "ObservedDomains"_s, createObservedDomain},
+        { "TopLevelDomains"_s, createTopLevelDomains},
+        { "StorageAccessUnderTopFrameDomains"_s, createStorageAccessUnderTopFrameDomains},
+        { "TopFrameUniqueRedirectsTo"_s, createTopFrameUniqueRedirectsTo},
+        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement},
+        { "TopFrameUniqueRedirectsFrom"_s, createTopFrameUniqueRedirectsFrom},
+        { "TopFrameLinkDecorationsFrom"_s, createTopFrameLinkDecorationsFrom},
+        { "TopFrameLoadedThirdPartyScripts"_s, createTopFrameLoadedThirdPartyScripts},
+        { "SubframeUnderTopFrameDomains"_s, createSubframeUnderTopFrameDomains},
+        { "SubresourceUnderTopFrameDomains"_s, createSubresourceUnderTopFrameDomains},
+        { "SubresourceUniqueRedirectsTo"_s, createSubresourceUniqueRedirectsTo},
+        { "SubresourceUniqueRedirectsFrom"_s, createSubresourceUniqueRedirectsFrom}
+    });
+    
+    return createTableQueries;
+}
+
+
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
     , m_storageDirectoryPath(storageDirectoryPath + "/observations.db")
@@ -312,19 +317,11 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
 {
     ASSERT(!RunLoop::isMain());
 
-    openAndDropOldDatabaseIfNecessary();
+    openAndUpdateSchemaIfNecessary();
     enableForeignKeys();
 
     // Since we are using a workerQueue, the sequential dispatch blocks may be called by different threads.
     m_database.disableThreadingChecks();
-
-    if (!m_database.tableExists("ObservedDomains"_s)) {
-        if (!createSchema()) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
-            ASSERT_NOT_REACHED();
-            return;
-        }
-    }
     
     if (!m_database.turnOnIncrementalAutoVacuum())
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::turnOnIncrementalAutoVacuum failed, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
@@ -352,6 +349,14 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
         ASSERT_NOT_REACHED();
     }
+    
+    if (m_isNewResourceLoadStatisticsDatabaseFile) {
+        if (!createSchema()) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
 }
 
 static void resetStatement(SQLiteStatement& statement)
@@ -360,27 +365,30 @@ static void resetStatement(SQLiteStatement& statement)
     ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 }
 
-bool ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema()
+Optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema()
 {
+    Vector<String> missingTables;
     SQLiteStatement statement(m_database, "SELECT 1 from sqlite_master WHERE type='table' and tbl_name=?");
     if (statement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-        return false;
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to prepare, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
+        return WTF::nullopt;
     }
 
-    bool hasAllTables = true;
-    for (auto table : tables) {
+    for (auto& table : createTableQueries().keys()) {
         if (statement.bindText(1, table) != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
-            return false;
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
+            return WTF::nullopt;
         }
         if (statement.step() != SQLITE_ROW) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema schema is missing table: %s", this, table);
-            hasAllTables = false;
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema schema is missing table: %s", this, table.ascii().data());
+            missingTables.append(String(table));
         }
         resetStatement(statement);
     }
-    return hasAllTables;
+    if (missingTables.isEmpty())
+        return WTF::nullopt;
+
+    return missingTables;
 }
 
 void ResourceLoadStatisticsDatabaseStore::enableForeignKeys()
@@ -424,7 +432,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     SQLiteTransaction transaction(m_database);
     transaction.begin();
 
-    for (auto& table : tables) {
+    for (auto& table : createTableQueries().keys()) {
         auto query = makeString("ALTER TABLE ", table, " RENAME TO _", table);
         SQLiteStatement alterTable(m_database, query);
         if (alterTable.prepare() != SQLITE_OK || alterTable.step() != SQLITE_DONE) {
@@ -440,7 +448,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
         return;
     }
 
-    for (auto& table : tables) {
+    for (auto& table : createTableQueries().keys()) {
         auto query = makeString("INSERT INTO ", table, " SELECT * FROM _", table);
         SQLiteStatement migrateTableData(m_database, query);
         if (migrateTableData.prepare() != SQLITE_OK || migrateTableData.step() != SQLITE_DONE) {
@@ -467,17 +475,29 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
+void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
 {
-    openITPDatabase();
+    auto missingTables = checkForMissingTablesInSchema();
+    if (!missingTables)
+        return;
 
-    if (!isCorrectTableSchema()) {
-        m_database.close();
-        // FIXME: Migrate existing data to new database file instead of deleting it (204482).
-        FileSystem::deleteFile(m_storageDirectoryPath);
-        openITPDatabase();
+    for (auto& table : *missingTables) {
+        auto createTableQuery = createTableQueries().get(table);
+        if (!m_database.executeCommand(createTableQuery))
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingTables failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
+    }
+
+    if (!createUniqueIndices()) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingTables failed to create unique indices, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
         return;
     }
+}
+
+void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
+{
+    openITPDatabase();
+    addMissingTablesIfNecessary();
 
     String currentSchema;
     {
@@ -503,7 +523,8 @@ void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
 
     ASSERT(!currentSchema.isEmpty());
 
-    // If the schema in the ResourceLoadStatistics directory is not the current schema, delete the database file.
+    // If the ObservedDomains schema in the ResourceLoadStatistics directory is not the current schema, delete the database file.
+    // FIXME: Migrate old ObservedDomains data to new table schema.
     if (currentSchema != ObservedDomainsTableSchemaV1() && currentSchema != ObservedDomainsTableSchemaV1Alternate()) {
         m_database.close();
         FileSystem::deleteFile(m_storageDirectoryPath);

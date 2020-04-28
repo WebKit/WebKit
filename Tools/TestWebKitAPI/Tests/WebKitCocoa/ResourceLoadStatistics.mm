@@ -1495,3 +1495,57 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
 
     TestWebKitAPI::Util::run(&doneFlag);
 }
+
+TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema)
+{
+    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+
+    auto defaultFileManager = [NSFileManager defaultManager];
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
+    NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
+
+    // Load an incorrect database schema with pre-seeded ITP data.
+    [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"missingTopFrameUniqueRedirectSameSiteStrictTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
+    [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool: sharedProcessPool];
+    configuration.get().websiteDataStore = dataStore;
+
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    static bool doneFlag;
+    [dataStore _setUseITPDatabase:true completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Since the database should not be deleted, the pre-seeded data should
+    // still be there after initializing ITP.
+    doneFlag = false;
+    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler: ^(BOOL isRegistered) {
+        EXPECT_TRUE(isRegistered);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+    
+    // Check to make sure all tables are accounted for.
+    doneFlag = false;
+    [dataStore _statisticsDatabaseHasAllTables:^(BOOL hasAllTables) {
+        EXPECT_TRUE(hasAllTables);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+}

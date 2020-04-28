@@ -140,16 +140,17 @@ public:
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
     void removeDataForDomain(const RegistrableDomain&) override;
     bool domainIDExistsInDatabase(int);
+    Optional<Vector<String>> checkForMissingTablesInSchema();
 
 private:
     void openITPDatabase();
-    bool isCorrectTableSchema();
+    void addMissingTablesIfNecessary();
     void enableForeignKeys();
     bool isMigrationNecessary();
     void migrateDataToNewTablesIfNecessary();
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
-    void openAndDropOldDatabaseIfNecessary();
+    void openAndUpdateSchemaIfNecessary();
     String getDomainStringFromDomainID(unsigned) const;
     String getSubStatisticStatement(const String&) const;
     void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;

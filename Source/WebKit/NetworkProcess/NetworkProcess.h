@@ -237,6 +237,7 @@ public:
     void getResourceLoadStatisticsDataSummary(PAL::SessionID, CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
     void scheduleCookieBlockingUpdate(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID, CompletionHandler<void()>&&);
+    void statisticsDatabaseHasAllTables(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void submitTelemetry(PAL::SessionID, CompletionHandler<void()>&&);
     void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setGrandfatheringTime(PAL::SessionID, Seconds, CompletionHandler<void()>&&);

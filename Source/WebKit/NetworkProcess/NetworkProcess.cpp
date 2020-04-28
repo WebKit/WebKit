@@ -828,6 +828,19 @@ void NetworkProcess::scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID s
     }
 }
 
+void NetworkProcess::statisticsDatabaseHasAllTables(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->statisticsDatabaseHasAllTables(WTFMove(completionHandler));
+        else
+            completionHandler(false);
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+    }
+}
+
 void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {

@@ -249,6 +249,7 @@ struct ThirdPartyData {
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdateForDomains(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
+    void statisticsDatabaseHasAllTables(CompletionHandler<void(bool)>&&);
     void submitTelemetry(CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);

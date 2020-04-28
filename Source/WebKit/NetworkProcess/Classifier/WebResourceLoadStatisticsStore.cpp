@@ -322,6 +322,23 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
     });
 }
 
+void WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable { 
+        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+            completionHandler(false);
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto missingTables = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).checkForMissingTablesInSchema();
+        postTaskReply([hasAllTables = missingTables ? false : true, completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(hasAllTables);
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics)
 {
     ASSERT(RunLoop::isMain());

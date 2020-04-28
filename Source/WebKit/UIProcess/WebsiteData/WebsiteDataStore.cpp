@@ -1583,6 +1583,20 @@ void WebsiteDataStore::scheduleStatisticsAndDataRecordsProcessing(CompletionHand
     }
 }
 
+void WebsiteDataStore::statisticsDatabaseHasAllTables(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess()) {
+            process->statisticsDatabaseHasAllTables(m_sessionID, WTFMove(completionHandler));
+            return;
+        }
+    }
+
+    completionHandler(false);
+}
+
 void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {

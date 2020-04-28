@@ -1,3 +1,64 @@
+2020-04-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create a mechanism to add missing ITP Database tables when the schema is updated
+        https://bugs.webkit.org/show_bug.cgi?id=211004
+        <rdar://problem/62261187>
+
+        Reviewed by John Wilander.
+
+        This patch updates the ITP database to better handle added tables to
+        the schema. Currently the database store deletes and re-creates the
+        database when any schema change is encountered. This is simple but
+        would result in ITP data loss during schema updates, so this patch
+        searches the schema for missing tables and adds any it finds.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::createTableQueries):
+        Convert the tables array to a mapping of table names to their
+        respective CREATE TABLE queries so we can add missing tables on the
+        fly.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        Remove call to createSchema() from the constructor. It makes more
+        sense to base this on whether the file is new as opposed to whether
+        one table exists.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary):
+        Checks for missing tables and adds them using a best-effort approach.
+        Call createUniqueIndices() to call all CREATE UNIQUE INDEX queries,
+        even though we may not need them all. It is much simpler than to
+        associate each query with its table, and it doesn't hurt to call
+        again.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+        Add missing tables instead of deleting the old database file. Changed
+        the function name to reflect this. Deleted a FIXME which this patch
+        addresses but added a new FIXME for migrating data when adding new
+        columns, which this patch does not address.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isCorrectTableSchema): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::statisticsDatabaseHasAllTables):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _statisticsDatabaseHasAllTables:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::statisticsDatabaseHasAllTables):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::statisticsDatabaseHasAllTables):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Added an SPI call to test that the database schema includes all
+        tables. This tests the database is not dropped when a new
+        table is added upon opening the database.
+
 2020-04-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Global preferences are not accessible in the WebContent process when CFPrefs direct mode is enabled

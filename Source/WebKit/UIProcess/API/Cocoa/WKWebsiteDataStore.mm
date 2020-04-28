@@ -562,6 +562,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_statisticsDatabaseHasAllTables:(void (^)(BOOL))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->statisticsDatabaseHasAllTables([completionHandler = makeBlockPtr(completionHandler)](bool hasAllTables) {
+        completionHandler(hasAllTables);
+    });
+#else
+    completionHandler(NO);
+#endif
+}
+
 - (void)_processStatisticsAndDataRecords:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

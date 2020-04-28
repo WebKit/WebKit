@@ -629,6 +629,16 @@ void NetworkProcessProxy::scheduleStatisticsAndDataRecordsProcessing(PAL::Sessio
     sendWithAsyncReply(Messages::NetworkProcess::ScheduleStatisticsAndDataRecordsProcessing(sessionID), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::statisticsDatabaseHasAllTables(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::StatisticsDatabaseHasAllTables(sessionID), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::logUserInteraction(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
