@@ -7,6 +7,8 @@
     <script src="../media-controls.js"></script>
     <script>
         window.addEventListener('load', async event => {
+            if (window.internals)
+                run("internals.setCaptionDisplayMode('ForcedOnly')");
             window.video = document.querySelector('video');
             run('video.src = findMediaFile("video", "../content/test")');
 

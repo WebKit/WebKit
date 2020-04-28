@@ -1,4 +1,5 @@
 
+RUN(internals.setCaptionDisplayMode('ForcedOnly'))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 RUN(captionTrack = video.addTextTrack("captions"))
