@@ -1,5 +1,13 @@
 2020-04-27  Brent Fulgham  <bfulgham@apple.com>
 
+        Follow-up change after r260798.
+
+        Allow iOS to consume the 'com.apple.cfprefsd.agent' endpoint if issued by the UIProcess.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2020-04-27  Brent Fulgham  <bfulgham@apple.com>
+
         [MacCatalyst] Dynamic access to accessibility services is incomplete 
         https://bugs.webkit.org/show_bug.cgi?id=211100
         <rdar://problem/62133491>

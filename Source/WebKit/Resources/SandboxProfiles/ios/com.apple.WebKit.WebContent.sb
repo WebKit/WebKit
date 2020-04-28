@@ -896,6 +896,7 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
+            "com.apple.cfprefsd.agent"
             "com.apple.cfprefsd.daemon"
             "com.apple.diagnosticd"
             "com.apple.iphone.axserver-systemwide"
