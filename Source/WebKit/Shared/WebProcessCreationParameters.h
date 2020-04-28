@@ -231,6 +231,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::HandleArray mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
 #if ENABLE(CFPREFS_DIRECT_MODE)
     Optional<SandboxExtension::HandleArray> preferencesExtensionHandles;
+    String encodedGlobalPreferences;
 #endif
 #endif
 

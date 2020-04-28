@@ -165,8 +165,37 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 }
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+static void setGlobalPreferences(const String& encodedGlobalPreferences)
+{
+    if (encodedGlobalPreferences.isEmpty())
+        return;
+
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedGlobalPreferences options:0]);
+    if (!encodedData)
+        return;
+
+    NSError *err = nil;
+    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
+    id globalPreferencesDictionary = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
+    if (err) {
+        ASSERT_NOT_REACHED();
+        WTFLogAlways("Failed to unarchive global preferences dictionary with NSKeyedUnarchiver.");
+        return;
+    }
+    [globalPreferencesDictionary enumerateKeysAndObjectsUsingBlock: ^(NSString *key, id value, BOOL* stop) {
+        if (value)
+            CFPreferencesSetAppValue(static_cast<CFStringRef>(key), static_cast<CFPropertyListRef>(value), CFSTR("kCFPreferencesAnyApplication"));
+    }];
+}
+#endif
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    setGlobalPreferences(parameters.encodedGlobalPreferences);
+#endif
+
     // Map Launch Services database. This should be done as early as possible, as the mapping will fail
     // if 'com.apple.lsd.mapdb' is being accessed before this.
     if (parameters.mapDBExtensionHandle) {
@@ -178,7 +207,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         ok = extension->revoke();
         ASSERT_UNUSED(ok, ok);
     }
-
 
 #if PLATFORM(IOS_FAMILY)
     if (parameters.runningboardExtensionHandle) {

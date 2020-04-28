@@ -194,6 +194,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaExtensionHandles;
 #if ENABLE(CFPREFS_DIRECT_MODE)
     encoder << preferencesExtensionHandles;
+    encoder << encodedGlobalPreferences;
 #endif
 #endif
 
@@ -542,6 +543,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!preferencesExtensionHandles)
         return false;
     parameters.preferencesExtensionHandles = WTFMove(*preferencesExtensionHandles);
+
+    Optional<String> encodedGlobalPreferences;
+    decoder >> encodedGlobalPreferences;
+    if (!encodedGlobalPreferences)
+        return false;
+    parameters.encodedGlobalPreferences = WTFMove(*encodedGlobalPreferences);
 #endif
 #endif
 
