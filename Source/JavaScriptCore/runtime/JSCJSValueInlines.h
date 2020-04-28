@@ -53,7 +53,8 @@ ALWAYS_INLINE int32_t JSValue::toInt32(JSGlobalObject* globalObject) const
 
 inline uint32_t JSValue::toUInt32(JSGlobalObject* globalObject) const
 {
-    // See comment on JSC::toUInt32, in JSCJSValue.h.
+    // The only difference between toInt32 and toUint32 is that toUint32 reinterprets resulted int32_t value as uint32_t.
+    // https://tc39.es/ecma262/#sec-touint32
     return toInt32(globalObject);
 }
 
@@ -847,6 +848,17 @@ ALWAYS_INLINE JSValue JSValue::toNumeric(JSGlobalObject* globalObject) const
     RETURN_IF_EXCEPTION(scope, { });
 
     return jsNumber(value);
+}
+
+ALWAYS_INLINE Optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject* globalObject) const
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue result = toBigIntOrInt32(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (LIKELY(result.isInt32()))
+        return static_cast<uint32_t>(result.asInt32());
+    return WTF::nullopt;
 }
 
 ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) const

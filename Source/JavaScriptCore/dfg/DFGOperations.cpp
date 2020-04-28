@@ -506,16 +506,8 @@ EncodedJSValue JIT_OPERATION operationValueBitURShift(JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue op1 = JSValue::decode(encodedOp1);
-    JSValue op2 = JSValue::decode(encodedOp2);
-
-    uint32_t a = op1.toUInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    uint32_t b = op2.toUInt32(globalObject);
-    return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
+    return JSValue::encode(jsURShift(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2)));
 }
 
 EncodedJSValue JIT_OPERATION operationValueAddNotNumber(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

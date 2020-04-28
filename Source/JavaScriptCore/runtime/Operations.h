@@ -792,7 +792,7 @@ ALWAYS_INLINE JSValue shift(JSGlobalObject* globalObject, JSValue v1, JSValue v2
     }
 #endif
 
-    if (!(leftNumeric.isBigInt() && rightNumeric.isBigInt())) {
+    if (UNLIKELY(!(leftNumeric.isBigInt() && rightNumeric.isBigInt()))) {
         auto errorMessage = isLeft ? "Invalid mix of BigInt and other type in left shift operation." : "Invalid mix of BigInt and other type in signed right shift operation.";
         return throwTypeError(globalObject, scope, errorMessage);
     }
@@ -821,6 +821,24 @@ ALWAYS_INLINE JSValue jsRShift(JSGlobalObject* globalObject, JSValue v1, JSValue
 {
     bool isLeft = false;
     return shift(globalObject, v1, v2, isLeft);
+}
+
+ALWAYS_INLINE JSValue jsURShift(JSGlobalObject* globalObject, JSValue left, JSValue right)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Optional<uint32_t> leftUint32 = left.toUInt32AfterToNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    Optional<uint32_t> rightUint32 = right.toUInt32AfterToNumeric(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (UNLIKELY(!leftUint32 || !rightUint32)) {
+        throwTypeError(globalObject, scope, "BigInt does not support >>> operator"_s);
+        return { };
+    }
+
+    return jsNumber(static_cast<int32_t>(leftUint32.value() >> (rightUint32.value() & 31)));
 }
 
 template<typename HeapBigIntOperation, typename Int32Operation>

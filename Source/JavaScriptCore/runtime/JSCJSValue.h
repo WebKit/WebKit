@@ -294,6 +294,8 @@ public:
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
     double toLength(JSGlobalObject*) const;
 
+    Optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
+
     // Floating point conversions (this is a convenience function for WebCore;
     // single precision float is not a representation used in JS or JSC).
     float toFloat(JSGlobalObject* globalObject) const { return static_cast<float>(toNumber(globalObject)); }

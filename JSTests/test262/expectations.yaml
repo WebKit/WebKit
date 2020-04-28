@@ -3092,9 +3092,6 @@ test/language/expressions/super/call-poisoned-underscore-proto.js:
 test/language/expressions/super/prop-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
-test/language/expressions/unsigned-right-shift/bigint-toprimitive.js:
-  default: 'Test262Error: 0n >>> {[Symbol.toPrimitive]: function() {throw new MyError();}} throws MyError Expected a MyError but got a TypeError'
-  strict mode: 'Test262Error: 0n >>> {[Symbol.toPrimitive]: function() {throw new MyError();}} throws MyError Expected a MyError but got a TypeError'
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'

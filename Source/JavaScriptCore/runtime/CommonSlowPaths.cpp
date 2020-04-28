@@ -755,11 +755,12 @@ SLOW_PATH_DECL(slow_path_urshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpUrshift>();
-    uint32_t a = GET_C(bytecode.m_lhs).jsValue().toUInt32(globalObject);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    uint32_t b = GET_C(bytecode.m_rhs).jsValue().toUInt32(globalObject);
-    RETURN(jsNumber(static_cast<int32_t>(a >> (b & 31))));
+    JSValue left = GET_C(bytecode.m_lhs).jsValue();
+    JSValue right = GET_C(bytecode.m_rhs).jsValue();
+
+    JSValue result = jsURShift(globalObject, left, right);
+    CHECK_EXCEPTION();
+    RETURN(result);
 }
 
 SLOW_PATH_DECL(slow_path_unsigned)

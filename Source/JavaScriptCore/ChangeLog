@@ -1,3 +1,21 @@
+2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] >>> should call ToNumeric
+        https://bugs.webkit.org/show_bug.cgi?id=211065
+
+        Reviewed by Ross Kirsling.
+
+        While BigInt does not support >>> operator, >>> operator should call ToNumeric (in this case, toBigIntOrInt32) for both before throwing an error.
+        We call toBigIntOrInt32 for both operands, and throw an error. And after that, casting int32_t to uint32_t to perform >>> operator. This is correct
+        since the only difference between toUint32 and toInt32 is casting int32_t result to uint32_t.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Operations.h:
+        (JSC::shift):
+        (JSC::jsURShift):
+
 2020-04-27  Keith Miller  <keith_miller@apple.com>
 
         OSR Exit compiler should know and print the exiting DFG node's index
