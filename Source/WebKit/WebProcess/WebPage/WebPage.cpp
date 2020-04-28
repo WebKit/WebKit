@@ -271,6 +271,7 @@
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 #if HAVE(TOUCH_BAR)
@@ -4215,10 +4216,25 @@ void WebPage::changeSelectedIndex(int32_t index)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData)
+void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, SandboxExtension::Handle&& frontboardServicesSandboxExtensionHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
 {
     if (!m_activeOpenPanelResultListener)
         return;
+
+    auto frontboardServicesSandboxExtension = SandboxExtension::create(WTFMove(frontboardServicesSandboxExtensionHandle));
+    if (frontboardServicesSandboxExtension) {
+        bool consumed = frontboardServicesSandboxExtension->consume();
+        ASSERT_UNUSED(consumed, consumed);
+    }
+
+    auto iconServicesSandboxExtension = SandboxExtension::create(WTFMove(iconServicesSandboxExtensionHandle));
+    if (iconServicesSandboxExtension) {
+        bool consumed = iconServicesSandboxExtension->consume();
+        ASSERT_UNUSED(consumed, consumed);
+    }
+
+    RELEASE_ASSERT(!sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.frontboard.systemappservices"));
+    RELEASE_ASSERT(!sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.frontboard.iconservices"));
 
     RefPtr<Icon> icon;
     if (!iconData.isEmpty()) {
@@ -4230,6 +4246,17 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
 
     m_activeOpenPanelResultListener->didChooseFilesWithDisplayStringAndIcon(files, displayString, icon.get());
     m_activeOpenPanelResultListener = nullptr;
+
+    if (frontboardServicesSandboxExtension) {
+        bool revoked = frontboardServicesSandboxExtension->revoke();
+        ASSERT_UNUSED(revoked, revoked);
+    }
+
+    if (iconServicesSandboxExtension) {
+        bool revoked = iconServicesSandboxExtension->revoke();
+        ASSERT_UNUSED(revoked, revoked);
+    }
+
 }
 #endif
 

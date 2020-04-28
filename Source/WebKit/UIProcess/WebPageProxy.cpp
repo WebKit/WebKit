@@ -6640,7 +6640,11 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
     send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles));
 #endif
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference()));
+    SandboxExtension::Handle frontboardServicesSandboxExtension, iconServicesSandboxExtension;
+    SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices", WTF::nullopt, frontboardServicesSandboxExtension);
+    SandboxExtension::createHandleForMachLookup("com.apple.iconservices", WTF::nullopt, iconServicesSandboxExtension);
+
+    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), frontboardServicesSandboxExtension, iconServicesSandboxExtension));
 
     m_openPanelResultListener->invalidate();
     m_openPanelResultListener = nullptr;

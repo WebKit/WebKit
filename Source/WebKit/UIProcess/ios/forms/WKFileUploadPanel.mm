@@ -74,7 +74,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
 - (instancetype)initWithFileURL:(NSURL *)fileURL;
 @property (nonatomic, readonly, getter=isVideo) BOOL video;
 @property (nonatomic, readonly) NSURL *fileURL;
-@property (nonatomic, readonly) UIImage *displayImage;
+@property (nonatomic, readonly) RetainPtr<UIImage> displayImage;
 @end
 
 @implementation _WKFileUploadItem {
@@ -103,7 +103,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     return _fileURL.get();
 }
 
-- (UIImage *)displayImage
+- (RetainPtr<UIImage>)displayImage
 {
     ASSERT_NOT_REACHED();
     return nil;
@@ -122,7 +122,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     return NO;
 }
 
-- (UIImage *)displayImage
+- (RetainPtr<UIImage>)displayImage
 {
     return iconForImageFile(self.fileURL);
 }
@@ -140,7 +140,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
     return YES;
 }
 
-- (UIImage *)displayImage
+- (RetainPtr<UIImage>)displayImage
 {
     return iconForVideoFile(self.fileURL);
 }
@@ -629,7 +629,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 {
     ASSERT(urls.count);
     [self _dismissDisplayAnimated:YES];
-    [self _chooseFiles:urls displayString:displayStringForDocumentsAtURLs(urls) iconImage:iconForFile(urls[0])];
+    [self _chooseFiles:urls displayString:displayStringForDocumentsAtURLs(urls) iconImage:iconForFile(urls[0]).get()];
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)documentPicker
@@ -667,7 +667,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             ASSERT([processedResults count] == 1);
             _WKFileUploadItem *result = [processedResults objectAtIndex:0];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self _chooseFiles:@[result.fileURL] displayString:displayString iconImage:result.displayImage];
+                [self _chooseFiles:@[result.fileURL] displayString:displayString iconImage:result.displayImage.get()];
             });
         }
         failureBlock:^{
@@ -684,7 +684,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
     [self _processMediaInfoDictionaries:infos
         successBlock:^(NSArray *processedResults, NSString *displayString) {
-            UIImage *iconImage = nil;
+            RetainPtr<UIImage> iconImage = nil;
             NSMutableArray *fileURLs = [NSMutableArray array];
             for (_WKFileUploadItem *result in processedResults) {
                 NSURL *fileURL = result.fileURL;
@@ -696,7 +696,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             }
 
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self _chooseFiles:fileURLs displayString:displayString iconImage:iconImage];
+                [self _chooseFiles:fileURLs displayString:displayString iconImage:iconImage.get()];
             });
         }
         failureBlock:^{

@@ -71,7 +71,7 @@ static UIImage *squareImage(CGImageRef image)
     return [UIImage imageWithCGImage:squareImage.get()];
 }
 
-static UIImage *thumbnailSizedImageForImage(CGImageRef image)
+static RetainPtr<UIImage> thumbnailSizedImageForImage(CGImageRef image)
 {
     UIImage *squaredImage = squareImage(image);
     if (!squaredImage)
@@ -81,20 +81,22 @@ static UIImage *thumbnailSizedImageForImage(CGImageRef image)
     UIGraphicsBeginImageContext(destRect.size);
     CGContextSetInterpolationQuality(UIGraphicsGetCurrentContext(), kCGInterpolationHigh);
     [squaredImage drawInRect:destRect];
-    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
+    RetainPtr<UIImage> resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return resultImage;
 }
 
-UIImage* fallbackIconForFile(NSURL *file)
+RetainPtr<UIImage> fallbackIconForFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
+    if (![interactionController.icons count])
+        return nil;
     return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
 }
 
-UIImage* iconForImageFile(NSURL *file)
+RetainPtr<UIImage> iconForImageFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -113,7 +115,7 @@ UIImage* iconForImageFile(NSURL *file)
     return thumbnailSizedImageForImage(thumbnail.get());
 }
 
-UIImage* iconForVideoFile(NSURL *file)
+RetainPtr<UIImage> iconForVideoFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -131,7 +133,7 @@ UIImage* iconForVideoFile(NSURL *file)
     return thumbnailSizedImageForImage(imageRef.get());
 }
 
-UIImage* iconForFile(NSURL *file)
+RetainPtr<UIImage> iconForFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
