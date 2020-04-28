@@ -353,7 +353,6 @@ public:
             }
 
             m_node = nullptr;
-            m_nodeIndexInGraph = 0;
             m_origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), true);
 
             // Check Arguments.
@@ -512,8 +511,8 @@ private:
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
         
-        for (unsigned nodeIndex = 0; nodeIndex < m_highBlock->size(); ++nodeIndex) {
-            if (!compileNode(nodeIndex))
+        for (m_nodeIndex = 0; m_nodeIndex < m_highBlock->size(); ++m_nodeIndex) {
+            if (!compileNode(m_nodeIndex))
                 break;
         }
     }
@@ -676,7 +675,6 @@ private:
         }
         
         m_node = m_highBlock->at(nodeIndex);
-        m_nodeIndexInGraph = m_node->index();
         m_origin = m_node->origin;
         m_out.setOrigin(m_node);
         
@@ -10824,7 +10822,7 @@ private:
                 CCallHelpers::Label label = jit.watchpointLabel();
 
                 RefPtr<OSRExitHandle> handle = descriptor->emitOSRExitLater(
-                    *state, UncountableInvalidation, origin, params, m_nodeIndexInGraph, 0);
+                    *state, UncountableInvalidation, origin, params);
 
                 RefPtr<JITCode> jitCode = state->jitCode.get();
 
@@ -13898,7 +13896,7 @@ private:
                 for (unsigned i = 0; i < domJIT->numFPScratchRegisters; ++i)
                     fpScratch.append(params.fpScratch(i));
 
-                RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, BadType, origin, params, m_nodeIndexInGraph, osrExitArgumentOffset);
+                RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, BadType, origin, params, osrExitArgumentOffset);
 
                 SnippetParams domJITParams(*state, params, node, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
@@ -18588,7 +18586,7 @@ private:
         HandlerInfo* exceptionHandler;
         bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler);
         if (!willCatchException)
-            return PatchpointExceptionHandle::defaultHandle(m_ftlState, m_nodeIndexInGraph);
+            return PatchpointExceptionHandle::defaultHandle(m_ftlState);
 
         dataLogLnIf(verboseCompilationEnabled(), "    Patchpoint exception OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap());
 
@@ -18611,7 +18609,7 @@ private:
             ValueRep::LateColdAny);
 
         return PatchpointExceptionHandle::create(
-            m_ftlState, exitDescriptor, origin, m_nodeIndexInGraph, offset, *exceptionHandler);
+            m_ftlState, exitDescriptor, origin, offset, *exceptionHandler);
     }
 
     LBasicBlock lowBlock(DFG::BasicBlock* block)
@@ -18693,7 +18691,7 @@ private:
         value->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 exitDescriptor->emitOSRExit(
-                    *state, kind, origin, jit, params, m_nodeIndexInGraph, 0);
+                    *state, kind, origin, jit, params, 0);
             });
     }
 
@@ -19188,7 +19186,7 @@ private:
     LBasicBlock m_nextLowBlock;
 
     NodeOrigin m_origin;
-    unsigned m_nodeIndexInGraph { 0 };
+    unsigned m_nodeIndex;
     Node* m_node;
 
     // These are used for validating AI state.

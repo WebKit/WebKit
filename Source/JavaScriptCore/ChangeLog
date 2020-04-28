@@ -1,3 +1,16 @@
+2020-04-27  Jason Lawrence  <lawrence.j@apple.com>
+
+        Unreviewed, reverting r260772.
+
+        This commit caused tests to start failing internally.
+
+        Reverted changeset:
+
+        "OSR Exit compiler should know and print the exiting DFG
+        node's index"
+        https://bugs.webkit.org/show_bug.cgi?id=210998
+        https://trac.webkit.org/changeset/260772
+
 2020-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add $vm.assertEnabled() to suppress Debug crash expected tests in release+assert build
