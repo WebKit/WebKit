@@ -1,3 +1,43 @@
+2020-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Timestamps should be the same for all rendering update steps
+        https://bugs.webkit.org/show_bug.cgi?id=207153
+
+        Reviewed by Simon Fraser.
+
+        The HTML 5 event loop sepcs states that timestamps should be the same for 
+        all rendering update steps.
+
+        Specs link (step 9):
+            https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-processing-model
+
+        This patch also fixes some issues in IntersectionObserver.
+
+        Test: intersection-observer/intersection-observer-callback-timestamp.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::notifyIntersectionObserversTimerFired): Deleted.
+        * dom/Document.h:
+        -- Handle the case when two floats are areEssentiallyEqual().
+        -- Execute the IntersectionObserver immediately and do not wait until the 
+           next CFRunLoop event since this does not implement the specs.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::freezeNowTimestamp):
+        (WebCore::DOMWindow::unfreezeNowTimestamp):
+        (WebCore::DOMWindow::frozenNowTimestamp const):
+        * page/DOMWindow.h:
+        Provide a frozen now() timestamp in seconds to be used internally only.
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::nowTimestamp const):
+        Use the frozenNowTimestamp().
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        Freeze the timestamps while serving the rendering update steps.
+
 2020-04-27  Dean Jackson  <dino@apple.com>
 
         getShaderPrecisionFormat returns the wrong values

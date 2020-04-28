@@ -1341,6 +1341,13 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+    // Timestamps should not change while serving the rendering update steps.
+    Vector<WeakPtr<Document>> initialDocuments;
+    forEachDocument([&initialDocuments] (Document& document) {
+        document.domWindow()->freezeNowTimestamp();
+        initialDocuments.append(makeWeakPtr(&document));
+    });
+
     // Flush autofocus candidates
 
     forEachDocument([] (Document& document) {
@@ -1358,7 +1365,7 @@ void Page::updateRendering()
     forEachDocument([] (Document& document) {
         if (!document.domWindow())
             return;
-        auto timestamp = document.domWindow()->nowTimestamp();
+        auto timestamp = document.domWindow()->frozenNowTimestamp();
         if (auto* timelinesController = document.timelinesController())
             timelinesController->updateAnimationsAndSendEvents(timestamp);
         // FIXME: Run the fullscreen steps.
@@ -1385,6 +1392,11 @@ void Page::updateRendering()
                 page->updateRendering();
         }
     });
+
+    for (auto& document : initialDocuments) {
+        if (document)
+            document->domWindow()->unfreezeNowTimestamp();
+    }
 
     layoutIfNeeded();
     doAfterUpdateRendering();

@@ -1668,10 +1668,6 @@ private:
     bool canNavigateInternal(Frame& targetFrame);
     bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
-#if ENABLE(INTERSECTION_OBSERVER)
-    void notifyIntersectionObserversTimerFired();
-#endif
-
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;
     void applyQuickLookSandbox();
@@ -1844,7 +1840,6 @@ private:
 #if ENABLE(INTERSECTION_OBSERVER)
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
-    Timer m_intersectionObserversNotifyTimer;
     Timer m_intersectionObserversInitialUpdateTimer;
     // This is only non-null when this document is an explicit root.
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;

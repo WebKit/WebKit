@@ -256,7 +256,7 @@ Optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
     ASSERT(context->isDocument());
     auto& document = downcast<Document>(*context);
     if (auto* window = document.domWindow())
-        return window->nowTimestamp();
+        return window->frozenNowTimestamp();
     
     return WTF::nullopt;
 }

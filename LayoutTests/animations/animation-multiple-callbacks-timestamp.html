@@ -5,43 +5,34 @@
 </head>
 <body>
     <script>
-        var currentFrame = 0;
         var timestamp1 = 0;
-        var failed = false;
-
-        function finishTest()
-        {
-            if (failed)
-                testFailed("Some of the multiple requestAnimationFrame() callbacks, which were fired at the same time, received different timestamps.");
-            else
-                testPassed("All the multiple requestAnimationFrame() callbacks, which were fired at the same time, received the same timestamp.");
-            finishJSTest();
-        }
+        var timestamp2 = 0;
+        var currentFrame = 0;
+        const MaxFrames = 10;
 
         function doAnimation1(timestamp)
         {
-            timestamp1 = timestamp;
-            
-            const MaxFrames = 25;
-            if (currentFrame == MaxFrames)
-                finishTest();
-            else {
-                requestAnimationFrame(doAnimation1);
-                requestAnimationFrame(doAnimation2);
+            if (++currentFrame > MaxFrames) {
+                finishJSTest();
+                return;
             }
+
+            timestamp1 = timestamp;
+            requestAnimationFrame(doAnimation1);
+            requestAnimationFrame(doAnimation2);
         }
 
         function doAnimation2(timestamp)
         {
-            const WarmupFrames = 5;
-            if (++currentFrame > WarmupFrames && timestamp != timestamp1) {
-                testFailed("timestamp = " + timestamp + ", timestamp1 = " + timestamp1  + ", window.performance.now() = " + window.performance.now());
-                failed = true;
-            }
+            timestamp2 = timestamp;
+            shouldBe("Math.round(timestamp1)", "Math.round(timestamp2)");
         }
-        
+
         window.jsTestIsAsync = true;
+
+        description("Test the timestamps of all the rAF callbacks are the same.");
         requestAnimationFrame(doAnimation1);
+        requestAnimationFrame(doAnimation2);
     </script>
     <script src="../resources/js-test-post.js"></script>
 </body>

@@ -739,6 +739,21 @@ ReducedResolutionSeconds DOMWindow::nowTimestamp() const
     return performance().nowInReducedResolutionSeconds();
 }
 
+void DOMWindow::freezeNowTimestamp()
+{
+    m_frozenNowTimestamp = nowTimestamp();
+}
+
+void DOMWindow::unfreezeNowTimestamp()
+{
+    m_frozenNowTimestamp = WTF::nullopt;
+}
+
+ReducedResolutionSeconds DOMWindow::frozenNowTimestamp() const
+{
+    return m_frozenNowTimestamp.valueOr(nowTimestamp());
+}
+
 Location& DOMWindow::location()
 {
     if (!m_location)

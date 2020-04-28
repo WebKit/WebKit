@@ -1,3 +1,25 @@
+2020-04-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Timestamps should be the same for all rendering update steps
+        https://bugs.webkit.org/show_bug.cgi?id=207153
+
+        Reviewed by Simon Fraser.
+
+        * animations/animation-callback-timestamp-expected.txt:
+        * animations/animation-callback-timestamp.html:
+        Ensure the rAF callback timestamp is less than Performance.now().
+
+        * animations/animation-multiple-callbacks-timestamp-expected.txt:
+        * animations/animation-multiple-callbacks-timestamp.html:
+        Ensure the rAF callbacks receive the same timestamps.
+
+        * intersection-observer/intersection-observer-callback-timestamp-expected.txt: Added.
+        * intersection-observer/intersection-observer-callback-timestamp.html: Added.
+        A new test to ensure the IntersectionObsever and the rAF callbacks receive the same timestamps.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2020-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ macOS/iOS wk2 Debug ] webrtc/datachannel/multiple-connections.html is flaky timing out.

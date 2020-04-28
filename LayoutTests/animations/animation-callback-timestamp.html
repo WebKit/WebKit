@@ -5,37 +5,26 @@
 </head>
 <body>
     <script>
+        var timestamp1 = 0;
         var currentFrame = 0;
-        var failed = false;
+        const MaxFrames = 10;
 
-        function finishTest()
-        {
-            if (failed)
-                testFailed("Some of the requestAnimationFrame() callback timestamps were larger than Performance.now() by more than 3ms.");
-            else
-                testPassed("All the differences between requestAnimationFrame() callback timestamps and Performance.now() were within 3ms.")
-            finishJSTest();
-        }
-        
         function doAnimation(timestamp)
         {
-            const Tolerance = 3;
-            const WarmupFrames = 5;
+            timestamp1 = timestamp;
+            shouldBeGreaterThanOrEqual("Math.round(window.performance.now())", "Math.round(timestamp1)");
 
-            var performanceNow = window.performance.now();
-            if (++currentFrame > WarmupFrames && Math.abs(timestamp - performanceNow) >= Tolerance) {
-                debug("requestAnimationFrame() timestamp = " + timestamp + ", window.performance.now() = " + performanceNow);
-                failed = true;
+            if (++currentFrame == MaxFrames) {
+                finishJSTest();
+                return;
             }
 
-            const MaxFrames = 25;
-            if (currentFrame == MaxFrames)
-                finishTest();
-            else
-                requestAnimationFrame(doAnimation);
+            requestAnimationFrame(doAnimation);
         }
-        
+
         window.jsTestIsAsync = true;
+
+        description("Test performance.now() is at least as the timestamp the rAF callback.");
         requestAnimationFrame(doAnimation);
     </script>
     <script src="../resources/js-test-post.js"></script>

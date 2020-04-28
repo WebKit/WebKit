@@ -901,8 +901,6 @@ webkit.org/b/208165 http/tests/cookies/document-cookie-after-showModalDialog.htm
 
 webkit.org/b/207560 media/airplay-target-availability.html [ Pass Failure ]
 
-webkit.org/b/207153 [ Debug ] animations/animation-callback-timestamp.html [ Pass Failure ]
-
 webkit.org/b/207568 inspector/page/overrideUserAgent.html [ Pass Failure ]
 
 webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Timeout ]

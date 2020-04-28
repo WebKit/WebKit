@@ -561,7 +561,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_fullscreenManager { makeUniqueRef<FullscreenManager>(*this) }
 #endif
 #if ENABLE(INTERSECTION_OBSERVER)
-    , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
     , m_intersectionObserversInitialUpdateTimer(*this, &Document::scheduleTimedRenderingUpdate)
 #endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
@@ -7614,11 +7613,11 @@ void Document::updateIntersectionObservations()
     if (!frameView)
         return;
 
-    m_intersectionObserversInitialUpdateTimer.stop();
-
     bool needsLayout = frameView->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout());
     if (needsLayout || hasPendingStyleRecalc())
         return;
+
+    Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
     for (const auto& observer : m_intersectionObservers) {
         bool needNotify = false;
@@ -7646,9 +7645,11 @@ void Document::updateIntersectionObservations()
                     else
                         intersectionRatio = 1;
 
-                    auto& thresholds = observer->thresholds();
-                    while (thresholdIndex < thresholds.size() && thresholds[thresholdIndex] <= intersectionRatio)
+                    for (auto threshold : observer->thresholds()) {
+                        if (!(threshold <= intersectionRatio || WTF::areEssentiallyEqual<float>(threshold, intersectionRatio)))
+                            break;
                         ++thresholdIndex;
+                    }
                 }
             }
 
@@ -7689,20 +7690,13 @@ void Document::updateIntersectionObservations()
             }
         }
         if (needNotify)
-            m_intersectionObserversWithPendingNotifications.append(makeWeakPtr(observer.get()));
+            intersectionObserversWithPendingNotifications.append(makeWeakPtr(observer.get()));
     }
 
-    if (m_intersectionObserversWithPendingNotifications.size())
-        m_intersectionObserversNotifyTimer.startOneShot(0_s);
-}
-
-void Document::notifyIntersectionObserversTimerFired()
-{
-    for (const auto& observer : m_intersectionObserversWithPendingNotifications) {
+    for (const auto& observer : intersectionObserversWithPendingNotifications) {
         if (observer)
             observer->notify();
     }
-    m_intersectionObserversWithPendingNotifications.clear();
 }
 
 void Document::scheduleInitialIntersectionObservationUpdate()
