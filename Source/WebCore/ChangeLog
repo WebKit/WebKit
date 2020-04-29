@@ -1,3 +1,14 @@
+2020-04-29  Youenn Fablet  <youenn@apple.com>
+
+        Update SWServer.cpp originURL after https://trac.webkit.org/changeset/260707
+        https://bugs.webkit.org/show_bug.cgi?id=211169
+
+        Reviewed by Alex Christensen.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::originURL):
+        No need to dereference port since URL::setPort takes an Optional.
+
 2020-04-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] FormattingContext::constraintsForInFlow/OutOfFlowContent should take const ContainerBox&

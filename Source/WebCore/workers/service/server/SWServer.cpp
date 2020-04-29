@@ -427,7 +427,7 @@ URL static inline originURL(const SecurityOrigin& origin)
     URL url;
     url.setProtocol(origin.protocol());
     url.setHost(origin.host());
-    url.setPort(*origin.port());
+    url.setPort(origin.port());
     return url;
 }
 
