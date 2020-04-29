@@ -1,3 +1,15 @@
+2020-04-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()
+        https://bugs.webkit.org/show_bug.cgi?id=170553
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/GtkVersioning.h: Add replacements for GtkPopover functions which are no longet available in GTK4.
+        (gtk_popover_menu_new): Added.
+        (gtk_popover_bind_model): Added.
+        (gtk_popover_set_relative_to): Added.
+
 2020-04-29  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Switch to audiointerleave

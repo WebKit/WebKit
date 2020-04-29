@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,28 @@
 #include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* kServer;
+
+struct LookupWidgetsData {
+    void (*walkChildren)(GtkContainer*, GtkCallback, void*);
+    Function<bool(GtkWidget*)> predicate;
+    Vector<GtkWidget*> result;
+};
+
+static void lookupWidgetsWalkChild(GtkWidget* child, void* userdata)
+{
+    auto& data = *reinterpret_cast<LookupWidgetsData*>(userdata);
+    if (data.predicate(child))
+        data.result.append(child);
+    else if (GTK_IS_CONTAINER(child))
+        data.walkChildren(GTK_CONTAINER(child), lookupWidgetsWalkChild, userdata);
+}
+
+static Vector<GtkWidget*> lookupWidgets(GtkWidget* widget, Function<bool(GtkWidget*)>&& predicate, bool internal = false)
+{
+    LookupWidgetsData data = {internal ? gtk_container_forall : gtk_container_foreach, WTFMove(predicate)};
+    lookupWidgetsWalkChild(widget, &data);
+    return WTFMove(data.result);
+}
 
 class ContextMenuTest: public WebViewTest {
 public:
@@ -94,19 +116,25 @@ public:
         quitMainLoop();
     }
 
-    GtkMenu* getPopupMenu()
+    GtkPopover* getPopoverMenu()
     {
         GUniquePtr<GList> toplevels(gtk_window_list_toplevels());
         for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
             if (!GTK_IS_WINDOW(iter->data))
                 continue;
 
-            GtkWidget* child = gtk_bin_get_child(GTK_BIN(iter->data));
-            if (!GTK_IS_MENU(child))
-                continue;
+            // Popovers are internal to the GtkContainer where the webview resides,
+            // gtk_container_forall() is the only way to enumerate internal children.
+            GtkPopover *popover = nullptr;
+            gtk_container_forall(GTK_CONTAINER(iter->data),
+                [](GtkWidget* child, void* data) {
+                    auto** popover = reinterpret_cast<GtkPopover**>(data);
+                    if (GTK_IS_POPOVER_MENU(child) && !*popover)
+                        *popover = GTK_POPOVER(child);
+                }, &popover);
 
-            if (gtk_menu_get_attach_widget(GTK_MENU(child)) == GTK_WIDGET(m_webView))
-                return GTK_MENU(child);
+            if (popover && gtk_popover_get_relative_to(popover) == GTK_WIDGET(m_webView))
+                return popover;
         }
         g_assert_not_reached();
         return 0;
@@ -551,24 +579,32 @@ public:
         return false;
     }
 
-    GtkMenuItem* getMenuItem(GtkMenu* menu, const gchar* itemLabel)
+    GtkButton* getMenuItem(GtkPopover* popover, const gchar* itemLabel)
     {
-        GUniquePtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
-        for (GList* iter = items.get(); iter; iter = g_list_next(iter)) {
-            GtkMenuItem* child = GTK_MENU_ITEM(iter->data);
-            if (g_str_equal(itemLabel, gtk_menu_item_get_label(child)))
-                return child;
-        }
-        g_assert_not_reached();
-        return 0;
+        auto items = lookupWidgets(GTK_WIDGET(popover),
+            [itemLabel](GtkWidget* widget) {
+                if (!GTK_IS_BUTTON(widget))
+                    return false;
+                const char* label = gtk_button_get_label(GTK_BUTTON(widget));
+                if (!label) {
+                    const auto labels = lookupWidgets(GTK_WIDGET(widget),
+                        [](GtkWidget* child) { return GTK_IS_LABEL(child); });
+                    g_assert_cmpuint(1, ==, labels.size());
+                    label = gtk_label_get_label(GTK_LABEL(labels[0]));
+                }
+                return GTK_IS_BUTTON(widget) && g_strcmp0(label, itemLabel) == 0;
+            }, true);
+
+        g_assert_cmpuint(items.size(), >, 0);
+        return items.size() ? GTK_BUTTON(items[0]) : nullptr;
     }
 
     void activateMenuItem()
     {
         g_assert_nonnull(m_itemToActivateLabel);
-        GtkMenu* menu = getPopupMenu();
-        GtkMenuItem* item = getMenuItem(menu, m_itemToActivateLabel);
-        gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
+        auto* menu = getPopoverMenu();
+        auto* item = getMenuItem(menu, m_itemToActivateLabel);
+        gtk_button_clicked(item);
         m_itemToActivateLabel = nullptr;
     }
 
@@ -612,6 +648,10 @@ public:
     static void actionToggledCallback(ContextMenuCustomTest* test)
     {
         test->m_toggled = true;
+
+        // For toggle actions the popover menu is NOT dismissed automatically, as to show visual feedback to the user
+        // (i.e. the check marker). Dismiss it here to trigger contextMenuDismissedCallback() and continue the test.
+        gtk_popover_popdown(test->getPopoverMenu());
     }
 
     void setAction(GtkAction* action)
@@ -619,10 +659,12 @@ public:
         m_action = action;
         m_gAction = nullptr;
         m_expectedTarget = nullptr;
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         if (GTK_IS_TOGGLE_ACTION(action))
             g_signal_connect_swapped(action, "toggled", G_CALLBACK(actionToggledCallback), this);
         else
             g_signal_connect_swapped(action, "activate", G_CALLBACK(actionActivatedCallback), this);
+        G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 
     void setAction(GAction* action, const char* title, GVariant* target = nullptr)

@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2014 Collabora Ltd.
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2011, 2017, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -2580,16 +2579,13 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
 }
 
 #if PLATFORM(GTK)
-#if !USE(GTK4)
-static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
+static void contextMenuDismissed(GtkWidget*, WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
 }
-#endif
 
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)
 {
-#if !USE(GTK4)
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
     ASSERT(contextMenuProxy);
@@ -2609,11 +2605,10 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
     contextMenuProxy->populate(contextMenuItems);
 
-    g_signal_connect(contextMenuProxy->gtkMenu(), "deactivate", G_CALLBACK(contextMenuDismissed), webView);
+    g_signal_connect(contextMenuProxy->gtkWidget(), "closed", G_CALLBACK(contextMenuDismissed), webView);
 
     // Clear the menu to make sure it's useless after signal emission.
     webkit_context_menu_remove_all(contextMenu.get());
-#endif
 }
 #elif PLATFORM(WPE)
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)

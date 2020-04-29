@@ -1,3 +1,46 @@
+2020-04-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()
+        https://bugs.webkit.org/show_bug.cgi?id=170553
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace GtkMenuShell with a GtkPopoverMenu for context menus. The former is not available
+        at all in GTK4, and the later allows for simplifying the positioning code: it is enough
+        to provide a point in WebKitWebView widget where to place the popup, and GTK takes care
+        of everything. This removes the custom positioning code (as it is not needed anymore),
+        which did GdkScreen-relative calculations that GTK4 does not support.
+
+        No new tests needed.
+
+        * Shared/glib/WebContextMenuItemGlib.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (contextMenuDismissed): Change parameter from GtkMenuShell to GtkMenuShell to GtkWidget.
+        (webkitWebViewPopulateContextMenu): Connect to the GtkPopover::closed signal instead of
+        GtkMenuShell::deactivate.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (activeContextMenuClosed): Renamed from activeContextMenuUnmapped(), changed parameter
+        from GtkMenuShell to GtkWidget, and compare with WebContextMenuProxyGtk::gtkWidget().
+        (activeContextMenuUnmapped): Renamed to activeContextMenuClosed().
+        (webkitWebViewBaseSetActiveContextMenuProxy): Connect to the GtkPopover::closed signal
+        instead of GtkMenuShell::deactivate.
+        (webkitWebViewBaseGetActiveContextMenuProxy):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp: Arrange to use GtkPopoverMenu instead of
+        GtkMenuShell.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::populate):
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems): Simplify using
+        m_context.menuLocation() to obtain the location where to make the context menu popup
+        next to, which allows removing the ::menuPositionFunction() callback as well.
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h: Remove declarations for ::menuPositionFunction()
+        and ::m_popupPosition, which are now unneeded.
+        (WebKit::WebContextMenuProxyGtk::gtkWidget const): Renamed from ::gtkMenu(), and made it
+        return a GtkWidget.
+
 2020-04-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260650.

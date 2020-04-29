@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2015, 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4)
 typedef struct _GtkAction GtkAction;
+#endif // PLATFORM(GTK) && !USE(GTK4)
 typedef struct _GAction GAction;
-#endif
 
 namespace WebKit {
 

@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2013 Gustavo Noronha Silva <gns@gnome.org>.
+ * Copyright (C) 2011, 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -190,9 +190,7 @@ struct _WebKitWebViewBasePrivate {
     AttachmentSide inspectorAttachmentSide { AttachmentSide::Bottom };
     unsigned inspectorViewSize { 0 };
     GUniquePtr<GdkEvent> contextMenuEvent;
-#if !USE(GTK4)
     WebContextMenuProxyGtk* activeContextMenuProxy { nullptr };
-#endif
     InputMethodFilter inputMethodFilter;
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
@@ -1860,24 +1858,22 @@ void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase* webkitWebViewBase,
         gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 }
 
-#if !USE(GTK4)
-static void activeContextMenuUnmapped(GtkMenu* menu, WebKitWebViewBase* webViewBase)
+static void activeContextMenuClosed(GtkWidget* widget, WebKitWebViewBase* webViewBase)
 {
-    if (webViewBase->priv->activeContextMenuProxy && webViewBase->priv->activeContextMenuProxy->gtkMenu() == menu)
+    if (webViewBase->priv->activeContextMenuProxy && webViewBase->priv->activeContextMenuProxy->gtkWidget() == widget)
         webViewBase->priv->activeContextMenuProxy = nullptr;
 }
 
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase* webkitWebViewBase, WebContextMenuProxyGtk* contextMenuProxy)
 {
     webkitWebViewBase->priv->activeContextMenuProxy = contextMenuProxy;
-    g_signal_connect_object(contextMenuProxy->gtkMenu(), "unmap", G_CALLBACK(activeContextMenuUnmapped), webkitWebViewBase, static_cast<GConnectFlags>(0));
+    g_signal_connect_object(contextMenuProxy->gtkWidget(), "closed", G_CALLBACK(activeContextMenuClosed), webkitWebViewBase, static_cast<GConnectFlags>(0));
 }
 
 WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase* webkitWebViewBase)
 {
     return webkitWebViewBase->priv->activeContextMenuProxy;
 }
-#endif
 
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
 {

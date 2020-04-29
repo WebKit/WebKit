@@ -1,3 +1,17 @@
+2020-04-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()
+        https://bugs.webkit.org/show_bug.cgi?id=170553
+
+        Minor adaptations needed in the API tests to account for the differences between
+        GtkMenuShell and GtkPopoverMenu.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (lookupWidgetsWalkChild): Added.
+        (lookupWidgets): Added.
+
 2020-04-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Upgrade motionmark1.1.plan to r260656

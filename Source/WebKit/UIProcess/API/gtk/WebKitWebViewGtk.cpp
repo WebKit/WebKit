@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2017, 2020 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
