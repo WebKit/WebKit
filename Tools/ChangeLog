@@ -1,3 +1,83 @@
+2020-04-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r260408. rdar://problem/62617775
+
+    App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration
+    https://bugs.webkit.org/show_bug.cgi?id=210769
+    <rdar://problem/62065241>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    Changes app-bound domain behavior to be triggered by the value of
+    limitsNavigationsToAppBoundDomains, a WebView configuration flag.
+    If the WebView has this parameter set and is currently navigating to
+    an app bound domain, then app-bound privileges will be granted.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+    Update this function to return a boolean to indicate whether the
+    navigation should fail. A failure should occur if a WebView has set
+    the limitsNavigationsToAppBoundDomains flag and attempts to navigate
+    away from an app-bound domain.
+    
+    If the limitsNavigationsToAppBoundDomains value has not been set to
+    true, maintain non-app bound behavior regardless of whether the domain
+    is app-bound or not.
+    
+    (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+    Check the result of setIsNavigatingToAppBoundDomainAndCheckIfPermitted and fail the
+    navigation if needed, with both RELEASE logging and an appropriate
+    error message.
+    
+    (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomain): Deleted.
+    * UIProcess/WebPageProxy.h:
+    Renamed for clarity.
+    
+    Tools:
+    
+    Removes any tests for swapping between app-bound and non app-bound
+    domains as this behavior is no longer supported.
+    
+    Sets the limitsNavigationsToAppBoundDomains flag for tests which should
+    have app-bound behavior to maintain test functionality.
+    
+    Adds 5 new tests for new behavior.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+    (TEST):
+    (-[AppBoundDomainDelegate webView:didFinishNavigation:]):
+    (-[AppBoundDomainDelegate webView:didFailProvisionalNavigation:withError:]):
+    (-[AppBoundDomainDelegate waitForDidFinishNavigation]):
+    (-[AppBoundDomainDelegate waitForDidFailProvisionalNavigationError]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260408 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+            App-bound domain behavior should abide by the limitsNavigationsToAppBoundDomains argument in WKWebView configuration
+            https://bugs.webkit.org/show_bug.cgi?id=210769
+            <rdar://problem/62065241>
+
+            Reviewed by Brent Fulgham.
+
+            Removes any tests for swapping between app-bound and non app-bound
+            domains as this behavior is no longer supported.
+
+            Sets the limitsNavigationsToAppBoundDomains flag for tests which should
+            have app-bound behavior to maintain test functionality.
+
+            Adds 5 new tests for new behavior.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+            (TEST):
+            (-[AppBoundDomainDelegate webView:didFinishNavigation:]):
+            (-[AppBoundDomainDelegate webView:didFailProvisionalNavigation:withError:]):
+            (-[AppBoundDomainDelegate waitForDidFinishNavigation]):
+            (-[AppBoundDomainDelegate waitForDidFailProvisionalNavigationError]):
+
 2020-04-24  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r260486. rdar://problem/62349885

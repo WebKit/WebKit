@@ -220,49 +220,6 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(InAppBrowserPrivacy, SwapBackToAppBoundRejectsUserScript)
-{
-    initializeInAppBrowserPrivacyTestSettings();
-    auto userScript = adoptNS([[WKUserScript alloc] initWithSource:userScriptSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
-
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:NO];
-    [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
-
-    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
-    
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-script"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
-
-    [configuration.userContentController _addUserScriptImmediately:userScript.get()];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
-        EXPECT_FALSE(result);
-        EXPECT_TRUE(!!error);
-        isDone = true;
-    }];
-
-    isDone = false;
-    TestWebKitAPI::Util::run(&isDone);
-
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
-    
-    isDone = false;
-    [configuration.userContentController _addUserScriptImmediately:userScript.get()];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
-        EXPECT_FALSE(result);
-        EXPECT_TRUE(!!error);
-        cleanUpInAppBrowserPrivacyTestSettings();
-        isDone = true;
-    }];
-
-    TestWebKitAPI::Util::run(&isDone);
-}
-
 TEST(InAppBrowserPrivacy, AppBoundDomains)
 {
     initializeInAppBrowserPrivacyTestSettings();
@@ -288,6 +245,7 @@ TEST(InAppBrowserPrivacy, LocalFilesAreAppBound)
     initializeInAppBrowserPrivacyTestSettings();
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -308,6 +266,7 @@ TEST(InAppBrowserPrivacy, DataFilesAreAppBound)
     initializeInAppBrowserPrivacyTestSettings();
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
@@ -327,6 +286,7 @@ TEST(InAppBrowserPrivacy, AboutFilesAreAppBound)
     initializeInAppBrowserPrivacyTestSettings();
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
@@ -345,6 +305,7 @@ static NSString *styleSheetSource = @"body { background-color: green !important;
 static NSString *backgroundColorScript = @"window.getComputedStyle(document.body, null).getPropertyValue('background-color')";
 static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document.getElementsByTagName('iframe')[0].contentDocument.body, null).getPropertyValue('background-color')";
 static const char* redInRGB = "rgb(255, 0, 0)";
+static const char* blackInRGB = "rgba(0, 0, 0, 0)";
 
 static void expectScriptEvaluatesToColor(WKWebView *webView, NSString *script, const char* color)
 {
@@ -458,7 +419,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainCannotAccessMessageHandlers)
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
-TEST(InAppBrowserPrivacy, AppBoundToNonAppBoundDomainCannotAccessMessageHandlers)
+TEST(InAppBrowserPrivacy, AppBoundDomainCanAccessMessageHandlers)
 {
     initializeInAppBrowserPrivacyTestSettings();
     isDone = false;
@@ -468,6 +429,7 @@ TEST(InAppBrowserPrivacy, AppBoundToNonAppBoundDomainCannotAccessMessageHandlers
     auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
@@ -486,14 +448,6 @@ TEST(InAppBrowserPrivacy, AppBoundToNonAppBoundDomainCannotAccessMessageHandlers
         FAIL();
     }];
 
-    // Navigate away from an app-bound domain.
-    NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-message-handler"]];
-    [webView loadRequest:request2];
-    [webView _test_waitForDidFinishNavigation];
-
-    // Set the background color to red if message handlers returned null so we can
-    // check without needing a message handler.
-    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
     cleanUpInAppBrowserPrivacyTestSettings();
 }
 
@@ -873,6 +827,205 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainDoesNotAllowServiceWorkers)
     }];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
+}
+
+@interface AppBoundDomainDelegate : NSObject <WKNavigationDelegate>
+- (void)waitForDidFinishNavigation;
+- (NSError *)waitForDidFailProvisionalNavigationError;
+@end
+
+@implementation AppBoundDomainDelegate {
+    bool _navigationFinished;
+    RetainPtr<NSError> _provisionalNavigationFailedError;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    _navigationFinished = true;
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+{
+    _provisionalNavigationFailedError = error;
+}
+
+- (void)waitForDidFinishNavigation
+{
+    TestWebKitAPI::Util::run(&_navigationFinished);
+}
+
+- (NSError *)waitForDidFailProvisionalNavigationError
+{
+    while (!_provisionalNavigationFailedError)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _provisionalNavigationFailedError.autorelease();
+}
+
+@end
+
+TEST(InAppBrowserPrivacy, AppBoundFlagForNonAppBoundDomainFails)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Load a non-app bound domain.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    NSError *error = [delegate waitForDidFailProvisionalNavigationError];
+    EXPECT_WK_STREQ(error.localizedDescription, @"Attempted navigation away from app-bound domain");
+
+    // Make sure the load didn't complete by checking the background color.
+    // Red would indicate it finished loading.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blackInRGB);
+    cleanUpInAppBrowserPrivacyTestSettings();
+}
+
+TEST(InAppBrowserPrivacy, NavigateAwayFromAppBoundDomainWithAppBoundFlagFails)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    // Navigate to an app-bound domain and expect a successful load.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+    
+    // Now try to load a non-app bound domain and make sure it fails.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    NSError *error = [delegate waitForDidFailProvisionalNavigationError];
+    EXPECT_WK_STREQ(error.localizedDescription, @"Attempted navigation away from app-bound domain");
+
+    // Make sure the load didn't complete by checking the background color.
+    // Red would indicate it finished loading.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blackInRGB);
+    cleanUpInAppBrowserPrivacyTestSettings();
+}
+
+TEST(InAppBrowserPrivacy, AppBoundDomainWithoutFlagTreatedAsNonAppBound)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    // Navigate to an app-bound domain and expect a successful load.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+
+    // But the navigation should not have been considered app-bound because the WebView configuration
+    // specification was not set.
+    isDone = false;
+    [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        cleanUpInAppBrowserPrivacyTestSettings();
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    // Navigate to an app-bound domain and expect a successful load.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+
+    isDone = false;
+    [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    // Navigate to an non app-bound domain and expect a successful load.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+    
+    isDone = false;
+    [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
+        EXPECT_FALSE(isAppBound);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    // Navigation should be successful, but this WebView should not get app-bound domain
+    // privileges like user style sheets.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blackInRGB);
+    cleanUpInAppBrowserPrivacyTestSettings();
+}
+
+TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
+{
+    initializeInAppBrowserPrivacyTestSettings();
+    isDone = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
+    [configuration setLimitsNavigationsToAppBoundDomains:YES];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([AppBoundDomainDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    // Navigate to an app-bound domain and expect a successful load.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"in-app-browser-privacy-local-file" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+
+    isDone = false;
+    [webView _isNavigatingToAppBoundDomain:^(BOOL isAppBound) {
+        EXPECT_TRUE(isAppBound);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    [[webView configuration] setLimitsNavigationsToAppBoundDomains:NO];
+    // Now try to load a non-app bound domain and make sure it fails.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
+    [webView loadRequest:request];
+    NSError *error = [delegate waitForDidFailProvisionalNavigationError];
+    EXPECT_WK_STREQ(error.localizedDescription, @"Attempted navigation away from app-bound domain");
+
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 #endif // USE(APPLE_INTERNAL_SDK)
