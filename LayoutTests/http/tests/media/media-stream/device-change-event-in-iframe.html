@@ -2,17 +2,16 @@
 <html>
 <script src="../../../../resources/js-test-pre.js"></script>
 <body onload="start()">
-    <iframe id="none"" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?1"></iframe>
-    <iframe id="camera" allow="camera" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?2"></iframe>
-    <iframe id="microphone" allow="camera" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?2"></iframe>
-    <iframe id="same-origin" src="http://127.0.0.1:8000/media/media-stream/resources/device-change-iframe.html?3"></iframe>
+    <iframe id="none"" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?none"></iframe>
+    <iframe id="camera" allow="camera" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?camera"></iframe>
+    <iframe id="microphone" allow="camera" src="http://localhost:8000/media/media-stream/resources/device-change-iframe.html?microphone"></iframe>
+    <iframe id="same-origin" src="http://127.0.0.1:8000/media/media-stream/resources/device-change-iframe.html?same-origin"></iframe>
 
     <script>
 
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-            testRunner.setUserMediaPermission(true);
         }
 
         let count = new Set();
@@ -20,18 +19,16 @@
         let results = [];
         function countEvent(id)
         {
-            results.push(`&LT;iframe id=${id}> got a 'devicechange' event`);
-            if (id == "none") {
-                result.innerHTML += `FAIL: &LT;iframe id=${id}> got 'devicechange' event<br>`;
-                success = false;
-            } else
-                count.add(id);
+            if (count.has(id))
+                return;
 
-            if (count.size == 4) {
+            count.add(id);
+            const status = id === "none" ? "FAIL": "PASS";
+            results.push(`${status}: &LT;iframe id=${id}> got a 'devicechange' event`);
+
+            if (results.length == 4) {
                 setTimeout(() => {
                     result.innerHTML = results.sort().join('<br>');
-                    if (success)
-                        result.innerHTML += "<br><br>PASS: 'devicechange' only fired on frames with access to devices<br>";
                     if (window.testRunner) {
                         testRunner.notifyDone();
                         testRunner.resetMockMediaDevices();
@@ -43,19 +40,13 @@
         async function start()
         {
             await window.navigator.mediaDevices.getUserMedia({audio:true});
+
+            navigator.mediaDevices.ondevicechange = () => { countEvent('main'); };
+            window.onmessage = (event) => { countEvent(event.data); };
+
             if (window.testRunner)
                 testRunner.addMockMicrophoneDevice("id4", "microphone 3");
         }
-
-        window.onmessage = (event) => { countEvent(event.data); };
-        navigator.mediaDevices.ondevicechange = (event) => { countEvent('main'); };
-
-        Array.from(document.getElementsByTagName('iframe')).forEach(element => {
-            element.onload = (evt) => { 
-                evt.target.contentWindow.postMessage(evt.target.id, '*'); 
-            }
-        });
-
     </script>
 
     <div id="result"></div>

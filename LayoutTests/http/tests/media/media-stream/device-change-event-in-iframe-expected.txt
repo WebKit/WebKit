@@ -1,8 +1,5 @@
      
-<iframe id=camera> got a 'devicechange' event
-<iframe id=main> got a 'devicechange' event
-<iframe id=microphone> got a 'devicechange' event
-<iframe id=same-origin> got a 'devicechange' event
-
-PASS: 'devicechange' only fired on frames with access to devices
-
+PASS: <iframe id=camera> got a 'devicechange' event
+PASS: <iframe id=main> got a 'devicechange' event
+PASS: <iframe id=microphone> got a 'devicechange' event
+PASS: <iframe id=same-origin> got a 'devicechange' event

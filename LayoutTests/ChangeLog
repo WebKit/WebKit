@@ -1,3 +1,17 @@
+2020-04-29  Youenn Fablet  <youenn@apple.com>
+
+        http/tests/media/media-stream/device-change-event-in-iframe.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211119
+        <rdar://problem/62457151>
+
+        Reviewed by Eric Carlson.
+
+        Make sure duplicate ondevicechange events do not create flakiness.
+
+        * http/tests/media/media-stream/device-change-event-in-iframe-expected.txt:
+        * http/tests/media/media-stream/device-change-event-in-iframe.html:
+        * http/tests/media/media-stream/resources/device-change-iframe.html:
+
 2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Refactor layout tests after updates to In-App Browser Privacy
