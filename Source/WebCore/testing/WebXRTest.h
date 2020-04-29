@@ -55,9 +55,10 @@ public:
     };
 
     static Ref<WebXRTest> create(WeakPtr<WebXRSystem>&& system) { return adoptRef(*new WebXRTest(WTFMove(system))); }
+    virtual ~WebXRTest();
 
     using WebFakeXRDevicePromise = DOMPromiseDeferred<IDLInterface<WebFakeXRDevice>>;
-    void simulateDeviceConnection(FakeXRDeviceInit, WebFakeXRDevicePromise&&) const;
+    void simulateDeviceConnection(ScriptExecutionContext& state, const FakeXRDeviceInit&, WebFakeXRDevicePromise&&);
 
     // Simulates a user activation (aka user gesture) for the current scope.
     // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
@@ -72,6 +73,7 @@ private:
         : m_context(WTFMove(system)) { }
 
     WeakPtr<WebXRSystem> m_context;
+    Vector<Ref<WebFakeXRDevice>> m_devices;
 };
 
 } // namespace WebCore

@@ -31,16 +31,57 @@
 #include "FakeXRInputSourceInit.h"
 #include "FakeXRViewInit.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PlatformXR.h"
 #include "WebFakeXRInputController.h"
+#include "WebXRRigidTransform.h"
+#include "WebXRView.h"
 #include "XRVisibilityState.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+class FakeXRView final : public RefCounted<FakeXRView> {
+public:
+    static Ref<FakeXRView> create(XREye eye) { return adoptRef(*new FakeXRView(eye)); }
+
+    RefPtr<WebXRView> view() { return m_view; }
+    void setResolution(FakeXRViewInit::DeviceResolution resolution) { m_resolution = resolution; }
+    void setFieldOfView(FakeXRViewInit::FieldOfViewInit);
+
+private:
+    FakeXRView(XREye eye)
+    {
+        m_view = WebXRView::create();
+        m_view->setEye(eye);
+    }
+
+    RefPtr<WebXRView> m_view;
+    FakeXRViewInit::DeviceResolution m_resolution;
+    FakeXRViewInit::FieldOfViewInit m_fov;
+};
+
+class SimulatedXRDevice final : public PlatformXR::Device {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    void setNativeBoundsGeometry(Vector<FakeXRBoundsPoint> geometry) { m_nativeBoundsGeometry = geometry; }
+    void setViewerOrigin(RefPtr<WebXRRigidTransform>&& origin) { m_viewerOrigin = WTFMove(origin); }
+    void setFloorOrigin(RefPtr<WebXRRigidTransform>&& origin) { m_floorOrigin = WTFMove(origin); }
+    void setEmulatedPosition(bool emulated) { m_emulatedPosition = emulated; }
+    Vector<Ref<FakeXRView>>& views() { return m_views; }
+private:
+    Optional<Vector<FakeXRBoundsPoint>> m_nativeBoundsGeometry;
+    RefPtr<WebXRRigidTransform> m_viewerOrigin;
+    RefPtr<WebXRRigidTransform> m_floorOrigin;
+    bool m_emulatedPosition { false };
+    XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
+    Vector<Ref<FakeXRView>> m_views;
+};
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {
 public:
-    void setViews(Vector<FakeXRViewInit>);
+    static Ref<WebFakeXRDevice> create() { return adoptRef(*new WebFakeXRDevice()); }
+
+    void setViews(const Vector<FakeXRViewInit>&);
 
     void disconnect(DOMPromiseDeferred<void>&&);
 
@@ -59,6 +100,17 @@ public:
     void simulateResetPose();
 
     WebFakeXRInputController simulateInputSourceConnection(FakeXRInputSourceInit);
+
+    static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
+
+    SimulatedXRDevice& simulatedXRDevice() { return m_device; }
+
+private:
+    WebFakeXRDevice();
+
+    static ExceptionOr<Ref<WebXRRigidTransform>> parseRigidTransform(const FakeXRRigidTransformInit&);
+
+    SimulatedXRDevice m_device;
 };
 
 } // namespace WebCore

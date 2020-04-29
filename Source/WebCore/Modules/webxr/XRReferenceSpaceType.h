@@ -27,15 +27,11 @@
 
 #if ENABLE(WEBXR)
 
+#include "PlatformXR.h"
+
 namespace WebCore {
 
-enum class XRReferenceSpaceType {
-    Viewer,
-    Local,
-    LocalFloor,
-    BoundedFloor,
-    Unbounded
-};
+using XRReferenceSpaceType = PlatformXR::ReferenceSpaceType;
 
 } // namespace WebCore
 

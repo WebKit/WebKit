@@ -1,3 +1,74 @@
+2020-04-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR][WPE] Implement XRTest::simulateDeviceConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=210912
+
+        Reviewed by Dean Jackson.
+
+        This API gives tests the ability to spin up a simulated XR device which
+        is an XR device which from the point of view of the WebXR API behaves
+        like a normal XR device. These simulated XR devices can be controlled by
+        the associated FakeXRDevice object.
+
+        No new tests as this is machinery required to execute tests when
+        implementing the WebXR API.
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::WebXRSystem): Initialize the default inline device.
+        (WebCore::WebXRSystem::registerSimulatedXRDeviceForTesting): Add a newly
+        created simulated XR device to the list of available devices. Update
+        also the active immersive device and current inline device.
+        (WebCore::WebXRSystem::unregisterSimulatedXRDeviceForTesting): Remove
+        all simulated devices from the list of immersive XR devices.
+        * Modules/webxr/WebXRSystem.h: New DummyInlineDevice which represents
+        the default inline device which must not provide pose information.
+        * Modules/webxr/WebXRView.cpp:
+        (WebCore::WebXRView::WebXRView): Removed some methods that should be
+        really part of a fake XRView instance.
+        (WebCore::WebXRView::setProjectionMatrix): Add implementation.
+        (WebCore::WebXRView::eye const): Deleted.
+        (WebCore::WebXRView::projectionMatrix const): Deleted.
+        (WebCore::WebXRView::transform const): Deleted.
+        * Modules/webxr/WebXRView.h:
+        (WebCore::WebXRView::eye const): Implemented.
+        (WebCore::WebXRView::projectionMatrix const): Ditto.
+        (WebCore::WebXRView::transform const): Ditto.
+        (WebCore::WebXRView::setEye): Ditto.
+        (WebCore::WebXRView::setTransform): Ditto.
+        * Modules/webxr/XRReferenceSpaceType.h: Moved the definitions to PlatformXR.
+        * platform/xr/PlatformXR.cpp:
+        (PlatformXR::Instance::nextDeviceId): New method which returns uniquely
+        defined ids for XR devices.
+        (PlatformXR::Device::Device):
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::id const): New method.
+        (PlatformXR::Device::supports const): Ditto.
+        (PlatformXR::Device::setSupportedModes): Ditto.
+        (PlatformXR::Device::setEnabledFeatures): Ditto.
+        (PlatformXR::Device::operator== const): Ditto.
+        * testing/FakeXRViewInit.h: fieldOfView is optional.
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::FakeXRView::setFieldOfView): Implemented.
+        (WebCore::WebFakeXRDevice::setViews): Ditto.
+        (WebCore::WebFakeXRDevice::setViewerOrigin): Ditto.
+        (WebCore::WebFakeXRDevice::clearViewerOrigin): Ditto.
+        (WebCore::WebFakeXRDevice::setFloorOrigin): Ditoo.
+        (WebCore::WebFakeXRDevice::clearFloorOrigin): Ditto.
+        (WebCore::WebFakeXRDevice::parseRigidTransform): Added.
+        (WebCore::WebFakeXRDevice::parseView): Ditto.
+        * testing/WebFakeXRDevice.h: Defined FakeXRView class which wraps a
+        XRView adding some associated data as the field of view and viewport.
+        Also defined the SimulatedXRDevice which is an PlatformXR::Device with
+        some additional data useful for testing purpouses.
+        * testing/WebXRTest.cpp:
+        (WebCore::WebXRTest::simulateDeviceConnection): Create a new
+        FakeXRDevice with an associated simulated XR device with the data
+        provided by a FakeXRDeviceInit.
+        (WebCore::WebXRTest::disconnectAllDevices): Remove all simulated devices
+        from the list of immersive devices.
+        * testing/WebXRTest.h: Call simulateDeviceConnection with ScriptExecutionContext.
+        * testing/WebXRTest.idl: Ditto.
+
 2020-04-29  Saam Barati  <sbarati@apple.com>
 
         U_STRING_NOT_TERMINATED_WARNING ICU must be handled when using the output buffer as a C string

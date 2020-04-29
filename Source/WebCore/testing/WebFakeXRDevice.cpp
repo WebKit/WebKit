@@ -28,13 +28,30 @@
 
 #if ENABLE(WEBXR)
 
+#include "DOMPointReadOnly.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebFakeXRInputController.h"
 
 namespace WebCore {
 
-void WebFakeXRDevice::setViews(Vector<FakeXRViewInit>)
+void FakeXRView::setFieldOfView(FakeXRViewInit::FieldOfViewInit fov)
 {
+    m_fov = fov;
+}
+
+WebFakeXRDevice::WebFakeXRDevice() = default;
+
+void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
+{
+    Vector<Ref<FakeXRView>>& deviceViews = m_device.views();
+    deviceViews.clear();
+
+    // TODO: do in next animation frame.
+    for (auto& viewInit : views) {
+        auto view = parseView(viewInit);
+        if (!view.hasException())
+            deviceViews.append(view.releaseReturnValue());
+    }
 }
 
 void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
@@ -44,12 +61,19 @@ void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
 
 void WebFakeXRDevice::setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition)
 {
-    UNUSED_PARAM(origin);
-    UNUSED_PARAM(emulatedPosition);
+    auto rigidTransform = parseRigidTransform(origin);
+    if (rigidTransform.hasException())
+        return;
+
+    // TODO: do in next animation frame.
+    m_device.setViewerOrigin(rigidTransform.releaseReturnValue());
+    m_device.setEmulatedPosition(emulatedPosition);
 }
 
 void WebFakeXRDevice::clearViewerOrigin()
 {
+    // TODO: do in next animation frame.
+    m_device.setViewerOrigin(nullptr);
 }
 
 void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
@@ -60,12 +84,20 @@ void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>)
 {
 }
 
-void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit)
+void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
 {
+    auto rigidTransform = parseRigidTransform(origin);
+    if (rigidTransform.hasException())
+        return;
+
+    // TODO: do in next animation frame.
+    m_device.setFloorOrigin(rigidTransform.releaseReturnValue());
 }
 
 void WebFakeXRDevice::clearFloorOrigin()
 {
+    // TODO: do in next animation frame.
+    m_device.setFloorOrigin(nullptr);
 }
 
 void WebFakeXRDevice::simulateResetPose()
@@ -75,6 +107,53 @@ void WebFakeXRDevice::simulateResetPose()
 WebFakeXRInputController WebFakeXRDevice::simulateInputSourceConnection(FakeXRInputSourceInit)
 {
     return WebFakeXRInputController();
+}
+
+ExceptionOr<Ref<WebXRRigidTransform>> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
+{
+    if (init.position.size() != 3 || init.orientation.size() != 4)
+        return Exception { TypeError };
+
+    DOMPointInit position;
+    position.x = init.position[0];
+    position.y = init.position[1];
+    position.z = init.position[2];
+
+    DOMPointInit orientation;
+    orientation.x = init.orientation[0];
+    orientation.y = init.orientation[1];
+    orientation.z = init.orientation[2];
+    orientation.w = init.orientation[3];
+
+    return WebXRRigidTransform::create(position, orientation);
+}
+
+ExceptionOr<Ref<FakeXRView>> WebFakeXRDevice::parseView(const FakeXRViewInit& init)
+{
+    // https://immersive-web.github.io/webxr-test-api/#parse-a-view
+    auto fakeView = FakeXRView::create(init.eye);
+
+    if (init.projectionMatrix.size() != 16)
+        return Exception { TypeError };
+    fakeView->view()->setProjectionMatrix(init.projectionMatrix);
+
+    auto viewOffset = parseRigidTransform(init.viewOffset);
+    if (viewOffset.hasException())
+        return viewOffset.releaseException();
+    fakeView->view()->setTransform(viewOffset.releaseReturnValue());
+
+    fakeView->setResolution(init.resolution);
+
+    if (init.fieldOfView) {
+        fakeView->setFieldOfView(init.fieldOfView.value());
+        // TODO: Set view’s projection matrix to the projection matrix
+        // corresponding to this field of view, and depth values equal to
+        // depthNear and depthFar of any XRSession associated with the device.
+        // If there currently is none, use the default values of near=0.1,
+        // far=1000.0.
+    }
+
+    return fakeView;
 }
 
 } // namespace WebCore

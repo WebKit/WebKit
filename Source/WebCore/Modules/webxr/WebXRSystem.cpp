@@ -29,6 +29,8 @@
 #if ENABLE(WEBXR)
 
 #include "PlatformXR.h"
+#include "RuntimeEnabledFeatures.h"
+#include "WebXRSession.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,6 +45,7 @@ Ref<WebXRSystem> WebXRSystem::create(ScriptExecutionContext& scriptExecutionCont
 WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
     : ActiveDOMObject(&scriptExecutionContext)
 {
+    m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
 }
 
 WebXRSystem::~WebXRSystem() = default;
@@ -85,6 +88,28 @@ const char* WebXRSystem::activeDOMObjectName() const
 
 void WebXRSystem::stop()
 {
+}
+
+void WebXRSystem::registerSimulatedXRDeviceForTesting(const PlatformXR::Device& device)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+        return;
+    if (device.supports(PlatformXR::SessionMode::ImmersiveVr) || device.supports(PlatformXR::SessionMode::ImmersiveAr)) {
+        m_immersiveDevices.append(makeWeakPtr(device));
+        m_activeImmersiveDevice = m_immersiveDevices.last();
+    }
+    if (device.supports(PlatformXR::SessionMode::Inline))
+        m_inlineXRDevice = makeWeakPtr(device);
+}
+
+void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device* device)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+        return;
+    ASSERT(m_immersiveDevices.contains(device));
+    m_immersiveDevices.removeFirst(device);
+    if (m_inlineXRDevice == device)
+        m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
 }
 
 } // namespace WebCore

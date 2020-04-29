@@ -27,11 +27,13 @@
 
 #if ENABLE(WEBXR)
 
+#include "WebXRRigidTransform.h"
 #include "XREye.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,16 +45,20 @@ public:
     static Ref<WebXRView> create();
     ~WebXRView();
 
-    XREye eye() const;
-    const Float32Array& projectionMatrix() const;
-    const WebXRRigidTransform& transform() const;
+    XREye eye() const { return m_eye; }
+    const Float32Array& projectionMatrix() const { return *m_projectionMatrix; }
+    const WebXRRigidTransform& transform() const { return *m_transform; }
+
+    void setEye(XREye eye) { m_eye = eye; }
+    void setProjectionMatrix(const Vector<float>&);
+    void setTransform(RefPtr<WebXRRigidTransform>&& viewOffset) { m_transform = WTFMove(viewOffset); }
 
 private:
     WebXRView();
 
     XREye m_eye;
-    Ref<Float32Array> m_projectionMatrix;
-    Ref<WebXRRigidTransform> m_transform;
+    RefPtr<Float32Array> m_projectionMatrix;
+    RefPtr<WebXRRigidTransform> m_transform;
 };
 
 } // namespace WebCore

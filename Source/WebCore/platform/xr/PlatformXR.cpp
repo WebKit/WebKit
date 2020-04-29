@@ -19,3 +19,22 @@
 
 #include "config.h"
 #include "PlatformXR.h"
+
+namespace PlatformXR {
+
+#if ENABLE(WEBXR)
+
+Device::DeviceId Instance::nextDeviceId()
+{
+    static Device::DeviceId s_nextDeviceId { 0 };
+    return s_nextDeviceId++;
+}
+
+Device::Device()
+    : m_id(Instance::nextDeviceId())
+{
+}
+
+#endif // ENABLE(WEBXR)
+
+} // namespace PlatformXR

@@ -29,6 +29,7 @@
 
 #include "FakeXRRigidTransformInit.h"
 #include "XREye.h"
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ struct FakeXRViewInit {
     Vector<float> projectionMatrix;
     DeviceResolution resolution;
     FakeXRRigidTransformInit viewOffset;
-    FieldOfViewInit fieldOfView;
+    Optional<FieldOfViewInit> fieldOfView;
 };
 
 } // namespace WebCore

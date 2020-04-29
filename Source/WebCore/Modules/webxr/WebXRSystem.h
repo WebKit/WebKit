@@ -56,6 +56,10 @@ public:
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
 
+    // For testing purpouses only.
+    void registerSimulatedXRDeviceForTesting(const PlatformXR::Device&);
+    void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device*);
+
 protected:
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSystemEventTargetInterfaceType; }
@@ -69,6 +73,22 @@ protected:
 
 private:
     WebXRSystem(ScriptExecutionContext&);
+
+    // https://immersive-web.github.io/webxr/#default-inline-xr-device
+    class DummyInlineDevice final : public PlatformXR::Device {
+    public:
+        DummyInlineDevice()
+        {
+            m_supportedModes.append(XRSessionMode::Inline);
+        }
+    };
+    DummyInlineDevice m_defaultInlineDevice;
+
+    WeakPtr<WebXRSession> m_activeImmersiveSession;
+
+    WeakPtr<PlatformXR::Device> m_activeImmersiveDevice;
+    Vector<WeakPtr<PlatformXR::Device>> m_immersiveDevices;
+    WeakPtr<PlatformXR::Device> m_inlineXRDevice;
 };
 
 } // namespace WebCore

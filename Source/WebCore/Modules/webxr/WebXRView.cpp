@@ -42,27 +42,15 @@ Ref<WebXRView> WebXRView::create()
 }
 
 WebXRView::WebXRView()
-    : m_eye(XREye::Left)
-    , m_projectionMatrix(Float32Array::create(0))
-    , m_transform(WebXRRigidTransform::create())
+    : m_eye(XREye::None)
 {
 }
 
 WebXRView::~WebXRView() = default;
 
-XREye WebXRView::eye() const
+void WebXRView::setProjectionMatrix(const Vector<float>& matrix)
 {
-    return m_eye;
-}
-
-const Float32Array& WebXRView::projectionMatrix() const
-{
-    return m_projectionMatrix;
-}
-
-const WebXRRigidTransform& WebXRView::transform() const
-{
-    return m_transform;
+    m_projectionMatrix = Float32Array::create(matrix.data(), matrix.size());
 }
 
 } // namespace WebCore

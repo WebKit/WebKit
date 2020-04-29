@@ -28,18 +28,82 @@
 
 #if ENABLE(WEBXR)
 
+#include "JSWebFakeXRDevice.h"
+#include "JSXRReferenceSpaceType.h"
+#include "WebXRSystem.h"
+#include "XRSessionMode.h"
+
 namespace WebCore {
 
-void WebXRTest::simulateDeviceConnection(FakeXRDeviceInit, WebFakeXRDevicePromise&&) const
+WebXRTest::~WebXRTest() = default;
+
+void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
+    // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
+    context.postTask([this, init, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
+        auto device = WebFakeXRDevice::create();
+        auto& simulatedDevice = device->simulatedXRDevice();
+
+        for (auto& viewInit : init.views) {
+            auto view = WebFakeXRDevice::parseView(viewInit);
+            if (view.hasException()) {
+                promise.reject(view.releaseException());
+                return;
+            }
+            simulatedDevice.views().append(view.releaseReturnValue());
+        }
+
+        if (init.supportedFeatures) {
+            Vector<XRReferenceSpaceType> features;
+            for (auto& feature : init.supportedFeatures.value()) {
+                if (auto referenceSpaceType = parseEnumeration<XRReferenceSpaceType>(*context.execState(), feature))
+                    features.append(referenceSpaceType.value());
+            }
+            simulatedDevice.setEnabledFeatures(features);
+        }
+
+        if (init.boundsCoordinates) {
+            if (init.boundsCoordinates->size() < 3) {
+                promise.reject(Exception { TypeError });
+                return;
+            }
+            simulatedDevice.setNativeBoundsGeometry(init.boundsCoordinates.value());
+        }
+
+        if (init.viewerOrigin)
+            device->setViewerOrigin(init.viewerOrigin.value());
+
+        if (init.floorOrigin)
+            device->setFloorOrigin(init.floorOrigin.value());
+
+        Vector<XRSessionMode> supportedModes;
+        if (init.supportedModes) {
+            supportedModes = init.supportedModes.value();
+            if (supportedModes.isEmpty())
+                supportedModes.append(XRSessionMode::Inline);
+        } else {
+            supportedModes.append(XRSessionMode::Inline);
+            if (init.supportsImmersive)
+                supportedModes.append(XRSessionMode::ImmersiveVr);
+        }
+        simulatedDevice.setSupportedModes(supportedModes);
+
+        m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
+
+        promise.resolve(device.get());
+        m_devices.append(WTFMove(device));
+    });
 }
 
 void WebXRTest::simulateUserActivation(XRSimulateUserActivationFunction&)
 {
 }
 
-void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&&)
+void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)
 {
+    for (auto& device : m_devices)
+        m_context->unregisterSimulatedXRDeviceForTesting(&device->simulatedXRDevice());
+    promise.resolve();
 }
 
 } // namespace WebCore

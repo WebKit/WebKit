@@ -28,12 +28,11 @@
     Conditional=WEBXR,
     Exposed=Window,
     InterfaceName=XRTest,
-    ImplementationLacksVTable,
     NoInterfaceObject
 ] interface WebXRTest {
     // Simulates connecting a device to the system.
     // Used to instantiate a fake device for use in tests.
-    Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
+    [CallWith=ScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
 
     // Simulates a user activation (aka user gesture) for the current scope.
     // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
