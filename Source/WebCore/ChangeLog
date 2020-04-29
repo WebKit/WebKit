@@ -1,3 +1,16 @@
+2020-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take row span into account when checking for missing cells
+        https://bugs.webkit.org/show_bug.cgi?id=211184
+
+        Reviewed by Antti Koivisto.
+
+        The tree builder looks for missing cells in the table grid and fills in the gaps with empty cells.
+        This patch takes row spanning into account and make sure we don't end up adding an extra, redundant cell.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+
 2020-04-29  Youenn Fablet  <youenn@apple.com>
 
         Update SWServer.cpp originURL after https://trac.webkit.org/changeset/260707

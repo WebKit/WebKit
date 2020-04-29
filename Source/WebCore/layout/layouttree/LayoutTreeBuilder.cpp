@@ -311,12 +311,18 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
         // Find the max number of columns and fill in the gaps.
         size_t maximumColumns = 0;
         Vector<size_t> numberOfCellsPerRow;
+        size_t currentRow = 0;
         for (auto& rowBox : childrenOfType<ContainerBox>(tableBody)) {
-            size_t numberOfCells = 0;
-            for (auto& cellBox : childrenOfType<ContainerBox>(rowBox))
-                numberOfCells += cellBox.columnSpan();
-            numberOfCellsPerRow.append(numberOfCells);
-            maximumColumns = std::max(maximumColumns, numberOfCells);
+            for (auto& cellBox : childrenOfType<ContainerBox>(rowBox)) {
+                for (size_t rowSpan = 0; rowSpan < cellBox.rowSpan(); ++rowSpan) {
+                    if (numberOfCellsPerRow.size() <= currentRow + rowSpan)
+                        numberOfCellsPerRow.append(cellBox.columnSpan());
+                    else
+                        numberOfCellsPerRow[currentRow + rowSpan] += cellBox.columnSpan();
+                }
+            }
+            maximumColumns = std::max(maximumColumns, numberOfCellsPerRow[currentRow]);
+            ++currentRow;
         }
         // Fill in the gaps.
         size_t rowIndex = 0;
