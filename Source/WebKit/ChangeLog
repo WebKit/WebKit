@@ -1,3 +1,17 @@
+2020-04-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: SyntaxError: Unexpected identifier 'E'. Expected either a closing ']' or a ',' following an array element.
+        https://bugs.webkit.org/show_bug.cgi?id=211163
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateFindString):
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::updateFindString):
+        Use the newly exposed `JSON::Value::escapeString` to ensure that the `findString` will not
+        throw a JavaScript exception when placed in the `InspectorFrontendAPI` call.
+
 2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for key events

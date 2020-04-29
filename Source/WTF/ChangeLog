@@ -1,3 +1,16 @@
+2020-04-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: SyntaxError: Unexpected identifier 'E'. Expected either a closing ']' or a ',' following an array element.
+        https://bugs.webkit.org/show_bug.cgi?id=211163
+
+        Reviewed by Joseph Pecoraro.
+
+        * wtf/JSONValues.h:
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::appendDoubleQuotedString):
+        (WTF::JSONImpl::Value::escapeString): Added.
+        Pull out and expose the logic for escaping strings so it can be used elsewhere.
+
 2020-04-29  Saam Barati  <sbarati@apple.com>
 
         U_STRING_NOT_TERMINATED_WARNING ICU must be handled when using the output buffer as a C string

@@ -453,42 +453,7 @@ RefPtr<JSON::Value> buildValue(const UChar* start, const UChar* end, const UChar
 inline void appendDoubleQuotedString(StringBuilder& builder, StringView string)
 {
     builder.append('"');
-    for (UChar codeUnit : string.codeUnits()) {
-        switch (codeUnit) {
-        case '\b':
-            builder.appendLiteral("\\b");
-            continue;
-        case '\f':
-            builder.appendLiteral("\\f");
-            continue;
-        case '\n':
-            builder.appendLiteral("\\n");
-            continue;
-        case '\r':
-            builder.appendLiteral("\\r");
-            continue;
-        case '\t':
-            builder.appendLiteral("\\t");
-            continue;
-        case '\\':
-            builder.appendLiteral("\\\\");
-            continue;
-        case '"':
-            builder.appendLiteral("\\\"");
-            continue;
-        }
-        // We escape < and > to prevent script execution.
-        if (codeUnit >= 32 && codeUnit < 127 && codeUnit != '<' && codeUnit != '>') {
-            builder.append(codeUnit);
-            continue;
-        }
-        // We could encode characters >= 127 as UTF-8 instead of \u escape sequences.
-        // We could handle surrogates here if callers wanted that; for now we just
-        // write them out as a \u sequence, so a surrogate pair appears as two of them.
-        builder.append("\\u",
-            upperNibbleToASCIIHexDigit(codeUnit >> 8), lowerNibbleToASCIIHexDigit(codeUnit >> 8),
-            upperNibbleToASCIIHexDigit(codeUnit), lowerNibbleToASCIIHexDigit(codeUnit));
-    }
+    Value::escapeString(builder, string);
     builder.append('"');
 }
 
@@ -558,6 +523,46 @@ bool Value::parseJSON(const String& jsonInput, RefPtr<Value>& output)
 
     output = WTFMove(result);
     return true;
+}
+
+void Value::escapeString(StringBuilder& builder, StringView string)
+{
+    for (UChar codeUnit : string.codeUnits()) {
+        switch (codeUnit) {
+        case '\b':
+            builder.appendLiteral("\\b");
+            continue;
+        case '\f':
+            builder.appendLiteral("\\f");
+            continue;
+        case '\n':
+            builder.appendLiteral("\\n");
+            continue;
+        case '\r':
+            builder.appendLiteral("\\r");
+            continue;
+        case '\t':
+            builder.appendLiteral("\\t");
+            continue;
+        case '\\':
+            builder.appendLiteral("\\\\");
+            continue;
+        case '"':
+            builder.appendLiteral("\\\"");
+            continue;
+        }
+        // We escape < and > to prevent script execution.
+        if (codeUnit >= 32 && codeUnit < 127 && codeUnit != '<' && codeUnit != '>') {
+            builder.append(codeUnit);
+            continue;
+        }
+        // We could encode characters >= 127 as UTF-8 instead of \u escape sequences.
+        // We could handle surrogates here if callers wanted that; for now we just
+        // write them out as a \u sequence, so a surrogate pair appears as two of them.
+        builder.append("\\u",
+            upperNibbleToASCIIHexDigit(codeUnit >> 8), lowerNibbleToASCIIHexDigit(codeUnit >> 8),
+            upperNibbleToASCIIHexDigit(codeUnit), lowerNibbleToASCIIHexDigit(codeUnit));
+    }
 }
 
 String Value::toJSONString() const

@@ -271,7 +271,9 @@ void WebInspectorUI::setIsVisible(bool visible)
 
 void WebInspectorUI::updateFindString(const String& findString)
 {
-    m_frontendAPIDispatcher.dispatchCommand("updateFindString"_s, findString);
+    StringBuilder builder;
+    JSON::Value::escapeString(builder, findString);
+    m_frontendAPIDispatcher.dispatchCommand("updateFindString"_s, builder.toString());
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)

@@ -108,6 +108,7 @@ public:
     virtual bool asArray(RefPtr<Array>&);
 
     static bool parseJSON(const String& jsonInput, RefPtr<Value>& output);
+    static void escapeString(StringBuilder&, StringView);
 
     String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;
