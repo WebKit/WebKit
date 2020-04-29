@@ -637,16 +637,19 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
         return;
 
     auto& renderBox = downcast<RenderBox>(this->renderer());
-    LayoutRect boxRect = renderBox.borderBoxRect();
-    if (renderBox.hasClip())
-        boxRect.intersect(renderBox.clipRect(LayoutPoint(), nullptr));
-    boxRect.move(contentOffsetInCompositingLayer());
 
     FloatRoundedRect backdropFiltersRect;
-    if (renderBox.style().hasBorderRadius() && !renderBox.hasClip())
-        backdropFiltersRect = renderBox.roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-    else
+    if (renderBox.style().hasBorderRadius() && !renderBox.hasClip()) {
+        auto roundedBoxRect = renderBox.roundedBorderBoxRect();
+        roundedBoxRect.move(contentOffsetInCompositingLayer());
+        backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+    } else {
+        auto boxRect = renderBox.borderBoxRect();
+        if (renderBox.hasClip())
+            boxRect.intersect(renderBox.clipRect(LayoutPoint(), nullptr));
+        boxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = FloatRoundedRect(snapRectToDevicePixels(boxRect, deviceScaleFactor()));
+    }
 
     m_graphicsLayer->setBackdropFiltersRect(backdropFiltersRect);
 }
