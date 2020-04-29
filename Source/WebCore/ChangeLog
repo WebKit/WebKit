@@ -1,3 +1,16 @@
+2020-04-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rendering update steps should use Seconds for the timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=210990
+
+        Unreviewed.
+
+        serviceRequestAnimationFrameCallbacks() should return rounded milliseconds.
+        This rounding was removed in r260736. So put it back.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks):
+
 2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for key events
