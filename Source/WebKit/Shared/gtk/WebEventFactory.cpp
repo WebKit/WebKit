@@ -281,15 +281,10 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, Optional<Vector<CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
 {
-#if USE(GTK4)
-    guint keyval = 0;
-    guint16 keycode = 0;
-#else
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
     guint16 keycode;
     gdk_event_get_keycode(event, &keycode);
-#endif
     GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
 
     return WebKeyboardEvent(

@@ -135,4 +135,20 @@ gdk_event_get_button(const GdkEvent* event, guint* button)
         *button = gdk_button_event_get_button(const_cast<GdkEvent*>(event));
     return true;
 }
+
+static inline gboolean
+gdk_event_get_keyval(const GdkEvent* event, guint* keyval)
+{
+    if (keyval)
+        *keyval = gdk_key_event_get_keyval(const_cast<GdkEvent*>(event));
+    return TRUE;
+}
+
+static inline gboolean
+gdk_event_get_keycode(const GdkEvent* event, guint16* keycode)
+{
+    if (keycode)
+        *keycode = gdk_key_event_get_keycode(const_cast<GdkEvent*>(event));
+    return TRUE;
+}
 #endif // USE(GTK4)

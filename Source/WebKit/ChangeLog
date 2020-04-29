@@ -1,3 +1,37 @@
+2020-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support for key events
+        https://bugs.webkit.org/show_bug.cgi?id=211128
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle key-pressed and key-released events using a GtkEventControllerKey. To receive key events the widget needs
+        to be focused, so also implement GtkWidgetClass::grab_focus and handle enter and leave focus events. GTK4 needs
+        the widget used by the key bindings translator to be added to a parent to be able to forward key events, so it's
+        now added as a child internal widget of the WebKitWeViewBase.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewChildIsInternalWidget):
+        (webkitWebViewBaseContainerRemove):
+        (webkitWebViewBaseContainerForall):
+        (webkitWebViewBaseFocusEnter):
+        (webkitWebViewBaseFocusLeave):
+        (webkitWebViewBaseKeyPressed):
+        (webkitWebViewBaseKeyReleased):
+        (webkitWebViewBaseGrabFocus):
+        (webkitWebViewBaseConstructed):
+        (webkit_web_view_base_class_init):
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        (WebKit::KeyBindingTranslator::KeyBindingTranslator):
+        (WebKit::KeyBindingTranslator::~KeyBindingTranslator):
+        (WebKit::handleCustomKeyBindings):
+        (WebKit::KeyBindingTranslator::commandsForKeyEvent):
+        * UIProcess/gtk/KeyBindingTranslator.h:
+        (WebKit::KeyBindingTranslator::widget const):
+        (WebKit::KeyBindingTranslator::destroyed):
+
 2020-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text manipulation] Add a userInfo dictionary to _WKTextManipulationToken

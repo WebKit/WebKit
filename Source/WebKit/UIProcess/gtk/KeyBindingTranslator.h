@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Igalia S.L.
+ * Copyright (C) 2010, 2011, 2020 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef KeyBindingTranslator_h
-#define KeyBindingTranslator_h
+#pragma once
 
-#include <WebCore/GRefPtrGtk.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+typedef struct _GtkWidget GtkWidget;
+
 #if USE(GTK4)
-typedef struct _GdkKeyEvent GdkKeyEvent;
-typedef GdkKeyEvent GdkEventKey;
+typedef struct _GtkEventControllerKey GtkEventControllerKey;
 #else
 typedef struct _GdkEventKey GdkEventKey;
 #endif
@@ -35,17 +34,22 @@ namespace WebKit {
 class KeyBindingTranslator {
 public:
     KeyBindingTranslator();
+    ~KeyBindingTranslator();
 
+    GtkWidget* widget() const { return m_nativeWidget; }
+    void destroyed() { m_nativeWidget = nullptr; }
+
+#if USE(GTK4)
+    Vector<String> commandsForKeyEvent(GtkEventControllerKey*);
+#else
     Vector<String> commandsForKeyEvent(GdkEventKey*);
+#endif
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
 
 private:
-    GRefPtr<GtkWidget> m_nativeWidget;
+    GtkWidget* m_nativeWidget;
     Vector<String> m_pendingEditorCommands;
 };
 
 } // namespace WebKit
-
-#endif
-
 
