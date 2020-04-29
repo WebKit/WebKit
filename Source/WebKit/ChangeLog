@@ -1,5 +1,16 @@
 2020-04-28  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r260407): Over-release of NSGraphicsContext in WebKit::convertPlatformImageToBitmap()
+        <https://webkit.org/b/211160>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap): Use retainPtr() instead
+        of adoptNS() to fix the over-release.
+
+2020-04-28  David Kilzer  <ddkilzer@apple.com>
+
         IPC::Decoder::isValid() should just be a nullptr check
         <https://webkit.org/b/211152>
         <rdar://problem/62552699>

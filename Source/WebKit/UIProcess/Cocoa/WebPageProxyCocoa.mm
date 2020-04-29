@@ -405,7 +405,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
     UIGraphicsPopContext();
 #elif PLATFORM(MAC)
-    auto savedContext = adoptNS([NSGraphicsContext currentContext]);
+    auto savedContext = retainPtr([NSGraphicsContext currentContext]);
 
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithCGContext:graphicsContext->platformContext() flipped:YES]];
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
