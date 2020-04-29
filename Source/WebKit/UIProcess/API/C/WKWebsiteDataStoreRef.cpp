@@ -755,9 +755,9 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
     });
 }
 
-void WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, WKWebsiteDataStoreSetInAppBrowserPrivacyEnabledFunction completionHandler)
+void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
 {
-    WebKit::toImpl(dataStoreRef)->setInAppBrowserPrivacyEnabled(enabled, [context, completionHandler] {
+    WebKit::toImpl(dataStoreRef)->clearAppBoundSession([context, completionHandler] {
         completionHandler(context);
     });
 }

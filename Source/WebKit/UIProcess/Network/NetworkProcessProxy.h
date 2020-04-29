@@ -223,7 +223,7 @@ public:
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
-    void setInAppBrowserPrivacyEnabled(PAL::SessionID, bool, CompletionHandler<void()>&&);
+    void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);
     void getAppBoundDomains(PAL::SessionID, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
 private:

@@ -346,11 +346,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
         return;
     }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetInAppBrowserPrivacyEnabled")) {
-        m_testRunner->callDidSetInAppBrowserPrivacyEnabledCallback();
-        return;
-    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetFirstPartyWebsiteDataRemovalMode")) {
         m_testRunner->statisticsCallDidSetFirstPartyWebsiteDataRemovalModeCallback();
@@ -440,14 +435,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         }
 
         m_testRunner->callDidReceiveLoadedThirdPartyDomainsCallback(WTFMove(domains));
-        return;
-    }
-    
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveWebViewCategory")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
-
-        m_testRunner->callDidReceiveWebViewCategoryCallback(toWTFString(static_cast<WKStringRef>(messageBody)));
         return;
     }
 

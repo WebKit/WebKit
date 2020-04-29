@@ -271,8 +271,7 @@ public:
     void getAllStorageAccessEntries();
     void loadedThirdPartyDomains();
     void clearLoadedThirdPartyDomains();
-    void getWebViewCategory();
-    void setInAppBrowserPrivacyEnabled(bool);
+    void clearAppBoundSession();
     void reinitializeAppBoundDomains();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }

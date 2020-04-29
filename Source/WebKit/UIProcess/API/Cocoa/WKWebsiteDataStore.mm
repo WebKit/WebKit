@@ -456,22 +456,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (void)_getWebViewCategoryFor:(WKWebView *)webView completionHandler:(void (^)(_WKWebViewCategory category))completionHandler
-{
-    if (!webView) {
-        completionHandler(_WKWebViewCategoryWebBrowser);
-        return;
-    }
-
-    auto webPageProxy = [webView _page];
-    if (!webPageProxy) {
-        completionHandler(_WKWebViewCategoryWebBrowser);
-        return;
-    }
-
-    completionHandler(toWKWebViewCategory(webPageProxy->configuration().webViewCategory()));
-}
-
 - (void)_scheduleCookieBlockingUpdate:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

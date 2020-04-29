@@ -97,7 +97,7 @@ public:
     bool hasAppBoundSession() const override { return !!m_appBoundSession; }
 
     SessionWrapper& sessionWrapperForTask(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, Optional<NavigatingToAppBoundDomain>);
-    void setInAppBrowserPrivacyEnabled(bool enabled) override { m_isInAppBrowserPrivacyEnabled = enabled; }
+    void clearAppBoundSession() override;
     bool isInAppBrowserPrivacyEnabled() const { return m_isInAppBrowserPrivacyEnabled; }
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     

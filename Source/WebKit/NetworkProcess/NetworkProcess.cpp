@@ -2698,10 +2698,10 @@ void NetworkProcess::hasAppBoundSession(PAL::SessionID sessionID, CompletionHand
     completionHandler(result);
 }
 
-void NetworkProcess::setInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool enable, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::clearAppBoundSession(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
-        networkSession->setInAppBrowserPrivacyEnabled(enable);
+        networkSession->clearAppBoundSession();
         completionHandler();
     } else {
         ASSERT_NOT_REACHED();

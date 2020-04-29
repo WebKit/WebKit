@@ -358,9 +358,6 @@ interface TestRunner {
     // Storage Access API
     void getAllStorageAccessEntries(object callback);
 
-    void getWebViewCategory(object callback);
-    void setInAppBrowserPrivacyEnabled(boolean value, object callback);
-
     // Open panel
     void setOpenPanelFiles(object filesArray);
     void setOpenPanelFilesMediaIcon(object mediaIcon);

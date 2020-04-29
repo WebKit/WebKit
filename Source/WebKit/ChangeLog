@@ -1,3 +1,48 @@
+2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Refactor layout tests after updates to In-App Browser Privacy
+        https://bugs.webkit.org/show_bug.cgi?id=211146
+        <rdar://problem/62524127>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/in-app-browser-privacy/app-bound-domain-gets-app-bound-session.html
+               http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html
+
+        Removes setInAppBrowserPrivacyEnabled, which is no longer needed by
+        layout tests. Setting this in TestOptions is enough.
+        getWebViewCategory is not needed because this patch deletes the only test
+        which uses it. Lastly, adds a new function to clear app-bound sessions
+        now that multiple tests are checking for them.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearAppBoundSession):
+        (WebKit::NetworkProcess::setInAppBrowserPrivacyEnabled): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::clearAppBoundSession):
+        (WebKit::NetworkSession::setInAppBrowserPrivacyEnabled): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::appBoundSession):
+        (WebKit::NetworkSessionCocoa::clearAppBoundSession):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreClearAppBoundSession):
+        (WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getWebViewCategoryFor:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::clearAppBoundSession):
+        (WebKit::NetworkProcessProxy::setInAppBrowserPrivacyEnabled): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::clearAppBoundSession):
+        (WebKit::WebsiteDataStore::setInAppBrowserPrivacyEnabled): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-04-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GPUP][GTK] compile GPUProcess in GTK port

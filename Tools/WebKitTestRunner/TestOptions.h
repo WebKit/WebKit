@@ -104,6 +104,7 @@ struct TestOptions {
     bool enableCaptureAudioInGPUProcess { false };
     bool allowTopNavigationToDataURLs { true };
     bool enableInAppBrowserPrivacy { false };
+    bool isAppBoundWebView { false };
 
     double contentInsetTop { 0 };
 
@@ -172,7 +173,8 @@ struct TestOptions {
             || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess
             || allowTopNavigationToDataURLs != options.allowTopNavigationToDataURLs
             || enableInAppBrowserPrivacy != options.enableInAppBrowserPrivacy
-            || standaloneWebApplicationURL != options.standaloneWebApplicationURL)
+            || standaloneWebApplicationURL != options.standaloneWebApplicationURL
+            || isAppBoundWebView != options.isAppBoundWebView)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))

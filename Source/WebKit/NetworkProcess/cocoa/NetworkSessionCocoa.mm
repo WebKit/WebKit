@@ -1365,6 +1365,11 @@ void NetworkSessionCocoa::clearIsolatedSessions()
     m_isolatedSessions.clear();
 }
 
+void NetworkSessionCocoa::clearAppBoundSession()
+{
+    m_appBoundSession = nullptr;
+}
+
 void NetworkSessionCocoa::invalidateAndCancel()
 {
     NetworkSession::invalidateAndCancel();

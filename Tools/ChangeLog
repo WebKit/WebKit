@@ -1,3 +1,53 @@
+2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Refactor layout tests after updates to In-App Browser Privacy
+        https://bugs.webkit.org/show_bug.cgi?id=211146
+        <rdar://problem/62524127>
+
+        Reviewed by Brent Fulgham.
+
+        Removes two unused functions after updating the test cases.
+        setInAppBrowserPrivacyEnabled is no longer needed, setting this
+        in TestOptions is enough. getWebViewCategory is not needed because
+        this patch deletes the only test which uses it.
+
+        Adds a function to clear app-bound sessions between tests now that
+        multiple tests check for them.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::getWebViewCategory): Deleted.
+        (WTR::TestRunner::callDidReceiveWebViewCategoryCallback): Deleted.
+        (WTR::TestRunner::setInAppBrowserPrivacyEnabled): Deleted.
+        (WTR::TestRunner::callDidSetInAppBrowserPrivacyEnabledCallback): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::resetStateToConsistentValues):
+        Move the call to clear the bundle id to happen in
+        resetStateToConsistentValues to make sure the next test can set the
+        value if needed (otherwise results in a call to exit(1)).
+
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::clearAppBoundSession):
+        (WTR::TestController::getWebViewCategory): Deleted.
+        (WTR::TestController::setInAppBrowserPrivacyEnabled): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didSetInAppBrowserPrivacyEnabled): Deleted.
+        (WTR::TestInvocation::didReceiveWebViewCategory): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        App-bound WebViews now require a special configuration argument. This
+        patch adds logic to enable that using a new TestOption.
+        (WTR::TestController::getWebViewCategory): Deleted.
+
 2020-04-29  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Display flaky test names in build summary when ReRunJavaScriptCoreTests passes

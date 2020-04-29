@@ -2397,13 +2397,13 @@ void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& comple
     completionHandler(false);
 }
 
-void WebsiteDataStore::setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::clearAppBoundSession(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
         if (auto* networkProcess = processPool->networkProcess())
-            networkProcess->setInAppBrowserPrivacyEnabled(m_sessionID, enabled, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+            networkProcess->clearAppBoundSession(m_sessionID, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 

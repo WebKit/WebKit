@@ -145,6 +145,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setIgnoresViewportScaleLimits:YES];
     if (options.useCharacterSelectionGranularity)
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
+    if (options.isAppBoundWebView)
+        [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
 #else
     [copiedConfiguration _setServiceControlsEnabled:options.enableServiceControls];
 #endif
@@ -370,32 +372,6 @@ void TestController::clearLoadedThirdPartyDomains()
         return;
 
     [globalWebViewConfiguration.websiteDataStore _clearLoadedThirdPartyDomainsFor:parentView->platformView()];
-}
-
-void TestController::getWebViewCategory()
-{
-    auto* parentView = mainWebView();
-    if (!parentView)
-        return;
-
-    [globalWebViewConfiguration.websiteDataStore _getWebViewCategoryFor:parentView->platformView() completionHandler:^(_WKWebViewCategory webViewCategory) {
-        String category;
-        switch (webViewCategory) {
-        case _WKWebViewCategoryAppBoundDomain:
-            category = "AppBoundDomain";
-            break;
-        case _WKWebViewCategoryHybridApp:
-            category = "HybridApp";
-            break;
-        case _WKWebViewCategoryInAppBrowser:
-            category = "InAppBrowser";
-            break;
-        case _WKWebViewCategoryWebBrowser:
-            category = "WebBrowser";
-            break;
-        }
-        m_currentInvocation->didReceiveWebViewCategory(WTFMove(category));
-    }];
 }
 
 void TestController::injectUserScript(WKStringRef script)

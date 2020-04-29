@@ -645,7 +645,6 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         exit(1);
     }
     if (!options.applicationBundleIdentifier.isEmpty()) {
-        clearApplicationBundleIdentifierTestingOverride();
         setApplicationBundleIdentifier(options.applicationBundleIdentifier);
         m_hasSetApplicationBundleIdentifier = true;
     }
@@ -1136,7 +1135,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     statisticsResetToConsistentState();
     clearLoadedThirdPartyDomains();
-
+    clearAppBoundSession();
     clearAdClickAttribution();
 
     m_didReceiveServerRedirectForProvisionalNavigation = false;
@@ -1150,8 +1149,12 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (!m_doneResetting)
         return false;
     
-    if (resetStage == ResetStage::AfterTest)
+    if (resetStage == ResetStage::AfterTest) {
         updateLiveDocumentsAfterTest();
+#if PLATFORM(COCOA)
+        clearApplicationBundleIdentifierTestingOverride();
+#endif
+    }
 
     return m_doneResetting;
 }
@@ -1527,7 +1530,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableInAppBrowserPrivacy = parseBooleanTestHeaderValue(value);
         else if (key == "standaloneWebApplicationURL")
             testOptions.standaloneWebApplicationURL = parseStringTestHeaderValueAsURL(value);
-
+        else if (key == "isAppBoundWebView")
+            testOptions.isAppBoundWebView = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -3191,10 +3195,6 @@ void TestController::clearLoadedThirdPartyDomains()
     WKPageClearLoadedThirdPartyDomains(m_mainWebView->page());
 }
 
-void TestController::getWebViewCategory()
-{
-}
-
 #endif
 
 struct ClearServiceWorkerRegistrationsCallbackContext {
@@ -3850,13 +3850,11 @@ bool TestController::hasAppBoundSession()
     return context.result;
 }
 
-
-void TestController::setInAppBrowserPrivacyEnabled(bool value)
+void TestController::clearAppBoundSession()
 {
     InAppBrowserPrivacyCallbackContext context(*this);
-    WKWebsiteDataStoreSetInAppBrowserPrivacyEnabled(TestController::websiteDataStore(), value, &context, inAppBrowserPrivacyVoidResultCallback);
+    WKWebsiteDataStoreClearAppBoundSession(TestController::websiteDataStore(), &context, inAppBrowserPrivacyVoidResultCallback);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didSetInAppBrowserPrivacyEnabled();
 }
 
 void TestController::reinitializeAppBoundDomains()

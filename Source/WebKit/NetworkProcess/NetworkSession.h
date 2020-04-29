@@ -109,7 +109,7 @@ public:
 #endif
     
     virtual bool hasAppBoundSession() const { return false; }
-    virtual void setInAppBrowserPrivacyEnabled(bool) { }
+    virtual void clearAppBoundSession() { }
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void dumpAdClickAttribution(CompletionHandler<void(String)>&&);

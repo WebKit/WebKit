@@ -173,7 +173,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResetQuota(PAL::SessionID sessionID) -> () Async
     
     HasAppBoundSession(PAL::SessionID sessionID) -> (bool hasAppBoundSession) Async
-    SetInAppBrowserPrivacyEnabled(PAL::SessionID sessionID, bool value) -> () Async
+    ClearAppBoundSession(PAL::SessionID sessionID) -> () Async
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     DisableServiceWorkerEntitlement()

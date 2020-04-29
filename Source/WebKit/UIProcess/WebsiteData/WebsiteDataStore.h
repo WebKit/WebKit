@@ -286,7 +286,7 @@ public:
 
     void resetQuota(CompletionHandler<void()>&&);
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
-    void setInAppBrowserPrivacyEnabled(bool enabled, CompletionHandler<void()>&&);
+    void clearAppBoundSession(CompletionHandler<void()>&&);
 
     void beginAppBoundDomainCheck(const URL&, WebFramePolicyListenerProxy&);
     void getAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;

@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInAppBrowserPrivacy=true applicationBundleIdentifier=inAppBrowserPrivacyTestIdentifier isAppBoundWebView=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Tests that an app-bound domain has an app-bound session.");
+    jsTestIsAsync = true;
+
+    function runTest() {
+        if (!testRunner.hasAppBoundSession()) {
+            testFailed("Origin did not start with app-bound session.");
+            finishJSTest();
+        } else {
+            testPassed("Origin has app-bound session.");
+            finishJSTest();
+        }
+    }
+
+</script>
+</body>
+</html>
