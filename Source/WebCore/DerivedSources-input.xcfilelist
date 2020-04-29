@@ -935,6 +935,7 @@ $(PROJECT_DIR)/page/PerformanceNavigation.idl
 $(PROJECT_DIR)/page/PerformanceObserver.idl
 $(PROJECT_DIR)/page/PerformanceObserverCallback.idl
 $(PROJECT_DIR)/page/PerformanceObserverEntryList.idl
+$(PROJECT_DIR)/page/PerformancePaintTiming.idl
 $(PROJECT_DIR)/page/PerformanceResourceTiming.idl
 $(PROJECT_DIR)/page/PerformanceServerTiming.idl
 $(PROJECT_DIR)/page/PerformanceTiming.idl

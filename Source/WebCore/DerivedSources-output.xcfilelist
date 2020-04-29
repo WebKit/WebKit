@@ -1270,6 +1270,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserverEntryList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserverEntryList.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformancePaintTiming.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformancePaintTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceResourceTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceResourceTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceServerTiming.cpp

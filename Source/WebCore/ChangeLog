@@ -1,5 +1,12 @@
 2020-04-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Update the xcfilelists.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
+2020-04-28  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r260808): Backdrops on music.apple.com are offset
         https://bugs.webkit.org/show_bug.cgi?id=211153
         <rdar://problem/62543158>
