@@ -1,3 +1,13 @@
+2020-04-29  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove no longer used variable and the build warning below.
+        warning: unused variable ‘view’ [-Wunused-variable]
+
+        No new tests, no new behaviour changes.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2020-04-29  Alicia Boya García  <aboya@igalia.com>
 
         PlatformMediaResourceLoader should be destroyed on the main thread

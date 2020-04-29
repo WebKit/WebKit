@@ -1786,16 +1786,14 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
         return false;
     }
 
-    if (FrameView* view = m_frame.view()) {
-        RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : nullptr;
-        auto localPoint = roundedIntPoint(mouseEvent.hitTestResult().localPoint());
-        if (layer && layer->isPointInResizeControl(localPoint)) {
-            layer->setInResizeMode(true);
-            m_resizeLayer = layer;
-            m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
-            invalidateClick();
-            return true;
-        }
+    RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : nullptr;
+    auto localPoint = roundedIntPoint(mouseEvent.hitTestResult().localPoint());
+    if (layer && layer->isPointInResizeControl(localPoint)) {
+        layer->setInResizeMode(true);
+        m_resizeLayer = layer;
+        m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
+        invalidateClick();
+        return true;
     }
 
     m_frame.selection().setCaretBlinkingSuspended(true);
