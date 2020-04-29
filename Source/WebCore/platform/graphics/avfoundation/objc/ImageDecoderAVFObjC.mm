@@ -437,7 +437,6 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
-    ASSERT(iter != m_sampleData.presentationOrder().end());
     if (iter == m_sampleData.presentationOrder().end()) {
         RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not find sample buffer entry with specified presentation time", this);
         return false;

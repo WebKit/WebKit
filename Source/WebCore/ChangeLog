@@ -1,3 +1,16 @@
+2020-04-29  Jer Noble  <jer.noble@apple.com>
+
+        Remove the debug ASSERT in ImageDecoderAVFObjC::storeSampleBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=211191
+        <rdar://problem/62542285>
+
+        Reviewed by Said Abou-Hallawa.
+
+        r259594 added an iterator check and a RELEASE_LOG_ERROR for that check, making this ASSERT superfluous.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer):
+
 2020-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify contents clipping layer geometry
