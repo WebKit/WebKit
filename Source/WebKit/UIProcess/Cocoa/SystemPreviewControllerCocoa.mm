@@ -109,10 +109,10 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
-    ARQuickLookPreviewItem *previewItem = [allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL];
-    previewItem.canonicalWebPageURL = _originatingPageURL;
+    auto previewItem = adoptNS([allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL]);
+    [previewItem setCanonicalWebPageURL:_originatingPageURL];
 
-    _item = [allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem];
+    _item = adoptNS([allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem.get()]);
     [_item setDelegate:self];
 
     if ([_item respondsToSelector:(@selector(setAdditionalParameters:))]) {

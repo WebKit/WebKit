@@ -1,3 +1,15 @@
+2020-04-29  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r246395): Leak of ARQuickLookPreviewItem and ARQuickLookWebKitItem in -[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]
+        <https://webkit.org/b/211197>
+        <rdar://problem/62612483>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        - Use RetainPtr<> and adoptNS() to fix leaks.
+
 2020-04-29  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed sandbox compile fix.
