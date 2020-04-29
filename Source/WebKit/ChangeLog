@@ -1,3 +1,11 @@
+2020-04-29  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Unreviewed compile-warning fixes
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetEnableBackForwardNavigationGesture):
+        (webkitWebViewBaseWillSwapWebProcess):
+
 2020-04-29  Rob Buis  <rbuis@igalia.com>
 
         Make PolicyChecker an inner class of FrameLoader

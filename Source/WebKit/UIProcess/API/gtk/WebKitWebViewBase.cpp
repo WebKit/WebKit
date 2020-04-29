@@ -1444,8 +1444,8 @@ GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webView
 
 void webkitWebViewBaseSetEnableBackForwardNavigationGesture(WebKitWebViewBase* webViewBase, bool enabled)
 {
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
 #if !USE(GTK4)
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->isBackForwardNavigationGestureEnabled = enabled;
 
     if (auto* controller = webkitWebViewBaseViewGestureController(webViewBase))
@@ -1979,8 +1979,8 @@ bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 #if !USE(GTK4)
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     if (priv->viewGestureController)
         priv->viewGestureController->disconnectFromProcess();
 #endif
