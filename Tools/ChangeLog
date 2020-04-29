@@ -1,3 +1,14 @@
+2020-04-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Upgrade motionmark1.1.plan to r260656
+        https://bugs.webkit.org/show_bug.cgi?id=211143
+
+        Reviewed by Darin Adler.
+
+        r260656 includes a fix for the Multiply test.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+
 2020-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text manipulation] Add a userInfo dictionary to _WKTextManipulationToken
