@@ -1,3 +1,17 @@
+2020-04-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GPUP][GTK] compile GPUProcess in GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=208814
+
+        Reviewed by Don Olmstead.
+
+        Enable GPUProcess compilation in WebKitGTK as an experimental
+        feature
+
+        * Source/cmake/OptionsGTK.cmake: sort alphabetically WebKit
+        options for GTK port and enable GPU_PROCESS if experimental
+        features option is enabled.
+
 2020-04-29  Sergio Villar Senin  <svillar@igalia.com>
 
         Add ccls config file to the list of ignored files

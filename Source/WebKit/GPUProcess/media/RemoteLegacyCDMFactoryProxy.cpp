@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "RemoteLegacyCDMProxy.h"
 #include "RemoteLegacyCDMProxyMessages.h"

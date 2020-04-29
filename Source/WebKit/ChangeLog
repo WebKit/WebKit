@@ -1,3 +1,63 @@
+2020-04-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GPUP][GTK] compile GPUProcess in GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=208814
+
+        Reviewed by Don Olmstead.
+
+        Enable GPUProcess compilation in WebKitGTK as an experimental
+        feature
+
+        No new tests required.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp: guard
+        UserMediaCaptureManagerProxy for Cocoa platform only.
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage): guard
+        messages from UserMediaCaptureManagerProxy for Cocoa platform,
+        moving up this guard from video track messages.
+        (WebKit::GPUConnectionToWebProcess::mediaKeyStorageDirectory):
+        removed guard for this function of ENCRYPTED_MEDIA leaving only
+        LEGACY_ENCRYPTED_MEDIA, since it's were it is defined.
+        (WebKit::GPUConnectionToWebProcess::setOrientationForMediaCapture):
+        guard the content of this function for Cocoa platform, since it is
+        calling a UserMediaCaptureManagerProxy object.
+        * GPUProcess/GPUProcess.cpp: Replace the included header to match
+        with the used symbols in file.
+        * GPUProcess/gstreamer/GPUProcessGStreamer.cpp: Added.
+        (WebKit::GPUProcess::initializeProcess): Empty function.
+        (WebKit::GPUProcess::initializeProcessName): Empty function.
+        (WebKit::GPUProcess::initializeSandbox): Empty function.
+        * GPUProcess/gstreamer/GPUProcessMainGStreamer.cpp: Added.
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>): New function.
+        (WebKit::GPUProcessMain): New function.
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp: changed guard
+        for this file from ENCRYPTED_MEDIA to LEGACY_ENCRYPTED_MEDIA to
+        match with its header file.
+        * GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp: Added.
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        New function that raises noImplemented()
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        New function that raises noImplemented()
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+        New function that raises noImplemented()
+        (WebKit::RemoteMediaPlayerProxy::enterFullscreen): New function
+        that raises noImplemented()
+        (WebKit::RemoteMediaPlayerProxy::exitFullscreen): New function
+        that raises noImplemented()
+        * PlatformGTK.cmake: add Platform/generic header directory.
+        * SourcesGTK.txt: Add the new files and
+        GPUProcess/media/RemoteAudioDestinationManager.cpp
+        * WebProcess/GPU/GPUProcessConnection.cpp: guard
+        UserMediaCaptureManager for Cocoa platform only.
+        (WebKit::GPUProcessConnection::dispatchMessage): guard messages
+        from UserMediaCaptureManager for Cocoa platform, moving up this
+        guard applied also for video track.
+        * WebProcess/GPU/media/RemoteCDM.cpp: include missing header
+        GPUProcessConnection.h
+        * WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp: Added.
+        (WebKit::createVideoLayerRemote): New function
+        that raises noImplemented()
+
 2020-04-29  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Unreviewed compile-warning fixes

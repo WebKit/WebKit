@@ -56,7 +56,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include <WebCore/MockAudioSharedUnit.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
 
 namespace WebKit {

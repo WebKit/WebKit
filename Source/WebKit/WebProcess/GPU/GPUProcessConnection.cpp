@@ -50,7 +50,7 @@
 #include "RemoteCDMInstanceSessionMessages.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerMessages.h"
 #endif
@@ -112,19 +112,19 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         return true;
     }
 
-#if ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManager::messageReceiverName()) {
         if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
             captureManager->didReceiveMessageFromGPUProcess(connection, decoder);
         return true;
     }
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK)
     if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
         return true;
     }
-#endif // PLATFORM(COCOA) && ENABLE(VIDEO_TRACK)
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(VIDEO_TRACK)
+#endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {
         WebProcess::singleton().libWebRTCCodecs().didReceiveMessage(connection, decoder);

@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 #include "DataReference.h"
+#include "GPUProcessConnection.h"
 #include "RemoteCDMInstance.h"
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceIdentifier.h"
