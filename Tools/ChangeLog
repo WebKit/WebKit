@@ -1,3 +1,17 @@
+2020-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should suggest CheckedSize for Checked<size_t, RecordOverflow>
+        <https://webkit.org/b/211158>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_wtf_checked_size): Add checker.
+        (check_style): Call check_wtf_checked_size() to check.
+        (CppChecker): Add 'runtime/wtf_checked_size'.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_wtf_checked_size): Add tests.
+
 2020-04-28  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] update-webkitgtk-libs: TypeError: cannot use a string pattern on a bytes-like object

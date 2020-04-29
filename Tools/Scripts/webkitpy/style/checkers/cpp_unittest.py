@@ -5432,6 +5432,31 @@ class WebKitStyleTest(CppStyleTestBase):
             '  [runtime/max_min_macros] [4]',
             'foo.h')
 
+    def test_wtf_checked_size(self):
+        self.assert_lint(
+            'CheckedSize totalSize = barSize;\n'
+            'totalSize += bazSize;',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto totalSize = CheckedSize(barSize) + bazSize;',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'Checked<size_t, RecordOverflow> totalSize = barSize;\n'
+            'totalSize += bazSize;',
+            "Use 'CheckedSize' instead of 'Checked<size_t, RecordOverflow>'."
+            "  [runtime/wtf_checked_size] [5]",
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto totalSize = Checked<size_t, RecordOverflow>(barSize) + bazSize;',
+            "Use 'CheckedSize' instead of 'Checked<size_t, RecordOverflow>'."
+            "  [runtime/wtf_checked_size] [5]",
+            'foo.cpp')
+
     def test_wtf_make_unique(self):
         self.assert_lint(
              'std::unique_ptr<Foo> foo = WTF::makeUnique<Foo>();',

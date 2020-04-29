@@ -2473,6 +2473,30 @@ def check_max_min_macros(clean_lines, line_number, file_state, error):
           % (max_min_macro_lower, max_min_macro_lower, max_min_macro))
 
 
+def check_wtf_checked_size(clean_lines, line_number, file_state, error):
+    """Looks for use of 'Checked<size_t, RecordOverflow>' which should be replaced with 'CheckedSize'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]
+
+    using_checked_size_record_overflow = search(r'\bChecked\s*<\s*size_t,\s*RecordOverflow\s*>\s*(\b|\()', line)
+    if not using_checked_size_record_overflow:
+        return
+
+    error(line_number, 'runtime/wtf_checked_size', 5,
+          "Use 'CheckedSize' instead of 'Checked<size_t, RecordOverflow>'.")
+
+
 def check_wtf_move(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::move()' which should be replaced with 'WTFMove()'.
 
@@ -3143,6 +3167,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_using_std(clean_lines, line_number, file_state, error)
     check_using_namespace(clean_lines, line_number, file_extension, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
+    check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
     check_wtf_optional(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
@@ -4325,6 +4350,7 @@ class CppChecker(object):
         'runtime/threadsafe_fn',
         'runtime/unsigned',
         'runtime/virtual',
+        'runtime/wtf_checked_size',
         'runtime/wtf_optional',
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
