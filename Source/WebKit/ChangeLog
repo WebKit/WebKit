@@ -1,3 +1,9 @@
+2020-04-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed sandbox compile fix.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate API shouldAllowDeprecatedTLS
