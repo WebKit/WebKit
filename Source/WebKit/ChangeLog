@@ -1,3 +1,17 @@
+2020-04-28  David Kilzer  <ddkilzer@apple.com>
+
+        IPC::Decoder::isValid() should just be a nullptr check
+        <https://webkit.org/b/211152>
+        <rdar://problem/62552699>
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::isValid const): Change to nullptr check.  I
+        reviewed the code in Decoder.{cpp,h}, and I didn't see
+        m_bufferPos being set without a bounds check.  Also added
+        WARN_UNUSED_RETURN to make sure the result is always checked.
+
 2020-04-28  Daniel Bates  <dabates@apple.com>
 
         Move WebPage::textInputContextsInRect() to WebPageIOS.mm

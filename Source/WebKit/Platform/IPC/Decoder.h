@@ -71,12 +71,7 @@ public:
 
     size_t length() const { return m_bufferEnd - m_buffer; }
 
-    bool isValid() const
-    {
-        // (m_bufferPos == m_bufferEnd) is a valid state for decoding if the last parameter
-        // is a variable length byte array and its size == 0.
-        return m_bufferPos >= m_buffer && m_bufferPos <= m_bufferEnd;
-    }
+    WARN_UNUSED_RETURN bool isValid() const { return m_bufferPos != nullptr; }
     void markInvalid() { m_bufferPos = nullptr; }
 
     WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
