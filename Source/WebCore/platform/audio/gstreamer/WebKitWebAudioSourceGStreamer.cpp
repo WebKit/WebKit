@@ -211,10 +211,10 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     ASSERT(priv->provider);
     ASSERT(priv->sampleRate);
 
-    priv->interleave = gst_element_factory_make("interleave", nullptr);
+    priv->interleave = gst_element_factory_make("audiointerleave", nullptr);
 
     if (!priv->interleave) {
-        GST_ERROR_OBJECT(src, "Failed to create interleave");
+        GST_ERROR_OBJECT(src, "Failed to create audiointerleave");
         return;
     }
 
@@ -398,8 +398,8 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
         if (!src->priv->interleave) {
-            gst_element_post_message(element, gst_missing_element_message_new(element, "interleave"));
-            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (nullptr), ("no interleave"));
+            gst_element_post_message(element, gst_missing_element_message_new(element, "audiointerleave"));
+            GST_ELEMENT_ERROR(src, CORE, MISSING_PLUGIN, (nullptr), ("no audiointerleave"));
             return GST_STATE_CHANGE_FAILURE;
         }
         src->priv->numberOfSamples = 0;

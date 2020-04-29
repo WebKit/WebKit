@@ -1,3 +1,19 @@
+2020-04-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Switch to audiointerleave
+        https://bugs.webkit.org/show_bug.cgi?id=211124
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The audiointerleave element is a drop-in replacement of
+        interleave. It should behave a bit better in live.
+
+        No new tests, existing webaudio tests cover this change.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcChangeState):
+
 2020-04-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR][WPE] Implement XRTest::simulateDeviceConnection()
