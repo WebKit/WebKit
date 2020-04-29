@@ -1,3 +1,15 @@
+2020-04-29  Youenn Fablet  <youenn@apple.com>
+
+        Set _STAttributionDisplayName to iOS WebContent Info plist
+        https://bugs.webkit.org/show_bug.cgi?id=210772
+        <rdar://problem/62075201>
+
+        Reviewed by Eric Carlson.
+
+        Set _STAttributionDisplayName to 'Website' value.
+
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist:
+
 2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Refactor layout tests after updates to In-App Browser Privacy

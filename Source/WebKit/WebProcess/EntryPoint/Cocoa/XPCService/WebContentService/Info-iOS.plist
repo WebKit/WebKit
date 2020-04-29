@@ -26,6 +26,8 @@
 	<string>${BUNDLE_VERSION}</string>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
+	<key>_STAttributionDisplayName</key>
+	<string>Website</string>
 	<key>XPCService</key>
 	<dict>
 		<key>ServiceType</key>
