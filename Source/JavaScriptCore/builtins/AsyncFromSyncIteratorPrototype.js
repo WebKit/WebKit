@@ -36,9 +36,10 @@ function next(value)
     }
 
     var syncIterator = @getByIdDirectPrivate(this, "syncIterator");
+    var nextMethod = @getByIdDirectPrivate(this, "nextMethod");
 
     try {
-        var nextResult = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
+        var nextResult = @argumentCount() === 0 ? nextMethod.@call(syncIterator) : nextMethod.@call(syncIterator, value);
         var nextDone = !!nextResult.done;
         var nextValue = nextResult.value;
         @resolveWithoutPromise(nextValue,
@@ -79,7 +80,7 @@ function return(value)
     }
     
     try {
-        var returnResult = returnMethod.@call(syncIterator, value);
+        var returnResult = @argumentCount() === 0 ? returnMethod.@call(syncIterator) : returnMethod.@call(syncIterator, value);
 
         if (!@isObject(returnResult)) {
             @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator result interface is not an object.'));
@@ -126,7 +127,7 @@ function throw(exception)
     }
     
     try {
-        var throwResult = throwMethod.@call(syncIterator, exception);
+        var throwResult = @argumentCount() === 0 ? throwMethod.@call(syncIterator) : throwMethod.@call(syncIterator, exception);
         
         if (!@isObject(throwResult)) {
             @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator result interface is not an object.'));

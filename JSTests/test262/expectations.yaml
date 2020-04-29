@@ -729,12 +729,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/absent-value-not-passed.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/return/absent-value-not-passed.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«1», «0») to be true'
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-promise.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'

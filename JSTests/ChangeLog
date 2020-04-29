@@ -1,3 +1,12 @@
+2020-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        AsyncFromSyncIterator methods should not pass absent values
+        https://bugs.webkit.org/show_bug.cgi?id=211147
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSStringJoiner is missing BigInt handling

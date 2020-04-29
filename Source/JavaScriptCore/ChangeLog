@@ -1,3 +1,21 @@
+2020-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        AsyncFromSyncIterator methods should not pass absent values
+        https://bugs.webkit.org/show_bug.cgi?id=211147
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements minor spec change [1] to match async and sync iteration
+        from the perspective of userland `next` and `return` iterator methods.
+        `throw` method always receives an argument, yet we align with others to be
+        consistent and future-proof.
+
+        This change is already implemented in SpiderMonkey.
+
+        [1]: https://github.com/tc39/ecma262/pull/1776
+
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+
 2020-04-29  Mark Lam  <mark.lam@apple.com>
 
         Freezing of Gigacage and JSC Configs should be thread safe.
