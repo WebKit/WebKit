@@ -158,22 +158,24 @@ static GtkWidget *createInfoBarQuestionMessage(const char *title, const char *te
     gtk_orientable_set_orientation(GTK_ORIENTABLE(contentBox), GTK_ORIENTATION_VERTICAL);
     gtk_box_set_spacing(GTK_BOX(contentBox), 0);
 
-    GtkWidget *label = gtk_label_new(NULL);
+    GtkLabel *label = GTK_LABEL(gtk_label_new(NULL));
     gchar *markup = g_strdup_printf("<span size='xx-large' weight='bold'>%s</span>", title);
-    gtk_label_set_markup(GTK_LABEL(label), markup);
+    gtk_label_set_markup(label, markup);
     g_free(markup);
-    gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-    gtk_label_set_selectable(GTK_LABEL(label), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(label), 0., 0.5);
-    gtk_box_pack_start(GTK_BOX(contentBox), label, FALSE, FALSE, 2);
-    gtk_widget_show(label);
+    gtk_label_set_line_wrap(label, TRUE);
+    gtk_label_set_selectable(label, TRUE);
+    gtk_label_set_xalign(label, 0.);
+    gtk_label_set_yalign(label, 0.5);
+    gtk_box_pack_start(GTK_BOX(contentBox), GTK_WIDGET(label), FALSE, FALSE, 2);
+    gtk_widget_show(GTK_WIDGET(label));
 
-    label = gtk_label_new(text);
-    gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-    gtk_label_set_selectable(GTK_LABEL(label), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(label), 0., 0.5);
-    gtk_box_pack_start(GTK_BOX(contentBox), label, FALSE, FALSE, 0);
-    gtk_widget_show(label);
+    label = GTK_LABEL(gtk_label_new(text));
+    gtk_label_set_line_wrap(label, TRUE);
+    gtk_label_set_selectable(label, TRUE);
+    gtk_label_set_xalign(label, 0.);
+    gtk_label_set_yalign(label, 0.5);
+    gtk_box_pack_start(GTK_BOX(contentBox), GTK_WIDGET(label), FALSE, FALSE, 0);
+    gtk_widget_show(GTK_WIDGET(label));
 
     return dialog;
 }
@@ -408,8 +410,8 @@ static void browserTabConstructed(GObject *gObject)
     gtk_widget_set_halign(tab->statusLabel, GTK_ALIGN_START);
     gtk_widget_set_valign(tab->statusLabel, GTK_ALIGN_END);
 #if !GTK_CHECK_VERSION(3, 98, 0)
-    gtk_widget_set_margin_left(tab->statusLabel, 1);
-    gtk_widget_set_margin_right(tab->statusLabel, 1);
+    gtk_widget_set_margin_start(tab->statusLabel, 1);
+    gtk_widget_set_margin_end(tab->statusLabel, 1);
     gtk_widget_set_margin_top(tab->statusLabel, 1);
     gtk_widget_set_margin_bottom(tab->statusLabel, 1);
 #endif
@@ -447,7 +449,6 @@ static void browserTabConstructed(GObject *gObject)
     tab->titleLabel = gtk_label_new(NULL);
     gtk_label_set_ellipsize(GTK_LABEL(tab->titleLabel), PANGO_ELLIPSIZE_END);
     gtk_label_set_single_line_mode(GTK_LABEL(tab->titleLabel), TRUE);
-    gtk_misc_set_padding(GTK_MISC(tab->titleLabel), 0, 0);
     gtk_box_pack_start(GTK_BOX(hbox), tab->titleLabel, FALSE, FALSE, 0);
     gtk_widget_show(tab->titleLabel);
 
@@ -457,7 +458,7 @@ static void browserTabConstructed(GObject *gObject)
     tab->titleCloseButton = gtk_button_new();
     g_signal_connect_swapped(tab->titleCloseButton, "clicked", G_CALLBACK(gtk_widget_destroy), tab);
     gtk_button_set_relief(GTK_BUTTON(tab->titleCloseButton), GTK_RELIEF_NONE);
-    gtk_button_set_focus_on_click(GTK_BUTTON(tab->titleCloseButton), FALSE);
+    gtk_widget_set_focus_on_click(tab->titleCloseButton, FALSE);
 
     GtkWidget *image = gtk_image_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_MENU);
     gtk_container_add(GTK_CONTAINER(tab->titleCloseButton), image);

@@ -57,13 +57,13 @@ static void doSearch(BrowserSearchBar *searchBar)
 
     if (!gtk_entry_get_text_length(entry)) {
         webkit_find_controller_search_finish(webkit_web_view_get_find_controller(searchBar->webView));
-        gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+        gtk_entry_set_icon_from_icon_name(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
         setFailedStyleForEntry(searchBar, FALSE);
         return;
     }
 
-    if (!gtk_entry_get_icon_stock(entry, GTK_ENTRY_ICON_SECONDARY))
-        gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_CLEAR);
+    if (!gtk_entry_get_icon_name(entry, GTK_ENTRY_ICON_SECONDARY))
+        gtk_entry_set_icon_from_icon_name(entry, GTK_ENTRY_ICON_SECONDARY, "edit-clear");
 
     WebKitFindOptions options = WEBKIT_FIND_OPTIONS_WRAP_AROUND;
     if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->caseCheckButton)))
@@ -94,10 +94,8 @@ static void searchCloseButtonClickedCallback(BrowserSearchBar *searchBar)
 
 static void searchEntryMenuIconPressedCallback(BrowserSearchBar *searchBar, GtkEntryIconPosition iconPosition, GdkEvent *event)
 {
-    if (iconPosition == GTK_ENTRY_ICON_PRIMARY) {
-        GdkEventButton *eventButton = (GdkEventButton *)event;
-        gtk_menu_popup(GTK_MENU(searchBar->optionsMenu), NULL, NULL, NULL, NULL, eventButton->button, eventButton->time);
-    }
+    if (iconPosition == GTK_ENTRY_ICON_PRIMARY)
+        gtk_menu_popup_at_pointer(GTK_MENU(searchBar->optionsMenu), event);
 }
 
 static void searchEntryClearIconReleasedCallback(BrowserSearchBar *searchBar, GtkEntryIconPosition iconPosition)
@@ -158,7 +156,7 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
     searchBar->entry = gtk_entry_new();
     gtk_widget_set_name(searchBar->entry, "searchEntry");
     gtk_entry_set_placeholder_text(GTK_ENTRY(searchBar->entry), "Search");
-    gtk_entry_set_icon_from_stock(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_FIND);
+    gtk_entry_set_icon_from_icon_name(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, "edit-find");
     gtk_box_pack_start(hBox, searchBar->entry, TRUE, TRUE, 0);
 
     searchBar->cssProvider = gtk_css_provider_new();
@@ -167,28 +165,21 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
     GtkBox *hBoxButtons = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(hBox, GTK_WIDGET(hBoxButtons), TRUE, TRUE, 0);
 
-    searchBar->prevButton = gtk_button_new();
+    searchBar->prevButton = gtk_button_new_from_icon_name("go-up", GTK_ICON_SIZE_SMALL_TOOLBAR);
     GtkButton *button = GTK_BUTTON(searchBar->prevButton);
-    GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_GO_UP, GTK_ICON_SIZE_SMALL_TOOLBAR);
-    gtk_button_set_image(button, image);
     gtk_button_set_relief(button, GTK_RELIEF_NONE);
-    gtk_button_set_focus_on_click(button, FALSE);
+    gtk_widget_set_focus_on_click(searchBar->prevButton, FALSE);
     gtk_box_pack_start(hBoxButtons, searchBar->prevButton, FALSE, FALSE, 0);
 
-    searchBar->nextButton = gtk_button_new();
+    searchBar->nextButton = gtk_button_new_from_icon_name("go-down", GTK_ICON_SIZE_SMALL_TOOLBAR);
     button = GTK_BUTTON(searchBar->nextButton);
-    image = gtk_image_new_from_stock(GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_SMALL_TOOLBAR);
-    gtk_button_set_image(button, image);
     gtk_button_set_relief(button, GTK_RELIEF_NONE);
-    gtk_button_set_focus_on_click(button, FALSE);
+    gtk_widget_set_focus_on_click(searchBar->nextButton, FALSE);
     gtk_box_pack_start(hBoxButtons, searchBar->nextButton, FALSE, FALSE, 0);
 
-    GtkWidget *closeButton = gtk_button_new();
-    button = GTK_BUTTON(closeButton);
-    image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_SMALL_TOOLBAR);
-    gtk_button_set_image(button, image);
-    gtk_button_set_relief(button, GTK_RELIEF_NONE);
-    gtk_button_set_focus_on_click(button, FALSE);
+    GtkWidget *closeButton = gtk_button_new_from_icon_name("window-close", GTK_ICON_SIZE_SMALL_TOOLBAR);
+    gtk_button_set_relief(GTK_BUTTON(closeButton), GTK_RELIEF_NONE);
+    gtk_widget_set_focus_on_click(closeButton, FALSE);
     gtk_box_pack_end(hBoxButtons, closeButton, FALSE, FALSE, 0);
 
     searchBar->optionsMenu = g_object_ref_sink(gtk_menu_new());

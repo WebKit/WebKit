@@ -70,7 +70,8 @@ static void browser_downloads_bar_init(BrowserDownloadsBar *downloadsBar)
 
     GtkWidget *title = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(title), "<span size='xx-large' weight='bold'>Downloads</span>");
-    gtk_misc_set_alignment(GTK_MISC(title), 0., 0.5);
+    gtk_label_set_xalign(GTK_LABEL(title), 0.);
+    gtk_label_set_yalign(GTK_LABEL(title), 0.5);
     gtk_box_pack_start(GTK_BOX(contentBox), title, FALSE, FALSE, 12);
     gtk_widget_show(title);
 }
@@ -84,7 +85,7 @@ static void browser_downloads_bar_class_init(BrowserDownloadsBarClass *klass)
 GtkWidget *browser_downloads_bar_new()
 {
     GtkInfoBar *downloadsBar = GTK_INFO_BAR(g_object_new(BROWSER_TYPE_DOWNLOADS_BAR, NULL));
-    gtk_info_bar_add_buttons(downloadsBar, GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+    gtk_info_bar_add_buttons(downloadsBar, "_Close", GTK_RESPONSE_CLOSE, NULL);
     return GTK_WIDGET(downloadsBar);
 }
 
@@ -115,7 +116,7 @@ static void actionButtonClicked(GtkButton *button, BrowserDownload *browserDownl
         return;
     }
 
-    gtk_show_uri(gtk_widget_get_screen(GTK_WIDGET(browserDownload)),
+    gtk_show_uri_on_window(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(browserDownload))),
                  webkit_download_get_destination(browserDownload->download),
                  gtk_get_current_event_time(), NULL);
     gtk_widget_destroy(GTK_WIDGET(browserDownload));
@@ -149,12 +150,14 @@ static void browser_download_init(BrowserDownload *download)
 
     download->statusLabel = gtk_label_new("Starting Download");
     gtk_label_set_ellipsize(GTK_LABEL(download->statusLabel), PANGO_ELLIPSIZE_END);
-    gtk_misc_set_alignment(GTK_MISC(download->statusLabel), 0., 0.5);
+    gtk_label_set_xalign(GTK_LABEL(download->statusLabel), 0.);
+    gtk_label_set_yalign(GTK_LABEL(download->statusLabel), 0.5);
     gtk_box_pack_start(GTK_BOX(statusBox), download->statusLabel, TRUE, TRUE, 0);
     gtk_widget_show(download->statusLabel);
 
     download->remainingLabel = gtk_label_new(NULL);
-    gtk_misc_set_alignment(GTK_MISC(download->remainingLabel), 1., 0.5);
+    gtk_label_set_xalign(GTK_LABEL(download->remainingLabel), 1.);
+    gtk_label_set_yalign(GTK_LABEL(download->remainingLabel), 0.5);
     gtk_box_pack_end(GTK_BOX(statusBox), download->remainingLabel, TRUE, TRUE, 0);
     gtk_widget_show(download->remainingLabel);
 
@@ -162,7 +165,7 @@ static void browser_download_init(BrowserDownload *download)
     gtk_box_pack_start(GTK_BOX(vbox), download->progressBar, FALSE, FALSE, 0);
     gtk_widget_show(download->progressBar);
 
-    download->actionButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    download->actionButton = gtk_button_new_with_mnemonic("_Cancel");
     g_signal_connect(download->actionButton, "clicked", G_CALLBACK(actionButtonClicked), download);
     gtk_box_pack_end(GTK_BOX(mainBox), download->actionButton, FALSE, FALSE, 0);
     gtk_widget_show(download->actionButton);
@@ -233,8 +236,7 @@ static void downloadFinished(WebKitDownload *download, BrowserDownload *browserD
     gtk_label_set_text(GTK_LABEL(browserDownload->statusLabel), text);
     g_free(text);
     gtk_label_set_text(GTK_LABEL(browserDownload->remainingLabel), NULL);
-    gtk_button_set_image(GTK_BUTTON(browserDownload->actionButton),
-                         gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image(GTK_BUTTON(browserDownload->actionButton), gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_BUTTON));
     gtk_button_set_label(GTK_BUTTON(browserDownload->actionButton), "Open ...");
     browserDownload->finished = TRUE;
 }

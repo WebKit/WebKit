@@ -133,7 +133,7 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
     gtk_window_set_title(GTK_WINDOW(dialog), "WebKit View Settings");
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-    gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+    gtk_dialog_add_button(GTK_DIALOG(dialog), "_Close", GTK_RESPONSE_CLOSE);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
 
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
