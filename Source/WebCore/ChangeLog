@@ -1,3 +1,22 @@
+2020-04-29  Alicia Boya García  <aboya@igalia.com>
+
+        PlatformMediaResourceLoader should be destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=211155
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        PlatformMediaResourceLoader is only safe to use from the main thread.
+        A tricky detail is this includes its destruction. The same is true for
+        PlatformMediaResource.
+
+        Both classes are ThreadSafeRefCounted<> classes and therefore
+        WTF::DestructionThread::Main can be used to ensure destruction is run
+        in the correct thread with no need for additional client code.
+
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (WebKitWebSrcPrivate::StreamingMembers::~StreamingMembers):
+
 2020-04-29  Rob Buis  <rbuis@igalia.com>
 
         Make PolicyChecker an inner class of FrameLoader

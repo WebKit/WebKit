@@ -102,16 +102,14 @@ struct WebKitWebSrcPrivate {
     GUniquePtr<gchar> httpMethod;
 
     struct StreamingMembers {
+#ifndef NDEBUG
         ~StreamingMembers()
         {
             // By the time we're destroying WebKitWebSrcPrivate unLock() should have been called and therefore resource
             // should have already been cleared.
             ASSERT(!resource);
-            // ResourceLoader is not thread-safe. It's not even ThreadSafeRefCounted. Therefore, to be safe, we want the
-            // unref to happen in the main thread.
-            if (loader)
-                RunLoop::main().dispatch([loader = WTFMove(loader)] { });
         }
+#endif
 
         // Properties initially empty, but set once the first HTTP response arrives:
         bool wasResponseReceived;
