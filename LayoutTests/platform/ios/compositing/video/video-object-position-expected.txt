@@ -21,7 +21,7 @@
           (contentsOpaque 1)
           (drawsContent 1)
           (contents clipping layer 2.00, 2.00 120.00 x 200.00)
-          (contents layer 20.00, 10.00 120.00 x 200.00)
+          (contents layer 22.00, 12.00 120.00 x 200.00)
         )
         (GraphicsLayer
           (position 289.00 13.00)
@@ -36,7 +36,7 @@
           (contentsOpaque 1)
           (drawsContent 1)
           (contents clipping layer 2.00, 2.00 120.00 x 200.00)
-          (contents layer -10.00, -10.00 120.00 x 200.00)
+          (contents layer -8.00, -8.00 120.00 x 200.00)
         )
         (GraphicsLayer
           (position 565.00 13.00)
@@ -58,7 +58,7 @@
           (contentsOpaque 1)
           (drawsContent 1)
           (contents clipping layer 2.00, 2.00 120.00 x 200.00)
-          (contents layer 20.00, 10.00 120.00 x 90.00)
+          (contents layer 22.00, 12.00 120.00 x 90.00)
         )
         (GraphicsLayer
           (position 289.00 232.00)
@@ -73,7 +73,7 @@
           (contentsOpaque 1)
           (drawsContent 1)
           (contents clipping layer 2.00, 2.00 120.00 x 200.00)
-          (contents layer -10.00, 100.00 120.00 x 90.00)
+          (contents layer -8.00, 102.00 120.00 x 90.00)
         )
         (GraphicsLayer
           (position 565.00 232.00)

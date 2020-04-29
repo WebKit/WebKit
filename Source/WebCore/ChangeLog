@@ -1,3 +1,30 @@
+2020-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify contents clipping layer geometry
+        https://bugs.webkit.org/show_bug.cgi?id=211162
+
+        Reviewed by Zalan Bujtas.
+
+        GraphicsLayerCA uses a contents clipping layer, with an optional shape layer, to support
+        clipping replaced elements with composited contents, like video and WebGL canvas.
+
+        A future patch will use this code path for composited subframes. To achieve this,
+        we need to host the layers of child GraphicsLayers under m_contentsClippingLayer, but
+        without the GraphicsLayer client having to do geometry math. We can do this by setting
+        the bounds origin of m_contentsClippingLayer to adjust for its position relative
+        to the GraphicsLayer origin.
+
+        This patch does that, adjusting the position of the contents layer accordingly.
+        The shape mask layer also needs adjusting; its position has to be at the layer's
+        bounds origin, and the shape itself needs to have a zero origin.
+
+        Tested by existing tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::updateClippingStrategy):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+
 2020-04-29  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION (r256784?): Shadertoy demo no longer works in Safari

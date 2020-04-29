@@ -1,3 +1,17 @@
+2020-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify contents clipping layer geometry
+        https://bugs.webkit.org/show_bug.cgi?id=211162
+
+        Reviewed by Zalan Bujtas.
+
+        New content layer positions.
+
+        * compositing/video/video-object-fit.html:
+        * compositing/video/video-object-position-expected.txt:
+        * platform/ios/compositing/video/video-object-position-expected.txt:
+        * platform/mac/compositing/video/video-object-fit-expected.txt:
+
 2020-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         editing/selection/ios/selection-handles-after-touch-end.html is failing on iOS 13.4 after r260367

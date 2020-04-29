@@ -1968,7 +1968,7 @@ void GraphicsLayerCA::updateNames()
 void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 {
     if (maxLayerDepthReached) {
-        m_layer->setSublayers(PlatformCALayerList());
+        m_layer->setSublayers({ });
         return;
     }
 
@@ -2658,9 +2658,18 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
         shapeMaskLayer->setAnchorPoint({ });
         shapeMaskLayer->setName("shape mask");
     }
+
+    // clippingLayer's boundsOrigin is roundedRect.rect().location(), and is non-zero to positioning descendant layers.
+    // The mask layer needs an equivalent position.
+    auto rectLocation = roundedRect.rect().location();
+    shapeMaskLayer->setPosition({ rectLocation.x(), rectLocation.y(), 0.0f });
+
+    auto shapeBounds = FloatRect { { }, roundedRect.rect().size() };
+    shapeMaskLayer->setBounds(shapeBounds);
     
-    shapeMaskLayer->setBounds(clippingLayer.bounds());
-    shapeMaskLayer->setShapeRoundedRect(roundedRect);
+    auto localRoundedRect = roundedRect;
+    localRoundedRect.setLocation({ });
+    shapeMaskLayer->setShapeRoundedRect(localRoundedRect);
 
     clippingLayer.setCornerRadius(0);
     clippingLayer.setMask(shapeMaskLayer.get());
@@ -2671,11 +2680,7 @@ void GraphicsLayerCA::updateContentsRects()
     if (!m_contentsLayer)
         return;
 
-    FloatPoint contentOrigin;
-    const FloatRect contentBounds(0, 0, m_contentsRect.width(), m_contentsRect.height());
-
-    FloatPoint clippingOrigin(m_contentsClippingRect.rect().location());
-    FloatRect clippingBounds({ }, m_contentsClippingRect.rect().size());
+    auto contentBounds = FloatRect { { }, m_contentsRect.size() };
     
     bool gainedOrLostClippingLayer = false;
     if (m_contentsClippingRect.isRounded() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
@@ -2690,20 +2695,15 @@ void GraphicsLayerCA::updateContentsRects()
             gainedOrLostClippingLayer = true;
         }
 
-        m_contentsClippingLayer->setPosition(clippingOrigin);
-        m_contentsClippingLayer->setBounds(clippingBounds);
+        m_contentsClippingLayer->setPosition(m_contentsClippingRect.rect().location());
+        m_contentsClippingLayer->setBounds(m_contentsClippingRect.rect());
         
-        auto clippingRectRelativeToClippingLayer = m_contentsClippingRect;
-        clippingRectRelativeToClippingLayer.setLocation({ });
-
-        updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, clippingRectRelativeToClippingLayer);
+        updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect);
 
         if (gainedOrLostClippingLayer) {
             m_contentsLayer->removeFromSuperlayer();
             m_contentsClippingLayer->appendSublayer(*m_contentsLayer);
         }
-    
-        contentOrigin = FloatPoint(m_contentsRect.location() - m_contentsClippingRect.rect().location());
     } else {
         if (m_contentsClippingLayer) {
             m_contentsLayer->removeFromSuperlayer();
@@ -2719,19 +2719,17 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsShapeMaskLayer->setOwner(nullptr);
             m_contentsShapeMaskLayer = nullptr;
         }
-
-        contentOrigin = m_contentsRect.location();
     }
     
     if (gainedOrLostClippingLayer)
         noteSublayersChanged(DontScheduleFlush);
 
-    m_contentsLayer->setPosition(contentOrigin);
+    m_contentsLayer->setPosition(m_contentsRect.location());
     m_contentsLayer->setBounds(contentBounds);
 
     if (m_layerClones) {
         for (auto& layer : m_layerClones->contentsLayerClones.values()) {
-            layer->setPosition(contentOrigin);
+            layer->setPosition(m_contentsRect.location());
             layer->setBounds(contentBounds);
         }
 
