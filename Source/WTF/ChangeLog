@@ -1,3 +1,15 @@
+2020-04-29  Noam Rosenthal  <noam@webkit.org>
+
+        Add StringView::isAllSpecialCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=211150
+
+        This enables checking for whitespace-only strings without allocating a StringImpl wrapper.
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringView.h:
+        (WTF::isSpecialCharacter const):
+
 2020-04-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Cocoa] stop using out arguments for document attributes when converting to attributed strings

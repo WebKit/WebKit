@@ -155,6 +155,8 @@ public:
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
 
+    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
+
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(const StringView&) const;
     WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringView&) const;
@@ -506,6 +508,13 @@ inline bool StringView::contains(UChar character) const
 inline bool StringView::contains(CodeUnitMatchFunction function) const
 {
     return find(function) != notFound;
+}
+
+template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCharacters() const
+{
+    if (is8Bit())
+        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length());
+    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
 }
 
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const

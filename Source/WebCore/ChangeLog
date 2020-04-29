@@ -1,3 +1,17 @@
+2020-04-29  Noam Rosenthal  <noam@webkit.org>
+
+        Add StringView::isAllSpecialCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=211150
+
+        Reviewed by Darin Adler.
+
+        Uses new StringView::isAllSpecialCharacters() instead of creating a StringImpl.
+
+        No new tests.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextOrEmphasisMarks):
+
 2020-04-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rendering update steps should use Seconds for the timestamps

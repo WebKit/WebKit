@@ -108,7 +108,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     ASSERT(startOffset < endOffset);
 
     if (m_context.detectingContentfulPaint()) {
-        if (!textRun.text().toStringWithoutCopying().isAllSpecialCharacters<isHTMLSpace>())
+        if (!textRun.text().isAllSpecialCharacters<isHTMLSpace>())
             m_context.setContentfulPaintDetected();
         return;
     }
