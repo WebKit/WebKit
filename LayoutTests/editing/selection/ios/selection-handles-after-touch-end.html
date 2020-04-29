@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <meta name=viewport content="width=device-width">
 <style>
     body, html {
@@ -17,59 +18,44 @@
 
 <body>
 <p id="target">WK</p>
-<pre id="output"></pre>
+<p id="description"></p>
+<p id="console"></p>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
-function appendOutput(s)
-{
-    const paragraph = document.createElement("div");
-    paragraph.textContent = s;
-    output.appendChild(paragraph);
-}
-
-function toString(rect)
-{
-    return `{ left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)} }`;
-}
-
-function checkDone() {
-    if (!window.doneCount)
-        doneCount = 0;
-    if (++doneCount == 3)
-        testRunner.notifyDone();
-}
-
-document.addEventListener("selectionchange", async () => {
-    if (!getSelection().rangeCount || getSelection().getRangeAt(0).collapsed)
-        return;
-
-    appendOutput("Selection rects before touchend:");
-    (await UIHelper.getUISelectionRects()).map(toString).map(appendOutput);
-    appendOutput(`Selection start handle before touchend: ${toString(await UIHelper.getSelectionStartGrabberViewRect())}`);
-    appendOutput(`Selection end handle before touchend: ${toString(await UIHelper.getSelectionEndGrabberViewRect())}`);
-    appendOutput("\n");
-    testRunner.runUIScript("uiController.liftUpAtPoint(100, 75, 1, () => uiController.uiScriptComplete(''));", checkDone);
-});
+jsTestIsAsync = true;
+observedTouchEnd = false;
 
 document.addEventListener("touchend", async () => {
-    appendOutput("Selection rects after touchend:");
-    (await UIHelper.getUISelectionRects()).map(toString).map(appendOutput);
-    appendOutput(`Selection start handle after touchend: ${toString(await UIHelper.getSelectionStartGrabberViewRect())}`);
-    appendOutput(`Selection end handle after touchend: ${toString(await UIHelper.getSelectionEndGrabberViewRect())}`);
-    checkDone();
+    selectionRects = await UIHelper.getUISelectionRects();
+    shouldBe("selectionRects.length", "1");
+    shouldBe("Math.round(selectionRects[0].left)", "0");
+    shouldBe("Math.round(selectionRects[0].top)", "3");
+    shouldBe("Math.round(selectionRects[0].width)", "250");
+    shouldBe("Math.round(selectionRects[0].height)", "167");
+
+    startGrabberRect = await UIHelper.getSelectionStartGrabberViewRect();
+    shouldBe("Math.round(startGrabberRect.left)", "0");
+    shouldBe("Math.round(startGrabberRect.top)", "3");
+    shouldBe("Math.round(startGrabberRect.width)", "2");
+    shouldBe("Math.round(startGrabberRect.height)", "167");
+
+    endGrabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    shouldBe("Math.round(endGrabberRect.left)", "249");
+    shouldBe("Math.round(endGrabberRect.top)", "3");
+    shouldBe("Math.round(endGrabberRect.width)", "2");
+    shouldBe("Math.round(endGrabberRect.height)", "167");
+
+    observedTouchEnd = true;
 });
 
-if (window.testRunner && testRunner.runUIScript)
-    testRunner.runUIScript("uiController.touchDownAtPoint(100, 75, 1, () => uiController.uiScriptComplete(''));", checkDone);
-else {
-    appendOutput(`This test verifies that selection handles are not present when selecting a word via long press,
-        before ending the long press. To manually test, long press the word "WK" until a selection highlight is shown,
-        and verify that there are no selection handles. Upon release, selection handles should appear.`);
-}
+description("This test verifies that selection handles are present after selecting a word via long press. To manually test, long press the word 'WK' until a selection highlight is shown, and verify that selection handles are present after ending the touch.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(target);
+    shouldBecomeEqual("observedTouchEnd", "true", finishJSTest);
+});
 </script>
 </body>
 </html>

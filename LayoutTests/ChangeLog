@@ -1,3 +1,31 @@
+2020-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/selection/ios/selection-handles-after-touch-end.html is failing on iOS 13.4 after r260367
+        https://bugs.webkit.org/show_bug.cgi?id=211185
+        <rdar://problem/62560030>
+
+        Reviewed by Tim Horton.
+
+        Clean up a test and test expectation after r260367. Before this change, the test was trying to verify
+        that selection handles didn't show up before ending a long press when selecting text. However, the test
+        expectation in platform/ios/editing/selection/ios/selection-handles-after-touch-end-expected.txt prior
+        to r260367, which overrode editing/selection/ios/selection-handles-after-touch-end-expected.txt, was
+        verifying that selection handles showed up after making the text selection, but before ending the touch.
+        r260367 removed this redundant test expectation in favor of a single test expectation file in
+        editing/selection/ios, but did not transfer over the expectation of non-empty grabber rects before
+        ending the touch. This is because the version of the iOS SDK I was testing against happened to _not_
+        show selection handles before ending the touch.
+
+        In a more recent version of that iOS SDK, selection handles are now shown again before ending the touch,
+        which matches behavior expected in iOS 13.4 once again. This means that the expectation across both
+        versions of iOS is, once again, to show selection handles before ending the touch. As such, fix this
+        failing test by refactoring it to only verify that selection handles are present after ending the touch.
+        We can also take this opportunity to rewrite parts of the test to use more modern idioms, like the
+        testing facilities in `js-test.js` and `ui-helper.js`.
+
+        * editing/selection/ios/selection-handles-after-touch-end-expected.txt:
+        * editing/selection/ios/selection-handles-after-touch-end.html:
+
 2020-04-29  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION (r256784?): Shadertoy demo no longer works in Safari

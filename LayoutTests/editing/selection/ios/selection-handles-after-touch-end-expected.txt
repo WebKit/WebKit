@@ -1,11 +1,25 @@
 WK
 
-Selection rects before touchend:
-{ left = 0, top = 3, width = 250, height = 167 }
-Selection start handle before touchend: { left = 0, top = 0, width = 0, height = 0 }
-Selection end handle before touchend: { left = 0, top = 0, width = 0, height = 0 }
+This test verifies that selection handles are present after selecting a word via long press. To manually test, long press the word 'WK' until a selection highlight is shown, and verify that selection handles are present after ending the touch.
 
-Selection rects after touchend:
-{ left = 0, top = 3, width = 250, height = 167 }
-Selection start handle after touchend: { left = 0, top = 3, width = 2, height = 167 }
-Selection end handle after touchend: { left = 249, top = 3, width = 2, height = 167 }
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 1
+PASS Math.round(selectionRects[0].left) is 0
+PASS Math.round(selectionRects[0].top) is 3
+PASS Math.round(selectionRects[0].width) is 250
+PASS Math.round(selectionRects[0].height) is 167
+PASS Math.round(startGrabberRect.left) is 0
+PASS Math.round(startGrabberRect.top) is 3
+PASS Math.round(startGrabberRect.width) is 2
+PASS Math.round(startGrabberRect.height) is 167
+PASS Math.round(endGrabberRect.left) is 249
+PASS Math.round(endGrabberRect.top) is 3
+PASS Math.round(endGrabberRect.width) is 2
+PASS Math.round(endGrabberRect.height) is 167
+PASS observedTouchEnd became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
