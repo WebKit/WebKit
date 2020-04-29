@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCConfig.h"
 
+#include <wtf/Lock.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/StdLibExtras.h>
 
@@ -53,6 +54,9 @@ void Config::enableRestrictedOptions()
     
 void Config::permanentlyFreeze()
 {
+    static Lock configLock;
+    auto locker = holdLock(configLock);
+
     RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
 
     if (!g_jscConfig.isPermanentlyFrozen)

@@ -1,3 +1,41 @@
+2020-04-29  Mark Lam  <mark.lam@apple.com>
+
+        Freezing of Gigacage and JSC Configs should be thread safe.
+        https://bugs.webkit.org/show_bug.cgi?id=211201
+        <rdar://problem/62597619>
+
+        Reviewed by Yusuke Suzuki.
+
+        If a client creates multiple VM instances in different threads concurrently, the
+        following race can occur:
+
+        Config::permanentlyFreeze() contains the following code:
+
+            if (!g_jscConfig.isPermanentlyFrozen)         // Point P1
+                g_jscConfig.isPermanentlyFrozen = true;   // Point P2
+
+        Let's say there are 2 threads T1 and T2.
+
+        1. T1 creates a VM and gets to point P1, and sees that g_jscConfig.isPermanentlyFrozen is not set.
+           T1 is about to execute P2 when it gets pre-empted.
+
+        2. T2 creates a VM and gets to point P1, and sees that g_jscConfig.isPermanentlyFrozen is not set.
+           T2 proceeds to point P2 and sets g_jscConfig.isPermanentlyFrozen to true.
+           T2 goes on to freeze the Config and makes it not writable.
+
+        3. T1 gets to run again, and proceeds to point P2.
+           T1 tries to set g_jscConfig.isPermanentlyFrozen to true.
+           But because the Config has been frozen against writes, the write to
+           g_jscConfig.isPermanentlyFrozen results in a crash.
+
+        This is a classic TOCTOU bug.  The fix is simply to ensure that only one thread
+        can enter Config::permanentlyFreeze() at a time.
+
+        Ditto for Gigacage::permanentlyFreezeGigacageConfig().
+
+        * runtime/JSCConfig.cpp:
+        (JSC::Config::permanentlyFreeze):
+
 2020-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSStringJoiner is missing BigInt handling
