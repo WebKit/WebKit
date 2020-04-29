@@ -1,3 +1,10 @@
+2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, cherry-pick scripts from r259811. rdar://62268126
+
+        * BuildSlaveSupport/trigger-crash-log-submission: Added.
+        * BuildSlaveSupport/wait-for-crash-collection: Added.
+
 2020-04-20  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/61950472
