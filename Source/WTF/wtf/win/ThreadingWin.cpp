@@ -267,6 +267,12 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
 struct Thread::ThreadHolder {
     ~ThreadHolder()
     {
+        // The thread_local object of the main thread is destructed
+        // after Windows terminates other threads. If the terminated
+        // thread was holding a mutex, trying to lock the mutex causes
+        // deadlock.
+        if (isMainThread())
+            return;
         if (thread) {
             thread->specificStorage().destroySlots();
             thread->didExit();

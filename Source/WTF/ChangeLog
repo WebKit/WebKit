@@ -1,3 +1,18 @@
+2020-04-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Deadlock in WTF::Thread::didExit() while WebKitNetworkProcess.exe is exiting
+        https://bugs.webkit.org/show_bug.cgi?id=210955
+
+        Reviewed by Don Olmstead.
+
+        The thread_local object of the main thread is destructed after
+        Windows terminates other threads. If the terminated thread was
+        holding a mutex, trying to lock the mutex causes deadlock.
+
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::ThreadHolder::~ThreadHolder): Do nothing if the
+        thread is the main thread.
+
 2020-04-29  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Adopt kMTSupportNotification_ShouldPlayHDRVideoChanged notification
