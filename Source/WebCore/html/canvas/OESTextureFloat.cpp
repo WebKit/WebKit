@@ -26,14 +26,18 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
 #include "OESTextureFloat.h"
+
+#include "ExtensionsGL.h"
 
 namespace WebCore {
 
 OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_OES_texture_float"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
 }
 
 OESTextureFloat::~OESTextureFloat() = default;
@@ -41,6 +45,11 @@ OESTextureFloat::~OESTextureFloat() = default;
 WebGLExtension::ExtensionName OESTextureFloat::getName() const
 {
     return OESTextureFloatName;
+}
+
+bool OESTextureFloat::supported(const WebGLRenderingContextBase& context)
+{
+    return context.graphicsContextGL()->getExtensions().supports("GL_OES_texture_float"_s);
 }
 
 } // namespace WebCore

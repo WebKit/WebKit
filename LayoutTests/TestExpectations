@@ -3317,6 +3317,10 @@ webkit.org/b/197673 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.0/deqp [ Skip ]
 
+# webkit.org/b/211156 clearBuffer entry points are not implemented
+webgl/2.0.0/conformance2/reading/format-r11f-g11f-b10f.html [ Skip ]
+webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match.html [ Skip ]
+
 # webkit.org/b/208078 To-be-addressed WebGL 2 tests that generate inconsistent results between devices
 webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Pass Failure ]

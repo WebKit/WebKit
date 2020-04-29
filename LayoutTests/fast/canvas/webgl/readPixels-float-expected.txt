@@ -3,5 +3,5 @@ Clear to black
 Create a floating point texture
 Create and bind framebuffer
 Clear framebuffer to red
-FAIL: Framebuffer is not floating-point red.
+PASS: Framebuffer is floating-point red.
 

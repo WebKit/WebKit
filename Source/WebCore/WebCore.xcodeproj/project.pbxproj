@@ -9374,6 +9374,15 @@
 		6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLUnknownElement.h; sourceTree = "<group>"; };
 		6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLContextAttributes.h; sourceTree = "<group>"; };
 		6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLContextAttributes.idl; sourceTree = "<group>"; };
+		6E5388D82458AE180076AE03 /* EXTColorBufferFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = EXTColorBufferFloat.idl; sourceTree = "<group>"; };
+		6E5388DA2458AE190076AE03 /* EXTColorBufferHalfFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EXTColorBufferHalfFloat.cpp; sourceTree = "<group>"; };
+		6E5388DB2458AE1A0076AE03 /* WebGLColorBufferFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLColorBufferFloat.h; sourceTree = "<group>"; };
+		6E5388DC2458AE1B0076AE03 /* EXTColorBufferFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EXTColorBufferFloat.h; sourceTree = "<group>"; };
+		6E5388DD2458AE1B0076AE03 /* EXTColorBufferFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EXTColorBufferFloat.cpp; sourceTree = "<group>"; };
+		6E5388DE2458AE1C0076AE03 /* EXTColorBufferHalfFloat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EXTColorBufferHalfFloat.h; sourceTree = "<group>"; };
+		6E5388DF2458AE1C0076AE03 /* EXTColorBufferHalfFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = EXTColorBufferHalfFloat.idl; sourceTree = "<group>"; };
+		6E5388E02458AE1D0076AE03 /* WebGLColorBufferFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLColorBufferFloat.cpp; sourceTree = "<group>"; };
+		6E5388E12458AE1D0076AE03 /* WebGLColorBufferFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLColorBufferFloat.idl; sourceTree = "<group>"; };
 		6E67D2A41280E8A4008758F7 /* ExtensionsGLOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionsGLOpenGL.cpp; sourceTree = "<group>"; };
 		6E67D2A51280E8A4008758F7 /* ExtensionsGLOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsGLOpenGL.h; sourceTree = "<group>"; };
 		6E67D2A81280E8BD008758F7 /* ExtensionsGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsGL.h; sourceTree = "<group>"; };
@@ -18833,6 +18842,12 @@
 				724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */,
 				724ED32A1A3A7E5400F5F13C /* EXTBlendMinMax.h */,
 				724ED32B1A3A7E5400F5F13C /* EXTBlendMinMax.idl */,
+				6E5388DD2458AE1B0076AE03 /* EXTColorBufferFloat.cpp */,
+				6E5388DC2458AE1B0076AE03 /* EXTColorBufferFloat.h */,
+				6E5388D82458AE180076AE03 /* EXTColorBufferFloat.idl */,
+				6E5388DA2458AE190076AE03 /* EXTColorBufferHalfFloat.cpp */,
+				6E5388DE2458AE1C0076AE03 /* EXTColorBufferHalfFloat.h */,
+				6E5388DF2458AE1C0076AE03 /* EXTColorBufferHalfFloat.idl */,
 				72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */,
 				72F1ADA01A3904C300014E18 /* EXTFragDepth.h */,
 				72F1ADA11A3904C300014E18 /* EXTFragDepth.idl */,
@@ -18895,6 +18910,9 @@
 				49C7B9A81042D32E0009D447 /* WebGLBuffer.cpp */,
 				49C7B9A91042D32E0009D447 /* WebGLBuffer.h */,
 				49C7B9AA1042D32E0009D447 /* WebGLBuffer.idl */,
+				6E5388E02458AE1D0076AE03 /* WebGLColorBufferFloat.cpp */,
+				6E5388DB2458AE1A0076AE03 /* WebGLColorBufferFloat.h */,
+				6E5388E12458AE1D0076AE03 /* WebGLColorBufferFloat.idl */,
 				D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */,
 				D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */,
 				D036DD8D208FFC0C00F9F4B2 /* WebGLCompressedTextureASTC.idl */,

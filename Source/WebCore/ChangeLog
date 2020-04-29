@@ -1,3 +1,83 @@
+2020-04-29  Kenneth Russell  <kbr@chromium.org>
+
+        REGRESSION (r256784?): Shadertoy demo no longer works in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=210994
+
+        Reviewed by Dean Jackson.
+
+        Certain Shadertoy examples stopped working with the ANGLE backend
+        for WebGL because rendering to floating-point render targets was
+        no longer being enabled implicitly along with the
+        OES_texture_float extension.
+
+        Add support for the WebGL 1.0 extensions
+        EXT_color_buffer_half_float and WEBGL_color_buffer_float, and the
+        WebGL 2.0 extension EXT_color_buffer_float. Enable these
+        implicitly for WebGL 1.0 in the OES_texture_float and
+        OES_texture_half_float extensions, restoring the previous
+        functionality.
+
+        Translate 32-bit floating point texture formats appropriately for
+        the ANGLE backend. Fix some failures in previously-skipped
+        conformance tests. The new code passes the more stringent
+        top-of-tree WebGL 1.0.4 and 2.0.1 conformance tests related to
+        floating-point texture renderability, which are not yet in the
+        WebKit repository.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/EXTColorBufferFloat.cpp: Copied from Source/WebCore/html/canvas/OESTextureHalfFloat.cpp.
+        (WebCore::EXTColorBufferFloat::EXTColorBufferFloat):
+        (WebCore::EXTColorBufferFloat::getName const):
+        (WebCore::EXTColorBufferFloat::supported):
+        * html/canvas/EXTColorBufferFloat.h: Copied from Source/WebCore/html/canvas/OESTextureFloat.h.
+        * html/canvas/EXTColorBufferFloat.idl: Added.
+        * html/canvas/EXTColorBufferHalfFloat.cpp: Copied from Source/WebCore/html/canvas/OESTextureFloat.cpp.
+        (WebCore::EXTColorBufferHalfFloat::EXTColorBufferHalfFloat):
+        (WebCore::EXTColorBufferHalfFloat::getName const):
+        (WebCore::EXTColorBufferHalfFloat::supported):
+        * html/canvas/EXTColorBufferHalfFloat.h: Copied from Source/WebCore/html/canvas/OESTextureFloat.h.
+        * html/canvas/EXTColorBufferHalfFloat.idl: Added.
+        * html/canvas/OESTextureFloat.cpp:
+        (WebCore::OESTextureFloat::OESTextureFloat):
+        (WebCore::OESTextureFloat::supported):
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureHalfFloat.cpp:
+        (WebCore::OESTextureHalfFloat::OESTextureHalfFloat):
+        (WebCore::OESTextureHalfFloat::supported):
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLColorBufferFloat.cpp: Copied from Source/WebCore/html/canvas/OESTextureFloat.cpp.
+        (WebCore::WebGLColorBufferFloat::WebGLColorBufferFloat):
+        (WebCore::WebGLColorBufferFloat::getName const):
+        (WebCore::WebGLColorBufferFloat::supported):
+        * html/canvas/WebGLColorBufferFloat.h: Copied from Source/WebCore/html/canvas/OESTextureFloat.h.
+        * html/canvas/WebGLColorBufferFloat.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::extensionIsEnabled):
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        (WebCore::ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat):
+        (WebCore::ExtensionsGLANGLE::texImage2DRobustANGLE):
+        * platform/graphics/angle/ExtensionsGLANGLE.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::texImage2DDirect):
+
 2020-04-29  Zalan Bujtas  <zalan@apple.com>
 
         Header is blank on https://nader.org

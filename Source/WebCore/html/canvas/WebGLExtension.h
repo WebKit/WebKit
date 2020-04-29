@@ -60,6 +60,9 @@ public:
         WebGLCompressedTexturePVRTCName,
         WebGLCompressedTextureASTCName,
         ANGLEInstancedArraysName,
+        EXTColorBufferHalfFloatName,
+        WebGLColorBufferFloatName,
+        EXTColorBufferFloatName,
     };
 
     void ref() { m_context.ref(); }

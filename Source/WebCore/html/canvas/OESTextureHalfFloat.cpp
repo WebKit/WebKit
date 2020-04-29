@@ -34,6 +34,9 @@ namespace WebCore {
 OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_OES_texture_half_float"_s);
+    // Renderability is implicit when this extension is enabled.
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_color_buffer_half_float"_s);
 }
 
 OESTextureHalfFloat::~OESTextureHalfFloat() = default;
@@ -41,6 +44,11 @@ OESTextureHalfFloat::~OESTextureHalfFloat() = default;
 WebGLExtension::ExtensionName OESTextureHalfFloat::getName() const
 {
     return OESTextureHalfFloatName;
+}
+
+bool OESTextureHalfFloat::supported(const WebGLRenderingContextBase& context)
+{
+    return context.graphicsContextGL()->getExtensions().supports("GL_OES_texture_half_float"_s);
 }
 
 } // namespace WebCore

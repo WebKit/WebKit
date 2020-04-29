@@ -246,6 +246,21 @@ String ExtensionsGLANGLE::getExtensions()
     return String(reinterpret_cast<const char*>(gl::GetString(GL_EXTENSIONS)));
 }
 
+GCGLenum ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type)
+{
+    // The implementation of WEBGL_color_buffer_float for WebGL 1.0 / ES 2.0 requires a sized
+    // internal format. Adjust it if necessary at this lowest level. Note that it does not matter at
+    // this point whether the WEBGL_color_buffer_float extension has actually been enabled at higher
+    // levels; the enum will be valid or invalid either way.
+    if (type == GL_FLOAT) {
+        if (format == GL_RGBA && internalformat == GL_RGBA)
+            return GL_RGBA32F;
+        if (format == GL_RGB && internalformat == GL_RGB)
+            return GL_RGB32F;
+    }
+    return internalformat;
+}
+
 // GL_ANGLE_robust_client_memory
 void ExtensionsGLANGLE::getBooleanvRobustANGLE(GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLboolean *data)
 {
@@ -329,6 +344,8 @@ void ExtensionsGLANGLE::readPixelsRobustANGLE(int x, int y, GCGLsizei width, GCG
 
 void ExtensionsGLANGLE::texImage2DRobustANGLE(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLenum format, GCGLenum type, GCGLsizei bufSize, const void *pixels)
 {
+    if (!m_context->m_isForWebGL2)
+        internalformat = adjustWebGL1TextureInternalFormat(internalformat, format, type);
     gl::TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, bufSize, pixels);
 }
 

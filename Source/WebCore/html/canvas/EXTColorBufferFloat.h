@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Motorola Mobility LLC. All rights reserved.
+ * Copyright (C) 2020 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-class OESTextureHalfFloat final : public WebGLExtension {
+class EXTColorBufferFloat final : public WebGLExtension {
 public:
-    OESTextureHalfFloat(WebGLRenderingContextBase&);
-    virtual ~OESTextureHalfFloat();
+    explicit EXTColorBufferFloat(WebGLRenderingContextBase&);
+    virtual ~EXTColorBufferFloat();
 
     ExtensionName getName() const override;
 

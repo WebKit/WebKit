@@ -55,6 +55,8 @@ namespace WebCore {
 
 class ANGLEInstancedArrays;
 class EXTBlendMinMax;
+class EXTColorBufferFloat;
+class EXTColorBufferHalfFloat;
 class EXTTextureFilterAnisotropic;
 class EXTShaderTextureLOD;
 class EXTsRGB;
@@ -73,14 +75,15 @@ class OESElementIndexUint;
 class OffscreenCanvas;
 #endif
 class WebGLActiveInfo;
-class WebGLContextGroup;
-class WebGLContextObject;
+class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
 class WebGLCompressedTextureATC;
 class WebGLCompressedTextureETC;
 class WebGLCompressedTextureETC1;
 class WebGLCompressedTexturePVRTC;
 class WebGLCompressedTextureS3TC;
+class WebGLContextGroup;
+class WebGLContextObject;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLDepthTexture;
@@ -623,6 +626,9 @@ protected:
     std::unique_ptr<WebGLDepthTexture> m_webglDepthTexture;
     std::unique_ptr<WebGLDrawBuffers> m_webglDrawBuffers;
     std::unique_ptr<ANGLEInstancedArrays> m_angleInstancedArrays;
+    std::unique_ptr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    std::unique_ptr<WebGLColorBufferFloat> m_webglColorBufferFloat;
+    std::unique_ptr<EXTColorBufferFloat> m_extColorBufferFloat;
 
     // Helpers for getParameter and other similar functions.
     bool getBooleanParameter(GCGLenum);

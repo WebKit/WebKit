@@ -510,6 +510,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendMinMax.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendMinMax.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferFloat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferFloat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferHalfFloat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferHalfFloat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTShaderTextureLOD.cpp
@@ -1938,6 +1942,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureATC.cpp

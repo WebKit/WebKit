@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Motorola Mobility LLC. All rights reserved.
+ * Copyright (C) 2020 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
-#include "WebGLExtension.h"
+#if ENABLE(WEBGL)
+#include "WebGLColorBufferFloat.h"
+
+#include "ExtensionsGL.h"
 
 namespace WebCore {
 
-class OESTextureHalfFloat final : public WebGLExtension {
-public:
-    OESTextureHalfFloat(WebGLRenderingContextBase&);
-    virtual ~OESTextureHalfFloat();
+WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
+    : WebGLExtension(context)
+{
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
+    // Optimistically enable RGB floating-point render targets also, if possible.
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
+    // https://github.com/KhronosGroup/WebGL/pull/2830
+    // Spec requires EXT_float_blend to be turned on implicitly here.
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_float_blend"_s);
+}
 
-    ExtensionName getName() const override;
+WebGLColorBufferFloat::~WebGLColorBufferFloat() = default;
 
-    static bool supported(const WebGLRenderingContextBase&);
-};
+WebGLExtension::ExtensionName WebGLColorBufferFloat::getName() const
+{
+    return WebGLColorBufferFloatName;
+}
+
+bool WebGLColorBufferFloat::supported(const WebGLRenderingContextBase& context)
+{
+    return context.graphicsContextGL()->getExtensions().supports("GL_OES_texture_float"_s)
+        && context.graphicsContextGL()->getExtensions().supports("GL_CHROMIUM_color_buffer_float_rgba"_s);
+}
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBGL)
