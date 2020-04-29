@@ -1,3 +1,13 @@
+2020-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Skip fast/text/text-indent-inside-float.html
+
+        Unreviewed test gardening.
+
+        Apparently float sizing/ahem font produces a different result on iOS.
+
+        * platform/ios/TestExpectations:
+
 2020-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify contents clipping layer geometry

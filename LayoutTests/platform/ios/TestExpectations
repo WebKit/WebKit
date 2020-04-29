@@ -2874,6 +2874,7 @@ webgl/1.0.3/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
 fast/attachment/attachment-folder-icon.html [ ImageOnlyFailure ]
 
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
+fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
 
 # <rdar://problem/28835343> REGRESSION: LayoutTest http/tests/multipart/load-last-non-html-frame.php failing
 http/tests/multipart/load-last-non-html-frame.php [ Failure  ]
