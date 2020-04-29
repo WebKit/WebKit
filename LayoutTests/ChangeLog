@@ -1,5 +1,16 @@
 2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
+        REGRESSION: [ Mac wk1 ] fast/canvas/webgl/canvas-webgl-page-cache.html is flaky crashing in rx::GetFunctionsGL
+        https://bugs.webkit.org/show_bug.cgi?id=208345
+
+        Unreviewed test gardening.
+
+        Remove flaky expectation since the test has been consistently passing for the past few weeks.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
         storage/indexeddb/value-cursor-cycle.html is flaky failing because it incorrectly thinks our JS GC is precise.
         https://bugs.webkit.org/show_bug.cgi?id=210046
 

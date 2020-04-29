@@ -920,8 +920,6 @@ webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
 
-webkit.org/b/208345 fast/canvas/webgl/canvas-webgl-page-cache.html [ Pass Crash ]
-
 webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html [ Pass Failure ]
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]
