@@ -214,7 +214,19 @@ sub buildMyProject
         }
         $compilerFlags .= '"';
 
-        my $command = "make " . (lc configuration()) . " " . $compilerFlags . " " . join(" ", @ARGV);
+        my $extraCommands = "";
+        foreach (@ARGV) {
+            # Ensure that if somebody passes in a flag like `ARCHS="i386 x86_64"` we
+            # maintain the quotes around "i386 x86_64".
+            my $arg = $_;
+            if ($arg =~ m/=/) {
+                $arg =~ s/=/="/;
+                $arg = $arg . "\"";
+            }
+            $extraCommands .= " " . $arg;
+        }
+
+        my $command = "make " . (lc configuration()) . " " . $compilerFlags . " " . $extraCommands;
 
         print "\n";
         print "building ", $projectName, "\n";

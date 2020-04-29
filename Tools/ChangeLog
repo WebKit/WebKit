@@ -1,3 +1,23 @@
+2020-04-29  Saam Barati  <sbarati@apple.com>
+
+        build-jsc should quote the value of compile flags it forwards
+        https://bugs.webkit.org/show_bug.cgi?id=211204
+
+        Reviewed by Mark Lam.
+
+        We should quote outgoing compile flags that have an equal in them. Before,
+        if build-jsc were invoked like:
+        $ build-jsc --release ARCHS="x86_64 i386"
+        It'd invoke make like:
+        $ make release ARCHS=x86_64 i386
+        leading us to try to build the "i386" target, which doesn't exist.
+        
+        This patch makes us invoke make like so:
+        $ make release ARCHS="x86_64 i386"
+
+        * Scripts/build-jsc:
+        (buildMyProject):
+
 2020-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate API shouldAllowDeprecatedTLS
