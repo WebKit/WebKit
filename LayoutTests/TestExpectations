@@ -3837,4 +3837,6 @@ webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
 
+webkit.org/b/202109 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html [ Pass Failure ]
+
 webkit.org/b/197673 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure Timeout ]
