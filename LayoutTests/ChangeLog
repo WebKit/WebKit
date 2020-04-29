@@ -1,5 +1,60 @@
 2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r259880. rdar://problem/62271251
+
+    Fix failing legacy CSP tests by converting them to modern tests instead.
+    https://bugs.webkit.org/show_bug.cgi?id=210310
+    
+    Reviewed by Daniel Bates.
+    
+    Convert these tests from verifying the (now removed) X-WebKit-CSP
+    header to the modern Content-Security-Policy header.  Since we
+    don't have equivalent tests for the modern CSP header and it's not
+    very useful to have tons of tests for a feature we no longer
+    support.
+    
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259880 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-10  Keith Miller  <keith_miller@apple.com>
+
+            Fix failing legacy CSP tests by converting them to modern tests instead.
+            https://bugs.webkit.org/show_bug.cgi?id=210310
+
+            Reviewed by Daniel Bates.
+
+            Convert these tests from verifying the (now removed) X-WebKit-CSP
+            header to the modern Content-Security-Policy header.  Since we
+            don't have equivalent tests for the modern CSP header and it's not
+            very useful to have tons of tests for a feature we no longer
+            support.
+
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+
+2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, land test expectations for rdar://62268126
 
         * TestExpectations:

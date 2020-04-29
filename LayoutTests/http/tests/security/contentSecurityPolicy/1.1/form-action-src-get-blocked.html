@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-WebKit-CSP" content="form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="form-action 'none'">
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -25,8 +25,6 @@
 
     <p>
     Tests that blocking form actions works correctly. If this test passes, you will see a console error, and will not see a page indicating a form was POSTed.
-
-    Update: Since we no longer support X-WebKit-CSP the form should be submitted.
     </p>
 </body>
 </html>
