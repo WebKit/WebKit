@@ -140,16 +140,11 @@ static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsInteger(JSGlobalObjec
 static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(JSGlobalObject*, CallFrame* callFrame)
 {
     JSValue argument = callFrame->argument(0);
-    bool isInteger;
     if (argument.isInt32())
-        isInteger = true;
-    else if (!argument.isDouble())
-        isInteger = false;
-    else {
-        double number = argument.asDouble();
-        isInteger = trunc(number) == number && std::abs(number) <= maxSafeInteger();
-    }
-    return JSValue::encode(jsBoolean(isInteger));
+        return JSValue::encode(jsBoolean(true));
+    if (!argument.isDouble())
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsBoolean(isSafeInteger(argument.asDouble())));
 }
 
 } // namespace JSC

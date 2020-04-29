@@ -31,6 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "MathCommon.h"
 #include <wtf/CagedUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -72,6 +73,7 @@ public:
     static JSBigInt* createFrom(VM&, uint32_t value);
     static JSBigInt* createFrom(VM&, int64_t value);
     static JSBigInt* createFrom(VM&, bool value);
+    static JSBigInt* createFrom(VM&, double value);
 
     static size_t offsetOfLength()
     {
@@ -93,9 +95,15 @@ public:
         if (value <= INT_MAX && value >= INT_MIN)
             return jsBigInt32(static_cast<int32_t>(value));
 #endif
+        return JSBigInt::createFrom(vm, value);
+    }
 
-        auto ptr = JSBigInt::createFrom(vm, value);
-        return JSValue(static_cast<JSCell*>(ptr));
+    static JSValue makeHeapBigIntOrBigInt32(VM& vm, double value)
+    {
+        ASSERT(isInteger(value));
+        if (std::abs(value) <= maxSafeInteger())
+            return makeHeapBigIntOrBigInt32(vm, static_cast<int64_t>(value));
+        return JSBigInt::createFrom(vm, value);
     }
 
     enum class ErrorParseMode {
@@ -417,7 +425,10 @@ private:
     static constexpr Digit halfDigitMask = (1ull << halfDigitBits) - 1;
     static constexpr int maxInt = 0x7FFFFFFF;
 
-    static constexpr unsigned doublePhysicalMantissaSize = 52;
+    static constexpr unsigned doubleMantissaSize = 53;
+    static constexpr unsigned doublePhysicalMantissaSize = 52; // Excluding hidden-bit.
+    static constexpr uint64_t doublePhysicalMantissaMask = (1ULL << doublePhysicalMantissaSize) - 1;
+    static constexpr uint64_t doubleMantissaHiddenBit = 1ULL << doublePhysicalMantissaSize;
     
     // The maximum length that the current implementation supports would be
     // maxInt / digitBits. However, we use a lower limit for now, because

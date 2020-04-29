@@ -158,6 +158,3 @@ skip:
     # requires ICU 65 (https://unicode-org.atlassian.net/browse/ICU-20654)
     - test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js
     - test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-auto.js
-
-    # Spec is changed. https://github.com/tc39/proposal-bigint/pull/138
-    - test/built-ins/BigInt/constructor-integer.js

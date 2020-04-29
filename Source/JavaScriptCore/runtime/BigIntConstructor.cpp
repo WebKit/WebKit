@@ -122,13 +122,10 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
     }
 
     if (primitive.isDouble()) {
-        // FIXME: Accept larger integers than safe-integers.
-        // https://bugs.webkit.org/show_bug.cgi?id=210755
         double number = primitive.asDouble();
-        if (trunc(number) != number || std::abs(number) > maxSafeInteger())
-            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not a safe integer"_s));
-
-        return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(vm, static_cast<int64_t>(primitive.asDouble())));
+        if (!isInteger(number))
+            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not an integer"_s));
+        return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(vm, primitive.asDouble()));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(toBigInt(globalObject, primitive)));

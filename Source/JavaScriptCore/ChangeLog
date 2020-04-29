@@ -1,3 +1,26 @@
+2020-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt constructor should accept larger integers than safe-integers
+        https://bugs.webkit.org/show_bug.cgi?id=210755
+
+        Reviewed by Darin Adler.
+
+        While our implementation of BigInt constructor only accepts safe integers, it should accept all integers.
+        This patch implements it by creating JSBigInt::createFrom(double). We port double bit processing part from
+        V8 as the same to the other part of JSBigInt.
+
+        * runtime/BigIntConstructor.cpp:
+        (JSC::callBigIntConstructor):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createFrom):
+        * runtime/JSBigInt.h:
+        * runtime/MathCommon.h:
+        (JSC::isInteger):
+        (JSC::isSafeInteger):
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorFuncIsSafeInteger):
+        * runtime/NumberConstructor.h:
+
 2020-04-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Align upon the name isCallable instead of isFunction

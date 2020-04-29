@@ -185,6 +185,76 @@ JSBigInt* JSBigInt::createFrom(VM& vm, bool value)
     return bigInt;
 }
 
+JSBigInt* JSBigInt::createFrom(VM& vm, double value)
+{
+    ASSERT(isInteger(value));
+    if (!value)
+        return createZero(vm);
+
+    bool sign = value < 0; // -0 was already handled above.
+    uint64_t doubleBits = bitwise_cast<uint64_t>(value);
+    int32_t rawExponent = static_cast<int32_t>(doubleBits >> doublePhysicalMantissaSize) & 0x7ff;
+    ASSERT(rawExponent != 0x7ff); // Since value is integer, exponent should not be 0x7ff (full bits, used for infinity etc.).
+    ASSERT(rawExponent >= 0x3ff); // Since value is integer, exponent should be >= 0 + bias (0x3ff).
+    int32_t exponent = rawExponent - 0x3ff;
+    int32_t digits = exponent / digitBits + 1;
+    JSBigInt* result = createWithLengthUnchecked(vm, digits);
+    ASSERT(result);
+    result->initialize(InitializationType::WithZero);
+    result->setSign(sign);
+
+    // We construct a BigInt from the double value by shifting its mantissa
+    // according to its exponent and mapping the bit pattern onto digits.
+    //
+    //               <----------- bitlength = exponent + 1 ----------->
+    //                <----- 52 ------> <------ trailing zeroes ------>
+    // mantissa:     1yyyyyyyyyyyyyyyyy 0000000000000000000000000000000
+    // digits:    0001xxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+    //                <-->          <------>
+    //           msdTopBit         digitBits
+    //
+
+    uint64_t mantissa = (doubleBits & doublePhysicalMantissaMask) | doubleMantissaHiddenBit;
+
+    int32_t mantissaTopBit = doubleMantissaSize - 1; // 0-indexed.
+    // 0-indexed position of most significant bit in the most significant digit.
+    int32_t msdTopBit = exponent % digitBits;
+    // Number of unused bits in mantissa. We'll keep them shifted to the
+    // left (i.e. most significant part) of the underlying uint64_t.
+    int32_t remainingMantissaBits = 0;
+    // Next digit under construction.
+    Digit digit = 0;
+
+    // First, build the MSD by shifting the mantissa appropriately.
+    if (msdTopBit < mantissaTopBit) {
+        remainingMantissaBits = mantissaTopBit - msdTopBit;
+        digit = mantissa >> remainingMantissaBits;
+        mantissa = mantissa << (64 - remainingMantissaBits);
+    } else {
+        ASSERT(msdTopBit >= mantissaTopBit);
+        digit = mantissa << (msdTopBit - mantissaTopBit);
+        mantissa = 0;
+    }
+    result->setDigit(digits - 1, digit);
+    // Then fill in the rest of the digits.
+    for (int32_t digitIndex = digits - 2; digitIndex >= 0; digitIndex--) {
+        if (remainingMantissaBits > 0) {
+            remainingMantissaBits -= digitBits;
+            if constexpr (sizeof(Digit) == 4) {
+                digit = mantissa >> 32;
+                mantissa = mantissa << 32;
+            } else {
+                ASSERT(sizeof(Digit) == 8);
+                digit = mantissa;
+                mantissa = 0;
+            }
+        } else
+            digit = 0;
+        result->setDigit(digitIndex, digit);
+    }
+    return result->rightTrim(vm);
+}
+
 JSValue JSBigInt::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 {
     return const_cast<JSBigInt*>(this);
