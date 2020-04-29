@@ -1,3 +1,21 @@
+2020-04-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] update-webkitgtk-libs: TypeError: cannot use a string pattern on a bytes-like object
+        https://bugs.webkit.org/show_bug.cgi?id=211144
+
+        Reviewed by Michael Catanzaro.
+
+        Unconditionally decode the output from the 'id' command to make it
+        work with python3.
+
+        Also check if the doc directory exists before passing it to bwrap.
+        Should avoid errors like these:
+
+        bwrap: Can't find source path /run/user/1000/doc: No such file or directory
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-04-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Create a mechanism to add missing ITP Database tables when the schema is updated

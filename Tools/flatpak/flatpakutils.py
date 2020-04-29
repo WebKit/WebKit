@@ -661,8 +661,12 @@ class WebkitFlatpak:
 
             try:
                 with open(os.devnull, 'w') as devnull:
-                    uid = subprocess.check_output(("id", "-u"), stderr=devnull).strip()
-                    flatpak_command.append("--bind-mount=/run/user/{uid}/doc=/run/user/{uid}/doc".format(uid=uid))
+                    uid = subprocess.check_output(("id", "-u"), stderr=devnull).strip().decode()
+                    uid_doc_path = '/run/user/{uid}/doc'.format(uid=uid)
+                    if os.path.exists(uid_doc_path):
+                        flatpak_command.append("--bind-mount={uid_doc_path}={uid_doc_path}".format(uid_doc_path=uid_doc_path))
+                    else:
+                        _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
             except subprocess.CalledProcessError:
                 pass
 
