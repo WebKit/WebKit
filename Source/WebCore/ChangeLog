@@ -1,5 +1,20 @@
 2020-04-29  Zalan Bujtas  <zalan@apple.com>
 
+        Header is blank on https://nader.org
+        https://bugs.webkit.org/show_bug.cgi?id=205747
+        <rdar://problem/58305910>
+
+        Reviewed by Simon Fraser.
+
+        Do not use stale containing block width value while computing preferred width.
+
+        Test: fast/text/text-indent-inside-float.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+
+2020-04-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Take row span into account when checking for missing cells
         https://bugs.webkit.org/show_bug.cgi?id=211184
 

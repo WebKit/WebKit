@@ -4218,9 +4218,6 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     float inlineMin = 0;
 
     const RenderStyle& styleToUse = style();
-    RenderBlock* containingBlock = this->containingBlock();
-    LayoutUnit cw = containingBlock ? containingBlock->contentLogicalWidth() : 0_lu;
-
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
     bool stripFrontSpaces = true;
@@ -4240,7 +4237,14 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     // Signals the text indent was more negative than the min preferred width
     bool hasRemainingNegativeTextIndent = false;
 
-    LayoutUnit textIndent = minimumValueForLength(styleToUse.textIndent(), cw);
+    auto textIndent = LayoutUnit { };
+    if (styleToUse.textIndent().isFixed())
+        textIndent = LayoutUnit { styleToUse.textIndent().value() };
+    else if (auto* containingBlock = this->containingBlock(); containingBlock && containingBlock->style().logicalWidth().isFixed()) {
+        // At this point of the shrink-to-fit computatation, we don't have a used value for the containing block width
+        // (that's exactly to what we try to contribute here) unless the computed value is fixed.
+        textIndent = minimumValueForLength(styleToUse.textIndent(), containingBlock->style().logicalWidth().value());
+    }
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;
