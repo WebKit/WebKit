@@ -3526,6 +3526,8 @@ webkit.org/b/209692 fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFail
 
 webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
 
+webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
+
 # These media controls tests are not relevant on macOS and iOS.
 media/media-document-audio-repaint.html [ Skip ]
 media/controls-styling.html [ Skip ]
