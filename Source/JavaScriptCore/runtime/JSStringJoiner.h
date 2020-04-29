@@ -116,6 +116,8 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
 
     if (value.isCell()) {
         JSString* jsString;
+        // FIXME: Support JSBigInt in side-effect-free append.
+        // https://bugs.webkit.org/show_bug.cgi?id=211173
         if (!value.asCell()->isString())
             return false;
         jsString = asString(value);
@@ -139,6 +141,14 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
         append8Bit(globalObject->vm().propertyNames->falseKeyword.string());
         return true;
     }
+
+#if USE(BIGINT32)
+    if (value.isBigInt32()) {
+        appendNumber(globalObject->vm(), value.bigInt32AsInt32());
+        return true;
+    }
+#endif
+
     ASSERT(value.isUndefinedOrNull());
     appendEmptyString();
     return true;

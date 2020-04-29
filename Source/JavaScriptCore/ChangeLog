@@ -1,3 +1,16 @@
+2020-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSStringJoiner is missing BigInt handling
+        https://bugs.webkit.org/show_bug.cgi?id=211174
+
+        Reviewed by Mark Lam.
+
+        JSStringJoiner missed handling of BigInt (specifically BigInt32) and appending empty string incorrectly.
+        In debug build, assertion hits. We should support BigInt in JSStringJoiner.
+
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::appendWithoutSideEffects):
+
 2020-04-29  Saam Barati  <sbarati@apple.com>
 
         U_STRING_NOT_TERMINATED_WARNING ICU must be handled when using the output buffer as a C string

@@ -1,3 +1,13 @@
+2020-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSStringJoiner is missing BigInt handling
+        https://bugs.webkit.org/show_bug.cgi?id=211174
+
+        Reviewed by Mark Lam.
+
+        * stress/bigint-to-string-in-array.js: Added.
+        (shouldBe):
+
 2020-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BigInt constructor should accept larger integers than safe-integers
