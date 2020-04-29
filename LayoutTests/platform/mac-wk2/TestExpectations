@@ -1023,8 +1023,6 @@ webkit.org/b/209281 imported/w3c/web-platform-tests/fetch/stale-while-revalidate
 
 webkit.org/b/209283 tiled-drawing/scrolling/scroll-iframe-latched-selects.html [ Pass Failure ]
 
-webkit.org/b/209295 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html  [ Pass Failure ]
-
 webkit.org/b/209503 [ Debug ] http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html [ Pass Crash ]
 
 webkit.org/b/209564 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
