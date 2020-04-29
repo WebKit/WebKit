@@ -1453,6 +1453,8 @@ webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mappin
 # Failing in test bots. Started failing since r260615.
 webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
 
+webkit.org/b/211167 editing/inserting/insert-list-then-edit-command-crash.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2974,6 +2976,8 @@ webkit.org/b/210537 imported/w3c/web-platform-tests/css/css-position/z-index-ble
 webkit.org/b/210538 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
+
+webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
