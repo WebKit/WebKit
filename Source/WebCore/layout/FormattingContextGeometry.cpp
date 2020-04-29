@@ -1098,17 +1098,19 @@ FormattingContext::IntrinsicWidthConstraints FormattingContext::Geometry::constr
     return intrinsicWidth;
 }
 
-FormattingContext::ConstraintsForOutOfFlowContent FormattingContext::Geometry::constraintsForOutOfFlowContent(const Display::Box& containingBlockGeometry)
+FormattingContext::ConstraintsForOutOfFlowContent FormattingContext::Geometry::constraintsForOutOfFlowContent(const ContainerBox& containerBox)
 {
+    auto& boxGeometry = formattingContext().geometryForBox(containerBox);
     return {
-        { containingBlockGeometry.paddingBoxLeft(), containingBlockGeometry.paddingBoxWidth() },
-        { containingBlockGeometry.paddingBoxTop(), containingBlockGeometry.paddingBoxHeight() },
-        containingBlockGeometry.contentBoxWidth() };
+        { boxGeometry.paddingBoxLeft(), boxGeometry.paddingBoxWidth() },
+        { boxGeometry.paddingBoxTop(), boxGeometry.paddingBoxHeight() },
+        boxGeometry.contentBoxWidth() };
 }
 
-FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const Display::Box& containingBlockGeometry)
+FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<EscapeReason> escapeReason)
 {
-    return { { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxWidth() }, { containingBlockGeometry.contentBoxTop(), { } } };
+    auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
+    return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), { } } };
 }
 
 }

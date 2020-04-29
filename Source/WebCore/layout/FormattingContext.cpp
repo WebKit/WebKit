@@ -141,7 +141,7 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
 
     auto constraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
         auto& containingBlock = outOfFlowBox.containingBlock();
-        return &containingBlock == &root() ? constraints : Geometry::constraintsForOutOfFlowContent(geometryForBox(containingBlock));
+        return &containingBlock == &root() ? constraints : geometry().constraintsForOutOfFlowContent(containingBlock);
     };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
@@ -154,19 +154,14 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
         computeBorderAndPadding(*outOfFlowBox, horizontalConstraintsForBorderAndPadding);
 
         computeOutOfFlowHorizontalGeometry(*outOfFlowBox, containingBlockConstraints);
-        if (is<ContainerBox>(*outOfFlowBox)) {
+        auto outOfFlowBoxHasContent = is<ContainerBox>(*outOfFlowBox) && downcast<ContainerBox>(*outOfFlowBox).hasChild();
+        if (outOfFlowBoxHasContent) {
             auto& containerBox = downcast<ContainerBox>(*outOfFlowBox);
-            auto& containerDisplayBox = geometryForBox(containerBox);
-
-            if (containerBox.hasInFlowOrFloatingChild()) {
-                auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                formattingContext->layoutInFlowContent(invalidationState, Geometry::constraintsForInFlowContent(containerDisplayBox));
-            }
+            auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
+            if (containerBox.hasInFlowOrFloatingChild())
+                formattingContext->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(containerBox));
             computeOutOfFlowVerticalGeometry(containerBox, containingBlockConstraints);
-            if (containerBox.hasChild()) {
-                auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                formattingContext->layoutOutOfFlowContent(invalidationState, Geometry::constraintsForOutOfFlowContent(containerDisplayBox));
-            }
+            formattingContext->layoutOutOfFlowContent(invalidationState, geometry().constraintsForOutOfFlowContent(containerBox));
         } else
             computeOutOfFlowVerticalGeometry(*outOfFlowBox, containingBlockConstraints);
     }

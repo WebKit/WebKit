@@ -92,20 +92,18 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
             // Inline-blocks, inline-tables and replaced elements (img, video) can be sized but not yet positioned.
             if (is<ContainerBox>(layoutBox) && layoutBox->establishesFormattingContext()) {
                 ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox() || layoutBox->isFloatingPositioned());
-                auto& containerBox = downcast<ContainerBox>(*layoutBox);
-                computeBorderAndPadding(containerBox, constraints.horizontal);
-                computeWidthAndMargin(containerBox, constraints.horizontal);
+                auto& formattingRoot = downcast<ContainerBox>(*layoutBox);
+                computeBorderAndPadding(formattingRoot, constraints.horizontal);
+                computeWidthAndMargin(formattingRoot, constraints.horizontal);
 
-                auto& formattingRootDisplayBox = geometryForBox(containerBox);
-                if (containerBox.hasInFlowOrFloatingChild()) {
-                    auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                    formattingContext->layoutInFlowContent(invalidationState, Geometry::constraintsForInFlowContent(formattingRootDisplayBox));
-                }
-                computeHeightAndMargin(containerBox, constraints.horizontal);
-                if (containerBox.hasChild()) {
-                    auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-                    formattingContext->layoutOutOfFlowContent(invalidationState, Geometry::constraintsForOutOfFlowContent(formattingRootDisplayBox));
-                }
+                if (formattingRoot.hasChild()) {
+                    auto formattingContext = LayoutContext::createFormattingContext(formattingRoot, layoutState());
+                    if (formattingRoot.hasInFlowOrFloatingChild())
+                        formattingContext->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(formattingRoot));
+                    computeHeightAndMargin(formattingRoot, constraints.horizontal);
+                    formattingContext->layoutOutOfFlowContent(invalidationState, geometry().constraintsForOutOfFlowContent(formattingRoot));
+                } else
+                    computeHeightAndMargin(formattingRoot, constraints.horizontal);
             } else {
                 // Replaced and other type of leaf atomic inline boxes.
                 computeBorderAndPadding(*layoutBox, constraints.horizontal);

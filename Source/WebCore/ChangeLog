@@ -1,3 +1,32 @@
+2020-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::constraintsForInFlow/OutOfFlowContent should take const ContainerBox&
+        https://bugs.webkit.org/show_bug.cgi?id=211161
+
+        Reviewed by Antti Koivisto.
+
+        Leaf boxes should not need to compute constraints (as by definition they don't have in/out-of-flow descendants).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::constraintsForOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::Geometry::constraintsForInFlowContent):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedInFlowHeight):
+        * layout/blockformatting/PrecomputedBlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+
 2020-04-29  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove no longer used variable and the build warning below.

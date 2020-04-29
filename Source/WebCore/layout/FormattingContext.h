@@ -157,8 +157,8 @@ protected:
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
 
-        static ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const Display::Box& containingBlockGeometry);
-        static ConstraintsForInFlowContent constraintsForInFlowContent(const Display::Box& containingBlockGeometry);
+        ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&);
+        ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<EscapeReason> = WTF::nullopt);
 
     protected:
         friend class FormattingContext;

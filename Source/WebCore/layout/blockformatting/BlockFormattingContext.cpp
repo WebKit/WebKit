@@ -93,9 +93,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
     auto constraintsForLayoutBox = [&] (const auto& layoutBox) {
         auto& containingBlock = layoutBox.containingBlock();
-        if (&containingBlock == &formattingRoot)
-            return constraints;
-        return Geometry::constraintsForInFlowContent(geometryForBox(containingBlock));
+        return &containingBlock == &formattingRoot ? constraints : geometry().constraintsForInFlowContent(containingBlock);
     };
 
     // This is a post-order tree traversal layout.
@@ -113,7 +111,6 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
             computeBorderAndPadding(layoutBox, containingBlockConstraints.horizontal);
             computeStaticVerticalPosition(layoutBox, containingBlockConstraints.vertical);
-
             computeWidthAndMargin(floatingContext, layoutBox, { constraints, containingBlockConstraints });
             computeStaticHorizontalPosition(layoutBox, containingBlockConstraints.horizontal);
 
@@ -131,7 +128,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                         }
                     }
                     // Layout the inflow descendants of this formatting context root.
-                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutInFlowContent(invalidationState, Geometry::constraintsForInFlowContent(geometryForBox(containerBox)));
+                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(containerBox));
                 }
                 break;
             }
@@ -152,7 +149,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                 // Now that we computed the root's height, we can layout the out-of-flow descendants.
                 if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasChild()) {
                     auto& containerBox = downcast<ContainerBox>(layoutBox);
-                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(invalidationState, Geometry::constraintsForOutOfFlowContent(geometryForBox(containerBox)));
+                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(invalidationState, geometry().constraintsForOutOfFlowContent(containerBox));
                 }
             }
             // Resolve final positions.
@@ -257,7 +254,7 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
     for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = &ancestor->containingBlock()) {
         auto constraintsForAncestor = [&] {
             auto& containingBlock = ancestor->containingBlock();
-            return &containingBlock == &root() ? constraintsPair.formattingContextRoot : Geometry::constraintsForInFlowContent(geometryForBox(containingBlock));
+            return &containingBlock == &root() ? constraintsPair.formattingContextRoot : geometry().constraintsForInFlowContent(containingBlock);
         }();
 
         auto computedVerticalMargin = geometry().computedVerticalMargin(*ancestor, constraintsForAncestor.horizontal);

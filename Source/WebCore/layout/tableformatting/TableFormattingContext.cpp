@@ -177,7 +177,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 
     if (cellBox.hasInFlowOrFloatingChild()) {
         auto invalidationState = InvalidationState { };
-        auto constraintsForCellContent = Geometry::constraintsForInFlowContent(cellDisplayBox);
+        auto constraintsForCellContent = geometry().constraintsForInFlowContent(cellBox);
         constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }

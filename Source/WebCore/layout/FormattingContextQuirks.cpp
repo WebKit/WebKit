@@ -50,11 +50,12 @@ LayoutUnit FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFix
         // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
-            auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
 
-            auto& containingBlockDisplayBox = formattingContext.geometryForBox(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
-            auto horizontalConstraints = Geometry::constraintsForInFlowContent(containingBlockDisplayBox).horizontal;
-            auto verticalMargin = formattingContext.geometry().computedVerticalMargin(*containingBlock, horizontalConstraints);
+            auto geometry = formattingContext.geometry();
+            auto horizontalConstraints = geometry.constraintsForInFlowContent(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal;
+            auto verticalMargin = geometry.computedVerticalMargin(*containingBlock, horizontalConstraints);
+
+            auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
             auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);
             auto verticalBorder = boxGeometry.borderTop() + boxGeometry.borderBottom();
             bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
