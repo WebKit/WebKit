@@ -74,14 +74,14 @@
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFailProvisionalNavigation;
 - (NSURLAuthenticationChallenge *)waitForDidNegotiateModernTLS;
-- (bool)receivedShouldAllowLegacyTLS;
-@property (nonatomic) bool shouldAllowLegacyTLS;
+- (bool)receivedShouldAllowDeprecatedTLS;
+@property (nonatomic) bool shouldAllowDeprecatedTLS;
 @end
 
 @implementation TLSNavigationDelegate {
     bool _navigationFinished;
     bool _navigationFailed;
-    bool _receivedShouldAllowLegacyTLS;
+    bool _receivedShouldAllowDeprecatedTLS;
     RetainPtr<NSURLAuthenticationChallenge> _negotiatedModernTLS;
 }
 
@@ -104,9 +104,9 @@
     return _negotiatedModernTLS.autorelease();
 }
 
-- (bool)receivedShouldAllowLegacyTLS
+- (bool)receivedShouldAllowDeprecatedTLS
 {
-    return _receivedShouldAllowLegacyTLS;
+    return _receivedShouldAllowDeprecatedTLS;
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * credential))completionHandler
@@ -125,10 +125,10 @@
     _navigationFailed = true;
 }
 
-- (void)_webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowLegacyTLS:(void (^)(BOOL))completionHandler
+- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))completionHandler
 {
-    _receivedShouldAllowLegacyTLS = true;
-    completionHandler([self shouldAllowLegacyTLS]);
+    _receivedShouldAllowDeprecatedTLS = true;
+    completionHandler([self shouldAllowDeprecatedTLS]);
 }
 
 - (void)_webView:(WKWebView *)webView didNegotiateModernTLS:(NSURLAuthenticationChallenge *)challenge
@@ -158,8 +158,9 @@ TEST(TLSVersion, DefaultBehavior)
     [delegate waitForDidFinishNavigation];
 }
 
-// FIXME: This test should remain disabled until rdar://problem/56522601 is fixed.
-TEST(TLSVersion, DISABLED_NetworkSession)
+#if HAVE(TLS_VERSION_DURING_CHALLENGE)
+
+TEST(TLSVersion, NetworkSession)
 {
     static auto delegate = adoptNS([TestNavigationDelegate new]);
     auto makeWebViewWith = [&] (WKWebsiteDataStore *store) {
@@ -216,32 +217,32 @@ TEST(TLSVersion, DISABLED_NetworkSession)
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
 }
 
-// FIXME: This test should remain disabled until rdar://problem/56522601 is fixed.
-TEST(TLSVersion, DISABLED_NavigationDelegateSPI)
+TEST(TLSVersion, ShouldAllowDeprecatedTLS)
 {
     {
         auto delegate = adoptNS([TLSNavigationDelegate new]);
         TCPServer server(TCPServer::Protocol::HTTPS, [](SSL *ssl) {
-            // FIXME: This is only if we have the new SPI.
             EXPECT_FALSE(ssl);
         }, tls1_1);
         auto webView = adoptNS([WKWebView new]);
         [webView setNavigationDelegate:delegate.get()];
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFailProvisionalNavigation];
-        EXPECT_TRUE([delegate receivedShouldAllowLegacyTLS]);
+        EXPECT_TRUE([delegate receivedShouldAllowDeprecatedTLS]);
     }
     {
         auto delegate = adoptNS([TLSNavigationDelegate new]);
-        delegate.get().shouldAllowLegacyTLS = YES;
+        delegate.get().shouldAllowDeprecatedTLS = YES;
         TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK, tls1_1);
         auto webView = adoptNS([WKWebView new]);
         [webView setNavigationDelegate:delegate.get()];
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
         [delegate waitForDidFinishNavigation];
-        EXPECT_TRUE([delegate receivedShouldAllowLegacyTLS]);
+        EXPECT_TRUE([delegate receivedShouldAllowDeprecatedTLS]);
     }
 }
+
+#endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 #if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 

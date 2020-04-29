@@ -230,6 +230,7 @@ private:
         bool webViewRenderingProgressDidChange : 1;
         bool webViewDidReceiveAuthenticationChallengeCompletionHandler : 1;
         bool webViewAuthenticationChallengeShouldAllowLegacyTLS : 1;
+        bool webViewAuthenticationChallengeShouldAllowDeprecatedTLS : 1;
         bool webViewDidNegotiateModernTLS : 1;
         bool webViewWebContentProcessDidTerminate : 1;
         bool webViewWebContentProcessDidTerminateWithReason : 1;

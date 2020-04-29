@@ -1,3 +1,19 @@
+2020-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKNavigationDelegate API shouldAllowDeprecatedTLS
+        https://bugs.webkit.org/show_bug.cgi?id=210981
+        <rdar://problem/61742976>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (-[TLSNavigationDelegate receivedShouldAllowDeprecatedTLS]):
+        (-[TLSNavigationDelegate webView:authenticationChallenge:shouldAllowDeprecatedTLS:]):
+        (TestWebKitAPI::TEST):
+        (-[TLSNavigationDelegate receivedShouldAllowLegacyTLS]): Deleted.
+        (-[TLSNavigationDelegate _webView:authenticationChallenge:shouldAllowLegacyTLS:]): Deleted.
+        * TestWebKitAPI/config.h:
+
 2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Refactor layout tests after updates to In-App Browser Privacy

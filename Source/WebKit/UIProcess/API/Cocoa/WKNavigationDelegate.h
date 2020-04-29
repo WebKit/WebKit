@@ -157,6 +157,13 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  */
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
+/*! @abstract Invoked when the web view is establishing a network connection using a deprecated version of TLS.
+ @param webView The web view initiating the connection.
+ @param challenge The authentication challenge.
+ @param decisionHandler The decision handler you must invoke to respond to indicate whether or not to continue with the connection establishment.
+ */
+- (void)webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowDeprecatedTLS:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

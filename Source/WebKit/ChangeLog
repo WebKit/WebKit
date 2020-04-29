@@ -1,3 +1,17 @@
+2020-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKNavigationDelegate API shouldAllowDeprecatedTLS
+        https://bugs.webkit.org/show_bug.cgi?id=210981
+        <rdar://problem/61742976>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::shouldAllowLegacyTLS):
+
 2020-04-29  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Temporarily stop using RunningBoard for the foreground process assertion
