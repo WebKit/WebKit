@@ -26,7 +26,15 @@
 #import "config.h"
 #import "_WKTextManipulationToken.h"
 
-@implementation _WKTextManipulationToken
+#import <wtf/RetainPtr.h>
+
+NSString * const _WKTextManipulationTokenUserInfoDocumentURLKey = @"_WKTextManipulationTokenUserInfoDocumentURLKey";
+NSString * const _WKTextManipulationTokenUserInfoTagNameKey = @"_WKTextManipulationTokenUserInfoTagNameKey";
+NSString * const _WKTextManipulationTokenUserInfoRoleAttributeKey = @"_WKTextManipulationTokenUserInfoRoleAttributeKey";
+
+@implementation _WKTextManipulationToken {
+    RetainPtr<NSDictionary<NSString *, id>> _userInfo;
+}
 
 - (void)dealloc
 {
@@ -36,6 +44,19 @@
     _content = nil;
 
     [super dealloc];
+}
+
+- (void)setUserInfo:(NSDictionary<NSString *, id> *)userInfo
+{
+    if (userInfo == _userInfo || [_userInfo isEqual:userInfo])
+        return;
+
+    _userInfo = adoptNS(userInfo.copy);
+}
+
+- (NSDictionary<NSString *, id> *)userInfo
+{
+    return _userInfo.get();
 }
 
 static BOOL isEqualOrBothNil(id a, id b)
@@ -65,8 +86,9 @@ static BOOL isEqualOrBothNil(id a, id b)
     BOOL equalIdentifiers = isEqualOrBothNil(self.identifier, otherToken.identifier);
     BOOL equalExclusion = self.isExcluded == otherToken.isExcluded;
     BOOL equalContent = !includingContentEquality || isEqualOrBothNil(self.content, otherToken.content);
+    BOOL equalUserInfo = isEqualOrBothNil(self.userInfo, otherToken.userInfo);
 
-    return equalIdentifiers && equalExclusion && equalContent;
+    return equalIdentifiers && equalExclusion && equalContent && equalUserInfo;
 }
 
 - (NSString *)description
@@ -85,7 +107,7 @@ static BOOL isEqualOrBothNil(id a, id b)
     if (preservePrivacy)
         [description appendFormat:@"; content length = %lu", (unsigned long)self.content.length];
     else
-        [description appendFormat:@"; content = %@", self.content];
+        [description appendFormat:@"; content = %@; user info = %@", self.content, self.userInfo];
 
     [description appendString:@">"];
 

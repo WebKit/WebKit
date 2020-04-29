@@ -258,6 +258,21 @@ static bool containsOnlyHTMLSpaces(StringView text)
     return true;
 }
 
+static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
+{
+    if (!node)
+        return WTF::nullopt;
+
+    TextManipulationController::ManipulationTokenInfo result;
+    result.documentURL = node->document().url();
+    if (auto element = is<Element>(node) ? makeRefPtr(downcast<Element>(*node)) : makeRefPtr(node->parentElement())) {
+        result.tagName = element->tagName();
+        if (element->hasAttributeWithoutSynchronization(HTMLNames::roleAttr))
+            result.roleAttribute = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
+    }
+    return result;
+}
+
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
 {
     if (start.isNull() || end.isNull())
@@ -321,13 +336,13 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                 auto& currentElement = downcast<Element>(*content.node);
                 if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(currentElement)) {
                     addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), nullQName(),
-                        { ManipulationToken { m_tokenIdentifier.generate(), currentElement.textContent() } } });
+                        { ManipulationToken { m_tokenIdentifier.generate(), currentElement.textContent(), tokenInfo(&currentElement) } } });
                 }
                 if (currentElement.hasAttributes()) {
                     for (auto& attribute : currentElement.attributesIterator()) {
                         if (isAttributeForTextManipulation(attribute.name())) {
                             addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), attribute.name(),
-                                { ManipulationToken { m_tokenIdentifier.generate(), attribute.value() } } });
+                                { ManipulationToken { m_tokenIdentifier.generate(), attribute.value(), tokenInfo(&currentElement) } } });
                         }
                     }
                 }
@@ -346,7 +361,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                 continue;
 
             endOfCurrentParagraph = currentEndOfCurrentParagraph;
-            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), "[]", true });
+            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true });
 
             continue;
         }
@@ -365,7 +380,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                 if (tokensInCurrentParagraph.isEmpty())
                     startOfCurrentParagraph = Position(&textNode, startOfCurrentLine);
 
-                tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), stringUntilEndOfLine, exclusionRuleMatcher.isExcluded(content.node.get()) });
+                tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), stringUntilEndOfLine, tokenInfo(&textNode), exclusionRuleMatcher.isExcluded(content.node.get()) });
             }
 
             if (!tokensInCurrentParagraph.isEmpty()) {
@@ -385,7 +400,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                     startOfCurrentParagraph = iterator.startPosition();
             }
             endOfCurrentParagraph = iterator.endPosition();
-            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), remainingText.toString(), exclusionRuleMatcher.isExcluded(content.node.get()) });
+            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), remainingText.toString(), tokenInfo(content.node.get()), exclusionRuleMatcher.isExcluded(content.node.get()) });
         }
     }
 

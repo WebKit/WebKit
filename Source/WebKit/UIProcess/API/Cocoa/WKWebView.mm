@@ -1606,6 +1606,22 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _textManipulationDelegate = delegate;
 }
 
+static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
+{
+    if (!info)
+        return { };
+
+    auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:3]);
+    if (!info->documentURL.isNull())
+        [result setObject:(NSURL *)info->documentURL forKey:_WKTextManipulationTokenUserInfoDocumentURLKey];
+    if (!info->tagName.isNull())
+        [result setObject:(NSString *)info->tagName forKey:_WKTextManipulationTokenUserInfoTagNameKey];
+    if (!info->roleAttribute.isNull())
+        [result setObject:(NSString *)info->roleAttribute forKey:_WKTextManipulationTokenUserInfoRoleAttributeKey];
+
+    return result;
+}
+
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
     using ExclusionRule = WebCore::TextManipulationController::ExclusionRule;
@@ -1643,6 +1659,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
                 [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
                 [wkToken setContent:token.content];
                 [wkToken setExcluded:token.isExcluded];
+                [wkToken setUserInfo:createUserInfo(token.info).get()];
                 return wkToken;
             });
             return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(item.identifier.toUInt64()) tokens:tokens.get()]);
@@ -1680,7 +1697,7 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
     Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
     for (_WKTextManipulationToken *wkToken in item.tokens)
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content });
+        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
 
     Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(1);
@@ -1739,7 +1756,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         Vector<WebCore::TextManipulationController::ManipulationToken> coreTokens;
         coreTokens.reserveInitialCapacity(wkItem.tokens.count);
         for (_WKTextManipulationToken *wkToken in wkItem.tokens)
-            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content });
+            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
         coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
     }
 

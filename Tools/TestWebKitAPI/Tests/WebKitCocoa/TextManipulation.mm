@@ -704,6 +704,59 @@ TEST(TextManipulation, StartTextManipulationTreatsLinksInNavigationElementsAsPar
     EXPECT_WK_STREQ("Garply", items[3].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsUserInfo)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "    <title>This is a test</title>"
+        "    <p>First</p>"
+        "    <div role='button'>Second</div>"
+        "    <span>Third</span>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 4UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_WK_STREQ("This is a test", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("First", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("Second", items[2].tokens[0].content);
+    EXPECT_WK_STREQ("Third", items[3].tokens[0].content);
+    {
+        auto userInfo = items[0].tokens[0].userInfo;
+        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+        EXPECT_WK_STREQ("TITLE", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+    }
+    {
+        auto userInfo = items[1].tokens[0].userInfo;
+        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+        EXPECT_WK_STREQ("P", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+    }
+    {
+        auto userInfo = items[2].tokens[0].userInfo;
+        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+        EXPECT_WK_STREQ("DIV", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+        EXPECT_WK_STREQ("button", (NSString *)userInfo[_WKTextManipulationTokenUserInfoRoleAttributeKey]);
+    }
+    {
+        auto userInfo = items[3].tokens[0].userInfo;
+        EXPECT_WK_STREQ("TestWebKitAPI.resources", [(NSURL *)userInfo[_WKTextManipulationTokenUserInfoDocumentURLKey] lastPathComponent]);
+        EXPECT_WK_STREQ("SPAN", (NSString *)userInfo[_WKTextManipulationTokenUserInfoTagNameKey]);
+    }
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

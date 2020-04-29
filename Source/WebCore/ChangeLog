@@ -1,3 +1,31 @@
+2020-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text manipulation] Add a userInfo dictionary to _WKTextManipulationToken
+        https://bugs.webkit.org/show_bug.cgi?id=211151
+        <rdar://problem/62329534>
+
+        Reviewed by Darin Adler.
+
+        Add an extensible mechanism for the text manipulation controller to send additional
+        metadata for each text manipulation token through to the WebKit client, for debugging
+        purposes.
+
+        Test: TextManipulation.StartTextManipulationExtractsUserInfo
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::tokenInfo):
+        (WebCore::TextManipulationController::observeParagraphs):
+        * editing/TextManipulationController.h:
+
+        Add TextManipulationTokenInfo, and add an optional TextManipulationTokenInfo member to
+        TextManipulationToken. For now, just send over the document URL, element tag name, and
+        the value of the role attribute.
+
+        (WebCore::TextManipulationController::ManipulationTokenInfo::encode const):
+        (WebCore::TextManipulationController::ManipulationTokenInfo::decode):
+        (WebCore::TextManipulationController::ManipulationToken::encode const):
+        (WebCore::TextManipulationController::ManipulationToken::decode):
+
 2020-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Update the xcfilelists.

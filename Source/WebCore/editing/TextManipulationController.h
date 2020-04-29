@@ -48,9 +48,19 @@ public:
     enum TokenIdentifierType { };
     using TokenIdentifier = ObjectIdentifier<TokenIdentifierType>;
 
+    struct ManipulationTokenInfo {
+        String tagName;
+        String roleAttribute;
+        URL documentURL;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<ManipulationTokenInfo> decode(Decoder&);
+    };
+
     struct ManipulationToken {
         TokenIdentifier identifier;
         String content;
+        Optional<ManipulationTokenInfo> info;
         bool isExcluded { false };
 
         template<class Encoder> void encode(Encoder&) const;
@@ -158,9 +168,33 @@ private:
 };
 
 template<class Encoder>
+void TextManipulationController::ManipulationTokenInfo::encode(Encoder& encoder) const
+{
+    encoder << tagName;
+    encoder << roleAttribute;
+    encoder << documentURL;
+}
+
+template<class Decoder>
+Optional<TextManipulationController::ManipulationTokenInfo> TextManipulationController::ManipulationTokenInfo::decode(Decoder& decoder)
+{
+    ManipulationTokenInfo result;
+    if (!decoder.decode(result.tagName))
+        return WTF::nullopt;
+
+    if (!decoder.decode(result.roleAttribute))
+        return WTF::nullopt;
+
+    if (!decoder.decode(result.documentURL))
+        return WTF::nullopt;
+
+    return result;
+}
+
+template<class Encoder>
 void TextManipulationController::ManipulationToken::encode(Encoder& encoder) const
 {
-    encoder << identifier << content << isExcluded;
+    encoder << identifier << content << info << isExcluded;
 }
 
 template<class Decoder>
@@ -170,6 +204,8 @@ Optional<TextManipulationController::ManipulationToken> TextManipulationControll
     if (!decoder.decode(result.identifier))
         return WTF::nullopt;
     if (!decoder.decode(result.content))
+        return WTF::nullopt;
+    if (!decoder.decode(result.info))
         return WTF::nullopt;
     if (!decoder.decode(result.isExcluded))
         return WTF::nullopt;
