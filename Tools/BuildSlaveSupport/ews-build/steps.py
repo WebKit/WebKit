@@ -1505,8 +1505,14 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
+        first_run_failures = set(self.getProperty('jsc_stress_test_failures', []) + self.getProperty('jsc_binary_failures', []))
+        second_run_failures = set(self.getProperty('jsc_rerun_stress_test_failures', []) + self.getProperty('jsc_rerun_binary_failures', []))
+        flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
+        flaky_failures_string = ', '.join(flaky_failures)
+
         if rc == SUCCESS or rc == WARNINGS:
-            message = 'Passed JSC tests'
+            pluralSuffix = 's' if len(flaky_failures) > 1 else ''
+            message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
             self.descriptionDone = message
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)

@@ -1,3 +1,14 @@
+2020-04-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Display flaky test names in build summary when ReRunJavaScriptCoreTests passes
+        https://bugs.webkit.org/show_bug.cgi?id=210855
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ReRunJavaScriptCoreTests.evaluateCommand): Display flaky test names in build summary.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests and removed extra TestReRunJavaScriptCoreTests class.
+
 2020-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build after r260891

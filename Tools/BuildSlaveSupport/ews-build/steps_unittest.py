@@ -433,11 +433,6 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         return self.runStep()
 
 
-class TestReRunJavaScriptCoreTests(TestRunWebKitPerlTests):
-    def configureStep(self):
-        self.setupStep(ReRunWebKitPerlTests())
-
-
 class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -1347,6 +1342,35 @@ class TestReRunJavaScriptCoreTests(TestRunJavaScriptCoreTests):
             self.setProperty('fullPlatform', fullPlatform)
         if configuration:
             self.setProperty('configuration', configuration)
+
+    def test_success(self):
+        self.configureStep(platform='mac', fullPlatform='mac-highsierra', configuration='release')
+        self.setProperty('jsc_stress_test_failures', ['test1', 'test2'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'],
+                        logfiles={'json': self.jsonFileName},
+                        ) +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found flaky tests: test1, test2')
+        return self.runStep()
+
+    def test_remote_success(self):
+        self.configureStep(platform='jsc-only', fullPlatform='jsc-only', configuration='release')
+        self.setProperty('remotes', 'remote-machines.json')
+        self.setProperty('jsc_binary_failures', ['testmasm'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--jsc-only'],
+                        logfiles={'json': self.jsonFileName},
+                        ) +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found flaky test: testmasm')
+        return self.runStep()
 
 
 class TestRunJSCTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
