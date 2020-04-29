@@ -246,18 +246,18 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
     // Global ContentBrowser KeyboardShortcut handlers
 
-    handleFindStringUpdated()
-    {
-        this._findBanner.searchQuery = WI.findString;
-
-        let currentContentView = this.currentContentView;
-        if (currentContentView?.supportsSearch)
-            currentContentView.performSearch(this._findBanner.searchQuery);
-    }
-
     handlePopulateFindShortcut()
     {
-        return this.currentContentView?.searchQueryWithSelection();
+        let currentContentView = this.currentContentView;
+        if (!currentContentView?.supportsSearch)
+            return;
+
+        if (!WI.updateFindString(currentContentView.searchQueryWithSelection()))
+            return;
+
+        this._findBanner.searchQuery = WI.findString;
+
+        currentContentView.performSearch(this._findBanner.searchQuery);
     }
 
     async handleFindNextShortcut()

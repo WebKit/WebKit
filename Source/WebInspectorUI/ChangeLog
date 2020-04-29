@@ -1,3 +1,30 @@
+2020-04-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: don't immediately attempt to perform a search whenever the find string changes
+        https://bugs.webkit.org/show_bug.cgi?id=211164
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.updateFindString):
+        (WI._populateFind):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.handlePopulateFindShortcut):
+        (WI.ContentBrowser.prototype.handleFindStringUpdated): Deleted.
+        Only update the `searchQuery` of the `WI.FindBanner` and `performSearch` when the find
+        next/previous keyboard shortcut is activated, not when the find string is populated/updated,
+        unless the update came from the populate find keyboard shortcut.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.handlePopulateFindShortcut):
+        (WI.LogContentView.prototype.handleFindNextShortcut):
+        (WI.LogContentView.prototype.handleFindPreviousShortcut):
+        (WI.LogContentView.prototype.highlightPreviousSearchMatch):
+        (WI.LogContentView.prototype.highlightNextSearchMatch):
+        (WI.LogContentView.prototype.handleFindStringUpdated): Deleted.
+        Ensure that the logic for performing a search if the `searchQuery` of the `WI.FindBanner`
+        doesn't match the current `WI.findString` is also performed when in the split console.
+
 2020-04-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Debug: "Outline focused element" should also outline elements with tabIndex=0

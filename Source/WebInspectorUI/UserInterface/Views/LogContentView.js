@@ -296,32 +296,24 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._logViewController.requestClearMessages();
     }
 
-    handleFindStringUpdated()
+    handlePopulateFindShortcut()
     {
+        if (!WI.updateFindString(this.searchQueryWithSelection()))
+            return;
+
         this._findBanner.searchQuery = WI.findString;
 
         this.performSearch(this._findBanner.searchQuery);
     }
 
-    handlePopulateFindShortcut()
-    {
-        return this.searchQueryWithSelection();
-    }
-
     handleFindNextShortcut()
     {
-        if (this._findBanner.searchQuery !== WI.findString)
-            this.handleFindStringUpdated();
-
-        this.findBannerRevealNextResult(this._findBanner);
+        this.highlightNextSearchMatch();
     }
 
     handleFindPreviousShortcut()
     {
-        if (this._findBanner.searchQuery !== WI.findString)
-            this.handleFindStringUpdated();
-
-        this.findBannerRevealPreviousResult(this._findBanner);
+        this.highlightPreviousSearchMatch();
     }
 
     findBannerRevealPreviousResult()
@@ -331,7 +323,13 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     highlightPreviousSearchMatch()
     {
-        if (!this.hasPerformedSearch || isEmptyObject(this._searchMatches))
+        if (!this.hasPerformedSearch || this._findBanner.searchQuery !== WI.findString) {
+            this._findBanner.searchQuery = WI.findString;
+
+            this.performSearch(this._findBanner.searchQuery);
+        }
+
+        if (isEmptyObject(this._searchMatches))
             return;
 
         var index = this._selectedSearchMatch ? this._searchMatches.indexOf(this._selectedSearchMatch) : this._searchMatches.length;
@@ -345,7 +343,13 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     highlightNextSearchMatch()
     {
-        if (!this.hasPerformedSearch || isEmptyObject(this._searchMatches))
+        if (!this.hasPerformedSearch || this._findBanner.searchQuery !== WI.findString) {
+            this._findBanner.searchQuery = WI.findString;
+
+            this.performSearch(this._findBanner.searchQuery);
+        }
+
+        if (isEmptyObject(this._searchMatches))
             return;
 
         var index = this._selectedSearchMatch ? this._searchMatches.indexOf(this._selectedSearchMatch) + 1 : 0;

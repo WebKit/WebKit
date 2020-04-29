@@ -1047,22 +1047,12 @@ WI.updateVisibilityState = function(visible)
 
 WI.updateFindString = function(findString)
 {
-    if (WI.findString === findString)
-        return;
+    if (!findString || WI.findString === findString)
+        return false;
 
     WI.findString = findString;
 
-    let focusedContentView = WI._focusedContentView();
-    if (focusedContentView && focusedContentView.supportsCustomFindBanner) {
-        focusedContentView.handleFindStringUpdated();
-        return;
-    }
-
-    let contentBrowser = WI._focusedOrVisibleContentBrowser();
-    if (contentBrowser) {
-        contentBrowser.handleFindStringUpdated();
-        return;
-    }
+    return true;
 };
 
 WI.handlePossibleLinkClick = function(event, frame, options = {})
@@ -2631,19 +2621,13 @@ WI._populateFind = function(event)
 {
     let focusedContentView = WI._focusedContentView();
     if (focusedContentView && focusedContentView.supportsCustomFindBanner) {
-        let string = focusedContentView.handlePopulateFindShortcut();
-        if (string)
-            WI.findString = string;
-        focusedContentView.handleFindStringUpdated();
+        focusedContentView.handlePopulateFindShortcut();
         return;
     }
 
     let contentBrowser = WI._focusedOrVisibleContentBrowser();
     if (contentBrowser) {
-        let string = contentBrowser.handlePopulateFindShortcut();
-        if (string)
-            WI.findString = string;
-        contentBrowser.handleFindStringUpdated();
+        contentBrowser.handlePopulateFindShortcut();
         return;
     }
 };
