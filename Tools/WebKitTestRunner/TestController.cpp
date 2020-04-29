@@ -640,11 +640,9 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
 #if PLATFORM(COCOA)
-    if (m_hasSetApplicationBundleIdentifier) {
-        // Exit if the application bundle identifier has already been set, since it can only be set once.
-        exit(1);
-    }
     if (!options.applicationBundleIdentifier.isEmpty()) {
+        // The bundle identifier can only be set once per test, and is cleared between tests.
+        RELEASE_ASSERT(!m_hasSetApplicationBundleIdentifier);
         setApplicationBundleIdentifier(options.applicationBundleIdentifier);
         m_hasSetApplicationBundleIdentifier = true;
     }

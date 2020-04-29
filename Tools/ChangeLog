@@ -1,3 +1,14 @@
+2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add better handling of an uncleared bundle identifier in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=211195
+        <rdar://problem/62117145>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2020-04-29  Saam Barati  <sbarati@apple.com>
 
         build-jsc should quote the value of compile flags it forwards
