@@ -138,7 +138,6 @@ public:
     bool equalsToNumber(JSValue);
     JS_EXPORT_PRIVATE bool equalsToInt32(int32_t);
     static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
-#if USE(BIGINT32)
     static ComparisonResult compare(int32_t x, JSBigInt* y);
     static ComparisonResult compare(JSBigInt* x, int32_t y);
     static ComparisonResult compare(int32_t x, int32_t y)
@@ -149,7 +148,6 @@ public:
             return JSBigInt::ComparisonResult::LessThan;
         return JSBigInt::ComparisonResult::GreaterThan;
     }
-#endif
 
     bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue& result) const;
     double toNumber(JSGlobalObject*) const;
