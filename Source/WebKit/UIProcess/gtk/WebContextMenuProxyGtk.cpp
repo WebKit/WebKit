@@ -193,8 +193,7 @@ WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy&
 {
     gtk_popover_set_position(m_menu, GTK_POS_BOTTOM);
     gtk_popover_set_relative_to(m_menu, m_webView);
-    GRefPtr<GSimpleActionGroup> group = adoptGRef(g_simple_action_group_new());
-    gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(group.get()));
+    gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(m_actionGroup.get()));
     webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), this);
 }
 
