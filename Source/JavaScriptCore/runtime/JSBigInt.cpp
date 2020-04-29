@@ -228,11 +228,11 @@ JSBigInt* JSBigInt::createFrom(VM& vm, double value)
     // First, build the MSD by shifting the mantissa appropriately.
     if (msdTopBit < mantissaTopBit) {
         remainingMantissaBits = mantissaTopBit - msdTopBit;
-        digit = mantissa >> remainingMantissaBits;
+        digit = static_cast<Digit>(mantissa >> remainingMantissaBits);
         mantissa = mantissa << (64 - remainingMantissaBits);
     } else {
         ASSERT(msdTopBit >= mantissaTopBit);
-        digit = mantissa << (msdTopBit - mantissaTopBit);
+        digit = static_cast<Digit>(mantissa << (msdTopBit - mantissaTopBit));
         mantissa = 0;
     }
     result->setDigit(digits - 1, digit);
@@ -318,6 +318,7 @@ private:
     JSBigInt* m_bigInt;
 };
 
+#if USE(BIGINT32)
 class Int32BigIntImpl {
 public:
     explicit Int32BigIntImpl(int32_t value)
@@ -331,6 +332,7 @@ public:
     {
         ASSERT(length());
         ASSERT_UNUSED(i, i == 0);
+        static_assert(sizeof(Digit) == sizeof(uint64_t), "INT32_MAX can be represented with length() == 1 only when Digit is 64bit");
         if (sign())
             return -static_cast<int64_t>(m_value);
         return m_value;
@@ -342,6 +344,7 @@ private:
     friend struct JSBigInt::ImplResult;
     int32_t m_value;
 };
+#endif
 
 ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(HeapBigIntImpl& heapImpl)
     : payload(heapImpl.m_bigInt)
@@ -1358,6 +1361,7 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, JSBigInt* y)
 {
     return compareImpl(HeapBigIntImpl { x }, HeapBigIntImpl { y });
 }
+#if USE(BIGINT32)
 JSBigInt::ComparisonResult JSBigInt::compare(int32_t x, JSBigInt* y)
 {
     return compareImpl(Int32BigIntImpl { x }, HeapBigIntImpl { y });
@@ -1366,6 +1370,7 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int32_t y)
 {
     return compareImpl(HeapBigIntImpl { x }, Int32BigIntImpl { y });
 }
+
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::absoluteAdd(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y, bool resultSign)
