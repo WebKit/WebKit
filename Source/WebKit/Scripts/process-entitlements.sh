@@ -144,15 +144,11 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
-    plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
     plistbuddy Add :dynamic-codesigning bool YES
 
     plistbuddy Add :com.apple.tcc.delegated-services array
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
-
-    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
-    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.systemstatus.activityattribution
 
     plistbuddy Add :seatbelt-profiles array
     plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebContent

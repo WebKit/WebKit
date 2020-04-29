@@ -208,9 +208,6 @@ struct WebProcessCreationParameters {
     SandboxExtension::HandleArray dynamicMachExtensionHandles;
     SandboxExtension::HandleArray dynamicIOKitExtensionHandles;
 #endif
-#if HAVE(SYSTEM_STATUS_ATTRIBUTION)
-    Optional<SandboxExtension::Handle> systemStatusActivityAttributionExtensionHandle;
-#endif
 
 #if PLATFORM(COCOA)
     Optional<SandboxExtension::Handle> neHelperExtensionHandle;

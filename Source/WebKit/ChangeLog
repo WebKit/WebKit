@@ -1,3 +1,16 @@
+2020-04-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r260650.
+        https://bugs.webkit.org/show_bug.cgi?id=211172
+
+        It is breaking internal bots (Requested by youenn on #webkit).
+
+        Reverted changeset:
+
+        "Call STDynamicActivityAttributionPublisher in the WebProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=210772
+        https://trac.webkit.org/changeset/260650
+
 2020-04-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: SyntaxError: Unexpected identifier 'E'. Expected either a closing ']' or a ',' following an array element.
