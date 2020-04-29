@@ -26,6 +26,7 @@ xcuserdata
 tags
 *~
 .*.sw[a-p]
+.ccls
 .clangd
 compile_commands.json
 

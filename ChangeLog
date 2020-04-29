@@ -1,3 +1,13 @@
+2020-04-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add ccls config file to the list of ignored files
+        https://bugs.webkit.org/show_bug.cgi?id=210426
+
+        Reviewed by Tim Horton.
+
+        * .gitignore: ccls can read configuration options from a .ccls file in
+        the project root directory. Let's just ignore it.
+
 2020-04-28  Christopher Reid  <chris.reid@sony.com>
 
         [Win] Bundle Inspector Resources in Release builds
