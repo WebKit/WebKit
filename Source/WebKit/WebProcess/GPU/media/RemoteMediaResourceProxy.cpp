@@ -46,7 +46,7 @@ RemoteMediaResourceProxy::~RemoteMediaResourceProxy()
 {
 }
 
-void RemoteMediaResourceProxy::responseReceived(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::PolicyChecker::ShouldContinue)>&& completionHandler)
+void RemoteMediaResourceProxy::responseReceived(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&& completionHandler)
 {
     m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::ResponseReceived(m_id, response, m_platformMediaResource.didPassAccessControlCheck()), [completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
         completionHandler(shouldContinue);

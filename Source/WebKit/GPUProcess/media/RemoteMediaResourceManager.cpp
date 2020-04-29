@@ -59,11 +59,11 @@ void RemoteMediaResourceManager::removeMediaResource(RemoteMediaResourceIdentifi
     m_remoteMediaResources.remove(remoteMediaResourceIdentifier);
 }
 
-void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier id, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(PolicyChecker::ShouldContinue)>&& completionHandler)
+void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier id, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     auto* resource = m_remoteMediaResources.get(id);
     if (!resource || !resource->ready()) {
-        completionHandler(PolicyChecker::ShouldContinue::No);
+        completionHandler(ShouldContinuePolicyCheck::No);
         return;
     }
 

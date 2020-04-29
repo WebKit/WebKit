@@ -1,3 +1,36 @@
+2020-04-29  Rob Buis  <rbuis@igalia.com>
+
+        Make PolicyChecker an inner class of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=211138
+
+        Reviewed by Alex Christensen.
+
+        PolicyChecker HistoryController an inner class of FrameLoader, this allows us to move some methods
+        only used by PolicyChecker out of the FrameLoader public API. Because it is not possible to forward declare
+        an enum class in an inner class, move ShouldContinue out of the PolicyChecker class and rename it
+        to ShouldContinuePolicyCheck.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        * loader/PolicyChecker.cpp:
+        * loader/PolicyChecker.h:
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResourceClient::responseReceived):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::PlatformResourceMediaLoader::responseReceived):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::responseReceived):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:completionHandler:]):
+
 2020-04-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Misplaced right click menu on web page due to deprecated gtk_menu_popup()

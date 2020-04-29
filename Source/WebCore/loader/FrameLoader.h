@@ -39,7 +39,6 @@
 #include "LayoutMilestone.h"
 #include "MixedContentChecker.h"
 #include "PageIdentifier.h"
-#include "PolicyChecker.h"
 #include "ReferrerPolicy.h"
 #include "ResourceLoadNotifier.h"
 #include "ResourceLoaderOptions.h"
@@ -77,7 +76,6 @@ class NavigationAction;
 class NetworkingContext;
 class Node;
 class Page;
-class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -110,6 +108,7 @@ public:
 
     Frame& frame() const { return m_frame; }
 
+    class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
     class HistoryController;
@@ -156,7 +155,6 @@ public:
     void stopLoading(UnloadEventPolicy);
     void closeURL();
     void cancelAndClear();
-    void clearProvisionalLoadForPolicyCheck();
     // FIXME: clear() is trying to do too many things. We should break it down into smaller functions (ideally with fewer raw Boolean parameters).
     void clear(Document* newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true, WTF::Function<void()>&& handleDOMWindowCreation = nullptr);
 
@@ -256,7 +254,6 @@ public:
     WEBCORE_EXPORT Frame* opener();
     WEBCORE_EXPORT void setOpener(Frame*);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
-    bool hasOpenedFrames() const { return !m_openedFrames.isEmpty(); }
 
     void resetMultipleFormSubmissionProtection();
 
@@ -363,7 +360,7 @@ private:
     void dispatchUnloadEvents(UnloadEventPolicy);
 
     void continueLoadAfterNavigationPolicy(const ResourceRequest&, FormState*, NavigationPolicyDecision, AllowNavigationToInvalidURL);
-    void continueLoadAfterNewWindowPolicy(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, PolicyChecker::ShouldContinue, AllowNavigationToInvalidURL, NewFrameOpenerPolicy);
+    void continueLoadAfterNewWindowPolicy(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, ShouldContinuePolicyCheck, AllowNavigationToInvalidURL, NewFrameOpenerPolicy);
     void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
     bool shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType, const URL&);
@@ -429,6 +426,10 @@ private:
     // SubframeLoader specific.
     void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
     void started();
+
+    // PolicyChecker specific.
+    void clearProvisionalLoadForPolicyCheck();
+    bool hasOpenedFrames() const { return !m_openedFrames.isEmpty(); }
 
     Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;

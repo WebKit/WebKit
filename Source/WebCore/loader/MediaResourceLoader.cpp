@@ -182,7 +182,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
         m_client->responseReceived(*this, response, [this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
             if (completionHandler)
                 completionHandler();
-            if (shouldContinue == PolicyChecker::ShouldContinue::No)
+            if (shouldContinue == ShouldContinuePolicyCheck::No)
                 stop();
         });
 

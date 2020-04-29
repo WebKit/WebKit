@@ -112,6 +112,11 @@ Optional<PolicyCheckIdentifier> PolicyCheckIdentifier::decode(Decoder& decoder)
     return PolicyCheckIdentifier { *process, policyCheck };
 }
 
+enum class ShouldContinuePolicyCheck : bool {
+    Yes,
+    No
+};
+
 enum class NewFrameOpenerPolicy : uint8_t {
     Suppress,
     Allow

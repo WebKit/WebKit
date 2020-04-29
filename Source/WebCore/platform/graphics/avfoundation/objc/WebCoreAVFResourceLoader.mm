@@ -143,7 +143,7 @@ private:
     void loadFinished();
 
     // PlatformMediaResourceClient
-    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(PolicyChecker::ShouldContinue)>&&) final;
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) final;
     void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTFMove(request)); }
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
@@ -186,10 +186,10 @@ void PlatformResourceMediaLoader::stop()
     resource->setClient(nullptr);
 }
 
-void PlatformResourceMediaLoader::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(PolicyChecker::ShouldContinue)>&& completionHandler)
+void PlatformResourceMediaLoader::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     m_parent.responseReceived(response);
-    completionHandler(PolicyChecker::ShouldContinue::Yes);
+    completionHandler(ShouldContinuePolicyCheck::Yes);
 }
 
 void PlatformResourceMediaLoader::loadFailed(const ResourceError& error)

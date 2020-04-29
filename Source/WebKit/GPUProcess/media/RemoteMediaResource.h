@@ -48,7 +48,7 @@ public:
     void stop() final;
     bool didPassAccessControlCheck() const final;
 
-    void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::PolicyChecker::ShouldContinue)>&&);
+    void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(uint64_t, uint64_t);
     void dataReceived(const char*, int64_t);
