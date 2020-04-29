@@ -39,7 +39,6 @@
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessCreationParameters.h"
-#include "WebSQLiteDatabaseTracker.h"
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/FrameIdentifier.h>
@@ -579,7 +578,6 @@ private:
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
 #if PLATFORM(IOS_FAMILY)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
     std::unique_ptr<ProcessAssertion> m_uiProcessDependencyProcessAssertion;
 #endif
 

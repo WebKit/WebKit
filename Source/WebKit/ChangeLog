@@ -1,3 +1,55 @@
+2020-04-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Drop process assertion logic for holding locked files
+        https://bugs.webkit.org/show_bug.cgi?id=206910
+
+        Reviewed by Alex Christensen.
+
+        Drop process assertion logic for holding locked files as it is causing issues and
+        should no longer be needed.
+
+        The intention of this code was that the Network Process would send a
+        SetIsHoldingLockedFiles(bool) IPC to the UIProcess whenever there are pending
+        SQLite transactions and the UIProcess would then take a process assertion on behalf
+        of the WebProcess (or release it) to prevent / allow suspension.
+
+        This approach has some issues:
+        1. It was noisy in terms of IPC
+        2. Because it relies on an IPC to the UIProcess to keep running, it was inherently
+           racy
+        3. We already have logic to deal with suspension in the network / web processes.
+           The UIProcess sends a PrepareForSuspension IPC to its child processes. In turn,
+           those processes will make sure to suspend their database threads to prevent any
+           further database work. The child processes would then respond to the
+           PrepareForSuspension IPC to let the UIProcess know they are ready to suspend.
+           The 2 approaches were conflicting, because after the PrepareForSuspension IPC is
+           sent, the child process could process a transaction and send the
+           SetIsHoldingLockedFiles() IPC to the UIProcess which would incorrectly cancel the
+           suspension.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::m_messagePortChannelRegistry): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/WebSQLiteDatabaseTracker.cpp: Removed.
+        * Shared/WebSQLiteDatabaseTracker.h: Removed.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didSetAssertionState):
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_nonVisibleProcessCleanupTimer):
+        (WebKit::m_webSQLiteDatabaseTracker): Deleted.
+        * WebProcess/WebProcess.h:
+
 2020-04-28  Noam Rosenthal  <noam@webkit.org>
 
         Implement FCP (first contentful paint)
