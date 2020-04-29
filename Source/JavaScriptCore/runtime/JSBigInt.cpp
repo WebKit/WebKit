@@ -1370,7 +1370,7 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int32_t y)
 {
     return compareImpl(HeapBigIntImpl { x }, Int32BigIntImpl { y });
 }
-
+#endif
 
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::absoluteAdd(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y, bool resultSign)
