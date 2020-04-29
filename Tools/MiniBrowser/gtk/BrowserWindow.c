@@ -754,6 +754,7 @@ static void browserWindowDispose(GObject *gObject)
     G_OBJECT_CLASS(browser_window_parent_class)->dispose(gObject);
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static GtkWidget *
 browserWindowSetupEditorToolbarItem(BrowserWindow* window, GtkWidget* toolbar, GType type, const char* label, const char* namedIcon)
 {
@@ -766,6 +767,7 @@ browserWindowSetupEditorToolbarItem(BrowserWindow* window, GtkWidget* toolbar, G
 
     return item;
 }
+#endif
 
 static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 {
@@ -918,6 +920,7 @@ static void browserWindowTabAddedOrRemoved(GtkNotebook *notebook, BrowserTab *ta
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_n_pages(notebook) > 1);
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkWidget* toolbar, GType type, const char* label, const char* namedIcon, GCallback callback)
 {
     GtkWidget *item = g_object_new(type, "icon-name", namedIcon, NULL);
@@ -930,6 +933,7 @@ static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkWidget
 
     return item;
 }
+#endif
 
 static void browser_window_init(BrowserWindow *window)
 {

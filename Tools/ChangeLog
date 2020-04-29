@@ -1,3 +1,9 @@
+2020-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build after r260891
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+
 2020-04-29  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Remove deprecated GTK API calls from MiniBrowser
