@@ -58,6 +58,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -1620,15 +1621,15 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     // 17. Let L be a String whose elements are, in order, the elements of cuList.
 
     // Most strings lower/upper case will be the same size as original, so try that first.
-    UErrorCode error(U_ZERO_ERROR);
+    UErrorCode error = U_ZERO_ERROR;
     Vector<UChar> buffer(viewLength);
     String lower;
     const int32_t resultLength = convertCase(buffer.data(), viewLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
     if (U_SUCCESS(error))
         lower = String(buffer.data(), resultLength);
-    else if (error == U_BUFFER_OVERFLOW_ERROR) {
+    else if (needsToGrowToProduceBuffer(error)) {
         // Converted case needs more space than original. Try again.
-        UErrorCode error(U_ZERO_ERROR);
+        UErrorCode error = U_ZERO_ERROR;
         Vector<UChar> buffer(resultLength);
         convertCase(buffer.data(), resultLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
         if (U_FAILURE(error))
@@ -1926,7 +1927,7 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
         RELEASE_AND_RETURN(scope, string);
 
     int32_t normalizedStringLength = unorm2_normalize(normalizer, characters, view.length(), nullptr, 0, &status);
-    ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
+    ASSERT(needsToGrowToProduceBuffer(status));
 
     UChar* buffer;
     auto result = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);

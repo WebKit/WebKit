@@ -31,6 +31,7 @@
 #include "IntlObject.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -253,7 +254,7 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
     auto resultLength = formatRelativeTime(m_relativeDateTimeFormatter.get(), value, unitType.value(), result.data(), result.size(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         result.grow(resultLength);
         formatRelativeTime(m_relativeDateTimeFormatter.get(), value, unitType.value(), result.data(), resultLength, &status);
@@ -295,7 +296,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
 
     Vector<UChar, 32> buffer(32);
     auto numberLength = unum_formatDoubleForFields(m_numberFormat.get(), absValue, buffer.data(), buffer.size(), iterator.get(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         buffer.grow(numberLength);
         unum_formatDoubleForFields(m_numberFormat.get(), absValue, buffer.data(), numberLength, iterator.get(), &status);

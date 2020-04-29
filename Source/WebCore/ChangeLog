@@ -1,3 +1,25 @@
+2020-04-29  Saam Barati  <sbarati@apple.com>
+
+        U_STRING_NOT_TERMINATED_WARNING ICU must be handled when using the output buffer as a C string
+        https://bugs.webkit.org/show_bug.cgi?id=211142
+        <rdar://problem/62530860>
+
+        Reviewed by Darin Adler.
+
+        * editing/TextIterator.cpp:
+        (WebCore::normalizeCharacters):
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::decimalSymbol):
+        (WebCore::LocaleICU::decimalTextAttribute):
+        (WebCore::getDateFormatPattern):
+        (WebCore::LocaleICU::createLabelVector):
+        (WebCore::getFormatForSkeleton):
+        * platform/text/LocaleToScriptMappingICU.cpp:
+        (WebCore::localeToScriptCodeForFontSelection):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decode):
+        (WebCore::TextCodecICU::encode):
+
 2020-04-29  Noam Rosenthal  <noam@webkit.org>
 
         Add StringView::isAllSpecialCharacters()

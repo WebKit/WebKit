@@ -37,6 +37,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ufieldpositer.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -361,7 +362,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
     auto length = unum_formatDouble(m_numberFormat.get(), value, buffer.data(), buffer.size(), nullptr, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         buffer.grow(length);
         status = U_ZERO_ERROR;
         unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
@@ -389,7 +390,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value)
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
     auto length = unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), buffer.size(), nullptr, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         buffer.grow(length);
         status = U_ZERO_ERROR;
         unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), length, nullptr, &status);
@@ -552,7 +553,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
 
     Vector<UChar, 32> result(32);
     auto resultLength = unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), result.size(), fieldItr.get(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         result.grow(resultLength);
         unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), resultLength, fieldItr.get(), &status);

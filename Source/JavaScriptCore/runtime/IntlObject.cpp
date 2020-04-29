@@ -54,6 +54,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringImpl.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -144,13 +145,17 @@ static String convertICULocaleToBCP47LanguageTag(const char* localeID)
     UErrorCode status = U_ZERO_ERROR;
     Vector<char, 32> buffer(32);
     auto length = uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         buffer.grow(length);
         status = U_ZERO_ERROR;
         uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
     }
-    if (!U_FAILURE(status))
+    if (!U_FAILURE(status)) {
+        // This is used to store into static variables that may be shared across 
+        // JSC execution threads. This must be immortal to make concurrent ref/deref
+        // safe.
         return String(StringImpl::createStaticStringImpl(buffer.data(), length));
+    }
     return String();
 }
 
@@ -322,10 +327,10 @@ static String canonicalizeLanguageTag(const CString& input)
     // - uloc_toLanguageTag doesn't take an input size param so we must ensure the string is null-terminated ourselves
     // - before ICU 64, there's a chance that it will "buffer overflow" while requesting a *smaller* size
     UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> intermediate(31);
+    Vector<char, 32> intermediate(32);
     int32_t parsedLength;
     auto intermediateLength = uloc_forLanguageTag(input.data(), intermediate.data(), intermediate.size(), &parsedLength, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceCString(status)) {
         intermediate.resize(intermediateLength + 1);
         status = U_ZERO_ERROR;
         uloc_forLanguageTag(input.data(), intermediate.data(), intermediateLength + 1, &parsedLength, &status);
@@ -333,9 +338,12 @@ static String canonicalizeLanguageTag(const CString& input)
     if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(input.length()))
         return String();
 
+    ASSERT(intermediate.contains('\0'));
+
+    status = U_ZERO_ERROR;
     Vector<char, 32> result(32);
     auto resultLength = uloc_toLanguageTag(intermediate.data(), result.data(), result.size(), false, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         result.grow(resultLength);
         status = U_ZERO_ERROR;
         uloc_toLanguageTag(intermediate.data(), result.data(), resultLength, false, &status);

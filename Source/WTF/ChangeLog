@@ -1,3 +1,43 @@
+2020-04-29  Saam Barati  <sbarati@apple.com>
+
+        U_STRING_NOT_TERMINATED_WARNING ICU must be handled when using the output buffer as a C string
+        https://bugs.webkit.org/show_bug.cgi?id=211142
+        <rdar://problem/62530860>
+
+        Reviewed by Darin Adler.
+
+        Most of our uses of ICU require us to produce a buffer of the correct
+        length. We often test if the first call to ICU API succeeds, and if it
+        doesn't, we grow to the required buffer size, and try again. However,
+        there are a few APIs that we use like this, except that they write their
+        output to a C string instead of a buffer.
+        
+        In a couple scenarios when we were producing C strings, we were only testing
+        for the U_BUFFER_OVERFLOW_ERROR, instead of both U_BUFFER_OVERFLOW_ERROR and
+        U_STRING_NOT_TERMINATED_WARNING. This patch fixes those bugs. It also
+        introduces two new helper methods for testing error codes returned by ICU.
+        
+        - The first is needsToGrowToProduceBuffer, which returns true if we need to
+        grow the buffer and re-call into ICU to get the result.
+        - The second is needsToGrowToProduceCString, which returns true if we need to
+        grow the buffer and re-call into ICU to produce a valid C string.
+        
+        I've audited all uses of U_BUFFER_OVERFLOW_ERROR and converted them to use one
+        of the above helper methods instead.
+        
+        The issues in our handling of U_STRING_NOT_TERMINATED_WARNING were caught on iOS JSC
+        tests in JSTests/stress/intl-datetimeformat.js
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        * wtf/text/StringView.cpp:
+        (WTF::normalizedNFC):
+        * wtf/unicode/icu/ICUHelpers.h: Added.
+        (WTF::needsToGrowToProduceCString):
+        (WTF::needsToGrowToProduceBuffer):
+
 2020-04-29  Noam Rosenthal  <noam@webkit.org>
 
         Add StringView::isAllSpecialCharacters()

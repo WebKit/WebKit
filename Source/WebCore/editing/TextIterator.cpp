@@ -66,6 +66,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 #if !UCONFIG_NO_COLLATION
 #include <unicode/usearch.h>
@@ -1836,7 +1837,7 @@ static void normalizeCharacters(const UChar* characters, unsigned length, Vector
     buffer.resize(length);
 
     auto normalizedLength = unorm2_normalize(normalizer, characters, length, buffer.data(), length, &status);
-    ASSERT(U_SUCCESS(status) || status == U_BUFFER_OVERFLOW_ERROR);
+    ASSERT(U_SUCCESS(status) || needsToGrowToProduceBuffer(status));
 
     buffer.resize(normalizedLength);
 

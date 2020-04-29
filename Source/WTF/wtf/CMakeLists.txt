@@ -358,6 +358,8 @@ set(WTF_PUBLIC_HEADERS
     unicode/CharacterNames.h
     unicode/Collator.h
     unicode/UTF8Conversion.h
+
+    unicode/icu/ICUHelpers.h
 )
 
 set(WTF_SOURCES

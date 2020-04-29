@@ -36,6 +36,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WebCore {
 
@@ -308,7 +309,7 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
     do {
         int ucharsDecoded = decodeToBuffer(buffer, bufferLimit, source, sourceLimit, offsets, flush, err);
         result.appendCharacters(buffer, ucharsDecoded);
-    } while (err == U_BUFFER_OVERFLOW_ERROR);
+    } while (needsToGrowToProduceBuffer(err));
 
     if (U_FAILURE(err)) {
         // flush the converter so it can be reused, and not be bothered by this error.
@@ -461,7 +462,7 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
         error = U_ZERO_ERROR;
         ucnv_fromUnicode(m_converter.get(), &target, targetLimit, &source, sourceLimit, 0, true, &error);
         result.append(reinterpret_cast<uint8_t*>(buffer), target - buffer);
-    } while (error == U_BUFFER_OVERFLOW_ERROR);
+    } while (needsToGrowToProduceBuffer(error));
     return result;
 }
 

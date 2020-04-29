@@ -392,6 +392,7 @@
 		51F175291F3D486000C74950 /* PersistentEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentEncoder.cpp; sourceTree = "<group>"; };
 		51F1752A1F3D486000C74950 /* PersistentEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentEncoder.h; sourceTree = "<group>"; };
 		526AEC911F6B4E5C00695F5D /* NoTailCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTailCalls.h; sourceTree = "<group>"; };
+		52B228C12458DC8200753D91 /* ICUHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICUHelpers.h; sourceTree = "<group>"; };
 		530A63481FA3E3A00026A545 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		5311BD511EA71CAD00525281 /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
 		5311BD551EA7E15A00525281 /* LocklessBag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocklessBag.h; sourceTree = "<group>"; };
@@ -1438,6 +1439,7 @@
 		A8A4734F151A825B004123FF /* icu */ = {
 			isa = PBXGroup;
 			children = (
+				52B228C12458DC8200753D91 /* ICUHelpers.h */,
 				A8A47350151A825B004123FF /* CollatorICU.cpp */,
 			);
 			path = icu;

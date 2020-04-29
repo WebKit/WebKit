@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/Optional.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WTF {
 
@@ -291,7 +292,7 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
         return { string, { } };
 
     unsigned normalizedLength = unorm2_normalize(normalizer, string.characters16(), string.length(), nullptr, 0, &status);
-    ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
+    ASSERT(needsToGrowToProduceBuffer(status));
 
     UChar* characters;
     String result = String::createUninitialized(normalizedLength, characters);

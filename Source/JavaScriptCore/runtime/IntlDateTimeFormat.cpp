@@ -39,6 +39,7 @@
 #include <unicode/uenum.h>
 #include <unicode/ufieldpositer.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -119,7 +120,7 @@ static String defaultTimeZone()
 
     Vector<UChar, 32> buffer(32);
     auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         buffer.grow(bufferLength);
         ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
@@ -128,7 +129,7 @@ static String defaultTimeZone()
         status = U_ZERO_ERROR;
         Vector<UChar, 32> canonicalBuffer(32);
         auto canonicalLength = ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalBuffer.size(), nullptr, &status);
-        if (status == U_BUFFER_OVERFLOW_ERROR) {
+        if (needsToGrowToProduceBuffer(status)) {
             status = U_ZERO_ERROR;
             canonicalBuffer.grow(canonicalLength);
             ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalLength, nullptr, &status);
@@ -175,7 +176,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         Vector<UChar, 32> buffer(ianaTimeZoneLength);
         status = U_ZERO_ERROR;
         auto canonicalLength = ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), ianaTimeZoneLength, nullptr, &status);
-        if (status == U_BUFFER_OVERFLOW_ERROR) {
+        if (needsToGrowToProduceBuffer(status)) {
             buffer.grow(canonicalLength);
             status = U_ZERO_ERROR;
             ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), canonicalLength, nullptr, &status);
@@ -650,7 +651,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     Vector<UChar, 32> patternBuffer(32);
     status = U_ZERO_ERROR;
     auto patternLength = udatpg_getBestPatternWithOptions(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer.data(), patternBuffer.size(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         patternBuffer.grow(patternLength);
         udatpg_getBestPattern(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), patternBuffer.data(), patternLength, &status);
@@ -908,7 +909,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value)
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
     auto resultLength = udat_format(m_dateFormat.get(), value, result.data(), result.size(), nullptr, &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         result.grow(resultLength);
         udat_format(m_dateFormat.get(), value, result.data(), resultLength, nullptr, &status);
@@ -1000,7 +1001,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
     auto resultLength = udat_formatForFields(m_dateFormat.get(), value, result.data(), result.size(), fields.get(), &status);
-    if (status == U_BUFFER_OVERFLOW_ERROR) {
+    if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         result.grow(resultLength);
         udat_formatForFields(m_dateFormat.get(), value, result.data(), resultLength, fields.get(), &status);
