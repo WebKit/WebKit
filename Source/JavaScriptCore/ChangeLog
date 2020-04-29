@@ -1,3 +1,11 @@
+2020-04-28  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix 32-bit build.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createFrom):
+        (JSC::Int32BigIntImpl::digit):
+
 2020-04-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260876 and r260877.

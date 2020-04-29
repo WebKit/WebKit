@@ -228,11 +228,11 @@ JSBigInt* JSBigInt::createFrom(VM& vm, double value)
     // First, build the MSD by shifting the mantissa appropriately.
     if (msdTopBit < mantissaTopBit) {
         remainingMantissaBits = mantissaTopBit - msdTopBit;
-        digit = mantissa >> remainingMantissaBits;
+        digit = static_cast<Digit>(mantissa >> remainingMantissaBits);
         mantissa = mantissa << (64 - remainingMantissaBits);
     } else {
         ASSERT(msdTopBit >= mantissaTopBit);
-        digit = mantissa << (msdTopBit - mantissaTopBit);
+        digit = static_cast<Digit>(mantissa << (msdTopBit - mantissaTopBit));
         mantissa = 0;
     }
     result->setDigit(digits - 1, digit);
@@ -332,7 +332,7 @@ public:
         ASSERT(length());
         ASSERT_UNUSED(i, i == 0);
         if (sign())
-            return -static_cast<int64_t>(m_value);
+            return static_cast<JSBigInt::Digit>(-static_cast<int64_t>(m_value));
         return m_value;
     }
 
