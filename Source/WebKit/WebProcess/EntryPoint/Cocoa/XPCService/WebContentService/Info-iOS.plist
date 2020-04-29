@@ -43,5 +43,7 @@
 	</array>
 	<key>CanInheritApplicationStateFromOtherProcesses</key>
 	<true/>
+	<key>_WKGenericWebsiteName</key>
+	<string>Website</string>
 </dict>
 </plist>
