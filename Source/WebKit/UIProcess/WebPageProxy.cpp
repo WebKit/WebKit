@@ -10026,16 +10026,6 @@ void WebPageProxy::webViewDidMoveToWindow()
     }
 }
 
-void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&& completionHandler)
-{
-    if (!hasRunningProcess()) {
-        completionHandler({ });
-        return;
-    }
-
-    sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTFMove(completionHandler));
-}
-
 void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)
 {
     if (hasRunningProcess())

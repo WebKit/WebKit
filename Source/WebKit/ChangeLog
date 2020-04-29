@@ -1,3 +1,35 @@
+2020-04-28  Daniel Bates  <dabates@apple.com>
+
+        Move WebPage::textInputContextsInRect() to WebPageIOS.mm
+        https://bugs.webkit.org/show_bug.cgi?id=211136
+
+        Reviewed by Eric Carlson.
+
+        The function WebPage::textInputContextsInRect is very specific to a client on iOS.
+        Although it's tempting to keep this cross-platform because its implementation does
+        not make use of iOS-specific technologies it does a very specific operation, the
+        result of which is a list of contexts to editable elements on the page. The contexts
+        provide enough info for the specific iOS client, but not enough to ever be useful
+        to any other client. Therefore move it to WebPageIOS.mm.
+
+        Only Mac and iOS were ever using this function. The former only for testing purposes
+        that have since been removed.
+
+        A side effect of this change is that I also move WebPageProxy::textInputContextsInRect()
+        from WebPageProxy.cpp to WebPageProxyIOS.mm.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::textInputContextsInRect): Deleted; moved to WebPageProxyIOS.mm.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::textInputContextsInRect): Moved from WebPageProxy.cpp.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect): Deleted; moved to WebPageIOS.mm.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::textInputContextsInRect): Moved from WebPage.cpp.
+
 2020-04-28  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Drop process assertion logic for holding locked files

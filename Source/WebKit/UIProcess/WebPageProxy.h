@@ -706,7 +706,6 @@ public:
     void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
     void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
 
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 
 #if ENABLE(UI_SIDE_COMPOSITING)
@@ -714,6 +713,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
 
     void setShouldRevealCurrentSelectionAfterInsertion(bool);

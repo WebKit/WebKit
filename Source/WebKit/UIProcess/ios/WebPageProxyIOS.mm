@@ -1546,6 +1546,16 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     return pageClient().isApplicationVisible();
 }
 
+void WebPageProxy::textInputContextsInRect(FloatRect rect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTFMove(completionHandler));
+}
+
 void WebPageProxy::focusTextInputContextAndPlaceCaret(const ElementContext& context, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!hasRunningProcess()) {

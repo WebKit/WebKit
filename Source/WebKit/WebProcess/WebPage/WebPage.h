@@ -644,10 +644,10 @@ public:
     void executeEditCommandWithCallback(const String&, const String& argument, CompletionHandler<void()>&&);
     void selectAll();
 
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 
 #if PLATFORM(IOS_FAMILY)
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
     void focusTextInputContextAndPlaceCaret(const WebCore::ElementContext&, const WebCore::IntPoint&, CompletionHandler<void(bool)>&&);
 
     bool shouldRevealCurrentSelectionAfterInsertion() const { return m_shouldRevealCurrentSelectionAfterInsertion; }

@@ -4315,6 +4315,21 @@ void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCur
     scheduleFullEditorStateUpdate();
 }
 
+void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
+{
+    auto contexts = m_page->editableElementsInRect(searchRect).map([&] (const auto& element) {
+        auto& document = element->document();
+
+        ElementContext context;
+        context.webPageIdentifier = m_identifier;
+        context.documentIdentifier = document.identifier();
+        context.elementIdentifier = document.identifierForElement(element);
+        context.boundingRect = element->clientRect();
+        return context;
+    });
+    completionHandler(contexts);
+}
+
 void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto target = elementForContext(elementContext);

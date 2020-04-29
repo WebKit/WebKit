@@ -6917,21 +6917,6 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&& completionHandler)
-{
-    auto contexts = m_page->editableElementsInRect(searchRect).map([&] (const auto& element) {
-        auto& document = element->document();
-
-        WebCore::ElementContext context;
-        context.webPageIdentifier = m_identifier;
-        context.documentIdentifier = document.identifier();
-        context.elementIdentifier = document.identifierForElement(element);
-        context.boundingRect = element->clientRect();
-        return context;
-    });
-    completionHandler(contexts);
-}
-
 void WebPage::setCanShowPlaceholder(const WebCore::ElementContext& elementContext, bool canShowPlaceholder)
 {
     RefPtr<Element> element = elementForContext(elementContext);
