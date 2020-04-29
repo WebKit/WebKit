@@ -1,3 +1,17 @@
+2020-04-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed follow-up to r260848.
+        LowerDFGToB3 has its own isFunction which should NOT have been renamed.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::isFunction): Renamed from isCallable.
+
 2020-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         AsyncFromSyncIterator methods should not pass absent values
