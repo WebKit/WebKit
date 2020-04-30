@@ -1,3 +1,12 @@
+2020-04-30  Caio Lima  <ticaiolima@gmail.com>
+
+        Investigate stress/v8-bitint32-inc.js failure on mips
+        https://bugs.webkit.org/show_bug.cgi?id=210907
+
+        Unreviewed test gardening.
+
+        * stress/v8-bigint32-inc.js:
+
 2020-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         AsyncFromSyncIterator methods should not pass absent values
