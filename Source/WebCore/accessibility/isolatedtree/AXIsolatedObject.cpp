@@ -582,7 +582,7 @@ void AXIsolatedObject::mathPostscripts(AccessibilityMathMultiscriptPairs& pairs)
 
 AXCoreObject* AXIsolatedObject::focusedUIElement() const
 {
-    return tree()->focusedUIElement().get();
+    return tree()->focusedNode().get();
 }
     
 AXCoreObject* AXIsolatedObject::parentObjectUnignored() const

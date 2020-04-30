@@ -33,6 +33,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AXIsolatedObject;
@@ -43,7 +47,7 @@ typedef unsigned AXIsolatedTreeID;
 
 class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
-
+    friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
 public:
     static Ref<AXIsolatedTree> create();
     virtual ~AXIsolatedTree();
@@ -57,7 +61,7 @@ public:
     void setAXObjectCache(AXObjectCache* axObjectCache) { m_axObjectCache = axObjectCache; }
 
     RefPtr<AXIsolatedObject> rootNode();
-    RefPtr<AXIsolatedObject> focusedUIElement();
+    RefPtr<AXIsolatedObject> focusedNode();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
     Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
@@ -79,19 +83,17 @@ public:
     // Removes the given node and all its descendants.
     void removeSubtree(AXID);
 
-    // Both setRootNode and setFocusedNode must be called only during the
-    // generation of the IsolatedTree.
-    // The focused node needs to be set during the generation because a request
-    // for it can come in before pending changes are applied. For focused node
-    // updates, use setFocusNodeID.
-    void setRootNode(Ref<AXIsolatedObject>&);
-    void setFocusedNode(AXID);
+    // Both setRootNodeID and setFocusedNodeID are called during the generation
+    // of the IsolatedTree.
+    // Focused node updates in AXObjectCache use setFocusNodeID.
+    void setRootNodeID(AXID);
     void setFocusedNodeID(AXID);
 
-    // Call on AX thread
+    // Called on AX thread from WebAccessibilityObjectWrapper methods.
+    // During layout tests, it is called on the main thread.
     void applyPendingChanges();
 
-    AXIsolatedTreeID treeIdentifier() const { return m_treeID; }
+    AXIsolatedTreeID treeID() const { return m_treeID; }
 
 private:
     AXIsolatedTree();

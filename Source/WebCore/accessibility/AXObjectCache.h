@@ -42,6 +42,10 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Document;
@@ -617,5 +621,7 @@ inline AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache*) { }
 inline AXAttributeCacheEnabler::~AXAttributeCacheEnabler() { }
 
 #endif
+
+WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache::AXNotification);
 
 } // namespace WebCore

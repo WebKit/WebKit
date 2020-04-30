@@ -379,7 +379,7 @@ AXCoreObject* AXObjectCache::focusedObject(Document& document)
 AXCoreObject* AXObjectCache::isolatedTreeFocusedObject()
 {
     if (auto tree = getOrCreateIsolatedTree())
-        return tree->focusedUIElement().get();
+        return tree->focusedNode().get();
 
     // Should not get here, couldn't create the IsolatedTree.
     ASSERT_NOT_REACHED();
@@ -3074,6 +3074,7 @@ void AXObjectCache::performDeferredCacheUpdate()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, Document& document)
 {
+    AXTRACE("AXObjectCache::generateIsolatedTree");
     RELEASE_ASSERT(isMainThread());
 
     RefPtr<AXIsolatedTree> tree(AXIsolatedTree::createTreeForPageID(pageID));
@@ -3091,19 +3092,23 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 
     auto* axFocus = axObjectCache->focusedObject(document);
     if (axFocus)
-        tree->setFocusedNode(axFocus->objectID());
+        tree->setFocusedNodeID(axFocus->objectID());
 
+    AXLOG(*tree);
     return makeRef(*tree);
 }
 
 void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
 {
+    AXTRACE("AXObjectCache::updateIsolatedTree");
+    AXLOG(std::make_pair(&object, notification));
     if (!m_pageID)
         return;
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
     if (!tree)
         return;
+    AXLOG(*tree);
 
     switch (notification) {
     case AXCheckedStateChanged:
@@ -3116,6 +3121,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     default:
         break;
     }
+    AXLOG(*tree);
 }
 
 // FIXME: should be added to WTF::Vector.
@@ -3130,17 +3136,20 @@ static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F mat
 
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
+    AXTRACE("AXObjectCache::updateIsolatedTree");
     if (!m_pageID)
         return;
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
     if (!tree)
         return;
+    AXLOG(*tree);
 
     // Filter out multiple notifications for the same object. This avoids
     // updating the isolated tree multiple times unnecessarily.
     Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> filteredNotifications;
     for (const auto& notification : notifications) {
+        AXLOG(notification);
         if (!notification.first || notification.first->objectID() == InvalidAXID)
             continue;
 
@@ -3169,6 +3178,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         }
     }
+    AXLOG(*tree);
 }
 #endif
 

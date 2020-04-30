@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AXObjectCache.h"
 #include "AccessibilityObjectInterface.h"
 
 namespace WebCore {
@@ -34,8 +35,13 @@ public:
     AXLogger() = default;
     AXLogger(const String& methodName);
     ~AXLogger();
-    void log(const String&);
-    void log(const AXCoreObject&);
+    static void log(const String&);
+    static void log(const AXCoreObject&);
+    static void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    static void log(AXIsolatedTree&);
+#endif
+    static void add(TextStream&, const RefPtr<AXCoreObject>&, bool recursive = false);
 private:
     String m_methodName;
 };
@@ -45,8 +51,7 @@ private:
 #define AXLOG(x) (void)0
 #else
 #define AXTRACE(methodName) AXLogger axLogger(methodName)
-#define AXLOG(x) AXLogger logger; \
-    logger.log(x)
+#define AXLOG(x) AXLogger::log(x)
 #endif // LOG_DISABLED
 
 } // namespace WebCore

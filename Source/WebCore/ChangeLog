@@ -1,3 +1,46 @@
+2020-04-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add logging of AXIsolatedTree and AXNotifications.
+        https://bugs.webkit.org/show_bug.cgi?id=211214
+
+        Reviewed by Chris Fleizach.
+
+        - Added operator<< implementations for AXIsolatedTree and AX notifications.
+        - Added corresponding AXLogger::log overloads for the above types.
+        - To set the root node and the focused node we are now always using
+        setRootNodeID and setFocusedNodeID respectively. Therefore, before
+        returning the root or the focused nodes, it is necessary to applyPendingChanges.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::add): Used for recursive logging of the hierarchy.
+        (WebCore::AXLogger::log):
+        (WebCore::operator<<):
+        * accessibility/AXLogger.h:
+        * accessibility/AXObjectCache.cpp:
+        Added logging of the isolated tree when it's generated and before and after updates.
+        (WebCore::AXObjectCache::isolatedTreeFocusedObject):
+        (WebCore::AXObjectCache::generateIsolatedTree):
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/AXObjectCache.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::focusedUIElement const):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::createTreeForPageID):
+        (WebCore::AXIsolatedTree::removeTreeForPageID):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::focusedNode):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::setRootNodeID):
+        (WebCore::AXIsolatedTree::setFocusedNodeID):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        (WebCore::AXIsolatedTree::focusedUIElement): Renamed focusedNode for naming consistency.
+        (WebCore::AXIsolatedTree::setRootNode): Deleted. Using setRootNodeID instead,
+        (WebCore::AXIsolatedTree::setFocusedNode): Deleted. Use setFocusedNodeID instead.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        (WebCore::AXIsolatedTree::treeID const):
+        (WebCore::AXIsolatedTree::treeIdentifier const): renamed treeID for naming consistency.
+
 2020-04-30  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GStreamer build warning fix after r260755.

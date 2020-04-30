@@ -66,6 +66,37 @@ void AXLogger::log(const AXCoreObject& object)
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
+void AXLogger::add(TextStream& stream, const RefPtr<AXCoreObject>& object, bool recursive)
+{
+    if (!object)
+        return;
+
+    stream.increaseIndent();
+    stream << *object;
+
+    if (recursive) {
+        for (auto& child : object->children())
+            add(stream, child, true);
+    }
+    stream.decreaseIndent();
+}
+
+void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>& notification)
+{
+    TextStream stream(TextStream::LineMode::MultipleLine);
+    stream << "Notification " << notification.second << " for object " << *notification.first;
+    LOG(Accessibility, "%s", stream.release().utf8().data());
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXLogger::log(AXIsolatedTree& tree)
+{
+    TextStream stream(TextStream::LineMode::MultipleLine);
+    stream << tree;
+    LOG(Accessibility, "%s", stream.release().utf8().data());
+}
+#endif
+
 TextStream& operator<<(TextStream& stream, AccessibilityRole role)
 {
     switch (role) {
@@ -527,12 +558,122 @@ TextStream& operator<<(TextStream& stream, AccessibilityRole role)
     return stream;
 }
 
+TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notification)
+{
+    switch (notification) {
+    case AXObjectCache::AXNotification::AXActiveDescendantChanged:
+        stream << "AXActiveDescendantChanged";
+        break;
+    case AXObjectCache::AXNotification::AXAutocorrectionOccured:
+        stream << "AXAutocorrectionOccured";
+        break;
+    case AXObjectCache::AXNotification::AXCheckedStateChanged:
+        stream << "AXCheckedStateChanged";
+        break;
+    case AXObjectCache::AXNotification::AXChildrenChanged:
+        stream << "AXChildrenChanged";
+        break;
+    case AXObjectCache::AXNotification::AXCurrentChanged:
+        stream << "AXCurrentChanged";
+        break;
+    case AXObjectCache::AXNotification::AXDisabledStateChanged:
+        stream << "AXDisabledStateChanged";
+        break;
+    case AXObjectCache::AXNotification::AXFocusedUIElementChanged:
+        stream << "AXFocusedUIElementChanged";
+        break;
+    case AXObjectCache::AXNotification::AXLayoutComplete:
+        stream << "AXLayoutComplete";
+        break;
+    case AXObjectCache::AXNotification::AXLoadComplete:
+        stream << "AXLoadComplete";
+        break;
+    case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
+        stream << "AXNewDocumentLoadComplete";
+        break;
+    case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
+        stream << "AXSelectedChildrenChanged";
+        break;
+    case AXObjectCache::AXNotification::AXSelectedTextChanged:
+        stream << "AXSelectedTextChanged";
+        break;
+    case AXObjectCache::AXNotification::AXValueChanged:
+        stream << "AXValueChanged";
+        break;
+    case AXObjectCache::AXNotification::AXScrolledToAnchor:
+        stream << "AXScrolledToAnchor";
+        break;
+    case AXObjectCache::AXNotification::AXLiveRegionCreated:
+        stream << "AXLiveRegionCreated";
+        break;
+    case AXObjectCache::AXNotification::AXLiveRegionChanged:
+        stream << "AXLiveRegionChanged";
+        break;
+    case AXObjectCache::AXNotification::AXMenuListItemSelected:
+        stream << "AXMenuListItemSelected";
+        break;
+    case AXObjectCache::AXNotification::AXMenuListValueChanged:
+        stream << "AXMenuListValueChanged";
+        break;
+    case AXObjectCache::AXNotification::AXMenuClosed:
+        stream << "AXMenuClosed";
+        break;
+    case AXObjectCache::AXNotification::AXMenuOpened:
+        stream << "AXMenuOpened";
+        break;
+    case AXObjectCache::AXNotification::AXRowCountChanged:
+        stream << "AXRowCountChanged";
+        break;
+    case AXObjectCache::AXNotification::AXRowCollapsed:
+        stream << "AXRowCollapsed";
+        break;
+    case AXObjectCache::AXNotification::AXRowExpanded:
+        stream << "AXRowExpanded";
+        break;
+    case AXObjectCache::AXNotification::AXExpandedChanged:
+        stream << "AXExpandedChanged";
+        break;
+    case AXObjectCache::AXNotification::AXInvalidStatusChanged:
+        stream << "AXInvalidStatusChanged";
+        break;
+    case AXObjectCache::AXNotification::AXPressDidSucceed:
+        stream << "AXPressDidSucceed";
+        break;
+    case AXObjectCache::AXNotification::AXPressDidFail:
+        stream << "AXPressDidFail";
+        break;
+    case AXObjectCache::AXNotification::AXPressedStateChanged:
+        stream << "AXPressedStateChanged";
+        break;
+    case AXObjectCache::AXNotification::AXReadOnlyStatusChanged:
+        stream << "AXReadOnlyStatusChanged";
+        break;
+    case AXObjectCache::AXNotification::AXRequiredStatusChanged:
+        stream << "AXRequiredStatusChanged";
+        break;
+    case AXObjectCache::AXNotification::AXTextChanged:
+        stream << "AXTextChanged";
+        break;
+    case AXObjectCache::AXNotification::AXAriaAttributeChanged:
+        stream << "AXAriaAttributeChanged";
+        break;
+    case AXObjectCache::AXNotification::AXElementBusyChanged:
+        stream << "AXElementBusyChanged";
+        break;
+    default:
+        break;
+    }
+
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
 {
     TextStream::GroupScope groupScope(stream);
-    stream << "AXCoreObject " << &object;
-    stream.dumpProperty("objectID", object.objectID());
+    stream << "objectID " << object.objectID();
+    stream.dumpProperty("identifierAttribute", object.identifierAttribute());
     stream.dumpProperty("roleValue", object.roleValue());
+    stream.dumpProperty("address", &object);
 
     auto* parent = object.parentObject();
     stream.dumpProperty("parentObject", parent ? parent->objectID() : 0);
@@ -542,5 +683,17 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
 
     return stream;
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+TextStream& operator<<(TextStream& stream, AXIsolatedTree& tree)
+{
+    TextStream::GroupScope groupScope(stream);
+    stream << "treeID " << tree.treeID();
+    stream.dumpProperty("rootNodeID", tree.m_rootNodeID);
+    stream.dumpProperty("focusedNodeID", tree.m_focusedNodeID);
+    AXLogger::add(stream, tree.rootNode(), true);
+    return stream;
+}
+#endif
 
 } // namespace WebCore
