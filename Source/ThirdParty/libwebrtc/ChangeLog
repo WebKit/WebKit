@@ -1,3 +1,13 @@
+2020-04-30  Youenn Fablet  <youenn@apple.com>
+
+        Disable low latency encoder on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211229
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        This is not yet fully ready.
+
 2020-04-15  Jer Noble  <jer.noble@apple.com>
 
         isNullFunctionPointer() can fail for symbols not explicitly marked as weakly linked.
