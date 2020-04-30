@@ -1,3 +1,26 @@
+2020-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r260932): ASSERTION FAILED: ok in webkit::SandboxExtension::consumePermanently for 3 tests
+        https://bugs.webkit.org/show_bug.cgi?id=211253
+        <rdar://problem/62673727>
+
+        Reviewed by Per Arne Vollan.
+
+        In r260932 I added an assertion to confirm that a sandbox extension was successfully consumed. This triggered three
+        test failures because those tests attempt to pass a sandbox extension from the WebContent process to the UIProcess.
+
+        After speaking with the Sandbox team, I learned that an unsandboxed program that attempts to consume a valid
+        sandbox extension will return 0. Sandboxed processes either receive -1 (for error), or a handle representing the
+        newly added extension (so that it can be removed when no longer needed).
+        
+        Since the TestWebKitAPI (and WebKitTestRunner) processes are not sandboxed they receive a zero return value here.
+
+        We should recognize this as a valid and expected result. We should also consider making some form of sandboxed
+        driver for WebKit.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::consume): Recognize a 0 handle as valid.
+
 2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Optimize LocalAuthenticator

@@ -68,7 +68,7 @@ public:
             LOG_ERROR("Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
             return false;
         }
-        return m_handle;
+        return true;
 #endif
     }
 
