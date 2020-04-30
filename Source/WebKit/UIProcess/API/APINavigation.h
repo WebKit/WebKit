@@ -155,7 +155,7 @@ public:
 
     const Optional<WebCore::AdClickAttribution>& adClickAttribution() const { return m_lastNavigationAction.adClickAttribution; }
 
-    void setForegroundActivity(std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity>&& activity) { m_foregroundActivity = WTFMove(activity); }
+    void setClientNavigationActivity(WebKit::ProcessThrottler::ActivityVariant&& activity) { m_clientNavigationActivity = WTFMove(activity); }
 
     void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
@@ -183,7 +183,7 @@ private:
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     bool m_userContentExtensionsEnabled { true };
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
-    std::unique_ptr<WebKit::ProcessThrottler::ForegroundActivity> m_foregroundActivity;
+    WebKit::ProcessThrottler::TimedActivity m_clientNavigationActivity;
     bool m_isLoadedWithNavigationShared { false };
 };
 

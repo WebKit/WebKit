@@ -35,14 +35,18 @@ namespace API {
 using namespace WebCore;
 using namespace WebKit;
 
+static constexpr Seconds navigationActivityTimeout { 30_s };
+
 Navigation::Navigation(WebNavigationState& state)
     : m_navigationID(state.generateNavigationID())
+    , m_clientNavigationActivity(navigationActivityTimeout)
 {
 }
 
 Navigation::Navigation(WebNavigationState& state, WebBackForwardListItem* currentAndTargetItem)
     : m_navigationID(state.generateNavigationID())
     , m_reloadItem(currentAndTargetItem)
+    , m_clientNavigationActivity(navigationActivityTimeout)
 {
 }
 
@@ -51,6 +55,7 @@ Navigation::Navigation(WebNavigationState& state, WebCore::ResourceRequest&& req
     , m_originalRequest(WTFMove(request))
     , m_currentRequest(m_originalRequest)
     , m_fromItem(fromItem)
+    , m_clientNavigationActivity(navigationActivityTimeout)
 {
     m_redirectChain.append(m_originalRequest.url());
 }
@@ -62,6 +67,7 @@ Navigation::Navigation(WebNavigationState& state, WebBackForwardListItem& target
     , m_targetItem(&targetItem)
     , m_fromItem(fromItem)
     , m_backForwardFrameLoadType(backForwardFrameLoadType)
+    , m_clientNavigationActivity(navigationActivityTimeout)
 {
 }
 

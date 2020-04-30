@@ -102,6 +102,20 @@ public:
     using ActivityVariant = Variant<std::nullptr_t, UniqueRef<BackgroundActivity>, UniqueRef<ForegroundActivity>>;
     static bool isValidBackgroundActivity(const ActivityVariant&);
     static bool isValidForegroundActivity(const ActivityVariant&);
+
+    class TimedActivity {
+    public:
+        TimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
+        TimedActivity& operator=(ActivityVariant&&);
+
+    private:
+        void activityTimedOut();
+        void updateTimer();
+
+        RunLoop::Timer<TimedActivity> m_timer;
+        Seconds m_timeout;
+        ActivityVariant m_activity;
+    };
     
     void didConnectToProcess(ProcessID);
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }

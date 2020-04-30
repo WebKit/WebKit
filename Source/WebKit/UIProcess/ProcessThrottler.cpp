@@ -239,4 +239,33 @@ bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::Activit
     return WTF::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
 }
 
+ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
+    : m_timer(RunLoop::main(), this, &TimedActivity::activityTimedOut)
+    , m_timeout(timeout)
+    , m_activity(WTFMove(activity))
+{
+    updateTimer();
+}
+
+auto ProcessThrottler::TimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> TimedActivity&
+{
+    m_activity = WTFMove(activity);
+    updateTimer();
+    return *this;
+}
+
+void ProcessThrottler::TimedActivity::activityTimedOut()
+{
+    RELEASE_LOG_ERROR(ProcessSuspension, "%p - TimedActivity::activityTimedOut:", this);
+    m_activity = nullptr;
+}
+
+void ProcessThrottler::TimedActivity::updateTimer()
+{
+    if (WTF::holds_alternative<std::nullptr_t>(m_activity))
+        m_timer.stop();
+    else
+        m_timer.startOneShot(m_timeout);
+}
+
 } // namespace WebKit

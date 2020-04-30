@@ -1,3 +1,32 @@
+2020-04-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Add timeout for "Client navigation" foreground assertion
+        https://bugs.webkit.org/show_bug.cgi?id=211202
+
+        Reviewed by Alex Christensen.
+
+        Add a 30s timeout for "Client navigation" foreground assertion. Foreground assertions do not timeout
+        at RunningBoard level and we thus need to make sure we release them to avoid power leaks.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setClientNavigationActivity):
+        (API::Navigation::setForegroundActivity): Deleted.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::TimedActivity::TimedActivity):
+        (WebKit::ProcessThrottler::TimedActivity::operator=):
+        (WebKit::ProcessThrottler::TimedActivity::activityTimedOut):
+        (WebKit::ProcessThrottler::TimedActivity::updateTimer):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+
 2020-04-30  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to change a WKWebView's CORS disabling pattern after initialization
