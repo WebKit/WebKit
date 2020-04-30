@@ -1,3 +1,19 @@
+2020-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support click events
+        https://bugs.webkit.org/show_bug.cgi?id=211175
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle button pressed and released events using a GtkGestureClick.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (ClickCounter::currentClickCountForGdkButtonEvent):
+        (webkitWebViewBaseButtonPressed):
+        (webkitWebViewBaseButtonReleased):
+        (webkitWebViewBaseConstructed):
+        (webkitWebViewBaseResetClickCounter):
+
 2020-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Use initializers in PlatformMouseEvent and WebEvent

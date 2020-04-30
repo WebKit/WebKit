@@ -82,6 +82,7 @@
 using namespace WebKit;
 using namespace WebCore;
 
+#if !USE(GTK4)
 struct ClickCounter {
 public:
     void reset()
@@ -94,7 +95,6 @@ public:
 
     int currentClickCountForGdkButtonEvent(GdkEvent* event)
     {
-#if !USE(GTK4)
         int doubleClickDistance = 250;
         int doubleClickTime = 5;
         g_object_get(gtk_settings_get_for_screen(gdk_event_get_screen(event)),
@@ -131,7 +131,6 @@ public:
         previousClickPoint = IntPoint(x, y);
         previousClickButton = button;
         previousClickTime = eventTime;
-#endif
 
         return currentClickCount;
     }
@@ -142,6 +141,7 @@ private:
     unsigned previousClickButton;
     int previousClickTime;
 };
+#endif
 
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
@@ -181,7 +181,9 @@ struct _WebKitWebViewBasePrivate {
     RefPtr<WebPageProxy> pageProxy;
     bool shouldForwardNextKeyEvent { false };
     bool shouldForwardNextWheelEvent { false };
+#if !USE(GTK4)
     ClickCounter clickCounter;
+#endif
     CString tooltipText;
     IntRect tooltipArea;
     GRefPtr<AtkObject> accessible;
@@ -1025,7 +1027,48 @@ static gboolean webkitWebViewBaseButtonReleaseEvent(GtkWidget* widget, GdkEventB
 
     return GDK_EVENT_STOP;
 }
+#endif
 
+#if USE(GTK4)
+static void webkitWebViewBaseButtonPressed(WebKitWebViewBase* webViewBase, int clickCount, double x, double y, GtkGesture* gesture)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+    if (clickCount == 1)
+        priv->inputMethodFilter.cancelComposition();
+    gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+
+    auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
+
+    auto button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+    auto* event = gtk_gesture_get_last_event(gesture, sequence);
+
+    // If it's a right click event save it as a possible context menu event.
+    if (button == GDK_BUTTON_SECONDARY)
+        priv->contextMenuEvent.reset(gdk_event_copy(event));
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+}
+
+static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int clickCount, double x, double y, GtkGesture* gesture)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+    gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+
+    auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_gesture_get_last_event(gesture, sequence), { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+}
+#endif
+
+#if !USE(GTK4)
 static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Optional<WebWheelEvent::Phase> phase = WTF::nullopt, Optional<WebWheelEvent::Phase> momentum = WTF::nullopt)
 {
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
@@ -1659,6 +1702,12 @@ static void webkitWebViewBaseConstructed(GObject* object)
     g_signal_connect_object(controller, "key-pressed", G_CALLBACK(webkitWebViewBaseKeyPressed), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(controller, "key-released", G_CALLBACK(webkitWebViewBaseKeyReleased), viewWidget, G_CONNECT_SWAPPED);
     gtk_widget_add_controller(viewWidget, controller);
+
+    auto* gesture = gtk_gesture_click_new();
+    gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+    g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseButtonPressed), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(gesture, "released", G_CALLBACK(webkitWebViewBaseButtonReleased), viewWidget, G_CONNECT_SWAPPED);
+    gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #endif
 }
 
@@ -1950,7 +1999,9 @@ void webkitWebViewBaseSetContentsSize(WebKitWebViewBase* webkitWebViewBase, cons
 
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 {
+#if !USE(GTK4)
     webkitWebViewBase->priv->clickCounter.reset();
+#endif
 }
 
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase, const LayerTreeContext& layerTreeContext)
