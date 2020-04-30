@@ -525,16 +525,17 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
 {
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+        auto randomNumber = cryptographicallyRandomNumber();
 
-        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
-        WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Cache").get());
-        WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "CacheStorage").get());
-        WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
-        WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "LocalStorage").get());
-        WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration, toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());
-        WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
-        WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
-        WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
+        WKWebsiteDataStoreConfigurationSetApplicationCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ApplicationCache", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "CacheStorage", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases", pathSeparator, "IndexedDB", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "LocalStorage", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases", pathSeparator, "WebSQL", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "MediaKeys", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ResourceLoadStatistics", pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ServiceWorkers", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
