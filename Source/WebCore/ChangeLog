@@ -1,5 +1,13 @@
 2020-04-30  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GStreamer build warning fix after r260755.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcMakeRequest): There is no need to capture src in the
+        closure, its protector is used instead.
+
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] fast/mediastream/get-user-media-device-id.html failing
         https://bugs.webkit.org/show_bug.cgi?id=190576
 
