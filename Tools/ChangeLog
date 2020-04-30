@@ -1,3 +1,18 @@
+2020-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        TestWebKitAPI.WebKit.DefaultDisplayName and TestWebKitAPI.WebKit.CustomDisplayName are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=209993
+        <rdar://problem/61282602>
+
+        Reviewed by Chris Dumez.
+
+        The display name for the web process is set on a low-priority background queue in WebProcess::updateProcessName()
+        so sometimes in our test it hasn't executed yet.  If it hasn't executed yet, it will soon, so try until it succeeds.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        (TestWebKitAPI::checkUntilDisplayNameIs):
+        (TestWebKitAPI::TEST):
+
 2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Optimize LocalAuthenticator

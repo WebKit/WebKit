@@ -41,6 +41,16 @@
 namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
+static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, bool* done)
+{
+    [webView _getProcessDisplayNameWithCompletionHandler:^(NSString *name) {
+        if ([name isEqualToString:expectedName])
+            *done = true;
+        else
+            checkUntilDisplayNameIs(webView, expectedName, done);
+    }];
+}
+
 TEST(WebKit, CustomDisplayName)
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration new] autorelease];
@@ -49,13 +59,8 @@ TEST(WebKit, CustomDisplayName)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
     [webView synchronouslyLoadHTMLString:@"start web process"];
 
-    __block bool done = false;
-
-    [webView _getProcessDisplayNameWithCompletionHandler:^(NSString *name) {
-        EXPECT_WK_STREQ(name, displayNameToSet);
-        done = true;
-    }];
-
+    bool done = false;
+    checkUntilDisplayNameIs(webView.get(), displayNameToSet, &done);
     Util::run(&done);
 }
 
@@ -65,11 +70,7 @@ TEST(WebKit, DefaultDisplayName)
     [webView synchronouslyLoadHTMLString:@"start web process"];
 
     __block bool done = false;
-    [webView _getProcessDisplayNameWithCompletionHandler:^(NSString *name) {
-        EXPECT_WK_STREQ(name, @"TestWebKitAPI Web Content");
-        done = true;
-    }];
-
+    checkUntilDisplayNameIs(webView.get(), @"TestWebKitAPI Web Content", &done);
     Util::run(&done);
 }
 #endif // PLATFORM(MAC)
