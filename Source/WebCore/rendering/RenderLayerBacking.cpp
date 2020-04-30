@@ -967,6 +967,11 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
+    if (RenderLayerCompositor::isCompositedSubframeRenderer(renderer())) {
+        m_graphicsLayer->setContentsRectClipsDescendants(true);
+        updateContentsRects();
+    }
+
     if (is<RenderImage>(renderer()) && downcast<RenderImage>(renderer()).isEditableImage()) {
         auto element = renderer().element();
         if (is<HTMLImageElement>(element)) {

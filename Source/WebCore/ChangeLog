@@ -1,3 +1,42 @@
+2020-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        border-radius fails to clip iframe contents
+        https://bugs.webkit.org/show_bug.cgi?id=211199
+        <rdar://problem/61945671>
+
+        Reviewed by Zalan Bujtas.
+
+        iframes need to use the same composited clipping strategy that we use for other
+        replaced elements with composited contents, like video and WebGL. To achieve this,
+        change GraphicsLayer to allow child GraphicsLayers to be parented in the contents
+        clipping layer, just like content layers are. (We don't want to do this unconditionally,
+        because it will change behavior for video with controls.)
+
+        Add GraphicsLayer::contentsRectClipsDescendants(), and used it to run code that
+        creates the contents clipping (and optional shape) layers even when no contents
+        layer is present. Fix up the sublayer list building to parent layers from
+        children in the contents clipping layer.
+
+        Tests: compositing/iframes/border-radius-composited-frame.html
+               compositing/iframes/border-uneven-radius-composited-frame.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsRectClipsDescendants const):
+        (WebCore::GraphicsLayer::setContentsRectClipsDescendants):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsRectClipsDescendants):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::isCompositedSubframeRenderer):
+        * rendering/RenderLayerCompositor.h:
+
 2020-04-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adjust the available vertical space with the row span for cell layout

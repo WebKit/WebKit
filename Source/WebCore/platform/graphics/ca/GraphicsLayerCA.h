@@ -120,6 +120,7 @@ public:
     
     WEBCORE_EXPORT void setContentsRect(const FloatRect&) override;
     WEBCORE_EXPORT void setContentsClippingRect(const FloatRoundedRect&) override;
+    WEBCORE_EXPORT void setContentsRectClipsDescendants(bool) override;
     WEBCORE_EXPORT bool setMasksToBoundsRect(const FloatRoundedRect&) override;
 
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;

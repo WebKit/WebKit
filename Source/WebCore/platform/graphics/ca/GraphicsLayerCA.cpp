@@ -967,6 +967,15 @@ void GraphicsLayerCA::setContentsClippingRect(const FloatRoundedRect& rect)
     noteLayerPropertyChanged(ContentsRectsChanged);
 }
 
+void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDescendants)
+{
+    if (contentsRectClipsDescendants == m_contentsRectClipsDescendants)
+        return;
+
+    GraphicsLayer::setContentsRectClipsDescendants(contentsRectClipsDescendants);
+    noteLayerPropertyChanged(ChildrenChanged | ContentsRectsChanged);
+}
+
 bool GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
 {
     if (roundedRect == m_masksToBoundsRect)
@@ -2019,19 +2028,31 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
 #endif
     };
 
+    auto buildChildLayerList = [&](PlatformCALayerList& list) {
+        appendLayersFromChildren(list);
+        appendDebugLayers(list);
+    };
+
     PlatformCALayerList primaryLayerChildren;
     appendCustomAndClippingLayers(primaryLayerChildren);
+
+    bool clippingLayerHostsChildren = m_contentsRectClipsDescendants && m_contentsClippingLayer;
+    if (clippingLayerHostsChildren) {
+        PlatformCALayerList clippingChildren;
+        buildChildLayerList(clippingChildren);
+        m_contentsClippingLayer->setSublayers(clippingChildren);
+    }
 
     if (m_structuralLayer) {
         PlatformCALayerList layerList;
         appendStructuralLayerChildren(layerList);
-        appendLayersFromChildren(layerList);
-        appendDebugLayers(layerList);
+
+        if (!clippingLayerHostsChildren)
+            buildChildLayerList(layerList);
+
         m_structuralLayer->setSublayers(layerList);
-    } else {
-        appendLayersFromChildren(primaryLayerChildren);
-        appendDebugLayers(primaryLayerChildren);
-    }
+    } else if (!clippingLayerHostsChildren)
+        buildChildLayerList(primaryLayerChildren);
 
     m_layer->setSublayers(primaryLayerChildren);
 }
@@ -2677,7 +2698,7 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
 
 void GraphicsLayerCA::updateContentsRects()
 {
-    if (!m_contentsLayer)
+    if (!m_contentsLayer && !m_contentsRectClipsDescendants)
         return;
 
     auto contentBounds = FloatRect { { }, m_contentsRect.size() };
@@ -2700,13 +2721,14 @@ void GraphicsLayerCA::updateContentsRects()
         
         updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect);
 
-        if (gainedOrLostClippingLayer) {
+        if (m_contentsLayer && gainedOrLostClippingLayer) {
             m_contentsLayer->removeFromSuperlayer();
             m_contentsClippingLayer->appendSublayer(*m_contentsLayer);
         }
     } else {
         if (m_contentsClippingLayer) {
-            m_contentsLayer->removeFromSuperlayer();
+            if (m_contentsLayer)
+                m_contentsLayer->removeFromSuperlayer();
 
             m_contentsClippingLayer->removeFromSuperlayer();
             m_contentsClippingLayer->setOwner(nullptr);
@@ -2724,8 +2746,10 @@ void GraphicsLayerCA::updateContentsRects()
     if (gainedOrLostClippingLayer)
         noteSublayersChanged(DontScheduleFlush);
 
-    m_contentsLayer->setPosition(m_contentsRect.location());
-    m_contentsLayer->setBounds(contentBounds);
+    if (m_contentsLayer) {
+        m_contentsLayer->setPosition(m_contentsRect.location());
+        m_contentsLayer->setBounds(contentBounds);
+    }
 
     if (m_layerClones) {
         for (auto& layer : m_layerClones->contentsLayerClones.values()) {
@@ -3615,7 +3639,13 @@ void GraphicsLayerCA::resumeAnimations()
 
 PlatformCALayer* GraphicsLayerCA::hostLayerForSublayers() const
 {
-    return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); 
+    if (contentsRectClipsDescendants() && m_contentsClippingLayer)
+        return m_contentsClippingLayer.get();
+
+    if (m_structuralLayer)
+        return m_structuralLayer.get();
+
+    return m_layer.get();
 }
 
 PlatformCALayer* GraphicsLayerCA::layerForSuperlayer() const

@@ -2823,6 +2823,14 @@ ScrollingNodeID RenderLayerCompositor::asyncScrollableContainerNodeID(const Rend
     return containerScrollingNodeID;
 }
 
+bool RenderLayerCompositor::isCompositedSubframeRenderer(const RenderObject& renderer)
+{
+    if (!is<RenderWidget>(renderer))
+        return false;
+
+    return downcast<RenderWidget>(renderer).requiresAcceleratedCompositing();
+}
+
 // Return true if the given layer is a stacking context and has compositing child
 // layers that it needs to clip. In this case we insert a clipping GraphicsLayer
 // into the hierarchy between this layer and its children in the z-order hierarchy.

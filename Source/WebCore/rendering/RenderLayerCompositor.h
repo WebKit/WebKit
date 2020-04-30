@@ -295,6 +295,7 @@ public:
     // to know if there is non-affine content, e.g. for drawing into an image.
     bool has3DContent() const;
     
+    static bool isCompositedSubframeRenderer(const RenderObject&);
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
     // Return true if the layers changed.
     bool parentFrameContentLayers(RenderWidget&);
