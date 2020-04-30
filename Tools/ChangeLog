@@ -1,3 +1,16 @@
+2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Optimize LocalAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=183534
+        <rdar://problem/43357408>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:selectAssertionResponse:source:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        Adds a new test case for the LRU.
+
 2020-04-30  Kate Cheney  <katherine_cheney@apple.com>
 
         Change default of "inAppBrowserPrivacyQuirks" testing toggle to use it for tests only

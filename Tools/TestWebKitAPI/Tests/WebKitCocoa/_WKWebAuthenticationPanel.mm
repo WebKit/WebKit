@@ -62,7 +62,8 @@ static String testES256PrivateKeyBase64 =
     "BDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749VBJPgqUIwfhWHJ91nb7U"
     "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6"
     "RQ==";
-static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVwQUFFQ0F3UUZCZ2NJQ1E9PQ==";
+static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVkSm9obg=="; // { "id": h'00010203040506070809', "name": "John" }
+static String webAuthenticationPanelSelectedCredentialName;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -136,6 +137,14 @@ static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVwQUFFQ0F3
 {
     if (responses.count == 1) {
         completionHandler(responses[0]);
+        return;
+    }
+
+    // Responses returned from LocalAuthenticator is in the order of LRU. Therefore, we use the last item to populate it to
+    // the first to test its correctness.
+    if (source == _WKWebAuthenticationSourceLocal) {
+        webAuthenticationPanelSelectedCredentialName = responses.lastObject.name;
+        completionHandler(responses.lastObject);
         return;
     }
 
@@ -300,6 +309,7 @@ static void reset()
     webAuthenticationPanelPin = emptyString();
     webAuthenticationPanelNullUserHandle = NO;
     localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyDisallow;
+    webAuthenticationPanelSelectedCredentialName = emptyString();
 }
 
 static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
@@ -1294,6 +1304,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 
 // Skip the test because of <rdar://problem/59635486>.
 #if PLATFORM(MAC)
+
 TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
@@ -1313,6 +1324,34 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
     cleanUpKeychain("");
 }
+
+TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationLocalAuthenticatorExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "", testUserEntityBundleBase64));
+    ASSERT_TRUE(addKeyToKeychain("BBRoi2JbR0IXTeJmvXUp1YIuM4sph/Lu3eGf75F7n+HojHKG70a4R0rB2PQce5/SJle6T7OO5Cqet/LJZVM6NQ8yDDxWvayf71GTDp2yUtuIbqJLFVbpWymlj9WRizgX3A==", "", "omJpZEoAAQIDBAUGBwgJZG5hbWVkSmFuZQ=="/* { "id": h'00010203040506070809', "name": "Jane" } */));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+    EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "John");
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+    EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
+
+    cleanUpKeychain("");
+}
+
 #endif
 
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)

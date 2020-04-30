@@ -232,6 +232,9 @@
 /* Continue */
 "Continue" = "Continue";
 
+/* Continue with Touch ID */
+"Continue with Touch ID." = "Continue with Touch ID.";
+
 /* Media Controls context menu item */
 "Controls" = "Controls";
 
@@ -868,9 +871,6 @@
 /* Unwanted software warning */
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
-/* This website would like to use Touch ID */
-"This website would like to use Touch ID." = "This website would like to use Touch ID.";
-
 /* Informative text for requesting cross-site cookie and website data access. */
 "This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
 
@@ -888,9 +888,6 @@
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
-
-/* Use Touch ID to sign in to this website */
-"Touch ID to sign in to this website." = "Touch ID to sign in to this website.";
 
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";

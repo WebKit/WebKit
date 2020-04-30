@@ -72,8 +72,6 @@ private:
 
     State m_state { State::Init };
     UniqueRef<LocalConnection> m_connection;
-    // FIXME(183534): Combine these two.
-    HashSet<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_existingCredentials;
 };
 

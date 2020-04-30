@@ -31,7 +31,6 @@
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/ExceptionData.h>
-#import <wtf/HashSet.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
@@ -47,7 +46,7 @@ MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguratio
 {
 }
 
-void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, UserVerificationCallback&& callback) const
+void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, UserVerificationCallback&& callback)
 {
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
@@ -124,7 +123,7 @@ void MockLocalConnection::getAttestation(SecKeyRef, NSData *, NSData *, Attestat
     });
 }
 
-void MockLocalConnection::filterResponses(HashSet<Ref<AuthenticatorAssertionResponse>>& responses) const
+void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionResponse>>& responses) const
 {
     const auto& preferredCredentialIdBase64 = m_configuration.local->preferredCredentialIdBase64;
     if (preferredCredentialIdBase64.isEmpty())
@@ -138,10 +137,9 @@ void MockLocalConnection::filterResponses(HashSet<Ref<AuthenticatorAssertionResp
         if (rawIdBase64 == preferredCredentialIdBase64)
             break;
     }
-    auto response = responses.take(itr);
-    ASSERT(response);
+    auto response = itr->copyRef();
     responses.clear();
-    responses.add(WTFMove(*response));
+    responses.append(WTFMove(response));
 }
 
 } // namespace WebKit

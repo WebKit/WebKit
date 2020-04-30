@@ -34,16 +34,17 @@
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
 #import <WebCore/ExceptionData.h>
+#import <WebCore/FidoConstants.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
 #import <WebCore/WebAuthenticationUtils.h>
 #import <pal/crypto/CryptoDigest.h>
-#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -57,8 +58,6 @@ const uint8_t makeCredentialFlags = 0b01000101; // UP, UV and AT are set.
 const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
-const char* const userEntityIdKey = "id";
-const char* const userEntityNameKey = "name";
 const uint64_t counter = 0;
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
@@ -66,7 +65,7 @@ static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>
     return transports.isEmpty() ? true : transports.contains(target);
 }
 
-// FIXME(183534): Find a better way of comparing credential id. Doing it with array seems fine given the list should be small.
+// A Base64 encoded string of the Credential ID is used as the key of the hash set.
 static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDescriptor>& credentialDescriptors)
 {
     HashSet<String> result;
@@ -74,7 +73,7 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
         if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal)
             && credentialDescriptor.type == PublicKeyCredentialType::PublicKey
             && credentialDescriptor.idVector.size() == credentialIdLength)
-            result.add(String(reinterpret_cast<const char*>(credentialDescriptor.idVector.data()), credentialDescriptor.idVector.size()));
+            result.add(base64Encode(credentialDescriptor.idVector.data(), credentialDescriptor.idVector.size()));
     }
     return result;
 }
@@ -88,14 +87,12 @@ static inline Vector<uint8_t> toVector(NSData *data)
 
 static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
 {
-    // FIXME(183534): Consider using initWithBytesNoCopy.
     return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
 }
 
 static inline RetainPtr<NSData> toNSData(ArrayBuffer* buffer)
 {
     ASSERT(buffer);
-    // FIXME(183534): Consider using initWithBytesNoCopy.
     return adoptNS([[NSData alloc] initWithBytes:buffer->data() length:buffer->byteLength()]);
 }
 
@@ -140,11 +137,13 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
     if (status && status != errSecItemNotFound)
         return WTF::nullopt;
     auto retainAttributesArray = adoptCF(attributesArrayRef);
-    NSArray *nsAttributesArray = (NSArray *)attributesArrayRef;
+    NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
+        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
+    }];
 
     Vector<Ref<AuthenticatorAssertionResponse>> result;
-    result.reserveInitialCapacity(nsAttributesArray.count);
-    for (NSDictionary *attributes in nsAttributesArray) {
+    result.reserveInitialCapacity(sortedAttributesArray.count);
+    for (NSDictionary *attributes in sortedAttributesArray) {
         auto decodedResponse = cbor::CBORReader::read(toVector(attributes[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
@@ -152,14 +151,14 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
         }
         auto& responseMap = decodedResponse->getMap();
 
-        auto it = responseMap.find(CBOR(userEntityIdKey));
+        auto it = responseMap.find(CBOR(kEntityIdMapKey));
         if (it == responseMap.end() || !it->second.isByteString()) {
             ASSERT_NOT_REACHED();
             return WTF::nullopt;
         }
         auto& userHandle = it->second.getByteString();
 
-        it = responseMap.find(CBOR(userEntityNameKey));
+        it = responseMap.find(CBOR(kEntityNameMapKey));
         if (it == responseMap.end() || !it->second.isString()) {
             ASSERT_NOT_REACHED();
             return WTF::nullopt;
@@ -211,7 +210,7 @@ void LocalAuthenticator::makeCredential()
         if (notFound != m_existingCredentials.findMatching([&excludeCredentialIds] (auto& credential) {
             auto* rawId = credential->rawId();
             ASSERT(rawId);
-            return excludeCredentialIds.contains(String(reinterpret_cast<const char*>(rawId->data()), rawId->byteLength()));
+            return excludeCredentialIds.contains(base64Encode(rawId->data(), rawId->byteLength()));
         })) {
             receiveException({ NotAllowedError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
@@ -286,8 +285,8 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     const auto& secAttrLabel = creationOptions.rp.id;
 
     cbor::CBORValue::MapValue userEntityMap;
-    userEntityMap[cbor::CBORValue(userEntityIdKey)] = cbor::CBORValue(creationOptions.user.idVector);
-    userEntityMap[cbor::CBORValue(userEntityNameKey)] = cbor::CBORValue(creationOptions.user.name);
+    userEntityMap[cbor::CBORValue(kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.idVector);
+    userEntityMap[cbor::CBORValue(kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
     auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
     ASSERT(userEntity);
     auto secAttrApplicationTag = toNSData(*userEntity);
@@ -435,26 +434,25 @@ void LocalAuthenticator::getAssertion()
     }
     m_existingCredentials = WTFMove(*existingCredentials);
 
+    Vector<Ref<WebCore::AuthenticatorAssertionResponse>> assertionResponses;
+    assertionResponses.reserveInitialCapacity(m_existingCredentials.size());
     for (auto& credential : m_existingCredentials) {
         if (allowCredentialIds.isEmpty()) {
-            auto addResult = m_assertionResponses.add(credential.copyRef());
-            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+            assertionResponses.uncheckedAppend(credential.copyRef());
             continue;
         }
 
         auto* rawId = credential->rawId();
-        if (allowCredentialIds.contains(String(reinterpret_cast<const char*>(rawId->data()), rawId->byteLength()))) {
-            auto addResult = m_assertionResponses.add(credential.copyRef());
-            ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        }
+        if (allowCredentialIds.contains(base64Encode(rawId->data(), rawId->byteLength())))
+            assertionResponses.uncheckedAppend(credential.copyRef());
     }
-    if (m_assertionResponses.isEmpty()) {
+    if (assertionResponses.isEmpty()) {
         receiveException({ NotAllowedError, "No matched credentials are found in the platform attached authenticator."_s }, WebAuthenticationStatus::LANoCredential);
         return;
     }
 
     // Step 6-7. User consent is implicitly acquired by selecting responses.
-    m_connection->filterResponses(m_assertionResponses);
+    m_connection->filterResponses(assertionResponses);
 
     if (auto* observer = this->observer()) {
         auto callback = [this, weakThis = makeWeakPtr(*this)] (AuthenticatorAssertionResponse* response) {
@@ -462,12 +460,14 @@ void LocalAuthenticator::getAssertion()
             if (!weakThis)
                 return;
 
-            auto returnResponse = m_assertionResponses.take(response);
-            if (!returnResponse)
+            auto result = m_existingCredentials.findMatching([expectedResponse = response] (auto& response) {
+                return response.ptr() == expectedResponse;
+            });
+            if (result == notFound)
                 return;
-            continueGetAssertionAfterResponseSelected(WTFMove(*returnResponse));
+            continueGetAssertionAfterResponseSelected(m_existingCredentials[result].copyRef());
         };
-        observer->selectAssertionResponse(m_assertionResponses, WebAuthenticationSource::Local, WTFMove(callback));
+        observer->selectAssertionResponse(WTFMove(assertionResponses), WebAuthenticationSource::Local, WTFMove(callback));
     }
 }
 
@@ -502,15 +502,17 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         return;
 
     // Step 10.
-    auto authData = buildAuthData(WTF::get<PublicKeyCredentialRequestOptions>(requestData().options).rpId, getAssertionFlags, counter, { });
+    auto requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
+    auto authData = buildAuthData(requestOptions.rpId, getAssertionFlags, counter, { });
 
     // Step 11.
     RetainPtr<CFDataRef> signature;
+    auto nsCredentialId = toNSData(response->rawId());
     {
         NSDictionary *query = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-            (id)kSecAttrApplicationLabel: toNSData(response->rawId()).get(),
+            (id)kSecAttrApplicationLabel: nsCredentialId.get(),
             (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
@@ -544,6 +546,25 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     response->setAuthenticatorData(WTFMove(authData));
     response->setSignature(toArrayBuffer((NSData *)signature.get()));
     receiveRespond(WTFMove(response));
+
+    // Extra step: update the Keychain item with the same value to update its modification date such that LRU can be used
+    // for selectAssertionResponse
+    NSDictionary *updateQuery = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrApplicationLabel: nsCredentialId.get(),
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
+        (id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    NSDictionary *updateParams = @{
+        (id)kSecAttrLabel: requestOptions.rpId,
+    };
+    auto status = SecItemUpdate((__bridge CFDictionaryRef)updateQuery, (__bridge CFDictionaryRef)updateParams);
+    if (status)
+        LOG_ERROR("Couldn't update the Keychain item: %d", status);
 }
 
 void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenticationStatus status) const

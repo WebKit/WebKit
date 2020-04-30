@@ -82,7 +82,7 @@ private:
     void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
-    void selectAssertionResponse(const HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) final;
+    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) final;
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) final;
     void cancelRequest() final;
 

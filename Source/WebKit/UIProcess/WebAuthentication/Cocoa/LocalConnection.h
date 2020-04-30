@@ -61,14 +61,16 @@ public:
     using UserVerificationCallback = CompletionHandler<void(UserVerification, LAContext *)>;
 
     LocalConnection() = default;
-    // FIXME(183534): Invalidate the LAContext.
-    virtual ~LocalConnection() = default;
+    virtual ~LocalConnection();
 
     // Overrided by MockLocalConnection.
-    virtual void verifyUser(const String& rpId, WebCore::ClientDataType, SecAccessControlRef, UserVerificationCallback&&) const;
+    virtual void verifyUser(const String& rpId, WebCore::ClientDataType, SecAccessControlRef, UserVerificationCallback&&);
     virtual RetainPtr<SecKeyRef> createCredentialPrivateKey(LAContext *, SecAccessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag) const;
     virtual void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const;
-    virtual void filterResponses(HashSet<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };
+    virtual void filterResponses(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&) const { };
+
+private:
+    RetainPtr<LAContext> m_context;
 };
 
 } // namespace WebKit

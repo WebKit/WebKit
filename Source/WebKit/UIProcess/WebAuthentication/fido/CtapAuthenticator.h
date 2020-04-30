@@ -73,7 +73,7 @@ private:
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
     size_t m_remainingAssertionResponses { 0 };
-    HashSet<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
+    Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
     Vector<uint8_t> m_pinAuth;
 };
 

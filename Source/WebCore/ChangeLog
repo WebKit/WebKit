@@ -1,3 +1,20 @@
+2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Optimize LocalAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=183534
+        <rdar://problem/43357408>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by new API tests.
+
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::getAssertionTouchIDPromptTitle):
+        (WebCore::genericTouchIDPromptTitle):
+        * platform/LocalizedStrings.h:
+        Improving the LocalAuthentication dialog titles for iOS.
+
 2020-04-30  Kate Cheney  <katherine_cheney@apple.com>
 
         clearApplicationBundleIdentifierTestingOverride() should set the bundle identifier to a null string, not an empty string
