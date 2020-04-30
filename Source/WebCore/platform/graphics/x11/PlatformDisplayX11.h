@@ -23,8 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformDisplayX11_h
-#define PlatformDisplayX11_h
+#pragma once
 
 #if PLATFORM(X11)
 
@@ -32,6 +31,10 @@
 #include <wtf/Optional.h>
 
 typedef struct _XDisplay Display;
+
+// It's not possible to forward declare Visual, and including xlib in headers is problematic,
+// so we use void* for Visual and provide this macro to get the visual easily.
+#define WK_XVISUAL(platformDisplay) (static_cast<Visual*>(platformDisplay.visual()))
 
 namespace WebCore {
 
@@ -43,6 +46,7 @@ public:
     virtual ~PlatformDisplayX11();
 
     Display* native() const { return m_display; }
+    void* visual() const;
     bool supportsXComposite() const;
     bool supportsXDamage(Optional<int>& damageEventBase, Optional<int>& damageErrorBase) const;
 
@@ -60,6 +64,7 @@ private:
     mutable Optional<bool> m_supportsXDamage;
     mutable Optional<int> m_damageEventBase;
     mutable Optional<int> m_damageErrorBase;
+    mutable void* m_visual { nullptr };
 };
 
 } // namespace WebCore
@@ -67,5 +72,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayX11, X11)
 
 #endif // PLATFORM(X11)
-
-#endif // PlatformDisplayX11

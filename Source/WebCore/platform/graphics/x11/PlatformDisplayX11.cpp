@@ -124,6 +124,31 @@ bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase, Optiona
     return m_supportsXDamage.value();
 }
 
+void* PlatformDisplayX11::visual() const
+{
+    if (m_visual)
+        return m_visual;
+
+    XVisualInfo visualTemplate;
+    visualTemplate.screen = DefaultScreen(m_display);
+
+    int visualCount = 0;
+    XVisualInfo* visualInfo = XGetVisualInfo(m_display, VisualScreenMask, &visualTemplate, &visualCount);
+    for (int i = 0; i < visualCount; ++i) {
+        auto& info = visualInfo[i];
+        if (info.depth == 32 && info.red_mask == 0xff0000 && info.green_mask == 0x00ff00 && info.blue_mask == 0x0000ff) {
+            m_visual = info.visual;
+            break;
+        }
+    }
+    XFree(visualInfo);
+
+    if (!m_visual)
+        m_visual = DefaultVisual(m_display, DefaultScreen(m_display));
+
+    return m_visual;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(X11)

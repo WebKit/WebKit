@@ -64,13 +64,18 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
     , m_display(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native())
 {
-#if !USE(GTK4)
     Screen* screen = DefaultScreenOfDisplay(m_display);
 
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == m_display);
 
-    GdkVisual* visual = defaultVisual();
-    XUniqueColormap colormap(XCreateColormap(m_display, RootWindowOfScreen(screen), GDK_VISUAL_XVISUAL(visual), AllocNone));
+#if USE(GTK4)
+    auto* visual = WK_XVISUAL(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()));
+#else
+    auto* visual = GDK_VISUAL_XVISUAL(defaultVisual());
+#endif
+    XUniqueColormap colormap(XCreateColormap(m_display, RootWindowOfScreen(screen), visual, AllocNone));
+
+    int depth = visual == screen->root_visual ? screen->root_depth : 32;
 
     XSetWindowAttributes windowAttributes;
     windowAttributes.override_redirect = True;
@@ -84,9 +89,9 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
         RootWindowOfScreen(screen),
         -1, -1, 1, 1,
         0,
-        gdk_visual_get_depth(visual),
+        depth,
         InputOutput,
-        GDK_VISUAL_XVISUAL(visual),
+        visual,
         CWOverrideRedirect | CWColormap | CWBorderPixel,
         &windowAttributes);
     XMapWindow(m_display, m_parentWindow.get());
@@ -117,7 +122,6 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage, Client& client)
     XSelectInput(m_display, m_window.get(), NoEventMask);
     XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
     createPixmap();
-#endif
 }
 
 AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
@@ -133,14 +137,17 @@ AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
 
 void AcceleratedSurfaceX11::createPixmap()
 {
-#if !USE(GTK4)
     m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap.get(), GDK_VISUAL_XVISUAL(defaultVisual()), m_size.width(), m_size.height()));
+#if USE(GTK4)
+    auto* visual = WK_XVISUAL(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()));
+#else
+    auto* visual = GDK_VISUAL_XVISUAL(defaultVisual());
+#endif
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap.get(), visual, m_size.width(), m_size.height()));
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
     cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
     cairo_paint(cr.get());
     XSync(m_display, False);
-#endif
 }
 
 bool AcceleratedSurfaceX11::hostResize(const IntSize& size)

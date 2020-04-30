@@ -1,5 +1,26 @@
 2020-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4][X11] Add support for rendering web view contents
+        https://bugs.webkit.org/show_bug.cgi?id=211189
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use GdkDisplayX11::xevent signal instead of filtering events that is no longer available in GTK4. GdkVisual no
+        longer exists either, so we get the X visual from the PlatformDisplay.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::XDamageNotifier::add):
+        (WebKit::XDamageNotifier::remove):
+        (WebKit::XDamageNotifier::filterXDamageEvent):
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11):
+        (WebKit::AcceleratedBackingStoreX11::update):
+        (WebKit::AcceleratedBackingStoreX11::snapshot):
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::AcceleratedSurfaceX11):
+        (WebKit::AcceleratedSurfaceX11::createPixmap):
+
+2020-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Add support click events
         https://bugs.webkit.org/show_bug.cgi?id=211175
 
