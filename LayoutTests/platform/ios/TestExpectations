@@ -3533,4 +3533,4 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 media/media-document-audio-repaint.html [ Skip ]
 media/controls-styling.html [ Skip ]
 
-webkit.org/b/211261 compositing/iframes/border-radius-composited-frame.html [ Pass Failure ]
+webkit.org/b/211261 compositing/iframes/border-radius-composited-frame.html [ Pass ImageOnlyFailure ]
