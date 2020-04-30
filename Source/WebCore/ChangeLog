@@ -1,3 +1,18 @@
+2020-04-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crash in AXLogger.
+        https://bugs.webkit.org/show_bug.cgi?id=211236
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        Notifications may have a null AXCoreObject target, so must check for
+        nullity before streaming the object.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::log):
+
 2020-04-30  Charlie Turner  <cturner@igalia.com>
 
         [clang 11] fix build errors due to -WWc++11-narrowing

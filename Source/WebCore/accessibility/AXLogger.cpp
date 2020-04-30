@@ -84,7 +84,11 @@ void AXLogger::add(TextStream& stream, const RefPtr<AXCoreObject>& object, bool 
 void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>& notification)
 {
     TextStream stream(TextStream::LineMode::MultipleLine);
-    stream << "Notification " << notification.second << " for object " << *notification.first;
+    stream << "Notification " << notification.second << " for object ";
+    if (notification.first)
+        stream << *notification.first;
+    else
+        stream << "null";
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
