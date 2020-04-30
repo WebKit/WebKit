@@ -819,20 +819,6 @@ Could be worth adding to the API.
 + (void)_setLoadResourcesSerially:(BOOL)serialize;
 - (void)_forceRepaintForTesting;
 
-/*!
-    @method cssAnimationsSuspended
-    @abstract Returns whether or not CSS Animations are suspended.
-    @result YES if CSS Animations are suspended.
-*/
-- (BOOL)cssAnimationsSuspended;
-
-/*!
-    @method setCSSAnimationsSuspended
-    @param suspended YES to suspend animations, NO to resume animations.
-    @discussion Suspends or resumes all running animations and transitions in the page.
-*/
-- (void)setCSSAnimationsSuspended:(BOOL)suspended;
-
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme;
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme;
 + (void)_registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:(NSString *)scheme;

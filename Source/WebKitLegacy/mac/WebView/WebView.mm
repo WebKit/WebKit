@@ -4772,28 +4772,6 @@ IGNORE_WARNINGS_END
     [CATransaction synchronize];
 }
 
-- (BOOL)cssAnimationsSuspended
-{
-    // should ask the page!
-    auto* frame = core([self mainFrame]);
-    if (frame)
-        return frame->legacyAnimation().isSuspended();
-
-    return false;
-}
-
-- (void)setCSSAnimationsSuspended:(BOOL)suspended
-{
-    auto* frame = core([self mainFrame]);
-    if (suspended == frame->legacyAnimation().isSuspended())
-        return;
-
-    if (suspended)
-        frame->legacyAnimation().suspendAnimations();
-    else
-        frame->legacyAnimation().resumeAnimations();
-}
-
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme
 {
     WebCore::LegacySchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
