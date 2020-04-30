@@ -69,7 +69,7 @@ void setApplicationBundleIdentifier(const String& bundleIdentifier)
 void clearApplicationBundleIdentifierTestingOverride()
 {
     ASSERT(RunLoop::isMain());
-    applicationBundleIdentifierOverride() = emptyString();
+    applicationBundleIdentifierOverride() = String();
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = false;
 #endif
