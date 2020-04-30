@@ -103,7 +103,7 @@ Resolver::Resolver(Document& document)
     if (view)
         m_mediaQueryEvaluator = MediaQueryEvaluator { view->mediaType() };
     else
-        m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
+        m_mediaQueryEvaluator = MediaQueryEvaluator { };
 
     if (root) {
         m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), nullptr, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;

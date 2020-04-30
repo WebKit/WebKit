@@ -1056,7 +1056,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         isAudio,
         m_element.hasVideo(),
         m_element.hasAudio(),
-        m_element.renderer(),
+        m_element.hasRenderer(),
         isAudio && hasBehaviorRestriction(RequireUserGestureToControlControlsManager) && !processingUserGesture,
         m_element.hasAudio() && isPlaying && allowsPlaybackControlsForAutoplayingAudio(), // userHasPlayedAudioBefore
         isElementRectMostlyInMainFrame(m_element),

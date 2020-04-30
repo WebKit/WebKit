@@ -1,3 +1,42 @@
+2020-04-30  Charlie Turner  <cturner@igalia.com>
+
+        [clang 11] fix build errors due to -WWc++11-narrowing
+        https://bugs.webkit.org/show_bug.cgi?id=211193
+
+        Reviewed by Adrian Perez de Castro.
+
+        Fixes the following errors,
+
+        Source/WebCore/html/MediaElementSession.cpp:1059:9: error: type 'WebCore::RenderMedia *' cannot be narrowed to 'bool' in initializer list [-Wc++11-narrowing]
+        m_element.renderer(),
+        ^~~~~~~~~~~~~~~~~~~~
+
+        Source/WebCore/style/StyleResolver.cpp:106:55: error: type 'const char [4]' cannot be narrowed to 'bool' in initializer list [-Wc++11-narrowing]
+        m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
+                                                      ^~~~~
+        Source/WebCore/style/StyleResolver.cpp:106:55: note: insert an explicit cast to silence this issue
+        m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
+                                                      ^~~~~
+                                                      static_cast<bool>( )
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::hasRenderer const):
+        MediaElementSession was implicitly casting a pointer to a bool,
+        which is not allowed with modern Clang checks. Add a helper method
+        to encapsulate the now required static_cast<bool>.
+        * html/MediaElementSession.cpp: Use the new helper method to see
+        if the HTMLMediaElement has an associated renderer.
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged):
+        * style/StyleResolver.cpp: This was calling MediaQueryEvaluator {
+        "all" }; and seemingly expecting to cast a const char[] to a bool,
+        or maybe String? It's confusing because of the MediaQueryEvaluator
+        API. If it was implicitly converting to bool then that could be
+        unintentional. Such casts are not allowed either now. The
+        MediaQueryEvaluator's default constructor says it returns true for
+        "all", which appears to be the original intent of this call, so I
+        replaced it with that.
+        (WebCore::Style::Resolver::Resolver):
+
 2020-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         border-radius fails to clip iframe contents
