@@ -6023,7 +6023,7 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     if (!hasRunningProcess())
         return;
     
-    send(Messages::WebPage::HandleMediaEvent(eventType);
+    send(Messages::WebPage::HandleMediaEvent(eventType));
 }
 
 void WebPageProxy::setVolumeOfMediaElement(double volume, uint64_t elementID)

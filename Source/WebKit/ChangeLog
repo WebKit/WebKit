@@ -1,3 +1,10 @@
+2020-04-30  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, add missing parenthesis
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMediaEvent):
+
 2020-04-30  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Add timeout for "Client navigation" foreground assertion
