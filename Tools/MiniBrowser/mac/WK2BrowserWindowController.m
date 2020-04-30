@@ -55,6 +55,12 @@ static const int testFooterBannerHeight = 58;
 
 @implementation MiniBrowserNSTextFinder
 
+- (void)dealloc
+{
+    [_hideInterfaceCallback release];
+    [super dealloc];
+}
+
 - (void)performAction:(NSTextFinderAction)op
 {
     [super performAction:op];

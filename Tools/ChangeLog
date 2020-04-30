@@ -1,3 +1,14 @@
+2020-04-30  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r247490): Leak of MiniBrowserNSTextFinder._hideInterfaceCallback
+        <https://webkit.org/b/211242>
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[MiniBrowserNSTextFinder dealloc]): Add.
+        - Release _hideInterfaceCallback to fix the leak.
+
 2020-04-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Implement -markedTextRange
