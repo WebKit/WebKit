@@ -74,8 +74,10 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         auto& cellDisplayBox = formattingState().displayBox(cellBox);
         cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop());
         cellDisplayBox.setLeft(columnList[cell->startColumn()].logicalLeft());
-        auto rowHeight = rowList[cell->startRow()].logicalHeight();
-        layoutCell(*cell, availableHorizontalSpace, rowHeight);
+        auto availableVerticalSpace = rowList[cell->startRow()].logicalHeight();
+        for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
+            availableVerticalSpace += rowList[rowIndex].logicalHeight();
+        layoutCell(*cell, availableHorizontalSpace, availableVerticalSpace);
         
         // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
         // use some kind of intrinsic padding similar to RenderTableCell.
@@ -86,7 +88,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
         switch (cellBox.style().verticalAlign()) {
         case VerticalAlign::Middle: {
-            auto intrinsicVerticalPadding = std::max(0_lu, rowHeight - cellDisplayBox.verticalMarginBorderAndPadding() - cellDisplayBox.contentBoxHeight()); 
+            auto intrinsicVerticalPadding = std::max(0_lu, availableVerticalSpace - cellDisplayBox.verticalMarginBorderAndPadding() - cellDisplayBox.contentBoxHeight());
             intrinsicPaddingTop = intrinsicVerticalPadding / 2;
             intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
             break;
@@ -95,7 +97,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             auto rowBaselineOffset = LayoutUnit { rowList[cell->startRow()].baselineOffset() };
             auto cellBaselineOffset = LayoutUnit { cell->baselineOffset() };
             intrinsicPaddingTop = std::max(0_lu, rowBaselineOffset - cellBaselineOffset - cellDisplayBox.borderTop());
-            intrinsicPaddingBottom = std::max(0_lu, rowHeight - cellDisplayBox.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellDisplayBox.contentBoxHeight());
+            intrinsicPaddingBottom = std::max(0_lu, availableVerticalSpace - cellDisplayBox.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellDisplayBox.contentBoxHeight());
             break;
         }
         default:

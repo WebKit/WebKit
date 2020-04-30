@@ -1,3 +1,16 @@
+2020-04-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Adjust the available vertical space with the row span for cell layout
+        https://bugs.webkit.org/show_bug.cgi?id=211218
+
+        Reviewed by Antti Koivisto.
+
+        The vertical available space for a cell should include all row heights it spans.
+        (can't include test, current table layout logic is incompatible with LFC -and FF/Chrome.)
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+
 2020-04-30  Philippe Normand  <pnormand@igalia.com>
 
         [SOUP] http/tests/media/video-accept-encoding.html fails
