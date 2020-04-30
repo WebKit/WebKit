@@ -6632,12 +6632,8 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    SandboxExtension::HandleArray sandboxExtensionHandles;
-    sandboxExtensionHandles.allocate(fileURLs.size());
-    for (size_t i = 0; i < fileURLs.size(); ++i)
-        SandboxExtension::createHandle(fileURLs[i], SandboxExtension::Type::ReadOnly, sandboxExtensionHandles[i]);
-
-    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles));
+    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
+    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
 #endif
 
     SandboxExtension::Handle frontboardServicesSandboxExtension, iconServicesSandboxExtension;
@@ -6657,19 +6653,8 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    SandboxExtension::HandleArray sandboxExtensionHandles;
-    sandboxExtensionHandles.allocate(fileURLs.size());
-    for (size_t i = 0; i < fileURLs.size(); ++i) {
-        bool createdExtension = SandboxExtension::createHandle(fileURLs[i], SandboxExtension::Type::ReadOnly, sandboxExtensionHandles[i]);
-        if (!createdExtension) {
-            // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
-            // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
-            WTFLogAlways("WebPageProxy::didChooseFilesForOpenPanel: could not create a sandbox extension for '%s'\n", fileURLs[i].utf8().data());
-            continue;
-        }
-    }
-
-    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles));
+    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
+    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
 #endif
 
     send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs));

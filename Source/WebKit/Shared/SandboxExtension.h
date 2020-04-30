@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,6 +93,10 @@ public:
         Handle& operator[](size_t i);
         Handle& at(size_t i) { return operator[](i); }
         const Handle& operator[](size_t i) const;
+        Handle* begin();
+        Handle* end();
+        const Handle* begin() const;
+        const Handle* end() const;
         size_t size() const;
         void encode(IPC::Encoder&) const;
         static Optional<HandleArray> decode(IPC::Decoder&);
@@ -107,14 +111,17 @@ public:
     
     static RefPtr<SandboxExtension> create(Handle&&);
     static bool createHandle(const String& path, Type, Handle&);
+    static SandboxExtension::HandleArray createReadOnlyHandlesForFiles(const String& logLabel, const Vector<String>& paths);
     static bool createHandleWithoutResolvingPath(const String& path, Type, Handle&);
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
 #if HAVE(AUDIT_TOKEN)
     static bool createHandleForMachLookup(const String& service, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static HandleArray createHandlesForMachLookup(const Vector<String>& services, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
     static bool createHandleForIOKitClassExtension(const String& iokitClass, Optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static HandleArray createHandlesForIOKitClassExtensions(const Vector<String>& iokitClasses, Optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
 #endif
     ~SandboxExtension();
 
@@ -123,6 +130,7 @@ public:
 
     bool consumePermanently();
     static bool consumePermanently(const Handle&);
+    static bool consumePermanently(const HandleArray&);
 
 private:
     explicit SandboxExtension(const Handle&);
@@ -144,10 +152,15 @@ inline void SandboxExtension::HandleArray::allocate(size_t) { }
 inline size_t SandboxExtension::HandleArray::size() const { return 0; }    
 inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) const { return m_emptyHandle; }
 inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }
+inline SandboxExtension::Handle* SandboxExtension::HandleArray::begin() { return &m_emptyHandle; }
+inline SandboxExtension::Handle* SandboxExtension::HandleArray::end() { return &m_emptyHandle; }
+inline const SandboxExtension::Handle* SandboxExtension::HandleArray::begin() const { return &m_emptyHandle; }
+inline const SandboxExtension::Handle* SandboxExtension::HandleArray::end() const { return &m_emptyHandle; }
 inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
 inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> Optional<HandleArray> { return {{ }}; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
+inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(const String&, const Vector<String>&) { return { }; }
 inline bool SandboxExtension::createHandleWithoutResolvingPath(const String&, Type, Handle&) { return true; }
 inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
@@ -157,10 +170,15 @@ inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
+inline bool SandboxExtension::consumePermanently(const HandleArray&) { return true; }
 inline String stringByResolvingSymlinksInPath(const String& path) { return path; }
 inline String resolvePathForSandboxExtension(const String& path) { return path; }
 inline String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path) { return path; }
 #else
+inline SandboxExtension::Handle* SandboxExtension::HandleArray::begin() { return m_data.begin(); }
+inline SandboxExtension::Handle* SandboxExtension::HandleArray::end() { return m_data.end(); }
+inline const SandboxExtension::Handle* SandboxExtension::HandleArray::begin() const { return m_data.begin(); }
+inline const SandboxExtension::Handle* SandboxExtension::HandleArray::end() const { return m_data.end(); }
 String stringByResolvingSymlinksInPath(const String& path);
 String resolvePathForSandboxExtension(const String& path);
 String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path);

@@ -244,6 +244,39 @@ static const Vector<String>& mediaRelatedMachServices()
     return services;
 }
 
+#if PLATFORM(IOS_FAMILY)
+static const Vector<String>& nonBrowserServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<String> {
+        "com.apple.lsd.open",
+        "com.apple.mobileassetd",
+        "com.apple.iconservices",
+        "com.apple.PowerManagement.control",
+        "com.apple.frontboard.systemappservices"
+    });
+    return services;
+}
+
+static const Vector<String>& agxCompilerClasses()
+{
+    ASSERT(isMainThread());
+    static const auto iokitClasses = makeNeverDestroyed(Vector<String> {
+        "AGXCommandQueue",
+        "AGXDevice",
+        "AGXSharedUserClient",
+        "IOAccelContext",
+        "IOAccelContext2",
+        "IOAccelDevice",
+        "IOAccelDevice2",
+        "IOAccelSharedUserClient",
+        "IOAccelSharedUserClient2"
+        "IOAccelSubmitter2",
+    });
+    return iokitClasses;
+}
+#endif
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -351,19 +384,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (!WebCore::IOSApplication::isMobileSafari() || _AXSApplicationAccessibilityEnabled()) {
-        static const char* services[] = {
-            "com.apple.lsd.open",
-            "com.apple.mobileassetd",
-            "com.apple.iconservices",
-            "com.apple.PowerManagement.control",
-            "com.apple.frontboard.systemappservices"
-        };
-        auto size = WTF_ARRAY_LENGTH(services);
-        parameters.dynamicMachExtensionHandles.allocate(size);
-        for (size_t i = 0; i < size; ++i)
-            SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, parameters.dynamicMachExtensionHandles[i]);
-    }
+    if (!WebCore::IOSApplication::isMobileSafari() || _AXSApplicationAccessibilityEnabled())
+        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
     
     if (isInternalInstall()) {
         SandboxExtension::Handle diagnosticsExtensionHandle;
@@ -375,24 +397,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport))
         parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
 
-    if (WebCore::deviceHasAGXCompilerService()) {
-        static const char* const ioKitClasses[] = {
-            "AGXCommandQueue",
-            "AGXDevice",
-            "AGXSharedUserClient",
-            "IOAccelContext",
-            "IOAccelContext2",
-            "IOAccelDevice",
-            "IOAccelDevice2",
-            "IOAccelSharedUserClient",
-            "IOAccelSharedUserClient2"
-            "IOAccelSubmitter2",
-        };
-        auto size = WTF_ARRAY_LENGTH(ioKitClasses);
-        parameters.dynamicIOKitExtensionHandles.allocate(size);
-        for (size_t i = 0; i < size; ++i)
-            SandboxExtension::createHandleForIOKitClassExtension(ioKitClasses[i], WTF::nullopt, parameters.dynamicIOKitExtensionHandles[i]);
-    }
+    if (WebCore::deviceHasAGXCompilerService())
+        parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(agxCompilerClasses(), WTF::nullopt);
 #endif
     
 #if PLATFORM(COCOA)
@@ -442,30 +448,13 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     if (needWebProcessExtensions) {
         // FIXME(207716): The following should be removed when the GPU process is complete.
-        const auto& services = mediaRelatedMachServices();
-        parameters.mediaExtensionHandles.allocate(services.size());
-        for (size_t i = 0, size = services.size(); i < size; ++i)
-            SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, parameters.mediaExtensionHandles[i]);
+        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
     }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 #if PLATFORM(IOS_FAMILY)
-    if (_AXSApplicationAccessibilityEnabled()) {
-        SandboxExtension::HandleArray preferencesExtensionHandles;
-        
-        static constexpr const char* services[] = {
-            "com.apple.cfprefsd.agent",
-            "com.apple.cfprefsd.daemon"
-        };
-        auto size = std::size(services);
-        preferencesExtensionHandles.allocate(size);
-        for (size_t i = 0; i < size; ++i) {
-            bool ok = SandboxExtension::createHandleForMachLookup(services[i], WTF::nullopt, preferencesExtensionHandles[i]);
-            ASSERT_UNUSED(ok, ok);
-        }
-        
-        parameters.preferencesExtensionHandles = WTFMove(preferencesExtensionHandles);
-    }
+    if (_AXSApplicationAccessibilityEnabled())
+        parameters.preferencesExtensionHandles = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, WTF::nullopt);
 #endif
 
     auto globalPreferencesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, nullptr, nullptr));

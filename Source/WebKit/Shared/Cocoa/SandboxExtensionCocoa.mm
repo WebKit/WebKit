@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -293,6 +293,37 @@ bool SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type, handle);
 }
 
+static SandboxExtension::HandleArray createHandlesForResources(const Vector<String>& resources, Function<bool(const String&, SandboxExtension::Handle& handle)>&& createFunction)
+{
+    SandboxExtension::HandleArray handleArray;
+
+    if (resources.size() > 0)
+        handleArray.allocate(resources.size());
+
+    size_t currentHandle = 0;
+    for (const auto& resource : resources) {
+        if (!createFunction(resource, handleArray[currentHandle]))
+            continue;
+        ++currentHandle;
+    }
+    
+    return handleArray;
+}
+
+SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(const String& logLabel, const Vector<String>& paths)
+{
+    return createHandlesForResources(paths, [&logLabel] (const String& path, Handle& handle) {
+        if (!SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly, handle)) {
+            // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
+            // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
+            WTFLogAlways("%s: could not create a sandbox extension for '%s'\n", logLabel.utf8().data(), path.utf8().data());
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        return true;
+    });
+}
+
 bool SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
 {
     String resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
@@ -357,6 +388,17 @@ bool SandboxExtension::createHandleForMachLookup(const String& service, Optional
     return true;
 }
 
+SandboxExtension::HandleArray SandboxExtension::createHandlesForMachLookup(const Vector<String>& services, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+{
+    return createHandlesForResources(services, [auditToken, flags] (const String& service, Handle& handle) {
+        if (!SandboxExtension::createHandleForMachLookup(service, auditToken, handle, flags)) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        return true;
+    });
+}
+
 bool SandboxExtension::createHandleForReadByAuditToken(const String& path, audit_token_t auditToken, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
@@ -381,6 +423,17 @@ bool SandboxExtension::createHandleForIOKitClassExtension(const String& ioKitCla
     }
 
     return true;
+}
+
+SandboxExtension::HandleArray SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<String>& iokitClasses, Optional<audit_token_t> auditToken, OptionSet<Flags> flags)
+{
+    return createHandlesForResources(iokitClasses, [auditToken, flags] (const String& iokitClass, Handle& handle) {
+        if (!SandboxExtension::createHandleForIOKitClassExtension(iokitClass, auditToken, handle, flags)) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        return true;
+    });
 }
 
 SandboxExtension::SandboxExtension(const Handle& handle)
@@ -440,6 +493,21 @@ bool SandboxExtension::consumePermanently(const Handle& handle)
     handle.m_sandboxExtension = nullptr;
 
     return result;
+}
+
+bool SandboxExtension::consumePermanently(const HandleArray& handleArray)
+{
+    bool allSucceeded = true;
+    for (auto& handle : handleArray) {
+        if (!handle.m_sandboxExtension)
+            continue;
+
+        bool ok = SandboxExtension::consumePermanently(handle);
+        ASSERT(ok);
+        allSucceeded &= ok;
+    }
+
+    return allSucceeded;
 }
 
 } // namespace WebKit

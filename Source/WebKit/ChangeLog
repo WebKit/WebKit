@@ -1,3 +1,44 @@
+2020-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve SandboxExtension::HandleArray to reduce boilerplate
+        https://bugs.webkit.org/show_bug.cgi?id=211103
+        <rdar://problem/62533632>
+
+        Reviewed by Per Arne Vollan.
+
+        There are a number of boilerplate patterns needed when using SandboxExtension::HandleArray.
+        We could make these simpler and less error prone by improving the class.
+
+        This patch:
+        1. Adds convenience methods to create and consume HandleArrays.
+        2. Updates uses of HandleArray to use the convenience methods.
+
+        Tested by existing tests.
+
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::decode):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::createHandlesForFiles):
+        (WebKit::SandboxExtension::createHandlesForMachLookup):
+        (WebKit::SandboxExtension::consumePermanently):
+        * Shared/SandboxExtension.h:
+        (WebKit::createHandlesForFiles):
+        (WebKit::SandboxExtension::consumePermanently):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockPreferenceServiceIfNeeded):
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extendSandboxForFilesFromOpenPanel):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::unblockPreferenceService):
+
 2020-04-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r260791) Network process fails to suspend promptly

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,19 +239,10 @@ void WebProcessProxy::unblockPreferenceServiceIfNeeded()
     if (!canSendMessage())
         return;
 
-    SandboxExtension::HandleArray handleArray;
-    static constexpr const char* services[] = {
-        "com.apple.cfprefsd.agent",
-        "com.apple.cfprefsd.daemon"
-    };
-    auto size = std::size(services);
-    handleArray.allocate(size);
-    for (size_t i = 0; i < size; ++i) {
-        if (!SandboxExtension::createHandleForMachLookup(services[i], connection() ? connection()->getAuditToken() : WTF::nullopt, handleArray[i]))
-            return;
-    }
+    auto handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, connection() ? connection()->getAuditToken() : WTF::nullopt);
+    ASSERT(handleArray.size() == 2);
     
-    send(Messages::WebProcess::UnblockPreferenceService(handleArray), 0);
+    send(Messages::WebProcess::UnblockPreferenceService(WTFMove(handleArray)), 0);
     m_hasSentMessageToUnblockPreferenceService = true;
 }
 #endif

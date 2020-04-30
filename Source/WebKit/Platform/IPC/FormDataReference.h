@@ -85,8 +85,7 @@ public:
         if (!sandboxExtensionHandles)
             return WTF::nullopt;
 
-        for (size_t i = 0; i < sandboxExtensionHandles->size(); ++i)
-            WebKit::SandboxExtension::consumePermanently(sandboxExtensionHandles->at(i));
+        WebKit::SandboxExtension::consumePermanently(*sandboxExtensionHandles);
 
         return FormDataReference { formData.releaseNonNull() };
     }

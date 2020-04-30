@@ -323,11 +323,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.diagnosticsExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.diagnosticsExtensionHandle);
 
-    for (size_t i = 0, size = parameters.dynamicMachExtensionHandles.size(); i < size; ++i)
-        SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles[i]);
-
-    for (size_t i = 0, size = parameters.dynamicIOKitExtensionHandles.size(); i < size; ++i)
-        SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles[i]);
+    SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
+    SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
     
     if (parameters.neHelperExtensionHandle)
@@ -344,16 +341,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     // FIXME(207716): The following should be removed when the GPU process is complete.
-    for (size_t i = 0, size = parameters.mediaExtensionHandles.size(); i < size; ++i)
-        SandboxExtension::consumePermanently(parameters.mediaExtensionHandles[i]);
+    SandboxExtension::consumePermanently(parameters.mediaExtensionHandles);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     if (parameters.preferencesExtensionHandles) {
-        for (size_t i = 0; i < parameters.preferencesExtensionHandles->size(); ++i) {
-            bool ok = SandboxExtension::consumePermanently(parameters.preferencesExtensionHandles->at(i));
-            ASSERT_UNUSED(ok, ok);
-        }
-
+        SandboxExtension::consumePermanently(*parameters.preferencesExtensionHandles);
         _CFPrefsSetDirectModeEnabled(false);
     }
 #endif
@@ -963,11 +955,7 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
 
 void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handleArray)
 {
-    for (size_t i = 0; i < handleArray.size(); ++i) {
-        bool ok = SandboxExtension::consumePermanently(handleArray[i]);
-        ASSERT_UNUSED(ok, ok);
-    }
-
+    SandboxExtension::consumePermanently(handleArray);
     _CFPrefsSetDirectModeEnabled(false);
 }
 #endif
