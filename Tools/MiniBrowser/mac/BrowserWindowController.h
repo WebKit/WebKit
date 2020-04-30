@@ -58,6 +58,7 @@
 
 - (IBAction)showHideWebView:(id)sender;
 - (IBAction)removeReinsertWebView:(id)sender;
+- (IBAction)toggleFullWindowWebView:(id)sender;
 
 - (IBAction)zoomIn:(id)sender;
 - (IBAction)zoomOut:(id)sender;
@@ -78,6 +79,8 @@
 - (IBAction)showHideWebInspector:(id)sender;
 
 - (void)didChangeSettings;
+- (BOOL)webViewFillsWindow;
+- (void)setWebViewFillsWindow:(BOOL)fillWindow;
 
 - (NSURL *)currentURL;
 - (NSView *)mainContentView;

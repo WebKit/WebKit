@@ -25,6 +25,9 @@
 
 #import "BrowserWindowController.h"
 
+#import "AppDelegate.h"
+#import "SettingsController.h"
+
 @interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate>
 @end
 
@@ -124,6 +127,33 @@
         [self.mainContentView removeFromSuperview];
     else
         [containerView addSubview:self.mainContentView];
+}
+
+- (IBAction)toggleFullWindowWebView:(id)sender
+{
+    BOOL newFillWindow = ![self webViewFillsWindow];
+    [self setWebViewFillsWindow:newFillWindow];
+
+    SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
+    settings.webViewFillsWindow = newFillWindow;
+}
+
+- (BOOL)webViewFillsWindow
+{
+    return NSEqualRects(containerView.bounds, self.mainContentView.frame);
+}
+
+- (void)setWebViewFillsWindow:(BOOL)fillWindow
+{
+    if (fillWindow)
+        [self.mainContentView setFrame:containerView.bounds];
+    else {
+        const CGFloat viewInset = 100.0f;
+        NSRect viewRect = NSInsetRect(containerView.bounds, viewInset, viewInset);
+        // Make it not vertically centered, to reveal y-flipping bugs.
+        viewRect = NSOffsetRect(viewRect, 0, -25);
+        [self.mainContentView setFrame:viewRect];
+    }
 }
 
 - (IBAction)zoomIn:(id)sender

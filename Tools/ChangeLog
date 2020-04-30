@@ -1,3 +1,35 @@
+2020-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a MiniBrowser option to inset the web view so it doesn't fill the window
+        https://bugs.webkit.org/show_bug.cgi?id=211216
+
+        Reviewed by Tim Horton.
+
+        Add a menu item, Debug > Inset Web View to MiniBrowser which insets the view from
+        the edges of the window, making it possible to debug coordinate conversion issues.
+
+        The state is stored in Settings, but unlike other Settings this one doesn't
+        get populated into the Settings menu because it makes more logical sense grouped
+        with the options to Hide and Remove the web view.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController toggleFullWindowWebView:]):
+        (-[BrowserWindowController webViewFillsWindow]):
+        (-[BrowserWindowController setWebViewFillsWindow:]):
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController initWithMenu:]):
+        (-[SettingsController webViewFillsWindow]):
+        (-[SettingsController setWebViewFillsWindow:]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2020-04-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r260791) Network process fails to suspend promptly

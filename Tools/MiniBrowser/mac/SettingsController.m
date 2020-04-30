@@ -45,6 +45,7 @@ static NSString * const SimpleLineLayoutEnabledPreferenceKey = @"SimpleLineLayou
 static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 static NSString * const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForBanners";
+static NSString * const WebViewFillsWindowKey = @"WebViewFillsWindow";
 
 static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
 static NSString * const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
@@ -103,6 +104,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         SubpixelAntialiasedLayerTextEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
+        WebViewFillsWindowKey,
     ];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -623,6 +625,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)isSpaceReservedForBanners
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ReserveSpaceForBannersPreferenceKey];
+}
+
+- (BOOL)webViewFillsWindow
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebViewFillsWindowKey];
+}
+
+- (void)setWebViewFillsWindow:(BOOL)fillsWindow
+{
+    return [[NSUserDefaults standardUserDefaults] setBool:fillsWindow forKey:WebViewFillsWindowKey];
 }
 
 - (BOOL)tiledScrollingIndicatorVisible

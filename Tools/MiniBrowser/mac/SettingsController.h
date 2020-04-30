@@ -64,4 +64,6 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) NSString *defaultURL;
 @property (nonatomic, readonly) NSString *customUserAgent;
 
+@property (nonatomic) BOOL webViewFillsWindow;
+
 @end
