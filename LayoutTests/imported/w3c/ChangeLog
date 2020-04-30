@@ -1,3 +1,20 @@
+2020-04-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Import latest changes from webxr/resources in tests
+        https://bugs.webkit.org/show_bug.cgi?id=211129
+
+        Reviewed by Žan Doberšek.
+
+        The code in webxr_utils.js had some engine detecting code that was not
+        working, and thus was unconditionally loading Chromium-only resources when
+        running tests with other engines (as WebKit). I fixed it upstream in
+        https://github.com/web-platform-tests/wpt/pull/23200 and now I'm importing it
+        along with a recent fix in webxr_test_constants.js.
+
+        * web-platform-tests/webxr/resources/webxr_test_constants.js: Reverse position.
+        * web-platform-tests/webxr/resources/webxr_util.js:
+        (xr_promise_test): Properly detect browser engines.
+
 2020-04-28  Noam Rosenthal  <noam@webkit.org>
 
         Implement FCP (first contentful paint)
