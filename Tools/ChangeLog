@@ -1,3 +1,17 @@
+2020-04-30  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Sort out certificates on Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=202837
+        <rdar://problem/56177210>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/run-javascriptcore-tests:
+        (uploadResults): Do not allow insecure requests.
+        * Scripts/webkitpy/results/upload.py:
+        (Upload.upload): Verify ssl certificates.
+        (Upload.upload_archive): Ditto.
+
 2020-04-30  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to change a WKWebView's CORS disabling pattern after initialization

@@ -938,12 +938,7 @@ sub uploadResults
     }
 
     print "Uploading results to $report\n";
-
-    my $sslOptions = '';
-    if (!isAppleMacWebKit()) {
-        $sslOptions = '--insecure';
-    }
-    open(HANDLE, "|-", "curl -X POST $report/api/upload -H 'Content-Type: application/json' $sslOptions -f -d '\@-'") or die "Failed to open curl";
+    open(HANDLE, "|-", "curl -X POST $report/api/upload -H 'Content-Type: application/json' -f -d '\@-'") or die "Failed to open curl";
 
     # Json conforming to https://results.webkit.org/documentation#API-Uploads.
     my $encodedUpload = encode_json(\%upload);
