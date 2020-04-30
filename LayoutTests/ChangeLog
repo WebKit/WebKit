@@ -1,3 +1,11 @@
+2020-04-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Gardening Wayland compositing tests.
+
+        Unreviewed test gardening.
+
+        * platform/gtk-wayland/TestExpectations:
+
 2020-04-29  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Skip fast/text/text-indent-inside-float.html
