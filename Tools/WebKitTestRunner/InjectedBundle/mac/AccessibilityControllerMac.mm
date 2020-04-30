@@ -99,13 +99,13 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
-    id result;
+    RetainPtr<id> result;
     executeOnAXThreadIfPossible([&root, &idAttribute, &result] {
         result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
     });
 
     if (result)
-        return AccessibilityUIElement::create(result);
+        return AccessibilityUIElement::create(result.get());
     return nullptr;
 }
 

@@ -1,3 +1,22 @@
+2020-04-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crashes in accessibility/accessibility-node-memory-management.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=211215
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::executeOnAXThreadIfPossible):
+        Removed the call CFRunLoopRunInMode and instead we'll use setTimeout in
+        each of the tests that require to complete a spin of the main run loop.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::accessibleElementById):
+        Need to retain ObjectiveC object when it is retrieved from the secondary thread.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::getChildrenWithRange): Dito as above.
+
 2020-04-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Bring back the URI entry to MiniBrowser

@@ -372,11 +372,11 @@ void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >
 void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* children;
+    RetainPtr<NSArray> children;
     s_controller->executeOnAXThreadIfPossible([&children, location, length, this] {
         children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     });
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children);
+    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children.get());
     END_AX_OBJC_EXCEPTIONS
 }
 

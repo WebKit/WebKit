@@ -116,17 +116,12 @@ void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& fun
             m_semaphore.signal();
         });
 
-        // Spin the main loop so that any required DOM processing can be
-        // executed in the main thread. That is the case of most parameterized
-        // attributes, where the attribute value has to be calculated
-        // back in the main thread.
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, .25, false);
         m_semaphore.wait();
     } else
 #endif
         function();
 }
-#endif
+#endif // PLATFORM(COCOA)
 
 RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, int y)
 {
