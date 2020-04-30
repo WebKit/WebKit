@@ -67,6 +67,8 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static Vector<String> localeData(const String&, size_t);
+
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
     enum class Year : uint8_t { None, TwoDigit, Numeric };

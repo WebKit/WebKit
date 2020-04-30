@@ -43,10 +43,12 @@ namespace JSC {
 
 const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
 
-static const char* const relevantCollatorExtensionKeys[3] = { "co", "kn", "kf" };
-static const size_t indexOfExtensionKeyCo = 0;
-static const size_t indexOfExtensionKeyKn = 1;
-static const size_t indexOfExtensionKeyKf = 2;
+namespace IntlCollatorInternal {
+constexpr const char* const relevantExtensionKeys[3] = { "co", "kn", "kf" };
+constexpr size_t collationIndex = 0;
+constexpr size_t numericIndex = 1;
+constexpr size_t caseFirstIndex = 2;
+}
 
 void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
 {
@@ -87,12 +89,12 @@ void IntlCollator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_boundCompare);
 }
 
-static Vector<String> sortLocaleData(const String& locale, size_t keyIndex)
+Vector<String> IntlCollator::sortLocaleData(const String& locale, size_t keyIndex)
 {
     // 9.1 Internal slots of Service Constructors & 10.2.3 Internal slots (ECMA-402 2.0)
     Vector<String> keyLocaleData;
     switch (keyIndex) {
-    case indexOfExtensionKeyCo: {
+    case IntlCollatorInternal::collationIndex: {
         // 10.2.3 "The first element of [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co must be null for all locale values."
         keyLocaleData.append({ });
 
@@ -121,12 +123,12 @@ static Vector<String> sortLocaleData(const String& locale, size_t keyIndex)
         }
         break;
     }
-    case indexOfExtensionKeyKn:
+    case IntlCollatorInternal::numericIndex:
         keyLocaleData.reserveInitialCapacity(2);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("true"_s);
         break;
-    case indexOfExtensionKeyKf:
+    case IntlCollatorInternal::caseFirstIndex:
         keyLocaleData.reserveInitialCapacity(3);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("lower"_s);
@@ -138,22 +140,22 @@ static Vector<String> sortLocaleData(const String& locale, size_t keyIndex)
     return keyLocaleData;
 }
 
-static Vector<String> searchLocaleData(const String&, size_t keyIndex)
+Vector<String> IntlCollator::searchLocaleData(const String&, size_t keyIndex)
 {
     // 9.1 Internal slots of Service Constructors & 10.2.3 Internal slots (ECMA-402 2.0)
     Vector<String> keyLocaleData;
     switch (keyIndex) {
-    case indexOfExtensionKeyCo:
+    case IntlCollatorInternal::collationIndex:
         // 10.2.3 "The first element of [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co must be null for all locale values."
         keyLocaleData.reserveInitialCapacity(1);
         keyLocaleData.append({ });
         break;
-    case indexOfExtensionKeyKn:
+    case IntlCollatorInternal::numericIndex:
         keyLocaleData.reserveInitialCapacity(2);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("true"_s);
         break;
-    case indexOfExtensionKeyKf:
+    case IntlCollatorInternal::caseFirstIndex:
         keyLocaleData.reserveInitialCapacity(3);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("lower"_s);
@@ -215,7 +217,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     }
 
     auto& availableLocales = intlCollatorAvailableLocales();
-    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlCollatorInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlCollatorInternal::relevantExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {

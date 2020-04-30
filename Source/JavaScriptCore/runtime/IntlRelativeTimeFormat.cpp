@@ -37,15 +37,9 @@ namespace JSC {
 
 const ClassInfo IntlRelativeTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormat) };
 
+namespace IntlRelativeTimeFormatInternal {
 constexpr const char* relevantExtensionKeys[1] = { "nu" };
-
-struct UFieldPositionIteratorDeleter {
-    void operator()(UFieldPositionIterator* iterator) const
-    {
-        if (iterator)
-            ufieldpositer_close(iterator);
-    }
-};
+}
 
 void IntlRelativeTimeFormat::URelativeDateTimeFormatterDeleter::operator()(URelativeDateTimeFormatter* relativeDateTimeFormatter) const
 {
@@ -90,7 +84,7 @@ void IntlRelativeTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-static Vector<String> localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlRelativeTimeFormat::localeData(const String& locale, size_t keyIndex)
 {
     // The index of the extension key "nu" in relevantExtensionKeys is 0.
     ASSERT_UNUSED(keyIndex, !keyIndex);
@@ -130,7 +124,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     }
 
     const HashSet<String>& availableLocales = intlRelativeTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
+    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlRelativeTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlRelativeTimeFormatInternal::relevantExtensionKeys), localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat due to invalid locale"_s);

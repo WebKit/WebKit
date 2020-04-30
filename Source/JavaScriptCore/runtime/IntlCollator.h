@@ -67,6 +67,9 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static Vector<String> sortLocaleData(const String&, size_t);
+    static Vector<String> searchLocaleData(const String&, size_t);
+
     enum class Usage : uint8_t { Sort, Search };
     enum class Sensitivity : uint8_t { Base, Accent, Case, Variant };
     enum class CaseFirst : uint8_t { Upper, Lower, False };

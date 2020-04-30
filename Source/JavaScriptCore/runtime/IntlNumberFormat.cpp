@@ -36,22 +36,15 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
-#include <unicode/ufieldpositer.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
 const ClassInfo IntlNumberFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlNumberFormat) };
 
-static const char* const relevantNumberExtensionKeys[1] = { "nu" };
-
-struct UFieldPositionIteratorDeleter {
-    void operator()(UFieldPositionIterator* iterator) const
-    {
-        if (iterator)
-            ufieldpositer_close(iterator);
-    }
-};
+namespace IntlNumberFormatInternal {
+constexpr const char* relevantExtensionKeys[1] = { "nu" };
+}
 
 struct IntlNumberFormatField {
     int32_t type;
@@ -97,13 +90,11 @@ void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_boundFormat);
 }
 
-namespace IntlNFInternal {
-static Vector<String> localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlNumberFormat::localeData(const String& locale, size_t keyIndex)
 {
     // 9.1 Internal slots of Service Constructors & 11.2.3 Internal slots (ECMA-402 2.0)
     ASSERT_UNUSED(keyIndex, !keyIndex); // The index of the extension key "nu" in relevantExtensionKeys is 0.
     return numberingSystemsForLocale(locale);
-}
 }
 
 static inline unsigned computeCurrencySortKey(const String& currency)
@@ -198,7 +189,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
 
     auto& availableLocales = intlNumberFormatAvailableLocales();
-    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlNumberFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlNumberFormatInternal::relevantExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {

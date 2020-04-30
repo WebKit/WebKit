@@ -37,7 +37,6 @@
 #include <unicode/ucal.h>
 #include <unicode/udatpg.h>
 #include <unicode/uenum.h>
-#include <unicode/ufieldpositer.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -47,21 +46,12 @@ static const double minECMAScriptTime = -8.64E15;
 
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
-namespace IntlDTFInternal {
-static const char* const relevantExtensionKeys[3] = { "ca", "nu", "hc" };
+namespace IntlDateTimeFormatInternal {
+constexpr const char* relevantExtensionKeys[3] = { "ca", "nu", "hc" };
+constexpr size_t calendarIndex = 0;
+constexpr size_t numberingSystemIndex = 1;
+constexpr size_t hourCycleIndex = 2;
 }
-
-static const size_t indexOfExtensionKeyCa = 0;
-static const size_t indexOfExtensionKeyNu = 1;
-static const size_t indexOfExtensionKeyHc = 2;
-
-struct UFieldPositionIteratorDeleter {
-    void operator()(UFieldPositionIterator* iterator) const
-    {
-        if (iterator)
-            ufieldpositer_close(iterator);
-    }
-};
 
 void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
 {
@@ -194,12 +184,11 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     return canonical;
 }
 
-namespace IntlDTFInternal {
-static Vector<String> localeData(const String& locale, size_t keyIndex)
+Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIndex)
 {
     Vector<String> keyLocaleData;
     switch (keyIndex) {
-    case indexOfExtensionKeyCa: {
+    case IntlDateTimeFormatInternal::calendarIndex: {
         UErrorCode status = U_ZERO_ERROR;
         UEnumeration* calendars = ucal_getKeywordValuesForLocale("calendar", locale.utf8().data(), false, &status);
         ASSERT(U_SUCCESS(status));
@@ -220,10 +209,10 @@ static Vector<String> localeData(const String& locale, size_t keyIndex)
         uenum_close(calendars);
         break;
     }
-    case indexOfExtensionKeyNu:
+    case IntlDateTimeFormatInternal::numberingSystemIndex:
         keyLocaleData = numberingSystemsForLocale(locale);
         break;
-    case indexOfExtensionKeyHc:
+    case IntlDateTimeFormatInternal::hourCycleIndex:
         // Null default so we know to use 'j' in pattern.
         keyLocaleData.append(String());
         keyLocaleData.append("h11"_s);
@@ -332,7 +321,6 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
 
     // 9. Return options.
     return options;
-}
 }
 
 void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
@@ -449,7 +437,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* options = IntlDTFInternal::toDateTimeOptionsAnyDate(globalObject, originalOptions);
+    JSObject* options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
     RETURN_IF_EXCEPTION(scope, void());
 
     HashMap<String, String> opt;
@@ -493,7 +481,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         opt.add("hc"_s, String());
 
     const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlDTFInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDTFInternal::relevantExtensionKeys), IntlDTFInternal::localeData);
+    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlDateTimeFormatInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDateTimeFormatInternal::relevantExtensionKeys), localeData);
 
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {

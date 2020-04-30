@@ -62,6 +62,8 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static Vector<String> localeData(const String&, size_t);
+
     struct UPluralRulesDeleter {
         void operator()(UPluralRules*) const;
     };

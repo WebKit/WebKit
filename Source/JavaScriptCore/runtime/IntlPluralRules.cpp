@@ -88,7 +88,7 @@ void IntlPluralRules::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-static Vector<String> localeData(const String&, size_t)
+Vector<String> IntlPluralRules::localeData(const String&, size_t)
 {
     return { };
 }

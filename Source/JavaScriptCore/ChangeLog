@@ -1,5 +1,50 @@
 2020-04-29  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Ensure Intl classes don't have naming conflicts with unified builds
+        https://bugs.webkit.org/show_bug.cgi?id=211213
+
+        Reviewed by Yusuke Suzuki.
+
+        Each Intl class usually has an array named relevantExtensionsKeys and a function named localeData.
+        This can result in redefinition errors when unified builds put two of them into the same translation unit. 
+        Some are already guarding against this with an internal namespace while others are not.
+
+        As a uniform approach, this patch makes each localeData function a static method and
+        puts each relevantExtensionsKeys array (as well as any constants for its indices) into an internal namespace.
+
+        Furthermore, since three different classes are defining an identical UFieldPositionIteratorDeleter,
+        this patch consolidates them into one definition in IntlObject.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::sortLocaleData): Renamed from JSC::sortLocaleData.
+        (JSC::IntlCollator::searchLocaleData): Renamed from JSC::searchLocaleData.
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::localeData): Renamed from JSC::IntlDTFInternal::localeData.
+        (JSC::toDateTimeOptionsAnyDate): Renamed from JSC::IntlDTFInternal::toDateTimeOptionsAnyDate.
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::UFieldPositionIteratorDeleter::operator() const): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::localeData): Renamed from JSC::IntlNFInternal::localeData.
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::UFieldPositionIteratorDeleter::operator() const): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlObject.cpp:
+        (JSC::UFieldPositionIteratorDeleter::operator() const): Added.
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::localeData): Renamed from JSC::localeData.
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::localeData): Renamed from JSC::localeData.
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        (JSC::UFieldPositionIteratorDeleter::operator() const): Deleted.
+        * runtime/IntlRelativeTimeFormat.h:
+
+2020-04-29  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed follow-up to r260848.
         LowerDFGToB3 has its own isFunction which should NOT have been renamed.
 

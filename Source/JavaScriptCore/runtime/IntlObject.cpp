@@ -47,6 +47,7 @@
 #include "ObjectPrototype.h"
 #include "Options.h"
 #include <unicode/ucol.h>
+#include <unicode/ufieldpositer.h>
 #include <unicode/uloc.h>
 #include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
@@ -113,6 +114,12 @@ struct MatcherResult {
 };
 
 const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
+
+void UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
+{
+    if (iterator)
+        ufieldpositer_close(iterator);
+}
 
 IntlObject::IntlObject(VM& vm, Structure* structure)
     : Base(vm, structure)

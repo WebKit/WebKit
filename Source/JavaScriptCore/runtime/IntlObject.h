@@ -30,6 +30,8 @@
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 
+struct UFieldPositionIterator;
+
 namespace JSC {
 
 class IntlObject final : public JSNonFinalObject {
@@ -74,5 +76,9 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
 Vector<String> numberingSystemsForLocale(const String& locale);
 
 bool isUnicodeLocaleIdentifierType(StringView);
+
+struct UFieldPositionIteratorDeleter {
+    void operator()(UFieldPositionIterator*) const;
+};
 
 } // namespace JSC

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSObject.h"
-#include <unicode/ufieldpositer.h>
 #include <unicode/ureldatefmt.h>
 
 namespace JSC {
@@ -62,6 +61,8 @@ private:
     IntlRelativeTimeFormat(VM&, Structure*);
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    static Vector<String> localeData(const String&, size_t);
 
     String formatInternal(JSGlobalObject*, double, StringView unit);
 

@@ -71,6 +71,8 @@ private:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static Vector<String> localeData(const String&, size_t);
+
     enum class Style : uint8_t { Decimal, Percent, Currency };
     enum class CurrencyDisplay : uint8_t { Code, Symbol, Name };
 
