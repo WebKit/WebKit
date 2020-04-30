@@ -4118,12 +4118,22 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (CGRect)textFirstRect
 {
-    return _page->editorState().hasComposition ? _page->editorState().postLayoutData().firstMarkedRect : _autocorrectionData.textFirstRect;
+    auto& editorState = _page->editorState();
+    if (editorState.hasComposition) {
+        auto& markedTextRects = editorState.postLayoutData().markedTextRects;
+        return markedTextRects.isEmpty() ? CGRectZero : markedTextRects.first().rect();
+    }
+    return _autocorrectionData.textFirstRect;
 }
 
 - (CGRect)textLastRect
 {
-    return _page->editorState().hasComposition ? _page->editorState().postLayoutData().lastMarkedRect : _autocorrectionData.textLastRect;
+    auto& editorState = _page->editorState();
+    if (editorState.hasComposition) {
+        auto& markedTextRects = editorState.postLayoutData().markedTextRects;
+        return markedTextRects.isEmpty() ? CGRectZero : markedTextRects.last().rect();
+    }
+    return _autocorrectionData.textLastRect;
 }
 
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
@@ -4466,45 +4476,55 @@ static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore
     }).autorelease();
 }
 
+- (WebCore::FloatRect)_scaledCaretRectForSelectionStart:(WebCore::FloatRect)caretRect
+{
+    // The logical height of the caret is scaled inversely by the view's zoom scale
+    // to achieve the visual effect that the caret is narrow when zoomed in and wide
+    // when zoomed out.
+    double inverseScale = [self inverseScale];
+    if (bool isHorizontalCaret = caretRect.width() < caretRect.height())
+        caretRect.setWidth(caretRect.width() * inverseScale);
+    else
+        caretRect.setHeight(caretRect.height() * inverseScale);
+    return caretRect;
+}
+
+- (WebCore::FloatRect)_scaledCaretRectForSelectionEnd:(WebCore::FloatRect)caretRect
+{
+    // The logical height of the caret is scaled inversely by the view's zoom scale
+    // to achieve the visual effect that the caret is narrow when zoomed in and wide
+    // when zoomed out.
+    double inverseScale = [self inverseScale];
+    if (bool isHorizontalCaret = caretRect.width() < caretRect.height()) {
+        float originalWidth = caretRect.width();
+        caretRect.setWidth(originalWidth * inverseScale);
+        caretRect.move(caretRect.width() - originalWidth, 0);
+    } else {
+        float originalHeight = caretRect.height();
+        caretRect.setHeight(caretRect.height() * inverseScale);
+        caretRect.move(0, caretRect.height() - originalHeight);
+    }
+    return caretRect;
+}
+
 - (UITextRange *)selectedTextRange
 {
-    if (_page->editorState().selectionIsNone || _page->editorState().isMissingPostLayoutData)
+    auto& editorState = _page->editorState();
+    auto hasSelection = !editorState.selectionIsNone;
+    if (!hasSelection || editorState.isMissingPostLayoutData)
         return nil;
-    // UIKit does not expect caret selections in noneditable content.
-    if (!_page->editorState().isContentEditable && !_page->editorState().selectionIsRange)
+
+    auto isRange = editorState.selectionIsRange;
+    auto isContentEditable = editorState.isContentEditable;
+    // UIKit does not expect caret selections in non-editable content.
+    if (!isContentEditable && !isRange)
         return nil;
-    
-    auto& postLayoutEditorStateData = _page->editorState().postLayoutData();
-    WebCore::FloatRect startRect = postLayoutEditorStateData.caretRectAtStart;
-    WebCore::FloatRect endRect = postLayoutEditorStateData.caretRectAtEnd;
-    double inverseScale = [self inverseScale];
-    // We want to keep the original caret width, while the height scales with
-    // the content taking orientation into account.
-    // We achieve this by scaling the width with the inverse
-    // scale factor. This way, when it is converted from the content view
-    // the width remains unchanged.
-    if (startRect.width() < startRect.height())
-        startRect.setWidth(startRect.width() * inverseScale);
-    else
-        startRect.setHeight(startRect.height() * inverseScale);
-    if (endRect.width() < endRect.height()) {
-        double delta = endRect.width();
-        endRect.setWidth(endRect.width() * inverseScale);
-        delta = endRect.width() - delta;
-        endRect.move(delta, 0);
-    } else {
-        double delta = endRect.height();
-        endRect.setHeight(endRect.height() * inverseScale);
-        delta = endRect.height() - delta;
-        endRect.move(0, delta);
-    }
-    return [WKTextRange textRangeWithState:_page->editorState().selectionIsNone
-                                   isRange:_page->editorState().selectionIsRange
-                                isEditable:_page->editorState().isContentEditable
-                                 startRect:startRect
-                                   endRect:endRect
-                            selectionRects:wkTextSelectionRects(_page->editorState().postLayoutData().selectionRects)
-                        selectedTextLength:postLayoutEditorStateData.selectedTextLength];
+
+    auto caretStartRect = [self _scaledCaretRectForSelectionStart:_page->editorState().postLayoutData().caretRectAtStart];
+    auto caretEndRect = [self _scaledCaretRectForSelectionEnd:_page->editorState().postLayoutData().caretRectAtEnd];
+    auto selectionRects = wkTextSelectionRects(_page->editorState().postLayoutData().selectionRects);
+    auto selectedTextLength = editorState.postLayoutData().selectedTextLength;
+    return [WKTextRange textRangeWithState:!hasSelection isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
@@ -4540,7 +4560,20 @@ static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore
 
 - (UITextRange *)markedTextRange
 {
-    return nil;
+    auto& editorState = _page->editorState();
+    bool hasComposition = editorState.hasComposition;
+    if (!hasComposition || editorState.isMissingPostLayoutData)
+        return nil;
+    auto& postLayoutData = editorState.postLayoutData();
+    auto unscaledCaretRectAtStart = postLayoutData.markedTextCaretRectAtStart;
+    auto unscaledCaretRectAtEnd = postLayoutData.markedTextCaretRectAtEnd;
+    auto isRange = unscaledCaretRectAtStart != unscaledCaretRectAtEnd;
+    auto isContentEditable = editorState.isContentEditable;
+    auto caretStartRect = [self _scaledCaretRectForSelectionStart:unscaledCaretRectAtStart];
+    auto caretEndRect = [self _scaledCaretRectForSelectionEnd:unscaledCaretRectAtEnd];
+    auto selectionRects = wkTextSelectionRects(postLayoutData.markedTextRects);
+    auto selectedTextLength = postLayoutData.markedText.length();
+    return [WKTextRange textRangeWithState:!hasComposition isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
 }
 
 - (NSDictionary *)markedTextStyle

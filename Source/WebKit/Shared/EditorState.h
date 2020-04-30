@@ -92,6 +92,10 @@ struct EditorState {
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect caretRectAtEnd;
         Vector<WebCore::SelectionRect> selectionRects;
+        Vector<WebCore::SelectionRect> markedTextRects;
+        String markedText;
+        WebCore::IntRect markedTextCaretRectAtStart;
+        WebCore::IntRect markedTextCaretRectAtEnd;
         String wordAtSelection;
         UChar32 characterAfterSelection { 0 };
         UChar32 characterBeforeSelection { 0 };
@@ -106,9 +110,6 @@ struct EditorState {
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
-        WebCore::IntRect firstMarkedRect;
-        WebCore::IntRect lastMarkedRect;
-        String markedText;
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

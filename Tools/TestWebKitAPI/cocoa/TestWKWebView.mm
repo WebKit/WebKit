@@ -475,6 +475,15 @@ static UICalloutBar *suppressUICalloutBar()
     [_testHandler addMessage:message withHandler:action];
 }
 
+- (void)synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:(NSString *)html
+{
+    bool didFireDOMLoadEvent = false;
+    [self performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
+    [self loadHTMLString:html baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
+    [self waitForNextPresentationUpdate];
+}
+
 - (void)waitForMessage:(NSString *)message
 {
     __block bool isDoneWaiting = false;

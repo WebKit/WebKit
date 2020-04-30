@@ -1,3 +1,48 @@
+2020-04-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement -markedTextRange
+        https://bugs.webkit.org/show_bug.cgi?id=211148
+        <rdar://problem/57865890>
+
+        Reviewed by Wenson Hsieh.
+
+        Return the UITextRange-like object for the marked text range. Clients can use this range to
+        access the selection rects or query for the caret rect at the start or end of the range,
+        if desired.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        Encode and decode the marked text selection rects and caret rects at the state and end
+        of the marked text range. This is the same information that we compute in order to
+        implement -selectedTextRange. I thought about collecting these details into class and
+        having editor state hold two instances of it: one for selected text and one for marked text.
+        However I decided against it because this class is unlikely to find use outside of what is
+        needed to implement -selectedTextRange and -markedTextRange. This is because only those
+        functions require such details so as to return an opaque UITextRange-derived object that
+        can be passed to- or its sub-objects can be passed to WKContentView's -caretRectForPosition
+        and -selectionRectsForRange. Literally, WKContentView does not support other UITextInput
+        functions that operate on UITextRange or UITextPosition. I didn't pursue fixing this in
+        general because 1) I don't need it to solve my problem and 2) UIWKDocumentContext SPI seems
+        to be the new general-purpose solution.
+
+        (WebKit::operator<<): Pretty print all the new marked text details we collect. While I am here,
+        use Vector::isEmpty() instead of Vector::size() to check if there are selection rects.
+        * Shared/EditorState.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textFirstRect]):
+        (-[WKContentView textLastRect]):
+        Update code now that the marked text rects are in the post layout data sub-object.
+
+        (-[WKContentView _scaledCaretRectForSelectionStart:]): Extracted from -selectedTextRange.
+        (-[WKContentView _scaledCaretRectForSelectionEnd:]): Ditto.
+        (-[WKContentView selectedTextRange]): Write in terms of -_scaledCaretRectForSelectionStart
+        and -_scaledCaretRectForSelectionEnd. Also modernize the code while I am here.
+        (-[WKContentView markedTextRange]): Added.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Collect the marked text rects and the caret
+        rects at the start and end of the range.
+
 2020-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4][X11] Add support for rendering web view contents

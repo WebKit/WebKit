@@ -105,6 +105,10 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS_FAMILY)
     encoder << caretRectAtEnd;
     encoder << selectionRects;
+    encoder << markedTextRects;
+    encoder << markedText;
+    encoder << markedTextCaretRectAtStart;
+    encoder << markedTextCaretRectAtEnd;
     encoder << wordAtSelection;
     encoder << characterAfterSelection;
     encoder << characterBeforeSelection;
@@ -119,9 +123,6 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << atStartOfSentence;
     encoder << selectionStartIsAtParagraphBoundary;
     encoder << selectionEndIsAtParagraphBoundary;
-    encoder << firstMarkedRect;
-    encoder << lastMarkedRect;
-    encoder << markedText;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -166,6 +167,14 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
     if (!decoder.decode(result.selectionRects))
         return false;
+    if (!decoder.decode(result.markedTextRects))
+        return false;
+    if (!decoder.decode(result.markedText))
+        return false;
+    if (!decoder.decode(result.markedTextCaretRectAtStart))
+        return false;
+    if (!decoder.decode(result.markedTextCaretRectAtEnd))
+        return false;
     if (!decoder.decode(result.wordAtSelection))
         return false;
     if (!decoder.decode(result.characterAfterSelection))
@@ -193,12 +202,6 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.selectionStartIsAtParagraphBoundary))
         return false;
     if (!decoder.decode(result.selectionEndIsAtParagraphBoundary))
-        return false;
-    if (!decoder.decode(result.firstMarkedRect))
-        return false;
-    if (!decoder.decode(result.lastMarkedRect))
-        return false;
-    if (!decoder.decode(result.markedText))
         return false;
 #endif
 #if PLATFORM(MAC)
@@ -284,16 +287,18 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("baseWritingDirection", static_cast<uint8_t>(editorState.postLayoutData().baseWritingDirection));
 #endif // PLATFORM(COCOA)
 #if PLATFORM(IOS_FAMILY)
-    if (editorState.postLayoutData().firstMarkedRect != IntRect())
-        ts.dumpProperty("firstMarkedRect", editorState.postLayoutData().firstMarkedRect);
-    if (editorState.postLayoutData().lastMarkedRect != IntRect())
-        ts.dumpProperty("lastMarkedRect", editorState.postLayoutData().lastMarkedRect);
-    if (editorState.postLayoutData().markedText.length())
-        ts.dumpProperty("markedText", editorState.postLayoutData().markedText);
     if (editorState.postLayoutData().caretRectAtEnd != IntRect())
         ts.dumpProperty("caretRectAtEnd", editorState.postLayoutData().caretRectAtEnd);
-    if (editorState.postLayoutData().selectionRects.size())
+    if (!editorState.postLayoutData().selectionRects.isEmpty())
         ts.dumpProperty("selectionRects", editorState.postLayoutData().selectionRects);
+    if (!editorState.postLayoutData().markedTextRects.isEmpty())
+        ts.dumpProperty("markedTextRects", editorState.postLayoutData().markedTextRects);
+    if (editorState.postLayoutData().markedText.length())
+        ts.dumpProperty("markedText", editorState.postLayoutData().markedText);
+    if (editorState.postLayoutData().markedTextCaretRectAtStart != IntRect())
+        ts.dumpProperty("markedTextCaretRectAtStart", editorState.postLayoutData().markedTextCaretRectAtStart);
+    if (editorState.postLayoutData().markedTextCaretRectAtEnd != IntRect())
+        ts.dumpProperty("markedTextCaretRectAtEnd", editorState.postLayoutData().markedTextCaretRectAtEnd);
     if (editorState.postLayoutData().wordAtSelection.length())
         ts.dumpProperty("wordAtSelection", editorState.postLayoutData().wordAtSelection);
     if (editorState.postLayoutData().characterAfterSelection)

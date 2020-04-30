@@ -1,3 +1,20 @@
+2020-04-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Implement -markedTextRange
+        https://bugs.webkit.org/show_bug.cgi?id=211148
+        <rdar://problem/57865890>
+
+        Reviewed by Wenson Hsieh.
+
+        Add some tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        (TestWebKitAPI::applyAhemStyle): Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:]): Added.
+
 2020-04-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK4] Add navigation and reload buttons to MiniBrowser

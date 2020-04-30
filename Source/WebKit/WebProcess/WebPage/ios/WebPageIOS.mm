@@ -262,17 +262,15 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     auto view = makeRef(*frame.view());
 
     if (frame.editor().hasComposition()) {
-        auto compositionRange = frame.editor().compositionRange();
-        Vector<WebCore::SelectionRect> compositionRects;
-        if (compositionRange) {
-            compositionRange->collectSelectionRects(compositionRects);
-            if (compositionRects.size())
-                postLayoutData.firstMarkedRect = view->contentsToRootView(compositionRects[0].rect());
-            if (compositionRects.size() > 1)
-                postLayoutData.lastMarkedRect = view->contentsToRootView(compositionRects.last().rect());
-            else
-                postLayoutData.lastMarkedRect = postLayoutData.firstMarkedRect;
+        if (auto compositionRange = frame.editor().compositionRange()) {
+            compositionRange->collectSelectionRects(postLayoutData.markedTextRects);
+            convertContentToRootViewSelectionRects(view, postLayoutData.markedTextRects);
+
             postLayoutData.markedText = plainTextForContext(compositionRange.get());
+            VisibleSelection compositionSelection(*compositionRange);
+            postLayoutData.markedTextCaretRectAtStart = view->contentsToRootView(compositionSelection.visibleStart().absoluteCaretBounds(nullptr /* insideFixed */));
+            postLayoutData.markedTextCaretRectAtEnd = view->contentsToRootView(compositionSelection.visibleEnd().absoluteCaretBounds(nullptr /* insideFixed */));
+
         }
     }
 
