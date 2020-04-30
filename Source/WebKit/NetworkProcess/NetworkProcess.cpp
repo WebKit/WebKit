@@ -2218,12 +2218,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     });
     
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    forEachNetworkSession([&callbackAggregator](auto& networkSession) {
-        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics()) {
-            if (!resourceLoadStatistics->isEphemeral())
-                resourceLoadStatistics->suspend([callbackAggregator] { });
-        }
-    });
+    WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
 
     platformPrepareToSuspend([callbackAggregator] { });
@@ -2265,12 +2260,7 @@ void NetworkProcess::resume()
         connection->endSuspension();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    forEachNetworkSession([](auto& networkSession) {
-        if (auto* resourceLoadStatistics = networkSession.resourceLoadStatistics()) {
-            if (!resourceLoadStatistics->isEphemeral())
-                resourceLoadStatistics->resume();
-        }
-    });
+    WebResourceLoadStatisticsStore::resume();
 #endif
     
 #if ENABLE(SERVICE_WORKER)

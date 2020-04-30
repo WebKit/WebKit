@@ -321,6 +321,7 @@ public:
     void clearCachedCredentials();
     void terminateNetworkProcess();
     void terminateAllWebContentProcesses();
+    void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
     void terminateServiceWorkers();

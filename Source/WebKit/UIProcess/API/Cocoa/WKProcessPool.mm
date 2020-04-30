@@ -421,6 +421,13 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->sendNetworkProcessWillSuspendImminentlyForTesting();
 }
 
+- (void)_sendNetworkProcessPrepareToSuspend:(void(^)(void))completionHandler
+{
+    _processPool->sendNetworkProcessPrepareToSuspendForTesting([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_sendNetworkProcessDidResume
 {
     _processPool->sendNetworkProcessDidResume();

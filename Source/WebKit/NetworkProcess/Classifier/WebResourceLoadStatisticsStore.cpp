@@ -62,6 +62,10 @@
 namespace WebKit {
 using namespace WebCore;
 
+WebResourceLoadStatisticsStore::State WebResourceLoadStatisticsStore::suspendedState { WebResourceLoadStatisticsStore::State::Running };
+Lock WebResourceLoadStatisticsStore::suspendedStateLock;
+Condition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
+
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
     static NeverDestroyed<OptionSet<WebsiteDataType>> dataTypes(std::initializer_list<WebsiteDataType>({
@@ -1381,43 +1385,38 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
-    // Suspend is needed to manage the database store which is not used in ephemeral sessions.
-    ASSERT(RunLoop::isMain() && !isEphemeral());
-
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    Locker<Lock> stateLocker(m_stateLock);
-    if (m_state != State::Running)
+    Locker<Lock> stateLocker(suspendedStateLock);
+    if (suspendedState != State::Running)
         return;
-    m_state = State::WillSuspend;
+    suspendedState = State::WillSuspend;
 
-    postTask([this, completionHandler = completionHandlerCaller.release()] () mutable {
-        Locker<Lock> stateLocker(m_stateLock);
-        ASSERT(m_state != State::Suspended);
+    sharedStatisticsQueue()->dispatch([completionHandler = completionHandlerCaller.release()] () mutable {
 
-        if (m_state != State::WillSuspend) {
+        Locker<Lock> stateLocker(suspendedStateLock);
+        ASSERT(suspendedState != State::Suspended);
+
+        if (suspendedState != State::WillSuspend) {
             postTaskReply(WTFMove(completionHandler));
             return;
         }
 
-        m_state = State::Suspended;
+        suspendedState = State::Suspended;
         postTaskReply(WTFMove(completionHandler));
 
-        while (m_state == State::Suspended)
-            m_stateChangeCondition.wait(m_stateLock);
-        ASSERT(m_state == State::Running);
+        while (suspendedState == State::Suspended)
+            suspendedStateChangeCondition.wait(suspendedStateLock);
+        ASSERT(suspendedState == State::Running);
     });
 }
 
 void WebResourceLoadStatisticsStore::resume()
 {
-    // Resume is needed to manage the database store which is not used in ephemeral sessions.
-    ASSERT(RunLoop::isMain() && !isEphemeral());
-
-    Locker<Lock> stateLocker(m_stateLock);
-    auto previousState = m_state;
-    m_state = State::Running;
+    Locker<Lock> stateLocker(suspendedStateLock);
+    auto previousState = suspendedState;
+    suspendedState = State::Running;
     if (previousState == State::Suspended)
-        m_stateChangeCondition.notifyOne();
+        suspendedStateChangeCondition.notifyOne();
 }
 
 } // namespace WebKit

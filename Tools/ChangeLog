@@ -1,3 +1,16 @@
+2020-04-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r260791) Network process fails to suspend promptly
+        https://bugs.webkit.org/show_bug.cgi?id=211207
+        <rdar://problem/62620454>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2020-04-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Add better handling of an uncleared bundle identifier in WebKitTestRunner

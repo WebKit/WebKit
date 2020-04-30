@@ -1549,3 +1549,50 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
 
     TestWebKitAPI::Util::run(&doneFlag);
 }
+
+TEST(ResourceLoadStatistics, StoreSuspension)
+{
+    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+    auto *dataStore1 = [WKWebsiteDataStore defaultDataStore];
+    auto *dataStore2 = [[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease];
+
+    [dataStore1 _setResourceLoadStatisticsEnabled:YES];
+    [dataStore2 _setResourceLoadStatisticsEnabled:YES];
+
+    static bool doneFlag = false;
+    [dataStore1 _setUseITPDatabase:true completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    doneFlag = false;
+    [dataStore2 _setUseITPDatabase:true completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration1 setProcessPool: sharedProcessPool];
+    configuration1.get().websiteDataStore = dataStore1;
+
+    auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration2 setProcessPool: sharedProcessPool];
+    configuration2.get().websiteDataStore = dataStore2;
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration1.get()]);
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration2.get()]);
+
+    [webView1 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView1 _test_waitForDidFinishNavigation];
+
+    [webView2 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
+    [webView2 _test_waitForDidFinishNavigation];
+
+    doneFlag = false;
+    [sharedProcessPool _sendNetworkProcessPrepareToSuspend:^{
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    [sharedProcessPool _sendNetworkProcessDidResume];
+}

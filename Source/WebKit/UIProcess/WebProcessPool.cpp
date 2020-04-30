@@ -1799,6 +1799,14 @@ void WebProcessPool::terminateAllWebContentProcesses()
         process->terminate();
 }
 
+void WebProcessPool::sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_networkProcess)
+        return completionHandler();
+
+    m_networkProcess->sendPrepareToSuspend(IsSuspensionImminent::No, WTFMove(completionHandler));
+}
+
 void WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting()
 {
     if (m_networkProcess)

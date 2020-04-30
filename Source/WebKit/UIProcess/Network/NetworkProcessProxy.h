@@ -226,6 +226,9 @@ public:
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);
     void getAppBoundDomains(PAL::SessionID, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
+    // ProcessThrottlerClient
+    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+
 private:
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "Networking"_s; }
@@ -236,9 +239,6 @@ private:
 
     void networkProcessCrashed();
     void clearCallbackStates();
-
-    // ProcessThrottlerClient
-    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

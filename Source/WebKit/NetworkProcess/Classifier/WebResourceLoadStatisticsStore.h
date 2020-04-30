@@ -292,8 +292,8 @@ struct ThirdPartyData {
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
     void aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
-    void suspend(CompletionHandler<void()>&&);
-    void resume();
+    static void suspend(CompletionHandler<void()>&&);
+    static void resume();
     
     bool isEphemeral() const { return m_isEphemeral == WebCore::ResourceLoadStatistics::IsEphemeral::Yes; };
 
@@ -337,9 +337,9 @@ private:
         WillSuspend,
         Suspended
     };
-    State m_state { State::Running };
-    Lock m_stateLock;
-    Condition m_stateChangeCondition;
+    static State suspendedState;
+    static Lock suspendedStateLock;
+    static Condition suspendedStateChangeCondition;
 };
 
 } // namespace WebKit

@@ -1,3 +1,23 @@
+2020-04-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r260791) Network process fails to suspend promptly
+        https://bugs.webkit.org/show_bug.cgi?id=211207
+        <rdar://problem/62620454>
+
+        Reviewed by Alex Christensen.
+
+        After r260791, all WebResourceLoadStatisticsStore instances share a single WorkQueue.
+        As a result, the logic to suspend WebResourceLoadStatisticsStore's WorkQueues in
+        NetworkProcess::prepareToSuspend() needs to get updated to reflect this.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+        (WebKit::WebResourceLoadStatisticsStore::resume):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+
 2020-04-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         REGRESSION(r260889): TestContextMenu:/webkit/WebKitWebView/populate-menu no longer passes
