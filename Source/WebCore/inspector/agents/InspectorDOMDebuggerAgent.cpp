@@ -216,7 +216,9 @@ void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEv
 
     auto state = event.target()->scriptExecutionContext()->execState();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
-    ASSERT(!injectedScript.hasNoValue());
+    if (injectedScript.hasNoValue())
+        return;
+
     {
         JSC::JSLockHolder lock(state);
 

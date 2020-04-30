@@ -366,8 +366,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
         let {committingProvisionalLoad, contexts} = event.data;
 
         let hasActiveExecutionContext = contexts.some((context) => context === WI.runtimeManager.activeExecutionContext);
-        if (!hasActiveExecutionContext)
+        if (!hasActiveExecutionContext) {
+            this._updateActiveExecutionContextDisplay();
             return;
+        }
 
         // If this frame is navigating and it is selected in the UI we want to reselect its new item after navigation.
         if (committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame) {
@@ -375,6 +377,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
             // As a fail safe, if the frame never gets an execution context, clear the restore value.
             setTimeout(() => {
+                if (this._restoreSelectedExecutionContextForFrame)
+                    this._updateActiveExecutionContextDisplay();
                 this._restoreSelectedExecutionContextForFrame = null;
             }, 10);
             return;
@@ -402,8 +406,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _handleTargetRemoved(event)
     {
         let {target} = event.data;
-        if (target !== WI.runtimeManager.activeExecutionContext)
+        if (target !== WI.runtimeManager.activeExecutionContext) {
+            this._updateActiveExecutionContextDisplay();
             return;
+        }
 
         this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());

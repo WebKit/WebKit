@@ -191,6 +191,9 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         auto& error = createResult.error();
         ASSERT(error);
 
+        if (isTerminatedExecutionException(globalObject->vm(), error))
+            return InjectedScript();
+
         unsigned line = 0;
         unsigned column = 0;
         auto& stack = error->stack();

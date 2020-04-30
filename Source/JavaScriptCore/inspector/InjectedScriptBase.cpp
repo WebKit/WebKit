@@ -81,11 +81,21 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     if (hasNoValue() || !hasAccessToInspectedScriptState())
         return JSON::Value::null();
 
-    auto result = callFunctionWithEvalEnabled(function);
-    if (!result)
-        return JSON::Value::create("Exception while making a call.");
+    auto globalObject = m_injectedScriptObject.globalObject();
 
-    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(m_injectedScriptObject.globalObject(), result.value());
+    auto result = callFunctionWithEvalEnabled(function);
+    if (!result) {
+        auto& error = result.error();
+        ASSERT(error);
+
+        return JSON::Value::create(error->value().toWTFString(globalObject));
+    }
+
+    auto value = result.value();
+    if (!value)
+        return JSON::Value::null();
+
+    auto resultJSONValue = toInspectorValue(globalObject, value);
     if (!resultJSONValue)
         return JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')'));
 

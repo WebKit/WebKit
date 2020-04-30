@@ -1,3 +1,19 @@
+2020-04-30  Devin Rousso  <drousso@apple.com>
+
+        WebKit.WebContent process crashes when web developer tools are opened in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=210794
+        <rdar://problem/62214651>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._handleFrameExecutionContextsCleared):
+        (WI.QuickConsole.prototype._handleTargetRemoved):
+        If a `Worker` is removed and is not the active execution context, still check to see if the
+        execution context picker should be hidden, such as if there is only one other execution
+        context (e.g. the main page execution context). Previously, the execution context picker
+        would only be hidden in this case if the `Worker` was the active execution context.
+
 2020-04-30  Christopher Reid  <chris.reid@sony.com>
 
         [CMake] Don't copy inspector resources in every incremental build
