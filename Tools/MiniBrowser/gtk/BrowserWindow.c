@@ -118,7 +118,6 @@ static void activateUriEntryCallback(BrowserWindow *window)
     );
 }
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
 static void reloadOrStopCallback(BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
@@ -140,6 +139,7 @@ static void goForwardCallback(BrowserWindow *window)
     webkit_web_view_go_forward(webView);
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static void settingsCallback(BrowserWindow *window)
 {
     if (window->settingsDialog) {
@@ -263,11 +263,11 @@ static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, GLis
 
 static void browserWindowUpdateNavigationMenu(BrowserWindow *window, WebKitBackForwardList *backForwardlist)
 {
-#if !GTK_CHECK_VERSION(3, 98, 0)
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
     gtk_widget_set_sensitive(window->backItem, webkit_web_view_can_go_back(webView));
     gtk_widget_set_sensitive(window->forwardItem, webkit_web_view_can_go_forward(webView));
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     GList *list = g_list_reverse(webkit_back_forward_list_get_back_list_with_limit(backForwardlist, 10));
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem),
         browserWindowCreateBackForwardMenu(window, list));
@@ -537,11 +537,8 @@ static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, Browse
 
 static void webViewIsLoadingChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
-#if !GTK_CHECK_VERSION(3, 98, 0)
     gboolean isLoading = webkit_web_view_is_loading(webView);
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? "Stop" : "Reload");
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? "process-stop" : "view-refresh");
-#endif
+    g_object_set(G_OBJECT(window->reloadOrStopButton), "label", isLoading ? "Stop" : "Reload", "icon-name", isLoading ? "process-stop" : "view-refresh", NULL);
 }
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
@@ -946,7 +943,17 @@ static void browserWindowTabAddedOrRemoved(GtkNotebook *notebook, BrowserTab *ta
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(window->notebook), gtk_notebook_get_n_pages(notebook) > 1);
 }
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
+#if GTK_CHECK_VERSION(3, 98, 0)
+static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkContainer* container, const char* namedIcon, GCallback callback)
+{
+    GtkWidget *button = gtk_button_new_from_icon_name(namedIcon);
+    gtk_button_set_has_frame(GTK_BUTTON(button), FALSE);
+    gtk_container_add(container, button);
+    g_signal_connect_swapped(button, "clicked", callback, (gpointer)window);
+
+    return button;
+}
+#else
 static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkWidget* toolbar, GType type, const char* label, const char* namedIcon, GCallback callback)
 {
     GtkWidget *item = g_object_new(type, "icon-name", namedIcon, NULL);
@@ -1050,6 +1057,12 @@ static void browser_window_init(BrowserWindow *window)
     window->toolbar = toolbar;
     gtk_widget_set_hexpand(window->uriEntry, TRUE);
     gtk_center_box_set_center_widget(GTK_CENTER_BOX(toolbar), window->uriEntry);
+
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    window->backItem = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "go-previous", G_CALLBACK(goBackCallback));
+    window->forwardItem = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "go-next", G_CALLBACK(goForwardCallback));
+    window->reloadOrStopButton = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "view-refresh", G_CALLBACK(reloadOrStopCallback));
+    gtk_center_box_set_start_widget(GTK_CENTER_BOX(toolbar), box);
 #else
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;

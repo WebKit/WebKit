@@ -1,3 +1,16 @@
+2020-04-30  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Add navigation and reload buttons to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=211231
+
+        Reviewed by Adrian Perez de Castro.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUpdateNavigationMenu):
+        (webViewIsLoadingChanged):
+        (browserWindowSetupToolbarItem):
+        (browser_window_init):
+
 2020-04-30  Philippe Normand  <pnormand@igalia.com>
 
         [SOUP] http/tests/media/video-accept-encoding.html fails
