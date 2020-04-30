@@ -64,10 +64,14 @@ static CString& hstsStorageDirectory()
     return directory.get();
 }
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
 {
+#if !LOG_DISABLED
     LOG(Network, "%c %s", direction, data);
+#elif !RELEASE_LOG_DISABLED
+    RELEASE_LOG(Network, "%c %s", direction, data);
+#endif
 }
 #endif
 
@@ -152,7 +156,7 @@ SoupNetworkSession::~SoupNetworkSession() = default;
 
 void SoupNetworkSession::setupLogger()
 {
-#if !LOG_DISABLED
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     if (LogNetwork.state != WTFLogChannelState::On || soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_LOGGER))
         return;
 

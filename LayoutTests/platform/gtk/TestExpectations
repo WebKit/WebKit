@@ -3569,10 +3569,6 @@ Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
 
 Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-# Shared workers disabled with the Network Process
-webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
-webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
-
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Pass Failure ]

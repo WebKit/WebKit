@@ -137,6 +137,7 @@ void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
 
     encoder << static_cast<uint32_t>(m_soupFlags);
     encoder << m_initiatingPageID;
+    encoder << static_cast<bool>(m_acceptEncoding);
 }
 
 template<class Decoder>
@@ -165,6 +166,11 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
     if (!initiatingPageID)
         return false;
     m_initiatingPageID = *initiatingPageID;
+
+    bool acceptEncoding;
+    if (!decoder.decode(acceptEncoding))
+        return false;
+    m_acceptEncoding = acceptEncoding;
 
     return true;
 }

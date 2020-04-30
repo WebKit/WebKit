@@ -1,3 +1,15 @@
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        [SOUP] http/tests/media/video-accept-encoding.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=211228
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
 2020-04-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crashes in accessibility/accessibility-node-memory-management.html in isolated tree mode.

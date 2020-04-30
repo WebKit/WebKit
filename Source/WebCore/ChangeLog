@@ -1,3 +1,23 @@
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        [SOUP] http/tests/media/video-accept-encoding.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=211228
+
+        Reviewed by Carlos Garcia Campos.
+
+        The resource requests received by the network process always had
+        the accept-encoding setting enabled due to lack of IPC
+        (de)serialization for this boolean.
+
+        The patch also enables soup release logging, set WEBKIT_DEBUG=Network=debug.
+
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::encodeWithPlatformData const):
+        (WebCore::ResourceRequest::decodeWithPlatformData):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::soupLogPrinter):
+        (WebCore::SoupNetworkSession::setupLogger):
+
 2020-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4][X11] Add support for rendering web view contents

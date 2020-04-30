@@ -79,6 +79,7 @@ class WPEPort(Port):
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_JHBUILD')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
