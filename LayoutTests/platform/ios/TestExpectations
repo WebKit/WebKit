@@ -3532,3 +3532,5 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 # These media controls tests are not relevant on macOS and iOS.
 media/media-document-audio-repaint.html [ Skip ]
 media/controls-styling.html [ Skip ]
+
+webkit.org/b/211261 compositing/iframes/border-radius-composited-frame.html [ Pass Failure ]
