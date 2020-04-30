@@ -1,3 +1,18 @@
+2020-04-30  Chris Dumez  <cdumez@apple.com>
+
+        WebCore::systemHasBattery() is unnecessarily expensive on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211240
+        <rdar://problem/62619971>
+
+        Reviewed by Geoffrey Garen.
+
+        Update WebCore::systemHasBattery() to return true unconditionally on
+        PLATFORM(IOS) and PLATFORM(WATCHOS) since iOS devices always have a
+        battery. Also return false unconditionally for PLATFORM(APPLETV).
+
+        * platform/cocoa/SystemBattery.mm:
+        (WebCore::systemHasBattery):
+
 2020-04-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in AXLogger.

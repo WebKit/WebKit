@@ -41,6 +41,12 @@ bool systemHasBattery()
 {
     if (!hasBattery.hasValue()) {
         hasBattery = [] {
+#if PLATFORM(IOS) || PLATFORM(WATCHOS)
+            // Devices running iOS / WatchOS always have a battery.
+            return true;
+#elif PLATFORM(APPLETV)
+            return false;
+#else
             RetainPtr<CFTypeRef> powerSourcesInfo = adoptCF(IOPSCopyPowerSourcesInfo());
             if (!powerSourcesInfo)
                 return false;
@@ -54,6 +60,7 @@ bool systemHasBattery()
                     return true;
             }
             return false;
+#endif
         }();
     }
 
