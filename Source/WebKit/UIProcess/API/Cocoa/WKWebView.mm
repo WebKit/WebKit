@@ -2812,6 +2812,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
 }
 
+- (NSArray<NSString *> *)_corsDisablingPatterns
+{
+    return createNSArray(_page->corsDisablingPatterns()).autorelease();
+}
+
+- (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
+{
+    _page->setCORSDisablingPatterns(makeVector<String>(patterns));
+}
+
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
     _page->getProcessDisplayName([handler = makeBlockPtr(completionHandler)](auto&& name) {

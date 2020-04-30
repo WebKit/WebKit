@@ -1713,6 +1713,9 @@ public:
     const String& overriddenMediaType() const { return m_overriddenMediaType; }
     void setOverriddenMediaType(const String&);
 
+    void setCORSDisablingPatterns(Vector<String>&&);
+    const Vector<String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
+
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
 
     void setOrientationForMediaCapture(uint64_t);
@@ -2789,6 +2792,8 @@ private:
     bool m_isLayerTreeFrozenDueToSwipeAnimation { false };
     
     String m_overriddenMediaType;
+
+    Vector<String> m_corsDisablingPatterns;
 
     struct InjectedBundleMessage {
         String messageName;

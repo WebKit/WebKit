@@ -393,6 +393,21 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
     return page;
 }
 
+static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(Vector<String>&& input)
+{
+    Vector<UserContentURLPattern> parsedPatterns;
+    parsedPatterns.reserveInitialCapacity(input.size());
+    for (auto&& pattern : WTFMove(input)) {
+        UserContentURLPattern parsedPattern(WTFMove(pattern));
+        if (parsedPattern.isValid()) {
+            WebCore::SecurityPolicy::allowAccessTo(parsedPattern);
+            parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
+        }
+    }
+    parsedPatterns.shrinkToFit();
+    return parsedPatterns;
+}
+
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
     , m_mainFrame(WebFrame::create())
@@ -530,19 +545,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     pageConfiguration.deviceOrientationUpdateProvider = WebDeviceOrientationUpdateProvider::create(*this);
 #endif
-
-    Vector<UserContentURLPattern> parsedPatterns;
-    parsedPatterns.reserveInitialCapacity(parameters.corsDisablingPatterns.size());
-    for (auto&& pattern : WTFMove(parameters.corsDisablingPatterns)) {
-        UserContentURLPattern parsedPattern(WTFMove(pattern));
-        if (parsedPattern.isValid()) {
-            WebCore::SecurityPolicy::allowAccessTo(parsedPattern);
-            parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
-        }
-    }
-    parsedPatterns.shrinkToFit();
     
-    pageConfiguration.corsDisablingPatterns = WTFMove(parsedPatterns);
+    pageConfiguration.corsDisablingPatterns = parseAndAllowAccessToCORSDisablingPatterns(WTFMove(parameters.corsDisablingPatterns));
     pageConfiguration.userScriptsShouldWaitUntilNotification = parameters.userScriptsShouldWaitUntilNotification;
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
     pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
@@ -7048,6 +7052,12 @@ void WebPage::setOverriddenMediaType(const String& mediaType)
 
     m_overriddenMediaType = mediaType;
     m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void WebPage::updateCORSDisablingPatterns(Vector<String>&& patterns)
+{
+    if (m_page)
+        m_page->setCORSDisablingPatterns(parseAndAllowAccessToCORSDisablingPatterns(WTFMove(patterns)));
 }
 
 bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

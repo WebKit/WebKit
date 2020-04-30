@@ -601,6 +601,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetOverriddenMediaType(String mediaType)
     GetProcessDisplayName() -> (String displayName) Async
 
+    UpdateCORSDisablingPatterns(Vector<String> patterns)
+
     SetShouldFireEvents(bool shouldFireEvents)
     SetNeedsDOMWindowResizeEvent()
 

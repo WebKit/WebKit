@@ -483,6 +483,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
     , m_tryCloseTimeoutTimer(RunLoop::main(), this, &WebPageProxy::tryCloseTimedOut)
+    , m_corsDisablingPatterns(m_configuration->corsDisablingPatterns())
 #if PLATFORM(COCOA)
     , m_ignoresAppBoundDomains(m_configuration->ignoresAppBoundDomains() || WTF::processHasEntitlement("com.apple.private.applemediaservices"))
     , m_limitsNavigationsToAppBoundDomains(m_configuration->limitsNavigationsToAppBoundDomains())
@@ -7822,7 +7823,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.backgroundColor = m_backgroundColor;
 
     parameters.overriddenMediaType = m_overriddenMediaType;
-    parameters.corsDisablingPatterns = m_configuration->corsDisablingPatterns();
+    parameters.corsDisablingPatterns = corsDisablingPatterns();
     parameters.userScriptsShouldWaitUntilNotification = m_configuration->userScriptsShouldWaitUntilNotification();
     parameters.loadsFromNetwork = m_configuration->loadsFromNetwork();
     parameters.loadsSubresources = m_configuration->loadsSubresources();
@@ -10083,6 +10084,12 @@ void WebPageProxy::completeTextManipulation(const Vector<WebCore::TextManipulati
         return;
     }
     sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(items), WTFMove(completionHandler));
+}
+
+void WebPageProxy::setCORSDisablingPatterns(Vector<String>&& patterns)
+{
+    m_corsDisablingPatterns = WTFMove(patterns);
+    send(Messages::WebPage::UpdateCORSDisablingPatterns(m_corsDisablingPatterns));
 }
 
 void WebPageProxy::setOverriddenMediaType(const String& mediaType)
