@@ -1,3 +1,15 @@
+2020-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Use initializers in PlatformMouseEvent and WebEvent
+        https://bugs.webkit.org/show_bug.cgi?id=211217
+
+        Reviewed by Tim Horton.
+
+        Use initializers im PlatformMouseEvent.
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2020-04-29  Jer Noble  <jer.noble@apple.com>
 
         Remove the debug ASSERT in ImageDecoderAVFObjC::storeSampleBuffer()

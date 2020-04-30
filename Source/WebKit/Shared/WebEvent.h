@@ -166,17 +166,17 @@ public:
 private:
     static bool isMouseEventType(Type);
 
-    uint32_t m_button;
+    uint32_t m_button { static_cast<uint32_t>(NoButton) };
     unsigned short m_buttons { 0 };
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;
-    float m_deltaX;
-    float m_deltaY;
-    float m_deltaZ;
-    int32_t m_clickCount;
+    float m_deltaX { 0 };
+    float m_deltaY { 0 };
+    float m_deltaZ { 0 };
+    int32_t m_clickCount { 0 };
 #if PLATFORM(MAC)
-    int32_t m_eventNumber;
-    int32_t m_menuTypeForEvent;
+    int32_t m_eventNumber { -1 };
+    int32_t m_menuTypeForEvent { 0 };
 #endif
     double m_force { 0 };
     uint32_t m_syntheticClickType { NoTap };
