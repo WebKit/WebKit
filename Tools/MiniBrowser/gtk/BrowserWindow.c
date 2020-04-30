@@ -63,7 +63,11 @@ struct _BrowserWindow {
     GtkWidget *downloadsBar;
     gboolean searchBarVisible;
     gboolean fullScreenIsEnabled;
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GdkTexture *favicon;
+#else
     GdkPixbuf *favicon;
+#endif
     GtkWidget *reloadOrStopButton;
     GtkWindow *parentWindow;
     guint resetEntryProgressTimeoutId;
@@ -103,12 +107,18 @@ static void resetStatusText(GtkWidget *widget, BrowserWindow *window)
     browserWindowSetStatusText(window, NULL);
 }
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
 static void activateUriEntryCallback(BrowserWindow *window)
 {
-    browser_window_load_uri(window, gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
+    browser_window_load_uri(window,
+#if GTK_CHECK_VERSION(3, 98, 0)
+        gtk_editable_get_text(GTK_EDITABLE(window->uriEntry))
+#else
+        gtk_entry_get_text(GTK_ENTRY(window->uriEntry))
+#endif
+    );
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static void reloadOrStopCallback(BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
@@ -147,14 +157,13 @@ static void settingsCallback(BrowserWindow *window)
 
 static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
 {
-#if !GTK_CHECK_VERSION(3, 98, 0)
     char *externalURI = getExternalURI(webkit_web_view_get_uri(webView));
-    if (externalURI) {
-        gtk_entry_set_text(GTK_ENTRY(window->uriEntry), externalURI);
-        g_free(externalURI);
-    } else
-        gtk_entry_set_text(GTK_ENTRY(window->uriEntry), "");
+#if GTK_CHECK_VERSION(3, 98, 0)
+    gtk_editable_set_text(GTK_EDITABLE(window->uriEntry), externalURI ? externalURI : "");
+#else
+    gtk_entry_set_text(GTK_ENTRY(window->uriEntry), externalURI ? externalURI : "");
 #endif
+    g_free(externalURI);
 }
 
 static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
@@ -486,24 +495,37 @@ static void webViewZoomLevelChanged(GObject *object, GParamSpec *paramSpec, Brow
 
 static void updateUriEntryIcon(BrowserWindow *window)
 {
-#if !GTK_CHECK_VERSION(3, 98, 0)
     GtkEntry *entry = GTK_ENTRY(window->uriEntry);
     if (window->favicon)
+#if GTK_CHECK_VERSION(3, 98, 0)
+        gtk_entry_set_icon_from_paintable(entry, GTK_ENTRY_ICON_PRIMARY, GDK_PAINTABLE(window->favicon));
+#else
         gtk_entry_set_icon_from_pixbuf(entry, GTK_ENTRY_ICON_PRIMARY, window->favicon);
+#endif
     else
         gtk_entry_set_icon_from_icon_name(entry, GTK_ENTRY_ICON_PRIMARY, "document-new");
-#endif
 }
 
 static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GdkTexture *favicon = NULL;
+#else
     GdkPixbuf *favicon = NULL;
+#endif
     cairo_surface_t *surface = webkit_web_view_get_favicon(webView);
 
     if (surface) {
         int width = cairo_image_surface_get_width(surface);
         int height = cairo_image_surface_get_height(surface);
+#if GTK_CHECK_VERSION(3, 98, 0)
+        int stride = cairo_image_surface_get_stride(surface);
+        GBytes *bytes = g_bytes_new(cairo_image_surface_get_data(surface), stride * height);
+        favicon = gdk_memory_texture_new(width, height, GDK_MEMORY_DEFAULT, bytes, stride);
+        g_bytes_unref(bytes);
+#else
         favicon = gdk_pixbuf_get_from_surface(surface, 0, 0, width, height);
+#endif
     }
 
     if (window->favicon)
@@ -684,7 +706,11 @@ static void insertLinkCommandCallback(GtkWidget *widget, BrowserWindow *window)
     gtk_widget_show(entry);
 
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+#if GTK_CHECK_VERSION(3, 98, 0)
+        const char *url = gtk_editable_get_text(GTK_EDITABLE(entry));
+#else
         const char *url = gtk_entry_get_text(GTK_ENTRY(entry));
+#endif
         if (url && *url) {
             WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
             webkit_web_view_execute_editing_command_with_argument(webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, url);
@@ -945,12 +971,12 @@ static void browser_window_init(BrowserWindow *window)
     gtk_window_set_title(GTK_WINDOW(window), defaultWindowTitle);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
     window->uriEntry = gtk_entry_new();
     g_signal_connect_swapped(window->uriEntry, "activate", G_CALLBACK(activateUriEntryCallback), (gpointer)window);
     gtk_entry_set_icon_activatable(GTK_ENTRY(window->uriEntry), GTK_ENTRY_ICON_PRIMARY, FALSE);
     updateUriEntryIcon(window);
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
     /* Keyboard accelerators */
     window->accelGroup = gtk_accel_group_new();
     gtk_window_add_accel_group(GTK_WINDOW(window), window->accelGroup);
@@ -1017,6 +1043,14 @@ static void browser_window_init(BrowserWindow *window)
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(printPage), window, NULL));
 
+#endif
+
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GtkWidget *toolbar = gtk_center_box_new();
+    window->toolbar = toolbar;
+    gtk_widget_set_hexpand(window->uriEntry, TRUE);
+    gtk_center_box_set_center_widget(GTK_CENTER_BOX(toolbar), window->uriEntry);
+#else
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
     gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
@@ -1054,7 +1088,9 @@ static void browser_window_init(BrowserWindow *window)
 #endif
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     window->mainBox = vbox;
-#if !GTK_CHECK_VERSION(3, 98, 0)
+#if GTK_CHECK_VERSION(3, 98, 0)
+    gtk_container_add(GTK_CONTAINER(vbox), toolbar);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
     gtk_widget_show(toolbar);
 #endif

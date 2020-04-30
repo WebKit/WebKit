@@ -1,3 +1,21 @@
+2020-04-30  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK4] Bring back the URI entry to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=211186
+
+        Reviewed by Carlos Garcia Campos.
+
+        GTK4 support for the URI entry added, using a GtkCenterBox
+        to start layouting a modern version of the toolbar.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (activateUriEntryCallback):
+        (webViewURIChanged):
+        (updateUriEntryIcon):
+        (faviconChanged):
+        (insertLinkCommandCallback):
+        (browser_window_init):
+
 2020-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add a MiniBrowser option to inset the web view so it doesn't fill the window
