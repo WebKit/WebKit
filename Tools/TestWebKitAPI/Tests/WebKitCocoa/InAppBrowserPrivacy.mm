@@ -330,6 +330,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForSpecificWebViewFails)
     auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
@@ -353,6 +354,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetForAllWebViewsFails)
     auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets"]];
@@ -375,6 +377,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundUserStyleSheetAffectingAllFramesFails)
     auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"in-app-browser:///in-app-browser-privacy-test-user-style-sheets-iframe"]];
@@ -402,6 +405,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainCannotAccessMessageHandlers)
     auto schemeHandler = adoptNS([[InAppBrowserSchemeHandler alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"in-app-browser"];
     [[configuration preferences] _setInAppBrowserPrivacyEnabled:YES];
+    [[configuration preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
@@ -987,7 +991,9 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     TestWebKitAPI::Util::run(&isDone);
 
     // Navigation should be successful, but this WebView should not get app-bound domain
-    // privileges like user style sheets.
+    // privileges like user style sheets. Set quirks to true so we can evaluate script
+    // to check.
+    [[[webView configuration] preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, blackInRGB);
     cleanUpInAppBrowserPrivacyTestSettings();
 }

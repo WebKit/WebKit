@@ -1275,7 +1275,7 @@ IsInAppBrowserPrivacyEnabled:
 
 NeedsInAppBrowserPrivacyQuirks:
     type: bool
-    defaultValue: true
+    defaultValue: false
     humanReadableName: "Needs In-App Browser Privacy Quirks"
     humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
     webcoreBinding: RuntimeEnabledFeatures
