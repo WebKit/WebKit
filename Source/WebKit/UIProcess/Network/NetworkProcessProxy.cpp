@@ -91,6 +91,9 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
 {
     connect();
+
+    if (auto* websiteDataStore = m_processPool.websiteDataStore())
+        m_websiteDataStores.set(websiteDataStore->sessionID(), makeRef(*websiteDataStore));
 }
 
 NetworkProcessProxy::~NetworkProcessProxy()
@@ -1167,6 +1170,7 @@ void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)
 #if ENABLE(INDEXED_DATABASE)
         createSymLinkForFileUpgrade(store->resolvedIndexedDatabaseDirectory());
 #endif
+        m_websiteDataStores.set(sessionID, WTFMove(store));
     }
 }
 
@@ -1174,6 +1178,8 @@ void NetworkProcessProxy::removeSession(PAL::SessionID sessionID)
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::DestroySession { sessionID }, 0);
+    if (!sessionID.isEphemeral())
+        m_websiteDataStores.remove(sessionID);
 }
 
 WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::SessionID sessionID)

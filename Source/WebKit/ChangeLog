@@ -1,3 +1,43 @@
+2020-04-30  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62623152
+
+    2020-04-30  Alex Christensen  <achristensen@webkit.org>
+
+            Revert most of r260370 and all of r260795
+            <rdar://problem/62623152>
+
+            r260370 not only fixed client certificate authentication when using non-persistent WKWebsiteDataStores,
+            but it also removed a strong reference to the WebsiteDataStores, which changed their lifetime and caused their destructor
+            to be called more often in SafariViewController, which caused hangs because of a deadlock in the destruction code I tried to
+            fix in r260795, which introduced suspension hangs.  This keeps only the part of r260370 that is necessary to fix client certificate authentication
+            (as verified by the Challenge.ClientCertificateNonPersistentDataStore unit test from r260370 that continues to pass) but reverts the part of that
+            change that changed the lifetime of the WebsiteDataStore, restoring behavior to how the safari-609-branch was without hangs in SafariViewController
+            or in suspension, but with client certificate authentication working in non-persistent WKWebsiteDataStores.
+
+            This patch applies to the safari-609.2.9.0-branch.
+
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+            (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+            (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+            (WebKit::sharedStatisticsQueue): Deleted.
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::didClose):
+            * NetworkProcess/NetworkSession.cpp:
+            (WebKit::NetworkSession::~NetworkSession):
+            (WebKit::NetworkSession::destroyResourceLoadStatistics):
+            (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+            (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+            * NetworkProcess/NetworkSession.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+            (WebKit::NetworkProcessProxy::addSession):
+            (WebKit::NetworkProcessProxy::removeSession):
+            * UIProcess/Network/NetworkProcessProxy.h:
+
 2020-04-27  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/62377357
