@@ -1,5 +1,18 @@
 2020-04-30  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r176862, r210483): Leaks of BrowserWindowController in MiniBrowser/mac/AppDelegate.m
+        <https://webkit.org/b/211243>
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate createBrowserWindowController:]):
+        - Autorelease return value to fix leak.
+        (-[BrowserAppDelegate newPrivateWindow:]):
+        - Release controller to fix leak.
+
+2020-04-30  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r247490): Leak of MiniBrowserNSTextFinder._hideInterfaceCallback
         <https://webkit.org/b/211242>
 

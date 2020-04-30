@@ -183,7 +183,7 @@ static WKWebsiteDataStore *persistentDataStore()
 
     [_browserWindowControllers addObject:controller];
 
-    return controller;
+    return [controller autorelease];
 }
 
 - (IBAction)newWindow:(id)sender
@@ -208,6 +208,7 @@ static WKWebsiteDataStore *persistentDataStore()
     [_browserWindowControllers addObject:controller];
 
     [controller loadURLString:_settingsController.defaultURL];
+    [controller release];
 }
 
 - (IBAction)newEditorWindow:(id)sender
