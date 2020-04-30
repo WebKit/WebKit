@@ -1,5 +1,15 @@
 2020-04-30  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r260822): Apparently broke media/track/track-cue-missing.html on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=211194
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/track/track-cue-missing-expected.txt:
+        * media/track/track-cue-missing.html: Prospective fix, set display mode to automatic.
+
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] fast/mediastream/get-user-media-device-id.html failing
         https://bugs.webkit.org/show_bug.cgi?id=190576
 

@@ -1,4 +1,5 @@
 
+RUN(internals.setCaptionDisplayMode('Automatic'))
 RUN(video.src = findMediaFile("video", "../content/test"))
 RUN(track = video.addTextTrack("subtitles", "English", "en"))
 RUN(track.mode = "showing")
