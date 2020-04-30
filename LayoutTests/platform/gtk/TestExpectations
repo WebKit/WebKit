@@ -559,11 +559,6 @@ webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure ]
 
 webkit.org/b/186933 webrtc/peer-connection-createMediaStreamDestination.html
 
-webkit.org/b/205930 webrtc/audio-peer-connection-webaudio.html [ Failure ]
-webkit.org/b/205930 webrtc/peer-connection-audio-mute2.html [ Failure ]
-webkit.org/b/205930 webrtc/peer-connection-audio-unmute.html [ Failure Slow ]
-webkit.org/b/205930 webrtc/peer-connection-remote-audio-mute2.html [ Failure ]
-
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
 
@@ -581,7 +576,6 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-sing
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
-webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Timeout Pass ]
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout Pass ]
@@ -594,7 +588,6 @@ webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass Timeout ]
-webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure ]
 webkit.org/b/210385 fast/mediastream/audio-track-enabled.html [ Crash Pass ]
 webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Pass ]
@@ -605,8 +598,6 @@ webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
 webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
-
-webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 
 # No support for GPUProcess yet
 fast/mediastream/captureInGPUProcess.html [ Skip ]
@@ -1285,10 +1276,8 @@ webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-t
 
 webkit.org/b/206655 [ Release ] inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Failure ]
 
-webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Failure Crash ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Failure ]
-webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html [ Failure ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
 
 # LFC (LayoutFormatingContext is disabled by default).
@@ -1580,9 +1569,9 @@ webkit.org/b/209533 http/tests/contentextensions/video-element-resource-type.htm
 webkit.org/b/209533 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Crash Pass ]
 webkit.org/b/209533 media/track/track-automatic-subtitles.html [ Crash Pass ]
 
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Crash ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Crash ]
-webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Crash ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
+webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3330,8 +3319,6 @@ webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 
 webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
 
-webkit.org/b/206149 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
-
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
 
@@ -4441,7 +4428,6 @@ webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFa
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
-webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
 webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 
 webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
@@ -4670,8 +4656,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
-
-webkit.org/b/210843 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

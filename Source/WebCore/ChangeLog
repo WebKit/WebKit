@@ -1,3 +1,40 @@
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/get-user-media-device-id.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=190576
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The test was failing due to deviceId invalid constraint, which led
+        me to rewrite the GStreamer Mock sources, removing various hacks
+        and appsrc usage, which is not needed because we rely on
+        audioSamplesAvailable and videoSamplesAvailable notifications.
+
+        This patch also fixes the audio mock, which was generating silence
+        until now.
+
+        * platform/GStreamer.cmake:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::WebKitMediaStreamTrackObserver::WebKitMediaStreamTrackObserver):
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp: Removed.
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp: Removed.
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.h: Removed.
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp: Added.
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockRealtimeAudioSourceGStreamer::createForMockAudioCapturer):
+        (WebCore::MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer):
+        (WebCore::MockRealtimeAudioSourceGStreamer::render):
+        (WebCore::MockRealtimeAudioSourceGStreamer::addHum):
+        (WebCore::MockRealtimeAudioSourceGStreamer::reconfigure):
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.h: Copied from Source/WebCore/platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.h.
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp: Added.
+        (WebCore::MockRealtimeVideoSource::create):
+        (WebCore::MockRealtimeVideoSourceGStreamer::createForMockDisplayCapturer):
+        (WebCore::MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer):
+        (WebCore::MockRealtimeVideoSourceGStreamer::updateSampleBuffer):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h: Renamed from Source/WebCore/platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.h.
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2020-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Use initializers in PlatformMouseEvent and WebEvent

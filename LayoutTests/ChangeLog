@@ -1,3 +1,12 @@
+2020-04-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/get-user-media-device-id.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=190576
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations: Unskip now-passing mediastream tests.
+
 2020-04-29  Noam Rosenthal  <noam@webkit.org>
 
         [Mac] http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html is flaky

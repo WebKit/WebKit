@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2020 Igalia S.L.
  * Author: Thibault Saunier <tsaunier@igalia.com>
  * Author: Alejandro G. Castro  <alex@igalia.com>
  *
@@ -23,27 +24,32 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 
-#include "GStreamerAudioCaptureSource.h"
+#include "GStreamerAudioData.h"
+#include "GStreamerAudioStreamDescription.h"
+#include "MockRealtimeAudioSource.h"
 
 namespace WebCore {
 
-class WrappedMockRealtimeAudioSource;
-class MockGStreamerAudioCaptureSource final : public GStreamerAudioCaptureSource, RealtimeMediaSource::Observer {
+class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource {
 public:
-    MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
-    ~MockGStreamerAudioCaptureSource();
-    Optional<ApplyConstraintsError> applyConstraints(const MediaConstraints&);
-    void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&) final;
+    static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(String&& deviceID, String&& name, String&& hashSalt);
+
+    ~MockRealtimeAudioSourceGStreamer() = default;
+
+protected:
+    void render(Seconds) final;
 
 private:
-    void stopProducingData() final;
-    void startProducingData() final;
-    const RealtimeMediaSourceSettings& settings() final;
-    const RealtimeMediaSourceCapabilities& capabilities() final;
-    void captureFailed() final;
-    void videoSampleAvailable(MediaSample&) final { };
+    friend class MockRealtimeAudioSource;
+    MockRealtimeAudioSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt);
+    void reconfigure();
+    void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count);
 
-    Ref<WrappedMockRealtimeAudioSource> m_wrappedSource;
+    Optional<GStreamerAudioStreamDescription> m_streamFormat;
+    Vector<float> m_bipBopBuffer;
+    uint32_t m_maximiumFrameCount;
+    uint64_t m_samplesEmitted { 0 };
+    uint64_t m_samplesRendered { 0 };
 };
 
 } // namespace WebCore
