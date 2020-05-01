@@ -1,3 +1,9 @@
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, another build fix after r260962.
+
+        * page/Page.h:
+
 2020-05-01  Daniel Bates  <dabates@apple.com>
 
         Avoid unnecessary copying in AnimationTimeline and other clean ups
