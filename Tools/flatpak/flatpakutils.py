@@ -659,16 +659,22 @@ class WebkitFlatpak:
                 "--talk-name=org.freedesktop.Flatpak"
             ])
 
-            try:
-                with open(os.devnull, 'w') as devnull:
-                    uid = subprocess.check_output(("id", "-u"), stderr=devnull).strip().decode()
-                    uid_doc_path = '/run/user/{uid}/doc'.format(uid=uid)
-                    if os.path.exists(uid_doc_path):
-                        flatpak_command.append("--bind-mount={uid_doc_path}={uid_doc_path}".format(uid_doc_path=uid_doc_path))
-                    else:
-                        _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
-            except subprocess.CalledProcessError:
-                pass
+            xdg_runtime_dir = os.environ.get('XDG_RUNTIME_DIR', None)
+            if not xdg_runtime_dir:
+                _log.debug('XDG_RUNTIME_DIR not set. Trying default location.')
+                try:
+                    with open(os.devnull, 'w') as devnull:
+                        uid = subprocess.check_output(("id", "-u"), stderr=devnull).decode().strip()
+                        xdg_runtime_dir = '/run/user/{uid}'.format(uid=uid)
+                except subprocess.CalledProcessError:
+                    _log.debug("Could not determine XDG_RUNIME_DIR. This may cause bubblewrap to fail.")
+
+            if xdg_runtime_dir:
+                uid_doc_path = os.path.join(xdg_runtime_dir, 'doc')
+                if os.path.exists(uid_doc_path):
+                    flatpak_command.append("--bind-mount={uid_doc_path}={uid_doc_path}".format(uid_doc_path=uid_doc_path))
+                else:
+                    _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
 
             forwarded.update({
                 "TZ": "PST8PDT",

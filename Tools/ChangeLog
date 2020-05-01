@@ -1,3 +1,15 @@
+2020-05-01  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Honor XDG_RUNTIME_DIR when setting the document path
+        https://bugs.webkit.org/show_bug.cgi?id=211277
+
+        Reviewed by Philippe Normand.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Prefer using the value of
+        $XDG_RUNTIME_DIR instead of the hardcoded path when setting the
+        document portal path mount.
+
 2020-05-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] File GtkVersioning.h should be excluded from the style checker
