@@ -1,3 +1,23 @@
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Unable to take RunningBoard process assertions in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=211254
+        <rdar://problem/62674074>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/BaseXPCService.xcconfig:
+        Use this directive to add our entitlements:
+            CODE_SIGN_ENTITLEMENTS = $(WK_PROCESSED_XCENT_FILE);
+        instead of using:
+            OTHER_CODE_SIGN_FLAGS = --entitlements $(WK_PROCESSED_XCENT_FILE);
+        This is important because entitlements are added differently for iOS Simulator builds,
+        so that they only apply inside the simulator (and not for the host system). If we use
+        CODE_SIGN_ENTITLEMENTS, then XCode does the right thing on all platforms.
+
+        * Scripts/process-entitlements.sh:
+        Add com.apple.runningboard.assertions.webkit entitlement to iOS Simulator builds.
+
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
         [GTK] Add additional exports to support hidden visibility
