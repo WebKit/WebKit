@@ -1,5 +1,22 @@
 2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
 
+        Nullptr crash in CompositeEditCommand::cloneParagraphUnderNewElement when indent 
+        and align a paragraph.
+        https://bugs.webkit.org/show_bug.cgi?id=211273
+        <rdar://problem/61885958>
+
+        Reviewed by Geoffrey Garen.
+
+        A load event can fire when we clone and append a paragraph. Check if the elements
+        are removed in the event and bail out.
+
+        Test: fast/editing/indent-then-justifyFull-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+
+2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
+
         Nullptr crash in EditCommand::EditCommand via CompositeEditCommand::removeNode
         https://bugs.webkit.org/show_bug.cgi?id=207600
         <rdar://problem/56969450>

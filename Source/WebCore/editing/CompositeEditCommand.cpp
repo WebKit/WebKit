@@ -1260,6 +1260,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         }
     }
 
+    if (!start.deprecatedNode()->isConnected() || !end.deprecatedNode()->isConnected())
+        return;
+
     // Handle the case of paragraphs with more than one node,
     // cloning all the siblings until end.deprecatedNode() is reached.
     
