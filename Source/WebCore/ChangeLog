@@ -1,3 +1,35 @@
+2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in EditCommand::EditCommand via CompositeEditCommand::removeNode
+        https://bugs.webkit.org/show_bug.cgi?id=207600
+        <rdar://problem/56969450>
+
+        Reviewed by Geoffrey Garen.
+
+        Second part of the fix. Remove m_frame in FrameSelection so it will not be
+        inadvertently used and cause this crash.
+
+        No new tests, covered by existing test.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::rootViewRectForRange const):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+        (WebCore::FrameSelection::shouldDeleteSelection const):
+        (WebCore::FrameSelection::shouldDeleteSelection):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection:: shouldChangeSelection):
+        (WebCore::FrameSelection::shouldChangeSelection const):
+        * editing/FrameSelection.h:
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+
 2020-05-01  Darin Adler  <darin@apple.com>
 
         REGRESSION (r260739): Crash when pasting into Mail

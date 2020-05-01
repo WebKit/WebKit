@@ -97,7 +97,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!focusedNode)
         return;
 
-    AXObjectCache* cache = m_frame->document()->existingAXObjectCache();
+    AXObjectCache* cache = m_document->existingAXObjectCache();
     if (!cache)
         return;
 

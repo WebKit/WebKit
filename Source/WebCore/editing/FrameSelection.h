@@ -338,7 +338,6 @@ private:
 #endif
 
     Document* m_document;
-    Frame* m_frame;
 
     LayoutUnit m_xPosForVerticalArrowNavigation;
 

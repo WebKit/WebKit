@@ -146,7 +146,6 @@ static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
-    , m_frame(document? document->frame() : nullptr)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
     , m_granularity(CharacterGranularity)
 #if ENABLE(TEXT_CARET)
@@ -157,7 +156,7 @@ FrameSelection::FrameSelection(Document* document)
     , m_absCaretBoundsDirty(true)
     , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
-    , m_focused(m_frame && m_frame->page() && m_frame->page()->focusController().focusedFrame() == m_frame)
+    , m_focused(document && document->frame() && document->page() && document->page()->focusController().focusedFrame() == document->frame())
     , m_shouldShowBlockCursor(false)
     , m_pendingSelectionUpdate(false)
     , m_alwaysAlignCursorOnScrollWhenRevealingSelection(false)
@@ -336,17 +335,17 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     if (shouldAlwaysUseDirectionalSelection(m_document))
         newSelection.setIsDirectional(true);
 
-    if (!m_frame) {
+    if (!m_document || !m_document->frame()) {
         m_selection = newSelection;
         return false;
     }
 
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
-    // if document->frame() == m_frame we can get into an infinite loop
+    // if document->frame() == m_document->frame() we can get into an infinite loop
     if (Document* newSelectionDocument = newSelection.base().document()) {
         if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
-            if (newSelectionFrame != m_frame && newSelectionDocument != m_document) {
-                newSelectionFrame->selection().setSelection(newSelection, options, AXTextStateChangeIntent(), align, granularity);
+            if (newSelectionFrame != m_document->frame() && newSelectionDocument != m_document) {
+                newSelectionDocument->selection().setSelection(newSelection, options, AXTextStateChangeIntent(), align, granularity);
                 // It's possible that during the above set selection, this FrameSelection has been modified by
                 // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
                 // the frame is about to be destroyed. If this is the case, clear our selection.
@@ -384,6 +383,8 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     if (!newSelection.isNone() && !(options & DoNotSetFocus)) {
         auto* oldFocusedElement = m_document->focusedElement();
         setFocusedElementIfNeeded();
+        if (!m_document->frame())
+            return false;
         // FIXME: Should not be needed.
         if (m_document->focusedElement() != oldFocusedElement)
             m_document->updateStyleIfNeeded();
@@ -1377,9 +1378,10 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (position.isNull())
         return false;
 
-    if (isSpatialNavigationEnabled(m_frame))
+    if (m_document && isSpatialNavigationEnabled(m_document->frame())) {
         if (!wasRange && alter == AlterationMove && position == originalStartPosition)
             return false;
+    }
 
     if (m_document && AXObjectCache::accessibilityEnabled()) {
         if (AXObjectCache* cache = m_document->existingAXObjectCache())
@@ -1932,10 +1934,10 @@ bool FrameSelection::contains(const LayoutPoint& point) const
 void FrameSelection::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    Frame* parent = m_frame->tree().parent();
+    Frame* parent = m_document->frame()->tree().parent();
     if (!parent)
         return;
-    Page* page = m_frame->page();
+    Page* page = m_document->page();
     if (!page)
         return;
 
@@ -1948,7 +1950,7 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    Element* ownerElement = m_frame->ownerElement();
+    Element* ownerElement = m_document->ownerElement();
     if (!ownerElement)
         return;
     ContainerNode* ownerElementParent = ownerElement->parentNode();
@@ -2253,7 +2255,7 @@ void FrameSelection::setFocusedElementIfNeeded()
     bool caretBrowsing = m_document->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
         if (Element* anchor = enclosingAnchorElement(m_selection.base())) {
-            m_document->page()->focusController().setFocusedElement(anchor, *m_frame);
+            m_document->page()->focusController().setFocusedElement(anchor, *m_document->frame());
             return;
         }
     }
@@ -2265,7 +2267,7 @@ void FrameSelection::setFocusedElementIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(target)) {
-                m_document->page()->focusController().setFocusedElement(target, *m_frame);
+                m_document->page()->focusController().setFocusedElement(target, *m_document->frame());
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -2274,7 +2276,7 @@ void FrameSelection::setFocusedElementIfNeeded()
     }
 
     if (caretBrowsing)
-        m_document->page()->focusController().setFocusedElement(nullptr, *m_frame);
+        m_document->page()->focusController().setFocusedElement(nullptr, *m_document->frame());
 }
 
 void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
@@ -2300,7 +2302,7 @@ RefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (m_frame->selectionChangeCallbacksDisabled())
+    if (m_document->frame() && m_document->frame()->selectionChangeCallbacksDisabled())
         return true;
 #endif
     return m_document->editor().client()->shouldDeleteRange(createLiveRange(selection.toNormalizedRange()).get());
@@ -2411,7 +2413,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_document->page())
-                    m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_frame);
+                    m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_document->frame());
             }
         }
 #else
@@ -2445,7 +2447,7 @@ void FrameSelection::setSelectionFromNone()
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (m_frame->selectionChangeCallbacksDisabled())
+    if (m_document->frame() && m_document->frame()->selectionChangeCallbacksDisabled())
         return true;
 #endif
     return m_document->editor().shouldChangeSelection(selection(), newSelection, newSelection.affinity(), false);

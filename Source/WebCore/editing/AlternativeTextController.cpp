@@ -342,7 +342,7 @@ bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
 
 FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& range) const
 {
-    auto* view = m_document.frame()->view();
+    auto* view = m_document.view();
     if (!view)
         return { };
     return view->contentsToRootView(unitedBoundingBoxes(RenderObject::absoluteTextQuads(range)));

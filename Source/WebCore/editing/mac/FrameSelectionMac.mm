@@ -34,10 +34,8 @@ namespace WebCore {
 
 void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent& intent)
 {
-    Document* document = m_frame->document();
-
     if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
-        if (AXObjectCache* cache = document->existingAXObjectCache())
+        if (AXObjectCache* cache = m_document->existingAXObjectCache())
             cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
     }
 
@@ -46,10 +44,10 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!UAZoomEnabled() || !m_selection.isCaret())
         return;
 
-    RenderView* renderView = document->renderView();
+    RenderView* renderView = m_document->renderView();
     if (!renderView)
         return;
-    FrameView* frameView = m_frame->view();
+    FrameView* frameView = m_document->view();
     if (!frameView)
         return;
 
