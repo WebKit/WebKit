@@ -1,3 +1,9 @@
+2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
+
+        Unreviewed, amend change log entry for r260831.
+
+        * ChangeLog:
+
 2020-05-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, another build fix after r260962.
@@ -1978,15 +1984,14 @@
 
         * dom/Document.cpp:
         (WebCore::m_selection):
-        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::willBeRemovedFromFrame):
         (WebCore::m_undoManager): Deleted.
+        (WebCore::Document::prepareForDestruction): Deleted.
         * dom/Document.h:
         (WebCore::Document::editor):
         (WebCore::Document::editor const):
         (WebCore::Document::selection):
         (WebCore::Document::selection const):
-        * dom/PositionIterator.cpp:
-        (WebCore::PositionIterator::isCandidate const):
         * editing/AlternativeTextController.cpp:
         (WebCore::AlternativeTextController::AlternativeTextController):
         (WebCore::AlternativeTextController::stopPendingCorrection):
@@ -2116,11 +2121,10 @@
         (WebCore::Editor::findString):
         (WebCore::Editor::countMatchesForText):
         (WebCore::Editor::respondToChangedSelection):
-        (WebCore::Editor::shouldDetectTelephoneNumbers):
+        (WebCore::Editor::shouldDetectTelephoneNumbers const):
         (WebCore::Editor::scanSelectionForTelephoneNumbers):
         (WebCore::Editor::editorUIUpdateTimerFired):
         (WebCore::Editor::selectionStartHasMarkerFor const):
-        (WebCore::candidateRangeForSelection):
         (WebCore::Editor::stringForCandidateRequest const):
         (WebCore::Editor::contextRangeForCandidateRequest const):
         (WebCore::Editor::fontAttributesAtSelectionStart const):
@@ -2156,7 +2160,7 @@
         (WebCore::FrameSelection::modifyMovingRight):
         (WebCore::FrameSelection::modifyMovingLeft):
         (WebCore::FrameSelection::modify):
-        (WebCore::FrameSelection::prepareForDestruction):
+        (WebCore::FrameSelection::willBeRemovedFromFrame):
         (WebCore::FrameSelection::absoluteCaretBounds):
         (WebCore::FrameSelection::recomputeCaretRect):
         (WebCore::FrameSelection::contains const):
@@ -2179,6 +2183,7 @@
         (WebCore::FrameSelection::updateAppearanceAfterLayoutOrStyleChange):
         (WebCore::FrameSelection::selectRangeOnElement):
         (WebCore::FrameSelection::setCaretBlinks):
+        (WebCore::FrameSelection::prepareForDestruction): Deleted.
         * editing/FrameSelection.h:
         * editing/InsertIntoTextNodeCommand.cpp:
         (WebCore::InsertIntoTextNodeCommand::doApply):
@@ -2226,6 +2231,7 @@
         * editing/TypingCommand.h:
         * editing/cocoa/EditorCocoa.mm:
         (WebCore::Editor::selectionInHTMLFormat):
+        (WebCore::selectionAsAttributedString):
         (WebCore::Editor::writeSelectionToPasteboard):
         (WebCore::Editor::writeSelection):
         (WebCore::Editor::selectionInWebArchiveFormat):
@@ -2254,6 +2260,8 @@
         * editing/win/EditorWin.cpp:
         (WebCore::Editor::pasteWithPasteboard):
         (WebCore::Editor::webContentFromPasteboard):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::destroy):
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::willTransitionToCommitted):
         (WebCore::FrameLoader::closeURL):
@@ -2261,6 +2269,8 @@
         (WebCore::FrameLoader::clear):
         * page/Frame.cpp:
         (WebCore::Frame::Frame):
+        (WebCore::Frame::setView):
+        (WebCore::Frame::setDocument):
         (WebCore::Frame::requestDOMPasteAccess):
         (WebCore::Frame::setPageAndTextZoomFactors):
         * page/Frame.h:
