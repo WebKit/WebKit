@@ -5130,13 +5130,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return;
     }
     _usingGestureForSelection = YES;
-    auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = [context copy], completionHandler = makeBlockPtr(completionHandler)] (bool success) {
+    auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = adoptNS([context copy]), completionHandler = makeBlockPtr(completionHandler)] (bool success) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
             completionHandler(nil);
             return;
         }
-        bool isFocused = success && [strongSelf _isTextInputContextFocused:context];
+        bool isFocused = success && [strongSelf _isTextInputContextFocused:context.get()];
         bool isEditable = success && !strongSelf->_focusedElementInformation.isReadOnly;
         strongSelf->_textInteractionDidChangeFocusedElement |= isFocused;
         strongSelf->_usingGestureForSelection = NO;

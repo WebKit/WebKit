@@ -1,3 +1,16 @@
+2020-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r260214): Leak of _WKTextInputContext in -[WKContentView _isTextInputContextFocused:]
+        <https://webkit.org/b/211276>
+        <rdar://problem/62696724>
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]):
+        - Use RetainPtr<> to pass the copy of _WKTextInputContext into
+          the block to fix the leak.
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         We can't cast toLength result to unsigned
