@@ -1,3 +1,20 @@
+2020-05-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Update message filtering rules in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=211188
+        <rdar://problem/60922910>
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry and local testing, update the message filtering rules in the WebContent process' sandbox on iOS.
+        Messages that have not been observed being in use, should be denied.
+
+        No new tests, covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+
 2020-05-01  Peng Liu  <peng.liu6@apple.com>
 
         A PiP window doesn’t actually dismiss after the browser navigates to a different page within the same domain

@@ -90,7 +90,7 @@
         (iokit-user-client-class "IOMobileFramebufferUserClient")
         (when (defined? 'iokit-external-method)
             (apply-message-filter
-                (allow (with report) (with telemetry)
+                (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-method
                     iokit-external-trap)
@@ -234,10 +234,10 @@
         (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
         (when (defined? 'iokit-external-method)
             (apply-message-filter
-                (allow (with report) (with telemetry)
-                    iokit-async-external-method
+                (deny (with telemetry)
                     iokit-external-trap)
                 (allow (with telemetry)
+                    iokit-async-external-method
                     iokit-external-method)
             )
         )
@@ -383,7 +383,7 @@
         (iokit-user-client-class "AppleJPEGDriverUserClient")
         (when (defined? 'iokit-external-method)
             (apply-message-filter
-                (allow (with report) (with telemetry)
+                (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-method
                     iokit-external-trap)
@@ -396,10 +396,11 @@
         (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
         (when (defined? 'iokit-external-method)
             (apply-message-filter
-                (allow (with report) (with telemetry)
+                (deny (with telemetry)
                     iokit-async-external-method
-                    iokit-external-method
                     iokit-external-trap)
+                (allow (with telemetry)
+                    iokit-external-method)
             )
         )
     )
@@ -408,7 +409,7 @@
         (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
         (when (defined? 'iokit-external-method)
             (apply-message-filter
-                (allow (with report) (with telemetry)
+                (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
                 (allow (with telemetry)
@@ -1153,7 +1154,7 @@
 (when (defined? 'mach-bootstrap)
     (allow mach-bootstrap
         (apply-message-filter
-            (allow xpc-message-send (with report) (with telemetry))
+            (deny xpc-message-send (with telemetry))
             (allow xpc-message-send (message-number 206))
             (allow xpc-message-send (message-number 207))
             (allow xpc-message-send (message-number 711))
@@ -1169,7 +1170,7 @@
 )
 
 (when (defined? 'syscall-mach)
-    (allow syscall-mach (with report) (with telemetry))
+    (deny syscall-mach (with telemetry))
     (allow syscall-mach
         (machtrap-number MSC__kernelrpc_mach_port_allocate_trap)
         (machtrap-number MSC__kernelrpc_mach_port_construct_trap)
@@ -1183,6 +1184,7 @@
         (machtrap-number MSC__kernelrpc_mach_port_mod_refs_trap)
         (machtrap-number MSC__kernelrpc_mach_port_request_notification_trap)
         (machtrap-number MSC__kernelrpc_mach_port_type_trap)
+        (machtrap-number MSC__kernelrpc_mach_port_unguard_trap)
         (machtrap-number MSC__kernelrpc_mach_vm_allocate_trap)
         (machtrap-number MSC__kernelrpc_mach_vm_deallocate_trap)
         (machtrap-number MSC__kernelrpc_mach_vm_map_trap)
@@ -1213,12 +1215,12 @@
     )
 )
 
+(when (defined? 'mach_make_memory_entry)
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter
             (allow mach-message-send (with report) (with telemetry))
             (allow mach-message-send (kernel-mig-routine
-                mach_make_memory_entry
                 host_get_clock_service
                 host_get_io_master
                 host_get_special_port
@@ -1238,6 +1240,7 @@
                 io_service_get_matching_service_bin
                 io_service_get_matching_services_bin
                 io_service_open_extended
+                mach_make_memory_entry
                 mach_port_get_context_from_user
                 mach_port_request_notification
                 mach_port_set_attributes
@@ -1263,4 +1266,5 @@
             )
         )
     )
+)
 )
