@@ -1,3 +1,27 @@
+2020-05-01  Antti Koivisto  <antti@apple.com>
+
+        Specific dom node order of Shadow DOM (re)projection causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=211159
+        <rdar://problem/62626920>
+
+        Reviewed by Zalan Bujtas.
+
+        ComposedTreeIterator may traverse to nodes outside its root element if it is constructed
+        with a starting node that has no next sibling inside a slot.
+
+        This leads to miscomputing RenderTreePosition::nextSibling() and eventual nullptr crash in
+        RenderTreeBuilder when adding a renderer (due to beforeChild renderer being outside the parent renderer).
+
+        Test case by Elliott Marquez.
+
+        Test: fast/shadow-dom/composed-tree-iterator-escape.html
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::Context::Context):
+
+        When findind the end iterator for a tree context we need to look for a sibling in ancestors if
+        the current node has no siblings.
+
 2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Interface prototype objects should define @@toStringTag

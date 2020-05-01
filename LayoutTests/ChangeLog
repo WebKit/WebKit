@@ -1,3 +1,14 @@
+2020-05-01  Antti Koivisto  <antti@apple.com>
+
+        Specific dom node order of Shadow DOM (re)projection causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=211159
+        <rdar://problem/62626920>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shadow-dom/composed-tree-iterator-escape-expected.html: Added.
+        * fast/shadow-dom/composed-tree-iterator-escape.html: Added.
+ 
 2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Interface prototype objects should define @@toStringTag
