@@ -8,6 +8,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+        $<TARGET_OBJECTS:WebCore>
         OpenSSL::SSL
         mfuuid.lib
         strmiids.lib
@@ -23,6 +24,10 @@ else ()
         CoreText${DEBUG_SUFFIX}
         QuartzCore${DEBUG_SUFFIX}
         libdispatch${DEBUG_SUFFIX}
+        libxml2${DEBUG_SUFFIX}
+        libxslt${DEBUG_SUFFIX}
+        zdll${DEBUG_SUFFIX}
+        SQLite3${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -423,7 +428,6 @@ add_library(WebKitLegacyGUID STATIC
 set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-    $<TARGET_OBJECTS:WebCore>
     Comctl32
     Comsupp
     Crypt32

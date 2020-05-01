@@ -1,3 +1,14 @@
+2020-05-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix AppleWin build
+        https://bugs.webkit.org/show_bug.cgi?id=211324
+
+        Reviewed by Don Olmstead.
+
+        Remove unknown object target and fix link errors.
+
+        * PlatformWin.cmake:
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks

@@ -1372,7 +1372,10 @@ add_subdirectory(shell)
 
 target_include_directories(LowLevelInterpreterLib
     PRIVATE "$<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>")
-add_dependencies(LowLevelInterpreterLib WTF_CopyHeaders Bytecodes JSCBuiltins)
+add_dependencies(LowLevelInterpreterLib Bytecodes JSCBuiltins)
+if (TARGET WTF_CopyHeaders)
+    add_dependencies(LowLevelInterpreterLib WTF_CopyHeaders)
+endif ()
 
 if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
     message(STATUS "Enabling asm postprocessing")
