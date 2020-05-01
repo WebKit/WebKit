@@ -488,8 +488,10 @@ void TextTrackCue::rebuildDisplayTree()
     ScriptDisallowedScope::EventAllowedScope allowedScopeForReferenceTree(*m_cueNode);
 
     if (!m_displayTree) {
+        static NeverDestroyed<const AtomString> webkitGenericCueRootName("-webkit-generic-cue-root", AtomString::ConstructFromLiteral);
+        ASSERT(isMainThread());
         m_displayTree = TextTrackCueBox::create(ownerDocument(), *this);
-        m_displayTree->setPseudo(AtomString("-webkit-generic-cue-root", AtomString::ConstructFromLiteral));
+        m_displayTree->setPseudo(webkitGenericCueRootName);
     }
 
     m_displayTree->removeChildren();

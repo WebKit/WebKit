@@ -65,13 +65,6 @@ private:
 };
 static_assert(sizeof(ProgressInnerElement) == sizeof(ProgressShadowElement));
 
-inline Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
-{
-    Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
-    result->setPseudo(AtomString("-webkit-progress-inner-element", AtomString::ConstructFromLiteral));
-    return result;
-}
-
 class ProgressBarElement final : public ProgressShadowElement {
 public:
     static Ref<ProgressBarElement> create(Document&);
@@ -80,13 +73,6 @@ private:
     ProgressBarElement(Document&);
 };
 static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
-
-inline Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
-{
-    Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
-    result->setPseudo(AtomString("-webkit-progress-bar", AtomString::ConstructFromLiteral));
-    return result;
-}
 
 class ProgressValueElement final : public ProgressShadowElement {
 public:
@@ -97,12 +83,5 @@ private:
     ProgressValueElement(Document&);
 };
 static_assert(sizeof(ProgressValueElement) == sizeof(ProgressShadowElement));
-
-inline Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
-{
-    Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
-    result->setPseudo(AtomString("-webkit-progress-value", AtomString::ConstructFromLiteral));
-    return result;
-}
 
 } // namespace WebCore

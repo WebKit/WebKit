@@ -1,3 +1,68 @@
+2020-04-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Some HTML element critical paths include AtomString materialization
+        https://bugs.webkit.org/show_bug.cgi?id=211223
+
+        Reviewed by Saam Barati.
+
+        While measuring Speedometer2, I've noticed that every time we create some type of input element, we call AtomString multiple times while it is not necessary.
+        It turned out that this is because some places are using `AtomString("...", AtomString::ConstructFromLiteral)` instead of
+        `static NeverDestroyed<const AtomString> ...("...", AtomString::ConstructFromLiteral)`. Since HTML is in the main thread, we can just use `static NeverDestroyed<>`.
+        This patch fixes `AtomString()` calls by changing them to `NeverDestroyed<const AtomString>` if it is under WebCore/html directory.
+        And in this patch, we omit FTPDirectoryDocument, MediaDocument, and PluginDocument's fixes for now since their AtomString content has a bit different nature (some
+        pseudo CSS value ("-webkit-xxx") v.s. some particular CSS property value ("100%").
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::UploadButtonElement):
+        * html/HTMLElement.cpp:
+        (WebCore::trueName):
+        (WebCore::falseName):
+        (WebCore::plaintextOnlyName):
+        (WebCore::HTMLElement::setContentEditable):
+        (WebCore::HTMLElement::setDraggable):
+        (WebCore::HTMLElement::setSpellcheck):
+        (WebCore::HTMLElement::setAutocorrect):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updateInnerTextElementEditability):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/SearchInputType.cpp:
+        (WebCore::updateResultButtonPseudoType):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::createDataListDropdownIndicator):
+        (WebCore::TextFieldInputType::createContainer):
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::DetailsMarkerControl):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::create):
+        * html/shadow/ProgressShadowElement.h:
+        (WebCore::ProgressInnerElement::create): Deleted.
+        (WebCore::ProgressBarElement::create): Deleted.
+        (WebCore::ProgressValueElement::create): Deleted.
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::tryCreate):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElement::tryCreate):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::rebuildDisplayTree):
+
 2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Optimize LocalAuthenticator

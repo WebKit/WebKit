@@ -181,9 +181,19 @@ void ValidationMessage::buildBubbleTree()
 
     ShadowRoot& shadowRoot = m_element->ensureUserAgentShadowRoot();
 
+    static NeverDestroyed<const AtomString> webkitValidationBubbleName("-webkit-validation-bubble", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleArrowClipperName("-webkit-validation-bubble-arrow-clipper", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleArrowName("-webkit-validation-bubble-arrow", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleMessageName("-webkit-validation-bubble-message", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleIconName("-webkit-validation-bubble-icon", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleTextBlockName("-webkit-validation-bubble-text-block", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleHeadingName("-webkit-validation-bubble-heading", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> webkitValidationBubbleBodyName("-webkit-validation-bubble-body", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+
     Document& document = m_element->document();
     m_bubble = HTMLDivElement::create(document);
-    m_bubble->setPseudo(AtomString("-webkit-validation-bubble", AtomString::ConstructFromLiteral));
+    m_bubble->setPseudo(webkitValidationBubbleName);
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
@@ -199,24 +209,24 @@ void ValidationMessage::buildBubbleTree()
     adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
     auto clipper = HTMLDivElement::create(document);
-    clipper->setPseudo(AtomString("-webkit-validation-bubble-arrow-clipper", AtomString::ConstructFromLiteral));
+    clipper->setPseudo(webkitValidationBubbleArrowClipperName);
     auto bubbleArrow = HTMLDivElement::create(document);
-    bubbleArrow->setPseudo(AtomString("-webkit-validation-bubble-arrow", AtomString::ConstructFromLiteral));
+    bubbleArrow->setPseudo(webkitValidationBubbleArrowName);
     clipper->appendChild(bubbleArrow);
     m_bubble->appendChild(clipper);
 
     auto message = HTMLDivElement::create(document);
-    message->setPseudo(AtomString("-webkit-validation-bubble-message", AtomString::ConstructFromLiteral));
+    message->setPseudo(webkitValidationBubbleMessageName);
     auto icon = HTMLDivElement::create(document);
-    icon->setPseudo(AtomString("-webkit-validation-bubble-icon", AtomString::ConstructFromLiteral));
+    icon->setPseudo(webkitValidationBubbleIconName);
     message->appendChild(icon);
     auto textBlock = HTMLDivElement::create(document);
-    textBlock->setPseudo(AtomString("-webkit-validation-bubble-text-block", AtomString::ConstructFromLiteral));
+    textBlock->setPseudo(webkitValidationBubbleTextBlockName);
     m_messageHeading = HTMLDivElement::create(document);
-    m_messageHeading->setPseudo(AtomString("-webkit-validation-bubble-heading", AtomString::ConstructFromLiteral));
+    m_messageHeading->setPseudo(webkitValidationBubbleHeadingName);
     textBlock->appendChild(*m_messageHeading);
     m_messageBody = HTMLDivElement::create(document);
-    m_messageBody->setPseudo(AtomString("-webkit-validation-bubble-body", AtomString::ConstructFromLiteral));
+    m_messageBody->setPseudo(webkitValidationBubbleBodyName);
     textBlock->appendChild(*m_messageBody);
     message->appendChild(textBlock);
     m_bubble->appendChild(message);

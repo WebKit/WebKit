@@ -86,8 +86,11 @@ RefPtr<ImageControlsRootElement> ImageControlsRootElement::tryCreate(Document& d
     if (!document.page())
         return nullptr;
 
+    static NeverDestroyed<const AtomString> xWebkitImageControlsName("x-webkit-image-controls", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+
     Ref<ImageControlsRootElementMac> controls = adoptRef(*new ImageControlsRootElementMac(document));
-    controls->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("x-webkit-image-controls", AtomString::ConstructFromLiteral));
+    controls->setAttributeWithoutSynchronization(HTMLNames::classAttr, xWebkitImageControlsName);
 
     if (RefPtr<ImageControlsButtonElementMac> button = ImageControlsButtonElementMac::tryCreate(document))
         controls->appendChild(*button);

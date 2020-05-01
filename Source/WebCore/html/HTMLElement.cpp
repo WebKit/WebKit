@@ -660,14 +660,35 @@ String HTMLElement::contentEditable() const
     return "inherit"_s;
 }
 
+static const AtomString& trueName()
+{
+    static NeverDestroyed<const AtomString> trueValue("true", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+    return trueValue.get();
+}
+
+static const AtomString& falseName()
+{
+    static NeverDestroyed<const AtomString> falseValue("false", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+    return falseValue.get();
+}
+
+static const AtomString& plaintextOnlyName()
+{
+    static NeverDestroyed<const AtomString> plaintextOnlyValue("plaintext-only", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+    return plaintextOnlyValue.get();
+}
+
 ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 {
     if (equalLettersIgnoringASCIICase(enabled, "true"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("true", AtomString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, trueName());
     else if (equalLettersIgnoringASCIICase(enabled, "false"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("false", AtomString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, falseName());
     else if (equalLettersIgnoringASCIICase(enabled, "plaintext-only"))
-        setAttributeWithoutSynchronization(contenteditableAttr, AtomString("plaintext-only", AtomString::ConstructFromLiteral));
+        setAttributeWithoutSynchronization(contenteditableAttr, plaintextOnlyName());
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
         removeAttribute(contenteditableAttr);
     else
@@ -682,9 +703,7 @@ bool HTMLElement::draggable() const
 
 void HTMLElement::setDraggable(bool value)
 {
-    setAttributeWithoutSynchronization(draggableAttr, value
-        ? AtomString("true", AtomString::ConstructFromLiteral)
-        : AtomString("false", AtomString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(draggableAttr, value ? trueName() : falseName());
 }
 
 bool HTMLElement::spellcheck() const
@@ -694,9 +713,7 @@ bool HTMLElement::spellcheck() const
 
 void HTMLElement::setSpellcheck(bool enable)
 {
-    setAttributeWithoutSynchronization(spellcheckAttr, enable
-        ? AtomString("true", AtomString::ConstructFromLiteral)
-        : AtomString("false", AtomString::ConstructFromLiteral));
+    setAttributeWithoutSynchronization(spellcheckAttr, enable ? trueName() : falseName());
 }
 
 void HTMLElement::click()
@@ -1100,7 +1117,10 @@ bool HTMLElement::shouldAutocorrect() const
 
 void HTMLElement::setAutocorrect(bool autocorrect)
 {
-    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? AtomString("on", AtomString::ConstructFromLiteral) : AtomString("off", AtomString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomString> onName("on", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> offName("off", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+    setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? onName.get() : offName.get());
 }
 
 #endif

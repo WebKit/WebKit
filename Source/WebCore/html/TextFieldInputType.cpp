@@ -348,8 +348,10 @@ void TextFieldInputType::createShadowSubtree()
     }
 
     if (shouldHaveCapsLockIndicator) {
+        static NeverDestroyed<const AtomString> webkitCapsLockIndicatorName("-webkit-caps-lock-indicator", AtomString::ConstructFromLiteral);
+        ASSERT(isMainThread());
         m_capsLockIndicator = HTMLDivElement::create(document);
-        m_capsLockIndicator->setPseudo(AtomString("-webkit-caps-lock-indicator", AtomString::ConstructFromLiteral));
+        m_capsLockIndicator->setPseudo(webkitCapsLockIndicatorName);
 
         bool shouldDrawCapsLockIndicator = this->shouldDrawCapsLockIndicator();
         m_capsLockIndicator->setInlineStyleProperty(CSSPropertyDisplay, shouldDrawCapsLockIndicator ? CSSValueBlock : CSSValueNone, true);
@@ -455,10 +457,12 @@ void TextFieldInputType::createDataListDropdownIndicator()
     if (!m_container)
         createContainer();
 
+    static NeverDestroyed<const AtomString> webkitListButtonName("-webkit-list-button", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
     ScriptDisallowedScope::EventAllowedScope allowedScope(*m_container);
     m_dataListDropdownIndicator = DataListButtonElement::create(element()->document(), *this);
     m_container->appendChild(*m_dataListDropdownIndicator);
-    m_dataListDropdownIndicator->setPseudo(AtomString("-webkit-list-button", AtomString::ConstructFromLiteral));
+    m_dataListDropdownIndicator->setPseudo(webkitListButtonName);
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
 }
 
@@ -778,11 +782,14 @@ void TextFieldInputType::createContainer()
     ASSERT(!m_container);
     ASSERT(element());
 
+    static NeverDestroyed<const AtomString> webkitTextfieldDecorationContainerName("-webkit-textfield-decoration-container", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
+
     ScriptDisallowedScope::EventAllowedScope allowedScope(*element()->userAgentShadowRoot());
 
     m_container = TextControlInnerContainer::create(element()->document());
     element()->userAgentShadowRoot()->appendChild(*m_container);
-    m_container->setPseudo(AtomString("-webkit-textfield-decoration-container", AtomString::ConstructFromLiteral));
+    m_container->setPseudo(webkitTextfieldDecorationContainerName);
 
     m_innerBlock = TextControlInnerElement::create(element()->document());
     m_container->appendChild(*m_innerBlock);
@@ -796,10 +803,12 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
     if (autoFillButtonType == AutoFillButtonType::None)
         return;
 
+    static NeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
+    ASSERT(isMainThread());
     ASSERT(element());
     m_autoFillButton = AutoFillButtonElement::create(element()->document(), *this);
     m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
-    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, AtomString("button", AtomString::ConstructFromLiteral));
+    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, buttonName);
     m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
     m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton);
