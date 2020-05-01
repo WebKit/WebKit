@@ -277,7 +277,7 @@ public:
 
     virtual IntSize contentsSize() const = 0;
     virtual IntSize overhangAmount() const { return IntSize(); }
-    virtual IntPoint lastKnownMousePosition() const { return IntPoint(); }
+    virtual IntPoint lastKnownMousePositionInView() const { return IntPoint(); }
     virtual bool isHandlingWheelEvent() const { return false; }
 
     virtual int headerHeight() const { return 0; }

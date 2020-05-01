@@ -856,9 +856,9 @@ IntSize RenderListBox::contentsSize() const
     return IntSize(scrollWidth(), scrollHeight());
 }
 
-IntPoint RenderListBox::lastKnownMousePosition() const
+IntPoint RenderListBox::lastKnownMousePositionInView() const
 {
-    return view().frameView().lastKnownMousePosition();
+    return view().frameView().lastKnownMousePositionInView();
 }
 
 bool RenderListBox::isHandlingWheelEvent() const

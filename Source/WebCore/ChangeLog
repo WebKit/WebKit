@@ -1,3 +1,56 @@
+2020-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some EventHandler coordinate-related naming and fix ScrollableArea::lastKnownMousePosition() conversions
+        https://bugs.webkit.org/show_bug.cgi?id=211259
+
+        Reviewed by Zalan Bujtas.
+
+        On EventHandler, rename m_lastKnownMousePosition, m_mouseDownPos and m_mouseDown for clarity.
+
+        Rename ScrollableArea::lastKnownMousePosition() to be lastKnownMousePositionInView().
+        Previously, lastKnownMousePosition() would fetch it from EventHandler, which simply stashed
+        event.position() (which is in a coordinate system that differs between WK1 and Wk2) which
+        was not relative to the EventHandler's frame. This cause mouseLocationInScrollerForScrollerImp:
+        to give wrong answers.
+
+        Instead, lastKnownMousePositionInView() now specifically returns coordinates relative to the Frame.
+        This behavior change will be tested in future overlay scrollbar tests.
+
+        Document::showPlaybackTargetPicker() was using FrameView::lastKnownMousePosition(), so to avoid
+        changing its (probably broken) behavior, have it call frame()->eventHandler().lastKnownMousePosition().
+
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateDragSourceActionsAllowed const):
+        (WebCore::EventHandler::dispatchDragStartEventOnSourceElement):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::mouseMovementExceedsThreshold const):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::lastKnownMousePositionInView const):
+        (WebCore::FrameView::lastKnownMousePosition const): Deleted.
+        * page/FrameView.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::lastKnownMousePositionInView const):
+        (WebCore::ScrollableArea::lastKnownMousePosition const): Deleted.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollerImpPairDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[WebScrollerImpPairDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[WebScrollerImpDelegate mouseLocationInScrollerForScrollerImp:]):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::lastKnownMousePositionInView const):
+        (WebCore::RenderLayer::lastKnownMousePosition const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::lastKnownMousePositionInView const):
+        (WebCore::RenderListBox::lastKnownMousePosition const): Deleted.
+        * rendering/RenderListBox.h:
+
 2020-04-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Some HTML element critical paths include AtomString materialization

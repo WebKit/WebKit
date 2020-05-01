@@ -230,7 +230,7 @@ private:
     void setScrollOffset(const WebCore::ScrollOffset&) final;
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) final;
     void invalidateScrollCornerRect(const WebCore::IntRect&) final;
-    WebCore::IntPoint lastKnownMousePosition() const final { return m_lastMousePositionInPluginCoordinates; }
+    WebCore::IntPoint lastKnownMousePositionInView() const final { return m_lastMousePositionInPluginCoordinates; }
     bool isActive() const final;
     bool isScrollCornerVisible() const final { return false; }
     WebCore::ScrollPosition scrollPosition() const final;

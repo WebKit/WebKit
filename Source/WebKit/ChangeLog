@@ -1,3 +1,16 @@
+2020-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some EventHandler coordinate-related naming and fix ScrollableArea::lastKnownMousePosition() conversions
+        https://bugs.webkit.org/show_bug.cgi?id=211259
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::position const):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+
 2020-04-30  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix confusing idiom for releasing _selectionRects in -[WKTextRange dealloc]

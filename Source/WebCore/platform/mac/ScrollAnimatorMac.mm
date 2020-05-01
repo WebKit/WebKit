@@ -224,7 +224,9 @@ static NSSize abs(NSSize size)
     if (!_scrollableArea)
         return NSZeroPoint;
 
-    return _scrollableArea->lastKnownMousePosition();
+    // It's OK that this position isn't relative to this scroller (which might be an overflow scroller).
+    // AppKit just takes the result and passes it back to -scrollerImpPair:convertContentPoint:toScrollerImp:.
+    return _scrollableArea->lastKnownMousePositionInView();
 }
 
 - (NSPoint)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(NSScrollerImp *)scrollerImp
@@ -250,7 +252,7 @@ static NSSize abs(NSSize size)
 
     ASSERT(scrollerImp == scrollerImpForScrollbar(*scrollbar));
 
-    return scrollbar->convertFromContainingView(WebCore::IntPoint(pointInContentArea));
+    return scrollbar->convertFromContainingView(WebCore::roundedIntPoint(pointInContentArea));
 }
 
 - (void)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair setContentAreaNeedsDisplayInRect:(NSRect)rect
@@ -513,7 +515,8 @@ enum FeatureToAnimate {
 
     ASSERT_UNUSED(scrollerImp, scrollerImp == scrollerImpForScrollbar(*_scrollbar));
 
-    return _scrollbar->convertFromContainingView(_scrollbar->scrollableArea().lastKnownMousePosition());
+    auto positionInView = _scrollbar->scrollableArea().lastKnownMousePositionInView();
+    return _scrollbar->convertFromContainingView(positionInView);
 }
 
 - (NSRect)convertRectToLayer:(NSRect)rect

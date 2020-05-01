@@ -446,8 +446,8 @@ void EventHandler::clear()
     m_shouldOnlyFireDragOverEvent = false;
 #endif
     m_mousePositionIsUnknown = true;
-    m_lastKnownMousePosition = IntPoint();
-    m_lastKnownMouseGlobalPosition = IntPoint();
+    m_lastKnownMousePosition = { };
+    m_lastKnownMouseGlobalPosition = { };
     m_mousePressNode = nullptr;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -788,7 +788,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     m_mouseDownWasSingleClickInSelection = false;
 
-    m_mouseDown = event.event();
+    m_mouseDownEvent = event.event();
 
     if (m_immediateActionStage != ImmediateActionStage::PerformedHitTest)
         m_immediateActionStage = ImmediateActionStage::None;
@@ -906,7 +906,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     }
 
     if (m_selectionInitiationState != ExtendedSelection) {
-        HitTestResult result(m_mouseDownPos);
+        HitTestResult result(m_mouseDownContentsPosition);
         m_frame.document()->hitTest(HitTestRequest(), result);
 
         updateSelectionForMouseDrag(result);
@@ -1175,7 +1175,7 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
     if (!view)
         return DragSourceActionNone;
 
-    return page->dragController().delegateDragSourceAction(view->contentsToRootView(m_mouseDownPos));
+    return page->dragController().delegateDragSourceAction(view->contentsToRootView(m_mouseDownContentsPosition));
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -1725,7 +1725,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     m_mouseDownMayStartSelect = false;
     m_mouseDownMayStartAutoscroll = false;
     if (FrameView* view = m_frame.view())
-        m_mouseDownPos = view->windowToContents(platformMouseEvent.position());
+        m_mouseDownContentsPosition = view->windowToContents(platformMouseEvent.position());
     else {
         invalidateClick();
         return false;
@@ -3695,7 +3695,7 @@ void EventHandler::dispatchEventToDragSourceElement(const AtomString& eventType,
 
 bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
 {
-    return !dispatchDragEvent(eventNames().dragstartEvent, *dragState().source, m_mouseDown, dataTransfer) && !m_frame.selection().selection().isInPasswordField();
+    return !dispatchDragEvent(eventNames().dragstartEvent, *dragState().source, m_mouseDownEvent, dataTransfer) && !m_frame.selection().selection().isInPasswordField();
 }
     
 static bool ExactlyOneBitSet(DragSourceAction n)
@@ -3729,10 +3729,10 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         dragState().shouldDispatchEvents = (updateDragSourceActionsAllowed() & DragSourceActionDHTML);
 
         // Try to find an element that wants to be dragged.
-        HitTestResult result(m_mouseDownPos);
+        HitTestResult result(m_mouseDownContentsPosition);
         m_frame.document()->hitTest(OptionSet<HitTestRequest::RequestType> { HitTestRequest::ReadOnly, HitTestRequest::DisallowUserAgentShadowContent }, result);
         if (m_frame.page())
-            dragState().source = m_frame.page()->dragController().draggableElement(&m_frame, result.targetElement(), m_mouseDownPos, dragState());
+            dragState().source = m_frame.page()->dragController().draggableElement(&m_frame, result.targetElement(), m_mouseDownContentsPosition, dragState());
         
         if (!dragState().source)
             m_mouseDownMayStartDrag = false; // no element is draggable
@@ -3807,7 +3807,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             dragState().source->document().updateStyleIfNeeded();
             if (auto* renderer = dragState().source->renderer()) {
                 auto absolutePosition = renderer->localToAbsolute();
-                auto delta = m_mouseDownPos - roundedIntPoint(absolutePosition);
+                auto delta = m_mouseDownContentsPosition - roundedIntPoint(absolutePosition);
                 dragState().dataTransfer->setDragImage(dragState().source.get(), delta.width(), delta.height());
             } else {
                 dispatchEventToDragSourceElement(eventNames().dragendEvent, event.event());
@@ -3833,7 +3833,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame.page();
-        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos, hasNonDefaultPasteboardData);
+        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownContentsPosition, hasNonDefaultPasteboardData);
         // In WebKit2 we could re-enter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
         if (m_didStartDrag) {
@@ -3864,7 +3864,7 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
     if (!view)
         return false;
     IntPoint location = view->windowToContents(flooredIntPoint(viewportLocation));
-    IntSize delta = location - m_mouseDownPos;
+    IntSize delta = location - m_mouseDownContentsPosition;
     
     return abs(delta.width()) >= pointsThreshold || abs(delta.height()) >= pointsThreshold;
 }

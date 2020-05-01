@@ -179,6 +179,7 @@ public:
 
     void resizeLayerDestroyed();
 
+    // FIXME: Each Frame has an EventHandler, and not every event goes to all frames, so this position can be stale. It should probably be stored on Page.
     IntPoint lastKnownMousePosition() const;
     IntPoint lastKnownMouseGlobalPosition() const { return m_lastKnownMouseGlobalPosition; }
     Cursor currentMouseCursor() const { return m_currentMouseCursor; }
@@ -587,11 +588,11 @@ private:
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
     bool m_mousePositionIsUnknown { true };
-    IntPoint m_lastKnownMousePosition;
+    IntPoint m_lastKnownMousePosition; // Same coordinates as PlatformMouseEvent::position().
     IntPoint m_lastKnownMouseGlobalPosition;
-    IntPoint m_mouseDownPos; // In our view's coords.
+    IntPoint m_mouseDownContentsPosition;
     WallTime m_mouseDownTimestamp;
-    PlatformMouseEvent m_mouseDown;
+    PlatformMouseEvent m_mouseDownEvent;
     PlatformMouseEvent m_lastPlatformMouseEvent;
 
 #if PLATFORM(COCOA)

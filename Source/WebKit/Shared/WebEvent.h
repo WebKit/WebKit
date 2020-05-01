@@ -140,14 +140,14 @@ public:
     WebMouseEvent();
 
 #if PLATFORM(MAC)
-    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0);
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0);
 #else
-    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap);
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap);
 #endif
 
     Button button() const { return static_cast<Button>(m_button); }
     unsigned short buttons() const { return m_buttons; }
-    const WebCore::IntPoint& position() const { return m_position; }
+    const WebCore::IntPoint& position() const { return m_position; } // Relative to the view.
     const WebCore::IntPoint& globalPosition() const { return m_globalPosition; }
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
@@ -168,7 +168,7 @@ private:
 
     uint32_t m_button { static_cast<uint32_t>(NoButton) };
     unsigned short m_buttons { 0 };
-    WebCore::IntPoint m_position;
+    WebCore::IntPoint m_position; // Relative to the view.
     WebCore::IntPoint m_globalPosition;
     float m_deltaX { 0 };
     float m_deltaY { 0 };

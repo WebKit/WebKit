@@ -2012,9 +2012,9 @@ bool FrameView::fixedElementsLayoutRelativeToFrame() const
     return frame().settings().fixedElementsLayoutRelativeToFrame();
 }
 
-IntPoint FrameView::lastKnownMousePosition() const
+IntPoint FrameView::lastKnownMousePositionInView() const
 {
-    return frame().eventHandler().lastKnownMousePosition();
+    return convertFromContainingWindow(frame().eventHandler().lastKnownMousePosition());
 }
 
 bool FrameView::isHandlingWheelEvent() const

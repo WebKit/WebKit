@@ -3283,9 +3283,9 @@ void RenderLayer::didUpdateScroll()
 }
 #endif
 
-IntPoint RenderLayer::lastKnownMousePosition() const
+IntPoint RenderLayer::lastKnownMousePositionInView() const
 {
-    return renderer().frame().eventHandler().lastKnownMousePosition();
+    return renderer().view().frameView().lastKnownMousePositionInView();
 }
 
 bool RenderLayer::isHandlingWheelEvent() const

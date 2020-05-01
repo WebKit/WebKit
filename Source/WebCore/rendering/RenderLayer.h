@@ -1125,7 +1125,7 @@ private:
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
     IntSize overhangAmount() const final;
-    IntPoint lastKnownMousePosition() const final;
+    IntPoint lastKnownMousePositionInView() const final;
     bool isHandlingWheelEvent() const final;
     bool shouldSuspendScrollAnimations() const final;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;

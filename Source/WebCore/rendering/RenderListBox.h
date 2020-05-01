@@ -130,7 +130,7 @@ private:
     Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
     IntSize contentsSize() const final;
     IntSize visibleSize() const final { return IntSize(width(), height()); }
-    IntPoint lastKnownMousePosition() const final;
+    IntPoint lastKnownMousePositionInView() const final;
     bool isHandlingWheelEvent() const final;
     bool shouldSuspendScrollAnimations() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
