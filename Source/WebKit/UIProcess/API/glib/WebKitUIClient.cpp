@@ -294,6 +294,20 @@ private:
     }
 
 #if PLATFORM(GTK)
+    bool takeFocus(WebPageProxy* page, WKFocusDirection direction) final
+    {
+        if (!gtk_widget_has_focus(GTK_WIDGET(m_webView))) {
+            focus(page);
+            return true;
+        }
+        return gtk_widget_child_focus(gtk_widget_get_toplevel(GTK_WIDGET(m_webView)), direction == kWKFocusDirectionBackward ? GTK_DIR_TAB_BACKWARD : GTK_DIR_TAB_FORWARD);
+    }
+
+    void focus(WebPageProxy*) final
+    {
+        gtk_widget_grab_focus(GTK_WIDGET(m_webView));
+    }
+
     void printFrame(WebPageProxy&, WebFrameProxy& frame, CompletionHandler<void()>&& completionHandler) final
     {
         webkitWebViewPrintFrame(m_webView, &frame);
