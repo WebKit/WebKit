@@ -1,5 +1,19 @@
 2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Fix stress/big-int-negate-jit.js
+        https://bugs.webkit.org/show_bug.cgi?id=211321
+
+        Reviewed by Saam Barati.
+
+        This test is assuming that 100000 iteration of 2 negateBigInt calls makes negateBigInt DFG-compiled.
+        But this is wrong if BigInt negation is fast enough. We made BigInt faster and now this test starts
+        failing because running this iteration finishes earlier than DFG compilation finishes. We should use `useConcurrentJIT`
+        to ensure this status.
+
+        * stress/big-int-negate-jit.js:
+
+2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         REGRESSION (r260990): 8 test262 unicode tests failing
         https://bugs.webkit.org/show_bug.cgi?id=211298
 

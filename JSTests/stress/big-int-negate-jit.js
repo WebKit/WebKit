@@ -1,5 +1,5 @@
 //@ skip if not $jitTests
-//@ runBigIntEnabled
+//@ runDefault("--useConcurrentJIT=0")
 
 function assert(a, b) {
     if (a !== b)
