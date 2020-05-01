@@ -45,6 +45,6 @@ WallTime wallTimeForEvent(const GdkEvent*);
 
 String defaultGtkSystemFont();
 
-unsigned stateModifierForGdkButton(unsigned button);
+WEBCORE_EXPORT unsigned stateModifierForGdkButton(unsigned button);
 
 } // namespace WebCore

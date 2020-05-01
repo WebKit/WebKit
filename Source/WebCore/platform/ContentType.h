@@ -37,11 +37,11 @@ public:
     WEBCORE_EXPORT explicit ContentType(const String& type);
     ContentType() = default;
 
-    static const String& codecsParameter();
+    WEBCORE_EXPORT static const String& codecsParameter();
     static const String& profilesParameter();
 
-    String parameter(const String& parameterName) const;
-    String containerType() const;
+    WEBCORE_EXPORT String parameter(const String& parameterName) const;
+    WEBCORE_EXPORT String containerType() const;
     Vector<String> codecs() const;
     Vector<String> profiles() const;
     const String& raw() const { return m_type; }

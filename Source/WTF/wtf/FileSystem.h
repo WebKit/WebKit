@@ -140,7 +140,7 @@ bool excludeFromBackup(const String&); // Returns true if successful.
 WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter);
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
-String stringFromFileSystemRepresentation(const char*);
+WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(const char*);
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 

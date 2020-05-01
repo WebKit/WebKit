@@ -25,9 +25,9 @@
 #include "JSContextRef.h"
 #include <wtf/glib/GRefPtr.h>
 
-GRefPtr<JSCContext> jscContextGetOrCreate(JSGlobalContextRef);
-JSGlobalContextRef jscContextGetJSContext(JSCContext*);
-GRefPtr<JSCValue> jscContextGetOrCreateValue(JSCContext*, JSValueRef);
+JS_EXPORT_PRIVATE GRefPtr<JSCContext> jscContextGetOrCreate(JSGlobalContextRef);
+JS_EXPORT_PRIVATE JSGlobalContextRef jscContextGetJSContext(JSCContext*);
+JS_EXPORT_PRIVATE GRefPtr<JSCValue> jscContextGetOrCreateValue(JSCContext*, JSValueRef);
 void jscContextValueDestroyed(JSCContext*, JSValueRef);
 JSC::JSObject* jscContextGetJSWrapper(JSCContext*, gpointer);
 JSC::JSObject* jscContextGetOrCreateJSWrapper(JSCContext*, JSClassRef, JSValueRef prototype = nullptr, gpointer = nullptr, GDestroyNotify = nullptr);

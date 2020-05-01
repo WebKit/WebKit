@@ -21,5 +21,5 @@
 
 #include "JSCValue.h"
 
-JSValueRef jscValueGetJSValue(JSCValue*);
+JS_EXPORT_PRIVATE JSValueRef jscValueGetJSValue(JSCValue*);
 JSCValue* jscValueCreate(JSCContext*, JSValueRef);

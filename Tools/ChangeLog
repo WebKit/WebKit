@@ -1,5 +1,20 @@
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
+        [GTK] Add additional exports to support hidden visibility
+        https://bugs.webkit.org/show_bug.cgi?id=211246
+
+        Reviewed by Michael Catanzaro.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        * TestWebKitAPI/InjectedBundleMain.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (webkit_web_extension_initialize_with_user_data):
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp:
+        (webkit_web_extension_initialize):
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+
+2020-05-01  Don Olmstead  <don.olmstead@sony.com>
+
         Use export macros on all platforms
         https://bugs.webkit.org/show_bug.cgi?id=211293
 

@@ -39,10 +39,10 @@ class GSocketMonitor {
     WTF_MAKE_NONCOPYABLE(GSocketMonitor);
 public:
     GSocketMonitor() = default;
-    ~GSocketMonitor();
+    WTF_EXPORT_PRIVATE ~GSocketMonitor();
 
-    void start(GSocket*, GIOCondition, RunLoop&, Function<gboolean(GIOCondition)>&&);
-    void stop();
+    WTF_EXPORT_PRIVATE void start(GSocket*, GIOCondition, RunLoop&, Function<gboolean(GIOCondition)>&&);
+    WTF_EXPORT_PRIVATE void stop();
     bool isActive() const { return !!m_source; }
 
 private:

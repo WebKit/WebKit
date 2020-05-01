@@ -40,10 +40,10 @@ namespace Inspector {
 
 class RemoteInspectorServer {
 public:
-    static RemoteInspectorServer& singleton();
+    JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
     ~RemoteInspectorServer();
 
-    bool start(const char* address, unsigned port);
+    JS_EXPORT_PRIVATE bool start(const char* address, unsigned port);
     bool isRunning() const { return !!m_service; }
 
 private:

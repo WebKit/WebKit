@@ -704,7 +704,7 @@ static void registerGResource(void)
     g_resource_unref(resource);
 }
 
-extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
+extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
 {
     WebKitScriptWorld* isolatedWorld = webkit_script_world_new_with_name("WebExtensionTestScriptWorld");
     g_assert_true(WEBKIT_IS_SCRIPT_WORLD(isolatedWorld));

@@ -24,9 +24,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
-CString getCurrentExecutablePath();
-CString getCurrentExecutableName();
-CString enumToString(GType, guint value);
+WTF_EXPORT_PRIVATE CString getCurrentExecutablePath();
+WTF_EXPORT_PRIVATE CString getCurrentExecutableName();
+WTF_EXPORT_PRIVATE CString enumToString(GType, guint value);
 
 // These might be added to glib in the future, but in the meantime they're defined here.
 #ifndef GULONG_TO_POINTER

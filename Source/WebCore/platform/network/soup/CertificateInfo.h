@@ -46,7 +46,7 @@ public:
     explicit CertificateInfo(const WebCore::ResourceResponse&);
     explicit CertificateInfo(const WebCore::ResourceError&);
     explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
-    ~CertificateInfo();
+    WEBCORE_EXPORT ~CertificateInfo();
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }

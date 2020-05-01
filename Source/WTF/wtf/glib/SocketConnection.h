@@ -40,14 +40,15 @@ public:
     {
         return adoptRef(*new SocketConnection(WTFMove(connection), messageHandlers, userData));
     }
-    ~SocketConnection();
+    WTF_EXPORT_PRIVATE ~SocketConnection();
+
+    WTF_EXPORT_PRIVATE void sendMessage(const char*, GVariant*);
 
     bool isClosed() const { return !m_connection; }
-    void sendMessage(const char*, GVariant*);
     void close();
 
 private:
-    SocketConnection(GRefPtr<GSocketConnection>&&, const MessageHandlers&, gpointer);
+    WTF_EXPORT_PRIVATE SocketConnection(GRefPtr<GSocketConnection>&&, const MessageHandlers&, gpointer);
 
     bool read();
     bool readMessage();

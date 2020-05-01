@@ -117,8 +117,8 @@ public:
         virtual void fired() = 0;
 
 #if USE(GLIB_EVENT_LOOP)
-        void setName(const char*);
-        void setPriority(int);
+        WTF_EXPORT_PRIVATE void setName(const char*);
+        WTF_EXPORT_PRIVATE void setPriority(int);
 #endif
 
     private:

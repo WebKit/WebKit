@@ -68,7 +68,7 @@ public:
     static void setInitialAcceptLanguages(const CString&);
     void setAcceptLanguages(const CString&);
 
-    static void setShouldIgnoreTLSErrors(bool);
+    WEBCORE_EXPORT static void setShouldIgnoreTLSErrors(bool);
     static Optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);
     static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 

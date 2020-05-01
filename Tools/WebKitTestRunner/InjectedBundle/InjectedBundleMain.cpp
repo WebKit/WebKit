@@ -28,11 +28,7 @@
 
 #include <WebKit/WKBundleInitialize.h>
 
-#if defined(WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
+extern "C" WTF_EXPORT_DECLARATION
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);

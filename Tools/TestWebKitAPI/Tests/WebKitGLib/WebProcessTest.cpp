@@ -99,7 +99,7 @@ static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage*
     jsc_context_set_value(context.get(), "WebProcessTestRunner", testRunner.get());
 }
 
-extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
+extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize(WebKitWebExtension* extension)
 {
     webkitWebExtensionSetGarbageCollectOnPageDestroy(extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectClearedCallback), extension);
