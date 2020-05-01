@@ -52,7 +52,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
 
         if (!this._readOnly) {
-            this._element.tabIndex = -1;
             property.addEventListener(WI.CSSProperty.Event.ModifiedChanged, this.updateStatus, this);
 
             this._element.addEventListener("blur", (event) => {

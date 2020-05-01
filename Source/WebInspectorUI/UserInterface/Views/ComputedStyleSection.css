@@ -32,10 +32,9 @@
 .computed-style-section .computed-property-item {
     box-sizing: border-box;
     max-width: 100%;
-    min-height: var(--disclosure-button-size);
+    min-height: calc(var(--disclosure-button-size));
     padding-left: calc(var(--disclosure-button-size) + 6px);
     padding-right: var(--css-declaration-horizontal-padding);
-    border-top: 0.5px solid transparent;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -43,11 +42,18 @@
 .computed-style-section .computed-property-item.expanded {
     padding-bottom: 2px;
     background-color: hsl(0, 0%, 97%);
-    border-top-color: var(--text-color-quaternary);
+    border-top: 0.5px solid var(--text-color-quaternary);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
 }
 
-.computed-style-section .computed-property-item.expanded + .computed-property-item {
-    border-top-color: var(--text-color-quaternary);
+.computed-style-section .computed-property-item.expanded + .computed-property-item.expanded {
+    border-top: none;
+}
+
+.computed-style-section .computed-property-item > .disclosure-button:focus {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -3px; /* Make focus outline smaller than usual so it doesn't get clipped here. */
+    border-radius: calc((var(--disclosure-button-size) / 2) - 2px);
 }
 
 .computed-style-section .computed-property-item .disclosure-button {

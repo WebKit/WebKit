@@ -1,3 +1,27 @@
+2020-04-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Computed: shouldn't display focus outline on click
+        https://bugs.webkit.org/show_bug.cgi?id=211118
+        <rdar://problem/62491002>
+
+        Reviewed by Devin Rousso.
+
+        - CSS property view is no longer focusable.
+        - Disclosure triangle is now tabbable.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item):
+        (.computed-style-section .computed-property-item.expanded):
+        (.computed-style-section .computed-property-item > .disclosure-button:focus):
+        * UserInterface/Views/ExpandableView.js:
+        (WI.ExpandableView):
+        (WI.ExpandableView.prototype._onDisclosureButtonClick):
+        (WI.ExpandableView.prototype._update):
+        Drive-by: add `ariaExpanded` so VoiceOver reads whether it's expanded or collapsed.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        Remove tabIndex so we don't show any focus outline around the entire CSS property view.
+
 2020-04-30  Devin Rousso  <drousso@apple.com>
 
         WebKit.WebContent process crashes when web developer tools are opened in Safari
