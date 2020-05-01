@@ -939,8 +939,7 @@ void HTMLMediaElement::scheduleNextSourceChild()
 
 void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged()
 {
-    m_hasEverHadAudio |= hasAudio();
-    m_hasEverHadVideo |= hasVideo();
+    checkForAudioAndVideo();
 }
 
 void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
@@ -1852,6 +1851,7 @@ void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack& track)
         m_audioTracks->scheduleChangeEvent();
     if (processingUserGestureForMedia())
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+    checkForAudioAndVideo();
 }
 
 void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
@@ -1893,6 +1893,7 @@ void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack& track)
 {
     if (m_videoTracks && m_videoTracks->contains(track))
         m_videoTracks->scheduleChangeEvent();
+    checkForAudioAndVideo();
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack& track)
@@ -5104,11 +5105,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
     document().updateIsPlayingMedia();
 #endif
 
-    m_hasEverHadAudio |= hasAudio();
-    m_hasEverHadVideo |= hasVideo();
-
-    m_mediaSession->canProduceAudioChanged();
-
+    checkForAudioAndVideo();
     updateSleepDisabling();
 
     endProcessingMediaPlayerCallback();
@@ -5378,8 +5375,14 @@ void HTMLMediaElement::updatePlayState()
     updateMediaController();
     updateRenderer();
 
+    checkForAudioAndVideo();
+}
+
+void HTMLMediaElement::checkForAudioAndVideo()
+{
     m_hasEverHadAudio |= hasAudio();
     m_hasEverHadVideo |= hasVideo();
+    m_mediaSession->canProduceAudioChanged();
 }
 
 void HTMLMediaElement::setPlaying(bool playing)
@@ -7386,9 +7389,10 @@ unsigned long long HTMLMediaElement::fileSize() const
 PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 {
     if (m_player && m_readyState >= HAVE_METADATA) {
-        if (hasVideo() && hasAudio() && !muted())
+        auto hasVideo = this->hasVideo();
+        if (hasVideo && hasAudio() && !muted())
             return PlatformMediaSession::MediaType::VideoAudio;
-        return hasVideo() ? PlatformMediaSession::MediaType::Video : PlatformMediaSession::MediaType::Audio;
+        return hasVideo ? PlatformMediaSession::MediaType::Video : PlatformMediaSession::MediaType::Audio;
     }
 
     return presentationType();

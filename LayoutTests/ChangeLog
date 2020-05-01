@@ -1,3 +1,14 @@
+2020-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] Audio session category is sometimes not set correctly after changing video source
+        https://bugs.webkit.org/show_bug.cgi?id=211252
+        <rdar://problem/61894737>
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/media/media-source/media-source-change-source-expected.txt: Added.
+        * platform/mac/media/media-source/media-source-change-source.html: Added.
+
 2020-05-01  Truitt Savell  <tsavell@apple.com>
 
         [ iOS ] compositing/iframes/border-radius-composited-frame.html and compositing/iframes/border-uneven-radius-composited-frame.html are flaky failures

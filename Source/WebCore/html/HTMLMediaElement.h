@@ -933,6 +933,8 @@ private:
 
     void setInActiveDocument(bool);
 
+    void checkForAudioAndVideo();
+
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }

@@ -1,3 +1,32 @@
+2020-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] Audio session category is sometimes not set correctly after changing video source
+        https://bugs.webkit.org/show_bug.cgi?id=211252
+        <rdar://problem/61894737>
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-source/media-source-change-source.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged): Call checkForAudioAndVideo.
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged): Ditto.
+        (WebCore::HTMLMediaElement::videoTrackSelectedChanged): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        (WebCore::HTMLMediaElement::checkForAudioAndVideo): New, update m_hasEverHadAudio and m_hasEverHadVideo
+        and call m_mediaSession->canProduceAudioChanged.
+        (WebCore::HTMLMediaElement::mediaType const): Put `hasVideo()` in a local variable since it
+        is used more than once.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::updateSessionState): Iterate over the list of media
+        sessions once, not five times.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm: 
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer): Call m_player->characteristicChanged()
+        rather than m_player->renderingModeChanged().
+
 2020-05-01  Peng Liu  <peng.liu6@apple.com>
 
         A PiP window doesn’t actually dismiss after the browser navigates to a different page within the same domain

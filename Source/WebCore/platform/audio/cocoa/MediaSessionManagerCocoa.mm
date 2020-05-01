@@ -61,11 +61,39 @@ MediaSessionManagerCocoa::MediaSessionManagerCocoa()
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
-    int videoCount = count(PlatformMediaSession::MediaType::Video);
-    int videoAudioCount = count(PlatformMediaSession::MediaType::VideoAudio);
-    int audioCount = count(PlatformMediaSession::MediaType::Audio);
-    int webAudioCount = count(PlatformMediaSession::MediaType::WebAudio);
+    int videoCount = 0;
+    int videoAudioCount = 0;
+    int audioCount = 0;
+    int webAudioCount = 0;
     int captureCount = countActiveAudioCaptureSources();
+    bool hasAudibleAudioOrVideoMediaType = false;
+    forEachSession([&] (auto& session) mutable {
+        auto type = session.mediaType();
+        switch (type) {
+        case PlatformMediaSession::MediaType::None:
+            break;
+        case PlatformMediaSession::MediaType::Video:
+            ++videoCount;
+            break;
+        case PlatformMediaSession::MediaType::VideoAudio:
+            ++videoAudioCount;
+            break;
+        case PlatformMediaSession::MediaType::Audio:
+            ++audioCount;
+            break;
+        case PlatformMediaSession::MediaType::WebAudio:
+            ++webAudioCount;
+            break;
+        }
+
+        if (!hasAudibleAudioOrVideoMediaType) {
+            if ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
+                hasAudibleAudioOrVideoMediaType = true;
+            if (session.isPlayingToWirelessPlaybackTarget())
+                hasAudibleAudioOrVideoMediaType = true;
+        }
+    });
+
     ALWAYS_LOG(LOGIDENTIFIER, "types: "
         "AudioCapture(", captureCount, "), "
         "Video(", videoCount, "), "
@@ -80,9 +108,6 @@ void MediaSessionManagerCocoa::updateSessionState()
     else if (captureCount)
         AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
     else if ((videoAudioCount || audioCount) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
-        // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
-        // causes media LayoutTests to fail on 10.8.
-
         size_t bufferSize;
         if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
             bufferSize = kLowPowerVideoBufferSize;
@@ -94,15 +119,6 @@ void MediaSessionManagerCocoa::updateSessionState()
 
     if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
         return;
-
-    bool hasAudibleAudioOrVideoMediaType = false;
-    forEachSession([&hasAudibleAudioOrVideoMediaType] (auto& session) mutable {
-        auto type = session.mediaType();
-        if ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
-            hasAudibleAudioOrVideoMediaType = true;
-        if (session.isPlayingToWirelessPlaybackTarget())
-            hasAudibleAudioOrVideoMediaType = true;
-    });
 
     RouteSharingPolicy policy = RouteSharingPolicy::Default;
     AudioSession::CategoryType category = AudioSession::None;

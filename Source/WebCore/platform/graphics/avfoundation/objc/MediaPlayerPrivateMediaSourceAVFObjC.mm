@@ -1184,7 +1184,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
         return;
     }
-    m_player->renderingModeChanged();
+
+    m_player->characteristicChanged();
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
