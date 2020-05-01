@@ -303,7 +303,7 @@ public:
         FrameLoadRequest frameLoadRequest { requestingDocument, requestingDocument.securityOrigin(), { }, { }, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
-        frameLoadRequest.setReferrerPolicy(requestingDocument.referrerPolicy());
+        frameLoadRequest.setReferrerPolicy(ReferrerPolicy::EmptyString);
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
         m_submission->populateFrameLoadRequest(frameLoadRequest);
         frame.loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission->takeState());

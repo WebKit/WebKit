@@ -48,7 +48,6 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ScriptDisallowedScope.h"
-#include "SecurityPolicy.h"
 #include "TextEncoding.h"
 #include <wtf/WallTime.h>
 
@@ -248,11 +247,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
     }
 
     frameRequest.resourceRequest().setURL(requestURL());
-    if (doesRequestNeedHTTPOriginHeader(frameRequest.resourceRequest())) {
-        auto securityOrigin = SecurityOrigin::createFromString(m_origin);
-        auto origin = SecurityPolicy::generateOriginHeader(frameRequest.requester().referrerPolicy(), frameRequest.resourceRequest().url(), securityOrigin);
-        frameRequest.resourceRequest().setHTTPOrigin(origin);
-    }
+    FrameLoader::addHTTPOriginIfNeeded(frameRequest.resourceRequest(), m_origin);
 }
 
 }

@@ -229,11 +229,14 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
         outgoingReferrer = m_resourceRequest.httpReferrer();
     updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer);
 
-    if (doesRequestNeedHTTPOriginHeader(m_resourceRequest)) {
-        auto outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer);
-        auto origin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), outgoingOrigin);
-        m_resourceRequest.setHTTPOrigin(origin);
-    }
+    if (!m_resourceRequest.httpOrigin().isEmpty())
+        return;
+    String outgoingOrigin;
+    if (m_options.mode == FetchOptions::Mode::Cors)
+        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
+    else
+        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), SecurityOrigin::createFromString(outgoingReferrer));
+    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 }
 
 void CachedResourceRequest::updateUserAgentHeader(FrameLoader& frameLoader)

@@ -47,7 +47,6 @@
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SecurityPolicy.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -670,10 +669,7 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
 
     updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer());
 
-    if (doesRequestNeedHTTPOriginHeader(newRequest)) {
-        auto origin = SecurityPolicy::generateOriginHeader(referrerPolicy(), newRequest.url(), m_origin ? *m_origin : SecurityOrigin::createUnique().get());
-        newRequest.setHTTPOrigin(origin);
-    }
+    FrameLoader::addHTTPOriginIfNeeded(newRequest, m_origin ? m_origin->toString() : String());
 
     return { };
 }
