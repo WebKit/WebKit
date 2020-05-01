@@ -52,37 +52,37 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
 
 const AtomString& TextTrack::subtitlesKeyword()
 {
-    static NeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
     return subtitles;
 }
 
 static const AtomString& captionsKeyword()
 {
-    static NeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
     return captions;
 }
 
 static const AtomString& descriptionsKeyword()
 {
-    static NeverDestroyed<const AtomString> descriptions("descriptions", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> descriptions("descriptions", AtomString::ConstructFromLiteral);
     return descriptions;
 }
 
 static const AtomString& chaptersKeyword()
 {
-    static NeverDestroyed<const AtomString> chapters("chapters", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> chapters("chapters", AtomString::ConstructFromLiteral);
     return chapters;
 }
 
 static const AtomString& metadataKeyword()
 {
-    static NeverDestroyed<const AtomString> metadata("metadata", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> metadata("metadata", AtomString::ConstructFromLiteral);
     return metadata;
 }
     
 static const AtomString& forcedKeyword()
 {
-    static NeverDestroyed<const AtomString> forced("forced", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> forced("forced", AtomString::ConstructFromLiteral);
     return forced;
 }
 

@@ -289,19 +289,19 @@ void MediaController::setMuted(bool flag)
 
 static const AtomString& playbackStateWaiting()
 {
-    static NeverDestroyed<AtomString> waiting("waiting", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> waiting("waiting", AtomString::ConstructFromLiteral);
     return waiting;
 }
 
 static const AtomString& playbackStatePlaying()
 {
-    static NeverDestroyed<AtomString> playing("playing", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> playing("playing", AtomString::ConstructFromLiteral);
     return playing;
 }
 
 static const AtomString& playbackStateEnded()
 {
-    static NeverDestroyed<AtomString> ended("ended", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> ended("ended", AtomString::ConstructFromLiteral);
     return ended;
 }
 

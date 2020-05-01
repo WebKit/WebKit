@@ -221,7 +221,7 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
     // Toss the animation order map.
     m_keyframeAnimationOrderMap.clear();
 
-    static NeverDestroyed<const AtomString> none("none", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> none("none", AtomString::ConstructFromLiteral);
     
     // Now mark any still active animations as active and add any new animations.
     if (targetStyle.animations()) {

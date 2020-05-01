@@ -46,37 +46,37 @@ namespace WebCore {
 
 const AtomString& VideoTrack::alternativeKeyword()
 {
-    static NeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
     return alternative;
 }
 
 const AtomString& VideoTrack::captionsKeyword()
 {
-    static NeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
     return captions;
 }
 
 const AtomString& VideoTrack::mainKeyword()
 {
-    static NeverDestroyed<const AtomString> captions("main", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> captions("main", AtomString::ConstructFromLiteral);
     return captions;
 }
 
 const AtomString& VideoTrack::signKeyword()
 {
-    static NeverDestroyed<const AtomString> sign("sign", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> sign("sign", AtomString::ConstructFromLiteral);
     return sign;
 }
 
 const AtomString& VideoTrack::subtitlesKeyword()
 {
-    static NeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
     return subtitles;
 }
 
 const AtomString& VideoTrack::commentaryKeyword()
 {
-    static NeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
     return commentary;
 }
 

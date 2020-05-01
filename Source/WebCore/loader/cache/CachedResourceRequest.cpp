@@ -82,7 +82,7 @@ const AtomString& CachedResourceRequest::initiatorName() const
     if (!m_initiatorName.isEmpty())
         return m_initiatorName;
 
-    static NeverDestroyed<AtomString> defaultName("other", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> defaultName("other", AtomString::ConstructFromLiteral);
     return defaultName;
 }
 

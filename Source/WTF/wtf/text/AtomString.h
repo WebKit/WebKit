@@ -288,13 +288,15 @@ inline AtomString::AtomString(NSString *string)
 
 #endif
 
+// nullAtom and emptyAtom are special AtomString. They can be used from any threads since their StringImpls are not actually registered into AtomStringTable.
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> nullAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
+
 // Define external global variables for the commonly used atom strings.
 // These are only usable from the main thread.
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> nullAtomData;
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> emptyAtomData;
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> starAtomData;
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlAtomData;
-extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlnsAtomData;
+extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> starAtomData;
+extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlAtomData;
+extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlnsAtomData;
 
 inline const AtomString& nullAtom() { return nullAtomData.get(); }
 inline const AtomString& emptyAtom() { return emptyAtomData.get(); }

@@ -126,7 +126,7 @@ ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
 
 static const AtomString& upKeyword()
 {
-    static NeverDestroyed<const AtomString> upKeyword("up", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> upKeyword("up", AtomString::ConstructFromLiteral);
     return upKeyword;
 }
 
@@ -262,21 +262,21 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 
 const AtomString& VTTRegion::textTrackCueContainerScrollingClass()
 {
-    static NeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling", AtomString::ConstructFromLiteral);
 
     return trackRegionCueContainerScrollingClass;
 }
 
 const AtomString& VTTRegion::textTrackCueContainerShadowPseudoId()
 {
-    static NeverDestroyed<const AtomString> trackRegionCueContainerPseudoId("-webkit-media-text-track-region-container", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> trackRegionCueContainerPseudoId("-webkit-media-text-track-region-container", AtomString::ConstructFromLiteral);
 
     return trackRegionCueContainerPseudoId;
 }
 
 const AtomString& VTTRegion::textTrackRegionShadowPseudoId()
 {
-    static NeverDestroyed<const AtomString> trackRegionShadowPseudoId("-webkit-media-text-track-region", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> trackRegionShadowPseudoId("-webkit-media-text-track-region", AtomString::ConstructFromLiteral);
 
     return trackRegionShadowPseudoId;
 }

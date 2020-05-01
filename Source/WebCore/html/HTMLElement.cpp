@@ -505,9 +505,9 @@ static Ref<DocumentFragment> textToFragment(Document& document, const String& te
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#limited-to-only-known-values
 static inline const AtomString& toValidDirValue(const AtomString& value)
 {
-    static NeverDestroyed<AtomString> ltrValue("ltr", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> rtlValue("rtl", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> autoValue("auto", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> ltrValue("ltr", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> rtlValue("rtl", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> autoValue("auto", AtomString::ConstructFromLiteral);
     if (equalLettersIgnoringASCIICase(value, "ltr"))
         return ltrValue;
     if (equalLettersIgnoringASCIICase(value, "rtl"))
@@ -662,22 +662,19 @@ String HTMLElement::contentEditable() const
 
 static const AtomString& trueName()
 {
-    static NeverDestroyed<const AtomString> trueValue("true", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> trueValue("true", AtomString::ConstructFromLiteral);
     return trueValue.get();
 }
 
 static const AtomString& falseName()
 {
-    static NeverDestroyed<const AtomString> falseValue("false", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> falseValue("false", AtomString::ConstructFromLiteral);
     return falseValue.get();
 }
 
 static const AtomString& plaintextOnlyName()
 {
-    static NeverDestroyed<const AtomString> plaintextOnlyValue("plaintext-only", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> plaintextOnlyValue("plaintext-only", AtomString::ConstructFromLiteral);
     return plaintextOnlyValue.get();
 }
 
@@ -1117,9 +1114,8 @@ bool HTMLElement::shouldAutocorrect() const
 
 void HTMLElement::setAutocorrect(bool autocorrect)
 {
-    static NeverDestroyed<const AtomString> onName("on", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomString> offName("off", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> onName("on", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> offName("off", AtomString::ConstructFromLiteral);
     setAttributeWithoutSynchronization(autocorrectAttr, autocorrect ? onName.get() : offName.get());
 }
 

@@ -43,13 +43,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannel);
 
 static const AtomString& blobKeyword()
 {
-    static NeverDestroyed<AtomString> blob("blob", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> blob("blob", AtomString::ConstructFromLiteral);
     return blob;
 }
 
 static const AtomString& arraybufferKeyword()
 {
-    static NeverDestroyed<AtomString> arraybuffer("arraybuffer", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> arraybuffer("arraybuffer", AtomString::ConstructFromLiteral);
     return arraybuffer;
 }
 

@@ -255,8 +255,7 @@ void RangeInputType::createShadowSubtree()
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 
-    static NeverDestroyed<const AtomString> webkitSliderRunnableTrackName("-webkit-slider-runnable-track", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> webkitSliderRunnableTrackName("-webkit-slider-runnable-track", AtomString::ConstructFromLiteral);
     Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
     track->setPseudo(webkitSliderRunnableTrackName);

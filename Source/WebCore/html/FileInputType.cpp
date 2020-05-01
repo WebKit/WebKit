@@ -89,9 +89,8 @@ Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& docume
 UploadButtonElement::UploadButtonElement(Document& document)
     : HTMLInputElement(inputTag, document, 0, false)
 {
-    static NeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomString> webkitFileUploadButtonName("-webkit-file-upload-button", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> webkitFileUploadButtonName("-webkit-file-upload-button", AtomString::ConstructFromLiteral);
     setType(buttonName);
     setPseudo(webkitFileUploadButtonName);
 }

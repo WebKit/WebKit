@@ -68,7 +68,7 @@ bool HTMLOptGroupElement::isFocusable() const
 
 const AtomString& HTMLOptGroupElement::formControlType() const
 {
-    static NeverDestroyed<const AtomString> optgroup("optgroup", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> optgroup("optgroup", AtomString::ConstructFromLiteral);
     return optgroup;
 }
 

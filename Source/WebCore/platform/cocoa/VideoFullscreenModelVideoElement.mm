@@ -184,7 +184,7 @@ const Vector<AtomString>& VideoFullscreenModelVideoElement::observedEventNames()
 
 const AtomString& VideoFullscreenModelVideoElement::eventNameAll()
 {
-    static NeverDestroyed<AtomString> sEventNameAll = "allEvents";
+    static MainThreadNeverDestroyed<const AtomString> sEventNameAll = "allEvents";
     return sEventNameAll;
 }
 

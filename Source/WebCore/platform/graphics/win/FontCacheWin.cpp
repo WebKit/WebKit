@@ -373,7 +373,7 @@ RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fon
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    static NeverDestroyed<AtomString> fallbackFontName;
+    static MainThreadNeverDestroyed<AtomString> fallbackFontName;
 
     if (!fallbackFontName.get().isEmpty())
         return *fontForFamily(fontDescription, fallbackFontName);
@@ -384,7 +384,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     // Search all typical Windows-installed full Unicode fonts.
     // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
     // Start with Times New Roman also since it is the default if the user doesn't change prefs.
-    static NeverDestroyed<AtomString> fallbackFonts[] = {
+    static MainThreadNeverDestroyed<const AtomString> fallbackFonts[] = {
         AtomString("Times New Roman", AtomString::ConstructFromLiteral),
         AtomString("Microsoft Sans Serif", AtomString::ConstructFromLiteral),
         AtomString("Tahoma", AtomString::ConstructFromLiteral),
@@ -694,8 +694,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 const AtomString& FontCache::platformAlternateFamilyName(const AtomString& familyName)
 {
-    static NeverDestroyed<AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> microsoftSansSerif("Microsoft Sans Serif", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> microsoftSansSerif("Microsoft Sans Serif", AtomString::ConstructFromLiteral);
 
     switch (familyName.length()) {
     // On Windows, we don't support bitmap fonts, but legacy content expects support.

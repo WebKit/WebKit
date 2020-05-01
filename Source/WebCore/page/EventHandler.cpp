@@ -3406,10 +3406,10 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
 static FocusDirection focusDirectionForKey(const AtomString& keyIdentifier)
 {
-    static NeverDestroyed<AtomString> Down("Down", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> Up("Up", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> Left("Left", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> Right("Right", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> Down("Down", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> Up("Up", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> Left("Left", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> Right("Right", AtomString::ConstructFromLiteral);
 
     FocusDirection retVal = FocusDirectionNone;
 

@@ -94,8 +94,7 @@ RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(D
     if (!document.page())
         return nullptr;
 
-    static NeverDestroyed<const AtomString> xWebkitImageControlsButtonName("x-webkit-image-controls-button", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> xWebkitImageControlsButtonName("x-webkit-image-controls-button", AtomString::ConstructFromLiteral);
 
     auto button = adoptRef(*new ImageControlsButtonElementMac(document));
     button->setAttributeWithoutSynchronization(HTMLNames::classAttr, xWebkitImageControlsButtonName);

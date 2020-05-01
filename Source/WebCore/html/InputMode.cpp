@@ -82,49 +82,49 @@ namespace InputModeNames {
 
 const AtomString& none()
 {
-    static NeverDestroyed<AtomString> mode("none", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("none", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& text()
 {
-    static NeverDestroyed<AtomString> mode("text", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("text", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& tel()
 {
-    static NeverDestroyed<AtomString> mode("tel", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("tel", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& url()
 {
-    static NeverDestroyed<AtomString> mode("url", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("url", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& email()
 {
-    static NeverDestroyed<AtomString> mode("email", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("email", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& numeric()
 {
-    static NeverDestroyed<AtomString> mode("numeric", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("numeric", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& decimal()
 {
-    static NeverDestroyed<AtomString> mode("decimal", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("decimal", AtomString::ConstructFromLiteral);
     return mode;
 }
 
 const AtomString& search()
 {
-    static NeverDestroyed<AtomString> mode("search", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("search", AtomString::ConstructFromLiteral);
     return mode;
 }
 

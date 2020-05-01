@@ -587,8 +587,8 @@ Optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Rende
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
-    static NeverDestroyed<const AtomString> sliderThumbShadowPseudoId("-webkit-slider-thumb", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> sliderThumbShadowPseudoId("-webkit-slider-thumb", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomString::ConstructFromLiteral);
 
     if (!hostStyle)
         return WTF::nullopt;
@@ -641,8 +641,8 @@ Optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const R
 {
     // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
 
-    static NeverDestroyed<const AtomString> mediaSliderContainer("-webkit-media-slider-container", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<const AtomString> sliderContainer("-webkit-slider-container", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mediaSliderContainer("-webkit-media-slider-container", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> sliderContainer("-webkit-slider-container", AtomString::ConstructFromLiteral);
 
     if (!hostStyle)
         return WTF::nullopt;

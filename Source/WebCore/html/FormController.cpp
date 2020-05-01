@@ -320,7 +320,7 @@ AtomString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& cont
 {
     auto form = makeRefPtr(ownerFormForState(control));
     if (!form) {
-        static NeverDestroyed<AtomString> formKeyForNoOwner("No owner", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> formKeyForNoOwner("No owner", AtomString::ConstructFromLiteral);
         return formKeyForNoOwner;
     }
 

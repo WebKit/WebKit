@@ -149,12 +149,12 @@ static FontPlatformDataCache& fontPlatformDataCache()
 
 const AtomString& FontCache::alternateFamilyName(const AtomString& familyName)
 {
-    static NeverDestroyed<AtomString> arial("Arial", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> courier("Courier", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> courierNew("Courier New", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> helvetica("Helvetica", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> times("Times", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> arial("Arial", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> courier("Courier", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> courierNew("Courier New", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> helvetica("Helvetica", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> times("Times", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
 
     const AtomString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
     if (!platformSpecificAlternate.isNull())

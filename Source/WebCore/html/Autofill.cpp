@@ -132,11 +132,11 @@ AutofillFieldName toAutofillFieldName(const AtomString& value)
 
 static inline bool isContactToken(const AtomString& token)
 {
-    static NeverDestroyed<AtomString> home("home", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> work("work", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> mobile("mobile", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> fax("fax", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> pager("pager", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> home("home", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> work("work", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mobile("mobile", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> fax("fax", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> pager("pager", AtomString::ConstructFromLiteral);
 
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }
@@ -161,8 +161,8 @@ static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
 // https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
 AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormControlElement& element)
 {
-    static NeverDestroyed<AtomString> on("on", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> off("off", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
 
     // Label: Default
     // 26. Let the element's IDL-exposed autofill value be the empty string, and its autofill hint set and autofill scope be empty.

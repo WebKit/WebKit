@@ -53,10 +53,10 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
 {
     ASSERT(requiresCustomFallbackFont(c));
 
-    static NeverDestroyed<AtomString> helveticaFamily("Helvetica Neue", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> timesNewRomanPSMTFamily("TimesNewRomanPSMT", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> helveticaFamily("Helvetica Neue", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> timesNewRomanPSMTFamily("TimesNewRomanPSMT", AtomString::ConstructFromLiteral);
 
-    AtomString* family = nullptr;
+    const AtomString* family = nullptr;
     switch (c) {
     case AppleLogo:
         family = &helveticaFamily.get();

@@ -705,13 +705,13 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
 #if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
     if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo")) {
-        static NeverDestroyed<AtomString> courier("courier", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> courier("courier", AtomString::ConstructFromLiteral);
         return fontForFamily(description, courier);
     }
 
     // Substitute Verdana for Lucida Grande.
     if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
-        static NeverDestroyed<AtomString> verdana("verdana", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> verdana("verdana", AtomString::ConstructFromLiteral);
         return fontForFamily(description, verdana);
     }
 #endif
@@ -720,8 +720,8 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     static NeverDestroyed<String> pashto(MAKE_STATIC_STRING_IMPL("Pashto"));
     static NeverDestroyed<String> urdu(MAKE_STATIC_STRING_IMPL("Urdu"));
     static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
-    static NeverDestroyed<AtomString> geezaPlain("GeezaPro", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> geezaBold("GeezaPro-Bold", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> geezaPlain("GeezaPro", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> geezaBold("GeezaPro-Bold", AtomString::ConstructFromLiteral);
     for (String* matchWord : matchWords) {
         if (family.containsIgnoringASCIICase(*matchWord))
             return fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
@@ -1507,10 +1507,10 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
     static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
     static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
 
-    static NeverDestroyed<AtomString> songtiSC("Songti SC", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> songtiTC("Songti TC", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> heitiSCReplacement("PingFang SC", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> heitiTCReplacement("PingFang TC", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> songtiSC("Songti SC", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> songtiTC("Songti TC", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> heitiSCReplacement("PingFang SC", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> heitiTCReplacement("PingFang TC", AtomString::ConstructFromLiteral);
 
     switch (familyName.length()) {
     case 2:

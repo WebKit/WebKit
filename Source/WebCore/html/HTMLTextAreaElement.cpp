@@ -111,7 +111,7 @@ void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 const AtomString& HTMLTextAreaElement::formControlType() const
 {
-    static NeverDestroyed<const AtomString> textarea("textarea", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> textarea("textarea", AtomString::ConstructFromLiteral);
     return textarea;
 }
 

@@ -1,3 +1,26 @@
+2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Introduce MainThreadNeverDestroyed / MainThreadLazyNeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=211264
+
+        Reviewed by Mark Lam.
+
+        Since AtomString has thread-affinity, `static NeverDestroyed<const AtomString>` is basically only safe for the main-thread use.
+        We should ensure that this is only used in the main-thread. To do that, this patch introduces MainThreadNeverDestroyed and
+        MainThreadLazyNeverDestroyed. They are NeverDestroyed and LazyNeverDestroyed + main-thread assertions.
+
+        * wtf/Forward.h:
+        * wtf/NeverDestroyed.h:
+        (WTF::AnyThreadsAccessTraits::assertAccess):
+        (WTF::MainThreadAccessTraits::assertAccess):
+        (WTF::NeverDestroyed::NeverDestroyed):
+        (WTF::NeverDestroyed::storagePointer const):
+        (WTF::LazyNeverDestroyed::construct):
+        (WTF::LazyNeverDestroyed::storagePointer const):
+        (WTF::makeNeverDestroyed):
+        * wtf/text/AtomString.cpp:
+        * wtf/text/AtomString.h:
+
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
         Use export macros on all platforms

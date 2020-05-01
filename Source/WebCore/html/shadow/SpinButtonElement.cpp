@@ -55,8 +55,7 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
     , m_pressStartingState(Indeterminate)
     , m_repeatingTimer(*this, &SpinButtonElement::repeatingTimerFired)
 {
-    static NeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
     setHasCustomStyleResolveCallbacks();
     setPseudo(webkitInnerSpinButtonName);
 }

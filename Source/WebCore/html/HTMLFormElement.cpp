@@ -906,8 +906,8 @@ void HTMLFormElement::setAutocomplete(const AtomString& value)
 
 const AtomString& HTMLFormElement::autocomplete() const
 {
-    static NeverDestroyed<AtomString> on("on", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> off("off", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
 
     return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
 }

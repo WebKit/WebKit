@@ -253,9 +253,9 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
         // Do nothing.
     } else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
-        static NeverDestroyed<AtomString> noReferrer("noreferrer", AtomString::ConstructFromLiteral);
-        static NeverDestroyed<AtomString> noOpener("noopener", AtomString::ConstructFromLiteral);
-        static NeverDestroyed<AtomString> opener("opener", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> noOpener("noopener", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> opener("opener", AtomString::ConstructFromLiteral);
         const bool shouldFoldCase = true;
         SpaceSplitString relValue(value, shouldFoldCase);
         if (relValue.contains(noReferrer))
@@ -381,7 +381,7 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;
 
-    static NeverDestroyed<AtomString> systemPreviewRelValue("ar", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> systemPreviewRelValue("ar", AtomString::ConstructFromLiteral);
 
     if (!relList().contains(systemPreviewRelValue))
         return false;

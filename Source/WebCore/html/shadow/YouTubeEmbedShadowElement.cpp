@@ -41,8 +41,7 @@ Ref<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& doc)
 YouTubeEmbedShadowElement::YouTubeEmbedShadowElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
 {
-    static NeverDestroyed<const AtomString> webkitPluginReplacementName("-webkit-plugin-replacement", AtomString::ConstructFromLiteral);
-    ASSERT(isMainThread());
+    static MainThreadNeverDestroyed<const AtomString> webkitPluginReplacementName("-webkit-plugin-replacement", AtomString::ConstructFromLiteral);
     setPseudo(webkitPluginReplacementName);
 }
 

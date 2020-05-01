@@ -64,7 +64,7 @@ void SVGStyleElement::setDisabled(bool setDisabled)
 
 const AtomString& SVGStyleElement::type() const
 {
-    static NeverDestroyed<const AtomString> defaultValue("text/css", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> defaultValue("text/css", AtomString::ConstructFromLiteral);
     const AtomString& n = getAttribute(SVGNames::typeAttr);
     return n.isNull() ? defaultValue.get() : n;
 }
@@ -76,7 +76,7 @@ void SVGStyleElement::setType(const AtomString& type)
 
 const AtomString& SVGStyleElement::media() const
 {
-    static NeverDestroyed<const AtomString> defaultValue("all", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> defaultValue("all", AtomString::ConstructFromLiteral);
     const AtomString& n = attributeWithoutSynchronization(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue.get() : n;
 }

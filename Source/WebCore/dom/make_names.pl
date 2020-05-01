@@ -115,7 +115,7 @@ if (length($fontNamesIn)) {
 #include <wtf/text/AtomString.h>
 END
 
-    printMacros($F, "extern LazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
+    printMacros($F, "extern MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
     print F "#endif\n\n";
 
     printInit($F, 1);
@@ -129,7 +129,7 @@ END
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    printMacros($F, "LazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
+    printMacros($F, "MainThreadLazyNeverDestroyed<const WTF::AtomString>", "", \%parameters);
 
     printInit($F, 0);
 
@@ -722,7 +722,7 @@ END
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "// Namespace\n";
-    print F "WEBCORE_EXPORT extern LazyNeverDestroyed<const WTF::AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "WEBCORE_EXPORT extern MainThreadLazyNeverDestroyed<const WTF::AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";
@@ -760,7 +760,7 @@ sub printNamesCppFile
     
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
-    print F "LazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
+    print F "MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
 
     print F StaticString::GenerateStrings(\%allStrings);
 

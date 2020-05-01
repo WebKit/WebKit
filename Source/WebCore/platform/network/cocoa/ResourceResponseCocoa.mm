@@ -150,7 +150,7 @@ static inline AtomString extractHTTPStatusText(CFHTTPMessageRef messageRef)
     if (auto httpStatusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(messageRef)))
         return extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
 
-    static NeverDestroyed<AtomString> defaultStatusText("OK", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> defaultStatusText("OK", AtomString::ConstructFromLiteral);
     return defaultStatusText;
 }
 

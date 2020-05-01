@@ -34,7 +34,7 @@ namespace WebCore {
 
 #define TEXMAP_DECLARE_VARIABLE(Accessor, Name, Type) \
     GLuint Accessor##Location() { \
-        static NeverDestroyed<const AtomString> name(Name, AtomString::ConstructFromLiteral); \
+        static MainThreadNeverDestroyed<const AtomString> name(Name, AtomString::ConstructFromLiteral); \
         return getLocation(name.get(), Type); \
     }
 

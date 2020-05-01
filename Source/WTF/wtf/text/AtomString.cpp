@@ -133,11 +133,11 @@ void AtomString::show() const
 
 #endif
 
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> nullAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> emptyAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> starAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlAtomData;
-WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomString> xmlnsAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> nullAtomData;
+WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
+WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> starAtomData;
+WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlAtomData;
+WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlnsAtomData;
 
 void AtomString::init()
 {

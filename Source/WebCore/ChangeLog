@@ -1,3 +1,262 @@
+2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Introduce MainThreadNeverDestroyed / MainThreadLazyNeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=211264
+
+        Reviewed by Mark Lam.
+
+        No behavior change. Adding assertions additionally.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp:
+        (WebCore::stringForPlaybackTargetAvailability):
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::InitDataRegistry::cencName):
+        (WebCore::InitDataRegistry::keyidsName):
+        (WebCore::InitDataRegistry::webmName):
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::automaticKeyword):
+        (WebCore::MediaControlsHost::forcedOnlyKeyword):
+        (WebCore::alwaysOnKeyword):
+        (WebCore::manualKeyword):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::kind const):
+        (WebCore::MediaStreamTrack::contentHint const):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::blobKeyword):
+        (WebCore::arraybufferKeyword):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::liveRegionRelevant const):
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::nameForProperty const):
+        * dom/Document.cpp:
+        (WebCore::Document::validateCustomElementName):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::isValidCSSContentType):
+        * dom/MutationRecord.cpp:
+        * dom/make_names.pl:
+        (printNamesHeaderFile):
+        (printNamesCppFile):
+        * html/Autocapitalize.cpp:
+        (WebCore::stringForAutocapitalizeType):
+        * html/Autofill.cpp:
+        (WebCore::isContactToken):
+        (WebCore::AutofillData::createFromHTMLFormControlElement):
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::fallbackValue const):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::UploadButtonElement):
+        * html/FormController.cpp:
+        (WebCore::FormKeyGenerator::formKey):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        (WebCore::HTMLAnchorElement::isSystemPreviewLink const):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType const):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::summarySlotName):
+        * html/HTMLElement.cpp:
+        (WebCore::toValidDirValue):
+        (WebCore::trueName):
+        (WebCore::falseName):
+        (WebCore::plaintextOnlyName):
+        (WebCore::HTMLElement::setAutocorrect):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::formControlType const):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::autocomplete const):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::loadingForBindings const):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::formControlType const):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::formControlType const):
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::formControlType const):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay const):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::formControlType const):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::scope const):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::formControlType const):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::directionString):
+        (WebCore::HTMLTextFormControlElement::updateInnerTextElementEditability):
+        * html/InputMode.cpp:
+        (WebCore::InputModeNames::none):
+        (WebCore::InputModeNames::text):
+        (WebCore::InputModeNames::tel):
+        (WebCore::InputModeNames::url):
+        (WebCore::InputModeNames::email):
+        (WebCore::InputModeNames::numeric):
+        (WebCore::InputModeNames::decimal):
+        (WebCore::InputModeNames::search):
+        * html/InputTypeNames.cpp:
+        (WebCore::InputTypeNames::button):
+        (WebCore::InputTypeNames::checkbox):
+        (WebCore::InputTypeNames::color):
+        (WebCore::InputTypeNames::date):
+        (WebCore::InputTypeNames::datetime):
+        (WebCore::InputTypeNames::datetimelocal):
+        (WebCore::InputTypeNames::email):
+        (WebCore::InputTypeNames::file):
+        (WebCore::InputTypeNames::hidden):
+        (WebCore::InputTypeNames::image):
+        (WebCore::InputTypeNames::month):
+        (WebCore::InputTypeNames::number):
+        (WebCore::InputTypeNames::password):
+        (WebCore::InputTypeNames::radio):
+        (WebCore::InputTypeNames::range):
+        (WebCore::InputTypeNames::reset):
+        (WebCore::InputTypeNames::search):
+        (WebCore::InputTypeNames::submit):
+        (WebCore::InputTypeNames::telephone):
+        (WebCore::InputTypeNames::text):
+        (WebCore::InputTypeNames::time):
+        (WebCore::InputTypeNames::url):
+        (WebCore::InputTypeNames::week):
+        * html/MediaController.cpp:
+        (WebCore::playbackStateWaiting):
+        (WebCore::playbackStatePlaying):
+        (WebCore::playbackStateEnded):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/SearchInputType.cpp:
+        (WebCore::updateResultButtonPseudoType):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::createDataListDropdownIndicator):
+        (WebCore::TextFieldInputType::createContainer):
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::DetailsMarkerControl):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::create):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::resolveCustomStyle):
+        (WebCore::SliderContainerElement::resolveCustomStyle):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::ImageControlsButtonElementMac::tryCreate):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElement::tryCreate):
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::alternativeKeyword):
+        (WebCore::AudioTrack::descriptionKeyword):
+        (WebCore::AudioTrack::mainKeyword):
+        (WebCore::AudioTrack::mainDescKeyword):
+        (WebCore::AudioTrack::translationKeyword):
+        (WebCore::AudioTrack::commentaryKeyword):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::subtitlesKeyword):
+        (WebCore::captionsKeyword):
+        (WebCore::descriptionsKeyword):
+        (WebCore::chaptersKeyword):
+        (WebCore::metadataKeyword):
+        (WebCore::forcedKeyword):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueShadowPseudoId):
+        (WebCore::TextTrackCue::cueBoxShadowPseudoId):
+        (WebCore::TextTrackCue::cueBackdropShadowPseudoId):
+        (WebCore::TextTrackCue::rebuildDisplayTree):
+        * html/track/VTTRegion.cpp:
+        (WebCore::upKeyword):
+        (WebCore::VTTRegion::textTrackCueContainerScrollingClass):
+        (WebCore::VTTRegion::textTrackCueContainerShadowPseudoId):
+        (WebCore::VTTRegion::textTrackRegionShadowPseudoId):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::alternativeKeyword):
+        (WebCore::VideoTrack::captionsKeyword):
+        (WebCore::VideoTrack::mainKeyword):
+        (WebCore::VideoTrack::signKeyword):
+        (WebCore::VideoTrack::subtitlesKeyword):
+        (WebCore::VideoTrack::commentaryKeyword):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::initiatorName const):
+        * page/EventHandler.cpp:
+        (WebCore::focusDirectionForKey):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldBypassBackForwardCache const):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::eventNameAll):
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::eventNameAll):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::alternateFamilyName):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::applicationOctetStream):
+        (WebCore::textPlain):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::sinfName):
+        (WebCore::CDMPrivateFairPlayStreaming::skdName):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::metadataType):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::similarFont):
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::effectName):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::effectName):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::getCustomFallbackFont):
+        * platform/graphics/texmap/TextureMapperShaderProgram.h:
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::extractHTTPStatusText):
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::checkLinesForTextOverflow):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hyphenString const):
+        (WebCore::RenderStyle::textEmphasisMarkString const):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustForSiteSpecificQuirks const):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode const):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setCalcMode):
+        (WebCore::SVGAnimationElement::setAttributeType):
+        (WebCore::SVGAnimationElement::isAdditive const):
+        (WebCore::SVGAnimationElement::isAccumulated const):
+        (WebCore::inheritsFromProperty):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type const):
+        (WebCore::SVGStyleElement::media const):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::restart const):
+        (WebCore::SVGSMILElement::fill const):
+        (WebCore::SVGSMILElement::repeatCount const):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp:
+        (WebCore::SVGAnimationColorFunction::colorFromString):
+        * svg/properties/SVGPropertyAnimator.h:
+        (WebCore::SVGPropertyAnimator::adjustForInheritance const):
+
 2020-05-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r260243): [ Mac WK1 ] fast/media/mq-inverted-colors-live-update-for-listener.html is a flaky failure

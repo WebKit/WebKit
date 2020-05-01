@@ -422,7 +422,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(const EventTarget* target) const
 {
-    static NeverDestroyed<AtomString> selector(".snapshot-overlay", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> selector(".snapshot-overlay", AtomString::ConstructFromLiteral);
     auto shadow = userAgentShadowRoot();
     if (!shadow)
         return false;

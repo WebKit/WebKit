@@ -57,7 +57,7 @@ Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, D
 
 const AtomString& HTMLOutputElement::formControlType() const
 {
-    static NeverDestroyed<const AtomString> output("output", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> output("output", AtomString::ConstructFromLiteral);
     return output;
 }
 

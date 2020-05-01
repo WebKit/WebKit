@@ -64,19 +64,19 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueBox);
 
 const AtomString& TextTrackCue::cueShadowPseudoId()
 {
-    static NeverDestroyed<const AtomString> cue("cue", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> cue("cue", AtomString::ConstructFromLiteral);
     return cue;
 }
 
 const AtomString& TextTrackCue::cueBoxShadowPseudoId()
 {
-    static NeverDestroyed<const AtomString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomString::ConstructFromLiteral);
     return trackDisplayBoxShadowPseudoId;
 }
 
 const AtomString& TextTrackCue::cueBackdropShadowPseudoId()
 {
-    static NeverDestroyed<const AtomString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomString::ConstructFromLiteral);
     return cueBackdropShadowPseudoId;
 }
 
@@ -488,8 +488,7 @@ void TextTrackCue::rebuildDisplayTree()
     ScriptDisallowedScope::EventAllowedScope allowedScopeForReferenceTree(*m_cueNode);
 
     if (!m_displayTree) {
-        static NeverDestroyed<const AtomString> webkitGenericCueRootName("-webkit-generic-cue-root", AtomString::ConstructFromLiteral);
-        ASSERT(isMainThread());
+        static MainThreadNeverDestroyed<const AtomString> webkitGenericCueRootName("-webkit-generic-cue-root", AtomString::ConstructFromLiteral);
         m_displayTree = TextTrackCueBox::create(ownerDocument(), *this);
         m_displayTree->setPseudo(webkitGenericCueRootName);
     }

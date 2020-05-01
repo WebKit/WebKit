@@ -41,37 +41,37 @@ namespace WebCore {
 
 const AtomString& AudioTrack::alternativeKeyword()
 {
-    static NeverDestroyed<AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
     return alternative;
 }
 
 const AtomString& AudioTrack::descriptionKeyword()
 {
-    static NeverDestroyed<AtomString> description("description", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> description("description", AtomString::ConstructFromLiteral);
     return description;
 }
 
 const AtomString& AudioTrack::mainKeyword()
 {
-    static NeverDestroyed<AtomString> main("main", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> main("main", AtomString::ConstructFromLiteral);
     return main;
 }
 
 const AtomString& AudioTrack::mainDescKeyword()
 {
-    static NeverDestroyed<AtomString> mainDesc("main-desc", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mainDesc("main-desc", AtomString::ConstructFromLiteral);
     return mainDesc;
 }
 
 const AtomString& AudioTrack::translationKeyword()
 {
-    static NeverDestroyed<AtomString> translation("translation", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> translation("translation", AtomString::ConstructFromLiteral);
     return translation;
 }
 
 const AtomString& AudioTrack::commentaryKeyword()
 {
-    static NeverDestroyed<AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
     return commentary;
 }
 

@@ -57,19 +57,19 @@ const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
     case AutocapitalizeTypeDefault:
         return nullAtom();
     case AutocapitalizeTypeNone: {
-        static NeverDestroyed<const AtomString> valueNone("none", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueNone("none", AtomString::ConstructFromLiteral);
         return valueNone;
     }
     case AutocapitalizeTypeSentences: {
-        static NeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
         return valueSentences;
     }
     case AutocapitalizeTypeWords: {
-        static NeverDestroyed<const AtomString> valueWords("words", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueWords("words", AtomString::ConstructFromLiteral);
         return valueWords;
     }
     case AutocapitalizeTypeAllCharacters: {
-        static NeverDestroyed<const AtomString> valueAllCharacters("characters", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueAllCharacters("characters", AtomString::ConstructFromLiteral);
         return valueAllCharacters;
     }
     }

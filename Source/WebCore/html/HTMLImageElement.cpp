@@ -903,8 +903,8 @@ size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 
 const AtomString& HTMLImageElement::loadingForBindings() const
 {
-    static NeverDestroyed<AtomString> eager("eager", AtomString::ConstructFromLiteral);
-    static NeverDestroyed<AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> eager("eager", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
     auto& attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
     return hasLazyLoadableAttributeValue(attributeValue) ? lazy : eager;
 }

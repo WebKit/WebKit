@@ -74,15 +74,15 @@ const AtomString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
         case SUBMIT: {
-            static NeverDestroyed<const AtomString> submit("submit", AtomString::ConstructFromLiteral);
+            static MainThreadNeverDestroyed<const AtomString> submit("submit", AtomString::ConstructFromLiteral);
             return submit;
         }
         case BUTTON: {
-            static NeverDestroyed<const AtomString> button("button", AtomString::ConstructFromLiteral);
+            static MainThreadNeverDestroyed<const AtomString> button("button", AtomString::ConstructFromLiteral);
             return button;
         }
         case RESET: {
-            static NeverDestroyed<const AtomString> reset("reset", AtomString::ConstructFromLiteral);
+            static MainThreadNeverDestroyed<const AtomString> reset("reset", AtomString::ConstructFromLiteral);
             return reset;
         }
     }
