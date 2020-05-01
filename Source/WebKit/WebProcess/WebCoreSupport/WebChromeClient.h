@@ -276,7 +276,7 @@ private:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier) final;
 #endif
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;
 #endif
 

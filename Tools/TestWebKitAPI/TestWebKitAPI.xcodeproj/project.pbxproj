@@ -113,6 +113,7 @@
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
 		1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CF59AE421E696FB006E37EC /* dark-mode.html */; };
+		1D12BEC0245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */; };
 		1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */; };
 		1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1D67BFD92433DFD8006B5047 /* two-videos.html */; };
 		1DAA52CC243BE805001A3159 /* one-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1DAA52CB243BE621001A3159 /* one-video.html */; };
@@ -1681,6 +1682,7 @@
 		1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle.mm; sourceTree = "<group>"; };
 		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
 		1CF59AE421E696FB006E37EC /* dark-mode.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dark-mode.html"; sourceTree = "<group>"; };
+		1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExitPiPOnSuspendVideoElement.mm; sourceTree = "<group>"; };
 		1D67BFD92433DFD8006B5047 /* two-videos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-videos.html"; sourceTree = "<group>"; };
 		1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreemptVideoFullscreen.mm; sourceTree = "<group>"; };
 		1DAA52CB243BE621001A3159 /* one-video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "one-video.html"; sourceTree = "<group>"; };
@@ -3058,6 +3060,7 @@
 				A15502281E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm */,
 				F44D06461F395C4D001A0E29 /* EditorStateTests.mm */,
 				CDA29B2820FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm */,
+				1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				51242CD42374E61E00EED9C1 /* FindInPageAPI.mm */,
 				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */,
@@ -4873,6 +4876,7 @@
 				7CCE7EF01A411AE600447C4C /* EvaluateJavaScript.cpp in Sources */,
 				5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */,
 				CDA29B2920FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm in Sources */,
+				1D12BEC0245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm in Sources */,
 				315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */,
 				7CCE7EF11A411AE600447C4C /* FailedLoad.cpp in Sources */,
 				579651E7216BFDED006EBFE5 /* FidoHidMessageTest.cpp in Sources */,

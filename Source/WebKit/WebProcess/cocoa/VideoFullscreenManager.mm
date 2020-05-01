@@ -308,7 +308,6 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::
 {
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(%p)", this);
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(&videoElement));
 
@@ -318,10 +317,6 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::
     interface.setTargetIsFullscreen(false);
 
     m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
-#else
-    UNUSED_PARAM(videoElement);
-    UNUSED_PARAM(targetMode);
-#endif
 }
 
 #pragma mark Interface to VideoFullscreenInterfaceContext:

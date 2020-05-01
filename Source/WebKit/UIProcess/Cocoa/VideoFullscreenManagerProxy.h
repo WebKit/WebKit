@@ -132,9 +132,7 @@ public:
 
     void requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
     bool isPlayingVideoInEnhancedFullscreen() const;
-#endif
 
     PlatformVideoFullscreenInterface* controlsManagerInterface();
 
@@ -165,9 +163,7 @@ private:
     void cleanupFullscreen(uint64_t contextId);
     void preparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect);
     void preparedToExitFullscreen(uint64_t contextId);
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-#endif
 
     // Messages to VideoFullscreenManager
     void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);

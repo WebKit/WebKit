@@ -1,3 +1,28 @@
+2020-05-01  Peng Liu  <peng.liu6@apple.com>
+
+        A PiP window doesn’t actually dismiss after the browser navigates to a different page within the same domain
+        https://bugs.webkit.org/show_bug.cgi?id=211257
+
+        Reviewed by Jer Noble.
+
+        When we suspend a video element (this will happen when the browser is navigating to another page
+        within the same domain), we need to request the corresponding video to exit fullscreen/PiP.
+        The operation should be done immediately because the video element won't response to events
+        after it is suspended.
+
+        In r259095, we hold the start of exiting video fullscreen/PiP in HTMLMediaElement::exitFullscreen()
+        until the "webkitendfullscreen" event is dispatched/handled. This behavior does not work if
+        the video element is going to be suspended because the exiting fullscreen operation will be held
+        until the video element is resumed. Therefore, we need to handle that case separately by exiting
+        video fullscreen/PiP immediately.
+
+        API test: PictureInPicture.ExitPiPOnSuspendVideoElement
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::exitFullscreen):
+
 2020-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Introduce struct RowHeight in TableFormattingContext::computeAndDistributeExtraVerticalSpace

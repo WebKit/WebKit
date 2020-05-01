@@ -911,7 +911,8 @@ void VideoFullscreenInterfaceAVKit::enterFullscreen()
 
 void VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
 {
-    m_watchdogTimer.stop();
+    if (m_watchdogTimer.isActive())
+        m_watchdogTimer.stop();
 
     m_targetMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
 

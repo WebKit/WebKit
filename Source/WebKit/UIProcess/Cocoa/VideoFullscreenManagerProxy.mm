@@ -572,13 +572,20 @@ void VideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore::In
 #endif
 }
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
     MESSAGE_CHECK_CONTEXTID(contextId);
+#if PLATFORM(MAC)
     ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
-}
+#else
+    auto& [model, interface] = ensureModelAndInterface(contextId);
+    interface->invalidate();
+    [model->layerHostView() removeFromSuperview];
+    model->setLayerHostView(nullptr);
+    removeClientForContext(contextId);
+    m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, targetMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 #endif
+}
 
 #if PLATFORM(IOS_FAMILY)
 

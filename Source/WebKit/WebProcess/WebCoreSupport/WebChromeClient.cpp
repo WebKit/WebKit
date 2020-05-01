@@ -1030,7 +1030,7 @@ void WebChromeClient::removeMediaUsageManagerSession(MediaSessionIdentifier iden
 }
 #endif // ENABLE(MEDIA_USAGE)
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {

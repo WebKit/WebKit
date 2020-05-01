@@ -6056,14 +6056,10 @@ void HTMLMediaElement::exitFullscreen()
         }
     }
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (document().activeDOMObjectsAreSuspended() || document().activeDOMObjectsAreStopped()) {
         fullscreenModeChanged(VideoFullscreenModeNone);
         document().page()->chrome().client().exitVideoFullscreenToModeWithoutAnimation(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone);
-    }
-    else
-#endif
-    if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
+    } else if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
         if (m_videoFullscreenStandby) {
             fullscreenModeChanged(VideoFullscreenModeNone);
             document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
