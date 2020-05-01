@@ -1,3 +1,16 @@
+2020-05-01  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r260739): Crash when pasting into Mail
+        https://bugs.webkit.org/show_bug.cgi?id=211311
+
+        Reviewed by Wenson Hsieh.
+
+        Speculative fix. Would be much better to create a test case demonstrating it's correct.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedString): Use container node when TextIterator::node
+        returns null.
+
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
         [GTK] Add additional exports to support hidden visibility

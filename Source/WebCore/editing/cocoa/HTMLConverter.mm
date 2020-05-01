@@ -2392,6 +2392,10 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (!currentTextLength)
             continue;
 
+        // In some cases the text iterator emits text that is not associated with a node.
+        // In those cases, base the style on the container.
+        if (!node)
+            node = it.range().start.container.ptr();
         auto renderer = node->renderer();
         ASSERT(renderer);
         if (!renderer)
