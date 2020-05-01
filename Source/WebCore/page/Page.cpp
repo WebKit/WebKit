@@ -942,9 +942,9 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     auto& nodeSet = hitTestResult.listBasedTestResult();
     result.reserveInitialCapacity(nodeSet.size());
     for (auto& node : nodeSet) {
-        if (is<Element>(node) && isEditableTextInputElement(downcast<Element>(*node))) {
-            ASSERT(searchRectInRootViewCoordinates.intersects(downcast<Element>(*node).clientRect()));
-            result.uncheckedAppend(downcast<Element>(*node));
+        if (is<Element>(node) && isEditableTextInputElement(downcast<Element>(node.get()))) {
+            ASSERT(searchRectInRootViewCoordinates.intersects(downcast<Element>(node.get()).clientRect()));
+            result.uncheckedAppend(static_reference_cast<Element>(node));
         }
     }
     return result;

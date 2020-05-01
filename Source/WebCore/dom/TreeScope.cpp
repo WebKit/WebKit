@@ -180,7 +180,7 @@ void TreeScope::removeElementByName(const AtomStringImpl& name, Element& element
 }
 
 
-Node& TreeScope::retargetToScope(Node& node) const
+Ref<Node> TreeScope::retargetToScope(Node& node) const
 {
     auto& scope = node.treeScope();
     if (LIKELY(this == &scope || !node.isInShadowTree()))
@@ -196,8 +196,8 @@ Node& TreeScope::retargetToScope(Node& node) const
     for (auto* currentScope = this; currentScope; currentScope = currentScope->parentTreeScope())
         ancestorScopes.append(currentScope);
 
-    size_t i = nodeTreeScopes.size();
-    size_t j = ancestorScopes.size();
+    auto i = nodeTreeScopes.size();
+    auto j = ancestorScopes.size();
     while (i > 0 && j > 0 && nodeTreeScopes[i - 1] == ancestorScopes[j - 1]) {
         --i;
         --j;
@@ -207,7 +207,7 @@ Node& TreeScope::retargetToScope(Node& node) const
     if (nodeIsInOuterTreeScope)
         return node;
 
-    ShadowRoot& shadowRootInLowestCommonTreeScope = downcast<ShadowRoot>(nodeTreeScopes[i - 1]->rootNode());
+    auto& shadowRootInLowestCommonTreeScope = downcast<ShadowRoot>(nodeTreeScopes[i - 1]->rootNode());
     return *shadowRootInLowestCommonTreeScope.host();
 }
 
@@ -349,7 +349,7 @@ static Optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const
     return WTF::nullopt;
 }
 
-Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
+RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
 {
     auto absolutePoint = absolutePointIfNotClipped(documentScope(), clientPoint);
     if (!absolutePoint)
@@ -368,19 +368,19 @@ RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY)
     if (!document.hasLivingRenderTree())
         return nullptr;
 
-    Node* node = nodeFromPoint(LayoutPoint(clientX, clientY), nullptr);
+    auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr);
     if (!node)
         return nullptr;
 
-    node = &retargetToScope(*node);
+    node = retargetToScope(*node);
     while (!is<Element>(*node)) {
         node = node->parentInComposedTree();
         if (!node)
             break;
-        node = &retargetToScope(*node);
+        node = retargetToScope(*node);
     }
 
-    return downcast<Element>(node);
+    return static_pointer_cast<Element>(node);
 }
 
 Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clientY)
@@ -399,15 +399,16 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     HitTestResult result { absolutePoint.value() };
     documentScope().hitTest(hitType, result);
 
-    Node* lastNode = nullptr;
-    for (const auto& listBasedNode : result.listBasedTestResult()) {
-        Node* node = listBasedNode.get();
-        node = &retargetToScope(*node);
-        while (!is<Element>(*node)) {
+    RefPtr<Node> lastNode;
+    auto& nodeSet = result.listBasedTestResult();
+    elements.reserveInitialCapacity(nodeSet.size());
+    for (auto& listBasedNode : nodeSet) {
+        RefPtr<Node> node = retargetToScope(listBasedNode);
+        while (!is<Element>(node)) {
             node = node->parentInComposedTree();
             if (!node)
                 break;
-            node = &retargetToScope(*node);
+            node = retargetToScope(*node);
         }
 
         if (!node)
@@ -421,7 +422,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
         if (node == lastNode)
             continue;
 
-        elements.append(downcast<Element>(node));
+        elements.append(static_pointer_cast<Element>(node));
         lastNode = node;
     }
 

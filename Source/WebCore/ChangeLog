@@ -1,3 +1,40 @@
+2020-05-01  Daniel Bates  <dabates@apple.com>
+
+        Change HitTestResult::NodeSet from set of RefPtrs to set of Refs
+        https://bugs.webkit.org/show_bug.cgi?id=211306
+
+        Reviewed by Simon Fraser.
+
+        HitTestResult::listBasedTestResult() never returns a set with nullptrs in it.
+        So, change the set declaration from ListHashSet<RefPtr<Node>> to ListHashSet<Ref<Node>>.
+        This way people are not tempted to unnecessarily null check the nodes in the set.
+
+        As I made this change to TreeScope::elementsFromPoint() I noticed that retargetToScope(),
+        which is called by it, returned a Node&. So, I changed it to return a Ref<Node>. That
+        required me to fix up caretRangeFromPoint(), which lead me to fix up nodeFromPoint() as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/EventPath.cpp:
+        (WebCore::RelatedNodeRetargeter::checkConsistency):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::retargetToScope const):
+        (WebCore::TreeScope::nodeFromPoint):
+        (WebCore::TreeScope::elementFromPoint):
+        (WebCore::TreeScope::elementsFromPoint):
+        * dom/TreeScope.h:
+        * page/Page.cpp:
+        (WebCore::Page::editableElementsInRect const):
+        * rendering/HitTestResult.cpp:
+        (WebCore::appendToNodeSet):
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        (WebCore::HitTestResult::addNodeToListBasedTestResultCommon):
+        (WebCore::HitTestResult::append):
+        * rendering/HitTestResult.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect const):
+
 2020-05-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r260962.

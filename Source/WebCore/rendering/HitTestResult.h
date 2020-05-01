@@ -40,7 +40,7 @@ enum class HitTestProgress { Stop, Continue };
 class HitTestResult {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using NodeSet = ListHashSet<RefPtr<Node>>;
+    using NodeSet = ListHashSet<Ref<Node>>;
 
     WEBCORE_EXPORT HitTestResult();
     WEBCORE_EXPORT explicit HitTestResult(const LayoutPoint&);

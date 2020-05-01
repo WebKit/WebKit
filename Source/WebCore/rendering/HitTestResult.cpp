@@ -54,6 +54,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static inline void appendToNodeSet(const HitTestResult::NodeSet& source, HitTestResult::NodeSet& destination)
+{
+    for (auto& node : source)
+        destination.add(node.copyRef());
+}
+
 HitTestResult::HitTestResult() = default;
 
 HitTestResult::HitTestResult(const LayoutPoint& point)
@@ -91,7 +97,10 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_isOverWidget(other.isOverWidget())
 {
     // Only copy the NodeSet in case of list hit test.
-    m_listBasedTestResult = other.m_listBasedTestResult ? makeUnique<NodeSet>(*other.m_listBasedTestResult) : nullptr;
+    if (other.m_listBasedTestResult) {
+        m_listBasedTestResult = makeUnique<NodeSet>();
+        appendToNodeSet(*other.m_listBasedTestResult, *m_listBasedTestResult);
+    }
 }
 
 HitTestResult::~HitTestResult() = default;
@@ -108,7 +117,10 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_isOverWidget = other.isOverWidget();
 
     // Only copy the NodeSet in case of list hit test.
-    m_listBasedTestResult = other.m_listBasedTestResult ? makeUnique<NodeSet>(*other.m_listBasedTestResult) : nullptr;
+    if (other.m_listBasedTestResult) {
+        m_listBasedTestResult = makeUnique<NodeSet>();
+        appendToNodeSet(*other.m_listBasedTestResult, *m_listBasedTestResult);
+    }
 
     return *this;
 }
@@ -634,7 +646,7 @@ inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* n
     if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         node = node->document().ancestorNodeInThisScope(node);
 
-    mutableListBasedTestResult().add(node);
+    mutableListBasedTestResult().add(*node);
 
     if (request.includesAllElementsUnderPoint())
         return HitTestProgress::Continue;
@@ -667,11 +679,8 @@ void HitTestResult::append(const HitTestResult& other, const HitTestRequest& req
         m_isOverWidget = other.isOverWidget();
     }
 
-    if (other.m_listBasedTestResult) {
-        NodeSet& set = mutableListBasedTestResult();
-        for (const auto& node : *other.m_listBasedTestResult)
-            set.add(node.get());
-    }
+    if (other.m_listBasedTestResult)
+        appendToNodeSet(*other.m_listBasedTestResult, mutableListBasedTestResult());
 }
 
 const HitTestResult::NodeSet& HitTestResult::listBasedTestResult() const
