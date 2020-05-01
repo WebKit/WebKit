@@ -1,3 +1,110 @@
+2020-05-01  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Refactor texImage2D and texSubImage2D taking ImageBitmap, ImageData, Image, ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=210766
+
+        Reviewed by Dean Jackson.
+
+        Refactor the texture upload paths taking DOM sources and
+        ArrayBuffers so that texImage/texSubImage and 2D/3D textures are
+        handled with the same entry point. Hook up WebGL 2.0 pixel unpack
+        parameters for selecting sub-rectangles during texture uploads.
+        Refactor context initialization to support WebGL 2.0-specific code
+        paths.
+
+        Remove duplicate code validating the type of the ArrayBufferView
+        passed to readPixels that was added in the patch for Bug 209515,
+        and validation code subsumed by ANGLE.
+
+        With this patch, dozens more texture-related WebGL 2.0 conformance
+        tests are passing completely, including all of those under the
+        directories:
+
+            webgl/2.0.0/conformance2/textures/
+                canvas_sub_rectangle/
+                image_data/
+
+        The svg_image/ tests in this directory demonstrate browser
+        inconsistencies in SVG handling, and are temporarily skipped.
+        These will be investigated in Bug 211220.
+
+        Other conformance tests progress or change results, which is
+        expected until WebGL2RenderingContext is fully implemented.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::create):
+        (WebCore::WebGL2RenderingContext::WebGL2RenderingContext):
+        (WebCore::WebGL2RenderingContext::initializeNewContext):
+        (WebCore::WebGL2RenderingContext::resetUnpackParameters):
+        (WebCore::WebGL2RenderingContext::restoreUnpackParameters):
+        (WebCore::WebGL2RenderingContext::initializeShaderExtensions):
+        (WebCore::WebGL2RenderingContext::getTextureSourceSubRectangle):
+        (WebCore::WebGL2RenderingContext::pixelStorei):
+        (WebCore::WebGL2RenderingContext::texStorage2D):
+        (WebCore::WebGL2RenderingContext::texImage2D):
+        (WebCore::WebGL2RenderingContext::texImage3D):
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        (WebCore::WebGL2RenderingContext::initializeTransformFeedbackBufferCache): Deleted.
+        (WebCore::WebGL2RenderingContext::initializeSamplerCache): Deleted.
+        (WebCore::WebGL2RenderingContext::sliceTypedArrayBufferView): Deleted.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::ScopedUnpackParametersResetRestore::ScopedUnpackParametersResetRestore):
+        (WebCore::ScopedUnpackParametersResetRestore::~ScopedUnpackParametersResetRestore):
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::resetUnpackParameters):
+        (WebCore::WebGLRenderingContextBase::restoreUnpackParameters):
+        (WebCore::WebGLRenderingContextBase::compressedTexImage2D):
+        (WebCore::WebGLRenderingContextBase::compressedTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateSettableTexInternalFormat):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::generateMipmap):
+        (WebCore::WebGLRenderingContextBase::getTexParameter):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::sentinelEmptyRect):
+        (WebCore::WebGLRenderingContextBase::safeGetImageSize):
+        (WebCore::WebGLRenderingContextBase::getImageDataSize):
+        (WebCore::WebGLRenderingContextBase::getTexImageSourceSize):
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        (WebCore::WebGLRenderingContextBase::texImageArrayBufferViewHelper):
+        (WebCore::WebGLRenderingContextBase::texImageImpl):
+        (WebCore::WebGLRenderingContextBase::texImage2DBase):
+        (WebCore::WebGLRenderingContextBase::texSubImage2DBase):
+        (WebCore::WebGLRenderingContextBase::getTexImageFunctionName):
+        (WebCore::WebGLRenderingContextBase::validateTexFunc):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::texSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateArrayBufferType):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncParameters):
+        (WebCore::WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypes):
+        (WebCore::WebGLRenderingContextBase::addExtensionSupportedFormatsAndTypesWebGL2):
+        (WebCore::WebGLRenderingContextBase::validateTexImageSourceFormatAndType):
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D):
+        (WebCore::WebGLRenderingContextBase::drawImageIntoBuffer):
+        (WebCore::WebGLRenderingContextBase::texParameter):
+        (WebCore::WebGLRenderingContextBase::getUnpackPixelStoreParams const):
+        (WebCore::WebGLRenderingContextBase::validateTextureBinding):
+        (WebCore::WebGLRenderingContextBase::validateTexImageBinding):
+        (WebCore::WebGLRenderingContextBase::validateTexture2DBinding):
+        (WebCore::WebGLRenderingContextBase::validateSize):
+        (WebCore::WebGLRenderingContextBase::validateImageBitmap):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::texImageSource2D): Deleted.
+        (WebCore::WebGLRenderingContextBase::texImage2DImpl): Deleted.
+        (WebCore::WebGLRenderingContextBase::texSubImage2DImpl): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::getTextureSourceSize):
+        (WebCore::WebGLRenderingContextBase::validateTexImageSubRectangle):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::isValid const):
+        * platform/graphics/IntRect.h:
+
 2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in CompositeEditCommand::cloneParagraphUnderNewElement when indent 

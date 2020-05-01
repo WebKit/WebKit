@@ -314,7 +314,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/gl-get-tex-
 [ 311: FAIL ] gl.getTexParameter(gl["TEXTURE_2D_ARRAY"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
 [ 312: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
 [ 313: FAIL ] gl.getTexParameter(gl["TEXTURE_3D"], gl["TEXTURE_IMMUTABLE_FORMAT"]) should be false (of type boolean). Was null (of type object).
-[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
+[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors
 [ 315: PASS ] successfullyParsed is true
 [ FAIL ] 266 failures reported
 

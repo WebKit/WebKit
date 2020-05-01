@@ -46,6 +46,9 @@ public:
 
     ~WebGL2RenderingContext();
 
+    // Context state
+    void pixelStorei(GCGLenum pname, GCGLint param) override;
+
     // Buffer objects
     using WebGLRenderingContextBase::bufferData;
     using WebGLRenderingContextBase::bufferSubData;
@@ -247,9 +250,15 @@ private:
 
     bool isWebGL2() const final { return true; }
 
+    void initializeNewContext() final;
+
+    // Set all ES 3.0 unpack parameters to their default value.
+    void resetUnpackParameters() final;
+    // Restore the client's ES 3.0 unpack parameters.
+    void restoreUnpackParameters() final;
+
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
     RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
-    RefPtr<ArrayBufferView> sliceTypedArrayBufferView(const char* const functionName, RefPtr<ArrayBufferView>&, GCGLuint);
 
     void initializeVertexArrayObjects() final;
     GCGLint getMaxDrawBuffers() final;
@@ -264,8 +273,8 @@ private:
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);
     void initializeShaderExtensions();
-    void initializeTransformFeedbackBufferCache();
-    void initializeSamplerCache();
+
+    IntRect getTextureSourceSubRectangle(GLsizei width, GLsizei height);
 
 #if !USE(ANGLE)
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
@@ -279,6 +288,12 @@ private:
     HashMap<GCGLenum, RefPtr<WebGLQuery>> m_activeQueries;
 
     Vector<RefPtr<WebGLSampler>> m_boundSamplers;
+
+    GCGLint m_unpackSkipPixels { 0 };
+    GCGLint m_unpackSkipRows { 0 };
+    GCGLint m_unpackRowLength { 0 };
+    GCGLint m_unpackImageHeight { 0 };
+    GCGLint m_unpackSkipImages { 0 };
 };
 
 } // namespace WebCore

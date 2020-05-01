@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "LayoutRect.h"
 #include <algorithm>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -144,6 +145,17 @@ IntSize IntRect::differenceToPoint(const IntPoint& point) const
     int xdistance = distanceToInterval(point.x(), x(), maxX());
     int ydistance = distanceToInterval(point.y(), y(), maxY());
     return IntSize(xdistance, ydistance);
+}
+
+bool IntRect::isValid() const
+{
+    Checked<int, RecordOverflow> max = m_location.x();
+    max += m_size.width();
+    if (max.hasOverflowed())
+        return false;
+    max = m_location.y();
+    max += m_size.height();
+    return !max.hasOverflowed();
 }
 
 TextStream& operator<<(TextStream& ts, const IntRect& r)

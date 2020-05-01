@@ -1,3 +1,200 @@
+2020-05-01  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Refactor texImage2D and texSubImage2D taking ImageBitmap, ImageData, Image, ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=210766
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline WebGL layout tests affected by this patch.
+
+            webgl/2.0.0/conformance2/textures/
+                canvas_sub_rectangle/
+                image_data/
+
+        are now passing completely. Some of the individual tests in these
+        directories were skipped in earlier patches and will be re-enabled
+        in a subsequent patch.
+
+        Skip webgl/2.0.0/conformance2/textures/svg_image due to possible
+        bugs in the tests. These failures will be investigated in Bug
+        211220.
+
+        Fix bug in fast/canvas/webgl/gl-enum-tests.html where
+        INVALID_OPERATION rather than INVALID_ENUM is possible.
+
+        Other conformance tests progress or change results, which is
+        expected until WebGL2RenderingContext is fully implemented.
+
+        * TestExpectations:
+        * fast/canvas/webgl/gl-enum-tests-expected.txt:
+        * fast/canvas/webgl/gl-enum-tests.html:
+        * webgl/2.0.0/conformance2/misc/views-with-offsets-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb16f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb16f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb565-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb565-rgb-unsigned_short_5_6_5-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb5_a1-rgba-unsigned_short_5_5_5_1-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb9_e5-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb9_e5-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba4-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba4-rgba-unsigned_short_4_4_4_4-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb16f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb16f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb32f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb565-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb565-rgb-unsigned_short_5_6_5-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb5_a1-rgba-unsigned_short_5_5_5_1-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb9_e5-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb9_e5-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba4-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba4-rgba-unsigned_short_4_4_4_4-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb16f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb16f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb32f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb565-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb565-rgb-unsigned_short_5_6_5-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb5_a1-rgba-unsigned_short_5_5_5_1-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb9_e5-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgb9_e5-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba4-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba4-rgba-unsigned_short_4_4_4_4-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-3d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-2d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r8-red-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb16f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb16f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb32f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb565-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb565-rgb-unsigned_short_5_6_5-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb5_a1-rgba-unsigned_short_5_5_5_1-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb9_e5-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgb9_e5-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba16f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba16f-rgba-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba32f-rgba-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba4-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba4-rgba-unsigned_short_4_4_4_4-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-rgba8ui-rgba_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-srgb8-rgb-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/image_data/tex-3d-srgb8_alpha8-rgba-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-webgl-specific-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/gl-get-tex-parameter-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-and-sub-image-with-array-buffer-view-sub-source-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-with-different-data-source-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-unpack-params-expected.txt:
+
 2020-05-01  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in CompositeEditCommand::cloneParagraphUnderNewElement when indent

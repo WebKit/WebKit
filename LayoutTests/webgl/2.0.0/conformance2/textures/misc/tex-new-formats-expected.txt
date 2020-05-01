@@ -856,40 +856,40 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-new-for
 [ 853: PASS ] getError was expected value: NO_ERROR : texStorage3D should succeed
 [ 854: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable-format texture
 [ 855: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail on immutable-format texture with data of wrong type
-[ 856: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage2D should succeed with sized internalformat
+[ 856: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 857: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
-[ 858: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed
+[ 858: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
 [ 859: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 860: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
-[ 861: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable-format texture
+[ 861: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable-format texture
 [ 862: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail on immutable-format texture with data of wrong type
-[ 863: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage2D should succeed with sized internalformat
+[ 863: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 864: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
-[ 865: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed
+[ 865: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
 [ 866: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 867: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
-[ 868: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable-format texture
+[ 868: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable-format texture
 [ 869: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail on immutable-format texture with data of wrong type
-[ 870: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage2D should succeed with sized internalformat
+[ 870: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 871: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
-[ 872: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed
+[ 872: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
 [ 873: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 874: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
-[ 875: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable-format texture
+[ 875: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable-format texture
 [ 876: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail on immutable-format texture with data of wrong type
-[ 877: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage2D should succeed with sized internalformat
+[ 877: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 878: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
-[ 879: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed
+[ 879: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
 [ 880: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 881: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
-[ 882: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable-format texture
+[ 882: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable-format texture
 [ 883: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail on immutable-format texture with data of wrong type
-[ 884: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage2D should succeed with sized internalformat
+[ 884: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 885: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
-[ 886: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed
+[ 886: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed
 [ 887: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail with data of wrong type
 [ 888: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
-[ 889: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable-format texture
+[ 889: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable-format texture
 [ 890: PASS ] getError was expected value: INVALID_OPERATION : texSubImage2D should fail on immutable-format texture with data of wrong type
 [ 891: PASS ] getError was expected value: NO_ERROR : texImage2D should succeed with sized internalformat
 [ 892: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail with sized internalformat and data of wrong type
@@ -960,5 +960,5 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-new-for
 [ 957: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : texSubImage3D should fail with data of wrong type
 [ 958: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 959: PASS ] successfullyParsed is true
-[ FAIL ] 283 failures reported
+[ FAIL ] 268 failures reported
 

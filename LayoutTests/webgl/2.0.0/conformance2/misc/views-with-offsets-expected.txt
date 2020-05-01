@@ -47,7 +47,7 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 44: PASS ] Should be 2047, was 2047.
 [ 45: PASS ] getError was expected value: INVALID_OPERATION :
 [ 46: PASS ] getError was expected value: INVALID_OPERATION :
-[ 47: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
+[ 47: PASS ] getError was expected value: NO_ERROR :
 [ 48: PASS ] getError was expected value: NO_ERROR :
 [ 49: PASS ] Should be [0, 1, 1, 2], was [0, 1, 1, 2].
 [ 50: PASS ] getError was expected value: NO_ERROR :
@@ -84,16 +84,16 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 81: PASS ] getError was expected value: INVALID_OPERATION :
 [ 82: PASS ] getError was expected value: INVALID_OPERATION :
 [ 83: PASS ] getError was expected value: INVALID_OPERATION :
-[ 84: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE :
-[ 85: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 84: PASS ] getError was expected value: INVALID_OPERATION :
+[ 85: PASS ] getError was expected value: NO_ERROR :
 [ 86: PASS ] getError was expected value: NO_ERROR :
 [ 87: PASS ] Should be 65504, was 65504.
 [ 88: PASS ] getError was expected value: NO_ERROR :
 [ 89: PASS ] getError was expected value: NO_ERROR :
 [ 90: PASS ] Should be 2047, was 2047.
 [ 91: PASS ] getError was expected value: INVALID_OPERATION :
-[ 92: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE :
-[ 93: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
+[ 92: PASS ] getError was expected value: INVALID_OPERATION :
+[ 93: PASS ] getError was expected value: NO_ERROR :
 [ 94: PASS ] getError was expected value: NO_ERROR :
 [ 95: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 255].
 [ 96: PASS ] getError was expected value: NO_ERROR :
@@ -156,5 +156,5 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 153: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
 [ 154: FAIL ] Does not support doReadPixels with offsets into views.
 [ 155: PASS ] successfullyParsed is true
-[ FAIL ] 39 failures reported
+[ FAIL ] 34 failures reported
 

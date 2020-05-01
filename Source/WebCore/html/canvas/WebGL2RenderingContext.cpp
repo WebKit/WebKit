@@ -74,6 +74,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
+    // This context is pending policy resolution, so don't call initializeNewContext on it yet.
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
@@ -83,6 +84,8 @@ std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBas
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, Ref<GraphicsContextGLOpenGL>&& context, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(context), attributes));
+    // This is virtual and can't be called in the constructor.
+    renderingContext->initializeNewContext();
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
@@ -99,11 +102,6 @@ WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsC
 {
     if (isContextLost())
         return;
-
-    initializeShaderExtensions();
-    initializeVertexArrayObjects();
-    initializeTransformFeedbackBufferCache();
-    initializeSamplerCache();
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
@@ -113,6 +111,81 @@ WebGL2RenderingContext::~WebGL2RenderingContext()
     m_boundTransformFeedback = nullptr;
     m_boundTransformFeedbackBuffers.clear();
     m_activeQueries.clear();
+}
+
+void WebGL2RenderingContext::initializeNewContext()
+{
+    // FIXME: NEEDS_PORT
+    ASSERT(!isContextLost());
+
+    m_readFramebufferBinding = nullptr;
+
+    m_boundCopyReadBuffer = nullptr;
+    m_boundCopyWriteBuffer = nullptr;
+    m_boundPixelPackBuffer = nullptr;
+    m_boundPixelUnpackBuffer = nullptr;
+    m_boundTransformFeedbackBuffer = nullptr;
+    m_boundUniformBuffer = nullptr;
+
+    // NEEDS_PORT: boolean occlusion query, transform feedback primitives written query, elapsed query
+
+    int maxTransformFeedbackAttribs = getIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
+    ASSERT(maxTransformFeedbackAttribs >= 4);
+    m_boundTransformFeedbackBuffers.resize(maxTransformFeedbackAttribs);
+
+    // NEEDS_PORT: set up default transform feedback object
+
+    // NEEDS_PORT: set up bound indexed uniform buffers, max bound uniform buffer index
+
+    // NEEDS_PORT: set up pack parameters: row length, skip pixels, skip rows
+
+    m_unpackRowLength = 0;
+    m_unpackImageHeight = 0;
+    m_unpackSkipPixels = 0;
+    m_unpackSkipRows = 0;
+    m_unpackSkipImages = 0;
+
+    WebGLRenderingContextBase::initializeNewContext();
+
+    // These rely on initialization done in the superclass.
+    ASSERT(m_textureUnits.size() >= 8);
+    m_boundSamplers.clear();
+    m_boundSamplers.resize(m_textureUnits.size());
+
+    // FIXME: this should likely be removed.
+    initializeShaderExtensions();
+}
+
+void WebGL2RenderingContext::resetUnpackParameters()
+{
+    WebGLRenderingContextBase::resetUnpackParameters();
+
+    if (m_unpackRowLength)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, 0);
+    if (m_unpackImageHeight)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, 0);
+    if (m_unpackSkipPixels)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, 0);
+    if (m_unpackSkipRows)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, 0);
+    if (m_unpackSkipImages)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, 0);
+}
+
+void WebGL2RenderingContext::restoreUnpackParameters()
+{
+    WebGLRenderingContextBase::restoreUnpackParameters();
+
+    if (m_unpackRowLength)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, m_unpackRowLength);
+    if (m_unpackImageHeight)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, m_unpackImageHeight);
+    if (m_unpackSkipPixels)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, m_unpackSkipPixels);
+    if (m_unpackSkipRows)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, m_unpackSkipRows);
+    if (m_unpackSkipImages)
+        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, m_unpackSkipImages);
 }
 
 void WebGL2RenderingContext::initializeVertexArrayObjects()
@@ -132,24 +205,16 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
 
 void WebGL2RenderingContext::initializeShaderExtensions()
 {
+    // FIXME: these are in the WebGL 2.0 core API and should be removed.
     m_context->getExtensions().ensureEnabled("GL_OES_standard_derivatives");
     m_context->getExtensions().ensureEnabled("GL_EXT_draw_buffers");
     m_context->getExtensions().ensureEnabled("GL_EXT_shader_texture_lod");
     m_context->getExtensions().ensureEnabled("GL_EXT_frag_depth");
 }
 
-void WebGL2RenderingContext::initializeTransformFeedbackBufferCache()
+IntRect WebGL2RenderingContext::getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height)
 {
-    int maxTransformFeedbackAttribs = getIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
-    ASSERT(maxTransformFeedbackAttribs >= 4);
-
-    m_boundTransformFeedbackBuffers.resize(maxTransformFeedbackAttribs);
-}
-
-void WebGL2RenderingContext::initializeSamplerCache()
-{
-    ASSERT(m_textureUnits.size() >= 8);
-    m_boundSamplers.resize(m_textureUnits.size());
+    return IntRect(m_unpackSkipPixels, m_unpackSkipRows, width, height);
 }
 
 RefPtr<ArrayBufferView> WebGL2RenderingContext::arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte,  unsigned numElements)
@@ -202,6 +267,39 @@ RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceArrayBufferView(const char*
     }
 
     return arrayBufferViewSliceFactory(functionName, data, data.byteOffset() + checkedByteSrcOffset.unsafeGet(), length);
+}
+
+void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
+{
+    if (isContextLostOrPending())
+        return;
+    if (param < 0) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "pixelStorei", "negative value");
+        return;
+    }
+    // FIXME: NEEDS_PORT
+    // Hook up WebGL 2.0 pack parameters.
+    switch (pname) {
+    case GraphicsContextGL::UNPACK_ROW_LENGTH:
+        m_unpackRowLength = param;
+        break;
+    case GraphicsContextGL::UNPACK_IMAGE_HEIGHT:
+        m_unpackImageHeight = param;
+        break;
+    case GraphicsContextGL::UNPACK_SKIP_PIXELS:
+        m_unpackSkipPixels = param;
+        break;
+    case GraphicsContextGL::UNPACK_SKIP_ROWS:
+        m_unpackSkipRows = param;
+        break;
+    case GraphicsContextGL::UNPACK_SKIP_IMAGES:
+        m_unpackSkipImages = param;
+        break;
+    default:
+        WebGLRenderingContextBase::pixelStorei(pname, param);
+        return;
+    }
+    m_context->pixelStorei(pname, param);
 }
 
 void WebGL2RenderingContext::bufferData(GCGLenum target, const ArrayBufferView& data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length)
@@ -634,7 +732,7 @@ void WebGL2RenderingContext::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
     if (isContextLostOrPending())
         return;
 
-    auto texture = validateTextureBinding("texStorage2D", target, false);
+    auto texture = validateTextureBinding("texStorage2D", target);
     if (!texture)
         return;
 
@@ -725,39 +823,16 @@ ExceptionOr<void> WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint le
 
     // FIXME: Generate INVALID_OPERATION if a WebGLBuffer is bound to PIXEL_UNPACK_BUFFER.
 
-    return WebGLRenderingContextBase::texImageSource2D(target, level, internalformat, width, height, border, format, type, WTFMove(source));
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexImage2D, target, level, internalformat, border, format, type, 0, 0, 0, getTextureSourceSubRectangle(width, height), 1, 0, WTFMove(source));
 }
 
-RefPtr<ArrayBufferView> WebGL2RenderingContext::sliceTypedArrayBufferView(const char* const functionName, RefPtr<ArrayBufferView>& srcData, GCGLuint srcOffset)
-{
-    if (!srcData)
-        return nullptr;
-
-    if (!isTypedView(srcData->getType())) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid type of ArrayBufferView");
-        return nullptr;
-    }
-
-    auto elementSize = JSC::elementSize(srcData->getType());
-    auto startingByte = WTF::checkedProduct<unsigned>(elementSize, srcOffset);
-    if (startingByte.hasOverflowed() || startingByte >= srcData->byteLength()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "Invalid element offset!");
-        return nullptr;
-    }
-
-    auto numElements = (srcData->byteLength() - startingByte.unsafeGet()) / elementSize;
-
-    return arrayBufferViewSliceFactory(functionName, *srcData, startingByte.unsafeGet(), numElements);
-}
-
-void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLint internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData, GCGLuint srcOffset)
+void WebGL2RenderingContext::texImage2D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData, GCGLuint srcOffset)
 {
     if (isContextLostOrPending())
         return;
 
-    auto slicedData = sliceTypedArrayBufferView("texImage2D", srcData, srcOffset);
-
-    WebGLRenderingContextBase::texImage2D(target, level, internalFormat, width, height, border, format, type, WTFMove(slicedData));
+    // FIXME: NEEDS_PORT: check for bound pixel unpack buffer and fail if present.
+    texImageArrayBufferViewHelper(TexImageFunctionID::TexImage2D, target, level, internalformat, width, height, 1, border, format, type, 0, 0, 0, WTFMove(srcData), NullNotReachable, srcOffset);
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, GCGLint64)
@@ -765,10 +840,13 @@ void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, G
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(PIXEL_UNPACK_BUFFER)");
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, TexImageSource&& source)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texImage3D(TexImageSource)");
-    return { };
+    if (isContextLostOrPending())
+        return { };
+
+    // FIXME: NEEDS_PORT: check for bound pixel unpack buffer and fail if present.
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexImage3D, target, level, internalformat, border, format, type, 0, 0, 0, getTextureSourceSubRectangle(width, height), depth, m_unpackImageHeight, WTFMove(source));
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLint, GCGLenum, GCGLenum, RefPtr<ArrayBufferView>&&)
@@ -786,10 +864,13 @@ void WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, 
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D(PIXEL_UNPACK_BUFFER)");
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, TexImageSource&& source)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage2D(TexImageSource)");
-    return { };
+    if (isContextLostOrPending())
+        return { };
+
+    // FIXME: NEEDS_PORT: check for bound pixel unpack buffer and fail if present.
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexSubImage2D, target, level, 0, 0, format, type, xoffset, yoffset, 0, getTextureSourceSubRectangle(width, height), 1, 0, WTFMove(source));
 }
 
 void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData, GCGLuint srcOffset)
@@ -797,9 +878,8 @@ void WebGL2RenderingContext::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
     if (isContextLostOrPending())
         return;
 
-    auto slicedData = sliceTypedArrayBufferView("texSubImage2D", srcData, srcOffset);
-
-    WebGLRenderingContextBase::texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, WTFMove(slicedData));
+    // FIXME: NEEDS_PORT: check for bound pixel unpack buffer and fail if present.
+    texImageArrayBufferViewHelper(TexImageFunctionID::TexSubImage2D, target, level, 0, width, height, 1, 0, format, type, xoffset, yoffset, 0, WTFMove(srcData), NullNotReachable, srcOffset);
 }
 
 void WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLint64)
@@ -812,10 +892,13 @@ void WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, 
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D(ArrayBufferView, srcOffset)");
 }
 
-ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, TexImageSource&&)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, TexImageSource&& source)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] texSubImage3D(TexImageSource)");
-    return { };
+    if (isContextLostOrPending())
+        return { };
+
+    // FIXME: NEEDS_PORT: check for bound pixel unpack buffer and fail if present.
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexSubImage3D, target, level, 0, 0, format, type, xoffset, yoffset, zoffset, getTextureSourceSubRectangle(width, height), depth, m_unpackImageHeight, WTFMove(source));
 }
 
 void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLint, GCGLsizei, GCGLsizei)

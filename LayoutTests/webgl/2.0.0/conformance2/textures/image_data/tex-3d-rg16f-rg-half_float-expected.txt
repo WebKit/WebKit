@@ -18,7 +18,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 15: PASS ] should be 0,0,0
 [ 16: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 17: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 19: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 20: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 21: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -28,7 +28,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 25: PASS ] should be 0,0,0
 [ 26: PASS ] should be 0,0,0
 [ 27: PASS ] should be 0,0,0
-[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 28: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 29: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 30: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 31: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -38,7 +38,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 35: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 36: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 37: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 39: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 40: PASS ] should be 0,0,0
 [ 41: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -60,7 +60,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 57: PASS ] should be 0,0,0
 [ 58: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 59: PASS ] should be 0,0,0
-[ 60: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 60: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 61: PASS ] should be 0,0,0
 [ 62: PASS ] should be 0,0,0
 [ 63: PASS ] should be 0,0,0
@@ -70,7 +70,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 67: PASS ] should be 0,0,0
 [ 68: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 69: PASS ] should be 0,0,0
-[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 71: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 72: PASS ] should be 0,0,0
 [ 73: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -92,7 +92,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 89: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 90: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 91: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 92: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 92: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 93: PASS ] should be 0,0,0
 [ 94: PASS ] should be 0,0,0
 [ 95: PASS ] should be 0,0,0
@@ -102,7 +102,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 99: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 100: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 101: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
-[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 103: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 104: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 105: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -112,7 +112,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 109: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 110: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 111: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 112: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 112: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 113: PASS ] should be 0,0,0
 [ 114: PASS ] should be 0,0,0
 [ 115: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -134,7 +134,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 131: PASS ] should be 0,0,0
 [ 132: PASS ] should be 0,0,0
 [ 133: PASS ] should be 0,0,0
-[ 134: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 134: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 135: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 136: PASS ] should be 0,0,0
 [ 137: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -144,7 +144,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 141: PASS ] should be 0,0,0
 [ 142: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 143: PASS ] should be 0,0,0
-[ 144: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 144: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 145: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 146: PASS ] should be 0,0,0
 [ 147: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -166,7 +166,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 163: PASS ] should be 0,0,0
 [ 164: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 165: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 166: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 166: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 167: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 168: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 169: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -176,7 +176,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 173: PASS ] should be 0,0,0
 [ 174: PASS ] should be 0,0,0
 [ 175: PASS ] should be 0,0,0
-[ 176: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 176: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 177: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 178: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 179: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -186,7 +186,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 183: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 184: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 185: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 186: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 186: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 187: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 188: PASS ] should be 0,0,0
 [ 189: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -208,7 +208,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 205: PASS ] should be 0,0,0
 [ 206: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 207: PASS ] should be 0,0,0
-[ 208: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 208: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 209: PASS ] should be 0,0,0
 [ 210: PASS ] should be 0,0,0
 [ 211: PASS ] should be 0,0,0
@@ -218,7 +218,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 215: PASS ] should be 0,0,0
 [ 216: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 217: PASS ] should be 0,0,0
-[ 218: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 218: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 219: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 220: PASS ] should be 0,0,0
 [ 221: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -240,7 +240,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 237: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 238: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 239: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 240: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 240: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 241: PASS ] should be 0,0,0
 [ 242: PASS ] should be 0,0,0
 [ 243: PASS ] should be 0,0,0
@@ -250,7 +250,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 247: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 248: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 249: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
-[ 250: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 250: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 251: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 252: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 253: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -260,7 +260,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 257: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 258: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 259: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 260: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 260: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 261: PASS ] should be 0,0,0
 [ 262: PASS ] should be 0,0,0
 [ 263: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -282,7 +282,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 279: PASS ] should be 0,0,0
 [ 280: PASS ] should be 0,0,0
 [ 281: PASS ] should be 0,0,0
-[ 282: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 282: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 283: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 284: PASS ] should be 0,0,0
 [ 285: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -292,7 +292,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 289: PASS ] should be 0,0,0
 [ 290: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 291: PASS ] should be 0,0,0
-[ 292: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 292: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 293: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 294: PASS ] should be 0,0,0
 [ 295: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -314,7 +314,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 311: PASS ] should be 0,0,0
 [ 312: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 313: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 314: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 315: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 316: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 317: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -324,7 +324,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 321: PASS ] should be 0,0,0
 [ 322: PASS ] should be 0,0,0
 [ 323: PASS ] should be 0,0,0
-[ 324: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 324: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 325: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 326: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 327: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -334,7 +334,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 331: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 332: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 333: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 334: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 334: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 335: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 336: PASS ] should be 0,0,0
 [ 337: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -356,7 +356,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 353: PASS ] should be 0,0,0
 [ 354: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 355: PASS ] should be 0,0,0
-[ 356: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 356: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 357: PASS ] should be 0,0,0
 [ 358: PASS ] should be 0,0,0
 [ 359: PASS ] should be 0,0,0
@@ -366,7 +366,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 363: PASS ] should be 0,0,0
 [ 364: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 365: PASS ] should be 0,0,0
-[ 366: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 366: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 367: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 368: PASS ] should be 0,0,0
 [ 369: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -388,7 +388,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 385: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 386: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 387: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 388: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 388: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 389: PASS ] should be 0,0,0
 [ 390: PASS ] should be 0,0,0
 [ 391: PASS ] should be 0,0,0
@@ -398,7 +398,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 395: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 396: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 397: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
-[ 398: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 398: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 399: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 400: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 401: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -408,7 +408,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 405: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 406: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 407: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 408: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 408: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 409: PASS ] should be 0,0,0
 [ 410: PASS ] should be 0,0,0
 [ 411: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -430,7 +430,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 427: PASS ] should be 0,0,0
 [ 428: PASS ] should be 0,0,0
 [ 429: PASS ] should be 0,0,0
-[ 430: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 430: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 431: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 432: PASS ] should be 0,0,0
 [ 433: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -440,7 +440,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 437: PASS ] should be 0,0,0
 [ 438: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 439: PASS ] should be 0,0,0
-[ 440: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 440: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 441: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 442: PASS ] should be 0,0,0
 [ 443: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -462,7 +462,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 459: PASS ] should be 0,0,0
 [ 460: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 461: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 462: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 462: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 463: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 464: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 465: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -472,7 +472,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 469: PASS ] should be 0,0,0
 [ 470: PASS ] should be 0,0,0
 [ 471: PASS ] should be 0,0,0
-[ 472: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 472: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 473: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 474: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 475: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -482,7 +482,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 479: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 480: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 481: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 482: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 482: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 483: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 484: PASS ] should be 0,0,0
 [ 485: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -504,7 +504,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 501: PASS ] should be 0,0,0
 [ 502: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 503: PASS ] should be 0,0,0
-[ 504: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 504: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 505: PASS ] should be 0,0,0
 [ 506: PASS ] should be 0,0,0
 [ 507: PASS ] should be 0,0,0
@@ -514,7 +514,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 511: PASS ] should be 0,0,0
 [ 512: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 513: PASS ] should be 0,0,0
-[ 514: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 514: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 515: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 516: PASS ] should be 0,0,0
 [ 517: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -536,7 +536,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 533: FAIL ] should be 255,0,0 at (8, 24) expected: 255,0,0 was 0,0,0
 [ 534: FAIL ] should be 0,255,0 at (16, 24) expected: 0,255,0 was 0,0,0
 [ 535: FAIL ] should be 0,255,0 at (24, 24) expected: 0,255,0 was 0,0,0
-[ 536: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 536: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 537: PASS ] should be 0,0,0
 [ 538: PASS ] should be 0,0,0
 [ 539: PASS ] should be 0,0,0
@@ -546,7 +546,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 543: FAIL ] should be 255,0,0 at (16, 0) expected: 255,0,0 was 0,0,0
 [ 544: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
 [ 545: FAIL ] should be 255,0,0 at (16, 16) expected: 255,0,0 was 0,0,0
-[ 546: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 546: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 547: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 548: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 549: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
@@ -556,7 +556,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 553: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
 [ 554: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 555: FAIL ] should be 0,255,0 at (16, 16) expected: 0,255,0 was 0,0,0
-[ 556: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 556: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 557: PASS ] should be 0,0,0
 [ 558: PASS ] should be 0,0,0
 [ 559: FAIL ] should be 0,255,0 at (16, 0) expected: 0,255,0 was 0,0,0
@@ -578,7 +578,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 575: PASS ] should be 0,0,0
 [ 576: PASS ] should be 0,0,0
 [ 577: PASS ] should be 0,0,0
-[ 578: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 578: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 579: FAIL ] should be 255,0,0 at (0, 0) expected: 255,0,0 was 0,0,0
 [ 580: PASS ] should be 0,0,0
 [ 581: FAIL ] should be 255,0,0 at (0, 16) expected: 255,0,0 was 0,0,0
@@ -588,12 +588,12 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/image_data/tex-3
 [ 585: PASS ] should be 0,0,0
 [ 586: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 587: PASS ] should be 0,0,0
-[ 588: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors from texture upload
+[ 588: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : should be no errors from texture upload
 [ 589: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 0,0,0
 [ 590: PASS ] should be 0,0,0
 [ 591: FAIL ] should be 0,255,0 at (0, 16) expected: 0,255,0 was 0,0,0
 [ 592: PASS ] should be 0,0,0
-[ 593: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 593: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : should be no errors
 [ 594: PASS ] successfullyParsed is true
-[ FAIL ] 368 failures reported
+[ FAIL ] 369 failures reported
 

@@ -10,7 +10,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 7: PASS ] getError was expected value: NO_ERROR : no error
 [ 8: PASS ] texture data uploaded correctly
 [ 9: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 10: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 11: PASS ] getError was expected value: NO_ERROR : no error
 [ 12: FAIL ] Element 1: expected 1, got 0
 [ 13: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -26,7 +26,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 23: PASS ] getError was expected value: NO_ERROR : no error
 [ 24: PASS ] texture data uploaded correctly
 [ 25: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 26: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 26: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 27: PASS ] getError was expected value: NO_ERROR : no error
 [ 28: FAIL ] Element 1: expected 1, got 0
 [ 29: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -42,7 +42,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 39: PASS ] getError was expected value: NO_ERROR : no error
 [ 40: PASS ] texture data uploaded correctly
 [ 41: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 42: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 42: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 43: PASS ] getError was expected value: NO_ERROR : no error
 [ 44: FAIL ] Element 1: expected 1, got 0
 [ 45: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -58,7 +58,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 55: PASS ] getError was expected value: NO_ERROR : no error
 [ 56: PASS ] texture data uploaded correctly
 [ 57: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 58: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 58: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 59: PASS ] getError was expected value: NO_ERROR : no error
 [ 60: FAIL ] Element 1: expected 1, got 0
 [ 61: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -74,7 +74,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 71: PASS ] getError was expected value: NO_ERROR : no error
 [ 72: PASS ] texture data uploaded correctly
 [ 73: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 74: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 74: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 75: PASS ] getError was expected value: NO_ERROR : no error
 [ 76: FAIL ] Element 1: expected 1, got 0
 [ 77: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -90,7 +90,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 87: PASS ] getError was expected value: NO_ERROR : no error
 [ 88: PASS ] texture data uploaded correctly
 [ 89: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 90: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 90: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 91: PASS ] getError was expected value: NO_ERROR : no error
 [ 92: FAIL ] Element 1: expected 1, got 0
 [ 93: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -106,7 +106,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 103: PASS ] getError was expected value: NO_ERROR : no error
 [ 104: PASS ] texture data uploaded correctly
 [ 105: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : srcOffset too large
-[ 106: PASS ] getError was expected value: NO_ERROR : texImage3D succeeds with correct buffer and srcOffset
+[ 106: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texImage3D succeeds with correct buffer and srcOffset
 [ 107: PASS ] getError was expected value: NO_ERROR : no error
 [ 108: FAIL ] Element 1: expected 1.0000000591389835, got 0
 [ 109: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : srcOffset too large
@@ -114,5 +114,5 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-a
 [ 111: PASS ] getError was expected value: NO_ERROR : no error
 [ 112: FAIL ] Element 1: expected 1.0000000591389835, got 0
 [ 113: PASS ] successfullyParsed is true
-[ FAIL ] 28 failures reported
+[ FAIL ] 35 failures reported
 
