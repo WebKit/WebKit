@@ -164,13 +164,13 @@ Value* Procedure::addBoolConstant(Origin origin, TriState triState)
 {
     int32_t value = 0;
     switch (triState) {
-    case FalseTriState:
+    case TriState::False:
         value = 0;
         break;
-    case TrueTriState:
+    case TriState::True:
         value = 1;
         break;
-    case MixedTriState:
+    case TriState::Indeterminate:
         return nullptr;
     }
 

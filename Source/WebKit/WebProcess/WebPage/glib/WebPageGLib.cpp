@@ -83,13 +83,13 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 #if PLATFORM(GTK)
     const Editor& editor = frame.editor();
     if (selection.isRange()) {
-        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold") == TrueTriState)
+        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold") == TriState::True)
             postLayoutData.typingAttributes |= AttributeBold;
-        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic") == TrueTriState)
+        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic") == TriState::True)
             postLayoutData.typingAttributes |= AttributeItalics;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") == TrueTriState)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") == TriState::True)
             postLayoutData.typingAttributes |= AttributeUnderline;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through") == TrueTriState)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through") == TriState::True)
             postLayoutData.typingAttributes |= AttributeStrikeThrough;
     } else if (selection.isCaret()) {
         if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"))

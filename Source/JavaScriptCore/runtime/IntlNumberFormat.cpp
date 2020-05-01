@@ -283,7 +283,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     TriState useGrouping = intlBooleanOption(globalObject, options, Identifier::fromString(vm, "useGrouping"));
     RETURN_IF_EXCEPTION(scope, void());
-    m_useGrouping = useGrouping != FalseTriState;
+    m_useGrouping = useGrouping != TriState::False;
 
     UNumberFormatStyle style = UNUM_DEFAULT;
     switch (m_style) {

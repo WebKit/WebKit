@@ -139,7 +139,7 @@ public:
     Value* addBottom(Origin, Type);
     Value* addBottom(Value*);
 
-    // Returns null for MixedTriState.
+    // Returns null for TriState::Indeterminate.
     Value* addBoolConstant(Origin, TriState);
 
     void resetValueOwners();

@@ -2835,7 +2835,7 @@ void WebPage::validateCommand(const String& commandName, CallbackID callbackID)
         isEnabled = pluginView->isEditingCommandEnabled(commandName);
     else {
         Editor::Command command = frame.editor().command(commandName);
-        state = command.state();
+        state = (command.state() != TriState::False);
         isEnabled = command.isSupported() && command.isEnabled();
     }
 

@@ -3487,22 +3487,22 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 RELEASE_ASSERT_NOT_REACHED();
             }
 
-            TriState isLittleEndian = MixedTriState;
+            TriState isLittleEndian = TriState::Indeterminate;
             Node* littleEndianChild = nullptr;
             if (byteSize > 1) {
                 if (argumentCountIncludingThis < 3)
-                    isLittleEndian = FalseTriState;
+                    isLittleEndian = TriState::False;
                 else {
                     littleEndianChild = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
                         if (constant) {
                             isLittleEndian = constant.pureToBoolean();
-                            if (isLittleEndian != MixedTriState)
+                            if (isLittleEndian != TriState::Indeterminate)
                                 littleEndianChild = nullptr;
                         }
                     } else
-                        isLittleEndian = MixedTriState;
+                        isLittleEndian = TriState::Indeterminate;
                 }
             }
 
@@ -3572,22 +3572,22 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 RELEASE_ASSERT_NOT_REACHED();
             }
 
-            TriState isLittleEndian = MixedTriState;
+            TriState isLittleEndian = TriState::Indeterminate;
             Node* littleEndianChild = nullptr;
             if (byteSize > 1) {
                 if (argumentCountIncludingThis < 4)
-                    isLittleEndian = FalseTriState;
+                    isLittleEndian = TriState::False;
                 else {
                     littleEndianChild = get(virtualRegisterForArgumentIncludingThis(3, registerOffset));
                     if (littleEndianChild->hasConstant()) {
                         JSValue constant = littleEndianChild->constant()->value();
                         if (constant) {
                             isLittleEndian = constant.pureToBoolean();
-                            if (isLittleEndian != MixedTriState)
+                            if (isLittleEndian != TriState::Indeterminate)
                                 littleEndianChild = nullptr;
                         }
                     } else
-                        isLittleEndian = MixedTriState;
+                        isLittleEndian = TriState::Indeterminate;
                 }
             }
 

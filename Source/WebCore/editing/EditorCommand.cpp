@@ -121,7 +121,7 @@ static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, const char*
     // Windows: present throughout the selection
     if (editor.behavior().shouldToggleStyleBasedOnStartOfSelection())
         return editor.selectionStartHasStyle(propertyID, onValue);
-    return editor.selectionHasStyle(propertyID, onValue) == TrueTriState;
+    return editor.selectionHasStyle(propertyID, onValue) == TriState::True;
 }
 
 static bool executeApplyStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const String& propertyValue)
@@ -191,7 +191,7 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
 static TriState stateStyle(Frame& frame, CSSPropertyID propertyID, const char* desiredValue)
 {
     if (frame.editor().behavior().shouldToggleStyleBasedOnStartOfSelection())
-        return frame.editor().selectionStartHasStyle(propertyID, desiredValue) ? TrueTriState : FalseTriState;
+        return frame.editor().selectionStartHasStyle(propertyID, desiredValue) ? TriState::True : TriState::False;
     return frame.editor().selectionHasStyle(propertyID, desiredValue);
 }
 
@@ -207,8 +207,8 @@ static TriState stateTextWritingDirection(Frame& frame, WritingDirection directi
     bool hasNestedOrMultipleEmbeddings;
     WritingDirection selectionDirection = EditingStyle::textDirectionForSelection(frame.selection().selection(),
         frame.selection().typingStyle(), hasNestedOrMultipleEmbeddings);
-    // FXIME: We should be returning MixedTriState when selectionDirection == direction && hasNestedOrMultipleEmbeddings
-    return (selectionDirection == direction && !hasNestedOrMultipleEmbeddings) ? TrueTriState : FalseTriState;
+    // FXIME: We should be returning TriState::Indeterminate when selectionDirection == direction && hasNestedOrMultipleEmbeddings
+    return (selectionDirection == direction && !hasNestedOrMultipleEmbeddings) ? TriState::True : TriState::False;
 }
 
 static unsigned verticalScrollDistance(Frame& frame)
@@ -1438,7 +1438,7 @@ static bool enabledInRichlyEditableTextWithEditableImagesEnabled(Frame& frame, E
 
 static TriState stateNone(Frame&, Event*)
 {
-    return FalseTriState;
+    return TriState::False;
 }
 
 static TriState stateBold(Frame& frame, Event*)
@@ -1463,7 +1463,7 @@ static TriState stateStrikethrough(Frame& frame, Event*)
 
 static TriState stateStyleWithCSS(Frame& frame, Event*)
 {
-    return frame.editor().shouldStyleWithCSS() ? TrueTriState : FalseTriState;
+    return frame.editor().shouldStyleWithCSS() ? TriState::True : TriState::False;
 }
 
 static TriState stateSubscript(Frame& frame, Event*)
@@ -1906,7 +1906,7 @@ bool Editor::Command::isEnabled(Event* triggeringEvent) const
 TriState Editor::Command::state(Event* triggeringEvent) const
 {
     if (!isSupported() || !m_frame)
-        return FalseTriState;
+        return TriState::False;
     return m_command->state(*m_frame, triggeringEvent);
 }
 
@@ -1915,7 +1915,7 @@ String Editor::Command::value(Event* triggeringEvent) const
     if (!isSupported() || !m_frame)
         return String();
     if (m_command->value == valueNull && m_command->state != stateNone)
-        return m_command->state(*m_frame, triggeringEvent) == TrueTriState ? "true"_s : "false"_s;
+        return m_command->state(*m_frame, triggeringEvent) == TriState::True ? "true"_s : "false"_s;
     return m_command->value(*m_frame, triggeringEvent);
 }
 

@@ -201,8 +201,8 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
-    if (numeric != MixedTriState)
-        opt.add("kn"_s, numeric == TrueTriState ? "true"_s : "false"_s);
+    if (numeric != TriState::Indeterminate)
+        opt.add("kn"_s, numeric == TriState::True ? "true"_s : "false"_s);
 
     String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
     RETURN_IF_EXCEPTION(scope, void());
@@ -243,7 +243,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 
     TriState ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation);
     RETURN_IF_EXCEPTION(scope, void());
-    m_ignorePunctuation = (ignorePunctuation == TrueTriState);
+    m_ignorePunctuation = (ignorePunctuation == TriState::True);
 
     UErrorCode status = U_ZERO_ERROR;
     m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(m_locale.utf8().data(), &status));

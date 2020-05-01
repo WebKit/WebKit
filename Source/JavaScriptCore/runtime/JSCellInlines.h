@@ -330,12 +330,12 @@ inline bool JSCell::toBoolean(JSGlobalObject* globalObject) const
 inline TriState JSCell::pureToBoolean() const
 {
     if (isString())
-        return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+        return static_cast<const JSString*>(this)->toBoolean() ? TriState::True : TriState::False;
     if (isHeapBigInt())
-        return static_cast<const JSBigInt*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+        return static_cast<const JSBigInt*>(this)->toBoolean() ? TriState::True : TriState::False;
     if (isSymbol())
-        return TrueTriState;
-    return MixedTriState;
+        return TriState::True;
+    return TriState::Indeterminate;
 }
 
 inline void JSCellLock::lock()

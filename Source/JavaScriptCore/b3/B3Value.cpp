@@ -379,57 +379,57 @@ Value* Value::sqrtConstant(Procedure&) const
 
 TriState Value::equalConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::notEqualConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::lessThanConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::greaterThanConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::lessEqualConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::greaterEqualConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::aboveConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::belowConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::aboveEqualConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::belowEqualConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 TriState Value::equalOrUnorderedConstant(const Value*) const
 {
-    return MixedTriState;
+    return TriState::Indeterminate;
 }
 
 Value* Value::invertedCompare(Procedure& proc) const
@@ -520,7 +520,7 @@ TriState Value::asTriState() const
     case ConstFloat:
         return triState(asFloat() != 0.);
     default:
-        return MixedTriState;
+        return TriState::Indeterminate;
     }
 }
 

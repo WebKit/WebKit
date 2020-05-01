@@ -1894,7 +1894,7 @@ private:
         case AboveEqual:
         case BelowEqual: {
             CanonicalizedComparison comparison = canonicalizeComparison(m_value);
-            TriState result = MixedTriState;
+            TriState result = TriState::Indeterminate;
             switch (comparison.opcode) {
             case LessThan:
                 result = comparison.operands[1]->greaterThanConstant(comparison.operands[0]);
@@ -2167,7 +2167,7 @@ private:
 
             // Turn this: Branch(0, then, else)
             // Into this: Jump(else)
-            if (triState == FalseTriState) {
+            if (triState == TriState::False) {
                 m_block->taken().block()->removePredecessor(m_block);
                 m_value->replaceWithJump(m_block, m_block->notTaken());
                 m_changedCFG = true;
@@ -2176,7 +2176,7 @@ private:
 
             // Turn this: Branch(not 0, then, else)
             // Into this: Jump(then)
-            if (triState == TrueTriState) {
+            if (triState == TriState::True) {
                 m_block->notTaken().block()->removePredecessor(m_block);
                 m_value->replaceWithJump(m_block, m_block->taken());
                 m_changedCFG = true;

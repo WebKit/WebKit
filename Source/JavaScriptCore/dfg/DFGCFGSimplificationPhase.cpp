@@ -170,17 +170,17 @@ public:
                     Node* terminal = block->terminal();
                     if (terminal->child1()->hasConstant()) {
                         FrozenValue* value = terminal->child1()->constant();
-                        TriState found = FalseTriState;
+                        TriState found = TriState::False;
                         BasicBlock* targetBlock = 0;
-                        for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {
+                        for (unsigned i = data->cases.size(); found == TriState::False && i--;) {
                             found = data->cases[i].value.strictEqual(value);
-                            if (found == TrueTriState)
+                            if (found == TriState::True)
                                 targetBlock = data->cases[i].target.block;
                         }
                         
-                        if (found == MixedTriState)
+                        if (found == TriState::Indeterminate)
                             break;
-                        if (found == FalseTriState)
+                        if (found == TriState::False)
                             targetBlock = data->fallThrough.block;
                         ASSERT(targetBlock);
                         

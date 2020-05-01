@@ -1262,7 +1262,7 @@ inline TriState JSValue::pureStrictEqual(JSValue v1, JSValue v2)
             const StringImpl* v1String = asString(v1)->tryGetValueImpl();
             const StringImpl* v2String = asString(v2)->tryGetValueImpl();
             if (!v1String || !v2String)
-                return MixedTriState;
+                return TriState::Indeterminate;
             return triState(WTF::equal(*v1String, *v2String));
         }
         if (v1.asCell()->isHeapBigInt() && v2.asCell()->isHeapBigInt())
@@ -1275,16 +1275,16 @@ inline TriState JSValue::pureStrictEqual(JSValue v1, JSValue v2)
 inline TriState JSValue::pureToBoolean() const
 {
     if (isInt32())
-        return asInt32() ? TrueTriState : FalseTriState;
+        return asInt32() ? TriState::True : TriState::False;
     if (isDouble())
-        return isNotZeroAndOrdered(asDouble()) ? TrueTriState : FalseTriState; // false for NaN
+        return isNotZeroAndOrdered(asDouble()) ? TriState::True : TriState::False; // false for NaN
     if (isCell())
         return asCell()->pureToBoolean();
 #if USE(BIGINT32)
     if (isBigInt32())
-        return bigInt32AsInt32() ? TrueTriState : FalseTriState;
+        return bigInt32AsInt32() ? TriState::True : TriState::False;
 #endif
-    return isTrue() ? TrueTriState : FalseTriState;
+    return isTrue() ? TriState::True : TriState::False;
 }
 
 ALWAYS_INLINE bool JSValue::requireObjectCoercible(JSGlobalObject* globalObject) const

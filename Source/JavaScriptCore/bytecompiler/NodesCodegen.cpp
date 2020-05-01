@@ -103,15 +103,15 @@ void ConstantNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, 
     TriState value = jsValue(generator).pureToBoolean();
 
     if (UNLIKELY(needsDebugHook())) {
-        if (value != MixedTriState)
+        if (value != TriState::Indeterminate)
             generator.emitDebugHook(this);
     }
 
-    if (value == MixedTriState)
+    if (value == TriState::Indeterminate)
         ExpressionNode::emitBytecodeInConditionContext(generator, trueTarget, falseTarget, fallThroughMode);
-    else if (value == TrueTriState && fallThroughMode == FallThroughMeansFalse)
+    else if (value == TriState::True && fallThroughMode == FallThroughMeansFalse)
         generator.emitJump(trueTarget);
-    else if (value == FalseTriState && fallThroughMode == FallThroughMeansTrue)
+    else if (value == TriState::False && fallThroughMode == FallThroughMeansTrue)
         generator.emitJump(falseTarget);
 
     // All other cases are unconditional fall-throughs, like "if (true)".
@@ -2476,13 +2476,13 @@ void BinaryOpNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, 
     tryFoldToBranch(generator, branchCondition, branchExpression);
 
     if (UNLIKELY(needsDebugHook())) {
-        if (branchCondition != MixedTriState)
+        if (branchCondition != TriState::Indeterminate)
             generator.emitDebugHook(this);
     }
 
-    if (branchCondition == MixedTriState)
+    if (branchCondition == TriState::Indeterminate)
         ExpressionNode::emitBytecodeInConditionContext(generator, trueTarget, falseTarget, fallThroughMode);
-    else if (branchCondition == TrueTriState)
+    else if (branchCondition == TriState::True)
         generator.emitNodeInConditionContext(branchExpression, trueTarget, falseTarget, fallThroughMode);
     else
         generator.emitNodeInConditionContext(branchExpression, falseTarget, trueTarget, invert(fallThroughMode));
@@ -2504,7 +2504,7 @@ static inline bool canFoldToBranch(OpcodeID opcodeID, ExpressionNode* branchExpr
 
 void BinaryOpNode::tryFoldToBranch(BytecodeGenerator& generator, TriState& branchCondition, ExpressionNode*& branchExpression)
 {
-    branchCondition = MixedTriState;
+    branchCondition = TriState::Indeterminate;
     branchExpression = 0;
 
     ConstantNode* constant = 0;
@@ -2527,9 +2527,9 @@ void BinaryOpNode::tryFoldToBranch(BytecodeGenerator& generator, TriState& branc
         return;
 
     if (opcodeID == op_eq || opcodeID == op_stricteq)
-        branchCondition = triState(value.pureToBoolean());
+        branchCondition = triState(value.pureToBoolean() != TriState::False);
     else if (opcodeID == op_neq || opcodeID == op_nstricteq)
-        branchCondition = triState(!value.pureToBoolean());
+        branchCondition = triState(value.pureToBoolean() == TriState::False);
 }
 
 RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

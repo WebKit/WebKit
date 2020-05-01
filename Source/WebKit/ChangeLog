@@ -1,3 +1,16 @@
+2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        TriState should be an enum class and use "Indeterminate" instead of "Mixed"
+        https://bugs.webkit.org/show_bug.cgi?id=211268
+
+        Reviewed by Mark Lam.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::validateCommand):
+
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const):
+
 2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Require user gestures for LocalAuthenticator

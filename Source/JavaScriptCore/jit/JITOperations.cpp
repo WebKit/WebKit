@@ -1717,7 +1717,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
         dataLogLnIf(Options::verboseOSR(), "Performing OSR ", codeBlock, " -> ", optimizedCodeBlock);
 
         codeBlock->optimizeSoon();
-        codeBlock->unlinkedCodeBlock()->setDidOptimize(TrueTriState);
+        codeBlock->unlinkedCodeBlock()->setDidOptimize(TriState::True);
         void* targetPC = vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress();
         targetPC = retagCodePtr(targetPC, JITThunkPtrTag, bitwise_cast<PtrTag>(callFrame));
         return encodeResult(targetPC, dataBuffer);

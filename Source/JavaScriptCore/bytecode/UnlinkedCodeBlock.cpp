@@ -69,7 +69,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     , m_derivedContextType(static_cast<unsigned>(info.derivedContextType()))
     , m_evalContextType(static_cast<unsigned>(info.evalContextType()))
     , m_codeType(static_cast<unsigned>(codeType))
-    , m_didOptimize(static_cast<unsigned>(MixedTriState))
+    , m_didOptimize(static_cast<unsigned>(TriState::Indeterminate))
     , m_age(0)
     , m_hasCheckpoints(false)
     , m_parseMode(info.parseMode())
@@ -78,7 +78,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
 {
     ASSERT(m_constructorKind == static_cast<unsigned>(info.constructorKind()));
     ASSERT(m_codeType == static_cast<unsigned>(codeType));
-    ASSERT(m_didOptimize == static_cast<unsigned>(MixedTriState));
+    ASSERT(m_didOptimize == static_cast<unsigned>(TriState::Indeterminate));
     if (info.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {
         createRareDataIfNecessary(holdLock(cellLock()));
         m_rareData->m_needsClassFieldInitializer = static_cast<unsigned>(NeedsClassFieldInitializer::Yes);

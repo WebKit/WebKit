@@ -5118,9 +5118,9 @@ void SpeculativeJIT::compile(Node* node)
                         m_jit.signExtend16To32(t2, t2);
                 };
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     emitBigEndianLoad();
-                else if (data.isLittleEndian == TrueTriState)
+                else if (data.isLittleEndian == TriState::True)
                     emitLittleEndianLoad();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5137,9 +5137,9 @@ void SpeculativeJIT::compile(Node* node)
             case 4: {
                 m_jit.load32(baseIndex, t2);
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     m_jit.byteSwap32(t2);
-                else if (data.isLittleEndian == MixedTriState) {
+                else if (data.isLittleEndian == TriState::Indeterminate) {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
                     auto isLittleEndian = m_jit.branchTest32(MacroAssembler::NonZero, isLittleEndianGPR, TrustedImm32(1));
                     m_jit.byteSwap32(t2);
@@ -5173,9 +5173,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.convertFloatToDouble(resultFPR, resultFPR);
                 };
 
-                if (data.isLittleEndian == TrueTriState)
+                if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
-                else if (data.isLittleEndian == FalseTriState)
+                else if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5200,9 +5200,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.move64ToDouble(t2, resultFPR);
                 };
 
-                if (data.isLittleEndian == TrueTriState)
+                if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
-                else if (data.isLittleEndian == FalseTriState)
+                else if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5312,9 +5312,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.store32(t3, baseIndex);
                 };
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
-                else if (data.isLittleEndian == TrueTriState)
+                else if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5338,9 +5338,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.store64(t3, baseIndex);
                 };
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
-                else if (data.isLittleEndian == TrueTriState)
+                else if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5372,9 +5372,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.store16(t3, baseIndex);
                 };
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
-                else if (data.isLittleEndian == TrueTriState)
+                else if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
@@ -5400,9 +5400,9 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.store32(t3, baseIndex);
                 };
 
-                if (data.isLittleEndian == FalseTriState)
+                if (data.isLittleEndian == TriState::False)
                     emitBigEndianCode();
-                else if (data.isLittleEndian == TrueTriState)
+                else if (data.isLittleEndian == TriState::True)
                     emitLittleEndianCode();
                 else {
                     RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);

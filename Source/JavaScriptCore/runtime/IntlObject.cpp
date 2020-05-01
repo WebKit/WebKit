@@ -209,16 +209,16 @@ TriState intlBooleanOption(JSGlobalObject* globalObject, JSValue options, Proper
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (options.isUndefined())
-        return MixedTriState;
+        return TriState::Indeterminate;
 
     JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, MixedTriState);
+    RETURN_IF_EXCEPTION(scope, TriState::Indeterminate);
 
     JSValue value = opts->get(globalObject, property);
-    RETURN_IF_EXCEPTION(scope, MixedTriState);
+    RETURN_IF_EXCEPTION(scope, TriState::Indeterminate);
 
     if (value.isUndefined())
-        return MixedTriState;
+        return TriState::Indeterminate;
 
     return triState(value.toBoolean(globalObject));
 }

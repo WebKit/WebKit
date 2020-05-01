@@ -498,80 +498,80 @@ LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offse
 LValue Output::equal(LValue left, LValue right)
 {
     TriState result = left->equalConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right);
 }
 
 LValue Output::notEqual(LValue left, LValue right)
 {
     TriState result = left->notEqualConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right);
 }
 
 LValue Output::above(LValue left, LValue right)
 {
     TriState result = left->aboveConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::Above, origin(), left, right);
 }
 
 LValue Output::aboveOrEqual(LValue left, LValue right)
 {
     TriState result = left->aboveEqualConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::AboveEqual, origin(), left, right);
 }
 
 LValue Output::below(LValue left, LValue right)
 {
     TriState result = left->belowConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::Below, origin(), left, right);
 }
 
 LValue Output::belowOrEqual(LValue left, LValue right)
 {
     TriState result = left->belowEqualConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::BelowEqual, origin(), left, right);
 }
 
 LValue Output::greaterThan(LValue left, LValue right)
 {
     TriState result = left->greaterThanConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right);
 }
 
 LValue Output::greaterThanOrEqual(LValue left, LValue right)
 {
     TriState result = left->greaterEqualConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right);
 }
 
 LValue Output::lessThan(LValue left, LValue right)
 {
     TriState result = left->lessThanConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right);
 }
 
 LValue Output::lessThanOrEqual(LValue left, LValue right)
 {
     TriState result = left->lessEqualConstant(right);
-    if (result != MixedTriState)
-        return constBool(result == TrueTriState);
+    if (result != TriState::Indeterminate)
+        return constBool(result == TriState::True);
     return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right);
 }
 

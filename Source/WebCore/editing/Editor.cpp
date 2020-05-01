@@ -814,30 +814,30 @@ TriState Editor::selectionUnorderedListState() const
 {
     if (m_document.selection().isCaret()) {
         if (enclosingElementWithTag(m_document.selection().selection().start(), ulTag))
-            return TrueTriState;
+            return TriState::True;
     } else if (m_document.selection().isRange()) {
         auto* startNode = enclosingElementWithTag(m_document.selection().selection().start(), ulTag);
         auto* endNode = enclosingElementWithTag(m_document.selection().selection().end(), ulTag);
         if (startNode && endNode && startNode == endNode)
-            return TrueTriState;
+            return TriState::True;
     }
 
-    return FalseTriState;
+    return TriState::False;
 }
 
 TriState Editor::selectionOrderedListState() const
 {
     if (m_document.selection().isCaret()) {
         if (enclosingElementWithTag(m_document.selection().selection().start(), olTag))
-            return TrueTriState;
+            return TriState::True;
     } else if (m_document.selection().isRange()) {
         auto* startNode = enclosingElementWithTag(m_document.selection().selection().start(), olTag);
         auto* endNode = enclosingElementWithTag(m_document.selection().selection().end(), olTag);
         if (startNode && endNode && startNode == endNode)
-            return TrueTriState;
+            return TriState::True;
     }
 
-    return FalseTriState;
+    return TriState::False;
 }
 
 RefPtr<Node> Editor::insertOrderedList()

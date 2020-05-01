@@ -853,8 +853,8 @@ CodeBlock::~CodeBlock()
     if (UNLIKELY(vm.m_perBytecodeProfiler))
         vm.m_perBytecodeProfiler->notifyDestruction(this);
 
-    if (!vm.heap.isShuttingDown() && unlinkedCodeBlock()->didOptimize() == MixedTriState)
-        unlinkedCodeBlock()->setDidOptimize(FalseTriState);
+    if (!vm.heap.isShuttingDown() && unlinkedCodeBlock()->didOptimize() == TriState::Indeterminate)
+        unlinkedCodeBlock()->setDidOptimize(TriState::False);
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();
@@ -3385,11 +3385,11 @@ Optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteIndex 
 int32_t CodeBlock::thresholdForJIT(int32_t threshold)
 {
     switch (unlinkedCodeBlock()->didOptimize()) {
-    case MixedTriState:
+    case TriState::Indeterminate:
         return threshold;
-    case FalseTriState:
+    case TriState::False:
         return threshold * 4;
-    case TrueTriState:
+    case TriState::True:
         return threshold / 2;
     }
     ASSERT_NOT_REACHED();

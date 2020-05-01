@@ -207,14 +207,14 @@ Value* Const64Value::iToFConstant(Procedure& proc) const
 TriState Const64Value::equalConstant(const Value* other) const
 {
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value == other->asInt64());
 }
 
 TriState Const64Value::notEqualConstant(const Value* other) const
 {
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value != other->asInt64());
 }
 
@@ -222,9 +222,9 @@ TriState Const64Value::lessThanConstant(const Value* other) const
 {
     // INT64_MAX < x is always false.
     if (static_cast<int64_t>(m_value) == std::numeric_limits<int64_t>::max())
-        return FalseTriState;
+        return TriState::False;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value < other->asInt64());
 }
 
@@ -232,9 +232,9 @@ TriState Const64Value::greaterThanConstant(const Value* other) const
 {
     // INT64_MIN > x is always false.
     if (static_cast<int64_t>(m_value) == std::numeric_limits<int64_t>::min())
-        return FalseTriState;
+        return TriState::False;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value > other->asInt64());
 }
 
@@ -242,9 +242,9 @@ TriState Const64Value::lessEqualConstant(const Value* other) const
 {
     // INT64_MIN <= x is always true.
     if (static_cast<int64_t>(m_value) == std::numeric_limits<int64_t>::min())
-        return TrueTriState;
+        return TriState::True;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value <= other->asInt64());
 }
 
@@ -252,9 +252,9 @@ TriState Const64Value::greaterEqualConstant(const Value* other) const
 {
     // INT64_MAX >= x is always true.
     if (static_cast<int64_t>(m_value) == std::numeric_limits<int64_t>::max())
-        return TrueTriState;
+        return TriState::True;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(m_value >= other->asInt64());
 }
 
@@ -262,9 +262,9 @@ TriState Const64Value::aboveConstant(const Value* other) const
 {
     // UINT64_MIN > x is always false.
     if (static_cast<uint64_t>(m_value) == std::numeric_limits<uint64_t>::min())
-        return FalseTriState;
+        return TriState::False;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(static_cast<uint64_t>(m_value) > static_cast<uint64_t>(other->asInt64()));
 }
 
@@ -272,9 +272,9 @@ TriState Const64Value::belowConstant(const Value* other) const
 {
     // UINT64_MAX < x is always false.
     if (static_cast<uint64_t>(m_value) == std::numeric_limits<uint64_t>::max())
-        return FalseTriState;
+        return TriState::False;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(static_cast<uint64_t>(m_value) < static_cast<uint64_t>(other->asInt64()));
 }
 
@@ -282,9 +282,9 @@ TriState Const64Value::aboveEqualConstant(const Value* other) const
 {
     // UINT64_MAX >= x is always true.
     if (static_cast<uint64_t>(m_value) == std::numeric_limits<uint64_t>::max())
-        return TrueTriState;
+        return TriState::True;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(static_cast<uint64_t>(m_value) >= static_cast<uint64_t>(other->asInt64()));
 }
 
@@ -292,9 +292,9 @@ TriState Const64Value::belowEqualConstant(const Value* other) const
 {
     // UINT64_MIN <= x is always true.
     if (static_cast<uint64_t>(m_value) == std::numeric_limits<uint64_t>::min())
-        return TrueTriState;
+        return TriState::True;
     if (!other->hasInt64())
-        return MixedTriState;
+        return TriState::Indeterminate;
     return triState(static_cast<uint64_t>(m_value) <= static_cast<uint64_t>(other->asInt64()));
 }
 

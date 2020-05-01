@@ -468,7 +468,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     TriState hour12 = intlBooleanOption(globalObject, options, vm.propertyNames->hour12);
     RETURN_IF_EXCEPTION(scope, void());
-    bool isHour12Undefined = (hour12 == MixedTriState);
+    bool isHour12Undefined = (hour12 == TriState::Indeterminate);
 
     String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\"", nullptr);
     RETURN_IF_EXCEPTION(scope, void());
@@ -582,14 +582,14 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     if (hour == "2-digit") {
         if (isHour12Undefined && m_hourCycle.isNull())
             skeletonBuilder.appendLiteral("jj");
-        else if (hour12 == TrueTriState)
+        else if (hour12 == TriState::True)
             skeletonBuilder.appendLiteral("hh");
         else
             skeletonBuilder.appendLiteral("HH");
     } else if (hour == "numeric") {
         if (isHour12Undefined && m_hourCycle.isNull())
             skeletonBuilder.append('j');
-        else if (hour12 == TrueTriState)
+        else if (hour12 == TriState::True)
             skeletonBuilder.append('h');
         else
             skeletonBuilder.append('H');

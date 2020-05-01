@@ -1013,12 +1013,12 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 static NSControlStateValue kit(TriState state)
 {
     switch (state) {
-        case FalseTriState:
-            return NSControlStateValueOff;
-        case TrueTriState:
-            return NSControlStateValueOn;
-        case MixedTriState:
-            return NSControlStateValueMixed;
+    case TriState::False:
+        return NSControlStateValueOff;
+    case TriState::True:
+        return NSControlStateValueOn;
+    case TriState::Indeterminate:
+        return NSControlStateValueMixed;
     }
     ASSERT_NOT_REACHED();
     return NSControlStateValueOff;
@@ -2948,7 +2948,7 @@ IGNORE_WARNINGS_END
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             String direction = writingDirection == NSWritingDirectionLeftToRight ? "ltr" : "rtl";
-            [menuItem setState:frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, direction)];
+            [menuItem setState:(frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, direction) != TriState::False)];
         }
         return [self _canEdit];
     }
@@ -2965,7 +2965,7 @@ IGNORE_WARNINGS_END
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             // Take control of the title of the menu item instead of just checking/unchecking it because
             // a check would be ambiguous.
-            [menuItem setTitle:frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, "rtl")
+            [menuItem setTitle:(frame->editor().selectionHasStyle(WebCore::CSSPropertyDirection, "rtl") != TriState::False)
                 ? UI_STRING_INTERNAL("Left to Right", "Left to Right context menu item")
                 : UI_STRING_INTERNAL("Right to Left", "Right to Left context menu item")];
         }

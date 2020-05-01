@@ -152,7 +152,7 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
         auto markIfProfitable = [&] (WriteBarrier<UnlinkedFunctionCodeBlock>& unlinkedCodeBlock) {
             if (!unlinkedCodeBlock)
                 return;
-            if (unlinkedCodeBlock->didOptimize() == TrueTriState)
+            if (unlinkedCodeBlock->didOptimize() == TriState::True)
                 visitor.append(unlinkedCodeBlock);
             else if (unlinkedCodeBlock->age() < UnlinkedCodeBlock::maxAge)
                 visitor.append(unlinkedCodeBlock);

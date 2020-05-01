@@ -62,15 +62,15 @@ JSValue LazyJSValue::getValue(VM& vm) const
 static TriState equalToSingleCharacter(JSValue value, UChar character)
 {
     if (!value.isString())
-        return FalseTriState;
+        return TriState::False;
     
     JSString* jsString = asString(value);
     if (jsString->length() != 1)
-        return FalseTriState;
+        return TriState::False;
     
     const StringImpl* string = jsString->tryGetValueImpl();
     if (!string)
-        return MixedTriState;
+        return TriState::Indeterminate;
     
     return triState(string->at(0) == character);
 }
@@ -78,12 +78,12 @@ static TriState equalToSingleCharacter(JSValue value, UChar character)
 static TriState equalToStringImpl(JSValue value, StringImpl* stringImpl)
 {
     if (!value.isString())
-        return FalseTriState;
+        return TriState::False;
     
     JSString* jsString = asString(value);
     const StringImpl* string = jsString->tryGetValueImpl();
     if (!string)
-        return MixedTriState;
+        return TriState::Indeterminate;
     
     return triState(WTF::equal(stringImpl, string));
 }
@@ -142,18 +142,18 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
         switch (other.m_kind) {
         case KnownValue: {
             if (!value()->value() || !other.value()->value())
-                return value()->value() == other.value()->value() ? TrueTriState : FalseTriState;
+                return value()->value() == other.value()->value() ? TriState::True : TriState::False;
             return JSValue::pureStrictEqual(value()->value(), other.value()->value());
         }
         case SingleCharacterString: {
             if (!value()->value())
-                return FalseTriState;
+                return TriState::False;
             return equalToSingleCharacter(value()->value(), other.character());
         }
         case KnownStringImpl:
         case NewStringImpl: {
             if (!value()->value())
-                return FalseTriState;
+                return TriState::False;
             return equalToStringImpl(value()->value(), other.stringImpl());
         }
         }
@@ -165,7 +165,7 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
         case KnownStringImpl:
         case NewStringImpl:
             if (other.stringImpl()->length() != 1)
-                return FalseTriState;
+                return TriState::False;
             return triState(other.stringImpl()->at(0) == character());
         case KnownValue:
             return other.strictEqual(*this);
@@ -184,7 +184,7 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return FalseTriState;
+    return TriState::False;
 }
 
 uintptr_t LazyJSValue::switchLookupValue(SwitchKind kind) const

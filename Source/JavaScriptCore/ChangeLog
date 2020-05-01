@@ -1,5 +1,131 @@
 2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
 
+        TriState should be an enum class and use "Indeterminate" instead of "Mixed"
+        https://bugs.webkit.org/show_bug.cgi?id=211268
+
+        Reviewed by Mark Lam.
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::equalConstant const):
+        (JSC::B3::Const32Value::notEqualConstant const):
+        (JSC::B3::Const32Value::lessThanConstant const):
+        (JSC::B3::Const32Value::greaterThanConstant const):
+        (JSC::B3::Const32Value::lessEqualConstant const):
+        (JSC::B3::Const32Value::greaterEqualConstant const):
+        (JSC::B3::Const32Value::aboveConstant const):
+        (JSC::B3::Const32Value::belowConstant const):
+        (JSC::B3::Const32Value::aboveEqualConstant const):
+        (JSC::B3::Const32Value::belowEqualConstant const):
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::equalConstant const):
+        (JSC::B3::Const64Value::notEqualConstant const):
+        (JSC::B3::Const64Value::lessThanConstant const):
+        (JSC::B3::Const64Value::greaterThanConstant const):
+        (JSC::B3::Const64Value::lessEqualConstant const):
+        (JSC::B3::Const64Value::greaterEqualConstant const):
+        (JSC::B3::Const64Value::aboveConstant const):
+        (JSC::B3::Const64Value::belowConstant const):
+        (JSC::B3::Const64Value::aboveEqualConstant const):
+        (JSC::B3::Const64Value::belowEqualConstant const):
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::equalConstant const):
+        (JSC::B3::ConstDoubleValue::notEqualConstant const):
+        (JSC::B3::ConstDoubleValue::lessThanConstant const):
+        (JSC::B3::ConstDoubleValue::greaterThanConstant const):
+        (JSC::B3::ConstDoubleValue::lessEqualConstant const):
+        (JSC::B3::ConstDoubleValue::greaterEqualConstant const):
+        (JSC::B3::ConstDoubleValue::equalOrUnorderedConstant const):
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::equalConstant const):
+        (JSC::B3::ConstFloatValue::notEqualConstant const):
+        (JSC::B3::ConstFloatValue::lessThanConstant const):
+        (JSC::B3::ConstFloatValue::greaterThanConstant const):
+        (JSC::B3::ConstFloatValue::lessEqualConstant const):
+        (JSC::B3::ConstFloatValue::greaterEqualConstant const):
+        (JSC::B3::ConstFloatValue::equalOrUnorderedConstant const):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBoolConstant):
+        * b3/B3Procedure.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::equalConstant const):
+        (JSC::B3::Value::notEqualConstant const):
+        (JSC::B3::Value::lessThanConstant const):
+        (JSC::B3::Value::greaterThanConstant const):
+        (JSC::B3::Value::lessEqualConstant const):
+        (JSC::B3::Value::greaterEqualConstant const):
+        (JSC::B3::Value::aboveConstant const):
+        (JSC::B3::Value::belowConstant const):
+        (JSC::B3::Value::aboveEqualConstant const):
+        (JSC::B3::Value::belowEqualConstant const):
+        (JSC::B3::Value::equalOrUnorderedConstant const):
+        (JSC::B3::Value::asTriState const):
+        * b3/B3Value.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::thresholdForJIT):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstantNode::emitBytecodeInConditionContext):
+        (JSC::BinaryOpNode::emitBytecodeInConditionContext):
+        (JSC::BinaryOpNode::tryFoldToBranch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::equalToSingleCharacter):
+        (JSC::DFG::equalToStringImpl):
+        (JSC::DFG::LazyJSValue::strictEqual const):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewGet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewSet):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        * jit/JITOperations.cpp:
+        * runtime/CachedTypes.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * runtime/DefinePropertyAttributes.h:
+        (JSC::DefinePropertyAttributes::DefinePropertyAttributes):
+        (JSC::DefinePropertyAttributes::hasWritable const):
+        (JSC::DefinePropertyAttributes::writable const):
+        (JSC::DefinePropertyAttributes::hasConfigurable const):
+        (JSC::DefinePropertyAttributes::configurable const):
+        (JSC::DefinePropertyAttributes::hasEnumerable const):
+        (JSC::DefinePropertyAttributes::enumerable const):
+        (JSC::DefinePropertyAttributes::setWritable):
+        (JSC::DefinePropertyAttributes::setConfigurable):
+        (JSC::DefinePropertyAttributes::setEnumerable):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::intlBooleanOption):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::pureStrictEqual):
+        (JSC::JSValue::pureToBoolean const):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::pureToBoolean const):
+
+2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
+
         [JSC] intlBooleanOption should return TriState instead of taking an out param
         https://bugs.webkit.org/show_bug.cgi?id=211256
 
