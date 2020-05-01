@@ -610,7 +610,8 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         }
         if (!portAllowed(newRequest.url())) {
             RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - port not allowed");
-            FrameLoader::reportBlockedPortFailed(m_frame, newRequest.url().string());
+            if (m_frame)
+                m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to use restricted network port: " + newRequest.url().string());
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }

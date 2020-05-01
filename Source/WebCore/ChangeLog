@@ -1,3 +1,22 @@
+2020-04-30  Rob Buis  <rbuis@igalia.com>
+
+        Inline reportBlockedPortFailed and reportAuthenticationChallengeBlocked
+        https://bugs.webkit.org/show_bug.cgi?id=211250
+
+        Reviewed by Alex Christensen.
+
+        These two static methods have only one caller each, so we can just
+        inline them at the call site since there is nothing tying them to FrameLoader.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reportBlockedPortFailed): Deleted.
+        (WebCore::FrameLoader::reportAuthenticationChallengeBlocked): Deleted.
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didBlockAuthenticationChallenge):
+
 2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         TriState should be an enum class and use "Indeterminate" instead of "Mixed"
