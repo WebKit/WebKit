@@ -92,4 +92,25 @@ TEST_F(AttributedStringTest_Strikethrough, WebKit)
     runWebKit1Test();
 }
 
+class AttributedStringTest_NewlineAtEndOfDocument : public WebKitAgnosticTest {
+public:
+    template <typename View> void runSyncTest(View);
+
+    virtual void didLoadURL(WebView *webView) { runSyncTest(webView); }
+    virtual void didLoadURL(WKView *wkView) { }
+
+    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringNewlineAtEndOfDocument" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+};
+
+template <typename View>
+void AttributedStringTest_NewlineAtEndOfDocument::runSyncTest(View view)
+{
+    EXPECT_WK_STREQ("a\n", attributedString(view, NSMakeRange(0, 2)).string);
+}
+
+TEST_F(AttributedStringTest_NewlineAtEndOfDocument, WebKit)
+{
+    runWebKit1Test();
+}
+
 } // namespace TestWebKitAPI

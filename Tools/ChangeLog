@@ -1,3 +1,21 @@
+2020-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a test for webkit.org/b/211311
+        https://bugs.webkit.org/show_bug.cgi?id=211319
+        <rdar://problem/62663459>
+
+        Reviewed by Tim Horton.
+
+        Exercise the crash fixed in r261017 with a new API test that loads a page and then uses
+        `-[WebHTMLView attributedSubstringFromRange:]` to try and grab the contents of the page as an attributed string.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/AttributedString.mm:
+        (TestWebKitAPI::AttributedStringTest_NewlineAtEndOfDocument::didLoadURL):
+        (TestWebKitAPI::AttributedStringTest_NewlineAtEndOfDocument::url const):
+        (TestWebKitAPI::AttributedStringTest_NewlineAtEndOfDocument::runSyncTest):
+        * TestWebKitAPI/Tests/mac/attributedStringNewlineAtEndOfDocument.html: Added.
+
 2020-05-01  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Every running WebContent process should be granted access to frontboard services when Accessibility is enabled
