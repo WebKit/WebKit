@@ -1,3 +1,14 @@
+2020-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Mac Catalyst build after r260979
+
+        The presence of `_contextMenuInteraction` is conditional not only on `USE(UICONTEXTMENU)`, but also
+        `HAVE(LINK_PREVIEW)`. Guard logic in `-deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:` with the
+        latter as well.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2020-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some EventHandler coordinate-related naming and fix ScrollableArea::lastKnownMousePosition() conversions

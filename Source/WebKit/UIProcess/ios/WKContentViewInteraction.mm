@@ -7110,7 +7110,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         return NO;
 
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
         if (gesture == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
             return YES;
 #endif
