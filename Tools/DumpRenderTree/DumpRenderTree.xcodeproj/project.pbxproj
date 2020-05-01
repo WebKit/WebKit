@@ -1426,7 +1426,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = All;
-				USE_EXPORT_MACROS = 0;
 			};
 			name = Production;
 		};
@@ -1500,7 +1499,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
-				USE_EXPORT_MACROS = 0;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -1518,7 +1516,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
-				USE_EXPORT_MACROS = 0;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",

@@ -38,7 +38,7 @@
 #define BIMPORT_DECLARATION
 #endif
 
-#if BUSE(EXPORT_MACROS)
+#if !defined(BEXPORT)
 
 #if defined(BUILDING_bmalloc) || defined(STATICALLY_LINKED_WITH_bmalloc)
 #define BEXPORT BEXPORT_DECLARATION
@@ -46,8 +46,6 @@
 #define BEXPORT BIMPORT_DECLARATION
 #endif
 
-#else
-#define BEXPORT
 #endif
 
 #define BNOEXPORT

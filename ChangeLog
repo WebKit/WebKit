@@ -1,3 +1,22 @@
+2020-05-01  Don Olmstead  <don.olmstead@sony.com>
+
+        Use export macros on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=211293
+
+        Reviewed by Michael Catanzaro.
+
+        Remove explicit setting of USE_EXPORT_MACROS from all ports.
+
+        Ports that use declspec require no changes. Ports with visibility attributes
+        need to set that as the default in the CMake. This is already done on the
+        PlayStation port.
+
+        The export macros can also be overridden for different build variants if
+        required. For example production builds may want to override them.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2020-04-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GPUP][GTK] compile GPUProcess in GTK port

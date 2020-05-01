@@ -47,32 +47,23 @@
 #define WTF_INTERNAL
 #endif
 
-#if !USE(EXPORT_MACROS)
-
-#define WTF_EXPORT_DECLARATION
-#define WTF_IMPORT_DECLARATION
-#define WTF_HIDDEN_DECLARATION
-
-#elif USE(DECLSPEC_ATTRIBUTE)
-
+#if USE(DECLSPEC_ATTRIBUTE)
 #define WTF_EXPORT_DECLARATION __declspec(dllexport)
 #define WTF_IMPORT_DECLARATION __declspec(dllimport)
-#define WTF_HIDDEN_DECLARATION
-
 #elif USE(VISIBILITY_ATTRIBUTE)
-
 #define WTF_EXPORT_DECLARATION __attribute__((visibility("default")))
 #define WTF_IMPORT_DECLARATION WTF_EXPORT_DECLARATION
-#define WTF_HIDDEN_DECLARATION __attribute__((visibility("hidden")))
-
 #else
-
-#error "Unknown platform"
-
+#define WTF_EXPORT_DECLARATION
+#define WTF_IMPORT_DECLARATION
 #endif
+
+#if !defined(WTF_EXPORT_PRIVATE)
 
 #if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF)
 #define WTF_EXPORT_PRIVATE WTF_EXPORT_DECLARATION
 #else
 #define WTF_EXPORT_PRIVATE WTF_IMPORT_DECLARATION
+#endif
+
 #endif

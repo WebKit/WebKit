@@ -291,10 +291,6 @@
 #define BUSE_OS_LOG 1
 #endif
 
-#if !defined(BUSE_EXPORT_MACROS) && (BPLATFORM(MAC) || BPLATFORM(IOS_FAMILY) || BPLATFORM(PLAYSTATION))
-#define BUSE_EXPORT_MACROS 1
-#endif
-
 /* BUNUSED_PARAM */
 #if !defined(BUNUSED_PARAM)
 #define BUNUSED_PARAM(variable) (void)variable

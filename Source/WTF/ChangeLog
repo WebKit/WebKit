@@ -1,3 +1,19 @@
+2020-05-01  Don Olmstead  <don.olmstead@sony.com>
+
+        Use export macros on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=211293
+
+        Reviewed by Michael Catanzaro.
+
+        Always use export macros on all platforms. Remove USE_EXPORT_MACROS and always
+        define macros based on the platform. Allow overriding of WTF_EXPORT_PRIVATE otherwise
+        use the defaults.
+
+        Remove definition of WTF_HIDDEN_DECLARATION since its not used anywhere.
+
+        * wtf/ExportMacros.h:
+        * wtf/PlatformUse.h:
+
 2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         TriState should be an enum class and use "Indeterminate" instead of "Mixed"
