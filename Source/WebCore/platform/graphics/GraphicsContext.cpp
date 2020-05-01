@@ -711,7 +711,7 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& desti
 
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    FloatRect srcRect(FloatPoint(), image.size(imagePaintingOptions.orientation()));
+    FloatRect srcRect(FloatPoint(), image.size());
     return drawImage(image, destination, srcRect, imagePaintingOptions);
 }
 

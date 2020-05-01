@@ -1,3 +1,13 @@
+2020-05-01  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: MotionMark 1.1 regressed due to r260016
+        https://bugs.webkit.org/show_bug.cgi?id=211280
+        <rdar://problem/61898830>
+
+        Unreviewed.
+
+        * fast/images/image-orientation-none-canvas.html:
+
 2020-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: Double tap dispatches one click event on iOS 13.4 when it would dispatch two on iOS 13.3

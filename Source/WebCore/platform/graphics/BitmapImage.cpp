@@ -210,7 +210,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         return ImageDrawResult::DidNothing;
 
     FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
-    IntSize sizeForDrawing = expandedIntSize(size(ImageOrientation::None) * scaleFactorForDrawing);
+    IntSize sizeForDrawing = expandedIntSize(size() * scaleFactorForDrawing);
     ImageDrawResult result = ImageDrawResult::DidDraw;
 
     m_currentSubsamplingLevel = m_allowSubsampling ? subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
@@ -289,12 +289,10 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         return result;
     }
 
-    auto orientation = options.orientation();
-    if (orientation == ImageOrientation::FromImage) {
-        orientation = frameOrientationAtIndex(m_currentFrame);
-        drawNativeImage(image, context, destRect, srcRect, IntSize(size(orientation)), { options, orientation });
-    } else
-        drawNativeImage(image, context, destRect, srcRect, IntSize(size(orientation)), options);
+    if (options.orientation() == ImageOrientation::FromImage)
+        drawNativeImage(image, context, destRect, srcRect, IntSize(size()), { options, frameOrientationAtIndex(m_currentFrame) });
+    else
+        drawNativeImage(image, context, destRect, srcRect, IntSize(size()), options);
 
     m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
 
