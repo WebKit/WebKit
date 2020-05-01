@@ -1,5 +1,19 @@
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. Non-speculative build fix for watchOS build.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
         Unreviewed. Speculative build fix for watchOS build.
 
         * runtime/ArrayPrototype.cpp:

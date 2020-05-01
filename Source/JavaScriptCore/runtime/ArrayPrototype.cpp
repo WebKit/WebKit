@@ -336,7 +336,7 @@ void shift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, uin
         JSArray* array = asArray(thisObj);
         uint32_t header32 = static_cast<uint32_t>(header);
         ASSERT(header32 == header);
-        if (array->length() == length && array->shiftCount<shiftCountMode>(globalObject, header32, count))
+        if (array->length() == length && array->shiftCount<shiftCountMode>(globalObject, header32, static_cast<uint32_t>(count)))
             return;
         header = header32;
     }
@@ -394,7 +394,7 @@ void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t header, u
 
         JSArray* array = asArray(thisObj);
         if (array->length() == length) {
-            bool handled = array->unshiftCount<shiftCountMode>(globalObject, header, count);
+            bool handled = array->unshiftCount<shiftCountMode>(globalObject, static_cast<uint32_t>(header), static_cast<uint32_t>(count));
             EXCEPTION_ASSERT(!scope.exception() || handled);
             if (handled)
                 return;
@@ -706,7 +706,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(JSGlobalObject* global
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSStringJoiner stringJoiner(globalObject, ',', length);
+    JSStringJoiner stringJoiner(globalObject, ',', static_cast<uint32_t>(length));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     ArgList arguments(callFrame);
@@ -971,7 +971,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(JSGlobalObject* globalObject,
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguous().data();
-        if (containsHole(data, length) && holesMustForwardToPrototype(vm, thisObject))
+        if (containsHole(data, static_cast<uint32_t>(length)) && holesMustForwardToPrototype(vm, thisObject))
             break;
         std::reverse(data, data + length);
         if (!hasInt32(thisObject->indexingType()))
@@ -983,7 +983,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(JSGlobalObject* globalObject,
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguousDouble().data();
-        if (containsHole(data, length) && holesMustForwardToPrototype(vm, thisObject))
+        if (containsHole(data, static_cast<uint32_t>(length)) && holesMustForwardToPrototype(vm, thisObject))
             break;
         std::reverse(data, data + length);
         return JSValue::encode(thisObject);
@@ -1106,7 +1106,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(JSGlobalObject* globalObject, C
     bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, { });
     if (LIKELY(okToDoFastPath)) {
-        if (JSArray* result = asArray(thisObj)->fastSlice(globalObject, begin, end - begin))
+        if (JSArray* result = asArray(thisObj)->fastSlice(globalObject, static_cast<uint32_t>(begin), static_cast<uint32_t>(end - begin)))
             return JSValue::encode(result);
     }
 
@@ -1202,7 +1202,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(JSGlobalObject* globalObject, 
     bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(globalObject, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (LIKELY(okToDoFastPath))
-        result = asArray(thisObj)->fastSlice(globalObject, actualStart, actualDeleteCount);
+        result = asArray(thisObj)->fastSlice(globalObject, static_cast<uint32_t>(actualStart), static_cast<uint32_t>(actualDeleteCount));
 
     if (!result) {
         if (speciesResult.first == SpeciesConstructResult::CreatedObject)

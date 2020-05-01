@@ -240,7 +240,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
                 for (uint64_t index = 0; index < length; ++index) {
                     JSValue name;
                     if (isJSArray(replacerObject) && replacerObject->canGetIndexQuickly(index))
-                        name = replacerObject->getIndexQuickly(index);
+                        name = replacerObject->getIndexQuickly(static_cast<uint32_t>(index));
                     else {
                         name = replacerObject->get(globalObject, index);
                         RETURN_IF_EXCEPTION(scope, );
