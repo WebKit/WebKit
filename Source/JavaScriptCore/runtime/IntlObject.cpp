@@ -202,34 +202,25 @@ const HashSet<String>& intlCollatorAvailableLocales()
     return availableLocales;
 }
 
-bool intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, bool& usesFallback)
+// https://tc39.es/ecma402/#sec-getoption
+TriState intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyName property)
 {
-    // GetOption (options, property, type="boolean", values, fallback)
-    // https://tc39.github.io/ecma402/#sec-getoption
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (options.isUndefined()) {
-        usesFallback = true;
-        return false;
-    }
+    if (options.isUndefined())
+        return MixedTriState;
 
     JSObject* opts = options.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, false);
+    RETURN_IF_EXCEPTION(scope, MixedTriState);
 
     JSValue value = opts->get(globalObject, property);
-    RETURN_IF_EXCEPTION(scope, false);
+    RETURN_IF_EXCEPTION(scope, MixedTriState);
 
-    if (!value.isUndefined()) {
-        bool booleanValue = value.toBoolean(globalObject);
-        usesFallback = false;
-        return booleanValue;
-    }
+    if (value.isUndefined())
+        return MixedTriState;
 
-    // Because fallback can be undefined, we let the caller handle it instead.
-    usesFallback = true;
-    return false;
+    return triState(value.toBoolean(globalObject));
 }
 
 String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)

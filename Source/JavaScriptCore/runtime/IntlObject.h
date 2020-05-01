@@ -64,7 +64,7 @@ inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAv
 inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 
-bool intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName, bool& usesFallback);
+TriState intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSValue options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);

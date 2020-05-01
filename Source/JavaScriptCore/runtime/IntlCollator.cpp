@@ -199,22 +199,15 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
     opt.add("localeMatcher"_s, matcher);
 
-    {
-        String numericString;
-        bool usesFallback;
-        bool numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric, usesFallback);
-        RETURN_IF_EXCEPTION(scope, void());
-        if (!usesFallback)
-            numericString = numeric ? "true"_s : "false"_s;
-        if (!numericString.isNull())
-            opt.add("kn"_s, numericString);
-    }
-    {
-        String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
-        RETURN_IF_EXCEPTION(scope, void());
-        if (!caseFirst.isNull())
-            opt.add("kf"_s, caseFirst);
-    }
+    TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
+    RETURN_IF_EXCEPTION(scope, void());
+    if (numeric != MixedTriState)
+        opt.add("kn"_s, numeric == TrueTriState ? "true"_s : "false"_s);
+
+    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!caseFirstOption.isNull())
+        opt.add("kf"_s, caseFirstOption);
 
     auto& availableLocales = intlCollatorAvailableLocales();
     auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, IntlCollatorInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlCollatorInternal::relevantExtensionKeys), localeData);
@@ -248,12 +241,9 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     else
         m_sensitivity = Sensitivity::Variant;
 
-    bool usesFallback;
-    bool ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation, usesFallback);
+    TriState ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation);
     RETURN_IF_EXCEPTION(scope, void());
-    if (usesFallback)
-        ignorePunctuation = false;
-    m_ignorePunctuation = ignorePunctuation;
+    m_ignorePunctuation = (ignorePunctuation == TrueTriState);
 
     UErrorCode status = U_ZERO_ERROR;
     m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(m_locale.utf8().data(), &status));

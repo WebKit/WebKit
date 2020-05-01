@@ -281,12 +281,9 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         m_maximumSignificantDigits = maximumSignificantDigits;
     }
 
-    bool usesFallback;
-    bool useGrouping = intlBooleanOption(globalObject, options, Identifier::fromString(vm, "useGrouping"), usesFallback);
+    TriState useGrouping = intlBooleanOption(globalObject, options, Identifier::fromString(vm, "useGrouping"));
     RETURN_IF_EXCEPTION(scope, void());
-    if (usesFallback)
-        useGrouping = true;
-    m_useGrouping = useGrouping;
+    m_useGrouping = useGrouping != FalseTriState;
 
     UNumberFormatStyle style = UNUM_DEFAULT;
     switch (m_style) {
