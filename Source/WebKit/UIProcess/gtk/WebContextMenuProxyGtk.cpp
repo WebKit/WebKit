@@ -191,6 +191,7 @@ WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy&
     , m_page(&page)
     , m_menu(GTK_POPOVER(gtk_popover_menu_new()))
 {
+    gtk_popover_set_has_arrow(m_menu, FALSE);
     gtk_popover_set_position(m_menu, GTK_POS_BOTTOM);
     gtk_popover_set_relative_to(m_menu, m_webView);
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(m_actionGroup.get()));

@@ -167,4 +167,11 @@ static inline void gtk_popover_set_relative_to(GtkPopover* popover, GtkWidget* p
 {
     gtk_widget_set_parent(GTK_WIDGET(popover), parent);
 }
+
+#else
+
+static inline void gtk_popover_set_has_arrow(GtkPopover*, gboolean)
+{
+}
+
 #endif // USE(GTK4)
