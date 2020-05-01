@@ -1,3 +1,12 @@
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r260962.
+
+        * page/Page.cpp:
+        (WebCore::Page::setCORSDisablingPatterns):
+        * page/Page.h:
+        (WebCore::Page::setCORSDisablingPatterns): Deleted.
+
 2020-05-01  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Refactor texImage2D and texSubImage2D taking ImageBitmap, ImageData, Image, ArrayBufferView

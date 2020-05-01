@@ -1644,6 +1644,11 @@ double Page::customHTMLTokenizerTimeDelay() const
     return m_settings->maxParseDuration();
 }
 
+void Page::setCORSDisablingPatterns(Vector<UserContentURLPattern>&& patterns)
+{
+    m_corsDisablingPatterns = WTFMove(patterns);
+}
+
 void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 {
     if (m_areMemoryCacheClientCallsEnabled == enabled)

@@ -521,7 +521,7 @@ public:
     bool hasCustomHTMLTokenizerTimeDelay() const;
     double customHTMLTokenizerTimeDelay() const;
 
-    void setCORSDisablingPatterns(Vector<UserContentURLPattern>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
+    void setCORSDisablingPatterns(Vector<UserContentURLPattern>&&);
 
     WEBCORE_EXPORT void setMemoryCacheClientCallsEnabled(bool);
     bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
