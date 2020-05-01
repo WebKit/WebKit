@@ -130,7 +130,7 @@ public:
     typedef EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;
-    JSValue getValue(JSGlobalObject*, unsigned propertyName) const;
+    JSValue getValue(JSGlobalObject*, uint64_t propertyName) const;
     JSValue getPureResult() const;
 
     bool isCacheable() const { return isUnset() || m_cacheability == CachingAllowed; }
@@ -422,7 +422,7 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, Prope
     return customGetter(globalObject, propertyName);
 }
 
-ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, unsigned propertyName) const
+ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, uint64_t propertyName) const
 {
     VM& vm = getVM(globalObject);
     if (m_propertyType == TypeValue)

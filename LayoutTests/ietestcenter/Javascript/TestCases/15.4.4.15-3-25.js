@@ -31,7 +31,7 @@ ES5Harness.registerTest( {
 
         var obj = { 1: true, 2: false, length: -4294967294.5 };
 
-        return Array.prototype.lastIndexOf.call(obj, true) === 1 &&
+        return Array.prototype.lastIndexOf.call(obj, true) === -1 &&
             Array.prototype.lastIndexOf.call(obj, false) === -1;
     },
 

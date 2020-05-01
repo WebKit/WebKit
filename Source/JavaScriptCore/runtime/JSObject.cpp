@@ -1958,6 +1958,14 @@ bool JSObject::hasProperty(JSGlobalObject* globalObject, unsigned propertyName) 
     return hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::HasProperty);
 }
 
+bool JSObject::hasProperty(JSGlobalObject* globalObject, uint64_t propertyName) const
+{
+    if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+        return hasProperty(globalObject, static_cast<uint32_t>(propertyName));
+    ASSERT(propertyName <= maxSafeInteger());
+    return hasProperty(globalObject, Identifier::from(globalObject->vm(), propertyName));
+}
+
 bool JSObject::hasPropertyGeneric(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot::InternalMethodType internalMethodType) const
 {
     PropertySlot slot(this, internalMethodType);

@@ -1,3 +1,24 @@
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
+        We can't cast toLength result to unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=211205
+        <rdar://problem/62625562>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-length-cant-get-casted-to-unsigned.js: Added.
+        (assert):
+        (testArrayPop):
+        (testArrayPush):
+        (testArrayReverse):
+        (testArraySplice):
+        (testArrayUnshift):
+        (testArrayLastIndexOf):
+        (shouldThrowTypeError):
+        (testJSONStringify.get let):
+        (testJSONStringify):
+        * test262/expectations.yaml:
+
 2020-04-30  Caio Lima  <ticaiolima@gmail.com>
 
         Investigate stress/v8-bitint32-inc.js failure on mips

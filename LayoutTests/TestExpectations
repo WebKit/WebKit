@@ -1752,11 +1752,13 @@ webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-25.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-7.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-8.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-12.html [ Failure ]
-webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-25.html [ Failure ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-7.html [ Failure ]
 
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-14.html [ Skip ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-8.html [ Skip ]
+
+# This takes too long since it's searching through an array with ~4 billion elements.
+ietestcenter/Javascript/15.4.4.15-3-29.html [ Skip ]
 
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.

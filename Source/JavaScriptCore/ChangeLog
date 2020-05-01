@@ -1,3 +1,74 @@
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
+        We can't cast toLength result to unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=211205
+        <rdar://problem/62625562>
+
+        Reviewed by Yusuke Suzuki.
+
+        toLength, according to the spec, returns a 53-bit integer. In our
+        implementation, we return a double. However, there were many callsites
+        that did something like:
+        ```
+        unsigned length = toLength(obj);
+        ```
+        
+        This is bad for a few reasons:
+        - Casting to unsigned from double is undefined behavior when the integer
+        is greater than UINT_MAX. In practice, this means that we'd have different
+        engine behavior depending on what architecture we'd be running on. For
+        example, if the length were UINT_MAX + 1, on x86, we'd treat the
+        length as zero. On arm64, we'd treat it as UINT_MAX. Both are wrong.
+        - We weren't spec compliant. We were just ignoring that these numbers could
+        be 53-bit integers.
+        
+        This patch addresses each bad use of the undefined behavior, and by doing so,
+        makes us more spec compliant.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        (JSC::setLength):
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::fastIndexOf):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/Identifier.h:
+        (JSC::Identifier::from):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasProperty const):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::putDirectIndex):
+        (JSC::JSObject::canGetIndexQuickly const):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::get const):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionSetUserPreferredLanguages):
+
 2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         TriState should be an enum class and use "Indeterminate" instead of "Mixed"

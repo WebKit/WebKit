@@ -37,7 +37,7 @@ ES5Harness.registerTest( {
             length: 4294967296
         };
 
-        return Array.prototype.lastIndexOf.call(obj, targetObj) === -1; //verify length is 0 finally
+        return Array.prototype.lastIndexOf.call(obj, targetObj) === 4294967295;
     },
 
     precondition: function prereq() {

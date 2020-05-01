@@ -157,7 +157,7 @@ bool NPJSObject::hasProperty(NPIdentifier identifier)
     if (identifierRep->isString())
         result = m_jsObject->hasProperty(lexicalGlobalObject, identifierFromIdentifierRep(lexicalGlobalObject, identifierRep));
     else
-        result = m_jsObject->hasProperty(lexicalGlobalObject, identifierRep->number());
+        result = m_jsObject->hasProperty(lexicalGlobalObject, static_cast<uint32_t>(identifierRep->number()));
 
     scope.clearException();
     return result;
@@ -179,7 +179,7 @@ bool NPJSObject::getProperty(NPIdentifier propertyName, NPVariant* result)
     if (identifierRep->isString())
         jsResult = m_jsObject->get(lexicalGlobalObject, identifierFromIdentifierRep(lexicalGlobalObject, identifierRep));
     else
-        jsResult = m_jsObject->get(lexicalGlobalObject, identifierRep->number());
+        jsResult = m_jsObject->get(lexicalGlobalObject, static_cast<uint32_t>(identifierRep->number()));
     
     m_objectMap->convertJSValueToNPVariant(lexicalGlobalObject, jsResult, *result);
     scope.clearException();
@@ -231,7 +231,7 @@ bool NPJSObject::removeProperty(NPIdentifier propertyName)
 
         JSCell::deleteProperty(m_jsObject.get(), lexicalGlobalObject, identifier);
     } else {
-        if (!m_jsObject->hasProperty(lexicalGlobalObject, identifierRep->number())) {
+        if (!m_jsObject->hasProperty(lexicalGlobalObject, static_cast<uint32_t>(identifierRep->number()))) {
             scope.clearException();
             return false;
         }

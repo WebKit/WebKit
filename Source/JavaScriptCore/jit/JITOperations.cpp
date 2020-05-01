@@ -1979,7 +1979,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
                 arrayProfile->setOutOfBounds();
         } else if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->canGetIndexQuickly(i))
+            if (object->canGetIndexQuickly(static_cast<uint32_t>(i)))
                 return object->getIndexQuickly(i);
 
             bool skipMarkingOutOfBounds = false;

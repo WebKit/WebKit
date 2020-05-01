@@ -236,9 +236,9 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
             RETURN_IF_EXCEPTION(scope, );
             if (isArrayReplacer) {
                 m_usingArrayReplacer = true;
-                unsigned length = toLength(globalObject, replacerObject);
+                uint64_t length = static_cast<uint64_t>(toLength(globalObject, replacerObject));
                 RETURN_IF_EXCEPTION(scope, );
-                for (unsigned index = 0; index < length; ++index) {
+                for (uint64_t index = 0; index < length; ++index) {
                     JSValue name;
                     if (isJSArray(replacerObject) && replacerObject->canGetIndexQuickly(index))
                         name = replacerObject->getIndexQuickly(index);
@@ -476,7 +476,13 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     // First time through, initialize.
     if (!m_index) {
         if (m_isArray) {
-            m_size = toLength(globalObject, m_object);
+            uint64_t length = static_cast<uint64_t>(toLength(globalObject, m_object));
+            RETURN_IF_EXCEPTION(scope, false);
+            if (UNLIKELY(length > std::numeric_limits<uint32_t>::max())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return false;
+            }
+            m_size = static_cast<uint32_t>(length);
             RETURN_IF_EXCEPTION(scope, false);
             builder.append('[');
         } else {
@@ -645,9 +651,14 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
                 JSObject* array = asObject(inValue);
                 markedStack.appendWithCrashOnOverflow(array);
-                unsigned length = toLength(m_globalObject, array);
+                uint64_t length = static_cast<uint64_t>(toLength(m_globalObject, array));
                 RETURN_IF_EXCEPTION(scope, { });
-                arrayLengthStack.append(length);
+                if (UNLIKELY(length > std::numeric_limits<uint32_t>::max())) {
+                    throwOutOfMemoryError(m_globalObject, scope);
+                    return { };
+                }
+                RETURN_IF_EXCEPTION(scope, { });
+                arrayLengthStack.append(static_cast<uint32_t>(length));
                 indexStack.append(0);
             }
             arrayStartVisitMember:

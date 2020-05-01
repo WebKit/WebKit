@@ -149,6 +149,13 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, unsig
     }
 }
 
+ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, uint64_t propertyName, PropertySlot& slot)
+{
+    if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+        return getPropertySlot(globalObject, static_cast<uint32_t>(propertyName), slot);
+    return getPropertySlot(globalObject, Identifier::from(globalObject->vm(), propertyName), slot);
+}
+
 ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     // This method only supports non-index PropertyNames.
@@ -533,6 +540,33 @@ inline CallData getConstructData(VM& vm, JSValue value)
     CallData result = cell->methodTable(vm)->getConstructData(cell);
     ASSERT(result.type == CallData::Type::None || value.isValidCallee());
     return result;
+}
+
+inline bool JSObject::deleteProperty(JSGlobalObject* globalObject, PropertyName propertyName)
+{
+    DeletePropertySlot slot;
+    return this->methodTable(globalObject->vm())->deleteProperty(this, globalObject, propertyName, slot);
+}
+
+inline bool JSObject::deleteProperty(JSGlobalObject* globalObject, uint32_t propertyName)
+{
+    return this->methodTable(globalObject->vm())->deletePropertyByIndex(this, globalObject, propertyName);
+}
+
+inline bool JSObject::deleteProperty(JSGlobalObject* globalObject, uint64_t propertyName)
+{
+    if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+        return deleteProperty(globalObject, static_cast<uint32_t>(propertyName));
+    ASSERT(propertyName <= maxSafeInteger());
+    return deleteProperty(globalObject, Identifier::from(globalObject->vm(), propertyName));
+}
+
+inline JSValue JSObject::get(JSGlobalObject* globalObject, uint64_t propertyName) const
+{
+    if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+        return get(globalObject, static_cast<uint32_t>(propertyName));
+    ASSERT(propertyName <= maxSafeInteger());
+    return get(globalObject, Identifier::from(globalObject->vm(), propertyName));
 }
 
 } // namespace JSC

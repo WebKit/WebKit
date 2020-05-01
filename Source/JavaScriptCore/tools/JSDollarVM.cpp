@@ -2967,7 +2967,7 @@ static EncodedJSValue JSC_HOST_CALL functionSetUserPreferredLanguages(JSGlobalOb
 
     Vector<String> languages;
     unsigned length = array->length();
-    for (size_t i = 0; i < length; i++) {
+    for (unsigned i = 0; i < length; i++) {
         String language = array->get(globalObject, i).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         languages.append(language);

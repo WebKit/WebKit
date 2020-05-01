@@ -133,6 +133,10 @@ test(function() {
         }
     };
 
+
+    // When both start and end properties don't exist, spec says not to
+    // call the delete hook.
+
     let proxy = new Proxy(target, handler);
     let threw = false;
     try {
@@ -141,7 +145,7 @@ test(function() {
         threw = true;
         assert(e === error);
     }
-    assert(threw);
+    assert(!threw);
 });
 
 test(function() {

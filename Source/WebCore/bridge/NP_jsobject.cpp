@@ -311,7 +311,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         if (i->isString())
             result = obj->imp->get(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         else
-            result = obj->imp->get(lexicalGlobalObject, i->number());
+            result = obj->imp->get(lexicalGlobalObject, static_cast<uint32_t>(i->number()));
 
         convertValueToNPVariant(lexicalGlobalObject, result, variant);
         scope.clearException();
@@ -383,7 +383,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
                 return false;
             }
         } else {
-            if (!obj->imp->hasProperty(lexicalGlobalObject, i->number())) {
+            if (!obj->imp->hasProperty(lexicalGlobalObject, static_cast<uint32_t>(i->number()))) {
                 scope.clearException();
                 return false;
             }
@@ -422,7 +422,7 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
             return result;
         }
 
-        bool result = obj->imp->hasProperty(lexicalGlobalObject, i->number());
+        bool result = obj->imp->hasProperty(lexicalGlobalObject, static_cast<uint32_t>(i->number()));
         scope.clearException();
         return result;
     }

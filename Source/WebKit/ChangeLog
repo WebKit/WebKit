@@ -1,3 +1,16 @@
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
+        We can't cast toLength result to unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=211205
+        <rdar://problem/62625562>
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::hasProperty):
+        (WebKit::NPJSObject::getProperty):
+        (WebKit::NPJSObject::removeProperty):
+
 2020-05-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Disable arrow on context menu popover

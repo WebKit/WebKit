@@ -385,11 +385,11 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
     JSValue lengthProperty = localesObject->get(globalObject, vm.propertyNames->length);
     RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-    double length = lengthProperty.toLength(globalObject);
+    uint64_t length = static_cast<uint64_t>(lengthProperty.toLength(globalObject));
     RETURN_IF_EXCEPTION(scope, Vector<String>());
 
     HashSet<String> seenSet;
-    for (double k = 0; k < length; ++k) {
+    for (uint64_t k = 0; k < length; ++k) {
         bool kPresent = localesObject->hasProperty(globalObject, k);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
 

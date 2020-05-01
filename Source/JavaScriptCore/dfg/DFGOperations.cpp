@@ -828,7 +828,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(JSGlobalObject* glob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (index >= 0) {
-        object->putByIndexInline(globalObject, index, JSValue::decode(encodedValue), true);
+        object->putByIndexInline(globalObject, static_cast<uint32_t>(index), JSValue::decode(encodedValue), true);
         return;
     }
     
@@ -844,7 +844,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(JSGlobalObject* g
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (index >= 0) {
-        object->putByIndexInline(globalObject, index, JSValue::decode(encodedValue), false);
+        object->putByIndexInline(globalObject, static_cast<uint32_t>(index), JSValue::decode(encodedValue), false);
         return;
     }
     
@@ -862,7 +862,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(JSGlobalObject
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
     
     if (index >= 0) {
-        object->putByIndexInline(globalObject, index, jsValue, true);
+        object->putByIndexInline(globalObject, static_cast<uint32_t>(index), jsValue, true);
         return;
     }
     
@@ -880,7 +880,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(JSGlobalObj
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
     
     if (index >= 0) {
-        object->putByIndexInline(globalObject, index, jsValue, false);
+        object->putByIndexInline(globalObject, static_cast<uint32_t>(index), jsValue, false);
         return;
     }
     
@@ -898,7 +898,7 @@ void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(JSGlobal
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
 
     if (index >= 0) {
-        object->putDirectIndex(globalObject, index, jsValue, 0, PutDirectIndexShouldThrow);
+        object->putDirectIndex(globalObject, static_cast<uint32_t>(index), jsValue, 0, PutDirectIndexShouldThrow);
         return;
     }
 
@@ -915,7 +915,7 @@ void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(JSGlo
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
 
     if (index >= 0) {
-        object->putDirectIndex(globalObject, index, jsValue);
+        object->putDirectIndex(globalObject, static_cast<uint32_t>(index), jsValue);
         return;
     }
 
@@ -1003,7 +1003,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(JSGlobalObject
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     if (index >= 0) {
-        object->putDirectIndex(globalObject, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
+        object->putDirectIndex(globalObject, static_cast<uint32_t>(index), JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
         return;
     }
     
@@ -1018,7 +1018,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(JSGlobalObj
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     if (index >= 0) {
-        object->putDirectIndex(globalObject, index, JSValue::decode(encodedValue));
+        object->putDirectIndex(globalObject, static_cast<uint32_t>(index), JSValue::decode(encodedValue));
         return;
     }
     

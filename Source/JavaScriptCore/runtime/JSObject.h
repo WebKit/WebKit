@@ -35,6 +35,7 @@
 #include "Heap.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCast.h"
+#include "MathCommon.h"
 #include "ObjectInitializationScope.h"
 #include "PropertySlot.h"
 #include "PropertyStorage.h"
@@ -159,10 +160,12 @@ public:
 
     JSValue get(JSGlobalObject*, PropertyName) const;
     JSValue get(JSGlobalObject*, unsigned propertyName) const;
+    JSValue get(JSGlobalObject*, uint64_t propertyName) const;
 
     template<bool checkNullStructure = false>
     bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, unsigned propertyName, PropertySlot&);
+    bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
@@ -206,6 +209,16 @@ public:
         }
         return methodTable(vm)->putByIndex(this, globalObject, propertyName, value, shouldThrow);
     }
+
+    ALWAYS_INLINE bool putByIndexInline(JSGlobalObject* globalObject, uint64_t propertyName, JSValue value, bool shouldThrow)
+    {
+        if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+            return putByIndexInline(globalObject, static_cast<uint32_t>(propertyName), value, shouldThrow);
+
+        ASSERT(propertyName <= maxSafeInteger());
+        PutPropertySlot slot(this, shouldThrow);
+        return putInlineForJSObject(this, globalObject, Identifier::from(getVM(globalObject), propertyName), value, slot);
+    }
         
     // This is similar to the putDirect* methods:
     //  - the prototype chain is not consulted
@@ -244,6 +257,13 @@ public:
     bool putDirectIndex(JSGlobalObject* globalObject, unsigned propertyName, JSValue value)
     {
         return putDirectIndex(globalObject, propertyName, value, 0, PutDirectIndexLikePutDirect);
+    }
+
+    ALWAYS_INLINE bool putDirectIndex(JSGlobalObject* globalObject, uint64_t propertyName, JSValue value, unsigned attributes, PutDirectIndexMode mode)
+    {
+        if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
+            return putDirectIndex(globalObject, static_cast<uint32_t>(propertyName), value, attributes, mode);
+        return putDirect(getVM(globalObject), Identifier::from(getVM(globalObject), propertyName), value, attributes);
     }
 
     // A generally non-throwing version of putDirect and putDirectIndex.
@@ -287,6 +307,14 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
+    }
+
+    bool canGetIndexQuickly(uint64_t i) const
+    {
+        ASSERT(i <= maxSafeInteger());
+        if (LIKELY(i <= MAX_ARRAY_INDEX))
+            return canGetIndexQuickly(static_cast<uint32_t>(i));
+        return false;
     }
         
     JSValue getIndexQuickly(unsigned i) const
@@ -346,6 +374,14 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+        return JSValue();
+    }
+
+    JSValue tryGetIndexQuickly(uint64_t i) const
+    {
+        ASSERT(i <= maxSafeInteger());
+        if (LIKELY(i <= MAX_ARRAY_INDEX))
+            return tryGetIndexQuickly(static_cast<uint32_t>(i));
         return JSValue();
     }
         
@@ -612,6 +648,7 @@ public:
 
     JS_EXPORT_PRIVATE bool hasProperty(JSGlobalObject*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(JSGlobalObject*, unsigned propertyName) const;
+    bool hasProperty(JSGlobalObject*, uint64_t propertyName) const;
     bool hasPropertyGeneric(JSGlobalObject*, PropertyName, PropertySlot::InternalMethodType) const;
     bool hasPropertyGeneric(JSGlobalObject*, unsigned propertyName, PropertySlot::InternalMethodType) const;
     bool hasOwnProperty(JSGlobalObject*, PropertyName, PropertySlot&) const;
@@ -620,6 +657,9 @@ public:
 
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
+    bool deleteProperty(JSGlobalObject*, PropertyName);
+    bool deleteProperty(JSGlobalObject*, uint32_t propertyName);
+    bool deleteProperty(JSGlobalObject*, uint64_t propertyName);
 
     JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
     JSValue ordinaryToPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
