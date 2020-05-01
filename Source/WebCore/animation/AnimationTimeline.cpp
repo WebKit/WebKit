@@ -47,13 +47,8 @@
 
 namespace WebCore {
 
-AnimationTimeline::AnimationTimeline()
-{
-}
-
-AnimationTimeline::~AnimationTimeline()
-{
-}
+AnimationTimeline::AnimationTimeline() = default;
+AnimationTimeline::~AnimationTimeline() = default;
 
 void AnimationTimeline::forgetAnimation(WebAnimation* animation)
 {

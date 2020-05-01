@@ -48,10 +48,12 @@ class Element;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
 public:
+    virtual ~AnimationTimeline();
+
     virtual bool isDocumentTimeline() const { return false; }
 
-    AnimationCollection relevantAnimations() const { return m_animations; }
-    Vector<WeakPtr<WebAnimation>> allAnimations() const { return m_allAnimations; }
+    const AnimationCollection& relevantAnimations() const { return m_animations; }
+    const Vector<WeakPtr<WebAnimation>>& allAnimations() const { return m_allAnimations; }
 
     void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
@@ -61,7 +63,7 @@ public:
     virtual Optional<Seconds> currentTime() { return m_currentTime; }
 
     enum class Ordering : uint8_t { Sorted, Unsorted };
-    Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering ordering = Ordering::Unsorted) const;
+    Vector<RefPtr<WebAnimation>> animationsForElement(Element&, Ordering = Ordering::Unsorted) const;
 
     void elementWasRemoved(Element&);
 
@@ -75,8 +77,6 @@ public:
 
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
     void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);
-
-    virtual ~AnimationTimeline();
 
 protected:
     explicit AnimationTimeline();
