@@ -1162,6 +1162,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 @interface UIContextMenuInteraction ()
+@property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
 @end
 
@@ -1225,6 +1226,12 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UITextInteraction (IPI)
 @property (nonatomic, readonly) BOOL inGesture;
 @end
+
+#if ENABLE(DRAG_SUPPORT)
+@interface UIDragInteraction (IPI)
+@property (nonatomic, readonly, getter=_initiationDriver) id initiationDriver;
+@end
+#endif // ENABLE(DRAG_SUPPORT)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 @interface UIContextMenuConfiguration (IPI)
