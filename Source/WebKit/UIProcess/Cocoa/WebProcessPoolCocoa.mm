@@ -384,7 +384,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (!WebCore::IOSApplication::isMobileSafari() || _AXSApplicationAccessibilityEnabled())
+    if (!WebCore::IOSApplication::isMobileSafari())
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
     
     if (isInternalInstall()) {

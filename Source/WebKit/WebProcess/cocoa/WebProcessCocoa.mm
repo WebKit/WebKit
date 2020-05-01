@@ -1007,11 +1007,11 @@ void WebProcess::updatePageScreenProperties()
 }
 #endif
 
-void WebProcess::unblockAccessibilityServer(const SandboxExtension::Handle& handle)
+void WebProcess::unblockServicesRequiredByAccessibility(const SandboxExtension::HandleArray& handleArray)
 {
 #if PLATFORM(IOS_FAMILY)
-    bool ok = SandboxExtension::consumePermanently(handle);
-    ASSERT_UNUSED(ok, ok);
+    bool consumed = SandboxExtension::consumePermanently(handleArray);
+    ASSERT_UNUSED(consumed, consumed);
 #endif
     registerWithAccessibility();
 }

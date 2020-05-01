@@ -297,7 +297,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     void enableRemoteWebInspector(const SandboxExtension::Handle&);
 #endif
-    void unblockAccessibilityServer(const SandboxExtension::Handle&);
+    void unblockServicesRequiredByAccessibility(const SandboxExtension::HandleArray&);
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
     void unblockPreferenceService(SandboxExtension::HandleArray&&);

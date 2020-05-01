@@ -166,7 +166,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
+    UnblockServicesRequiredByAccessibility(WebKit::SandboxExtension::HandleArray handleArray)
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, Optional<String> encodedValue)
     UnblockPreferenceService(WebKit::SandboxExtension::HandleArray handleArray)

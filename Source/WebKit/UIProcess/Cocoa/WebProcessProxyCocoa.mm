@@ -219,13 +219,13 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     if (!canSendMessage())
         return;
 
-    SandboxExtension::Handle handle;
+    SandboxExtension::HandleArray handleArray;
 #if PLATFORM(IOS_FAMILY)
-    if (!SandboxExtension::createHandleForMachLookup("com.apple.iphone.axserver-systemwide", connection() ? connection()->getAuditToken() : WTF::nullopt, handle))
-        return;
+    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, connection() ? connection()->getAuditToken() : WTF::nullopt);
+    ASSERT(handleArray.size() == 2);
 #endif
 
-    send(Messages::WebProcess::UnblockAccessibilityServer(handle), 0);
+    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(handleArray), 0);
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
