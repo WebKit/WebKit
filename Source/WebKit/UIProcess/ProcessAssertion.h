@@ -59,7 +59,9 @@ public:
     class Client {
     public:
         virtual ~Client() { }
+
         virtual void uiAssertionWillExpireImminently() = 0;
+        virtual void assertionWasInvalidated() = 0;
     };
 
     ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType);
@@ -71,11 +73,10 @@ public:
     ProcessAssertionType type() const { return m_assertionType; }
     ProcessID pid() const { return m_pid; }
 
+    bool isValid() const;
+
 #if PLATFORM(IOS_FAMILY)
 protected:
-    enum class Validity { No, Yes, Unset };
-    Validity validity() const { return m_validity; }
-
     virtual void processAssertionWasInvalidated();
 #endif
 
@@ -86,7 +87,6 @@ private:
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
     RetainPtr<BKSProcessAssertion> m_bksAssertion; // Legacy.
-    Validity m_validity { Validity::Unset };
 #endif
     Client* m_client { nullptr };
 };

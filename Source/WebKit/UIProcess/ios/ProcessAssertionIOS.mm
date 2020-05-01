@@ -442,12 +442,24 @@ void ProcessAssertion::processAssertionWasInvalidated()
     ASSERT(RunLoop::isMain());
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWasInvalidated() PID: %d", this, m_pid);
 
-    m_validity = Validity::No;
+    if (auto* client = this->client())
+        client->assertionWasInvalidated();
+}
+
+bool ProcessAssertion::isValid() const
+{
+    if (m_rbsAssertion)
+        return m_rbsAssertion.get().valid;
+
+    if (m_bksAssertion)
+        return m_bksAssertion.get().valid;
+
+    return false;
 }
 
 void ProcessAndUIAssertion::updateRunInBackgroundCount()
 {
-    bool shouldHoldBackgroundTask = validity() != Validity::No && type() != ProcessAssertionType::Suspended;
+    bool shouldHoldBackgroundTask = isValid() && type() != ProcessAssertionType::Suspended;
     if (m_isHoldingBackgroundTask == shouldHoldBackgroundTask)
         return;
 

@@ -137,7 +137,8 @@ private:
     String assertionName(ProcessAssertionType) const;
 
     // ProcessAssertionClient
-    void uiAssertionWillExpireImminently() override;
+    void uiAssertionWillExpireImminently() final;
+    void assertionWasInvalidated() final;
 
     void clearPendingRequestToSuspend();
 

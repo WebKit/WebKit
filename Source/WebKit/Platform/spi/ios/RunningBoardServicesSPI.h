@@ -50,6 +50,8 @@
 - (void)invalidate;
 - (void)addObserver:(id <RBSAssertionObserving>)observer;
 - (void)removeObserver:(id <RBSAssertionObserving>)observer;
+
+@property (nonatomic, readonly, assign, getter=isValid) BOOL valid;
 @end
 
 @protocol RBSAssertionObserving <NSObject>

@@ -86,6 +86,7 @@ typedef void (^BKSProcessAssertionAcquisitionHandler)(BOOL acquired);
 @property (nonatomic, assign) BKSProcessAssertionFlags flags;
 - (id)initWithPID:(pid_t)pid flags:(BKSProcessAssertionFlags)flags reason:(BKSProcessAssertionReason)reason name:(NSString *)name withHandler:(BKSProcessAssertionAcquisitionHandler)handler;
 
+@property (nonatomic, readonly) BOOL valid;
 @property (nonatomic, copy) BKSProcessAssertionInvalidationHandler invalidationHandler;
 - (void)invalidate;
 @end

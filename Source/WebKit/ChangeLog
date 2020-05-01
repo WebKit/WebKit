@@ -1,5 +1,40 @@
 2020-05-01  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] ProcessThrottler fails to re-take ProcessAssertion if the previous one was invalidated
+        https://bugs.webkit.org/show_bug.cgi?id=211297
+        <rdar://problem/62542463>
+
+        Reviewed by Jer Noble.
+
+        Our ProcessAssertions may get invalidated upon backgrounding of the app. When the app becomes
+        foreground and the ProcessThrottler tries to take a Foreground assertion as a result, it would
+        incorrectly think it already had such assertion and not do anything, even though the previous
+        one is no longer valid. As a result, the child processes would stay suspended even though the
+        app was foregrounded.
+
+        To address the issue, add a isValid() method to ProcessAssertion() and check it in
+        ProcessThrottler::setAssertionType() to determine if we need to re-take an assertion or not.
+        We also invalidate all pending ProcessThrottler activities upon ProcessAssertion invalidation
+        for good measure. This way, the holders of these activities will be able to rely on
+        Activity::isValid() to determine if they need to re-take their activities or not.
+
+        * Platform/spi/ios/AssertionServicesSPI.h:
+        * Platform/spi/ios/RunningBoardServicesSPI.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::isValid const):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::validity const): Deleted.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::setAssertionType):
+        (WebKit::ProcessThrottler::assertionWasInvalidated):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+        (WebKit::ProcessAssertion::isValid const):
+        (WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount):
+
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r261015.
 
         Seems to have broken clean builds

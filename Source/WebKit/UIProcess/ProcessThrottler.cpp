@@ -124,7 +124,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
 
 void ProcessThrottler::setAssertionType(ProcessAssertionType newType)
 {
-    if (m_assertion && m_assertion->type() == newType)
+    if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
     PROCESSTHROTTLER_RELEASE_LOG("setAssertionType: Updating process assertion type to %u (foregroundActivities: %u, backgroundActivities: %u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
@@ -223,6 +223,12 @@ void ProcessThrottler::uiAssertionWillExpireImminently()
     sendPrepareToSuspendIPC(IsSuspensionImminent::Yes);
     invalidateAllActivities();
     m_prepareToSuspendTimeoutTimer.stop();
+}
+
+void ProcessThrottler::assertionWasInvalidated()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("assertionWasInvalidated:");
+    invalidateAllActivities();
 }
 
 bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::ActivityVariant& activity)
