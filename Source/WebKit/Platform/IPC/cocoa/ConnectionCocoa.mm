@@ -418,31 +418,29 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         return Decoder::create(body, bodySize, nullptr, Vector<Attachment> { });
     }
 
-    bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
-
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
-    mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
-    ASSERT(numDescriptors);
-    if (!numDescriptors)
+    mach_msg_size_t numberOfPortDescriptors = body->msgh_descriptor_count;
+    ASSERT(numberOfPortDescriptors);
+    if (!numberOfPortDescriptors)
         return nullptr;
 
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
 
     // If the message body was sent out-of-line, don't treat the last descriptor
     // as an attachment, since it is really the message body.
-    if (messageBodyIsOOL)
-        --numDescriptors;
+    bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
+    mach_msg_size_t numberOfAttachments = messageBodyIsOOL ? numberOfPortDescriptors - 1 : numberOfPortDescriptors;
 
     // Build attachment list
-    Vector<Attachment> attachments(numDescriptors);
+    Vector<Attachment> attachments(numberOfAttachments);
 
-    for (mach_msg_size_t i = 0; i < numDescriptors; ++i) {
+    for (mach_msg_size_t i = 0; i < numberOfAttachments; ++i) {
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
         ASSERT(descriptor->type.type == MACH_MSG_PORT_DESCRIPTOR);
         if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;
 
-        attachments[numDescriptors - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
+        attachments[numberOfAttachments - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
         descriptorData += sizeof(mach_msg_port_descriptor_t);
     }
 
@@ -456,6 +454,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         size_t messageBodySize = descriptor->out_of_line.size;
 
         return Decoder::create(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
+            // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer), length);
         }, WTFMove(attachments));
     }
