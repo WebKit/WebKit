@@ -292,6 +292,7 @@ public:
     void clearLegacyPrivateBrowsingLocalStorage();
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
+    void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
 #if ENABLE(SERVICE_WORKER)
     WebCore::SWServer* swServerForSessionIfExists(PAL::SessionID sessionID) { return m_swServers.get(sessionID); }

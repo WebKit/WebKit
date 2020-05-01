@@ -70,6 +70,15 @@ void LocalStorageNamespace::clearAllStorageAreas()
         storageArea->clear();
 }
 
+void LocalStorageNamespace::flushAndClose(const SecurityOriginData& origin)
+{
+    ASSERT(!RunLoop::isMain());
+    if (auto* storageArea = m_storageAreaMap.get(origin)) {
+        storageArea->syncToDatabase();
+        storageArea->close();
+    }
+}
+
 Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
 {
     ASSERT(!RunLoop::isMain());

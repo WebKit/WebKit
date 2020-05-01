@@ -588,6 +588,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_renameOrigin:(NSURL *)oldName to:(NSURL *)newName forDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(void))completionHandler
+{
+    if (!dataTypes.count)
+        return completionHandler();
+
+    if (dataTypes.count > 1 || ![dataTypes containsObject:WKWebsiteDataTypeLocalStorage])
+        [NSException raise:NSInvalidArgumentException format:@"_renameOrigin can only be called with WKWebsiteDataTypeLocalStorage right now."];
+    _websiteDataStore->renameOriginInWebsiteData(oldName, newName, WebKit::toWebsiteDataTypes(dataTypes), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
 {
     return _delegate.get().get();

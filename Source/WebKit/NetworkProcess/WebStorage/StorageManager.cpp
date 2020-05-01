@@ -40,6 +40,7 @@
 #include <WebCore/TextEncoding.h>
 #include <memory>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/FileSystem.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -153,6 +154,24 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> StorageManager::getLocalStora
     if (m_localStorageDatabaseTracker)
         return m_localStorageDatabaseTracker->originDetailsCrossThreadCopy();
     return { };
+}
+
+void StorageManager::renameOrigin(const URL& oldURL, const URL& newURL)
+{
+    ASSERT(!RunLoop::isMain());
+    auto oldOrigin = WebCore::SecurityOriginData::fromURL(oldURL);
+    auto newOrigin = WebCore::SecurityOriginData::fromURL(newURL);
+    for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+        localStorageNamespace->flushAndClose(oldOrigin);
+
+    if (auto* tracker = m_localStorageDatabaseTracker.get()) {
+        static const std::array<const char *, 3> suffixes { "", "-shm", "-wal" };
+        for (const auto* suffix : suffixes)
+            FileSystem::moveFile(makeString(tracker->databasePath(oldOrigin), suffix), makeString(tracker->databasePath(newOrigin), suffix));
+    }
+
+    for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+        localStorageNamespace->clearStorageAreasMatchingOrigin(oldOrigin);
 }
 
 void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time)

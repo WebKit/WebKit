@@ -2407,4 +2407,15 @@ void WebsiteDataStore::clearAppBoundSession(CompletionHandler<void()>&& completi
     }
 }
 
+void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        if (auto* networkProcess = processPool->networkProcess()) {
+            networkProcess->addSession(*this);
+            networkProcess->renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, [callbackAggregator = callbackAggregator.copyRef()] { });
+        }
+    }
+}
+
 }

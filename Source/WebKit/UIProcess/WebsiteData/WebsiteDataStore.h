@@ -258,6 +258,8 @@ public:
 
     API::HTTPCookieStore& cookieStore();
 
+    void renameOriginInWebsiteData(URL&&, URL&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
+
 #if ENABLE(DEVICE_ORIENTATION)
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif

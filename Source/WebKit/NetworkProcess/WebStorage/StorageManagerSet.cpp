@@ -293,6 +293,18 @@ void StorageManagerSet::getLocalStorageOriginDetails(PAL::SessionID sessionID, G
     });
 }
 
+void StorageManagerSet::renameOrigin(PAL::SessionID sessionID, const URL& oldName, const URL& newName, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, oldName = oldName.isolatedCopy(), newName = newName.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto* storageManager = m_storageManagers.get(sessionID);
+        ASSERT(storageManager);
+        storageManager->renameOrigin(oldName, newName);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
 void StorageManagerSet::connectToLocalStorageArea(IPC::Connection& connection, PAL::SessionID sessionID, StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& originData, ConnectToStorageAreaCallback&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());

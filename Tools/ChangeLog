@@ -1,3 +1,14 @@
+2020-05-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to move localStorage to a different domain
+        https://bugs.webkit.org/show_bug.cgi?id=209260
+        <rdar://problem/60285683>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2020-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a test for webkit.org/b/211311
