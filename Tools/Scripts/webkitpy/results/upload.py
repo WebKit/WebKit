@@ -22,6 +22,7 @@
 
 import webkitpy.thirdparty.autoinstalled.requests
 
+import math
 import os
 import json
 import requests
@@ -224,8 +225,13 @@ class Upload(object):
             )
 
         except requests.exceptions.ConnectionError:
-            log_line_func(' ' * 4 + 'Failed to upload test archive to {}, results server not online'.format(hostname))
-            return False
+            archive.seek(0, os.SEEK_END)
+            log_line_func(' ' * 4 + 'Failed to upload test archive to {}, results server dropped connection, likely due to archive size ({} MB).'.format(
+                hostname,
+                math.floor(float(archive.tell()) / 1024) / 1024,
+            ))
+            log_line_func(' ' * 4 + 'This error is not fatal, continuing')
+            return True
         except ValueError as e:
             log_line_func(' ' * 4 + 'Failed to encode archive reference data: {}'.format(e))
             return False

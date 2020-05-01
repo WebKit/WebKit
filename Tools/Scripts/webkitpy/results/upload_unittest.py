@@ -31,6 +31,7 @@ import unittest
 
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock
+from webkitpy.common.unicode_compatibility import BytesIO
 
 if sys.version_info > (3, 0):
     basestring = str
@@ -232,12 +233,15 @@ class UploadTest(unittest.TestCase):
         )
 
         with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.MockResponse()):
-            self.assertTrue(upload.upload_archive('https://results.webkit.org', archive='content', log_line_func=lambda _: None))
+            self.assertTrue(upload.upload_archive('https://results.webkit.org', archive=BytesIO(b'content'), log_line_func=lambda _: None))
 
         with mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.raise_requests_ConnectionError()):
             lines = []
-            self.assertFalse(upload.upload_archive('https://results.webkit.org', archive='content', log_line_func=lambda line: lines.append(line)))
-            self.assertEqual([' ' * 4 + 'Failed to upload test archive to https://results.webkit.org, results server not online'], lines)
+            self.assertTrue(upload.upload_archive('https://results.webkit.org', archive=BytesIO(b'content'), log_line_func=lambda line: lines.append(line)))
+            self.assertEqual([
+                ' ' * 4 + 'Failed to upload test archive to https://results.webkit.org, results server dropped connection, likely due to archive size (0.0 MB).',
+                ' ' * 4 + 'This error is not fatal, continuing'
+            ], lines)
 
         mock_404 = mock.patch('requests.post', new=lambda url, headers={}, data={}, files={}, verify=True: self.MockResponse(
             status_code=404,

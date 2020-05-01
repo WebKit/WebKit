@@ -1,3 +1,16 @@
+2020-05-01  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Dropped connections when uploading archives shouldn't be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=211248
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/results/upload.py:
+        (Upload.upload_archive): Dropping a connection when uploading archives shouldn't
+        be a fatal error.
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.test_archive_upload):
+
 2020-05-01  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Honor XDG_RUNTIME_DIR when setting the document path
