@@ -1,3 +1,33 @@
+2020-05-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r260888. rdar://problem/62714948
+
+    Unreviewed, reverting r260650.
+    https://bugs.webkit.org/show_bug.cgi?id=211172
+    
+    It is breaking internal bots (Requested by youenn on #webkit).
+    
+    Reverted changeset:
+    
+    "Call STDynamicActivityAttributionPublisher in the WebProcess"
+    https://bugs.webkit.org/show_bug.cgi?id=210772
+    https://trac.webkit.org/changeset/260650
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260888 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-29  Commit Queue  <commit-queue@webkit.org>
+
+            Unreviewed, reverting r260650.
+            https://bugs.webkit.org/show_bug.cgi?id=211172
+
+            It is breaking internal bots (Requested by youenn on #webkit).
+
+            Reverted changeset:
+
+            "Call STDynamicActivityAttributionPublisher in the WebProcess"
+            https://bugs.webkit.org/show_bug.cgi?id=210772
+            https://trac.webkit.org/changeset/260650
+
 2020-04-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r260650. rdar://problem/62622460
