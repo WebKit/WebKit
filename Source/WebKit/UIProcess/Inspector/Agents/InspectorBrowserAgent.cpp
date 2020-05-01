@@ -87,9 +87,8 @@ void InspectorBrowserAgent::disable(ErrorString& errorString)
 
     m_inspectedPage.inspectorController().setEnabledInspectorBrowserAgent(nullptr);
 
-    auto* inspector = m_inspectedPage.inspector();
-    ASSERT(inspector);
-    m_inspectedPage.inspectorClient().browserDomainDisabled(m_inspectedPage, *inspector);
+    if (auto* inspector = m_inspectedPage.inspector())
+        m_inspectedPage.inspectorClient().browserDomainDisabled(m_inspectedPage, *inspector);
 }
 
 void InspectorBrowserAgent::extensionsEnabled(HashMap<String, String>&& extensionIDToName)

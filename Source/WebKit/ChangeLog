@@ -1,3 +1,14 @@
+2020-05-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Browser: crash when handling `disable`
+        https://bugs.webkit.org/show_bug.cgi?id=211251
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp:
+        (WebKit::InspectorBrowserAgent::disable):
+        If the inspected page crashed, we won't have a `WebInspectorProxy` anymore.
+
 2020-05-01  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Every running WebContent process should be granted access to frontboard services when Accessibility is enabled
