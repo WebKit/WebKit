@@ -9752,7 +9752,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (void)dealloc
 {
-    [self.selectionRects release];
+    [_selectionRects release];
     [super dealloc];
 }
 
