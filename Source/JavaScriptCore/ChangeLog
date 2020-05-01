@@ -1,3 +1,15 @@
+2020-05-01  David Kilzer  <ddkilzer@apple.com>
+
+        JSC::PropertySlot::m_attributes is uninitialized in constructor
+        <https://webkit.org/b/211267>
+
+        Reviewed by Mark Lam.
+
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        - Initialize m_attributes and m_additionalData, and make use of
+          default initializers.
+
 2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Interface prototype objects should define @@toStringTag

@@ -113,15 +113,8 @@ public:
     };
 
     explicit PropertySlot(const JSValue thisValue, InternalMethodType internalMethodType)
-        : m_offset(invalidOffset)
-        , m_thisValue(thisValue)
-        , m_slotBase(nullptr)
-        , m_watchpointSet(nullptr)
-        , m_cacheability(CachingDisallowed)
-        , m_propertyType(TypeUnset)
+        : m_thisValue(thisValue)
         , m_internalMethodType(internalMethodType)
-        , m_additionalDataType(AdditionalDataType::None)
-        , m_isTaintedByOpaqueObject(false)
     {
     }
 
@@ -395,20 +388,20 @@ private:
         } customAccessor;
     } m_data;
 
-    unsigned m_attributes;
-    PropertyOffset m_offset;
+    unsigned m_attributes { 0 };
+    PropertyOffset m_offset { invalidOffset };
     JSValue m_thisValue;
-    JSObject* m_slotBase;
-    WatchpointSet* m_watchpointSet;
-    CacheabilityType m_cacheability;
-    PropertyType m_propertyType;
+    JSObject* m_slotBase { nullptr };
+    WatchpointSet* m_watchpointSet { nullptr };
+    CacheabilityType m_cacheability { CachingDisallowed };
+    PropertyType m_propertyType { TypeUnset };
     InternalMethodType m_internalMethodType;
-    AdditionalDataType m_additionalDataType;
-    bool m_isTaintedByOpaqueObject;
+    AdditionalDataType m_additionalDataType { AdditionalDataType::None };
+    bool m_isTaintedByOpaqueObject { false };
     union {
         DOMAttributeAnnotation domAttribute;
         ModuleNamespaceSlot moduleNamespaceSlot;
-    } m_additionalData;
+    } m_additionalData { { 0, 0 } };
 };
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, PropertyName propertyName) const
