@@ -114,11 +114,11 @@ PASS svgevents should be an alias for Event.
 PASS createEvent('svgevents') should be initialized correctly. 
 PASS SVGEVENTS should be an alias for Event. 
 PASS createEvent('SVGEVENTS') should be initialized correctly. 
-FAIL TextEvent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
+FAIL TextEvent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEvent]" but got object "[object TextEvent]"
 PASS createEvent('TextEvent') should be initialized correctly. 
-FAIL textevent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
+FAIL textevent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEvent]" but got object "[object TextEvent]"
 PASS createEvent('textevent') should be initialized correctly. 
-FAIL TEXTEVENT should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
+FAIL TEXTEVENT should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEvent]" but got object "[object TextEvent]"
 PASS createEvent('TEXTEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TextEvents" 
 FAIL TouchEvent should be an alias for TouchEvent. The operation is not supported.

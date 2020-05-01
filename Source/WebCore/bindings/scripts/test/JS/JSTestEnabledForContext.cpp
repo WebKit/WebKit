@@ -96,7 +96,7 @@ template<> JSValue JSTestEnabledForContextConstructor::prototypeForStructure(JSC
 template<> void JSTestEnabledForContextConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledForContext::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestEnabledForContext"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEnabledForContext"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -109,12 +109,13 @@ static const HashTableValue JSTestEnabledForContextPrototypeTableValues[] =
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEnabledForContextConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestEnabledForContextConstructor) } },
 };
 
-const ClassInfo JSTestEnabledForContextPrototype::s_info = { "TestEnabledForContextPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextPrototype) };
+const ClassInfo JSTestEnabledForContextPrototype::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContextPrototype) };
 
 void JSTestEnabledForContextPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestEnabledForContext::info(), JSTestEnabledForContextPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestEnabledForContext::s_info = { "TestEnabledForContext", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledForContext) };

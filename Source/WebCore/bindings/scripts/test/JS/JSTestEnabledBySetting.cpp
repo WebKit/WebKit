@@ -111,7 +111,7 @@ template<> JSValue JSTestEnabledBySettingConstructor::prototypeForStructure(JSC:
 template<> void JSTestEnabledBySettingConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledBySetting::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestEnabledBySetting"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEnabledBySetting"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -134,7 +134,7 @@ static const HashTableValue JSTestEnabledBySettingPrototypeTableValues[] =
 #endif
 };
 
-const ClassInfo JSTestEnabledBySettingPrototype::s_info = { "TestEnabledBySettingPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingPrototype) };
+const ClassInfo JSTestEnabledBySettingPrototype::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySettingPrototype) };
 
 void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 {
@@ -161,6 +161,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 #endif
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestEnabledBySetting::s_info = { "TestEnabledBySetting", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySetting) };

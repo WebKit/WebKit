@@ -74,7 +74,7 @@ void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "BigInt"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 // ------------------------------ Functions ---------------------------

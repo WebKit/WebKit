@@ -100,7 +100,7 @@ template<> JSValue JSTestOverrideBuiltinsConstructor::prototypeForStructure(JSC:
 template<> void JSTestOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestOverrideBuiltins"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestOverrideBuiltins"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -114,12 +114,13 @@ static const HashTableValue JSTestOverrideBuiltinsPrototypeTableValues[] =
     { "namedItem", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestOverrideBuiltinsPrototypeFunctionNamedItem), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltinsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsPrototype) };
+const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsPrototype) };
 
 void JSTestOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestOverrideBuiltins::info(), JSTestOverrideBuiltinsPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestOverrideBuiltins::s_info = { "TestOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverrideBuiltins) };

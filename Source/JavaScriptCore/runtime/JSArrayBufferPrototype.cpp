@@ -102,7 +102,7 @@ static EncodedJSValue JSC_HOST_CALL sharedArrayBufferProtoGetterFuncByteLength(J
 }
 
 const ClassInfo JSArrayBufferPrototype::s_info = {
-    "ArrayBufferPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
+    "ArrayBuffer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
 };
 
 JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure)
@@ -115,7 +115,7 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     Base::finishCreation(vm);
     
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, arrayBufferSharingModeName(sharingMode)), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     if (sharingMode == ArrayBufferSharingMode::Default)
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     else

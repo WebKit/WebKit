@@ -90,7 +90,7 @@ template<> JSValue JSInterfaceNameConstructor::prototypeForStructure(JSC::VM& vm
 template<> void JSInterfaceNameConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSInterfaceName::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("InterfaceName"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "InterfaceName"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -103,12 +103,13 @@ static const HashTableValue JSInterfaceNamePrototypeTableValues[] =
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsInterfaceNameConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSInterfaceNameConstructor) } },
 };
 
-const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceNamePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceNamePrototype) };
+const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceNamePrototype) };
 
 void JSInterfaceNamePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSInterfaceName::info(), JSInterfaceNamePrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSInterfaceName::s_info = { "InterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceName) };

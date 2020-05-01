@@ -298,7 +298,7 @@ template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm
 template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestInterface"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestInterface"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfaceConstructorTableValues, *this);
 }
@@ -426,13 +426,14 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 };
 
-const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfacePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterface) };

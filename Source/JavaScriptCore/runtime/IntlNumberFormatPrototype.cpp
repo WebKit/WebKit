@@ -77,7 +77,8 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 void IntlNumberFormatPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Object"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 // https://tc39.es/ecma402/#sec-number-format-functions

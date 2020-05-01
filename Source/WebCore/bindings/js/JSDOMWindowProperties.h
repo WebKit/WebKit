@@ -65,6 +65,7 @@ private:
     {
     }
 
+    void finishCreation(JSC::VM&);
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 };
 

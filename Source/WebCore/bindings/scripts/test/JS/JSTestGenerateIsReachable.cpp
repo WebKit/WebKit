@@ -93,7 +93,7 @@ template<> JSValue JSTestGenerateIsReachableConstructor::prototypeForStructure(J
 template<> void JSTestGenerateIsReachableConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestGenerateIsReachable"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestGenerateIsReachable"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -107,7 +107,7 @@ static const HashTableValue JSTestGenerateIsReachablePrototypeTableValues[] =
     { "aSecretAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGenerateIsReachableASecretAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachablePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
+const ClassInfo JSTestGenerateIsReachablePrototype::s_info = { "TestGenerateIsReachable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachablePrototype) };
 
 void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 {
@@ -123,6 +123,7 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
     }
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };

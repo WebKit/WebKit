@@ -88,7 +88,7 @@ template<> JSValue JSTestSerializationIndirectInheritanceConstructor::prototypeF
 template<> void JSTestSerializationIndirectInheritanceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSerializationIndirectInheritance::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestSerializationIndirectInheritance"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSerializationIndirectInheritance"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -101,12 +101,13 @@ static const HashTableValue JSTestSerializationIndirectInheritancePrototypeTable
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationIndirectInheritanceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationIndirectInheritanceConstructor) } },
 };
 
-const ClassInfo JSTestSerializationIndirectInheritancePrototype::s_info = { "TestSerializationIndirectInheritancePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationIndirectInheritancePrototype) };
+const ClassInfo JSTestSerializationIndirectInheritancePrototype::s_info = { "TestSerializationIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationIndirectInheritancePrototype) };
 
 void JSTestSerializationIndirectInheritancePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSerializationIndirectInheritance::info(), JSTestSerializationIndirectInheritancePrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestSerializationIndirectInheritance::s_info = { "TestSerializationIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationIndirectInheritance) };

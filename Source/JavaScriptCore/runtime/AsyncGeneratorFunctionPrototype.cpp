@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-const ClassInfo AsyncGeneratorFunctionPrototype::s_info = { "AsyncGenerator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionPrototype) };
+const ClassInfo AsyncGeneratorFunctionPrototype::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionPrototype) };
 
 AsyncGeneratorFunctionPrototype::AsyncGeneratorFunctionPrototype(VM& vm, Structure* structure)
     : JSC::JSNonFinalObject(vm, structure)
@@ -50,7 +50,7 @@ void AsyncGeneratorFunctionPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "AsyncGeneratorFunction"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 } // namespace JSC

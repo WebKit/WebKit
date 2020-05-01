@@ -92,7 +92,7 @@ template<> JSValue JSTestNamedSetterNoIdentifierConstructor::prototypeForStructu
 template<> void JSTestNamedSetterNoIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterNoIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedSetterNoIdentifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterNoIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -105,12 +105,13 @@ static const HashTableValue JSTestNamedSetterNoIdentifierPrototypeTableValues[] 
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedSetterNoIdentifierConstructor) } },
 };
 
-const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
+const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
 
 void JSTestNamedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedSetterNoIdentifier::info(), JSTestNamedSetterNoIdentifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedSetterNoIdentifier::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifier) };

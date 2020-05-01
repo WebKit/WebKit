@@ -97,7 +97,7 @@ template<> JSValue JSTestNamedGetterWithIdentifierConstructor::prototypeForStruc
 template<> void JSTestNamedGetterWithIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedGetterWithIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedGetterWithIdentifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedGetterWithIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -111,12 +111,13 @@ static const HashTableValue JSTestNamedGetterWithIdentifierPrototypeTableValues[
     { "getterName", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedGetterWithIdentifierPrototypeFunctionGetterName), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestNamedGetterWithIdentifierPrototype::s_info = { "TestNamedGetterWithIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierPrototype) };
+const ClassInfo JSTestNamedGetterWithIdentifierPrototype::s_info = { "TestNamedGetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifierPrototype) };
 
 void JSTestNamedGetterWithIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedGetterWithIdentifier::info(), JSTestNamedGetterWithIdentifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedGetterWithIdentifier::s_info = { "TestNamedGetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifier) };

@@ -52,7 +52,7 @@ void GeneratorFunctionPrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "GeneratorFunction"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 } // namespace JSC

@@ -92,7 +92,7 @@ template<> JSValue JSTestNamedSetterWithOverrideBuiltinsConstructor::prototypeFo
 template<> void JSTestNamedSetterWithOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithOverrideBuiltins::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedSetterWithOverrideBuiltins"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithOverrideBuiltins"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -105,12 +105,13 @@ static const HashTableValue JSTestNamedSetterWithOverrideBuiltinsPrototypeTableV
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedSetterWithOverrideBuiltinsConstructor) } },
 };
 
-const ClassInfo JSTestNamedSetterWithOverrideBuiltinsPrototype::s_info = { "TestNamedSetterWithOverrideBuiltinsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithOverrideBuiltinsPrototype) };
+const ClassInfo JSTestNamedSetterWithOverrideBuiltinsPrototype::s_info = { "TestNamedSetterWithOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithOverrideBuiltinsPrototype) };
 
 void JSTestNamedSetterWithOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedSetterWithOverrideBuiltins::info(), JSTestNamedSetterWithOverrideBuiltinsPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedSetterWithOverrideBuiltins::s_info = { "TestNamedSetterWithOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithOverrideBuiltins) };

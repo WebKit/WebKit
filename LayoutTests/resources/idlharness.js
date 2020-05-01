@@ -1021,18 +1021,6 @@ IdlInterface.prototype.test_self = function()
                                     '.prototype is not "' + inherit_interface + 'Prototype"');
             }
         }
-
-        // "The class string of an interface prototype object is the
-        // concatenation of the interface’s identifier and the string
-        // “Prototype”."
-        assert_class_string(self[this.name].prototype, this.name + "Prototype",
-                            "class string of " + this.name + ".prototype");
-        // String() should end up calling {}.toString if nothing defines a
-        // stringifier.
-        if (!this.has_stringifier()) {
-            assert_equals(String(self[this.name].prototype), "[object " + this.name + "Prototype]",
-                    "String(" + this.name + ".prototype)");
-        }
     }.bind(this), this.name + " interface: existence and properties of interface prototype object");
 
     test(function()

@@ -1,3 +1,101 @@
+2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Interface prototype objects should define @@toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=211020
+
+        Reviewed by Darin Adler.
+
+        WebIDL spec was recently updated [1] to define @@toStringTag on interface prototype objects.
+        This change aligns WebIDL with ECMA-262 built-ins and Blink's behavior. Gecko have also
+        expressed implementation commitment.
+
+        This patch implements the spec change, making `X.prototype.toString()` return "[object X]"
+        instead of "[object XPrototype]", where X is WebIDL interface. This behavior is proven to
+        be web compatible (shipping in Chrome since Q2 2016) and matches class strings of iterator
+        prototype objects [2] introduced in r253855.
+
+        We define @@toStringTag for all WebAssembly interfaces but Error subclasses since they
+        are not defined using WebIDL [3].
+
+        This change also introduces JSC_TO_STRING_TAG_WITHOUT_TRANSITION() macro that sets up
+        @@toStringTag using ClassInfo to avoid extra strings creation, ensuring `className` equality
+        between prototype and instance classes (fixing a few discrepancies), as well as correct
+        descriptors. It also ensures using faster jsNontrivialString() and relieves from putting
+        more code into CodeGeneratorJS.pm.
+
+        [1]: https://github.com/heycam/webidl/pull/357
+        [2]: https://heycam.github.io/webidl/#es-iterator-prototype-object
+        [3]: https://webassembly.github.io/spec/js-api/#error-objects
+
+        Tests: imported/w3c/web-platform-tests/wasm/jsapi/instance/toString.any.js
+               imported/w3c/web-platform-tests/wasm/jsapi/memory/toString.any.js
+               imported/w3c/web-platform-tests/wasm/jsapi/module/toString.any.js
+               imported/w3c/web-platform-tests/wasm/jsapi/table/toString.any.js
+
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/AsyncFunctionPrototype.cpp:
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorFunctionPrototype.cpp:
+        (JSC::AsyncGeneratorFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorPrototype.cpp:
+        (JSC::AsyncGeneratorPrototype::finishCreation):
+        * runtime/BigIntPrototype.cpp:
+        (JSC::BigIntPrototype::finishCreation):
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * runtime/GeneratorPrototype.cpp:
+        (JSC::GeneratorPrototype::finishCreation):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototype::finishCreation):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlPluralRulesPrototype.cpp:
+        (JSC::IntlPluralRulesPrototype::finishCreation):
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        (JSC::IntlRelativeTimeFormatPrototype::finishCreation):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::finishCreation):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSObject.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::finishCreation):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/RegExpStringIteratorPrototype.cpp:
+        (JSC::RegExpStringIteratorPrototype::finishCreation):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakObjectRefPrototype.cpp:
+        (JSC::WeakObjectRefPrototype::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::WebAssemblyInstancePrototype::finishCreation):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::WebAssemblyMemoryPrototype::finishCreation):
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        (JSC::WebAssemblyModulePrototype::finishCreation):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::WebAssemblyTablePrototype::finishCreation):
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         We can't cast toLength result to unsigned

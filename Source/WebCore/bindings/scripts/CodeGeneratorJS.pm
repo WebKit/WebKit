@@ -4298,17 +4298,14 @@ sub GenerateImplementation
 
     $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, $justGenerateValueArray);
 
-    if ($justGenerateValueArray) {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
-    } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
-    }
+    my $hashTable = $justGenerateValueArray ? "nullptr" : "&${className}PrototypeTable";
+    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${hashTable}, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
 
-    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface)) {
+    if (PrototypeHasStaticPropertyTable($interface) || IsGlobalInterface($interface)) {
         push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
-        push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
+        push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n") if !IsGlobalInterface($interface);
 
         my @runtimeEnabledProperties = @runtimeEnabledOperations;
         push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
@@ -4378,6 +4375,8 @@ sub GenerateImplementation
 
         addUnscopableProperties($interface);
 
+        assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
+        push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
         push(@implContent, "}\n\n");
     }
 
@@ -7340,13 +7339,11 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    {\n");
     push(@$outputArray, "    }\n");
 
-    if (PrototypeHasStaticPropertyTable($interface)) {
-        if (IsGlobalInterface($interface)) {
-            $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
-        } else {
-            push(@$outputArray, "\n");
-            push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
-        }
+    if (PrototypeHasStaticPropertyTable($interface) || IsGlobalInterface($interface)) {
+        $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if IsGlobalInterface($interface);
+
+        push(@$outputArray, "\n");
+        push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
     }
 
     # FIXME: Should this override putByIndex as well?
@@ -7611,7 +7608,8 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String(\"$visibleInterfaceName\"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, \"$visibleInterfaceName\"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
 
     if ($interface->extendedAttributes->{ConstructorEnabledBySetting}) {
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");

@@ -2,7 +2,7 @@ Tests the properties of the exceptions related to XMLHttpRequest.
 
 PASS e.toString() is "NetworkError:  A network error occurred."
 PASS Object.prototype.toString.call(e) is "[object DOMException]"
-FAIL Object.prototype.toString.call(e.__proto__) is not "[object DOMException]". Was "[object DOMExceptionPrototype]"
+PASS Object.prototype.toString.call(e.__proto__) is "[object DOMException]"
 PASS e.constructor.toString() is "function DOMException() {
     [native code]
 }"

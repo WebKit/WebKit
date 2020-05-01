@@ -1,3 +1,39 @@
+2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Interface prototype objects should define @@toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=211020
+
+        Reviewed by Darin Adler.
+
+        WebIDL spec was recently updated [1] to define @@toStringTag on interface prototype objects.
+        This change aligns WebIDL with ECMA-262 built-ins and Blink's behavior. Gecko have also
+        expressed implementation commitment.
+
+        This patch implements the spec change, making `X.prototype.toString()` return "[object X]"
+        instead of "[object XPrototype]", where X is WebIDL interface. This behavior is proven to
+        be web compatible (shipping in Chrome since Q2 2016) and matches class strings of iterator
+        prototype objects [2] introduced in r253855.
+
+        [1]: https://github.com/heycam/webidl/pull/357
+        [2]: https://heycam.github.io/webidl/#es-iterator-prototype-object
+
+        Tests: fast/dom/prototype-chain.html
+               fast/dom/wrapper-classes.html
+               fast/workers/DedicatedWorkerGlobalScope-prototype-chain.html
+               imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/class-string-interface.any.js
+               imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window.js
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::IteratorTraits>::finishCreation):
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::JSDOMWindowProperties::finishCreation):
+        * bindings/js/JSDOMWindowProperties.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GeneratePrototypeDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/*: Updated.
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         We can't cast toLength result to unsigned

@@ -1,3 +1,27 @@
+2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Interface prototype objects should define @@toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=211020
+
+        Reviewed by Darin Adler.
+
+        Adjust tests for `X.prototype.toString()` returning "[object X]"
+        instead of "[object XPrototype]", where X is WebIDL interface.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-interface.any-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-interface.any.worker-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-prototype-chain.html: WPT revision: 50417942bbfe.
+        * web-platform-tests/wasm/jsapi/instance/toString.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/toString.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/toString.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/toString.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/toString.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/toString.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/toString.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/toString.any.worker-expected.txt:
+
 2020-04-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Import latest changes from webxr/resources in tests

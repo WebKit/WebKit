@@ -92,7 +92,7 @@ template<> JSValue JSTestIndexedSetterThrowingExceptionConstructor::prototypeFor
 template<> void JSTestIndexedSetterThrowingExceptionConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestIndexedSetterThrowingException::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestIndexedSetterThrowingException"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestIndexedSetterThrowingException"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -105,12 +105,13 @@ static const HashTableValue JSTestIndexedSetterThrowingExceptionPrototypeTableVa
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestIndexedSetterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestIndexedSetterThrowingExceptionConstructor) } },
 };
 
-const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestIndexedSetterThrowingExceptionPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionPrototype) };
+const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionPrototype) };
 
 void JSTestIndexedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestIndexedSetterThrowingException::info(), JSTestIndexedSetterThrowingExceptionPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestIndexedSetterThrowingException::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingException) };

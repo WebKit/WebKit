@@ -93,7 +93,7 @@ template<> JSValue JSTestNamedAndIndexedSetterNoIdentifierConstructor::prototype
 template<> void JSTestNamedAndIndexedSetterNoIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedAndIndexedSetterNoIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedAndIndexedSetterNoIdentifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedAndIndexedSetterNoIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -106,12 +106,13 @@ static const HashTableValue JSTestNamedAndIndexedSetterNoIdentifierPrototypeTabl
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedAndIndexedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedAndIndexedSetterNoIdentifierConstructor) } },
 };
 
-const ClassInfo JSTestNamedAndIndexedSetterNoIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterNoIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterNoIdentifierPrototype) };
+const ClassInfo JSTestNamedAndIndexedSetterNoIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterNoIdentifierPrototype) };
 
 void JSTestNamedAndIndexedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedAndIndexedSetterNoIdentifier::info(), JSTestNamedAndIndexedSetterNoIdentifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedAndIndexedSetterNoIdentifier::s_info = { "TestNamedAndIndexedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterNoIdentifier) };

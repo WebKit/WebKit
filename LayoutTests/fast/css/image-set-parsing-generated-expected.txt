@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Single value for background-image with gradient : linear-gradient(green, white) 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule.cssText is 'linear-gradient(green, white)'
@@ -14,7 +14,7 @@ PASS subRule.cssText is '1dppx'
 
 Single value for content with gradient : linear-gradient(green, white) 1x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule.cssText is 'linear-gradient(green, white)'
@@ -22,7 +22,7 @@ PASS subRule.cssText is '1dppx'
 
 Single value for background-image with gradients : linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule.cssText is 'linear-gradient(green, white)'
@@ -32,7 +32,7 @@ PASS subRule.cssText is '2dppx'
 
 Combined gradient and URL : url('#a') 1x, linear-gradient(green, white) 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
@@ -42,7 +42,7 @@ PASS subRule.cssText is '2dppx'
 
 Combined gradient and URL in content : url('#a') 1x, linear-gradient(green, white) 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
@@ -52,7 +52,7 @@ PASS subRule.cssText is '2dppx'
 
 Combined gradient and cross-fade : -webkit-cross-fade(url('#a'), url('#b'), 70%) 1x, linear-gradient(green, white) 2x
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 4
 PASS subRule is 'a'
@@ -62,7 +62,7 @@ PASS subRule.cssText is '2dppx'
 
 Single value for background-image with gradient and dpi : linear-gradient(green, white) 192dpi
 PASS jsWrapperClass(imageSetRule) is 'CSSValueList'
-PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(imageSetRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(imageSetRule.constructor) is 'Function'
 PASS imageSetRule.length is 2
 PASS subRule.cssText is 'linear-gradient(green, white)'

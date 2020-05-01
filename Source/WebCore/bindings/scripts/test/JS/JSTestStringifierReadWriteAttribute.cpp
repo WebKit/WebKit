@@ -99,7 +99,7 @@ template<> JSValue JSTestStringifierReadWriteAttributeConstructor::prototypeForS
 template<> void JSTestStringifierReadWriteAttributeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestStringifierReadWriteAttribute::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestStringifierReadWriteAttribute"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestStringifierReadWriteAttribute"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -114,12 +114,13 @@ static const HashTableValue JSTestStringifierReadWriteAttributePrototypeTableVal
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierReadWriteAttributePrototypeFunctionToString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestStringifierReadWriteAttributePrototype::s_info = { "TestStringifierReadWriteAttributePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttributePrototype) };
+const ClassInfo JSTestStringifierReadWriteAttributePrototype::s_info = { "TestStringifierReadWriteAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttributePrototype) };
 
 void JSTestStringifierReadWriteAttributePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestStringifierReadWriteAttribute::info(), JSTestStringifierReadWriteAttributePrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestStringifierReadWriteAttribute::s_info = { "TestStringifierReadWriteAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttribute) };

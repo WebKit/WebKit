@@ -1,3 +1,43 @@
+2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Interface prototype objects should define @@toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=211020
+
+        Reviewed by Darin Adler.
+
+        Adjust tests for `X.prototype.toString()` returning "[object X]"
+        instead of "[object XPrototype]", where X is WebIDL interface.
+
+        * css3/blending/background-blend-mode-property-parsing-expected.txt:
+        * css3/blending/background-blend-mode-property-parsing.html:
+        * css3/blending/blend-mode-property-parsing-expected.txt:
+        * css3/blending/blend-mode-property-parsing.html:
+        * css3/filters/backdrop/backdropfilter-property-parsing-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-parsing.html:
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/filter-property-parsing.html:
+        * fast/css/image-set-parsing-expected.txt:
+        * fast/css/image-set-parsing-generated-expected.txt:
+        * fast/css/image-set-parsing-generated.html:
+        * fast/css/image-set-parsing.html:
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/prototype-object.html:
+        * fast/dom/prototype-chain-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/events/event-view-toString-expected.txt:
+        * fast/workers/DedicatedWorkerGlobalScope-prototype-chain-expected.txt:
+        * fast/workers/DedicatedWorkerGlobalScope-prototype-chain.html:
+        * http/tests/xmlhttprequest/XMLHttpRequestException-expected.txt:
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * resources/idlharness.js: Remove asserts that are commented out in upstream.
+        * svg/dom/svg2-inheritance.html:
+        * transforms/2d/transform-value-types-expected.txt:
+        * transforms/2d/transform-value-types.html:
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         We can't cast toLength result to unsigned

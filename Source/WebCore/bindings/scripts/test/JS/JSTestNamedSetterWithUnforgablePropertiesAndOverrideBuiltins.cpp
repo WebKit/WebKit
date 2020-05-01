@@ -116,7 +116,7 @@ template<> JSValue JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsC
 template<> void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -129,12 +129,13 @@ static const HashTableValue JSTestNamedSetterWithUnforgablePropertiesAndOverride
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor) } },
 };
 
-const ClassInfo JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::s_info = { "TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype) };
+const ClassInfo JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::s_info = { "TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype) };
 
 void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::info(), JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::s_info = { "TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins", &Base::s_info, &JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins) };

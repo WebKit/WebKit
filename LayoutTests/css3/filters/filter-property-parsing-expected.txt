@@ -9,7 +9,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "url(\"#a\")"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "url(\"#a\")"
@@ -19,7 +19,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "url(\"#a\")"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "url(\"#a\")"
@@ -29,7 +29,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "url(\"#a\") url(\"#b\")"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "url(\"#a\")"
@@ -40,7 +40,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(1) url(\"#a\")"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "grayscale(1)"
@@ -51,7 +51,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(1)"
@@ -61,7 +61,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(50%)"
@@ -71,7 +71,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(1)"
@@ -81,7 +81,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(1)"
@@ -91,7 +91,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(100%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(100%)"
@@ -101,7 +101,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale(0)"
@@ -111,7 +111,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "grayscale()"
@@ -121,7 +121,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "grayscale(0.5)"
@@ -132,7 +132,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(1)"
@@ -142,7 +142,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(50%)"
@@ -152,7 +152,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(1)"
@@ -162,7 +162,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(1)"
@@ -172,7 +172,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(100%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(100%)"
@@ -187,7 +187,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(0)"
@@ -197,7 +197,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia()"
@@ -212,7 +212,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(0.5) sepia(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "sepia(0.5)"
@@ -223,7 +223,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "sepia(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "sepia(0.5)"
@@ -234,7 +234,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(1)"
@@ -244,7 +244,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(50%)"
@@ -254,7 +254,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(250%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(250%)"
@@ -264,7 +264,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(1)"
@@ -274,7 +274,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(5.5)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(5.5)"
@@ -289,7 +289,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(0)"
@@ -299,7 +299,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate()"
@@ -309,7 +309,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(0.5) saturate(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "saturate(0.5)"
@@ -320,7 +320,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "saturate(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "saturate(0.5)"
@@ -331,7 +331,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(10deg)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(10deg)"
@@ -341,7 +341,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(10deg)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(10deg)"
@@ -351,7 +351,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(10rad)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(10rad)"
@@ -361,7 +361,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(10grad)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(10grad)"
@@ -371,7 +371,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(0.5turn)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(0.5turn)"
@@ -381,7 +381,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(-370.2deg)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(-370.2deg)"
@@ -391,7 +391,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(0deg)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(0deg)"
@@ -401,7 +401,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate()"
@@ -411,7 +411,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "hue-rotate(10deg) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "hue-rotate(10deg)"
@@ -422,7 +422,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(1)"
@@ -432,7 +432,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(50%)"
@@ -442,7 +442,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(1)"
@@ -452,7 +452,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(1)"
@@ -462,7 +462,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(100%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(100%)"
@@ -472,7 +472,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(0)"
@@ -487,7 +487,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert()"
@@ -497,7 +497,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(0.5) invert(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "invert(0.5)"
@@ -508,7 +508,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "invert(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "invert(0.5)"
@@ -519,7 +519,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(1)"
@@ -529,7 +529,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(50%)"
@@ -539,7 +539,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(1)"
@@ -549,7 +549,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(1)"
@@ -559,7 +559,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(100%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(100%)"
@@ -574,7 +574,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(0)"
@@ -584,7 +584,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity()"
@@ -594,7 +594,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(0.5) opacity(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "opacity(0.5)"
@@ -605,7 +605,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "opacity(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "opacity(0.5)"
@@ -616,7 +616,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(1)"
@@ -626,7 +626,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(50%)"
@@ -636,7 +636,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(1)"
@@ -646,7 +646,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(0)"
@@ -661,7 +661,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness()"
@@ -671,7 +671,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(0.5) brightness(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "brightness(0.5)"
@@ -682,7 +682,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "brightness(0.5)"
@@ -703,7 +703,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "brightness(101%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(101%)"
@@ -713,7 +713,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(0.25) brightness(0.5)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "grayscale(0.25)"
@@ -724,7 +724,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(1)"
@@ -734,7 +734,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(50%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(50%)"
@@ -744,7 +744,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(250%)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(250%)"
@@ -754,7 +754,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(1)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(1)"
@@ -764,7 +764,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(0)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(0)"
@@ -779,7 +779,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast()"
@@ -789,7 +789,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(2)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(2)"
@@ -804,7 +804,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(0.5) contrast(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "contrast(0.5)"
@@ -815,7 +815,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "contrast(0.5) grayscale(0.25)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "contrast(0.5)"
@@ -826,7 +826,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(0.25) contrast(0.5)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 2
 PASS subRule.cssText is "grayscale(0.25)"
@@ -837,7 +837,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "blur(0px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "blur(0px)"
@@ -847,7 +847,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "blur(10px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "blur(10px)"
@@ -857,7 +857,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "blur()"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "blur()"
@@ -872,7 +872,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "drop-shadow(red 1px 2px 3px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "drop-shadow(red 1px 2px 3px)"
@@ -882,7 +882,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "drop-shadow(red 1px 2px 3px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "drop-shadow(red 1px 2px 3px)"
@@ -892,7 +892,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"
@@ -902,7 +902,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "drop-shadow(0px 0px 0px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "drop-shadow(0px 0px 0px)"
@@ -912,7 +912,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "drop-shadow(1px 2px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "drop-shadow(1px 2px)"
@@ -922,7 +922,7 @@ PASS cssRule.type is 1
 PASS declaration.length is 1
 PASS declaration.getPropertyValue('filter') is "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)"
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 8
 PASS subRule.cssText is "grayscale(0.5)"

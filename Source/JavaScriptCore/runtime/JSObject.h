@@ -1639,6 +1639,10 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, 
     putDirectBuiltinFunctionWithoutTransition(\
         vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
+#define JSC_TO_STRING_TAG_WITHOUT_TRANSITION() \
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, \
+        jsNontrivialString(vm, info()->className), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly)
+
 // Helper for defining native getters on properties.
 #define JSC_NATIVE_INTRINSIC_GETTER(jsName, cppName, attributes, intrinsic)  \
     putDirectNativeIntrinsicGetter(\

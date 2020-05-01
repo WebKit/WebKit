@@ -43,7 +43,7 @@ static EncodedJSValue JSC_HOST_CALL IntlRelativeTimeFormatPrototypeFuncResolvedO
 
 namespace JSC {
 
-const ClassInfo IntlRelativeTimeFormatPrototype::s_info = { "Object", &Base::s_info, &relativeTimeFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormatPrototype) };
+const ClassInfo IntlRelativeTimeFormatPrototype::s_info = { "Intl.RelativeTimeFormat", &Base::s_info, &relativeTimeFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormatPrototype) };
 
 /* Source for IntlRelativeTimeFormatPrototype.lut.h
 @begin relativeTimeFormatPrototypeTable
@@ -73,7 +73,8 @@ IntlRelativeTimeFormatPrototype::IntlRelativeTimeFormatPrototype(VM& vm, Structu
 void IntlRelativeTimeFormatPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Intl.RelativeTimeFormat"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 // https://tc39.es/ecma402/#sec-Intl.RelativeTimeFormat.prototype.format

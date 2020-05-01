@@ -100,7 +100,7 @@ template<> JSValue JSTestSerializationInheritFinalConstructor::prototypeForStruc
 template<> void JSTestSerializationInheritFinalConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSerializationInheritFinal::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestSerializationInheritFinal"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSerializationInheritFinal"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -116,12 +116,13 @@ static const HashTableValue JSTestSerializationInheritFinalPrototypeTableValues[
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializationInheritFinalPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSerializationInheritFinalPrototype::s_info = { "TestSerializationInheritFinalPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalPrototype) };
+const ClassInfo JSTestSerializationInheritFinalPrototype::s_info = { "TestSerializationInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinalPrototype) };
 
 void JSTestSerializationInheritFinalPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSerializationInheritFinal::info(), JSTestSerializationInheritFinalPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestSerializationInheritFinal::s_info = { "TestSerializationInheritFinal", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritFinal) };

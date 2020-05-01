@@ -100,7 +100,7 @@ template<> JSValue JSTestNamedAndIndexedSetterWithIdentifierConstructor::prototy
 template<> void JSTestNamedAndIndexedSetterWithIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedAndIndexedSetterWithIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedAndIndexedSetterWithIdentifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedAndIndexedSetterWithIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -115,12 +115,13 @@ static const HashTableValue JSTestNamedAndIndexedSetterWithIdentifierPrototypeTa
     { "indexedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedAndIndexedSetterWithIdentifierPrototypeFunctionIndexedSetter), (intptr_t) (2) } },
 };
 
-const ClassInfo JSTestNamedAndIndexedSetterWithIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterWithIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifierPrototype) };
+const ClassInfo JSTestNamedAndIndexedSetterWithIdentifierPrototype::s_info = { "TestNamedAndIndexedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifierPrototype) };
 
 void JSTestNamedAndIndexedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedAndIndexedSetterWithIdentifier::info(), JSTestNamedAndIndexedSetterWithIdentifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedAndIndexedSetterWithIdentifier::s_info = { "TestNamedAndIndexedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterWithIdentifier) };

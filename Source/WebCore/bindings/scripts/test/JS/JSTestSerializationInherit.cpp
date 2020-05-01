@@ -98,7 +98,7 @@ template<> JSValue JSTestSerializationInheritConstructor::prototypeForStructure(
 template<> void JSTestSerializationInheritConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSerializationInherit::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestSerializationInherit"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSerializationInherit"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -113,12 +113,13 @@ static const HashTableValue JSTestSerializationInheritPrototypeTableValues[] =
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializationInheritPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSerializationInheritPrototype::s_info = { "TestSerializationInheritPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritPrototype) };
+const ClassInfo JSTestSerializationInheritPrototype::s_info = { "TestSerializationInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInheritPrototype) };
 
 void JSTestSerializationInheritPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSerializationInherit::info(), JSTestSerializationInheritPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestSerializationInherit::s_info = { "TestSerializationInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationInherit) };

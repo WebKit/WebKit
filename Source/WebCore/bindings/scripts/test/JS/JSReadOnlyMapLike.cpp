@@ -106,7 +106,7 @@ template<> JSValue JSReadOnlyMapLikeConstructor::prototypeForStructure(JSC::VM& 
 template<> void JSReadOnlyMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSReadOnlyMapLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("ReadOnlyMapLike"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "ReadOnlyMapLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -126,13 +126,14 @@ static const HashTableValue JSReadOnlyMapLikePrototypeTableValues[] =
     { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlyMapLikePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSReadOnlyMapLikePrototype::s_info = { "ReadOnlyMapLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLikePrototype) };
+const ClassInfo JSReadOnlyMapLikePrototype::s_info = { "ReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLikePrototype) };
 
 void JSReadOnlyMapLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSReadOnlyMapLike::info(), JSReadOnlyMapLikePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSReadOnlyMapLike::s_info = { "ReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlyMapLike) };

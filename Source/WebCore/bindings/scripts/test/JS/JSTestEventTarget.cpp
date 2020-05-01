@@ -99,7 +99,7 @@ template<> JSValue JSTestEventTargetConstructor::prototypeForStructure(JSC::VM& 
 template<> void JSTestEventTargetConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestEventTarget::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestEventTarget"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestEventTarget"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -113,12 +113,13 @@ static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
     { "item", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestEventTargetPrototypeFunctionItem), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
+const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTarget", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
 
 void JSTestEventTargetPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestEventTarget::info(), JSTestEventTargetPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTarget) };

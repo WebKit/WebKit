@@ -56,6 +56,8 @@ Structure* WebAssemblyModulePrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyModulePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 WebAssemblyModulePrototype::WebAssemblyModulePrototype(VM& vm, Structure* structure)

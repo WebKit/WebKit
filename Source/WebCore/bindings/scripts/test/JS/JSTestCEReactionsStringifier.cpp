@@ -102,7 +102,7 @@ template<> JSValue JSTestCEReactionsStringifierConstructor::prototypeForStructur
 template<> void JSTestCEReactionsStringifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCEReactionsStringifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestCEReactionsStringifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCEReactionsStringifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -118,12 +118,13 @@ static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsStringifierPrototypeFunctionToString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
+const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
 
 void JSTestCEReactionsStringifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestCEReactionsStringifier::info(), JSTestCEReactionsStringifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestCEReactionsStringifier::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifier) };

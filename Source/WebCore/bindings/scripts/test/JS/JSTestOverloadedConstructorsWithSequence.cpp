@@ -147,7 +147,7 @@ template<> JSValue JSTestOverloadedConstructorsWithSequenceConstructor::prototyp
 template<> void JSTestOverloadedConstructorsWithSequenceConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsWithSequence::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestOverloadedConstructorsWithSequence"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestOverloadedConstructorsWithSequence"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -160,12 +160,13 @@ static const HashTableValue JSTestOverloadedConstructorsWithSequencePrototypeTab
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsWithSequenceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestOverloadedConstructorsWithSequenceConstructor) } },
 };
 
-const ClassInfo JSTestOverloadedConstructorsWithSequencePrototype::s_info = { "TestOverloadedConstructorsWithSequencePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequencePrototype) };
+const ClassInfo JSTestOverloadedConstructorsWithSequencePrototype::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequencePrototype) };
 
 void JSTestOverloadedConstructorsWithSequencePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestOverloadedConstructorsWithSequence::info(), JSTestOverloadedConstructorsWithSequencePrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestOverloadedConstructorsWithSequence::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequence) };

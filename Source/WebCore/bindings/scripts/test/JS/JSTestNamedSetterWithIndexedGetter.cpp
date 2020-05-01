@@ -100,7 +100,7 @@ template<> JSValue JSTestNamedSetterWithIndexedGetterConstructor::prototypeForSt
 template<> void JSTestNamedSetterWithIndexedGetterConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithIndexedGetter::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedSetterWithIndexedGetter"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithIndexedGetter"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -115,12 +115,13 @@ static const HashTableValue JSTestNamedSetterWithIndexedGetterPrototypeTableValu
     { "indexedSetter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedSetterWithIndexedGetterPrototypeFunctionIndexedSetter), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestNamedSetterWithIndexedGetterPrototype::s_info = { "TestNamedSetterWithIndexedGetterPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetterPrototype) };
+const ClassInfo JSTestNamedSetterWithIndexedGetterPrototype::s_info = { "TestNamedSetterWithIndexedGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetterPrototype) };
 
 void JSTestNamedSetterWithIndexedGetterPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedSetterWithIndexedGetter::info(), JSTestNamedSetterWithIndexedGetterPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedSetterWithIndexedGetter::s_info = { "TestNamedSetterWithIndexedGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetter) };

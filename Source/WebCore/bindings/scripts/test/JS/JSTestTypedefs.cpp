@@ -187,7 +187,7 @@ template<> JSValue JSTestTypedefsConstructor::prototypeForStructure(JSC::VM& vm,
 template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestTypedefs"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestTypedefs"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(3), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsConstructorTableValues, *this);
 }
@@ -222,12 +222,13 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "methodWithException", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithException), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
+const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 void JSTestTypedefsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };

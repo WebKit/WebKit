@@ -108,7 +108,7 @@ template<> JSValue JSSetLikeConstructor::prototypeForStructure(JSC::VM& vm, cons
 template<> void JSSetLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSSetLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("SetLike"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "SetLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -130,13 +130,14 @@ static const HashTableValue JSSetLikePrototypeTableValues[] =
     { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionDelete), (intptr_t) (1) } },
 };
 
-const ClassInfo JSSetLikePrototype::s_info = { "SetLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSetLikePrototype) };
+const ClassInfo JSSetLikePrototype::s_info = { "SetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSetLikePrototype) };
 
 void JSSetLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSSetLike::info(), JSSetLikePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSSetLike::s_info = { "SetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSetLike) };

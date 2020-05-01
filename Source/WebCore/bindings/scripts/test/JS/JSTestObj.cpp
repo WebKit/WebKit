@@ -1988,7 +1988,7 @@ template<> JSValue JSTestObjConstructor::prototypeForStructure(JSC::VM& vm, cons
 template<> void JSTestObjConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestObj::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestObj::info(), JSTestObjConstructorTableValues, *this);
 #if ENABLE(TEST_FEATURE)
@@ -2348,7 +2348,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "readonly", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(0) } },
 };
 
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjPrototype) };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 void JSTestObjPrototype::finishCreation(VM& vm)
 {
@@ -2472,6 +2472,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     unscopables.putDirect(vm, Identifier::fromString(vm, "voidMethod"), jsBoolean(true));
     unscopables.putDirect(vm, Identifier::fromString(vm, "shortAttr"), jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, nullptr, CREATE_METHOD_TABLE(JSTestObj) };

@@ -114,6 +114,8 @@ private:
         : JSC::JSNonFinalObject(vm, structure)
     {
     }
+
+    void finishCreation(JSC::VM&);
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };

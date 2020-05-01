@@ -105,7 +105,7 @@ template<> JSValue JSReadOnlySetLikeConstructor::prototypeForStructure(JSC::VM& 
 template<> void JSReadOnlySetLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSReadOnlySetLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("ReadOnlySetLike"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "ReadOnlySetLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -124,13 +124,14 @@ static const HashTableValue JSReadOnlySetLikePrototypeTableValues[] =
     { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlySetLikePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSReadOnlySetLikePrototype::s_info = { "ReadOnlySetLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlySetLikePrototype) };
+const ClassInfo JSReadOnlySetLikePrototype::s_info = { "ReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlySetLikePrototype) };
 
 void JSReadOnlySetLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSReadOnlySetLike::info(), JSReadOnlySetLikePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSReadOnlySetLike::s_info = { "ReadOnlySetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlySetLike) };

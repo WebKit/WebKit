@@ -77,7 +77,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* entries = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().entriesPublicName().string(), mapProtoFuncEntries, JSMapEntriesIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, vm.propertyNames->Map.string()), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->size, mapProtoFuncSize, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 

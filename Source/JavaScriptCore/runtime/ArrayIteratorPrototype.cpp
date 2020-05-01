@@ -43,8 +43,8 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Array Iterator"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, arrayIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 } // namespace JSC

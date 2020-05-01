@@ -116,7 +116,7 @@ template<> JSValue JSTestNamedSetterWithUnforgablePropertiesConstructor::prototy
 template<> void JSTestNamedSetterWithUnforgablePropertiesConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedSetterWithUnforgableProperties::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedSetterWithUnforgableProperties"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithUnforgableProperties"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -129,12 +129,13 @@ static const HashTableValue JSTestNamedSetterWithUnforgablePropertiesPrototypeTa
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedSetterWithUnforgablePropertiesConstructor) } },
 };
 
-const ClassInfo JSTestNamedSetterWithUnforgablePropertiesPrototype::s_info = { "TestNamedSetterWithUnforgablePropertiesPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesPrototype) };
+const ClassInfo JSTestNamedSetterWithUnforgablePropertiesPrototype::s_info = { "TestNamedSetterWithUnforgableProperties", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesPrototype) };
 
 void JSTestNamedSetterWithUnforgablePropertiesPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedSetterWithUnforgableProperties::info(), JSTestNamedSetterWithUnforgablePropertiesPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedSetterWithUnforgableProperties::s_info = { "TestNamedSetterWithUnforgableProperties", &Base::s_info, &JSTestNamedSetterWithUnforgablePropertiesTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgableProperties) };

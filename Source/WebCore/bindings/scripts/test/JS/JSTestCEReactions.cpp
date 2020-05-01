@@ -115,7 +115,7 @@ template<> JSValue JSTestCEReactionsConstructor::prototypeForStructure(JSC::VM& 
 template<> void JSTestCEReactionsConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCEReactions::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestCEReactions"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCEReactions"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -136,12 +136,13 @@ static const HashTableValue JSTestCEReactionsPrototypeTableValues[] =
     { "methodWithCEReactionsNotNeeded", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsNotNeeded), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactionsPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsPrototype) };
+const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsPrototype) };
 
 void JSTestCEReactionsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestCEReactions::info(), JSTestCEReactionsPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestCEReactions::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactions) };

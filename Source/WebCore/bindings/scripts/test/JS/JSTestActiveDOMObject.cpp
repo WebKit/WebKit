@@ -119,7 +119,7 @@ template<> JSValue JSTestActiveDOMObjectConstructor::prototypeForStructure(JSC::
 template<> void JSTestActiveDOMObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestActiveDOMObject::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestActiveDOMObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestActiveDOMObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -135,12 +135,13 @@ static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
     { "overloadedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
+const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
 
 void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestActiveDOMObject::info(), JSTestActiveDOMObjectPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestActiveDOMObject) };

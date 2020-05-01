@@ -674,7 +674,7 @@ template<> JSValue JSTestGlobalObjectConstructor::prototypeForStructure(JSC::VM&
 template<> void JSTestGlobalObjectConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestGlobalObject"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestGlobalObject"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestGlobalObject::info(), JSTestGlobalObjectConstructorTableValues, *this);
 }
@@ -695,7 +695,16 @@ static const HashTableValue JSTestGlobalObjectPrototypeTableValues[] =
 };
 
 static const HashTable JSTestGlobalObjectPrototypeTable = { 1, 1, true, JSTestGlobalObject::info(), JSTestGlobalObjectPrototypeTableValues, JSTestGlobalObjectPrototypeTableIndex };
-const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObjectPrototype", &Base::s_info, &JSTestGlobalObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
+const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObject", &Base::s_info, &JSTestGlobalObjectPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectPrototype) };
+
+void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+#if ENABLE(TEST_FEATURE)
+    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testPrivateFunctionPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestGlobalObjectInstanceFunctionTestPrivateFunction), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+#endif
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
 
 const ClassInfo JSTestGlobalObject::s_info = { "TestGlobalObject", &Base::s_info, &JSTestGlobalObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObject) };
 

@@ -277,6 +277,7 @@ ALL PROPERTIES:
     CAPTURING_PHASE
     AT_TARGET
     BUBBLING_PHASE
+    Symbol(Symbol.toStringTag)
     toString
     toLocaleString
     valueOf
@@ -520,6 +521,7 @@ ALL PROPERTIES:
     item
     namedItem
     Symbol(Symbol.iterator)
+    Symbol(Symbol.toStringTag)
     toString
     toLocaleString
     valueOf

@@ -72,8 +72,8 @@ IntlCollatorPrototype::IntlCollatorPrototype(VM& vm, Structure* structure)
 void IntlCollatorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, "Object"_s), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(JSGlobalObject* globalObject, CallFrame* callFrame)

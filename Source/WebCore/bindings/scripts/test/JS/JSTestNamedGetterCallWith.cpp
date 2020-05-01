@@ -92,7 +92,7 @@ template<> JSValue JSTestNamedGetterCallWithConstructor::prototypeForStructure(J
 template<> void JSTestNamedGetterCallWithConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedGetterCallWith::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedGetterCallWith"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedGetterCallWith"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -105,12 +105,13 @@ static const HashTableValue JSTestNamedGetterCallWithPrototypeTableValues[] =
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedGetterCallWithConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestNamedGetterCallWithConstructor) } },
 };
 
-const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWithPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
+const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
 
 void JSTestNamedGetterCallWithPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedGetterCallWith::info(), JSTestNamedGetterCallWithPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedGetterCallWith::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWith) };

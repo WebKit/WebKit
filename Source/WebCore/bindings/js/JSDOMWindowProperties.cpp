@@ -82,6 +82,13 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     return false;
 }
 
+void JSDOMWindowProperties::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
 bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSDOMWindowProperties*>(object);

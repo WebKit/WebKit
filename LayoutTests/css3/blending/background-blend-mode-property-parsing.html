@@ -17,14 +17,10 @@ function jsWrapperClass(node)
     return string.substr(8, string.length - 9);
 }
 
-function shouldBeType(expression, className, prototypeName, constructorName)
+function shouldBeType(expression, className)
 {
-    if (!prototypeName)
-        prototypeName = className + "Prototype";
-    if (!constructorName)
-        constructorName = className + "Constructor";
     shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
+    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
     shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
 }
 

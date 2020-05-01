@@ -38,25 +38,17 @@ function tagJSWrapperConstructorClass(tagName)
     return jsWrapperClass(document.createElement(tagName).constructor);
 }
 
-function testTag(tagName, className, prototypeName, constructorName)
+function testTag(tagName, className)
 {
-    if (!prototypeName)
-        prototypeName = className + "Prototype";
-    if (!constructorName)
-        constructorName = className + "Constructor";
     shouldBe("tagJSWrapperClass('" + tagName + "')", "'" + className + "'");
-    shouldBe("tagJSWrapperPrototypeClass('" + tagName + "')", "'" + prototypeName + "'");
+    shouldBe("tagJSWrapperPrototypeClass('" + tagName + "')", "'" + className + "'");
     shouldBe("tagJSWrapperConstructorClass('" + tagName + "')", "'Function'");
 }
 
-function test(expression, className, prototypeName, constructorName)
+function test(expression, className)
 {
-    if (!prototypeName)
-        prototypeName = className + "Prototype";
-    if (!constructorName)
-        constructorName = className + "Constructor";
     shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
-    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
+    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
     shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
 }
 

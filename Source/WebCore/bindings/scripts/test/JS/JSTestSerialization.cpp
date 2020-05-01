@@ -132,7 +132,7 @@ template<> JSValue JSTestSerializationConstructor::prototypeForStructure(JSC::VM
 template<> void JSTestSerializationConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestSerialization::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestSerialization"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSerialization"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -158,12 +158,13 @@ static const HashTableValue JSTestSerializationPrototypeTableValues[] =
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializationPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestSerializationPrototype::s_info = { "TestSerializationPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationPrototype) };
+const ClassInfo JSTestSerializationPrototype::s_info = { "TestSerialization", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationPrototype) };
 
 void JSTestSerializationPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSerialization::info(), JSTestSerializationPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestSerialization::s_info = { "TestSerialization", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerialization) };

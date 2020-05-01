@@ -10,9 +10,7 @@ description("Validates the SVG2 inheritance model.");
 
 function interfaceName(prototype)
 {
-    var parts = prototype.toString().split(" ");
-    var lastPart = parts[parts.length - 1];
-    return lastPart.substring(0, lastPart.length - 10);
+    return prototype.toString().slice(8, -1);
 }
 
 function checkParent(type, expectedParent)

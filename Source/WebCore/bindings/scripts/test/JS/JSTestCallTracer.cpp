@@ -129,7 +129,7 @@ template<> JSValue JSTestCallTracerConstructor::prototypeForStructure(JSC::VM& v
 template<> void JSTestCallTracerConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestCallTracer::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestCallTracer"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCallTracer"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerConstructorTableValues, *this);
 }
@@ -156,12 +156,13 @@ static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
     { "testConstValue", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(false) } },
 };
 
-const ClassInfo JSTestCallTracerPrototype::s_info = { "TestCallTracerPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerPrototype) };
+const ClassInfo JSTestCallTracerPrototype::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerPrototype) };
 
 void JSTestCallTracerPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestCallTracer::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracer) };

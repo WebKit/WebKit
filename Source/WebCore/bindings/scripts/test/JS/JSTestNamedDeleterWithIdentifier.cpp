@@ -97,7 +97,7 @@ template<> JSValue JSTestNamedDeleterWithIdentifierConstructor::prototypeForStru
 template<> void JSTestNamedDeleterWithIdentifierConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedDeleterWithIdentifier::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String("TestNamedDeleterWithIdentifier"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedDeleterWithIdentifier"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
@@ -111,12 +111,13 @@ static const HashTableValue JSTestNamedDeleterWithIdentifierPrototypeTableValues
     { "namedDeleter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestNamedDeleterWithIdentifierPrototypeFunctionNamedDeleter), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifierPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
+const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifierPrototype) };
 
 void JSTestNamedDeleterWithIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNamedDeleterWithIdentifier::info(), JSTestNamedDeleterWithIdentifierPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 const ClassInfo JSTestNamedDeleterWithIdentifier::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifier) };
