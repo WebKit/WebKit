@@ -1,3 +1,16 @@
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r261015.
+
+        Seems to have broken clean builds
+
+        Reverted changeset:
+
+        "[iOS] Unable to take RunningBoard process assertions in the
+        iOS Simulator"
+        https://bugs.webkit.org/show_bug.cgi?id=211254
+        https://trac.webkit.org/changeset/261015
+
 2020-05-01  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] createMessageDecoder() needs a validity check

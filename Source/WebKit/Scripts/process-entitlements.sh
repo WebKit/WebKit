@@ -208,7 +208,6 @@ plistbuddy Clear dict
 if [[ "${WK_PLATFORM_NAME}" =~ .*simulator ]]
 then
     [[ "${RC_XBS}" != YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
-    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
 elif [[ "${WK_PLATFORM_NAME}" == macosx ]]
 then
     [[ "${RC_XBS}" != YES ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
