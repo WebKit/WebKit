@@ -3534,3 +3534,4 @@ media/media-document-audio-repaint.html [ Skip ]
 media/controls-styling.html [ Skip ]
 
 webkit.org/b/211261 compositing/iframes/border-radius-composited-frame.html [ Pass ImageOnlyFailure ]
+webkit.org/b/211261 compositing/iframes/border-uneven-radius-composited-frame.html [ Pass ImageOnlyFailure ]

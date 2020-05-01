@@ -1,3 +1,12 @@
+2020-05-01  Truitt Savell  <tsavell@apple.com>
+
+        [ iOS ] compositing/iframes/border-radius-composited-frame.html and compositing/iframes/border-uneven-radius-composited-frame.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=211261
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-05-01  Antti Koivisto  <antti@apple.com>
 
         Specific dom node order of Shadow DOM (re)projection causes crash
