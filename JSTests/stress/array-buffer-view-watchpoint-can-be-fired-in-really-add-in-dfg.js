@@ -1,3 +1,4 @@
+//@ skip if ["arm"].include?($architecture)
 //@ requireOptions("-e", "let iterations=40000") if ["mips"].include?($architecture)
 //@ runDefault("--jitPolicyScale=0")
 

@@ -1,3 +1,12 @@
+2020-05-01  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Skip on ARM and MIPS stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js added after r260990
+        https://bugs.webkit.org/show_bug.cgi?id=211304
+
+        Unreviewed Gardening.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         We can't cast toLength result to unsigned
