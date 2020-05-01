@@ -28,24 +28,32 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaQueryList);
 
 MediaQueryList::MediaQueryList(Document& document, MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
-    : ContextDestructionObserver(&document)
-    , m_matcher(matcher)
+    : ActiveDOMObject(&document)
+    , m_matcher(&matcher)
     , m_media(WTFMove(media))
-    , m_evaluationRound(m_matcher->evaluationRound())
+    , m_evaluationRound(matcher.evaluationRound())
     , m_changeRound(m_evaluationRound - 1) // Any value that is not the same as m_evaluationRound would do.
     , m_matches(matches)
 {
-    m_matcher->addMediaQueryList(*this);
+    matcher.addMediaQueryList(*this);
 }
 
 Ref<MediaQueryList> MediaQueryList::create(Document& document, MediaQueryMatcher& matcher, Ref<MediaQuerySet>&& media, bool matches)
 {
-    return adoptRef(*new MediaQueryList(document, matcher, WTFMove(media), matches));
+    auto list = adoptRef(*new MediaQueryList(document, matcher, WTFMove(media), matches));
+    list->suspendIfNeeded();
+    return list;
 }
 
 MediaQueryList::~MediaQueryList()
 {
-    m_matcher->removeMediaQueryList(*this);
+    if (m_matcher)
+        m_matcher->removeMediaQueryList(*this);
+}
+
+void MediaQueryList::detachFromMatcher()
+{
+    m_matcher = nullptr;
 }
 
 String MediaQueryList::media() const
@@ -71,6 +79,11 @@ void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)
 
 void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notificationNeeded)
 {
+    if (!m_matcher) {
+        notificationNeeded = false;
+        return;
+    }
+
     if (m_evaluationRound != m_matcher->evaluationRound())
         setMatches(evaluator.evaluate(m_media.get()));
     notificationNeeded = m_changeRound == m_matcher->evaluationRound();
@@ -78,6 +91,7 @@ void MediaQueryList::evaluate(MediaQueryEvaluator& evaluator, bool& notification
 
 void MediaQueryList::setMatches(bool newValue)
 {
+    ASSERT(m_matcher);
     m_evaluationRound = m_matcher->evaluationRound();
 
     if (newValue == m_matches)
@@ -89,9 +103,24 @@ void MediaQueryList::setMatches(bool newValue)
 
 bool MediaQueryList::matches()
 {
-    if (m_evaluationRound != m_matcher->evaluationRound())
+    if (m_matcher && m_evaluationRound != m_matcher->evaluationRound())
         setMatches(m_matcher->evaluate(m_media.get()));
     return m_matches;
+}
+
+void MediaQueryList::eventListenersDidChange()
+{
+    m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
+}
+
+const char* MediaQueryList::activeDOMObjectName() const
+{
+    return "MediaQueryList";
+}
+
+bool MediaQueryList::virtualHasPendingActivity() const
+{
+    return m_hasChangeEventListener && m_matcher;
 }
 
 }

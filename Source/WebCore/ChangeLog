@@ -1,3 +1,32 @@
+2020-05-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r260243): [ Mac WK1 ] fast/media/mq-inverted-colors-live-update-for-listener.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211154
+        <rdar://problem/62555128>
+
+        Reviewed by Darin Adler.
+
+        Make MediaQueryList an ActiveDOMObject and make sure its JS wrapper stays alive as long as
+        it may fire change events and there is at least 1 change event listener.
+
+        No new tests, already covered by existing tests.
+
+        * css/MediaQueryList.cpp:
+        (WebCore::MediaQueryList::MediaQueryList):
+        (WebCore::MediaQueryList::create):
+        (WebCore::MediaQueryList::~MediaQueryList):
+        (WebCore::MediaQueryList::detachFromMatcher):
+        (WebCore::MediaQueryList::evaluate):
+        (WebCore::MediaQueryList::setMatches):
+        (WebCore::MediaQueryList::matches):
+        (WebCore::MediaQueryList::eventListenersDidChange):
+        (WebCore::MediaQueryList::activeDOMObjectName const):
+        (WebCore::MediaQueryList::virtualHasPendingActivity const):
+        * css/MediaQueryList.h:
+        * css/MediaQueryList.idl:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::documentDestroyed):
+
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
         Use export macros on all platforms

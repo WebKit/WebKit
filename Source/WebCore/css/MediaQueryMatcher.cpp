@@ -48,7 +48,11 @@ MediaQueryMatcher::~MediaQueryMatcher() = default;
 void MediaQueryMatcher::documentDestroyed()
 {
     m_document = nullptr;
-    m_mediaQueryLists.clear();
+    auto mediaQueryLists = std::exchange(m_mediaQueryLists, { });
+    for (auto& mediaQueryList : mediaQueryLists) {
+        if (mediaQueryList)
+            mediaQueryList->detachFromMatcher();
+    }
 }
 
 String MediaQueryMatcher::mediaType() const

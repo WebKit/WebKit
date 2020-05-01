@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -32,7 +32,7 @@ namespace WebCore {
 // retrieve the current value of the given media query and to add/remove listeners that
 // will be called whenever the value of the query changes.
 
-class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaQueryList>, private ContextDestructionObserver {
+class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaQueryList>, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(MediaQueryList);
 public:
     static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);
@@ -46,6 +46,8 @@ public:
 
     void evaluate(MediaQueryEvaluator&, bool& notificationNeeded);
 
+    void detachFromMatcher();
+
     using RefCounted::ref;
     using RefCounted::deref;
 
@@ -58,12 +60,18 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    void eventListenersDidChange() final;
 
-    Ref<MediaQueryMatcher> m_matcher;
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
+
+    RefPtr<MediaQueryMatcher> m_matcher;
     Ref<MediaQuerySet> m_media;
     unsigned m_evaluationRound; // Indicates if the query has been evaluated after the last style selector change.
     unsigned m_changeRound; // Used to know if the query has changed in the last style selector change.
     bool m_matches;
+    bool m_hasChangeEventListener { false };
 };
 
 }

@@ -17,6 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  */
 [
+    ActiveDOMObject,
     Exposed=Window
 ] interface MediaQueryList : EventTarget {
     readonly attribute DOMString media;
