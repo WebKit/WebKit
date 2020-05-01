@@ -1,3 +1,43 @@
+2020-05-01  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Move video frame holder to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=211239
+
+        Reviewed by Alex Christensen.
+
+        This class implementation is big enough for a new compilation unit, IMHO.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp: Added.
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::~GstVideoFrameHolder):
+        (WebCore::GstVideoFrameHolder::handoffVideoDmaBuf):
+        (WebCore::GstVideoFrameHolder::waitForCPUSync):
+        (WebCore::GstVideoFrameHolder::updateTexture):
+        (WebCore::GstVideoFrameHolder::platformLayerBuffer):
+        * platform/graphics/gstreamer/GStreamerVideoFrameHolder.h: Added.
+        (WebCore::GstVideoFrameHolder::size const):
+        (WebCore::GstVideoFrameHolder::hasAlphaChannel const):
+        (WebCore::GstVideoFrameHolder::flags const):
+        (WebCore::GstVideoFrameHolder::textureID const):
+        (WebCore::GstVideoFrameHolder::hasMappedTextures const):
+        (WebCore::GstVideoFrameHolder::videoFrame const):
+        (WebCore::GstVideoFrameHolder::hasDMABuf const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder): Deleted.
+        (WebCore::GstVideoFrameHolder::~GstVideoFrameHolder): Deleted.
+        (WebCore::GstVideoFrameHolder::handoffVideoDmaBuf): Deleted.
+        (WebCore::GstVideoFrameHolder::waitForCPUSync): Deleted.
+        (WebCore::GstVideoFrameHolder::size const): Deleted.
+        (WebCore::GstVideoFrameHolder::hasAlphaChannel const): Deleted.
+        (WebCore::GstVideoFrameHolder::flags const): Deleted.
+        (WebCore::GstVideoFrameHolder::textureID const): Deleted.
+        (WebCore::GstVideoFrameHolder::hasMappedTextures const): Deleted.
+        (WebCore::GstVideoFrameHolder::videoFrame const): Deleted.
+        (WebCore::GstVideoFrameHolder::updateTexture): Deleted.
+        (WebCore::GstVideoFrameHolder::platformLayerBuffer): Deleted.
+        (WebCore::GstVideoFrameHolder::hasDMABuf const): Deleted.
+
 2020-05-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Disable arrow on context menu popover
