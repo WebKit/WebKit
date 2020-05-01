@@ -3050,6 +3050,18 @@ test/language/global-code/script-decl-func-err-non-extensible.js:
 test/language/global-code/script-decl-var-err.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/identifiers/part-unicode-13.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
+test/language/identifiers/part-unicode-13.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0b55'"
+  strict mode: "SyntaxError: Invalid character '\\u0b55'"
+test/language/identifiers/start-unicode-13.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
+test/language/identifiers/start-unicode-13.0.0.js:
+  default: "SyntaxError: Invalid character '\\u08be'"
+  strict mode: "SyntaxError: Invalid character '\\u08be'"
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'

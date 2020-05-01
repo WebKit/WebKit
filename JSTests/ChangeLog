@@ -1,3 +1,15 @@
+2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r260990): 8 test262 unicode tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=211298
+
+        Reviewed by Saam Barati.
+
+        These unicode identifier tests are marked as PASS in r260990, but they are failing.
+        Update test262/expectations.yaml by running `test262-runner --release --save`.
+
+        * test262/expectations.yaml:
+
 2020-05-01  Pablo Saavedra  <psaavedra@igalia.com>
 
         Skip on ARM and MIPS stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js added after r260990
