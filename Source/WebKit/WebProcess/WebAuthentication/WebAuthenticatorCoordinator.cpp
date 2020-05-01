@@ -36,6 +36,7 @@
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/UserGestureIndicator.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -50,7 +51,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
         return;
-    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, UserGestureIndicator::processingUserGesture()), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, RequestCompletionHandler&& handler)
@@ -58,7 +59,7 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
         return;
-    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, UserGestureIndicator::processingUserGesture()), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)

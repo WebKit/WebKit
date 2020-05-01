@@ -50,6 +50,7 @@ struct WebAuthenticationRequestData {
     RefPtr<API::WebAuthenticationPanel> panel;
     WTF::Optional<WebCore::GlobalFrameIdentifier> frameID;
     WebKit::FrameInfoData frameInfo;
+    bool processingUserGesture;
 };
 
 WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);

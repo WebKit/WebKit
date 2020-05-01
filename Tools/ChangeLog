@@ -1,3 +1,17 @@
+2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Require user gestures for LocalAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=182893
+        <rdar://problem/43357293>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-la-no-mock.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-la-no-mock.html: Added.
+
 2020-04-30  Alex Christensen  <achristensen@webkit.org>
 
         TestWebKitAPI.WebKit.DefaultDisplayName and TestWebKitAPI.WebKit.CustomDisplayName are flaky failures

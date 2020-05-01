@@ -305,6 +305,12 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
         transports.remove(AuthenticatorTransport::Nfc);
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
+
+    if (!isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
+        transports.remove(AuthenticatorTransport::Internal);
+    // Local authenticator might invoke system UI which should definitely not be able to trigger by scripts automatically.
+    if (!m_pendingRequestData.processingUserGesture)
+        transports.remove(AuthenticatorTransport::Internal);
 }
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
@@ -390,8 +396,6 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         transports = collectTransports(options.allowCredentials);
     });
-    if (!isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
-        transports.remove(AuthenticatorTransport::Internal);
     filterTransports(transports);
     return transports;
 }

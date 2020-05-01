@@ -1,3 +1,30 @@
+2020-04-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Require user gestures for LocalAuthenticator
+        https://bugs.webkit.org/show_bug.cgi?id=182893
+        <rdar://problem/43357293>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by API tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::filterTransports const):
+        (WebKit::AuthenticatorManager::getTransports const):
+        Checks UserGesture here. Since filterTransports will be overrided in mock testings,
+        all mock tests don't require user gestures.
+
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        Adds user gesture corresponding fields.
+
 2020-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Mac Catalyst build after r260979
