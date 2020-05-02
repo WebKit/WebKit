@@ -1,3 +1,18 @@
+2020-05-02  Devin Rousso  <drousso@apple.com>
+
+        [CSS Easing 1] implement `jump-*` step positions
+        https://bugs.webkit.org/show_bug.cgi?id=211271
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-valid-expected.txt:
+        * web-platform-tests/css/css-easing/step-timing-functions-output-expected.txt:
+        * web-platform-tests/css/css-easing/step-timing-functions-syntax-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-valid-expected.txt:
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+
 2020-05-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Interface prototype objects should define @@toStringTag

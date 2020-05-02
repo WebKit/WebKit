@@ -45,16 +45,36 @@ String CSSStepsTimingFunctionValue::customCSSText() const
     StringBuilder builder;
     builder.appendLiteral("steps(");
     builder.appendNumber(m_steps);
-    if (m_stepAtStart)
-        builder.appendLiteral(", start)");
-    else
-        builder.appendLiteral(", end)");
+    if (m_stepPosition) {
+        switch (m_stepPosition.value()) {
+        case StepsTimingFunction::StepPosition::JumpStart:
+            builder.appendLiteral(", jump-start");
+            break;
+
+        case StepsTimingFunction::StepPosition::JumpNone:
+            builder.appendLiteral(", jump-none");
+            break;
+
+        case StepsTimingFunction::StepPosition::JumpBoth:
+            builder.appendLiteral(", jump-both");
+            break;
+
+        case StepsTimingFunction::StepPosition::Start:
+            builder.appendLiteral(", start");
+            break;
+
+        case StepsTimingFunction::StepPosition::JumpEnd:
+        case StepsTimingFunction::StepPosition::End:
+            break;
+        }
+    }
+    builder.appendLiteral(")");
     return builder.toString();
 }
 
 bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& other) const
 {
-    return m_steps == other.m_steps && m_stepAtStart == other.m_stepAtStart;
+    return m_steps == other.m_steps && m_stepPosition == other.m_stepPosition;
 }
 
 String CSSSpringTimingFunctionValue::customCSSText() const

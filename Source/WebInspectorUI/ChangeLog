@@ -1,3 +1,14 @@
+2020-05-02  Devin Rousso  <drousso@apple.com>
+
+        [CSS Easing 1] implement `jump-*` step positions
+        https://bugs.webkit.org/show_bug.cgi?id=211271
+
+        Reviewed by Dean Jackson.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forFunction):
+        Include the step position keywords when autocompleting the `steps()` CSS function.
+
 2020-04-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Computed: shouldn't display focus outline on click

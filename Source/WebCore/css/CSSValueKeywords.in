@@ -977,6 +977,12 @@ ease-out
 ease-in-out
 step-start
 step-end
+jump-start
+jump-end
+jump-none
+jump-both
+// start
+// end
 
 //
 // CSS_PROP_ZOOM

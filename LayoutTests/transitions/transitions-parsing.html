@@ -330,28 +330,28 @@ shouldBe("style.webkitTransitionTimingFunction", "'cubic-bezier(0.2, -2, 0.2, 0.
 shouldBe("computedStyle.webkitTransitionTimingFunction", "'cubic-bezier(0.2, -2, 0.2, 0.4)'");
 
 style.transitionTimingFunction = "step-start";
-shouldBe("style.transitionTimingFunction", "'step-start'");
+shouldBe("style.transitionTimingFunction", "'steps(1, start)'");
 shouldBe("computedStyle.transitionTimingFunction", "'steps(1, start)'");
-shouldBe("style.webkitTransitionTimingFunction", "'step-start'");
+shouldBe("style.webkitTransitionTimingFunction", "'steps(1, start)'");
 shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(1, start)'");
 
 style.transitionTimingFunction = "step-end";
-shouldBe("style.transitionTimingFunction", "'step-end'");
-shouldBe("computedStyle.transitionTimingFunction", "'steps(1, end)'");
-shouldBe("style.webkitTransitionTimingFunction", "'step-end'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(1, end)'");
+shouldBe("style.transitionTimingFunction", "'steps(1)'");
+shouldBe("computedStyle.transitionTimingFunction", "'steps(1)'");
+shouldBe("style.webkitTransitionTimingFunction", "'steps(1)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(1)'");
 
 style.transitionTimingFunction = "steps(3)";
-shouldBe("style.transitionTimingFunction", "'steps(3, end)'");
-shouldBe("computedStyle.transitionTimingFunction", "'steps(3, end)'");
-shouldBe("style.webkitTransitionTimingFunction", "'steps(3, end)'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(3, end)'");
+shouldBe("style.transitionTimingFunction", "'steps(3)'");
+shouldBe("computedStyle.transitionTimingFunction", "'steps(3)'");
+shouldBe("style.webkitTransitionTimingFunction", "'steps(3)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(3)'");
 
-style.transitionTimingFunction = "steps(4, end)";
-shouldBe("style.transitionTimingFunction", "'steps(4, end)'");
-shouldBe("computedStyle.transitionTimingFunction", "'steps(4, end)'");
-shouldBe("style.webkitTransitionTimingFunction", "'steps(4, end)'");
-shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(4, end)'");
+style.transitionTimingFunction = "steps(4)";
+shouldBe("style.transitionTimingFunction", "'steps(4)'");
+shouldBe("computedStyle.transitionTimingFunction", "'steps(4)'");
+shouldBe("style.webkitTransitionTimingFunction", "'steps(4)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(4)'");
 
 style.transitionTimingFunction = "steps(5, start)";
 shouldBe("style.transitionTimingFunction", "'steps(5, start)'");

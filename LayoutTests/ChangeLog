@@ -1,3 +1,17 @@
+2020-05-02  Devin Rousso  <drousso@apple.com>
+
+        [CSS Easing 1] implement `jump-*` step positions
+        https://bugs.webkit.org/show_bug.cgi?id=211271
+
+        Reviewed by Dean Jackson.
+
+        * animations/computed-style.html:
+        * animations/computed-style-expected.txt:
+        * fast/css/animation-steps-calculated-value.html:
+        * fast/css/animation-steps-calculated-value-expected.txt:
+        * transitions/transitions-parsing.html:
+        * transitions/transitions-parsing-expected.txt:
+
 2020-05-01  Tim Horton  <timothy_horton@apple.com>
 
         Books sometimes ends up with blank pages, especially after adjusting font size

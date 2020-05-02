@@ -1,3 +1,61 @@
+2020-05-02  Devin Rousso  <drousso@apple.com>
+
+        [CSS Easing 1] implement `jump-*` step positions
+        https://bugs.webkit.org/show_bug.cgi?id=211271
+
+        Reviewed by Dean Jackson.
+
+        Add support for `jump-start`, `jump-end`, `jump-none`, and `jump-both` step positions inside
+        the `steps()` CSS timing function <https://drafts.csswg.org/css-easing-1/#step-position>.
+
+        Adjust existing serialization logic to match the spec <https://drafts.csswg.org/css-easing-1/#serialization>:
+         - omit `end` (and `jump-end`)
+         - the value `step-start` should result in `steps(1, start)` instead of `step-start`
+         - the value `step-end` should result in `steps(1)` instead of `step-end`
+
+        Tests: animations/computed-style.html
+               fast/css/animation-steps-calculated-value.html
+               transitions/transitions-parsing.html
+               web-platform-tests/css/css-animations/parsing/animation-timing-function-computed.html
+               web-platform-tests/css/css-animations/parsing/animation-timing-function-valid.html
+               web-platform-tests/css/css-easing/step-timing-functions-output.html
+               web-platform-tests/css/css-easing/step-timing-functions-syntax.html
+               web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed.html
+               web-platform-tests/css/css-transitions/parsing/transition-timing-function-valid.html
+               web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress.html
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSteps):
+        (WebCore::consumeAnimationTimingFunction):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSStepsTimingFunctionValue::create):
+        (WebCore::CSSStepsTimingFunctionValue::stepPosition const): Added.
+        (WebCore::CSSStepsTimingFunctionValue::CSSStepsTimingFunctionValue):
+        (WebCore::CSSStepsTimingFunctionValue::stepAtStart const): Deleted.
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText const):
+        (WebCore::CSSStepsTimingFunctionValue::equals const):
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::StepsTimingFunction::create):
+        (WebCore::StepsTimingFunction::StepsTimingFunction):
+        (WebCore::StepsTimingFunction::stepPosition): Added.
+        (WebCore::StepsTimingFunction::setStepPosition): Added.
+        (WebCore::StepsTimingFunction::clone):
+        (WebCore::StepsTimingFunction::stepAtStart): Deleted.
+        (WebCore::StepsTimingFunction::setStepAtStart): Deleted.
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::operator<<):
+        (WebCore::TimingFunction::transformTime):
+        (WebCore::TimingFunction::createFromCSSValue):
+        (WebCore::TimingFunction::cssText const):
+
 2020-05-01  Tim Horton  <timothy_horton@apple.com>
 
         Books sometimes ends up with blank pages, especially after adjusting font size
