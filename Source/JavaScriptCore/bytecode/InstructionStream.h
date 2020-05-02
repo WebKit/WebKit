@@ -37,11 +37,11 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
 class InstructionStream {
     WTF_MAKE_FAST_ALLOCATED;
 
-    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc>;
-
     friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
 public:
+    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc>;
+
     size_t sizeInBytes() const;
 
     using Offset = unsigned;
@@ -191,6 +191,13 @@ public:
         : InstructionStream({ })
     { }
 
+    void setInstructionBuffer(InstructionBuffer&& buffer)
+    {
+        RELEASE_ASSERT(!m_instructions.size());
+        RELEASE_ASSERT(!buffer.size());
+        m_instructions = WTFMove(buffer);
+    }
+
     inline MutableRef ref(Offset offset)
     {
         ASSERT(offset < m_instructions.size());
@@ -259,6 +266,19 @@ public:
         m_finalized = true;
         m_instructions.shrinkToFit();
         return std::unique_ptr<InstructionStream> { new InstructionStream(WTFMove(m_instructions)) };
+    }
+
+    std::unique_ptr<InstructionStream> finalize(InstructionBuffer& usedBuffer)
+    {
+        m_finalized = true;
+
+        InstructionBuffer resultBuffer(m_instructions.size());
+        RELEASE_ASSERT(m_instructions.sizeInBytes() == resultBuffer.sizeInBytes());
+        memcpy(resultBuffer.data(), m_instructions.data(), m_instructions.sizeInBytes());
+
+        usedBuffer = WTFMove(m_instructions);
+
+        return std::unique_ptr<InstructionStream> { new InstructionStream(WTFMove(resultBuffer)) };
     }
 
     MutableRef ref()

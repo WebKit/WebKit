@@ -1,3 +1,13 @@
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
+        Have a thread local cache for the Wasm LLInt bytecode buffer
+        https://bugs.webkit.org/show_bug.cgi?id=211317
+
+        Reviewed by Filip Pizlo and Mark Lam.
+
+        * wtf/Vector.h:
+        (WTF::Vector::sizeInBytes const):
+
 2020-05-01  Don Olmstead  <don.olmstead@sony.com>
 
         [GTK] Add additional exports to support hidden visibility

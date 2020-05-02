@@ -691,6 +691,7 @@ public:
     Vector& operator=(Vector&&);
 
     size_t size() const { return m_size; }
+    size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }

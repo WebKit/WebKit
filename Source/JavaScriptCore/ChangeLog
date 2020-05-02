@@ -1,3 +1,33 @@
+2020-05-01  Saam Barati  <sbarati@apple.com>
+
+        Have a thread local cache for the Wasm LLInt bytecode buffer
+        https://bugs.webkit.org/show_bug.cgi?id=211317
+
+        Reviewed by Filip Pizlo and Mark Lam.
+
+        One of the main things slowing down Wasm compile times is the banging
+        on bmalloc's global heap lock. This patch makes it so for the bytecode
+        instruction buffer, we keep a thread local cache with latest capacity
+        the thread needed to compile. This makes it so that in the average case,
+        we only do one malloc at the end of a compile to memcpy the final result.
+        
+        We clear these thread local caches when the WasmWorklist's automatic threads
+        underlying machine thread is destroyed.
+        
+        This is a 15% speedup in zen garden compile times on a 16-core Mac Pro.
+        This is a 4-5% speedup in zen garden compile times on a 6-core MBP.
+
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStreamWriter::setInstructionBuffer):
+        (JSC::InstructionStreamWriter::finalize):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::threadSpecificBuffer):
+        (JSC::Wasm::clearLLIntThreadSpecificCache):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmWorklist.cpp:
+
 2020-05-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Fix AppleWin build
