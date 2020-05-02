@@ -1,3 +1,20 @@
+2020-05-02  Daniel Bates  <dabates@apple.com>
+
+        Page::editableElementsInRect() should return root editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=211343
+        <rdar://problem/60015801>
+
+        Reviewed by Simon Fraser.
+
+        Return the root editable element for each non-text form control editable element
+        inside the search rect as it may not have been hit itself. This can happen if the
+        search rect is small enough to intersect only child elements of the root editable
+        elements.
+
+        * page/Page.cpp:
+        (WebCore::Page::editableElementsInRect const):
+        (WebCore::isEditableTextInputElement): Deleted.
+
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         scrollableAreaForScrollingNodeID() gives the wrong answer for the FrameView

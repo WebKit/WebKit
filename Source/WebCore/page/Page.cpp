@@ -912,16 +912,6 @@ void Page::unmarkAllTextMatches()
     });
 }
 
-static bool isEditableTextInputElement(const Element& element)
-{
-    if (is<HTMLTextFormControlElement>(element)) {
-        if (!element.isTextField() && !is<HTMLTextAreaElement>(element))
-            return false;
-        return downcast<HTMLTextFormControlElement>(element).isInnerTextElementEditable();
-    }
-    return element.isRootEditableElement();
-}
-
 Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
 {
     auto frameView = makeRefPtr(mainFrame().view());
@@ -938,16 +928,24 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     if (!document->hitTest(hitType, hitTestResult))
         return { };
 
-    Vector<Ref<Element>> result;
+    auto rootEditableElement = [](Node& node) -> Element* {
+        if (is<HTMLTextFormControlElement>(node)) {
+            if (downcast<HTMLTextFormControlElement>(node).isInnerTextElementEditable())
+                return &downcast<Element>(node);
+        } else if (is<Element>(node) && node.hasEditableStyle())
+            return node.rootEditableElement();
+        return nullptr;
+    };
+
+    ListHashSet<Ref<Element>> rootEditableElements;
     auto& nodeSet = hitTestResult.listBasedTestResult();
-    result.reserveInitialCapacity(nodeSet.size());
     for (auto& node : nodeSet) {
-        if (is<Element>(node) && isEditableTextInputElement(downcast<Element>(node.get()))) {
-            ASSERT(searchRectInRootViewCoordinates.intersects(downcast<Element>(node.get()).clientRect()));
-            result.uncheckedAppend(static_reference_cast<Element>(node));
+        if (auto* editableElement = rootEditableElement(node)) {
+            ASSERT(searchRectInRootViewCoordinates.intersects(editableElement->clientRect()));
+            rootEditableElements.add(*editableElement);
         }
     }
-    return result;
+    return WTF::map(rootEditableElements, [](const auto& element) { return element.copyRef(); });
 }
 
 const VisibleSelection& Page::selection() const

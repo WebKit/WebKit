@@ -285,6 +285,33 @@ TEST(RequestTextInputContext, CompositedOverlap)
     EXPECT_EQ(1UL, contexts.count);
 }
 
+TEST(RequestTextInputContext, RectContainsEditableNonRootChild)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body contenteditable='true' style='width: 500px; height: 500px'><div style='width: 200px; height: 200px; background-color: blue'>Hello World</div></body>")];
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(10, 10, 20, 20)];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 500, 500), contexts[0].boundingRect);
+}
+
+TEST(RequestTextInputContext, RectContainsNestedEditableNonRootChild)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body contenteditable='true' style='width: 500px; height: 500px'><div style='width: 200px; height: 200px; background-color: blue'><div style='width: 100px; height: 100px; background-color: yellow' contenteditable='true'>Hello World</div></div></body>")];
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(10, 10, 20, 20)];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 500, 500), contexts[0].boundingRect);
+}
+
+TEST(RequestTextInputContext, RectContainsInnerEditableNonRootChild)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<body contenteditable='true' style='width: 500px; height: 500px'><div style='width: 200px; height: 200px; background-color: blue' contenteditable='false'><div style='width: 100px; height: 100px; background-color: yellow' contenteditable='true'>Hello World</div></div><p>Body</p></body>")];
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:CGRectMake(10, 10, 20, 20)];
+    EXPECT_EQ(1UL, contexts.count);
+    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
+}
+
 TEST(RequestTextInputContext, ReadOnlyField)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
