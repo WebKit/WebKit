@@ -1,3 +1,16 @@
+2020-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Books sometimes ends up with blank pages, especially after adjusting font size
+        https://bugs.webkit.org/show_bug.cgi?id=211265
+        <rdar://problem/59898144>
+
+        Reviewed by Darin Adler.
+
+        * tiled-drawing/tile-coverage-scrolled-view-exposed-rect-expected.txt: Added.
+        * tiled-drawing/tile-coverage-scrolled-view-exposed-rect.html: Added.
+        Add a test ensuring that we create the correct tiles with a
+        scrolled web view that also uses clipsToVisibleRect=YES.
+
 2020-05-01  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Refactor texImage2D and texSubImage2D taking ImageBitmap, ImageData, Image, ArrayBufferView

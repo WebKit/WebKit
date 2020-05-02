@@ -71,7 +71,7 @@ private:
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
 
 #if PLATFORM(MAC)
-    void setViewExposedRect(Optional<WebCore::FloatRect>) override;
+    void didChangeViewExposedRect() override;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

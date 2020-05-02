@@ -514,8 +514,8 @@ FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
     // Having a m_scrolledContentsLayer indicates that we're doing scrolling via GraphicsLayers.
     FloatRect visibleRect = m_scrolledContentsLayer ? FloatRect({ }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
 
-    if (frameView.viewExposedRect())
-        visibleRect.intersect(frameView.viewExposedRect().value());
+    if (auto exposedRect = frameView.viewExposedRect())
+        visibleRect.intersect(*exposedRect);
 
     return visibleRect;
 #endif

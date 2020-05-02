@@ -44,6 +44,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << underlayColor;
     encoder << useFixedLayout;
     encoder << fixedLayoutSize;
+    encoder << viewExposedRect;
     encoder << alwaysShowsHorizontalScroller;
     encoder << alwaysShowsVerticalScroller;
     encoder.encodeEnum(paginationMode);
@@ -187,6 +188,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.useFixedLayout))
         return WTF::nullopt;
     if (!decoder.decode(parameters.fixedLayoutSize))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.viewExposedRect))
         return WTF::nullopt;
     if (!decoder.decode(parameters.alwaysShowsHorizontalScroller))
         return WTF::nullopt;

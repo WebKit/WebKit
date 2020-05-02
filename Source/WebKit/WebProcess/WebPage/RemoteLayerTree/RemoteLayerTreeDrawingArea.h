@@ -88,7 +88,7 @@ private:
     bool forceRepaintAsync(CallbackID) override { return false; }
 
     void setViewExposedRect(Optional<WebCore::FloatRect>) override;
-    Optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
+    Optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
 
     void acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime) override;
     void acceleratedAnimationDidEnd(uint64_t layerID, const String& key) override;
@@ -108,7 +108,6 @@ private:
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) override;
 
-    void updateScrolledExposedRect();
     void updateRootLayers();
 
     void addCommitHandlers();
@@ -145,7 +144,6 @@ private:
     WebCore::IntSize m_viewSize;
 
     Optional<WebCore::FloatRect> m_viewExposedRect;
-    Optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
     WebCore::Timer m_updateRenderingTimer;
     bool m_isRenderingSuspended { false };

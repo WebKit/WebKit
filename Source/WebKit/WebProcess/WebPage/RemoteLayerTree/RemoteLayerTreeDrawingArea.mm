@@ -73,6 +73,9 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     // DisplayIDs less likely, it is not entirely safe to have a RemoteLayerTreeDrawingArea and TiledCoreAnimationDrawingArea
     // coeexist in the same process.
     webPage.windowScreenDidChange(std::numeric_limits<uint32_t>::max() - webPage.identifier().toUInt64());
+
+    if (auto viewExposedRect = parameters.viewExposedRect)
+        setViewExposedRect(viewExposedRect);
 }
 
 RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
@@ -227,7 +230,9 @@ void RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd(uint64_t layerID, co
 void RemoteLayerTreeDrawingArea::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
     m_viewExposedRect = viewExposedRect;
-    updateScrolledExposedRect();
+
+    if (FrameView* frameView = m_webPage.mainFrameView())
+        frameView->setViewExposedRect(m_viewExposedRect);
 }
 
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
@@ -249,22 +254,6 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
 
     frameView->setExposedContentRect(exposedContentRect);
     scheduleRenderingUpdate();
-}
-
-void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
-{
-    FrameView* frameView = m_webPage.mainFrameView();
-    if (!frameView)
-        return;
-
-    m_scrolledViewExposedRect = m_viewExposedRect;
-
-#if !PLATFORM(IOS_FAMILY)
-    if (m_viewExposedRect)
-        m_scrolledViewExposedRect.value().moveBy(frameView->scrollOffset());
-#endif
-
-    frameView->setViewExposedRect(m_scrolledViewExposedRect);
 }
 
 TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
@@ -333,8 +322,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     m_webPage.updateRendering();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
-    if (m_scrolledViewExposedRect)
-        visibleRect.intersect(m_scrolledViewExposedRect.value());
+    if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
+        visibleRect.intersect(*exposedRect);
 
     addCommitHandlers();
 

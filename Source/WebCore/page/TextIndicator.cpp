@@ -335,7 +335,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
     contentsClipRect = enclosingIntRect(frameView->exposedContentRect());
 #else
     if (auto viewExposedRect = frameView->viewExposedRect())
-        contentsClipRect = frameView->viewToContents(enclosingIntRect(*viewExposedRect));
+        contentsClipRect = enclosingIntRect(*viewExposedRect);
     else
         contentsClipRect = frameView->visibleContentRect();
 #endif

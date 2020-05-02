@@ -1,3 +1,16 @@
+2020-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Books sometimes ends up with blank pages, especially after adjusting font size
+        https://bugs.webkit.org/show_bug.cgi?id=211265
+        <rdar://problem/59898144>
+
+        Reviewed by Darin Adler.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setViewExposedRect):
+        Rename "hasRectChanged" because it only tests if the optional-state of the
+        rect has changed, not the actual value.
+
 2020-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should observe the value attribute of some input elements

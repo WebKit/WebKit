@@ -1,3 +1,85 @@
+2020-05-01  Tim Horton  <timothy_horton@apple.com>
+
+        Books sometimes ends up with blank pages, especially after adjusting font size
+        https://bugs.webkit.org/show_bug.cgi?id=211265
+        <rdar://problem/59898144>
+
+        Reviewed by Darin Adler.
+
+        A few problems:
+
+        - There is short time during page creation where a WKWebView created
+        with _clipsToVisibleRect=YES would not yet have sent its viewExposedRect
+        to the Web Content process, and if we end up constructing tiles during
+        that time, we can make way too many, bogging down the process (or crashing).
+
+        Fix this by always keeping track of the viewExposedRect (on WebPageProxy,
+        instead of the somewhat-more-transient DrawingAreaProxy) and sending it
+        to the Web Content process in the WebPage creation parameters, to entirely
+        remove this window.
+
+        - Even when the viewExposedRect successfully gets to the Web Content
+        process, it can still end up wildly wrong: the DrawingArea was tasked with
+        watching scrolling changes, applying the scroll offset to the viewExposedRect,
+        and pushing it to FrameView in content coordinates.
+
+        It turns out that this was all unnecessary, as we need viewExposedRect
+        in root view coordinates (same space as visibleContentRect, which we
+        intersect it with), and we just didn't notice because all clients of
+        _clipsToVisibleRect: expand the view to its layout size and insert
+        a scrolling view outside the web view, and so don't use our scrolling.
+
+        Avoid this conversion and complexity entirely; I tested Mail and Books
+        where there is no impact (other than fixing the original bug), and also
+        a custom test app with a scrollable WKWebView inside a NSScrollView,
+        which improved significantly.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Plumb view exposed rect via WebPage creation parameters.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateViewExposedRect):
+        Send viewExposedRect changes to WebPageProxy instead of DrawingAreaProxy.
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::didChangeViewExposedRect):
+        (WebKit::DrawingAreaProxy::viewExposedRectChangedTimerFired):
+        (WebKit::DrawingAreaProxy::setViewExposedRect): Deleted.
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::viewExposedRect const): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didChangeViewExposedRect):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::indicatorLocation const):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::setViewExposedRect): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setViewExposedRect):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewExposedRect const):
+        Maintain viewExposedRect on WebPageProxy instead of DrawingAreaProxy,
+        so that we can always store it even if we don't have a DrawingAreaProxy yet
+        (or change DrawingAreaProxies) and can send it in WebPage creation parameters.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::setViewExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect): Deleted.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        (WebKit::TiledCoreAnimationDrawingArea::setViewExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::scroll): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect): Deleted.
+        Plumb viewExposedRect directly to FrameView, instead of trying to apply
+        the root view -> contents mapping ourselves and pushing updates.
+
 2020-05-01  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Refactor createMessageDecoder() for clarity
