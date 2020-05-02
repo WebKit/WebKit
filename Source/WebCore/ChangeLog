@@ -1,5 +1,24 @@
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
+        scrollableAreaForScrollingNodeID() gives the wrong answer for the FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=211310
+
+        Reviewed by Zalan Bujtas.
+
+        Given the FrameView's scrollingNodeID, RenderLayerCompositor::scrollableAreaForScrollingNodeID()
+        would return the RenderView's layer when it should return the FrameView itself.
+
+        Fixing this allows removal of a special-case in setActiveScrollSnapIndices().
+
+        No behavior change.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setActiveScrollSnapIndices):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scrollableAreaForScrollingNodeID const):
+
+2020-05-02  Simon Fraser  <simon.fraser@apple.com>
+
         handleWheelEventPhase() should include the relevant ScrollingNodeID
         https://bugs.webkit.org/show_bug.cgi?id=211315
 

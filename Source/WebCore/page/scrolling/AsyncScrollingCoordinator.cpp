@@ -885,13 +885,6 @@ void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrol
     if (!frameView)
         return;
     
-    if (scrollingNodeID == frameView->scrollingNodeID()) {
-        frameView->setCurrentHorizontalSnapPointIndex(horizontalIndex);
-        frameView->setCurrentVerticalSnapPointIndex(verticalIndex);
-        return;
-    }
-    
-    // Overflow-scroll area.
     if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(scrollingNodeID)) {
         scrollableArea->setCurrentHorizontalSnapPointIndex(horizontalIndex);
         scrollableArea->setCurrentVerticalSnapPointIndex(verticalIndex);

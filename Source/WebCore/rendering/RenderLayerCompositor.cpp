@@ -4774,6 +4774,9 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(Scrollin
     if (!nodeID)
         return nullptr;
 
+    if (nodeID == m_renderView.frameView().scrollingNodeID())
+        return &m_renderView.frameView();
+
     return m_scrollingNodeToLayerMap.get(nodeID).get();
 }
 
