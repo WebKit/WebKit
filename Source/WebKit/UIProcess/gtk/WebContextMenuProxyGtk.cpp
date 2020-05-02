@@ -72,9 +72,8 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
     switch (menuItem.type()) {
     case ActionType:
     case CheckableActionType: {
-        GUniquePtr<char> actionName(g_strdup_printf("%s.%s", gContextMenuItemGroup, g_action_get_name(action)));
         gMenuItem = adoptGRef(g_menu_item_new(menuItem.title().utf8().data(), nullptr));
-        g_menu_item_set_action_and_target_value(gMenuItem.get(), actionName.get(), menuItem.gActionTarget());
+        g_menu_item_set_action_and_target_value(gMenuItem.get(), g_action_get_name(action), menuItem.gActionTarget());
 
         if (menuItem.action() < ContextMenuItemBaseApplicationTag) {
             g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
@@ -128,7 +127,7 @@ Vector<WebContextMenuItemGlib> WebContextMenuProxyGtk::populateSubMenu(const Web
 void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemGlib>& items)
 {
     GRefPtr<GMenu> menu = buildMenu(items);
-    gtk_popover_bind_model(m_menu, G_MENU_MODEL(menu.get()), nullptr);
+    gtk_popover_bind_model(m_menu, G_MENU_MODEL(menu.get()), gContextMenuItemGroup);
 }
 
 void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& items)
@@ -156,7 +155,7 @@ void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& ite
         }
         }
     }
-    gtk_popover_bind_model(m_menu, G_MENU_MODEL(menu.get()), nullptr);
+    gtk_popover_bind_model(m_menu, G_MENU_MODEL(menu.get()), gContextMenuItemGroup);
 }
 
 void WebContextMenuProxyGtk::show()
