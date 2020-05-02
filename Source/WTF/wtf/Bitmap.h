@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,21 +22,17 @@
 #include <array>
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
-#include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <stdint.h>
 #include <string.h>
-#include <type_traits>
 
 namespace WTF {
 
-template<size_t size>
-using BitmapWordType = std::conditional_t<(size <= 32 && sizeof(UCPURegister) > sizeof(uint32_t)), uint32_t, UCPURegister>;
-
-template<size_t bitmapSize, typename WordType = BitmapWordType<bitmapSize>>
+template<size_t bitmapSize, typename WordType = uint32_t>
 class Bitmap final {
     WTF_MAKE_FAST_ALLOCATED;
     
-    static_assert(sizeof(WordType) <= sizeof(UCPURegister), "WordType must not be bigger than the CPU atomic word size");
+    static_assert(sizeof(WordType) <= sizeof(unsigned), "WordType must not be bigger than unsigned");
 public:
     constexpr Bitmap();
 

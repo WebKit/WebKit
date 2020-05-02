@@ -751,7 +751,6 @@
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
 		FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForbidHeapAllocation.h; sourceTree = "<group>"; };
 		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
-		FE97F6A8245CE5DD00C63FC6 /* StdIntExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdIntExtras.h; sourceTree = "<group>"; };
 		FEB6B035201BE0B600B958C1 /* PointerPreparations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerPreparations.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
@@ -1235,7 +1234,6 @@
 				FEDACD3C1630F83F00C69634 /* StackStats.h */,
 				313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */,
 				EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */,
-				FE97F6A8245CE5DD00C63FC6 /* StdIntExtras.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
 				FF0A436588954F3CB07DBECA /* StdList.h */,
 				391BD6BA4D164FD294F9A93D /* StdMap.h */,
