@@ -33,6 +33,7 @@
 #include "EventLoop.h"
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "NodeTraversal.h"
@@ -224,9 +225,13 @@ private:
     RefPtr<Node> m_pastEndNode;
 };
 
-static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
+static bool isAttributeForTextManipulation(const Element& element, const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
+
+    if (nameToCheck == valueAttr)
+        return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isTextButton();
+
     static const QualifiedName* const attributeNames[] = {
         &titleAttr.get(),
         &altAttr.get(),
@@ -340,7 +345,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                 }
                 if (currentElement.hasAttributes()) {
                     for (auto& attribute : currentElement.attributesIterator()) {
-                        if (isAttributeForTextManipulation(attribute.name())) {
+                        if (isAttributeForTextManipulation(currentElement, attribute.name())) {
                             addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), attribute.name(),
                                 { ManipulationToken { m_tokenIdentifier.generate(), attribute.value(), tokenInfo(&currentElement) } } });
                         }

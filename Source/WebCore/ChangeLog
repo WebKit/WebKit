@@ -1,3 +1,21 @@
+2020-05-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should observe the value attribute of some input elements
+        https://bugs.webkit.org/show_bug.cgi?id=211307
+        <rdar://problem/61568528>
+
+        Reviewed by Darin Adler.
+
+        Teach TextManipulationController to detect the `value` attribute in input elements of type "button" and
+        "submit". To do this, we plumb the element through to `isAttributeForTextManipulation` and check `isTextButton()`
+        if "value" attribute is being considered.
+
+        Test: TextManipulation.StartTextManipulationExtractsValuesFromButtonInputs
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isAttributeForTextManipulation):
+        (WebCore::TextManipulationController::observeParagraphs):
+
 2020-05-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r259036) Unable to post comments on Jira

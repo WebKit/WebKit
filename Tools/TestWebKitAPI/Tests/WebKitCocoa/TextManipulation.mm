@@ -757,6 +757,35 @@ TEST(TextManipulation, StartTextManipulationExtractsUserInfo)
     }
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsValuesFromButtonInputs)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<input type='button' value='One'>"
+        "<input type='submit' value='Two'>"
+        "<input type='password' value='Three'>"
+        "<input type='range' value='4'>"
+        "<input type='date' value='2020-05-01'>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("One", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
