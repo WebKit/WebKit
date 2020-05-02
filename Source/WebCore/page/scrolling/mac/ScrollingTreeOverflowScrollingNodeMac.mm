@@ -77,14 +77,11 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
     if (!canScrollWithWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
-    m_delegate.handleWheelEvent(wheelEvent);
+    bool handled = m_delegate.handleWheelEvent(wheelEvent);
 
-    // FIXME: Scroll snap
-
-    scrollingTree().handleWheelEventPhase(wheelEvent.phase());
+    scrollingTree().handleWheelEventPhase(scrollingNodeID(), wheelEvent.phase());
     
-    // FIXME: This needs to return whether the event was handled.
-    return ScrollingEventResult::DidHandleEvent;
+    return handled ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const

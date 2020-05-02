@@ -116,7 +116,7 @@ public:
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomString& eventName, IntPoint);
 
 #if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
+    virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) = 0;
     virtual void setActiveScrollSnapIndices(ScrollingNodeID, unsigned /*horizontalIndex*/, unsigned /*verticalIndex*/) { }
 
     virtual void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) { }

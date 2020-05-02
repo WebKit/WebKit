@@ -1,3 +1,22 @@
+2020-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        handleWheelEventPhase() should include the relevant ScrollingNodeID
+        https://bugs.webkit.org/show_bug.cgi?id=211315
+
+        Reviewed by Tim Horton.
+
+        handleWheelEventPhase() is used to send information about wheel event phases
+        to the main thread, which make their way to ScrollAnimatorMac::handleWheelEventPhase()
+        and are used to update the state of overlay scrollbars. In order to talk to the
+        correct set of scrollbars with overflow:scroll, we need to send along the ScrollingNodeID
+        and map that to the appropriate ScrollableArea.
+
+        Will be tested by future overlay scrollbar tests.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::handleWheelEventPhase):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+
 2020-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Re-inject key press events not handled by the web process

@@ -114,9 +114,9 @@ public:
     // Takes scroll positions from the scrolling tree and applies them to ScrollableAreas.
     virtual void synchronizeStateFromScrollingTree() { }
 
-#if PLATFORM(COCOA)
+#if ENABLE(KINETIC_SCROLLING)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
-    void handleWheelEventPhase(PlatformWheelEventPhase);
+    virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) { }
 #endif
 
     // Force all scroll layer position updates to happen on the main thread.

@@ -165,13 +165,13 @@ void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nod
 #endif
 
 #if PLATFORM(MAC)
-void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
+void ThreadedScrollingTree::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {
     if (!m_scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, phase] {
-        scrollingCoordinator->handleWheelEventPhase(phase);
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID, phase] {
+        scrollingCoordinator->handleWheelEventPhase(nodeID, phase);
     });
 }
 

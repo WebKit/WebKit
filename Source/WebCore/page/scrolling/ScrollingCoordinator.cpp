@@ -294,22 +294,6 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView)
     updateSynchronousScrollingReasons(frameView);
 }
 
-#if PLATFORM(COCOA)
-void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
-{
-    ASSERT(isMainThread());
-
-    if (!m_page)
-        return;
-
-    auto* frameView = m_page->mainFrame().view();
-    if (!frameView)
-        return;
-
-    frameView->scrollAnimator().handleWheelEventPhase(phase);
-}
-#endif
-
 bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView& frameView) const
 {
     auto* viewportConstrainedObjects = frameView.viewportConstrainedObjects();

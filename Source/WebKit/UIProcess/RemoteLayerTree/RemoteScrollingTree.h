@@ -60,7 +60,7 @@ private:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
 #if PLATFORM(MAC)
-    void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) override;
+    void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

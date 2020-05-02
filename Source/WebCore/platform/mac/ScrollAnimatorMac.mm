@@ -58,7 +58,7 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
     return nil;
 }
 
-}
+} // namespace WebCore
 
 using WebCore::ScrollableArea;
 using WebCore::ScrollAnimatorMac;
