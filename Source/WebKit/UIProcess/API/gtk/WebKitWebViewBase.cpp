@@ -816,6 +816,15 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
+    // Since WebProcess key event handling is not synchronous, handle the event in two passes.
+    // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent
+    // with event handled status which determines whether to pass the input event to parent or not
+    // using gtk_main_do_event().
+    if (priv->shouldForwardNextKeyEvent) {
+        priv->shouldForwardNextKeyEvent = false;
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
+    }
+
     GdkModifierType state;
     guint keyval;
     gdk_event_get_state(reinterpret_cast<GdkEvent*>(keyEvent), &state);
@@ -825,7 +834,6 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     if ((state & GDK_CONTROL_MASK) && (state & GDK_SHIFT_MASK) && keyval == GDK_KEY_G) {
         auto& preferences = priv->pageProxy->preferences();
         preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
-        priv->shouldForwardNextKeyEvent = FALSE;
         return GDK_EVENT_STOP;
     }
 #endif
@@ -847,14 +855,6 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     }
 #endif
 
-    // Since WebProcess key event handling is not synchronous, handle the event in two passes.
-    // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent
-    // with event handled status which determines whether to pass the input event to parent or not
-    // using gtk_main_do_event().
-    if (priv->shouldForwardNextKeyEvent) {
-        priv->shouldForwardNextKeyEvent = FALSE;
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
-    }
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent));
     if (!filterResult.handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), filterResult.keyText,
@@ -868,11 +868,6 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-
-    if (priv->shouldForwardNextKeyEvent) {
-        priv->shouldForwardNextKeyEvent = FALSE;
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, keyEvent);
-    }
 
     if (!priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent)).handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), { },
@@ -897,6 +892,15 @@ static void webkitWebViewBaseFocusLeave(WebKitWebViewBase* webViewBase, GtkEvent
 static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned, GdkModifierType state, GtkEventController* controller)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    // Since WebProcess key event handling is not synchronous, handle the event in two passes.
+    // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent
+    // with event handled status which determines whether to pass the input event to parent or not
+    // using gdk_display_put_event().
+    if (priv->shouldForwardNextKeyEvent) {
+        priv->shouldForwardNextKeyEvent = false;
+        return GDK_EVENT_PROPAGATE;
+    }
 
 #if ENABLE(DEVELOPER_MODE) && OS(LINUX)
     if ((state & GDK_CONTROL_MASK) && (state & GDK_SHIFT_MASK) && keyval == GDK_KEY_G) {

@@ -1,3 +1,21 @@
+2020-05-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Re-inject key press events not handled by the web process
+        https://bugs.webkit.org/show_bug.cgi?id=211286
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use gdk_display_put_event() since gtk_main_do_event() is no longer available in GTK4. Also stop forwarding key
+        release events in GTK3 case, this only makes sense for key press events and we were re-injecting every release
+        event since they are not handled by web elements in most of the cases.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkitWebViewBaseKeyPressed):
+
 2020-05-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Specify action group name when binding context menu models

@@ -239,11 +239,14 @@ WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::In
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
-    if (wasEventHandled)
+    if (wasEventHandled || event.type() != WebEvent::Type::KeyDown)
         return;
-#if !USE(GTK4)
+
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);
+#if USE(GTK4)
+    gdk_display_put_event(gtk_widget_get_display(m_viewWidget), event.nativeEvent());
+#else
     gtk_main_do_event(event.nativeEvent());
 #endif
 }
