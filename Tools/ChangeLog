@@ -1,3 +1,14 @@
+2020-05-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update API test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=211337
+
+        Unreviewed gardening.
+
+        Some tests became flaky under Flatpak.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-05-01  Tim Horton  <timothy_horton@apple.com>
 
         Books sometimes ends up with blank pages, especially after adjusting font size

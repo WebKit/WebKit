@@ -28,7 +28,7 @@
     "TestPrinting": {
         "subtests": {
             "/webkit/WebKitPrintOperation/custom-widget": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/168196"}}
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/168196"}}
             }
         }
     },
@@ -49,6 +49,9 @@
             },
             "/webkit/WebKitWebExtension/form-controls-associated-signal": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205380"}}
+            },
+            "/webkit/WebKitWebExtension/user-messages": {
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"}}
             }
         }
     },
