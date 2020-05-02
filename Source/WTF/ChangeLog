@@ -1,3 +1,26 @@
+2020-05-01  Mark Lam  <mark.lam@apple.com>
+
+        Allow Bitmap to use up to a UCPURegister word size for internal bit storage.
+        https://bugs.webkit.org/show_bug.cgi?id=211328
+        <rdar://problem/62755865>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Moved the definition of CPURegister and UCPURegister down into WTF.
+        2. Updated Bitmap so that it will automatically choose the minimal required
+           word size for the number of bits it needs to store.  This means the Bitmap
+           can automatically choose a WordType from uint8_t up to UCPURegister.
+           Previously, the WordType is always uint32_t by default.
+
+        This should improve perf with use of Bitmap on 64-bit platforms.  The size
+        optimization is necessary to prevent bloat on 64-bit platforms which would have
+        resulted if we simply set the default to always be UCPURegister.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bitmap.h:
+        * wtf/CMakeLists.txt:
+        * wtf/StdIntExtras.h: Added.
+
 2020-05-01  Saam Barati  <sbarati@apple.com>
 
         Have a thread local cache for the Wasm LLInt bytecode buffer
