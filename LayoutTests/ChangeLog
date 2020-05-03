@@ -1,3 +1,29 @@
+2020-05-02  Mark Lam  <mark.lam@apple.com>
+
+        editing/undo-manager/undo-manager-delete-stale-undo-items.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=211340
+        <rdar://problem/62767874>
+
+        Reviewed by Wenson Hsieh.
+
+        The test aims to measure the number of GC'ed Undo related objects.  It created
+        and estimated 600 objects and allows an error of 20 objects after GC is expected
+        to have collected these objects.  This turns out to be too tight an error allowance.
+        Just running any JS code could inadvertantly create more objects, that will exceed
+        that error allowance.
+
+        This patch attempts to make the test more robust by increasing the created object
+        count to an estimated 3000 objects and allows an error of 300 objects.  This means
+        we'll expect to see at least 2700 objects collected.  That is a high enough number
+        that it cannot be attributed to unexpected objects created by the JS runtime being
+        GCed.  The allowance of 300 is also much higher than number of unexpected objects
+        that the JS runtime may reasonably create beyond those managed by this test.
+
+        With this change, the test no longer times out.
+
+        * editing/undo-manager/undo-manager-delete-stale-undo-items-expected.txt:
+        * editing/undo-manager/undo-manager-delete-stale-undo-items.html:
+
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to test overlay scrollbar interactions

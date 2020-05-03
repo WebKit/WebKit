@@ -23,7 +23,7 @@
             editor = document.getElementById("editor");
             editor.focus();
 
-            const undoItemCount = 200;
+            const undoItemCount = 1000;
 
             for (let i = 0; i < undoItemCount; ++i) {
                 document.undoManager.addItem(new UndoItem({
@@ -46,7 +46,7 @@
             // some wiggle room for additional wrappers created when calling some testing helper functions. This is
             // still a useful test, since it will time out in the case where either our undo items or their undo/redo
             // handlers are not properly relinquished once they're no longer needed.
-            const minimumNumberOfWrappersToCollectBeforePassing = 3 * undoItemCount - 20;
+            const minimumNumberOfWrappersToCollectBeforePassing = 3 * undoItemCount - 300;
             objectCountAfterClearingUndoStack = objectCountBeforeClearingUndoStack;
             while (objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack < minimumNumberOfWrappersToCollectBeforePassing) {
                 await new Promise(resolve => setTimeout(resolve, 100));
