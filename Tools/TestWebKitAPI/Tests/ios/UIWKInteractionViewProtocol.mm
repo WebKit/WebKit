@@ -31,6 +31,7 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import "UserInterfaceSwizzler.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
@@ -107,6 +108,8 @@ TEST(UIWKInteractionViewProtocol, UpdateSelectionWithExtentPoint)
 
 TEST(UIWKInteractionViewProtocol, SelectPositionAtPointAfterBecomingFirstResponder)
 {
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
     auto inputDelegate = adoptNS([TestInputDelegate new]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView _setInputDelegate:inputDelegate.get()];

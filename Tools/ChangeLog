@@ -1,5 +1,23 @@
 2020-05-03  Daniel Bates  <dabates@apple.com>
 
+        [iPad Simulator] TestWebKitAPI.UIWKInteractionViewProtocol.SelectPositionAtPointAfterBecomingFirstResponder is failing
+        https://bugs.webkit.org/show_bug.cgi?id=208281
+        <rdar://problem/59829265>
+
+        Reviewed by Wenson Hsieh.
+
+        I tried to write the test SelectPositionAtPointAfterBecomingFirstResponder for both iPad and iPhone,
+        but it turns out that I forgot an impl detail on how form control dismissal works for iPad and fixing
+        this would require adding more SPI/IPI. This is largely due to differences in form control UI and
+        conventions for dismissing such UI. This test isn't testing such UI it just needs to ensure that the
+        view is not first responder before it runs the actual test code. It uses an iPhone specific set of
+        steps to do this. It's enough to test this functionality on iPhone.
+
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (TEST):
+
+2020-05-03  Daniel Bates  <dabates@apple.com>
+
         Update info.
 
         * Scripts/webkitpy/common/config/contributors.json:
