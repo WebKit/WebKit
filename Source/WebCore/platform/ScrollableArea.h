@@ -136,6 +136,9 @@ public:
     virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
     virtual bool verticalScrollbarHiddenByStyle() const { return false; }
 
+    WEBCORE_EXPORT String horizontalScrollbarStateForTesting() const;
+    WEBCORE_EXPORT String verticalScrollbarStateForTesting() const;
+
     bool inLiveResize() const { return m_inLiveResize; }
     WEBCORE_EXPORT virtual void willStartLiveResize();
     WEBCORE_EXPORT virtual void willEndLiveResize();

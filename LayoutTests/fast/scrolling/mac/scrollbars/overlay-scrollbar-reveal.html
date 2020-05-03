@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:useMockScrollbars=false ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+        
+        window.internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test maybegin and cancelled');
+            if (!window.internals)
+                return;
+            
+            debug('Document');
+            debug(internals.verticalScrollbarState());
+            
+            let windowWidth = window.innerWidth;
+
+            debug('MayBegin should show the scrollbar');
+            await UIHelper.mouseWheelMayBeginAt(100, 100);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let visible = state.indexOf('visible_thumb') != -1;
+                if (visible)
+                    testPassed('Scrollbar state: ' + state);
+                return visible;
+            });
+
+            debug('Cancelled should hide the scrollbar');
+            await UIHelper.mouseWheelCancelAt(100, 100);
+
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let hidden = state.indexOf('visible_thumb') == -1;
+                if (hidden)
+                    testPassed('Scrollbar state: ' + state);
+                return hidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="auto scroller">
+        <div class="contents"></div>
+    </div>
+    <div class="scroll scroller">
+        <div class="contents"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

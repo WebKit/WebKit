@@ -96,6 +96,7 @@ class RTCPeerConnection;
 class Range;
 class RenderedDocumentMarker;
 class SVGSVGElement;
+class ScrollableArea;
 class SerializedScriptValue;
 class SourceBuffer;
 class StringCallback;
@@ -396,6 +397,9 @@ public:
 
     ExceptionOr<String> scrollbarOverlayStyle(Node*) const;
     ExceptionOr<bool> scrollbarUsingDarkAppearance(Node*) const;
+
+    ExceptionOr<String> horizontalScrollbarState(Node*) const;
+    ExceptionOr<String> verticalScrollbarState(Node*) const;
 
     ExceptionOr<String> scrollingStateTreeAsText() const;
     ExceptionOr<String> scrollingTreeAsText() const;
@@ -1014,6 +1018,7 @@ private:
     Frame* frame() const;
 
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
+    ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API

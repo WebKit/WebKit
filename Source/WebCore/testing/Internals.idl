@@ -459,6 +459,8 @@ enum CompositingPolicy {
 
     [MayThrowException] DOMString scrollbarOverlayStyle(optional Node? node = null);
     [MayThrowException] boolean scrollbarUsingDarkAppearance(optional Node? node = null);
+    [MayThrowException] DOMString horizontalScrollbarState(optional Node? node = null);
+    [MayThrowException] DOMString verticalScrollbarState(optional Node? node = null);
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString scrollingTreeAsText();

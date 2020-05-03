@@ -1,3 +1,25 @@
+2020-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test overlay scrollbar interactions
+        https://bugs.webkit.org/show_bug.cgi?id=211342
+
+        Reviewed by Daniel Bates.
+
+        New tests, and some helper functions in UIHelper.
+
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html: Added.
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html: Added.
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-state-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html: Added.
+        * fast/scrolling/mac/scrollbars/scrollbar-state-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/scrollbar-state.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.async mouseWheelMayBeginAt):
+        (window.UIHelper.async mouseWheelCancelAt):
+        (window.UIHelper.async waitForCondition):
+
 2020-05-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, several WebGL tests are failing after r261023

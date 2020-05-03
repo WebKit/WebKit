@@ -123,6 +123,9 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
 
+    virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
+    virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
+
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)

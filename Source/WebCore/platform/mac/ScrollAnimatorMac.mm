@@ -853,6 +853,43 @@ bool ScrollAnimatorMac::isScrollSnapInProgress() const
 #endif
 }
 
+static String scrollbarState(Scrollbar* scrollbar)
+{
+    if (!scrollbar)
+        return "none"_s;
+
+    StringBuilder result;
+    result.append(scrollbar->enabled() ? "enabled"_s : "disabled"_s);
+
+    if (!scrollbar->isOverlayScrollbar())
+        return result.toString();
+
+    NSScrollerImp *scrollerImp = scrollerImpForScrollbar(*scrollbar);
+    if (!scrollerImp)
+        return result.toString();
+
+    if (scrollerImp.expanded)
+        result.append(",expanded"_s);
+
+    if (scrollerImp.trackAlpha > 0)
+        result.append(",visible_track"_s);
+
+    if (scrollerImp.knobAlpha > 0)
+        result.append(",visible_thumb"_s);
+
+    return result.toString();
+}
+
+String ScrollAnimatorMac::horizontalScrollbarStateForTesting() const
+{
+    return scrollbarState(m_scrollableArea.horizontalScrollbar());
+}
+
+String ScrollAnimatorMac::verticalScrollbarStateForTesting() const
+{
+    return scrollbarState(m_scrollableArea.verticalScrollbar());
+}
+
 void ScrollAnimatorMac::immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
