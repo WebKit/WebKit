@@ -83,6 +83,7 @@ namespace WebCore {
     M(MessagePorts) \
     M(Network) \
     M(NotYetImplemented) \
+    M(OverlayScrollbars) \
     M(PerformanceLogging) \
     M(PlatformLeaks) \
     M(Plugins) \

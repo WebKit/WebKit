@@ -1,5 +1,28 @@
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a log channel for OverlayScrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=211329
+
+        Reviewed by Zalan Bujtas.
+
+        Overlay scrollbar behavior is opaque. This log channel will add clarity.
+
+        * platform/Logging.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (operator<<):
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        (-[WebScrollbarPartAnimation startAnimation]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:setCurrentProgress:]):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture const):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture const):
+        (WebCore::ScrollAnimatorMac::mayBeginScrollGesture const):
+        (WebCore::ScrollAnimatorMac::handleWheelEventPhase):
+
+2020-05-02  Simon Fraser  <simon.fraser@apple.com>
+
         Make it possible to test overlay scrollbar interactions
         https://bugs.webkit.org/show_bug.cgi?id=211342
 

@@ -71,6 +71,10 @@ using WebCore::IntRect;
 using WebCore::ThumbPart;
 using WebCore::CubicBezierTimingFunction;
 
+#if !LOG_DISABLED
+using WebCore::LogOverlayScrollbars;
+#endif
+
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
 - (void)_stopRun;
@@ -288,6 +292,19 @@ enum FeatureToAnimate {
     ExpansionTransition
 };
 
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
+{
+    switch (feature) {
+    case ThumbAlpha: ts << "ThumbAlpha" ; break;
+    case TrackAlpha: ts << "TrackAlpha" ; break;
+    case UIStateTransition: ts << "UIStateTransition" ; break;
+    case ExpansionTransition: ts << "ExpansionTransition" ; break;
+    }
+    return ts;
+}
+#endif
+
 #if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 @interface WebScrollbarPartAnimation : NSAnimation
 #else
@@ -333,6 +350,8 @@ enum FeatureToAnimate {
     _timingFunction = CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut);
 #endif
 
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "Creating WebScrollbarPartAnimation for " << featureToAnimate << " from " << startValue << " to " << endValue);
+
     _scrollbar = scrollbar;
     _featureToAnimate = featureToAnimate;
     _startValue = startValue;
@@ -350,6 +369,8 @@ enum FeatureToAnimate {
     ASSERT(_scrollbar);
 
     _scrollerImp = scrollerImpForScrollbar(*_scrollbar);
+
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "-[WebScrollbarPartAnimation " << self << "startAnimation] for " << _featureToAnimate);
 
 #if !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [super startAnimation];
@@ -392,6 +413,8 @@ enum FeatureToAnimate {
     }
 #endif
     ASSERT(_scrollbar);
+
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "-[WebScrollbarPartAnimation " << self << "setCurrentProgress:" << progress <<"] for " << _featureToAnimate);
 
     CGFloat currentValue;
     if (_startValue > _endValue)
@@ -912,6 +935,7 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
 
 void ScrollAnimatorMac::mouseEnteredContentArea()
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] mouseEnteredContentArea");
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -920,6 +944,7 @@ void ScrollAnimatorMac::mouseEnteredContentArea()
 
 void ScrollAnimatorMac::mouseExitedContentArea()
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] mouseExitedContentArea");
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -928,6 +953,7 @@ void ScrollAnimatorMac::mouseExitedContentArea()
 
 void ScrollAnimatorMac::mouseMovedInContentArea()
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] mouseMovedInContentArea");
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -1016,6 +1042,8 @@ void ScrollAnimatorMac::contentAreaDidHide()
 
 void ScrollAnimatorMac::didBeginScrollGesture() const
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] didBeginScrollGesture");
+
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -1029,6 +1057,8 @@ void ScrollAnimatorMac::didBeginScrollGesture() const
 
 void ScrollAnimatorMac::didEndScrollGesture() const
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] didEndScrollGesture");
+
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -1042,6 +1072,8 @@ void ScrollAnimatorMac::didEndScrollGesture() const
 
 void ScrollAnimatorMac::mayBeginScrollGesture() const
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] mayBeginScrollGesture");
+
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
@@ -1206,10 +1238,13 @@ void ScrollAnimatorMac::cancelAnimations()
 
 void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac " << this << " scrollableArea " << m_scrollableArea << " handleWheelEventPhase " << phase);
+
     // This may not have been set to true yet if the wheel event was handled by the ScrollingTree,
     // So set it to true here.
     m_haveScrolledSincePageLoad = true;
 
+// FIXME: Need to ensure we get PlatformWheelEventPhaseEnded.
     if (phase == PlatformWheelEventPhaseBegan)
         didBeginScrollGesture();
     else if (phase == PlatformWheelEventPhaseEnded || phase == PlatformWheelEventPhaseCancelled)
