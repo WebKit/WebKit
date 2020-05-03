@@ -1,3 +1,19 @@
+2020-05-03  David Kilzer  <ddkilzer@apple.com>
+
+        Use default initializers and default constructors in WebEvent.h
+        <https://webkit.org/b/211354>
+
+        Reviewed by Daniel Bates.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebWheelEvent):
+        (WebKit::WebKeyboardEvent):
+        (WebKit::WebPlatformTouchPoint):
+        (WebKit::WebTouchEvent):
+        - Change empty constructors to use `default`.
+        - Use default initializers to make sure all fields are
+          initialized.
+
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         handleWheelEventPhase() should include the relevant ScrollingNodeID

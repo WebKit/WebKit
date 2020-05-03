@@ -200,7 +200,7 @@ public:
         PhaseMayBegin    = 1 << 5,
     };
 
-    WebWheelEvent() { }
+    WebWheelEvent() = default;
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, OptionSet<Modifier>, WallTime timestamp);
 #if PLATFORM(COCOA)
@@ -233,13 +233,13 @@ private:
     WebCore::IntPoint m_globalPosition;
     WebCore::FloatSize m_delta;
     WebCore::FloatSize m_wheelTicks;
-    uint32_t m_granularity; // Granularity
-    bool m_directionInvertedFromDevice;
+    uint32_t m_granularity { ScrollByPageWheelEvent };
+    bool m_directionInvertedFromDevice { false };
     uint32_t m_phase { Phase::PhaseNone };
     uint32_t m_momentumPhase { Phase::PhaseNone };
 #if PLATFORM(COCOA)
-    bool m_hasPreciseScrollingDeltas;
-    uint32_t m_scrollCount;
+    bool m_hasPreciseScrollingDeltas { false };
+    uint32_t m_scrollCount { 0 };
     WebCore::FloatSize m_unacceleratedScrollingDelta;
 #endif
 };
@@ -297,11 +297,11 @@ private:
     String m_key;
     String m_code;
     String m_keyIdentifier;
-    int32_t m_windowsVirtualKeyCode;
-    int32_t m_nativeVirtualKeyCode;
-    int32_t m_macCharCode;
+    int32_t m_windowsVirtualKeyCode { 0 };
+    int32_t m_nativeVirtualKeyCode { 0 };
+    int32_t m_macCharCode { 0 };
 #if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
-    bool m_handledByInputMethod;
+    bool m_handledByInputMethod { false };
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE)
     Optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
@@ -312,9 +312,9 @@ private:
 #elif PLATFORM(GTK)
     Vector<String> m_commands;
 #endif
-    bool m_isAutoRepeat;
-    bool m_isKeypad;
-    bool m_isSystemKey;
+    bool m_isAutoRepeat { false };
+    bool m_isKeypad { false };
+    bool m_isSystemKey { false };
 };
 
 #if ENABLE(TOUCH_EVENTS)
@@ -334,7 +334,7 @@ public:
         Stylus
     };
 
-    WebPlatformTouchPoint() { }
+    WebPlatformTouchPoint() = default;
     WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, TouchPointState phase)
         : m_identifier(identifier)
         , m_location(location)
@@ -368,9 +368,9 @@ public:
     static Optional<WebPlatformTouchPoint> decode(IPC::Decoder&);
 
 private:
-    unsigned m_identifier;
+    unsigned m_identifier { 0 };
     WebCore::IntPoint m_location;
-    uint32_t m_phase;
+    uint32_t m_phase { TouchReleased };
 #if ENABLE(IOS_TOUCH_EVENTS)
     double m_radiusX { 0 };
     double m_radiusY { 0 };
@@ -384,7 +384,7 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent() { }
+    WebTouchEvent() = default;
     WebTouchEvent(WebEvent::Type type, OptionSet<Modifier> modifiers, WallTime timestamp, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation)
         : WebEvent(type, modifiers, timestamp)
         , m_touchPoints(touchPoints)
@@ -420,11 +420,11 @@ private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
     
     WebCore::IntPoint m_position;
-    bool m_canPreventNativeGestures;
-    bool m_isPotentialTap;
-    bool m_isGesture;
-    float m_gestureScale;
-    float m_gestureRotation;
+    bool m_canPreventNativeGestures { false };
+    bool m_isPotentialTap { false };
+    bool m_isGesture { false };
+    float m_gestureScale { 0 };
+    float m_gestureRotation { 0 };
 };
 #else
 // FIXME: Move this class to its own header file.
