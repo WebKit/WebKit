@@ -214,6 +214,7 @@ public:
     Cells& cells() { return m_cells; }
 
     Slot* slot(SlotPosition);
+    const Slot* slot(SlotPosition position) const { return m_slotMap.get(position); }
     bool isSpanned(SlotPosition);
 
 private:

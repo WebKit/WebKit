@@ -347,140 +347,160 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
     return tableWidthConstraints;
 }
 
+struct ColumnSpan {
+    static size_t hasSpan(const TableGrid::Slot& slot) { return slot.hasColumnSpan(); }
+    static size_t isSpanned(const TableGrid::Slot& slot) { return slot.isColumnSpanned(); }
+
+    static size_t spanCount(const TableGrid::Cell& cell) { return cell.columnSpan(); }
+    static size_t startSpan(const TableGrid::Cell& cell) { return cell.startColumn(); }
+    static size_t endSpan(const TableGrid::Cell& cell) { return cell.endColumn(); }
+
+    static size_t index(size_t columnIndex, size_t /*rowIndex*/) { return columnIndex; }
+    static size_t size(const TableGrid& grid) { return grid.columns().size(); }
+
+    static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.columnSpan() - 1) * grid.horizontalSpacing(); }
+};
+
+using DistributedSpaces = Vector<float>;
+template <typename SpanType>
+static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float spaceToDistribute, const WTF::Function<LayoutUnit(const TableGrid::Slot&, size_t)>& slotSpace)
+{
+    struct ResolvedSpace {
+        float value { 0 };
+        bool isFixed { false };
+    };
+
+    auto& columns = grid.columns();
+    auto& rows = grid.rows();
+    // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
+    Vector<Optional<ResolvedSpace>> resolvedSpaces(SpanType::size(grid));
+    for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+            auto& slot = *grid.slot({ columnIndex, rowIndex });
+            if (SpanType::hasSpan(slot) || SpanType::isSpanned(slot))
+                continue;
+            auto index = SpanType::index(columnIndex, rowIndex);
+            if (!resolvedSpaces[index])
+                resolvedSpaces[index] = ResolvedSpace { };
+            resolvedSpaces[index]->value = std::max<float>(resolvedSpaces[index]->value, slotSpace(slot, index));
+        }
+    }
+
+    // 2. Collect the spanning cells.
+    struct SpanningCell {
+        SlotPosition position;
+        LayoutUnit unresolvedSpace;
+    };
+    Vector<SpanningCell> spanningCells;
+    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+        for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+            auto& slot = *grid.slot({ columnIndex, rowIndex });
+            if (SpanType::hasSpan(slot))
+                spanningCells.append({ { columnIndex, rowIndex }, slotSpace(slot, SpanType::index(columnIndex, rowIndex)) });
+        }
+    }
+    // We need these spanning cells in the order of the number of columns/rows they span so that
+    // we can resolve overlapping spans starting with the shorter ones e.g.
+    // <td colspan=4>#a</td><td>#b</td>
+    // <td colspan=2>#c</td><td colspan=3>#d</td>
+    std::sort(spanningCells.begin(), spanningCells.end(), [&] (auto& a, auto& b) {
+        return SpanType::spanCount(grid.slot(a.position)->cell()) < SpanType::spanCount(grid.slot(b.position)->cell());
+    });
+
+    // 3. Distribute the spanning cells' mimimum space across the columns/rows using the non-spanning spaces.
+    // e.g. [ 1 ][ 5 ][ 1 ]
+    //      [    9   ][ 1 ]
+    // The initial widths are: [ 2 ][ 7 ][ 1 ]
+    for (auto spanningCell : spanningCells) {
+        auto& cell = grid.slot(spanningCell.position)->cell();
+        float unresolvedSpanningSpace = spanningCell.unresolvedSpace;
+        if (!resolvedSpaces[SpanType::startSpan(cell)] || !resolvedSpaces[SpanType::endSpan(cell) - 1]) {
+            // <td colspan=4>#a</td><td>#b</td>
+            // <td colspan=2>#c</td><td colspan=3>#d</td>
+            // Unresolved columns are: 1 2 3 4
+            // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
+            // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
+            // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
+            auto unresolvedColumnCount = cell.columnSpan();
+            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
+                if (!resolvedSpaces[spanIndex])
+                    continue;
+                ASSERT(unresolvedColumnCount);
+                --unresolvedColumnCount;
+                unresolvedSpanningSpace = std::max(0.0f, unresolvedSpanningSpace - resolvedSpaces[spanIndex]->value);
+            }
+            ASSERT(unresolvedColumnCount);
+            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
+                if (resolvedSpaces[spanIndex])
+                    continue;
+                resolvedSpaces[spanIndex] = ResolvedSpace { unresolvedSpanningSpace / unresolvedColumnCount, false };
+            }
+        } else {
+            // 1. Collect the non-spaning resolved spaces.
+            // 2. Distribute the extra space among the spanned columns/rows based on the resolved space values.
+            // e.g. spanning width: [   9   ]. Resolved widths for the spanned columns: [ 1 ] [ 2 ]
+            // New resolved widths: [ 3 ] [ 6 ].
+            float resolvedSpace = 0;
+            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+                resolvedSpace += resolvedSpaces[columnIndex]->value;
+            if (resolvedSpace >= unresolvedSpanningSpace) {
+                // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
+                continue;
+            }
+            auto spanningSpaceToDistribute = std::max(0.0f, unresolvedSpanningSpace - SpanType::spacing(grid, cell) - resolvedSpace);
+            if (spanningSpaceToDistribute) {
+                for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
+                    resolvedSpaces[spanIndex]->value += spanningSpaceToDistribute / resolvedSpace * resolvedSpaces[spanIndex]->value;
+            }
+        }
+    }
+    // 4. Distribute the extra space using the final resolved widths.
+#if ASSERT_ENABLED
+    // We have to have all the spaces resolved at this point.
+    for (auto& resolvedSpace : resolvedSpaces)
+        ASSERT(resolvedSpace);
+#endif
+    // Fixed size cells don't participate in available space distribution.
+    float adjustabledSpace = 0;
+    for (auto& resolvedSpace : resolvedSpaces) {
+        if (resolvedSpace->isFixed)
+            continue;
+        adjustabledSpace += resolvedSpace->value;
+    }
+
+    DistributedSpaces distributedSpaces(resolvedSpaces.size());
+    // Distribute the extra space based on the resolved spaces.
+    for (size_t index = 0; index < resolvedSpaces.size(); ++index) {
+        auto& resolvedSpace = resolvedSpaces[index];
+        auto hasExtraSpaceToDistribute = spaceToDistribute && !resolvedSpace->isFixed;
+        auto resolvedValue = resolvedSpace->value;
+        distributedSpaces[index] = hasExtraSpaceToDistribute ? resolvedValue + (spaceToDistribute / adjustabledSpace * resolvedValue) : resolvedValue;
+    }
+    return distributedSpaces;
+}
+
 void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace)
 {
     auto& grid = formattingState().tableGrid();
     auto& columns = grid.columns();
-    auto& rows = grid.rows();
     auto tableWidthConstraints = *grid.widthConstraints();
 
     enum class ColumnWidthBalancingBase { MinimumWidth, MaximumWidth };
     auto computeColumnWidths = [&] (auto columnWidthBalancingBase, auto extraHorizontalSpace) {
-        auto slotInitialWidth = [&] (auto& slot) {
-            return columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth ? slot.widthConstraints().minimum : slot.widthConstraints().maximum;
-        };
-        // 1. Collect initial widths driven by <td> across columns but ignore spanning cells first.
-        struct ColumnInitialWidth {
-            float value { 0 };
-            bool isFixed { false };
-        };
-        Vector<Optional<ColumnInitialWidth>> columnInitialWidths(columns.size());
-        Vector<SlotPosition> spanningCellPositionList;
-        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
-            for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
-                auto& slot = *grid.slot({ columnIndex, rowIndex });
-                if (slot.isColumnSpanned())
-                    continue;
-                if (slot.hasColumnSpan()) {
-                    spanningCellPositionList.append({ columnIndex, rowIndex });
-                    continue;
-                }
-                if (!columnInitialWidths[columnIndex])
-                    columnInitialWidths[columnIndex] = ColumnInitialWidth { };
-                columnInitialWidths[columnIndex]->value = std::max<float>(columnInitialWidths[columnIndex]->value, slotInitialWidth(slot));
-            }
-        }
-        // 2. Adjust the <td> initial widths with fixed column widths (<col> vs. <td>) and also manage all-fixed-width-column content.
-        auto hasFixedColumnsOnly = columns.hasFixedColumnsOnly();
-        for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
+        auto distributedSpaces = distributeAvailableSpace<ColumnSpan>(grid, extraHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
             auto& column = columns.list()[columnIndex];
-            if (!column.isFixedWidth())
-                continue;
-            // This is the column width based on <col width=""> and not <td style="width: ">.
             auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt;
-            if (!columnFixedWidth)
-                continue;
-            if (!columnInitialWidths[columnIndex])
-                columnInitialWidths[columnIndex] = ColumnInitialWidth { };
-            columnInitialWidths[columnIndex]->value = std::max(columnInitialWidths[columnIndex]->value, columnFixedWidth.valueOr(0).toFloat());
-            // Fixed columns flex when there are no other flexing columns.
-            columnInitialWidths[columnIndex]->isFixed = !hasFixedColumnsOnly;
-        }
-
-        // We need these spanning cells in the order of the number of columns they span so that
-        // we can resolve overlapping spans starting with the shorter ones e.g.
-        // <td colspan=4>#a</td><td>#b</td>
-        // <td colspan=2>#c</td><td colspan=3>#d</td>
-        std::sort(spanningCellPositionList.begin(), spanningCellPositionList.end(), [&] (auto& a, auto& b) {
-            return grid.slot(a)->cell().columnSpan() < grid.slot(b)->cell().columnSpan();
+            auto slotWidth = columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth ? slot.widthConstraints().minimum : slot.widthConstraints().maximum;
+            return std::max(slotWidth, columnFixedWidth.valueOr(0_lu));
         });
-        // 3. Distribute the spanning cells' mimimum widths across the columns using the non-spanning initial widths.
-        // e.g. [ 1 ][ 5 ][ 1 ]
-        //      [    9   ][ 1 ]
-        // The initial widths are: [ 2 ][ 7 ][ 1 ]
-        for (auto spanningCellPosition : spanningCellPositionList) {
-            auto& slot = *grid.slot(spanningCellPosition);
-            ASSERT(slot.hasColumnSpan());
-            auto& cell = slot.cell();
-            float spanningInitialWidth = slotInitialWidth(slot);
-            if (!columnInitialWidths[cell.startColumn()] || !columnInitialWidths[cell.endColumn() - 1]) {
-                // <td colspan=4>#a</td><td>#b</td>
-                // <td colspan=2>#c</td><td colspan=3>#d</td>
-                // Unresolved columns are: 1 2 3 4
-                // 1. Take colspan=2 (shortest span) and resolve column 1 and 2
-                // 2. Take colspan=3 and resolve column 3 and 4 (5 is resolved because it already has a non-spanning cell).
-                // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
-                auto unresolvedColumnNumber = cell.columnSpan();
-                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex) {
-                    if (!columnInitialWidths[columnIndex])
-                        continue;
-                    ASSERT(unresolvedColumnNumber);
-                    --unresolvedColumnNumber;
-                    spanningInitialWidth = std::max(0.0f, spanningInitialWidth - columnInitialWidths[columnIndex]->value);
-                }
-                ASSERT(unresolvedColumnNumber);
-                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex) {
-                    if (columnInitialWidths[columnIndex])
-                        continue;
-                    columnInitialWidths[columnIndex] = ColumnInitialWidth { spanningInitialWidth / unresolvedColumnNumber, false };
-                }
-            } else {
-                // 1. Collect the non-spaning initial widths.
-                float currentSpanningInitialWidth = 0;
-                for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                    currentSpanningInitialWidth += columnInitialWidths[columnIndex]->value;
-                if (currentSpanningInitialWidth >= spanningInitialWidth) {
-                    // The spanning cell fits the spanned columns just fine. Nothing to distribute.
-                    continue;
-                }
-                // 2. Distribute the extra width among the spanned columns based on the initial column width.
-                // e.g. spanning initial width: [   9   ]. Current initial widths for the spanned columns: [ 1 ] [ 2 ]
-                // New initial widths: [ 3 ] [ 6 ].
-                auto spaceToDistribute = std::max(0.0f, spanningInitialWidth - (cell.columnSpan() - 1) * grid.horizontalSpacing() - currentSpanningInitialWidth);
-                if (spaceToDistribute) {
-                    for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                        columnInitialWidths[columnIndex]->value += spaceToDistribute / currentSpanningInitialWidth * columnInitialWidths[columnIndex]->value;
-                }
-            }
-        }
-        // 4. Distribute the extra space using the final initial widths.
-#if ASSERT_ENABLED
-        // We have to have all the columns resolved at this point with valid initial widths.
-        for (auto& columnInitialWidth : columnInitialWidths)
-            ASSERT(columnInitialWidth);
-#endif
-        // Fixed width columns don't participate in available space distribution.
-        // Unless there are no flexing column at all, then they start flexing as if they were not fixed at all.
-        float adjustabledHorizontalSpace = 0;
-        for (auto& columnInitialWidth : columnInitialWidths) {
-            if (columnInitialWidth->isFixed)
-                continue;
-            adjustabledHorizontalSpace += columnInitialWidth->value;
-        }
-
         // Set finial horizontal position and width.
-        float columnLogicalLeft = grid.horizontalSpacing();
+        auto columnLogicalLeft = grid.horizontalSpacing();
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& column = columns.list()[columnIndex];
-            auto initialWidth = columnInitialWidths[columnIndex]->value;
-            auto columnWidth = initialWidth;
+            auto columnWidth = LayoutUnit { distributedSpaces[columnIndex] };
 
-            if (extraHorizontalSpace && !columnInitialWidths[columnIndex]->isFixed) {
-                auto columnExtraSpace = extraHorizontalSpace / adjustabledHorizontalSpace * initialWidth;
-                columnWidth = initialWidth + columnExtraSpace;
-            }
-            column.setLogicalLeft(LayoutUnit {columnLogicalLeft });
-            column.setLogicalWidth(LayoutUnit { columnWidth });
+            column.setLogicalLeft(columnLogicalLeft);
+            column.setLogicalWidth(columnWidth);
             columnLogicalLeft += columnWidth + grid.horizontalSpacing();
         }
     };
