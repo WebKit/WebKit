@@ -1,3 +1,34 @@
+2020-05-03  Youenn Fablet  <youenn@apple.com>
+
+        AudioMediaStreamTrackRendererCocoa should create/start/stop its remote unit on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=211287
+
+        Reviewed by Eric Carlson.
+
+        Creating/starting/stopping audio units in different threads is error prone.
+        Now that we have an observer model where we have observers for when to play in the main thread and
+        based on that, we decide to receive audio samples in a background thread, we can simplify the logic of AudioMediaStreamTrackRendererCocoa.
+        We do this by creating/starting the unit in AudioMediaStreamTrackRendererCocoa::start.
+        At that point, AudioMediaStreamTrackRendererCocoa is not expected to receive any sample.
+        Just after starting, AudioTrackPrivateMediaStream will receive audio samples and forward them to AudioMediaStreamTrackRendererCocoa.
+        AudioMediaStreamTrackRendererCocoa will then create in a background thread the AudioSampleDataSource that is responsible to adapt the received audio samples to the unit.
+
+        Manually tested.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        (WebCore::AudioSampleDataSource::inputDescription const):
+        * platform/audio/mac/CAAudioStreamDescription.h:
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::startRenderer):
+        Ensure to start the unit and then start gettting audio samples.
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::start):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::stop):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::clear):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::render):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h:
+
 2020-05-03  Rob Buis  <rbuis@igalia.com>
 
         atob() should not accept a vertical tab

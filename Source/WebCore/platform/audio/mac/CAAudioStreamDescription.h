@@ -64,16 +64,16 @@ public:
     uint32_t bytesPerPacket() const { return m_streamDescription.mBytesPerPacket; }
     uint32_t formatFlags() const { return m_streamDescription.mFormatFlags; }
 
-    bool operator==(const AudioStreamBasicDescription& other) { return m_streamDescription == other; }
-    bool operator!=(const AudioStreamBasicDescription& other) { return !operator == (other); }
-    bool operator==(const AudioStreamDescription& other)
+    bool operator==(const AudioStreamBasicDescription& other) const { return m_streamDescription == other; }
+    bool operator!=(const AudioStreamBasicDescription& other) const { return !operator == (other); }
+    bool operator==(const AudioStreamDescription& other) const
     {
         if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
             return false;
 
         return operator==(*WTF::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
     }
-    bool operator!=(const AudioStreamDescription& other) { return !operator == (other); }
+    bool operator!=(const AudioStreamDescription& other) const { return !operator == (other); }
 
     const AudioStreamBasicDescription& streamDescription() const { return m_streamDescription; }
     AudioStreamBasicDescription& streamDescription() { return m_streamDescription; }

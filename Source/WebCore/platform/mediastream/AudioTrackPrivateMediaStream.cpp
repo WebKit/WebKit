@@ -139,8 +139,8 @@ void AudioTrackPrivateMediaStream::startRenderer()
         return;
 
     m_isPlaying = true;
-    m_audioSource->addAudioSampleObserver(*this);
     m_renderer->start();
+    m_audioSource->addAudioSampleObserver(*this);
 }
 
 void AudioTrackPrivateMediaStream::stopRenderer()

@@ -47,7 +47,7 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
     virtual void clear() = 0;
-    // May be called on a background thread.
+    // May be called on a background thread. It should only be called after start/before stop is called.
     virtual void pushSamples(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
 
     virtual void setMuted(bool);
