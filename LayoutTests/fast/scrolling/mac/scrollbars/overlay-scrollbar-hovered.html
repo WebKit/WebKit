@@ -37,6 +37,7 @@
 
             debug('Unhovering vertical scrollbar should hide it');
             await UIHelper.moveMouseAndWaitForFrame(windowWidth - 20, 10);
+            await UIHelper.moveMouseAndWaitForFrame(windowWidth - 25, 10);
             await UIHelper.waitForCondition(() => {
                 let state = internals.verticalScrollbarState();
                 let thumbHidden = state.indexOf('visible_thumb') == -1;
@@ -55,12 +56,6 @@
     </script>
 </head>
 <body>
-    <div class="auto scroller">
-        <div class="contents"></div>
-    </div>
-    <div class="scroll scroller">
-        <div class="contents"></div>
-    </div>
     <script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

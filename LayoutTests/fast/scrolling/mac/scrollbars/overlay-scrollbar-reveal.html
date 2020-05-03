@@ -20,7 +20,7 @@
             if (!window.internals)
                 return;
             
-            debug('Document');
+            debug('Initial state');
             debug(internals.verticalScrollbarState());
             
             let windowWidth = window.innerWidth;
@@ -55,12 +55,6 @@
     </script>
 </head>
 <body>
-    <div class="auto scroller">
-        <div class="contents"></div>
-    </div>
-    <div class="scroll scroller">
-        <div class="contents"></div>
-    </div>
     <script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

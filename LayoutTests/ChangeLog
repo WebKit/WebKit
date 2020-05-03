@@ -1,3 +1,14 @@
+2020-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test cleanup.
+
+        Remove some unused elements from these tests, and send a couple of mouseMoved
+        events to reduce the chances of flakiness.
+
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html:
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal-expected.txt:
+        * fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html:
+
 2020-05-02  Mark Lam  <mark.lam@apple.com>
 
         editing/undo-manager/undo-manager-delete-stale-undo-items.html is timing out.
