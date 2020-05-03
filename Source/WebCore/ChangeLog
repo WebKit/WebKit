@@ -1,3 +1,25 @@
+2020-05-03  Rob Buis  <rbuis@igalia.com>
+
+        atob() should not accept a vertical tab
+        https://bugs.webkit.org/show_bug.cgi?id=184529
+
+        Reviewed by Darin Adler.
+
+        The forgiving-base64 decode algorithm [1] uses [2] to strip
+        out ASCII whitespace which does not include vertical tabs, so
+        change the atob() implementation to not strip out vertical
+        tabs and thus to fail decode on vertical tabs.
+
+        [1] https://infra.spec.whatwg.org/#forgiving-base64-decode
+        [2] https://infra.spec.whatwg.org/#ascii-whitespace
+
+        Behavior matches Firefox and Chrome.
+
+        * page/Base64Utilities.cpp:
+        (WebCore::Base64Utilities::atob):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::decodeBase64):
+
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Add a log channel for OverlayScrollbars

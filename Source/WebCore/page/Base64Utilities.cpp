@@ -47,7 +47,7 @@ ExceptionOr<String> Base64Utilities::atob(const String& encodedString)
         return String();
 
     Vector<char> out;
-    if (!base64Decode(encodedString, out, Base64ValidatePadding | Base64IgnoreSpacesAndNewLines))
+    if (!base64Decode(encodedString, out, Base64ValidatePadding | Base64IgnoreSpacesAndNewLines | Base64DiscardVerticalTab))
         return Exception { InvalidCharacterError };
 
     return String(out.data(), out.size());

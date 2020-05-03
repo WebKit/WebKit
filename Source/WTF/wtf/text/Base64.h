@@ -43,6 +43,7 @@ enum Base64DecodeOptions {
     Base64Default = 0,
     Base64ValidatePadding = 1 << 0,
     Base64IgnoreSpacesAndNewLines = 1 << 1,
+    Base64DiscardVerticalTab = 1 << 2,
 };
 
 class SignedOrUnsignedCharVectorAdapter {
@@ -225,6 +226,7 @@ using WTF::Base64DoNotInsertLFs;
 using WTF::Base64InsertLFs;
 using WTF::Base64ValidatePadding;
 using WTF::Base64IgnoreSpacesAndNewLines;
+using WTF::Base64DiscardVerticalTab;
 using WTF::base64Encode;
 using WTF::base64Decode;
 using WTF::base64URLDecode;
