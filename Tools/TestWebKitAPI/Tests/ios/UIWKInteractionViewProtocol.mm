@@ -83,6 +83,8 @@
 
 @end
 
+namespace TestWebKitAPI {
+
 TEST(UIWKInteractionViewProtocol, SelectTextWithCharacterGranularity)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
@@ -177,5 +179,7 @@ TEST(UIWKInteractionViewProtocol, SelectPositionAtPointInElementInNonFocusedFram
     TestWebKitAPI::Util::run(&didStartInputSession);
     EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
 }
+
+} // namespace TestWebKitAPI
 
 #endif
