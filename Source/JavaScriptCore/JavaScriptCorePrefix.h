@@ -23,10 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __has_include(<WebKitAdditions/JavaScriptCorePrefix.h>)
-#include <WebKitAdditions/JavaScriptCorePrefix.h>
-#endif
-
 #ifdef __cplusplus
 #define NULL __null
 #else
