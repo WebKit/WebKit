@@ -71,10 +71,10 @@ void EventRegionContext::popClip()
     m_clipStack.removeLast();
 }
 
-void EventRegionContext::unite(const Region& region, const RenderStyle& style)
+void EventRegionContext::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
     if (m_transformStack.isEmpty() && m_clipStack.isEmpty()) {
-        m_eventRegion.unite(region, style);
+        m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
         return;
     }
 
@@ -83,7 +83,7 @@ void EventRegionContext::unite(const Region& region, const RenderStyle& style)
     if (!m_clipStack.isEmpty())
         transformedAndClippedRegion.intersect(m_clipStack.last());
 
-    m_eventRegion.unite(transformedAndClippedRegion, style);
+    m_eventRegion.unite(transformedAndClippedRegion, style, overrideUserModifyIsEditable);
 }
 
 bool EventRegionContext::contains(const IntRect& rect) const
@@ -107,15 +107,17 @@ bool EventRegion::operator==(const EventRegion& other) const
     return m_region == other.m_region;
 }
 
-void EventRegion::unite(const Region& region, const RenderStyle& style)
+void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
     m_region.unite(region);
 
     uniteTouchActions(region, style.effectiveTouchActions());
 
 #if ENABLE(EDITABLE_REGION)
-    if (style.userModify() != UserModify::ReadOnly)
+    if (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly)
         m_editableRegion.unite(region);
+#else
+    UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
 }
 

@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HTMLTextFormControlElement.h"
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
@@ -63,6 +64,7 @@
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGRoot.h"
 #include "RenderTableCell.h"
+#include "RenderTextControl.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
@@ -1247,7 +1249,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
         if (visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext->unite(borderRegion, style());
+            paintInfo.eventRegionContext->unite(borderRegion, style(), isTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
         bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
@@ -1255,7 +1257,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         needsTraverseDescendants |= document().mayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
-        needsTraverseDescendants |= document().mayHaveEditableElements();
+        // We treat the entire text control as editable to match users' expectation even
+        // though it's actually the inner text element of the control that is editable.
+        // So, no need to traverse to find the inner text element in this case.
+        if (!isTextControl())
+            needsTraverseDescendants |= document().mayHaveEditableElements();
 #endif
         if (!needsTraverseDescendants)
             return;

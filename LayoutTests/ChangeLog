@@ -1,3 +1,23 @@
+2020-05-03  Daniel Bates  <dabates@apple.com>
+
+        Sometimes cannot find <textarea> in list of editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=211348
+        <rdar://problem/62231067>
+
+        Reviewed by Simon Fraser.
+
+        Update some existing test results and add some more tests.
+
+        * editing/editable-region/hit-test-textarea-empty-space-expected.txt: Added.
+        * editing/editable-region/hit-test-textarea-empty-space.html: Added.
+        * editing/editable-region/overflow-scroll-text-field-and-contenteditable-expected.txt:
+        * editing/editable-region/search-field-basic-expected.txt: Copied from LayoutTests/editing/editable-region/input-basic-expected.txt.
+        * editing/editable-region/search-field-basic.html: Copied from LayoutTests/editing/editable-region/input-basic.html.
+        * editing/editable-region/text-field-basic-expected.txt: Copied from LayoutTests/editing/editable-region/input-basic-expected.txt.
+        * editing/editable-region/text-field-basic.html: Copied from LayoutTests/editing/editable-region/input-basic.html.
+        * editing/editable-region/textarea-basic-expected.txt: Renamed from LayoutTests/editing/editable-region/input-basic-expected.txt.
+        * editing/editable-region/textarea-basic.html: Renamed from LayoutTests/editing/editable-region/input-basic.html.
+
 2020-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test cleanup.

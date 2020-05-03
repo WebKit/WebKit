@@ -1,3 +1,39 @@
+2020-05-03  Daniel Bates  <dabates@apple.com>
+
+        Sometimes cannot find <textarea> in list of editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=211348
+        <rdar://problem/62231067>
+
+        Reviewed by Simon Fraser.
+
+        When building the editable region add the bounds of the text control to the region instead
+        of the bounds of its inner text element even though it is the latter that is actually editable.
+        Using the bounds of the text control is more in line with a user's expectation for the editable
+        portion of a text control: the entire control. So, do that.
+
+        Tests: editing/editable-region/hit-test-textarea-empty-space.html
+               editing/editable-region/search-field-basic.html
+               editing/editable-region/text-field-basic.html
+               editing/editable-region/textarea-basic.html
+
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegionContext::unite):
+        (WebCore::EventRegion::unite):
+        Add a new bool as to whether to override the user-modify check and just assume that the region
+        is for something editable. This is needed because the form control (e.g. the <input> or <textarea>
+        aka the shadow host element) isn't actually editable itself. Its inner text element is editable.
+        RenderBlock::paintObject() will pass true for this override when event region painting such a
+        control and the control's inner text element is editable so that the controls bounds are added to
+        the editable region.
+        * rendering/EventRegion.h: Add a bool, defaulting to false to keep the current behavior. While
+        I am here remove some unneeded WEBCORE_EXPORT attributions.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject): Pass a value for the override argument. It will be true
+        if this block is actually a text control and its inner text element is editable. Otherwise, it
+        will be false. There is also no longer a need to descend into the children of a text control
+        because I only care to record the bounds of the control itself as editable, not its inner text
+        element.
+
 2020-05-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Turns horizontal space distribution into a generic space distribution
