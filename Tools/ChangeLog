@@ -1,3 +1,9 @@
+2020-05-02  ChangSeok Oh  <changseok@webkit.org>
+
+        Unreviewed, add myself to some watch lists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2020-05-02  Daniel Bates  <dabates@apple.com>
 
         Page::editableElementsInRect() should return root editable elements
