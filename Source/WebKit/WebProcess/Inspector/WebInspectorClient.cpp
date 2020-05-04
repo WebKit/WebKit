@@ -218,10 +218,10 @@ void WebInspectorClient::timelineRecordingChanged(bool active)
         m_page->inspector()->timelineRecordingChanged(active);
 }
 
-void WebInspectorClient::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+void WebInspectorClient::setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, Optional<bool> overrideValue)
 {
     if (m_page->inspector())
-        m_page->inspector()->setMockCaptureDevicesEnabledOverride(enabled);
+        m_page->inspector()->setDeveloperPreferenceOverride(developerPreference, overrideValue);
 }
 
 void WebInspectorClient::willMoveToPage(PageOverlay&, Page* page)

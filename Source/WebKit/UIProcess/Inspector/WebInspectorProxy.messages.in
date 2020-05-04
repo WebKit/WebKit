@@ -39,7 +39,7 @@ messages -> WebInspectorProxy {
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
     ElementSelectionChanged(bool active)
     TimelineRecordingChanged(bool active)
-    SetMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+    SetDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, Optional<bool> overrideValue)
 
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
     Append(String filename, String content)

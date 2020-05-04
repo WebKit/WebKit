@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/InspectorClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,7 +75,7 @@ public:
     void stopElementSelection();
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
-    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
+    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, Optional<bool>);
 
     void setFrontendConnection(IPC::Attachment);
 

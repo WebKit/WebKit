@@ -148,6 +148,8 @@ messages -> NetworkProcess LegacyReceiver {
     SetToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> () Async
 #endif
 
+    SetAdClickAttributionDebugMode(bool debugMode)
+
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 
     RegisterURLSchemeAsSecure(String scheme)

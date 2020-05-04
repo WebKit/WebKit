@@ -281,9 +281,9 @@ void WebInspector::timelineRecordingChanged(bool active)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::TimelineRecordingChanged(active), m_page->identifier());
 }
 
-void WebInspector::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+void WebInspector::setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference developerPreference, Optional<bool> overrideValue)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetMockCaptureDevicesEnabledOverride(enabled), m_page->identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
 }
 
 bool WebInspector::canAttachWindow()

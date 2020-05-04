@@ -335,7 +335,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_isITPDatabaseEnabled = parameters.shouldEnableITPDatabase;
 #endif
 
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setAdClickAttributionDebugModeEnabled(parameters.enableAdClickAttributionDebugMode);
+    setAdClickAttributionDebugMode(parameters.enableAdClickAttributionDebugMode);
 
     SandboxExtension::consumePermanently(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsParameters.directoryExtensionHandle);
 
@@ -1356,6 +1356,21 @@ void NetworkProcess::setToSameSiteStrictCookiesForTesting(PAL::SessionID session
     }
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+
+void NetworkProcess::setAdClickAttributionDebugMode(bool debugMode)
+{
+    if (RuntimeEnabledFeatures::sharedFeatures().adClickAttributionDebugModeEnabled() == debugMode)
+        return;
+
+    RuntimeEnabledFeatures::sharedFeatures().setAdClickAttributionDebugModeEnabled(debugMode);
+
+    String message = debugMode ? "[Ad Click Attribution] Turned Debug Mode on."_s : "[Ad Click Attribution] Turned Debug Mode off."_s;
+    for (auto& networkConnectionToWebProcess : m_webProcessConnections.values()) {
+        if (networkConnectionToWebProcess->sessionID().isEphemeral())
+            continue;
+        networkConnectionToWebProcess->broadcastConsoleMessage(MessageSource::AdClickAttribution, MessageLevel::Info, message);
+    }
+}
 
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {

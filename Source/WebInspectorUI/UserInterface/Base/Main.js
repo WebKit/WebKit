@@ -2275,6 +2275,15 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
             ],
         },
         {
+            name: WI.UIString("Enable:"),
+            columns: [
+                [
+                    {name: WI.UIString("ITP Debug Mode"), setting: InspectorBackend.Enum.Page.Setting.ITPDebugModeEnabled, value: true},
+                    {name: WI.UIString("Ad Click Attribution Debug Mode"), setting: InspectorBackend.Enum.Page.Setting.AdClickAttributionDebugModeEnabled, value: true},
+                ],
+            ],
+        },
+        {
             name: WI.UIString("%s:").format(WI.unlocalizedString("WebRTC")),
             columns: [
                 [

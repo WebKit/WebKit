@@ -1,3 +1,18 @@
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way for inspector to turn on/off ITP debug mode and AdClickAttribution debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=209763
+
+        Reviewed by Brian Burg.
+
+        * inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled.html: Added.
+        * inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled-expected.txt: Added.
+        * inspector/page/overrideSetting-ITPDebugModeEnabled.html: Added.
+        * inspector/page/overrideSetting-ITPDebugModeEnabled-expected.txt: Added.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2020-05-04  Guillem Vinals  <gvinals@apple.com>
 
         WebGPU: Textures should be able to have OUTPUT_ATTACHEMENT | SAMPLED usage flags

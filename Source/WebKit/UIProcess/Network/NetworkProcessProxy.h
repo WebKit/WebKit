@@ -181,6 +181,8 @@ public:
     void setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID, WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
     void setToSameSiteStrictCookiesForTesting(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
 #endif
+
+    void setAdClickAttributionDebugMode(bool);
     
     void synthesizeAppIsBackground(bool background);
 

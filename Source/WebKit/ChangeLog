@@ -1,3 +1,46 @@
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way for inspector to turn on/off ITP debug mode and AdClickAttribution debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=209763
+
+        Reviewed by Brian Burg.
+
+        Generalize the `setMockCaptureDevicesEnabledOverride` to be `setDeveloperPreferenceOverride`
+        that uses an enum `WebCore::InspectorClient::DeveloperPreference` to know what to do.
+
+        Communicate with the NetworkProcess (from the WebProcess via the UIProcess) in the case of:
+         - `AdClickAttributionDebugModeEnabled`
+         - `ITPDebugModeEnabled`
+
+        * WebProcess/Inspector/WebInspectorClient.h:
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::setDeveloperPreferenceOverride): Added.
+        (WebKit::WebInspectorClient::setMockCaptureDevicesEnabledOverride): Deleted.
+        * WebProcess/Inspector/WebInspector.h:
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::setDeveloperPreferenceOverride): Added.
+        (WebKit::WebInspector::setMockCaptureDevicesEnabledOverride): Deleted.
+
+        * UIProcess/Inspector/WebInspectorProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setDeveloperPreferenceOverride): Added.
+        (WebKit::WebInspectorProxy::setMockCaptureDevicesEnabledOverride): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setAdClickAttributionDebugMode): Added.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setAdClickAttributionDebugMode): Added.
+
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setAdClickAttributionDebugMode): Added.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+
 2020-05-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Unable to take RunningBoard process assertions in the iOS Simulator

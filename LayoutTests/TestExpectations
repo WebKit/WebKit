@@ -976,6 +976,10 @@ inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Ski
 # Target domain is only present in WK2.
 http/tests/inspector/target [ Skip ]
 
+# ITP and AdClickAttribution are WK2 only.
+inspector/page/overrideSetting-AdClickAttributionDebugModeEnabled.html [ Skip ]
+inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Skip ]
+
 # These conformance tests are no longer in sync with the latest specification
 # and expect compareDocumentPosition() to return:
 # DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED

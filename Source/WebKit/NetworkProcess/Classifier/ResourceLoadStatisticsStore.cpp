@@ -292,6 +292,9 @@ void ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable
 {
     ASSERT(!RunLoop::isMain());
 
+    if (m_debugModeEnabled == enable)
+        return;
+
     m_debugModeEnabled = enable;
     m_debugLoggingEnabled = enable;
 

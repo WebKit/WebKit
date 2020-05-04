@@ -2144,6 +2144,12 @@ void WebsiteDataStore::isResourceLoadStatisticsEphemeral(CompletionHandler<void(
     completionHandler(false);
 }
 
+void WebsiteDataStore::setAdClickAttributionDebugMode(bool enabled)
+{
+    for (auto& processPool : processPools())
+        processPool->ensureNetworkProcess().setAdClickAttributionDebugMode(enabled);
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void WebsiteDataStore::logTestingEvent(const String& event)
 {

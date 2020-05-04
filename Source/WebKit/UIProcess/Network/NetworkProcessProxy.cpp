@@ -1167,6 +1167,14 @@ void NetworkProcessProxy::setToSameSiteStrictCookiesForTesting(PAL::SessionID se
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
+void NetworkProcessProxy::setAdClickAttributionDebugMode(bool debugMode)
+{
+    if (!canSendMessage())
+        return;
+
+    send(Messages::NetworkProcess::SetAdClickAttributionDebugMode(debugMode), 0);
+}
+
 void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
 {
     if (canSendMessage())

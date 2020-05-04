@@ -7,10 +7,12 @@
         {
             "id": "Setting",
             "type": "string",
-            "description": "List of settings able to be overridden by WebInspector. Keep this in sync with FOR_EACH_INSPECTOR_OVERRIDE_SETTING.",
+            "description": "List of settings able to be overridden by WebInspector.",
             "enum": [
+                "AdClickAttributionDebugModeEnabled",
                 "AuthorAndUserStylesEnabled",
                 "ICECandidateFilteringEnabled",
+                "ITPDebugModeEnabled",
                 "ImagesEnabled",
                 "MediaCaptureRequiresSecureConnection",
                 "MockCaptureDevicesEnabled",
