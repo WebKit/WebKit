@@ -201,10 +201,6 @@
 #define USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR 1
 #endif
 
-#if PLATFORM(MAC)
-#define USE_COREAUDIO 1
-#endif
-
 #if !defined(USE_ZLIB)
 #define USE_ZLIB 1
 #endif
