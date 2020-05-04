@@ -672,11 +672,11 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
     if (!overrideDisplayName) {
         auto activeOrigins = activePagesOrigins(m_pageMap);
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activeOrigins = WTFMove(activeOrigins)] {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), [activeOrigins = WTFMove(activeOrigins)] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activeOrigins.get(), nullptr);
         });
     } else {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, overrideDisplayName.createCFString().get(), nullptr);
         });
     }

@@ -1,3 +1,16 @@
+2020-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        TestWebKitAPI.WebKit.CustomDisplayName is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=211299
+
+        Reviewed by Chris Dumez.
+
+        Sometimes the task queued in WebProcess::updateProcessName happens after the one in WebProcess::updateActivePages.
+        Schedule them on the same queue so they happen in deterministic order so we get reliable process names eventually.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateActivePages):
+
 2020-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unneeded check for Apple Media Services
