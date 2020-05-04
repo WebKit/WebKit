@@ -636,13 +636,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (this._waitingForMainFrameResourceTreePayload)
             return;
 
-        // COMPATIBILITY (iOS 8): Timeline timestamps for legacy backends are computed
-        // dynamically from the first backend timestamp received. For navigations we
-        // need to reset that base timestamp, and an appropriate timestamp to use is
-        // the new main resource's will be sent timestamp. So save this value on the
-        // resource in case it becomes a main resource.
-        var originalRequestWillBeSentTimestamp = timestamp;
-
         var elapsedTime = WI.timelineManager.computeElapsedTime(timestamp);
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         if (resource) {
@@ -668,7 +661,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),
-            originalRequestWillBeSentTimestamp,
         });
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.

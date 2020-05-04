@@ -95,9 +95,7 @@ WI.Target = class Target extends WI.Object
             // Tell the backend we are initialized after all our initialization messages have been sent.
             // This allows an automatically paused backend to resume execution, but we want to ensure
             // our breakpoints were already sent to that backend.
-            // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-            if (this.hasCommand("Inspector.initialized"))
-                this.InspectorAgent.initialized();
+            this.InspectorAgent.initialized();
         });
 
         this._resumeIfPaused();

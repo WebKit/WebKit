@@ -25,21 +25,6 @@
 
 WI.FPSInstrument = class FPSInstrument extends WI.Instrument
 {
-    constructor()
-    {
-        super();
-
-        console.assert(WI.FPSInstrument.supported());
-    }
-
-    // Static
-
-    static supported()
-    {
-        // COMPATIBILITY (iOS 8): Timeline.EventType.RenderingFrame did not exist.
-        return InspectorBackend.hasDomain("Timeline") && !!InspectorBackend.Enum.Timeline.EventType.RenderingFrame;
-    }
-
     // Protected
 
     get timelineRecordType()

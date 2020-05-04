@@ -62,8 +62,7 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
     {
         target.RuntimeAgent.enable();
 
-        // COMPATIBILITY (iOS 8): Runtime.enableTypeProfiler did not exist.
-        if (target.hasCommand("Runtime.enableTypeProfiler") && WI.settings.showJavaScriptTypeInformation.value)
+        if (WI.settings.showJavaScriptTypeInformation.value)
             target.RuntimeAgent.enableTypeProfiler();
 
         if (WI.settings.enableControlFlowProfiler.value)
@@ -149,15 +148,31 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         }
 
         if (WI.debuggerManager.activeCallFrame) {
-            // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-            // COMPATIBILITY (iOS 13): "emulateUserGesture" did not exist.
-            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, emulateUserGesture}, evalCallback.bind(this));
+            target.DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: WI.debuggerManager.activeCallFrame.id,
+                expression,
+                objectGroup,
+                includeCommandLineAPI,
+                doNotPauseOnExceptionsAndMuteConsole,
+                returnByValue,
+                generatePreview,
+                saveResult,
+                emulateUserGesture, // COMPATIBILITY (iOS 13): "emulateUserGesture" did not exist yet.
+            }, evalCallback.bind(this));
             return;
         }
 
-        // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-        // COMPATIBILITY (iOS 12.2): "emulateUserGesture" did not exist.
-        target.RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId: executionContextId, returnByValue, generatePreview, saveResult, emulateUserGesture}, evalCallback.bind(this));
+        target.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup,
+            includeCommandLineAPI,
+            doNotPauseOnExceptionsAndMuteConsole,
+            contextId: executionContextId,
+            returnByValue,
+            generatePreview,
+            saveResult,
+            emulateUserGesture, // COMPATIBILITY (iOS 12.2): "emulateUserGesture" did not exist yet.
+        }, evalCallback.bind(this));
     }
 
     saveResult(remoteObject, callback)
@@ -166,12 +181,6 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
 
         let target = this._activeExecutionContext.target;
         let executionContextId = this._activeExecutionContext.id;
-
-        // COMPATIBILITY (iOS 8): Runtime.saveResult did not exist.
-        if (!target.hasCommand("Runtime.saveResult")) {
-            callback(undefined);
-            return;
-        }
 
         function mycallback(error, savedResultIndex)
         {

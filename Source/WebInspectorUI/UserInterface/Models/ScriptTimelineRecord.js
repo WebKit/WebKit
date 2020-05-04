@@ -146,15 +146,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
             var type = isProgramCode ? WI.ProfileNode.Type.Program : WI.ProfileNode.Type.Function;
             var functionName = !isProgramCode && !isAnonymousFunction && nodePayload.functionName !== "(unknown)" ? nodePayload.functionName : null;
 
-            // COMPATIBILITY (iOS 8): Timeline.CPUProfileNodes used to include an array of complete
-            // call information instead of the aggregated "callInfo" data.
-            var calls = null;
-            if ("calls" in nodePayload) {
-                console.assert(nodePayload.calls instanceof Array);
-                calls = nodePayload.calls.map(profileNodeCallFromPayload);
-            }
-
-            return new WI.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, calls, nodePayload.children);
+            return new WI.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, nodePayload.children);
         }
 
         function profileNodeCallFromPayload(nodeCallPayload)

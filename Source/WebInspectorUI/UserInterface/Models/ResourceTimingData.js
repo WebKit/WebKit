@@ -96,10 +96,6 @@ WI.ResourceTimingData = class ResourceTimingData
             responseEnd: offsetToTimestamp(payload.responseEnd)
         };
 
-        // COMPATIBILITY (iOS 8): connectStart is zero if a secure connection is used.
-        if (isNaN(data.connectStart) && !isNaN(data.secureConnectionStart))
-            data.connectStart = data.secureConnectionStart;
-
         return new WI.ResourceTimingData(resource, data);
     }
 

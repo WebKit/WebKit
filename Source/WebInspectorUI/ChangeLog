@@ -1,5 +1,73 @@
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: drop support for iOS 8.*
+        https://bugs.webkit.org/show_bug.cgi?id=211312
+
+        Reviewed by Daniel Bates.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.highlightSelector):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.resourceRequestWillBeSent):
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager.prototype.initializeTarget):
+        (WI.RuntimeManager.prototype.evaluateInInspectedWindow):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.defaultTimelineTypes):
+        (WI.TimelineManager.prototype._loadNewRecording):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.parseSelectorListPayload):
+        * UserInterface/Models/FPSInstrument.js:
+        (WI.FPSInstrument): Deleted.
+        (WI.FPSInstrument.supported): Deleted.
+        * UserInterface/Models/ObjectPreview.js:
+        (WI.ObjectPreview.fromPayload):
+        * UserInterface/Models/ProfileNode.js:
+        (WI.ProfileNode):
+        (WI.ProfileNode.prototype.get startTime):
+        (WI.ProfileNode.prototype.get endTime):
+        (WI.ProfileNode.prototype.computeCallInfoForTimeRange):
+        (WI.ProfileNode.prototype.get calls): Deleted.
+        (WI.ProfileNode.prototype.computeCallInfoForTimeRange.totalTimeInRange): Deleted.
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get initiatedResources):
+        (WI.Resource.prototype.get originalRequestWillBeSentTimestamp): Deleted.
+        * UserInterface/Models/ResourceTimingData.js:
+        (WI.ResourceTimingData.fromPayload):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording):
+        (WI.TimelineRecording.prototype.computeElapsedTime):
+        (WI.TimelineRecording.prototype.setLegacyBaseTimestamp): Deleted.
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js: Removed.
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.fromPayload):
+        (WI.RemoteObject.prototype.getDisplayablePropertyDescriptors):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.initialize):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WI.ObjectTreePropertyTreeElement.prototype._updateProperties):
+        (WI.ObjectTreePropertyTreeElement):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype._updateProperties):
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WI.ScriptTimelineDataGridNode.prototype.get data):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._createTypeTokenAnnotator):
+        (WI.SourceCodeTextEditor.prototype._createBasicBlockAnnotator):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        (WI.TimelineTabContentView.prototype.closed):
+        (WI.TimelineTabContentView.prototype.restoreFromCookie):
+        * Versions/Inspector-iOS-8.0.json: Removed.
+
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: drop support for iOS 10.*
         https://bugs.webkit.org/show_bug.cgi?id=211318
 

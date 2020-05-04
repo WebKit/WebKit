@@ -61,9 +61,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             timeline.addEventListener(WI.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
         }
 
-        // For legacy backends, we compute the elapsed time of records relative to this timestamp.
-        this._legacyFirstRecordedTimestamp = NaN;
-
         this.reset(true);
     }
 
@@ -414,36 +411,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     {
         if (!timestamp || isNaN(timestamp))
             return NaN;
-
-        // COMPATIBILITY (iOS 8): old backends send timestamps (seconds or milliseconds since the epoch),
-        // rather than seconds elapsed since timeline capturing started. We approximate the latter by
-        // subtracting the start timestamp, as old versions did not use monotonic times.
-        if (WI.TimelineRecording.isLegacy === undefined)
-            WI.TimelineRecording.isLegacy = timestamp > WI.TimelineRecording.TimestampThresholdForLegacyRecordConversion;
-
-        if (!WI.TimelineRecording.isLegacy)
-            return timestamp;
-
-        // If the record's start time is large, but not really large, then it is seconds since epoch
-        // not millseconds since epoch, so convert it to milliseconds.
-        if (timestamp < WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
-            timestamp *= 1000;
-
-        if (isNaN(this._legacyFirstRecordedTimestamp))
-            this._legacyFirstRecordedTimestamp = timestamp;
-
-        // Return seconds since the first recorded value.
-        return (timestamp - this._legacyFirstRecordedTimestamp) / 1000.0;
-    }
-
-    setLegacyBaseTimestamp(timestamp)
-    {
-        console.assert(isNaN(this._legacyFirstRecordedTimestamp));
-
-        if (timestamp < WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
-            timestamp *= 1000;
-
-        this._legacyFirstRecordedTimestamp = timestamp;
+        return timestamp;
     }
 
     initializeTimeBoundsIfNecessary(timestamp)
@@ -533,9 +501,5 @@ WI.TimelineRecording.Event = {
     TimesUpdated: "timeline-recording-times-updated",
     MarkerAdded: "timeline-recording-marker-added",
 };
-
-WI.TimelineRecording.isLegacy = undefined;
-WI.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 10000000; // Some value not near zero.
-WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds = 1420099200000; // Date.parse("Jan 1, 2015"). Milliseconds since epoch.
 
 WI.TimelineRecording.SerializationVersion = 1;

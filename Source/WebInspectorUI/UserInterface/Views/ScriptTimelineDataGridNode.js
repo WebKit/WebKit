@@ -51,15 +51,6 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
         let startTime = this.record.startTime;
         let duration = this.record.startTime + this.record.duration - startTime;
 
-        // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
-        if (this.record.profile) {
-            let oneRootNode = this.record.profile.topDownRootNodes[0];
-            if (oneRootNode && oneRootNode.calls) {
-                startTime = Math.max(rangeStartTime, this.record.startTime);
-                duration = Math.min(this.record.startTime + this.record.duration, rangeEndTime) - startTime;
-            }
-        }
-
         this._cachedData = super.data;
         this._cachedData.type = this.record.eventType;
         this._cachedData.name = this.displayName();

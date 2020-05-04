@@ -26,7 +26,7 @@
 
 WI.Resource = class Resource extends WI.SourceCode
 {
-    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode, originalRequestWillBeSentTimestamp} = {})
+    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode} = {})
     {
         console.assert(url);
 
@@ -58,7 +58,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
         this._initiatorNode = initiatorNode || null;
         this._initiatedResources = [];
-        this._originalRequestWillBeSentTimestamp = originalRequestWillBeSentTimestamp || null;
         this._requestSentTimestamp = requestSentTimestamp || NaN;
         this._requestSentWalltime = requestSentWalltime || NaN;
         this._responseReceivedTimestamp = NaN;
@@ -319,7 +318,6 @@ WI.Resource = class Resource extends WI.SourceCode
     get initiatorSourceCodeLocation() { return this._initiatorSourceCodeLocation; }
     get initiatorNode() { return this._initiatorNode; }
     get initiatedResources() { return this._initiatedResources; }
-    get originalRequestWillBeSentTimestamp() { return this._originalRequestWillBeSentTimestamp; }
     get statusCode() { return this._statusCode; }
     get statusText() { return this._statusText; }
     get responseSource() { return this._responseSource; }

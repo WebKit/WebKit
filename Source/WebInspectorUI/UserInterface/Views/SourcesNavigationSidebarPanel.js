@@ -1611,8 +1611,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!pauseData)
                 break;
 
-            // COMPATIBILITY (iOS 8): 'directive' was 'directiveText'.
-            this._pauseReasonTextRow.text = WI.UIString("Content Security Policy violation of directive: %s").format(pauseData.directive || pauseData.directiveText);
+            this._pauseReasonTextRow.text = WI.UIString("Content Security Policy violation of directive: %s").format(pauseData.directive);
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
             return true;
 
