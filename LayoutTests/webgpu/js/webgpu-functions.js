@@ -4,6 +4,26 @@ async function getBasicDevice() {
     return device;
 }
 
+function drawGreenMipChainOnRedBackgroundInSoftware(canvas) {
+    const context = canvas.getContext("2d");
+    context.fillStyle = "rgb(255, 0, 0)";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    let maxResolution = Math.max(canvas.width, canvas.height);
+    let mipLevelCount = Math.ceil(Math.log2(maxResolution));
+    if (mipLevelCount < 1) mipLevelCount = 1;
+
+    let width  = canvas.width;
+    let height = canvas.height;
+    for (var i = 1; i < mipLevelCount; ++i) {
+        width  = Math.max(Math.floor(width  / 2), 1);
+        height = Math.max(Math.floor(height / 2), 1);
+        context.fillStyle = "rgb(0, 255, 0)";
+        context.fillRect(0, height, width, height);
+    }
+
+}
+
 function drawWhiteSquareOnBlueBackgroundInSoftware(canvas) {
     const context = canvas.getContext("2d");
     context.fillStyle = "blue";

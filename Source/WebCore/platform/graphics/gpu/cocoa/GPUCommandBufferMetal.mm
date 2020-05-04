@@ -229,8 +229,8 @@ void GPUCommandBuffer::copyTextureToTexture(GPUTextureCopyView&& src, GPUTexture
         sourceOrigin:MTLOriginMake(src.origin.x, src.origin.y, src.origin.z)
         sourceSize:MTLSizeMake(size.width, size.height, size.depth)
         toTexture:dst.texture->platformTexture()
-        destinationSlice:src.arrayLayer
-        destinationLevel:src.mipLevel
+        destinationSlice:dst.arrayLayer
+        destinationLevel:dst.mipLevel
         destinationOrigin:MTLOriginMake(dst.origin.x, dst.origin.y, dst.origin.z)];
 
     END_BLOCK_OBJC_EXCEPTIONS;

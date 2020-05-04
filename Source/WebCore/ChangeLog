@@ -1,3 +1,17 @@
+2020-05-04  Guillem Vinals  <gvinals@apple.com>
+
+        WebGPU: copyTextureToTexture() has an implementation bug (src copy view info is used also as dst)
+        https://bugs.webkit.org/show_bug.cgi?id=211303
+
+        Reviewed by Daniel Bates.
+
+        The source copy information is also used as the destination copy information.
+
+        Test: webgpu/blit-commands-texture-to-texture.html
+
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyTextureToTexture):
+
 2020-05-04  Antoine Quint  <graouts@apple.com>
 
         Media controls tracks menu shows "Auto" selected instead of track selected via the JS API
