@@ -1,3 +1,23 @@
+2020-05-04  Antoine Quint  <graouts@apple.com>
+
+        Media controls tracks menu shows "Auto" selected instead of track selected via the JS API
+        https://bugs.webkit.org/show_bug.cgi?id=211230
+        <rdar://problem/62648409>
+
+        Reviewed by Eric Carlson.
+
+        Add a test that:
+        
+        - sets an embedded text track as selected via the HTMLMediaElement TextTrack APIs,
+        - brings up the tracks panel,
+        - dumps its initial UI state, checking that the track selected via the API shows as selected in the UI,
+        - selects the "Automatic (Recommended)" track,
+        - brings up the tracks panel again,
+        - dumps its current UI state, checking that the "Automatic (Recommended)" shows as selected in the UI.
+
+        * media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api.html: Added.
+
 2020-05-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add WTR::AccessibilityUIElement::attributeValueAsync to retrieve attribute values in isolated tree mode.

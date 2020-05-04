@@ -1,3 +1,29 @@
+2020-05-04  Antoine Quint  <graouts@apple.com>
+
+        Media controls tracks menu shows "Auto" selected instead of track selected via the JS API
+        https://bugs.webkit.org/show_bug.cgi?id=211230
+        <rdar://problem/62648409>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/modern-media-controls/tracks-support/tracks-support-text-track-selected-via-media-api.html
+
+        We're fixing two issues with the captions menu on macOS here.
+    
+        First, if a text track was marked as "showing" with the JS API, we would not show it as selected in the UI
+        because MediaControlsHost would report that the captionDisplayMode was "automatic" and we'd take this as
+        sufficient data to say that the "Automatic (Recommended)" item should be shown as selected. We now only
+        do this if we also don't have any text tracks set as "showing".
+
+        The second issue was when trying to select "Automatic (Recommended)" when a text track had been marked as
+        "showing" with the JS API. Calling `setSelectedTextTrack()` on MediaControlsHost in this case was not sufficient
+        because HTMLMediaElement::setSelectedTextTrack is a no-op if the automatic text track is provided but captionDisplayMode
+        is still set to "automatic". To address this, we first disable all text tracks before calling `setSelectedTextTrack()`.
+
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.tracksPanelIsTrackInSectionSelected):
+        (TracksSupport.prototype.tracksPanelSelectionDidChange):
+
 2020-05-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Override the table computed height when content needs more space
