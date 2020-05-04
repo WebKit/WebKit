@@ -107,7 +107,7 @@ Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
     return AccessibilityUIElement::create(focusedElement);
 }
 
-void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& function)
+void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& function)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_useMockAXThread) {
@@ -120,6 +120,30 @@ void AccessibilityController::executeOnAXThreadIfPossible(Function<void()>&& fun
     } else
 #endif
         function();
+}
+
+void AccessibilityController::executeOnAXThread(Function<void()>&& function)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (m_useMockAXThread) {
+        AXThread::dispatch([function = WTFMove(function)] {
+            function();
+        });
+    } else
+#endif
+        function();
+}
+
+void AccessibilityController::executeOnMainThread(Function<void()>&& function)
+{
+    if (isMainThread()) {
+        function();
+        return;
+    }
+
+    AXThread::dispatchBarrier([function = WTFMove(function)] {
+        function();
+    });
 }
 #endif // PLATFORM(COCOA)
 
@@ -157,7 +181,7 @@ void AXThread::dispatch(Function<void()>&& function)
 
 void AXThread::dispatchBarrier(Function<void()>&& function)
 {
-    dispatch([function = WTFMove(function)]() mutable {
+    dispatch([function = WTFMove(function)] () mutable {
         callOnMainThread(WTFMove(function));
     });
 }

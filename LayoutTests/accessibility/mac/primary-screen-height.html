@@ -13,16 +13,23 @@
 <script>
     description("This tests the primary screen height is exposed to AX API from web process.");
     if (window.accessibilityController) {
-    	var rootElement = accessibilityController.rootElement;
+        window.jsTestIsAsync = true;
+
+        var rootElement = accessibilityController.rootElement;
         var webArea = accessibilityController.rootElement.childAtIndex(0);
 
-        var screenHeightFromRootElement = rootElement.numberAttributeValue("_AXPrimaryScreenHeight");
-        shouldBeTrue("screenHeightFromRootElement > 0");
+        rootElement.attributeValueAsync("_AXPrimaryScreenHeight", function(value) {
+            debug(value > 0 ? "The screen height from the root element is > 0."
+                  : "The screen height from the root element should be > 0 but it is not.");
+        });
 
-        var screenHeightFromWebArea = webArea.numberAttributeValue("_AXPrimaryScreenHeight");
-        shouldBeTrue("screenHeightFromWebArea > 0");
+        webArea.attributeValueAsync("_AXPrimaryScreenHeight", function(value) {
+            debug(value > 0 ? "The screen height from the web area is > 0."
+                  : "The screen height from the web area should be > 0 but it is not.");
+
+            finishJSTest();
+        });
     }
-
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

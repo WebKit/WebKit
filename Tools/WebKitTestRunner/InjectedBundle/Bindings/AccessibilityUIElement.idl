@@ -66,6 +66,7 @@
     object uiElementArrayAttributeValue(DOMString attr);
     AccessibilityUIElement uiElementAttributeValue(DOMString attr);  
     boolean boolAttributeValue(DOMString attr);
+    void attributeValueAsync(DOMString attributeName, object callbackFunction);
     void setBoolAttributeValue(DOMString attr, boolean value);
     boolean isAttributeSupported(DOMString attr);
     boolean isAttributeSettable(DOMString attr);

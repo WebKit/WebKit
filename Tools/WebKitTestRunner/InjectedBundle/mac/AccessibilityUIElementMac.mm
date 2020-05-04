@@ -117,12 +117,12 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
     return platformUIElement() == otherElement->platformUIElement();
 }
 
-NSArray* supportedAttributes(id element)
+RetainPtr<NSArray> supportedAttributes(id element)
 {
-    NSArray *attributes;
+    RetainPtr<NSArray> attributes;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    AccessibilityUIElement::s_controller->executeOnAXThreadIfPossible([&attributes, &element] {
+    AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&attributes, &element] {
         attributes = [element accessibilityAttributeNames];
     });
     END_AX_OBJC_EXCEPTIONS
@@ -132,21 +132,21 @@ NSArray* supportedAttributes(id element)
 
 id attributeValue(id element, NSString *attribute)
 {
-    id value;
+    RetainPtr<id> value;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    AccessibilityUIElement::s_controller->executeOnAXThreadIfPossible([&element, &attribute, &value] {
+    AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&element, &attribute, &value] {
         value = [element accessibilityAttributeValue:attribute];
     });
     END_AX_OBJC_EXCEPTIONS
 
-    return value;
+    return value.get();
 }
 
 void setAttributeValue(id element, NSString* attribute, id value, bool synchronous = false)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    AccessibilityUIElement::s_controller->executeOnAXThreadIfPossible([&element, &attribute, &value, &synchronous] {
+    AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&element, &attribute, &value, &synchronous] {
         // FIXME: should always be asynchronous, fix tests.
         synchronous ? [element _accessibilitySetValue:value forAttribute:attribute] :
             [element accessibilitySetValue:value forAttribute:attribute];;;
@@ -198,10 +198,10 @@ static NSString* descriptionOfValue(id valueObject, id element)
 
 static NSString *attributesOfElement(id accessibilityObject)
 {
-    NSArray* attributes = supportedAttributes(accessibilityObject);
+    RetainPtr<NSArray> attributes = supportedAttributes(accessibilityObject);
 
     NSMutableString* attributesString = [NSMutableString string];
-    for (NSString* attribute in attributes) {
+    for (NSString* attribute in attributes.get()) {
         // Position provides useless and screen-specific information, so we do not
         // want to include it for the sake of universally passing tests.
         if ([attribute isEqualToString:@"AXPosition"])
@@ -373,7 +373,7 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIE
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     RetainPtr<NSArray> children;
-    s_controller->executeOnAXThreadIfPossible([&children, location, length, this] {
+    s_controller->executeOnAXThreadAndWait([&children, location, length, this] {
         children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     });
     elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children.get());
@@ -418,22 +418,22 @@ int AccessibilityUIElement::childrenCount()
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    id element;
-    s_controller->executeOnAXThreadIfPossible([&x, &y, &element, this] {
+    RetainPtr<id> element;
+    s_controller->executeOnAXThreadAndWait([&x, &y, &element, this] {
         element = [m_element accessibilityHitTest:NSMakePoint(x, y)];
     });
 
     if (!element)
         return nullptr;
 
-    return AccessibilityUIElement::create(element);
+    return AccessibilityUIElement::create(element.get());
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
 {
     unsigned index;
     id platformElement = element->platformUIElement();
-    s_controller->executeOnAXThreadIfPossible([&platformElement, &index, this] {
+    s_controller->executeOnAXThreadAndWait([&platformElement, &index, this] {
         index = [m_element accessibilityIndexOfChild:platformElement];
     });
     return index;
@@ -511,7 +511,7 @@ unsigned AccessibilityUIElement::selectedChildrenCount() const
     unsigned count = 0;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    s_controller->executeOnAXThreadIfPossible([&count, this] {
+    s_controller->executeOnAXThreadAndWait([&count, this] {
         count = [m_element accessibilityArrayAttributeCount:NSAccessibilitySelectedChildrenAttribute];
     });
     END_AX_OBJC_EXCEPTIONS
@@ -611,6 +611,27 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
     if ([value isKindOfClass:[NSNumber class]])
         return [value boolValue];
     return false;
+}
+
+void AccessibilityUIElement::attributeValueAsync(JSStringRef attribute, JSValueRef callback)
+{
+    if (!attribute || !callback)
+        return;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThread([attribute = retainPtr([NSString stringWithJSStringRef:attribute]), callback = WTFMove(callback), this] () mutable {
+        id value = [m_element accessibilityAttributeValue:attribute.get()];
+
+        s_controller->executeOnMainThread([value = retainPtr(value), callback = WTFMove(callback)] () {
+            auto mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+            auto context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+            JSValueRef arguments[1];
+            arguments[0] = makeValueRefForValue(context, value.get());
+            JSObjectCallAsFunction(context, const_cast<JSObjectRef>(callback), 0, 1, arguments, 0);
+        });
+    });
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef attribute, bool value)
@@ -1177,14 +1198,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContex
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = selectTextParameterizedAttributeForCriteria(context, ambiguityResolution, searchStrings, replacementString, activity);
-    id result;
-    s_controller->executeOnAXThreadIfPossible([&parameterizedAttribute, &result, this] {
+    RetainPtr<id> result;
+    s_controller->executeOnAXThreadAndWait([&parameterizedAttribute, &result, this] {
         result = [m_element accessibilityAttributeValue:@"AXSelectTextWithCriteria" forParameter:parameterizedAttribute];
     });
-    if ([result isKindOfClass:[NSString class]])
-        return [result createJSStringRef];
+    if ([result.get() isKindOfClass:[NSString class]])
+        return [result.get() createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 

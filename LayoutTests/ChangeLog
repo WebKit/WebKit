@@ -1,3 +1,17 @@
+2020-05-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add WTR::AccessibilityUIElement::attributeValueAsync to retrieve attribute values in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=211341
+
+        Reviewed by Chris Fleizach.
+
+        This test exercises the new WTR::AccessibilityUIElement::atributeValueAsync method.
+        Instead of using shouldBeTrue that does not work with local variables,
+        uses debug to log results.
+
+        * accessibility/mac/primary-screen-height-expected.txt:
+        * accessibility/mac/primary-screen-height.html:
+
 2020-05-03  Daniel Bates  <dabates@apple.com>
 
         Sometimes cannot find <textarea> in list of editable elements

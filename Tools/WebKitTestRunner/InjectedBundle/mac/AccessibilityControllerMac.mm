@@ -100,7 +100,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
     RetainPtr<id> result;
-    executeOnAXThreadIfPossible([&root, &idAttribute, &result] {
+    executeOnAXThreadAndWait([&root, &idAttribute, &result] {
         result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
     });
 

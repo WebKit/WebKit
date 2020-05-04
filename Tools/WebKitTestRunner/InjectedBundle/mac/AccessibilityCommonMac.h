@@ -42,7 +42,9 @@
 @end
 
 namespace WTR {
-    
+
+Class webAccessibilityObjectWrapperClass();
+JSValueRef makeValueRefForValue(JSContextRef, id value);
 extern NSDictionary *searchPredicateParameterizedAttributeForSearchCriteria(JSContextRef, AccessibilityUIElement *startElement, bool isDirectionNext, unsigned resultsLimit, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly);
 
 };
