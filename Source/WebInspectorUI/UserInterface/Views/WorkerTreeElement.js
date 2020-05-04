@@ -30,11 +30,15 @@ WI.WorkerTreeElement = class WorkerTreeElement extends WI.ScriptTreeElement
 {
     constructor(target)
     {
-        super(target.mainResource);
-
         console.assert(target instanceof WI.Target);
         console.assert(target.type === WI.TargetType.Worker || target.type === WI.TargetType.ServiceWorker);
         console.assert(target.mainResource instanceof WI.Script);
+
+        let options = {};
+        if (target instanceof WI.WorkerTarget)
+            options.mainTitle = target.customName;
+
+        super(target.mainResource, options);
 
         this._target = target;
         this._target.addEventListener(WI.Target.Event.ResourceAdded, this._resourceAdded, this);

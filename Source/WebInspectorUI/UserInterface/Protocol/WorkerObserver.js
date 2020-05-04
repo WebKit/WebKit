@@ -27,9 +27,9 @@ WI.WorkerObserver = class WorkerObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Worker" domain.
 
-    workerCreated(workerId, url)
+    workerCreated(workerId, url, name)
     {
-        WI.workerManager.workerCreated(this._target, workerId, url);
+        WI.workerManager.workerCreated(this._target, workerId, url, name);
     }
 
     workerTerminated(workerId)

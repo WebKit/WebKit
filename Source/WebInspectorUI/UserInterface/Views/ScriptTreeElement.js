@@ -25,38 +25,45 @@
 
 WI.ScriptTreeElement = class ScriptTreeElement extends WI.SourceCodeTreeElement
 {
-    constructor(script)
+    constructor(script, options = {})
     {
         console.assert(script instanceof WI.Script);
 
-        const title = null;
-        const subtitle = null;
-        super(script, "script", title, subtitle);
+        let scriptDisplayName = script.displayName;
 
-        this.mainTitle = script.displayName;
+        let title = options.mainTitle || scriptDisplayName;
+        let subtitle = null;
+        let tooltip = null;
+        let classNames = ["script"];
 
         if (script.url && !script.dynamicallyAddedScriptElement) {
-            if (script.urlComponents.scheme === "web-inspector")
-                this.tooltip = this.mainTitle;
-            else {
+            if (script.urlComponents.scheme !== "web-inspector") {
                 // Show the host as the subtitle if it is different from the main title.
                 let host = WI.displayNameForHost(script.urlComponents.host);
-                this.subtitle = this.mainTitle !== host ? host : null;
+                if (host && title !== host)
+                    subtitle = host;
+                else if (scriptDisplayName && title !== scriptDisplayName)
+                    subtitle = scriptDisplayName;
 
-                this.tooltip = script.url;
+                tooltip = script.url;
             }
 
-            this.addClassName(WI.ResourceTreeElement.ResourceIconStyleClassName);
-            this.addClassName(WI.Resource.Type.Script);
+            classNames.push(WI.ResourceTreeElement.ResourceIconStyleClassName);
+            classNames.push(WI.Resource.Type.Script);
         } else
-            this.addClassName(WI.ScriptTreeElement.AnonymousScriptIconStyleClassName);
+            classNames.push(WI.ScriptTreeElement.AnonymousScriptIconStyleClassName);
 
         if (script.isMainResource()) {
             console.assert(script.target.type === WI.TargetType.Worker || script.target.type === WI.TargetType.ServiceWorker, script.target.type);
-            this.addClassName("worker-icon");
+            classNames.push("worker-icon");
         }
 
+        super(script, classNames, title, subtitle);
+
         this._script = script;
+
+        if (tooltip)
+            this.tooltip = tooltip;
     }
 
     // Public

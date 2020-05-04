@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "StorageArea.h"
 #include "WebAnimation.h"
+#include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <initializer_list>
 #include <wtf/CompletionHandler.h>
@@ -97,7 +98,6 @@ class SharedBuffer;
 class TimerBase;
 class WebKitNamedFlow;
 class WorkerGlobalScope;
-class WorkerInspectorProxy;
 
 #if ENABLE(WEBGL)
 class WebGLProgram;
@@ -270,8 +270,8 @@ public:
     static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
     static bool shouldWaitForDebuggerOnStart(ScriptExecutionContext&);
-    static void workerStarted(ScriptExecutionContext&, WorkerInspectorProxy*, const URL&);
-    static void workerTerminated(ScriptExecutionContext&, WorkerInspectorProxy*);
+    static void workerStarted(WorkerInspectorProxy&);
+    static void workerTerminated(WorkerInspectorProxy&);
 
     static void didCreateWebSocket(Document*, unsigned long identifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const ResourceRequest&);
@@ -470,8 +470,8 @@ private:
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
     static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
-    static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy*, const URL&);
-    static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy*);
+    static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
+    static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
 
     static void didCreateWebSocketImpl(InstrumentingAgents&, unsigned long identifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents&, unsigned long identifier, const ResourceRequest&);
@@ -1293,17 +1293,17 @@ inline bool InspectorInstrumentation::shouldWaitForDebuggerOnStart(ScriptExecuti
     return false;
 }
 
-inline void InspectorInstrumentation::workerStarted(ScriptExecutionContext& context, WorkerInspectorProxy* proxy, const URL& url)
+inline void InspectorInstrumentation::workerStarted(WorkerInspectorProxy& proxy)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        workerStartedImpl(*instrumentingAgents, proxy, url);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(proxy.scriptExecutionContext()))
+        workerStartedImpl(*instrumentingAgents, proxy);
 }
 
-inline void InspectorInstrumentation::workerTerminated(ScriptExecutionContext& context, WorkerInspectorProxy* proxy)
+inline void InspectorInstrumentation::workerTerminated(WorkerInspectorProxy& proxy)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(proxy.scriptExecutionContext()))
         workerTerminatedImpl(*instrumentingAgents, proxy);
 }
 

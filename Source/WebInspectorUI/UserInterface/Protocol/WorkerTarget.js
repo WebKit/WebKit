@@ -25,16 +25,28 @@
 
 WI.WorkerTarget = class WorkerTarget extends WI.Target
 {
-    constructor(parentTarget, workerId, name, connection, options = {})
+    constructor(parentTarget, workerId, url, displayName, connection, options = {})
     {
-        super(parentTarget, workerId, name, WI.TargetType.Worker, connection, options);
+        super(parentTarget, workerId, url, WI.TargetType.Worker, connection, options);
+
+        this._displayName = displayName;
 
         this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, WI.ExecutionContext.Type.Normal, this.displayName);
     }
 
     // Protected (Target)
 
+    get customName()
+    {
+        return this._displayName;
+    }
+
     get displayName()
+    {
+        return this._displayName || this.displayURL;
+    }
+
+    get displayURL()
     {
         return WI.displayNameForURL(this._name);
     }

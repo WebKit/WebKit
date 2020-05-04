@@ -1,5 +1,30 @@
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Worker: should use the name of the worker if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=211244
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/WorkerObserver.js:
+        (WI.WorkerObserver.prototype.workerCreated):
+        * UserInterface/Controllers/WorkerManager.js:
+        (WI.WorkerManager.prototype.workerCreated):
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WI.WorkerTarget):
+        (WI.WorkerTarget.prototype.get customName): Added.
+        (WI.WorkerTarget.prototype.get displayName):
+        (WI.WorkerTarget.prototype.get displayURL): Added.
+        Use the `name` from the `WorkerOptions` given to the `Worker` when it's constructed as the
+        `displayName` of the `WI.WorkerTarget` if able. Also exposed via `get customName`.
+
+        * UserInterface/Views/ScriptTreeElement.js:
+        (WI.ScriptTreeElement):
+        * UserInterface/Views/WorkerTreeElement.js:
+        (WI.WorkerTreeElement):
+        Accept an `options` optional object that can be used to override the `mainTitle`.
+
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: provide a way for inspector to turn on/off ITP debug mode and AdClickAttribution debug mode
         https://bugs.webkit.org/show_bug.cgi?id=209763
 

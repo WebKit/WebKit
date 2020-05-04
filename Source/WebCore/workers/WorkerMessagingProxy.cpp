@@ -95,7 +95,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     workerThreadCreated(thread.get());
     thread->start();
 
-    m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.ptr(), scriptURL);
+    m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.ptr(), scriptURL, name);
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& message)

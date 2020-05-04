@@ -55,18 +55,18 @@ public:
     void sendMessageToWorker(ErrorString&, const String& workerId, const String& message) override;
 
     // WorkerInspectorProxy::PageChannel
-    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy*, const String& message) override;
+    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String& message) override;
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const;
-    void workerStarted(WorkerInspectorProxy*, const URL&);
-    void workerTerminated(WorkerInspectorProxy*);
+    void workerStarted(WorkerInspectorProxy&);
+    void workerTerminated(WorkerInspectorProxy&);
 
 private:
     void connectToAllWorkerInspectorProxiesForPage();
     void disconnectFromAllWorkerInspectorProxies();
-    void connectToWorkerInspectorProxy(WorkerInspectorProxy*);
-    void disconnectFromWorkerInspectorProxy(WorkerInspectorProxy*);
+    void connectToWorkerInspectorProxy(WorkerInspectorProxy&);
+    void disconnectFromWorkerInspectorProxy(WorkerInspectorProxy&);
 
     std::unique_ptr<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;

@@ -4,7 +4,7 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 passphrase = "page-passphrase";
-let worker = new Worker("resources/worker-1.js");
+let worker = new Worker("resources/worker-1.js", {name: "TestWorker"});
 
 function test()
 {

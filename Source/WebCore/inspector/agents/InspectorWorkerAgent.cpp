@@ -104,9 +104,9 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const S
     proxy->sendMessageToWorkerInspectorController(message);
 }
 
-void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy* proxy, const String& message)
+void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, const String& message)
 {
-    m_frontendDispatcher->dispatchMessageFromWorker(proxy->identifier(), message);
+    m_frontendDispatcher->dispatchMessageFromWorker(proxy.identifier(), message);
 }
 
 bool InspectorWorkerAgent::shouldWaitForDebuggerOnStart() const
@@ -114,7 +114,7 @@ bool InspectorWorkerAgent::shouldWaitForDebuggerOnStart() const
     return m_enabled;
 }
 
-void InspectorWorkerAgent::workerStarted(WorkerInspectorProxy* proxy, const URL&)
+void InspectorWorkerAgent::workerStarted(WorkerInspectorProxy& proxy)
 {
     if (!m_enabled)
         return;
@@ -122,7 +122,7 @@ void InspectorWorkerAgent::workerStarted(WorkerInspectorProxy* proxy, const URL&
     connectToWorkerInspectorProxy(proxy);
 }
 
-void InspectorWorkerAgent::workerTerminated(WorkerInspectorProxy* proxy)
+void InspectorWorkerAgent::workerTerminated(WorkerInspectorProxy& proxy)
 {
     if (!m_enabled)
         return;
@@ -142,7 +142,7 @@ void InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage()
         if (document.page() != &m_page)
             continue;
 
-        connectToWorkerInspectorProxy(proxy);
+        connectToWorkerInspectorProxy(*proxy);
     }
 }
 
@@ -154,22 +154,22 @@ void InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies()
     m_connectedProxies.clear();
 }
 
-void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy* proxy)
+void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy& proxy)
 {
-    proxy->connectToWorkerInspectorController(this);
+    proxy.connectToWorkerInspectorController(*this);
 
-    m_connectedProxies.set(proxy->identifier(), proxy);
+    m_connectedProxies.set(proxy.identifier(), &proxy);
 
-    m_frontendDispatcher->workerCreated(proxy->identifier(), proxy->url().string());
+    m_frontendDispatcher->workerCreated(proxy.identifier(), proxy.url().string(), proxy.name());
 }
 
-void InspectorWorkerAgent::disconnectFromWorkerInspectorProxy(WorkerInspectorProxy* proxy)
+void InspectorWorkerAgent::disconnectFromWorkerInspectorProxy(WorkerInspectorProxy& proxy)
 {
-    m_frontendDispatcher->workerTerminated(proxy->identifier());
+    m_frontendDispatcher->workerTerminated(proxy.identifier());
 
-    m_connectedProxies.remove(proxy->identifier());
+    m_connectedProxies.remove(proxy.identifier());
 
-    proxy->disconnectFromWorkerInspectorController();
+    proxy.disconnectFromWorkerInspectorController();
 }
 
 } // namespace Inspector

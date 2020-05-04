@@ -42,11 +42,11 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
     // WorkerObserver
 
-    workerCreated(target, workerId, url)
+    workerCreated(target, workerId, url, name)
     {
         console.assert(target.hasCommand("Worker.sendMessageToWorker"));
         let connection = new InspectorBackend.WorkerConnection;
-        let workerTarget = new WI.WorkerTarget(target, workerId, url, connection);
+        let workerTarget = new WI.WorkerTarget(target, workerId, url, name, connection);
         workerTarget.initialize();
 
         WI.targetManager.addTarget(workerTarget);

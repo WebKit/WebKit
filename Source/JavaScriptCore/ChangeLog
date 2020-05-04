@@ -1,5 +1,15 @@
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Worker: should use the name of the worker if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=211244
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Worker.json:
+        Include the `name` in `Worker.workerCreated`.
+
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: provide a way for inspector to turn on/off ITP debug mode and AdClickAttribution debug mode
         https://bugs.webkit.org/show_bug.cgi?id=209763
 

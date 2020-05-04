@@ -979,13 +979,13 @@ bool InspectorInstrumentation::shouldWaitForDebuggerOnStartImpl(InstrumentingAge
     return false;
 }
 
-void InspectorInstrumentation::workerStartedImpl(InstrumentingAgents& instrumentingAgents, WorkerInspectorProxy* proxy, const URL& url)
+void InspectorInstrumentation::workerStartedImpl(InstrumentingAgents& instrumentingAgents, WorkerInspectorProxy& proxy)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents.inspectorWorkerAgent())
-        workerAgent->workerStarted(proxy, url);
+        workerAgent->workerStarted(proxy);
 }
 
-void InspectorInstrumentation::workerTerminatedImpl(InstrumentingAgents& instrumentingAgents, WorkerInspectorProxy* proxy)
+void InspectorInstrumentation::workerTerminatedImpl(InstrumentingAgents& instrumentingAgents, WorkerInspectorProxy& proxy)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents.inspectorWorkerAgent())
         workerAgent->workerTerminated(proxy);
