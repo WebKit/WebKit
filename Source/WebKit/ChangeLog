@@ -1,3 +1,21 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Remove no-longer-needed HAVE(UISCENE)
+        https://bugs.webkit.org/show_bug.cgi?id=211376
+
+        Reviewed by Chris Dumez.
+
+        * Platform/spi/ios/UIKitSPI.h: Don't check HAVE(UISCENE) any more in this
+        iOS-family-only source file; it's always true.
+        * UIProcess/ApplicationStateTracker.h: Ditto.
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker): Ditto.
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker): Ditto.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView interfaceOrientation]): Ditto.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textEffectsWindow]): Ditto.
+
 2020-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative build fix for r261071

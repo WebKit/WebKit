@@ -1072,9 +1072,7 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 @interface UITextEffectsWindow : UIAutoRotatingWindow
 + (UITextEffectsWindow *)sharedTextEffectsWindow;
-#if HAVE(UISCENE)
 + (UITextEffectsWindow *)sharedTextEffectsWindowForWindowScene:(UIWindowScene *)windowScene;
-#endif // HAVE(UISCENE)
 @end
 
 @interface _UIVisualEffectLayerConfig : NSObject

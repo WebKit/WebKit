@@ -522,11 +522,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (UIInterfaceOrientation)interfaceOrientation
 {
-#if HAVE(UISCENE)
     return self.window.windowScene.interfaceOrientation;
-#else
-    return UIApp.interfaceOrientation;
-#endif
 }
 
 #pragma mark Internal

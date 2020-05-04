@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ApplicationStateTracker_h
-#define ApplicationStateTracker_h
+#pragma once
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -65,10 +64,8 @@ private:
     id m_didEnterBackgroundObserver;
     id m_didFinishSnapshottingAfterEnteringBackgroundObserver;
     id m_willEnterForegroundObserver;
-#if HAVE(UISCENE)
     id m_willBeginSnapshotSequenceObserver;
     id m_didCompleteSnapshotSequenceObserver;
-#endif
 };
 
 enum class ApplicationType {
@@ -83,5 +80,3 @@ bool isApplicationForeground(pid_t);
 }
 
 #endif
-
-#endif // ApplicationStateTracker_h

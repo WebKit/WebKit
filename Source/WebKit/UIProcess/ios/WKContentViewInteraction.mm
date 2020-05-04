@@ -7571,11 +7571,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (UIView *)textEffectsWindow
 {
-#if HAVE(UISCENE)
     return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
-#else
-    return [UITextEffectsWindow sharedTextEffectsWindow];
-#endif
 }
 
 - (NSDictionary *)_autofillContext

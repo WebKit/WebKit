@@ -1,3 +1,13 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Remove no-longer-needed HAVE(UISCENE)
+        https://bugs.webkit.org/show_bug.cgi?id=211376
+
+        Reviewed by Chris Dumez.
+
+        * wtf/PlatformHave.h: Don't define HAVE_UISCENE any more.
+        It's always true for PLATFORM(IOS_FAMILY).
+
 2020-05-03  Mark Lam  <mark.lam@apple.com>
 
         Remove some unused and broken functions in Bitmap.

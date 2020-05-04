@@ -97,7 +97,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
 
     switch (applicationType(window)) {
     case ApplicationType::Application: {
-#if HAVE(UISCENE)
         m_isInBackground = window.windowScene.activationState == UISceneActivationStateBackground || window.windowScene.activationState == UISceneActivationStateUnattached;
         RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::ApplicationStateTracker(): m_isInBackground: %d", this, m_isInBackground);
 
@@ -122,20 +121,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         m_didCompleteSnapshotSequenceObserver = [notificationCenter addObserverForName:_UISceneDidCompleteSystemSnapshotSequence object:nil queue:nil usingBlock:[this](NSNotification *notification) {
             didCompleteSnapshotSequence();
         }];
-#else
-        m_isInBackground = application.applicationState == UIApplicationStateBackground;
-        RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::ApplicationStateTracker(): m_isInBackground: %d", this, m_isInBackground);
-
-        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
-            RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UIApplicationDidEnterBackground", this);
-            applicationDidEnterBackground();
-        }];
-
-        m_willEnterForegroundObserver = [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
-            RELEASE_LOG(ViewState, "%p - ApplicationStateTracker: UIApplicationWillEnterForeground", this);
-            applicationWillEnterForeground();
-        }];
-#endif
         break;
     }
 
@@ -213,10 +198,8 @@ ApplicationStateTracker::~ApplicationStateTracker()
     [notificationCenter removeObserver:m_didEnterBackgroundObserver];
     [notificationCenter removeObserver:m_didFinishSnapshottingAfterEnteringBackgroundObserver];
     [notificationCenter removeObserver:m_willEnterForegroundObserver];
-#if HAVE(UISCENE)
     [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver];
     [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver];
-#endif
 }
 
 void ApplicationStateTracker::applicationDidEnterBackground()
