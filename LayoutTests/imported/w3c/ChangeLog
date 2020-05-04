@@ -1,3 +1,13 @@
+2020-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add @@toStringTag to WebAssembly.Global
+        https://bugs.webkit.org/show_bug.cgi?id=211372
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/wasm/jsapi/global/toString.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/toString.any.worker-expected.txt:
+
 2020-05-04  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Put lh / rlh units behind a flag until bug 211351 is sorted out.
