@@ -165,10 +165,7 @@ WI.CSSCompletions = class CSSCompletions
         }
 
         target.CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
-
-        // COMPATIBILITY (iOS 9): CSS.getSupportedSystemFontFamilyNames did not exist.
-        if (target.hasCommand("CSS.getSupportedSystemFontFamilyNames"))
-            target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
+        target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
     }
 
     static completeUnbalancedValue(value)

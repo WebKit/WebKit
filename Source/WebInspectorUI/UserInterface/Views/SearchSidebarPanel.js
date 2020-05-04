@@ -228,7 +228,6 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                     continue;
                 preventDuplicates.add(key);
 
-                // COMPATIBILITY (iOS 9): Page.searchInResources did not have the optional requestId parameter.
                 countPromise(target.PageAgent.searchInResource(searchResult.frameId, searchResult.url, searchQuery, isCaseSensitive, isRegex, searchResult.requestId), resourceCallback.bind(this, searchResult.frameId, searchResult.url));
             }
 

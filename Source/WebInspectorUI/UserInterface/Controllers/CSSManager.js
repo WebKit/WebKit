@@ -48,10 +48,6 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._modifiedStyles = new Map;
         this._defaultAppearance = null;
         this._forcedAppearance = null;
-
-        // COMPATIBILITY (iOS 9): Legacy backends did not send stylesheet
-        // added/removed events and must be fetched manually.
-        this._fetchedInitialStyleSheets = InspectorBackend.hasEvent("CSS.styleSheetAdded");
     }
 
     // Target
@@ -274,14 +270,6 @@ WI.CSSManager = class CSSManager extends WI.Object
         return match[1];
     }
 
-    fetchStyleSheetsIfNeeded()
-    {
-        if (this._fetchedInitialStyleSheets)
-            return;
-
-        this._fetchInfoForAllStyleSheets(function() {});
-    }
-
     styleSheetForIdentifier(id)
     {
         let styleSheet = this._styleSheetIdentifierMap.get(id);
@@ -319,82 +307,18 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
 
         let target = WI.assumingMainTarget();
-        if (target.hasCommand("CSS.createStyleSheet")) {
-            target.CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
-                const url = null;
-                let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
-                styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber);
-                styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
-                callback(styleSheet);
-            });
-            return;
-        }
-
-        // COMPATIBILITY (iOS 9): CSS.createStyleSheet did not exist.
-        // Legacy backends can only create the Inspector StyleSheet through CSS.addRule.
-        // Exploit that to create the Inspector StyleSheet for the document.body node in
-        // this frame, then get the StyleSheet for the new rule.
-
-        let expression = appendWebInspectorSourceURL("document");
-        let contextId = frame.pageExecutionContext.id;
-        target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, documentAvailable);
-
-        function documentAvailable(error, documentRemoteObjectPayload)
-        {
-            if (error) {
-                callback(null);
+        target.CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
+            if (error || !styleSheetId) {
+                WI.reportInternalError(error || styleSheetId);
                 return;
             }
 
-            let remoteObject = WI.RemoteObject.fromPayload(documentRemoteObjectPayload);
-            remoteObject.pushNodeToFrontend(documentNodeAvailable.bind(null, remoteObject));
-        }
-
-        function documentNodeAvailable(remoteObject, documentNodeId)
-        {
-            remoteObject.release();
-
-            if (!documentNodeId) {
-                callback(null);
-                return;
-            }
-
-            target.DOMAgent.querySelector(documentNodeId, "body", bodyNodeAvailable);
-        }
-
-        function bodyNodeAvailable(error, bodyNodeId)
-        {
-            if (error) {
-                console.error(error);
-                callback(null);
-                return;
-            }
-
-            let selector = ""; // Intentionally empty.
-            target.CSSAgent.addRule(bodyNodeId, selector, cssRuleAvailable);
-        }
-
-        function cssRuleAvailable(error, payload)
-        {
-            if (error || !payload.ruleId) {
-                callback(null);
-                return;
-            }
-
-            let styleSheetId = payload.ruleId.styleSheetId;
+            const url = null;
             let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
-            if (!styleSheet) {
-                callback(null);
-                return;
-            }
-
+            styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber);
             styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
-
-            console.assert(styleSheet.isInspectorStyleSheet());
-            console.assert(styleSheet.parentFrame === frame);
-
             callback(styleSheet);
-        }
+        });
     }
 
     mediaTypeChanged()
@@ -531,7 +455,6 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         // Clear our maps when the main frame navigates.
 
-        this._fetchedInitialStyleSheets = InspectorBackend.hasEvent("CSS.styleSheetAdded");
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
         this._modifiedStyles.clear();
@@ -616,13 +539,8 @@ WI.CSSManager = class CSSManager extends WI.Object
                 let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
                 let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
-                // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
-                let isInline = styleSheetInfo.isInline || false;
-                let startLine = styleSheetInfo.startLine || 0;
-                let startColumn = styleSheetInfo.startColumn || 0;
-
                 let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, isInline, startLine, startColumn);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);

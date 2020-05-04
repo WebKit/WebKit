@@ -1,5 +1,73 @@
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: drop support for iOS 9.*
+        https://bugs.webkit.org/show_bug.cgi?id=211314
+
+        Reviewed by Daniel Bates.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype._createPopoverContent):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame):
+        (WI.CSSManager.prototype._mainResourceDidChange):
+        (WI.CSSManager.prototype._fetchInfoForAllStyleSheets):
+        (WI.CSSManager.prototype.fetchStyleSheetsIfNeeded): Deleted.
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame.documentNodeAvailable): Deleted.
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame.bodyNodeAvailable): Deleted.
+        (WI.CSSManager.prototype.preferredInspectorStyleSheetForFrame.cssRuleAvailable): Deleted.
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._scopeChainNodeFromPayload):
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager.prototype.set showPaintRects):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.initializeTarget):
+        (WI.TimelineManager.defaultTimelineTypes):
+        (WI.TimelineManager.availableTimelineTypes):
+        (WI.TimelineManager.prototype.set autoCaptureOnPageLoad):
+        (WI.TimelineManager.prototype._processRecord):
+        (WI.TimelineManager.prototype._attemptAutoCapturingForFrame):
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.initializeCSSCompletions):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.refresh):
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        (WI.HeapAllocationsInstrument):
+        (WI.HeapAllocationsInstrument.supported): Deleted.
+        * UserInterface/Models/MemoryInstrument.js:
+        (WI.MemoryInstrument): Deleted.
+        (WI.MemoryInstrument.supported): Deleted.
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Models/ScriptInstrument.js:
+        (WI.ScriptInstrument.prototype.startInstrumentation):
+        (WI.ScriptInstrument.prototype.stopInstrumentation):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.functionReturnDivot):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord):
+        (WI.ScriptTimelineRecord.prototype._initializeProfileFromPayload):
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WI.DebuggerObserver.prototype.scriptParsed):
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js: Removed.
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js: Removed.
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        (WI.ScriptClusterTimelineView):
+        (WI.ScriptClusterTimelineView.createPathComponent):
+        (WI.ScriptClusterTimelineView.prototype.reset):
+        (WI.ScriptClusterTimelineView.prototype.showProfile):
+        (WI.ScriptClusterTimelineView.prototype._canShowProfileView): Deleted.
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        (WI.TimelineRecordingContentView.prototype._recordingTimesUpdated):
+        * Versions/Inspector-iOS-9.0.json: Removed.
+        * Versions/Inspector-iOS-9.3.json: Removed.
+
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: drop support for iOS 8.*
         https://bugs.webkit.org/show_bug.cgi?id=211312
 

@@ -25,21 +25,6 @@
 
 WI.MemoryInstrument = class MemoryInstrument extends WI.Instrument
 {
-    constructor()
-    {
-        super();
-
-        console.assert(WI.MemoryInstrument.supported());
-    }
-
-    // Static
-
-    static supported()
-    {
-        // COMPATIBILITY (iOS 9): Memory domain did not exist.
-        return InspectorBackend.hasDomain("Memory");
-    }
-
     // Protected
 
     get timelineRecordType()

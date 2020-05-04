@@ -43,11 +43,7 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         columns.location.icon = true;
         columns.location.width = "15%";
 
-        if (!InspectorBackend.hasDomain("ScriptProfiler")) {
-            // COMPATIBILITY(iOS 9): ScriptProfiler did not exist yet, we had call counts, not samples.
-            columns.callCount.title = WI.UIString("Calls");
-        } else
-            columns.callCount.title = WI.UIString("Samples");
+        columns.callCount.title = WI.UIString("Samples");
         columns.callCount.width = "5%";
         columns.callCount.aligned = "right";
 

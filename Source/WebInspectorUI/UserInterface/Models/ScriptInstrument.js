@@ -36,12 +36,6 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
     {
         let target = WI.assumingMainTarget();
 
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfiler. They use Timeline.
-        if (!target.hasDomain("ScriptProfiler")) {
-            super.startInstrumentation();
-            return;
-        }
-
         // FIXME: Make this some UI visible option.
         const includeSamples = true;
 
@@ -52,12 +46,6 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
     stopInstrumentation(initiatedByBackend)
     {
         let target = WI.assumingMainTarget();
-
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfiler. They use Timeline.
-        if (!target.hasDomain("ScriptProfiler")) {
-            super.stopInstrumentation();
-            return;
-        }
 
         if (!initiatedByBackend)
             target.ScriptProfilerAgent.stopTracking();

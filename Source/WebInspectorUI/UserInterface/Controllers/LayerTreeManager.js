@@ -90,7 +90,6 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         this._showPaintRects = showPaintRects;
 
         for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 9): Page.setCompositingBordersVisible did not exist yet.
             if (target.hasCommand("Page.setShowPaintRects"))
                 target.PageAgent.setShowPaintRects(this._showPaintRects);
         }

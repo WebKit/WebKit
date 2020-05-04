@@ -40,13 +40,8 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         this._profile = null;
         this._extraDetails = extraDetails || null;
 
-        // COMPATIBILITY(iOS 9): Before the ScriptProfiler we did not have sample data. Return NaN to match old behavior.
-        if (!InspectorBackend.hasDomain("ScriptProfiler"))
-            this._callCountOrSamples = NaN;
-        else {
-            // NOTE: _callCountOrSamples is being treated as the number of samples.
-            this._callCountOrSamples = 0;
-        }
+        // NOTE: _callCountOrSamples is being treated as the number of samples.
+        this._callCountOrSamples = 0;
     }
 
     // Import / Export
@@ -183,11 +178,8 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
             }
         }
 
-        // COMPATIBILITY (iOS 9): We only do this when we have ScriptProfiler because before that we didn't have a Sampling Profiler.
-        if (InspectorBackend.hasDomain("ScriptProfiler")) {
-            for (let i = 0; i < rootNodes.length; i++)
-                this._callCountOrSamples += rootNodes[i].callInfo.callCount;
-        }
+        for (let rootNode of rootNodes)
+            this._callCountOrSamples += rootNode.callInfo.callCount;
 
         this._profile = new WI.Profile(rootNodes);
     }

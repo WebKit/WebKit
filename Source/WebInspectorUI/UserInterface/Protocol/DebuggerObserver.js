@@ -41,17 +41,6 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
 
     scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL, isModule)
     {
-        if (this._legacyScriptParsed) {
-            // COMPATIBILITY (iOS 9): Debugger.scriptParsed had slightly different arguments.
-            // Debugger.scriptParsed: (scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
-            // Note that in this legacy version, url could be the sourceURL name, and the resource URL could be lost.
-            let legacySourceMapURL = arguments[7];
-            let hasSourceURL = arguments[8];
-            let legacySourceURL = hasSourceURL ? url : undefined;
-            WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, legacySourceURL, legacySourceMapURL);
-            return;
-        }
-
         WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL);
     }
 

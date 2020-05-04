@@ -309,9 +309,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             fetchedComputedStylesPromise.resolve();
         }
 
-        // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
-        WI.cssManager.fetchStyleSheetsIfNeeded();
-
         let target = WI.assumingMainTarget();
         target.CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
         target.CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
@@ -357,12 +354,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             }
 
             target.CSSAgent.setStyleText(rulePayload.style.styleId, text, styleChanged.bind(this));
-        }
-
-        // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
-        if (!target.hasCommand("CSS.createStyleSheet")) {
-            target.CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
-            return;
         }
 
         function inspectorStyleSheetAvailable(styleSheet)

@@ -33,9 +33,9 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
 
         this._currentContentViewSetting = new WI.Setting("script-cluster-timeline-view-current-view", WI.ScriptClusterTimelineView.EventsIdentifier);
 
-        let showSelectorArrows = this._canShowProfileView();
         function createPathComponent(displayName, className, identifier)
         {
+            const showSelectorArrows = true;
             let pathComponent = new WI.HierarchicalPathComponent(displayName, className, identifier, false, showSelectorArrows);
             pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
             pathComponent.comparisonData = timeline;
@@ -45,14 +45,12 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         this._eventsPathComponent = createPathComponent.call(this, WI.UIString("Events"), "events-icon", WI.ScriptClusterTimelineView.EventsIdentifier);
         this._profilePathComponent = createPathComponent.call(this, WI.UIString("Call Trees"), "call-trees-icon", WI.ScriptClusterTimelineView.ProfileIdentifier);
 
-        if (this._canShowProfileView()) {
-            this._eventsPathComponent.nextSibling = this._profilePathComponent;
-            this._profilePathComponent.previousSibling = this._eventsPathComponent;
-        }
+        this._eventsPathComponent.nextSibling = this._profilePathComponent;
+        this._profilePathComponent.previousSibling = this._eventsPathComponent;
 
         // FIXME: We should be able to create these lazily.
         this._eventsContentView = new WI.ScriptDetailsTimelineView(this.representedObject, extraArguments);
-        this._profileContentView = this._canShowProfileView() ? new WI.ScriptProfileTimelineView(this.representedObject, extraArguments) : null;
+        this._profileContentView = new WI.ScriptProfileTimelineView(this.representedObject, extraArguments);
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
 
@@ -80,9 +78,7 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
     reset()
     {
         this._eventsContentView.reset();
-
-        if (this._profileContentView)
-            this._profileContentView.reset();
+        this._profileContentView.reset();
     }
 
     // Public
@@ -129,19 +125,10 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
 
     showProfile()
     {
-        if (!this._canShowProfileView())
-            return this.showEvents();
-
         return this._showContentViewForIdentifier(WI.ScriptClusterTimelineView.ProfileIdentifier);
     }
 
     // Private
-
-    _canShowProfileView()
-    {
-        // COMPATIBILITY (iOS 9): Legacy backends did not include CallingContextTree ScriptProfiler data.
-        return InspectorBackend.hasDomain("ScriptProfiler");
-    }
 
     _pathComponentForContentView(contentView)
     {

@@ -89,9 +89,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             this._updateAutoCaptureInstruments([target]);
 
-            // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
-            if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
-                target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
+            target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
         }
     }
 
@@ -105,18 +103,18 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     static defaultTimelineTypes()
     {
         if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript) {
-            let defaultTypes = [WI.TimelineRecord.Type.Script];
-            if (WI.HeapAllocationsInstrument.supported())
-                defaultTypes.push(WI.TimelineRecord.Type.HeapAllocations);
-            return defaultTypes;
+            return [
+                WI.TimelineRecord.Type.Script,
+                WI.TimelineRecord.Type.HeapAllocations,
+            ];
         }
 
         if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) {
             // FIXME: Support Network Timeline in ServiceWorker.
-            let defaultTypes = [WI.TimelineRecord.Type.Script];
-            if (WI.HeapAllocationsInstrument.supported())
-                defaultTypes.push(WI.TimelineRecord.Type.HeapAllocations);
-            return defaultTypes;
+            return [
+                WI.TimelineRecord.Type.Script,
+                WI.TimelineRecord.Type.HeapAllocations,
+            ];
         }
 
         let defaultTypes = [
@@ -138,11 +136,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
             return types;
 
-        if (WI.MemoryInstrument.supported())
-            types.push(WI.TimelineRecord.Type.Memory);
-
-        if (WI.HeapAllocationsInstrument.supported())
-            types.push(WI.TimelineRecord.Type.HeapAllocations);
+        types.push(WI.TimelineRecord.Type.Memory);
+        types.push(WI.TimelineRecord.Type.HeapAllocations);
 
         if (WI.MediaInstrument.supported()) {
             let insertionIndex = types.indexOf(WI.TimelineRecord.Type.Layout) + 1;
@@ -211,11 +206,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._autoCaptureOnPageLoad = autoCapture;
 
-        for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist yet.
-            if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
-                target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
-        }
+        for (let target of WI.targets)
+            target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
     }
 
     get enabledTimelineTypes()
@@ -894,10 +886,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return record;
 
         case InspectorBackend.Enum.Timeline.EventType.ConsoleProfile:
-            var profileData = recordPayload.data.profile;
-            // COMPATIBILITY (iOS 9): With the Sampling Profiler, profiles no longer include legacy profile data.
-            console.assert(profileData || InspectorBackend.hasCommand("Timeline.setInstruments"));
-            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.title, profileData);
+            return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.title);
 
         case InspectorBackend.Enum.Timeline.EventType.TimerFire:
         case InspectorBackend.Enum.Timeline.EventType.EventDispatch:
@@ -1071,11 +1060,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         if (!InspectorBackend.hasDomain("Timeline"))
             return false;
-
-        // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
-        // Perform auto capture in the frontend.
-        if (!InspectorBackend.hasCommand("Timeline.setAutoCaptureEnabled"))
-            return this._legacyAttemptStartAutoCapturingForFrame(frame);
 
         if (!this._shouldSetAutoCapturingMainResource)
             return false;

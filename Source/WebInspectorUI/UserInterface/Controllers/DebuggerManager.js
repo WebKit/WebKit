@@ -988,16 +988,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         case InspectorBackend.Enum.Debugger.ScopeType.GlobalLexicalEnvironment:
             type = WI.ScopeChainNode.Type.GlobalLexicalEnvironment;
             break;
-
-        // COMPATIBILITY (iOS 9): Debugger.ScopeType.Local used to be provided by the backend.
-        // Newer backends no longer send this enum value, it should be computed by the frontend.
-        // Map this to "Closure" type. The frontend can recalculate this when needed.
-        case InspectorBackend.Enum.Debugger.ScopeType.Local:
-            type = WI.ScopeChainNode.Type.Closure;
-            break;
-
         default:
             console.error("Unknown type: " + payload.type);
+            break;
         }
 
         let object = WI.RemoteObject.fromPayload(payload.object, target);
