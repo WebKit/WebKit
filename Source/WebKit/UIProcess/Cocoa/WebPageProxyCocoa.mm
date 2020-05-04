@@ -400,17 +400,14 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     auto graphicsContext = bitmap->createGraphicsContext();
     if (!graphicsContext)
         return nullptr;
+
 #if PLATFORM(IOS_FAMILY)
     UIGraphicsPushContext(graphicsContext->platformContext());
     [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
     UIGraphicsPopContext();
-#elif PLATFORM(MAC)
-    auto savedContext = retainPtr([NSGraphicsContext currentContext]);
-
-    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithCGContext:graphicsContext->platformContext() flipped:YES]];
+#elif USE(APPKIT)
+    LocalCurrentGraphicsContext savedContext(*graphicsContext);
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-
-    [NSGraphicsContext setCurrentContext:savedContext.get()];
 #endif
     return bitmap;
 }

@@ -1,5 +1,16 @@
 2020-05-03  David Kilzer  <ddkilzer@apple.com>
 
+        Use LocalCurrentGraphicsContext in WebKit::convertPlatformImageToBitmap()
+        <https://webkit.org/b/211274>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        - Use LocalCurrentGraphicsContext to replace code.
+
+2020-05-03  David Kilzer  <ddkilzer@apple.com>
+
         Use default initializers and default constructors in WebEvent.h
         <https://webkit.org/b/211354>
 

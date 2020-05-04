@@ -1,5 +1,17 @@
 2020-05-03  David Kilzer  <ddkilzer@apple.com>
 
+        Use LocalCurrentGraphicsContext in WebKit::convertPlatformImageToBitmap()
+        <https://webkit.org/b/211274>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+        - Export methods for use in WebKit.
+
+2020-05-03  David Kilzer  <ddkilzer@apple.com>
+
         Fix static analyzer false positive in -[WebUndefined undefined]
         <https://webkit.org/b/211353>
 
