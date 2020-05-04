@@ -1,3 +1,16 @@
+2020-05-04  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Put lh / rlh units behind a flag until bug 211351 is sorted out.
+        https://bugs.webkit.org/show_bug.cgi?id=211356
+
+        Reviewed by Antti Koivisto.
+
+        * css/parser/CSSParserToken.cpp: Use the new runtime flag to disable parsing the units.
+        (WebCore::cssPrimitiveValueUnitFromTrie):
+        * page/RuntimeEnabledFeatures.h: Define the new runtime flag.
+        (WebCore::RuntimeEnabledFeatures::setLineHeightUnitsEnabled):
+        (WebCore::RuntimeEnabledFeatures::lineHeightUnitsEnabled const):
+
 2020-05-03  David Kilzer  <ddkilzer@apple.com>
 
         Use LocalCurrentGraphicsContext in WebKit::convertPlatformImageToBitmap()

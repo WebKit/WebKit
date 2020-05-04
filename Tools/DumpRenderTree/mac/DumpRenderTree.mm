@@ -1034,6 +1034,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.selectionAcrossShadowBoundariesEnabled = options.enableSelectionAcrossShadowBoundaries;
     preferences.webGPUEnabled = options.enableWebGPU;
     preferences.CSSLogicalEnabled = options.enableCSSLogical;
+    preferences.lineHeightUnitsEnabled = options.enableLineHeightUnits;
     preferences.adClickAttributionEnabled = options.adClickAttributionEnabled;
     preferences.resizeObserverEnabled = options.enableResizeObserver;
     preferences.CSSOMViewSmoothScrollingEnabled = options.enableCSSOMViewSmoothScrolling;

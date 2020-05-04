@@ -48,6 +48,7 @@ struct TestOptions {
     bool enableSelectionAcrossShadowBoundaries { true };
     bool enableWebGPU { false };
     bool enableCSSLogical { false };
+    bool enableLineHeightUnits { false };
     bool adClickAttributionEnabled { false };
     bool enableResizeObserver { false };
     bool enableCSSOMViewSmoothScrolling { false };

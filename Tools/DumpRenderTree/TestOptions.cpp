@@ -138,6 +138,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableWebGPU = parseBooleanTestHeaderValue(value);
         else if (key == "internal:CSSLogicalEnabled")
             enableCSSLogical = parseBooleanTestHeaderValue(value);
+        else if (key == "internal:LineHeightUnitsEnabled")
+            enableLineHeightUnits = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:AdClickAttributionEnabled")
             adClickAttributionEnabled = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:ResizeObserverEnabled")

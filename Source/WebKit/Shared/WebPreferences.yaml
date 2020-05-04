@@ -1803,6 +1803,14 @@ CSSLogicalEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
+LineHeightUnitsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "lh / rlh units"
+  humanReadableDescription: "Enable the lh and lhr units"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+
 DOMPasteAccessRequestsEnabled:
   type: bool
   defaultValue: DEFAULT_DOM_PASTE_ACCESS_REQUESTS_ENABLED

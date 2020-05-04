@@ -1,3 +1,17 @@
+2020-05-04  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Put lh / rlh units behind a flag until bug 211351 is sorted out.
+        https://bugs.webkit.org/show_bug.cgi?id=211356
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences lineHeightUnitsEnabled]):
+        (-[WebPreferences setLineHeightUnitsEnabled:]):
+        * WebView/WebView.mm:
+
 2020-04-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         TriState should be an enum class and use "Indeterminate" instead of "Mixed"

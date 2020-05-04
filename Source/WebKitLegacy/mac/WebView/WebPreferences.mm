@@ -681,6 +681,7 @@ public:
 #endif
         @YES, WebKitSelectionAcrossShadowBoundariesEnabledPreferenceKey,
         @NO, WebKitCSSLogicalEnabledPreferenceKey,
+        @NO, WebKitLineHeightUnitsEnabledPreferenceKey,
         @NO, WebKitAdClickAttributionEnabledPreferenceKey,
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
@@ -3549,6 +3550,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSLogicalEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCSSLogicalEnabledPreferenceKey];
+}
+
+- (BOOL)lineHeightUnitsEnabled
+{
+    return [self _boolValueForKey:WebKitLineHeightUnitsEnabledPreferenceKey];
+}
+
+- (void)setLineHeightUnitsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitLineHeightUnitsEnabledPreferenceKey];
 }
 
 - (BOOL)adClickAttributionEnabled
