@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -103,12 +103,6 @@ public:
             return !(*this == other);
         }
 
-        iterator& operator=(bool value)
-        {
-            m_bitmap->set(m_index, value);
-            return *this;
-        }
-
     private:
         const Bitmap* m_bitmap;
         size_t m_index;
@@ -118,9 +112,6 @@ public:
     iterator begin() const { return iterator(*this, findBit(0, true)); }
     iterator end() const { return iterator(*this, bitmapSize); }
     
-    iterator operator[](size_t);
-    const iterator operator[](size_t) const;
-
     void mergeAndClear(Bitmap&);
     void setAndClear(Bitmap&);
     
@@ -424,19 +415,6 @@ template<size_t bitmapSize, typename WordType>
 inline bool Bitmap<bitmapSize, WordType>::operator!=(const Bitmap& other) const
 {
     return !(*this == other);
-}
-
-template<size_t bitmapSize, typename WordType>
-inline auto Bitmap<bitmapSize, WordType>::operator[](size_t index) -> iterator
-{
-    ASSERT(index < size());
-    return iterator(*this, index);
-}
-
-template<size_t bitmapSize, typename WordType>
-inline auto Bitmap<bitmapSize, WordType>::operator[](size_t index) const -> const iterator
-{
-    return (*const_cast<Bitmap<bitmapSize, WordType>*>(this))[index];
 }
 
 template<size_t bitmapSize, typename WordType>

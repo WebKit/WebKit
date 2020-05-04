@@ -1,3 +1,23 @@
+2020-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unused and broken functions in Bitmap.
+        https://bugs.webkit.org/show_bug.cgi?id=211368
+
+        Reviewed by Yusuke Suzuki.
+
+        Bitmap::operator[] never worked.  There's currently no way to use it to read a
+        bit value.  We also can't use it to set a bit value because it relies on
+        Bitmap::iterator::operator= to set the value.  However, Bitmap::iterator stores
+        the Bitmap* as a const pointer, and Bitmap::iterator::operator= calls set() on
+        the const pointer.  If we try to use operator[] to set a bit, we'll get a
+        compilation error.
+
+        This patch removes the 2 variants of Bitmap::operator[] and Bitmap::iterator::operator=.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::operator): Deleted.
+        (WTF::WordType>::operator const const): Deleted.
+
 2020-05-03  Rob Buis  <rbuis@igalia.com>
 
         atob() should not accept a vertical tab
