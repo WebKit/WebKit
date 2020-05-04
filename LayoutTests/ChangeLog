@@ -1,3 +1,19 @@
+2020-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        (r261004) platform/mac/media/media-source/media-source-change-source.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=211326
+        <rdar://problem/62751237>
+
+        Unreviewed, skip new test on platforms where it is expected to fail.
+        
+        Set explicitly timeout before checking initial audio session category so it will fail
+        with an error message if it takes too long to run. Skip the test in the GPU process, because
+        audio session is not yet fully supported, and on WK1 because audio session is a singleton.
+
+        * gpu-process/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/media/media-source/media-source-change-source.html: Added.
+
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Worker: should use the name of the worker if it exists

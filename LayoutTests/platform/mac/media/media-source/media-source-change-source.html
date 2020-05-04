@@ -46,6 +46,8 @@
         };
 
         loader.onload = async () => {
+            failTestIn(15000);
+
             if (window.internals)
                 await testExpectedEventually("window.internals.audioSessionCategory()", "None");
 
@@ -53,8 +55,6 @@
             findMediaElement();
             runWithKeyDown('video.volume = 0.05');
             await waitFor(video, 'volumechange');
-
-            failTestIn(15000);
 
             consoleWrite('<br>* Load first file.');
             await loadAndPlay();

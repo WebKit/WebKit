@@ -372,6 +372,7 @@ platform/mac/media/audio-session-category-video-paused.html [ Skip ]
 platform/mac/media/audio-session-category-video-track-change.html [ Skip ]
 platform/mac/media/audio-session-deactivated-when-suspended.html [ Skip ]
 platform/mac/media/video-best-element-for-playback-controls-purpose.html [ Skip ]
+platform/mac/media/media-source/media-source-change-source.html [ Skip ]
 
 http/tests/media/track/track-webvtt-slow-loading.html [ Pass ]
 http/tests/media/track/track-webvtt-slow-loading-2.html [ Pass ]
