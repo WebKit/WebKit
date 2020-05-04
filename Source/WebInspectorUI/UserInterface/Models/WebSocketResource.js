@@ -78,10 +78,6 @@ WI.WebSocketResource = class WebSocketResource extends WI.Resource
         if (InspectorFrontendHost.isUnderTest())
             frame.dataForTest = data;
 
-        // COMPATIBILITY (iOS 10.3): `payloadLength` did not exist in 10.3 and earlier.
-        if (payloadLength === undefined)
-            payloadLength = new TextEncoder("utf-8").encode(data).length;
-
         this.increaseSize(payloadLength, elapsedTime);
 
         this.dispatchEventToListeners(WI.WebSocketResource.Event.FrameAdded, frame);

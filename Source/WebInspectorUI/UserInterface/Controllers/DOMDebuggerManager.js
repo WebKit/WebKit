@@ -189,7 +189,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     static supportsDOMBreakpoints()
     {
-        // COMPATIBILITY (iOS 10.3): DOMDebugger.setDOMBreakpoint and DOMDebugger.removeDOMBreakpoint did not exist yet.
         return InspectorBackend.hasCommand("DOMDebugger.setDOMBreakpoint")
             && InspectorBackend.hasCommand("DOMDebugger.removeDOMBreakpoint");
     }
@@ -613,7 +612,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (target.type === WI.TargetType.Worker)
             return;
 
-        // COMPATIBILITY (iOS 10.3): DOMDebugger.setDOMBreakpoint and DOMDebugger.removeDOMBreakpoint did not exist yet.
         if (!target.hasCommand("DOMDebugger.setDOMBreakpoint") || !target.hasCommand("DOMDebugger.removeDOMBreakpoint"))
             return;
 

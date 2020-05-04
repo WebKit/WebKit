@@ -361,8 +361,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
 
-        // COMPATIBILITY (iOS 10): Debugger.setPauseOnAssertions did not exist yet.
-        if (InspectorBackend.hasCommand("Debugger.setPauseOnAssertions") && WI.settings.showAssertionFailuresBreakpoint.value)
+        if (WI.settings.showAssertionFailuresBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
         // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
@@ -2025,19 +2024,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateBreakpointContextMenu(contextMenu)
     {
-        // COMPATIBILITY (iOS 10): Debugger.setPauseOnAssertions did not exist yet.
-        if (InspectorBackend.hasCommand("Debugger.setPauseOnAssertions")) {
-            let assertionFailuresBreakpointShown = WI.settings.showAssertionFailuresBreakpoint.value;
+        let assertionFailuresBreakpointShown = WI.settings.showAssertionFailuresBreakpoint.value;
 
-            contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
-                if (assertionFailuresBreakpointShown)
-                    WI.debuggerManager.removeBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
-                else {
-                    WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
-                    WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
-                }
-            }, assertionFailuresBreakpointShown);
-        }
+        contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
+            if (assertionFailuresBreakpointShown)
+                WI.debuggerManager.removeBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
+            else {
+                WI.debuggerManager.assertionFailuresBreakpoint.disabled = false;
+                WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
+            }
+        }, assertionFailuresBreakpointShown);
 
         contextMenu.appendSeparator();
 

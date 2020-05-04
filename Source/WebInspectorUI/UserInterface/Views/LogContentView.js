@@ -837,11 +837,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _garbageCollect()
     {
-        // COMPATIBILITY (iOS 10.3): Worker targets did not support Heap.gc.
-        for (let target of WI.targets) {
-            if (target.hasDomain("Heap"))
-                target.HeapAgent.gc();
-        }
+        for (let target of WI.targets)
+            target.HeapAgent.gc();
     }
 
     _messageShouldBeVisible(message)

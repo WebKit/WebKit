@@ -66,8 +66,7 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         if (target.hasCommand("Runtime.enableTypeProfiler") && WI.settings.showJavaScriptTypeInformation.value)
             target.RuntimeAgent.enableTypeProfiler();
 
-        // COMPATIBILITY (iOS 10): Runtime.enableControlFlowProfiler did not exist.
-        if (target.hasCommand("Runtime.enableControlFlowProfiler") && WI.settings.enableControlFlowProfiler.value)
+        if (WI.settings.enableControlFlowProfiler.value)
             target.RuntimeAgent.enableControlFlowProfiler();
 
         // COMPATIBILITY (iOS 12.2): Runtime.setSavedResultAlias did not exist.

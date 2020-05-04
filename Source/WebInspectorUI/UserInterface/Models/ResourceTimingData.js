@@ -62,11 +62,6 @@ WI.ResourceTimingData = class ResourceTimingData
     {
         payload = payload || {};
 
-        // COMPATIBILITY (iOS 10): Resource Timing data was incomplete and incorrect. Do not use it.
-        // iOS 8-9.3 sent a navigationStart time.
-        if (typeof payload.navigationStart === "number")
-            payload = {};
-
         // COMPATIBILITY (iOS 12.0): Resource Timing data was based on startTime, not fetchStart.
         let startTime = payload.startTime;
         let fetchStart = payload.fetchStart;

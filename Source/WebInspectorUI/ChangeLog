@@ -1,5 +1,66 @@
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: drop support for iOS 10.*
+        https://bugs.webkit.org/show_bug.cgi?id=211318
+
+        Reviewed by Daniel Bates.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.supportsDOMBreakpoints):
+        (WI.DOMDebuggerManager.prototype._updateDOMBreakpoint):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.async initializeTarget):
+        (WI.DebuggerManager.prototype.debuggerDidResume):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.initializeTarget):
+        (WI.NetworkManager.prototype.webSocketWillSendHandshakeRequest):
+        (WI.NetworkManager.prototype.resourceRequestDidReceiveResponse):
+        (WI.NetworkManager.prototype.markResourceRequestAsServedFromMemoryCache): Deleted.
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WI.RuntimeManager.prototype.initializeTarget):
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.legacyMarkServedFromMemoryCache): Deleted.
+        (WI.Resource.prototype.legacyMarkServedFromDiskCache): Deleted.
+        * UserInterface/Models/ResourceTimingData.js:
+        (WI.ResourceTimingData.fromPayload):
+        * UserInterface/Models/WebSocketResource.js:
+        (WI.WebSocketResource.prototype.addFrame):
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js: Removed.
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js: Removed.
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WI.NetworkObserver.prototype.requestServedFromCache): Deleted.
+        * UserInterface/Protocol/PageObserver.js:
+        (WI.PageObserver.prototype.frameClearedScheduledNavigation):
+        (WI.PageObserver):
+        (WI.PageObserver.prototype.javascriptDialogOpening): Deleted.
+        (WI.PageObserver.prototype.javascriptDialogClosed): Deleted.
+        (WI.PageObserver.prototype.scriptsEnabled): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._garbageCollect):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        * UserInterface/Views/WebSocketContentView.js:
+        (WI.WebSocketContentView):
+        (WI.WebSocketContentView.prototype._addRow):
+        * Versions/Inspector-iOS-10.0.json: Removed.
+        * Versions/Inspector-iOS-10.3.json: Removed.
+
+        * UserInterface/Protocol/CSSObserver.js:
+        (WI.CSSObserver.prototype.namedFlowCreated):
+        (WI.CSSObserver.prototype.namedFlowRemoved):
+        (WI.CSSObserver.prototype.regionOversetChanged):
+        (WI.CSSObserver.prototype.registeredNamedFlowContentElement):
+        (WI.CSSObserver.prototype.unregisteredNamedFlowContentElement):
+        Fix compatibility comments.
+
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Worker: should use the name of the worker if it exists
         https://bugs.webkit.org/show_bug.cgi?id=211244
 
