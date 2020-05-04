@@ -576,6 +576,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/mac/DynamicLinkerInterposing.h
     platform/mac/LegacyNSPasteboardTypes.h
+    platform/mac/LocalCurrentGraphicsContext.h
     platform/mac/LocalDefaultSystemAppearance.h
     platform/mac/NSScrollerImpDetails.h
     platform/mac/PasteboardWriter.h

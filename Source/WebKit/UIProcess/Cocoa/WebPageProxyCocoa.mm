@@ -42,6 +42,7 @@
 #import "WebProcessProxy.h"
 #import "WebsiteDataStore.h"
 #import <WebCore/DragItem.h>
+#import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/ValidationBubble.h>
