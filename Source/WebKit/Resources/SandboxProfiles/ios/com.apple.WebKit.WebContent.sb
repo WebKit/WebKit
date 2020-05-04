@@ -337,6 +337,7 @@
   (literal "/private/etc/fstab"
            "/private/etc/hosts"
            "/private/etc/group"
+           "/private/etc/passwd"
            "/private/etc/protocols"
            "/private/etc/services"))
 
@@ -562,9 +563,6 @@
 (allow file-read*
     required-etc-files
     (literal "/"))
-
-(deny file*
-    (literal "/private/etc/passwd"))
 
 (allow file-read*
        (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))

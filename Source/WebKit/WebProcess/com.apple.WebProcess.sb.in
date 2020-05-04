@@ -72,12 +72,7 @@
 (allow file-read*
     (literal "/dev/autofs_nowait")
     (literal "/dev/random")
-    (literal "/dev/urandom"))
-
-(deny file-read*
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
-    (with telemetry-backtrace)
-#endif
+    (literal "/dev/urandom")
     (literal "/private/etc/master.passwd")
     (literal "/private/etc/passwd"))
 
