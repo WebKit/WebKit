@@ -1,5 +1,14 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove unneeded USE(MEDIAREMOTE)
+        https://bugs.webkit.org/show_bug.cgi?id=211385
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformUse.h: Don't set USE_MEDIAREMOTE.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneded HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
         https://bugs.webkit.org/show_bug.cgi?id=211380
 

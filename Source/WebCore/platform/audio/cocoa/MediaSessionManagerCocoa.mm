@@ -312,7 +312,6 @@ PlatformMediaSession* MediaSessionManagerCocoa::nowPlayingEligibleSession()
 
 void MediaSessionManagerCocoa::updateNowPlayingInfo()
 {
-#if USE(MEDIAREMOTE)
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
@@ -361,7 +360,6 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
     m_nowPlayingActive = nowPlayingInfo->allowsNowPlayingControlsVisibility;
 
     END_BLOCK_OBJC_EXCEPTIONS
-#endif // USE(MEDIAREMOTE)
 }
 
 } // namespace WebCore

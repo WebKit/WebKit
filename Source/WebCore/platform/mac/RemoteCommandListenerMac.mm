@@ -42,7 +42,6 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
 
 void RemoteCommandListenerMac::updateSupportedCommands()
 {
-#if USE(MEDIAREMOTE)
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
@@ -72,13 +71,11 @@ void RemoteCommandListenerMac::updateSupportedCommands()
     CFArrayAppendValue(commandInfoArray.get(), seekCommandInfo.get());
 
     MRMediaRemoteSetSupportedCommands(commandInfoArray.get(), MRMediaRemoteGetLocalOrigin(), nullptr, nullptr);
-#endif // USE(MEDIAREMOTE)
 }
 
 RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& client)
     : RemoteCommandListener(client)
 {
-#if USE(MEDIAREMOTE)
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
@@ -144,15 +141,12 @@ RemoteCommandListenerMac::RemoteCommandListenerMac(RemoteCommandListenerClient& 
 
         completion((__bridge CFArrayRef)@[@(status)]);
     });
-#endif // USE(MEDIAREMOTE)
 }
 
 RemoteCommandListenerMac::~RemoteCommandListenerMac()
 {
-#if USE(MEDIAREMOTE)
     if (m_commandHandler)
         MRMediaRemoteRemoveCommandHandlerBlock(m_commandHandler);
-#endif
 }
 
 }

@@ -30,8 +30,6 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaRemote)
 
-#if USE(MEDIAREMOTE)
-
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ())
 #define MRMediaRemoteGetLocalOrigin softLink_MediaRemote_MRMediaRemoteGetLocalOrigin
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteAddAsyncCommandHandlerBlock, void*, (MRMediaRemoteAsyncCommandHandlerBlock block), (block))
@@ -70,8 +68,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteOptionPlayback
 #define kMRMediaRemoteOptionPlaybackPosition get_MediaRemote_kMRMediaRemoteOptionPlaybackPosition()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoUniqueIdentifier, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoUniqueIdentifier get_MediaRemote_kMRMediaRemoteNowPlayingInfoUniqueIdentifier()
-
-#endif // USE(MEDIAREMOTE)
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())

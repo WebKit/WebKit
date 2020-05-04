@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if USE(MEDIAREMOTE) && !PLATFORM(IOS_FAMILY_SIMULATOR) && (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101304)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -276,4 +276,4 @@ TEST_F(NowPlayingTest, VideoElementWithoutAudioPlayWithUserGesture)
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
 
-#endif // USE(MEDIAREMOTE) && (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
+#endif

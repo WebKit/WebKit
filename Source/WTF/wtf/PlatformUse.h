@@ -270,7 +270,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#define USE_MEDIAREMOTE 1
 #define USE_DICTATION_ALTERNATIVES 1
 #endif
 

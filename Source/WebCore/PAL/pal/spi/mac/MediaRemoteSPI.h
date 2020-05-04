@@ -25,26 +25,9 @@
 
 #pragma once
 
-#if USE(MEDIAREMOTE)
-
-#if __has_include(<MediaRemote/MRNowPlayingTypes.h>)
-
-#include <MediaRemote/MRNowPlayingTypes.h>
-
-#else
-
-enum {
-    MRNowPlayingClientVisibilityUndefined = 0,
-    MRNowPlayingClientVisibilityAlwaysVisible,
-    MRNowPlayingClientVisibilityVisibleWhenBackgrounded,
-    MRNowPlayingClientVisibilityNeverVisible
-};
-typedef uint32_t MRNowPlayingClientVisibility;
-
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <MediaRemote/MRNowPlayingTypes.h>
 #include <MediaRemote/MediaRemote.h>
 
 #else
@@ -100,6 +83,14 @@ enum {
 };
 typedef uint32_t MRMediaRemoteCommandHandlerStatus;
 
+enum {
+    MRNowPlayingClientVisibilityUndefined = 0,
+    MRNowPlayingClientVisibilityAlwaysVisible,
+    MRNowPlayingClientVisibilityVisibleWhenBackgrounded,
+    MRNowPlayingClientVisibilityNeverVisible
+};
+typedef uint32_t MRNowPlayingClientVisibility;
+
 typedef uint32_t MRMediaRemoteError;
 typedef struct _MROrigin *MROriginRef;
 typedef struct _MRMediaRemoteCommandInfo *MRMediaRemoteCommandInfoRef;
@@ -139,5 +130,3 @@ CFArrayRef MRMediaRemoteCopyPickableRoutes();
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // USE(MEDIAREMOTE)
