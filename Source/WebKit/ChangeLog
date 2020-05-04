@@ -1,3 +1,23 @@
+2020-05-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Unable to take RunningBoard process assertions in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=211254
+        <rdar://problem/62674074>
+
+        Reviewed by Geoffrey Garen.
+
+        Add com.apple.runningboard.assertions.webkit entitlement to iOS Simulator builds so that
+        we can take RunningBoard assertions on those platforms too.
+
+        While doing this, I found that we were not adding the entitlements properly for simulator
+        builds. For simulator builds, entitlements go into an __entitlements section of the binary,
+        rather than in the signature. Use CODE_SIGN_ENTITLEMENTS directive in xcconfig so that
+        XCode does the right thing for simulator builds.
+
+        * Configurations/BaseXPCService.xcconfig:
+        * Resources/ios/XPCService-embedded-simulator.entitlements: Added.
+        * Scripts/process-entitlements.sh:
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Remove now-unneded HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
