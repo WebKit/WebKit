@@ -1,5 +1,20 @@
 2020-05-04  Guillem Vinals  <gvinals@apple.com>
 
+        WebGPU: Textures should be able to have OUTPUT_ATTACHMENT | SAMPLED usage flags
+        https://bugs.webkit.org/show_bug.cgi?id=211345
+        <rdar://problem/62264423>
+
+        Reviewed by Myles C. Maxfield.
+
+        Added support for off-screen render targets. 
+
+        Test: webgpu/textures-textureviews.html
+
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags):
+
+2020-05-04  Guillem Vinals  <gvinals@apple.com>
+
         WebGPU: copyTextureToTexture() has an implementation bug (src copy view info is used also as dst)
         https://bugs.webkit.org/show_bug.cgi?id=211303
 

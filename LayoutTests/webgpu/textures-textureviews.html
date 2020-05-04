@@ -67,6 +67,19 @@ promise_test(() => {
     });
 }, "Create basic 3D texture from device.");
 
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        texDescriptor.format = "rgba8unorm";
+        texDescriptor.usage = GPUTextureUsage.OUTPUT_ATTACHMENT | GPUTextureUsage.SAMPLED;
+
+        const renderTarget = device.createTexture(texDescriptor);
+        assert_true(renderTarget instanceof GPUTexture, "Successfully created off-screen render target.");
+        const textureView = renderTarget.createDefaultView();
+        assert_true(textureView instanceof GPUTextureView, "Successfully created texture view from off-screen render target.");
+    }, function() {
+    });
+}, "Create a render target texture (which can be sampled) from device.");
+
 // FIXME: Add tests for 1D textures, textureArrays, and GPUTextureViews.
 </script>
 </body>

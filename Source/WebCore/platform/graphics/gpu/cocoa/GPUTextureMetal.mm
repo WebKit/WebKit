@@ -65,11 +65,6 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
         return WTF::nullopt;
     }
 
-    if (flags & GPUTextureUsage::Flags::OutputAttachment && flags.containsAny({ GPUTextureUsage::Flags::Storage, GPUTextureUsage::Flags::Sampled })) {
-        LOG(WebGPU, "%s: Texture cannot have OUTPUT_ATTACHMENT usage with STORAGE or SAMPLED usages!", functionName);
-        return WTF::nullopt;
-    }
-
     MTLTextureUsage result = MTLTextureUsagePixelFormatView;
     if (flags.contains(GPUTextureUsage::Flags::OutputAttachment))
         result |= MTLTextureUsageRenderTarget;
