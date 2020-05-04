@@ -1,3 +1,20 @@
+2020-05-04  Doug Kelly  <dougk@apple.com>
+
+        Add additional null checks to MediaPlayerPrivateMediaSourceAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=211134
+        <rdar://problem/62056577>
+
+        Reviewed by Daniel Bates.
+
+        Add additional null checks for a set m_mediaSourcePrivate to MediaPlayerPrivateMediaSourceAVFObjC.  Most uses in this
+        class are already guarded, but a few were not, which could lead to a null pointer crash if encountered.
+
+        No new tests; no functional changes.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded HAVE(MEDIA_PLAYER)
