@@ -116,6 +116,25 @@ class Console:
     def warning_message(cls, str_format, *args):
         cls.colored_message_if_supported(Colors.WARNING, str_format, *args)
 
+
+def flatpak_run_sanitized(command, gather_output=False):
+    """ Runs a command in a santized environment and optionally returns decoded output or raises
+        subprocess.CalledProcessError
+    """
+    # We need clean output free of debug messages
+    sanitized_env = os.environ.copy()
+    try:
+        del sanitized_env["G_MESSAGES_DEBUG"]
+    except KeyError:
+        pass
+
+    if gather_output:
+        output = subprocess.check_output(command, env=sanitized_env)
+        return output.decode('utf-8')
+    else:
+        return subprocess.check_call(command, env=sanitized_env)
+
+
 def check_flatpak(verbose=True):
     # Flatpak is only supported on Linux.
     if not sys.platform.startswith("linux"):
@@ -123,7 +142,7 @@ def check_flatpak(verbose=True):
 
     for app, required_version in FLATPAK_REQ:
         try:
-            output = subprocess.check_output([app, "--version"])
+            output = flatpak_run_sanitized([app, "--version"], gather_output=True)
         except (subprocess.CalledProcessError, OSError):
             if verbose:
                 Console.error_message("You need to install %s >= %s"
@@ -137,7 +156,7 @@ def check_flatpak(verbose=True):
         def comparable_version(version):
             return tuple(map(int, (version.split("."))))
 
-        version = output.decode("utf-8").split(" ")[1].strip("\n")
+        version = output.split(" ")[1].strip("\n")
         current = comparable_version(version)
         FLATPAK_VERSION[app] = current
         if current < comparable_version(required_version):
@@ -161,27 +180,22 @@ class FlatpakObject:
             Console.message(comment)
 
         command = ["flatpak", command]
-        help_output = subprocess.check_output(command + ["--help"]).decode("utf-8")
+        help_output = flatpak_run_sanitized(command + ["--help"], gather_output=True)
         if self.user and "--user" in help_output:
             command.append("--user")
         if "--assumeyes" in help_output:
             command.append("--assumeyes")
-        if "--noninteractive" and gather_output:
+        if "--noninteractive" in help_output and gather_output:
             command.append("--noninteractive")
 
         command.extend(args)
 
         _log.debug("Executing %s" % ' '.join(command))
-        if not show_output:
-            return subprocess.check_output(command).decode("utf-8")
+        output = flatpak_run_sanitized(command, gather_output=gather_output or show_output)
+        if show_output:
+            print(output)
 
-        if not gather_output:
-            return subprocess.check_call(command)
-        else:
-            p = subprocess.Popen(command, stdout=subprocess.PIPE)
-            output = p.communicate()
-            return output
-
+        return output
 
 class FlatpakPackages(FlatpakObject):
 
@@ -191,7 +205,7 @@ class FlatpakPackages(FlatpakObject):
         self.repos = repos
 
         packs = []
-        out = self.flatpak("list", "--columns=application,arch,branch,origin", "-a")
+        out = self.flatpak("list", "--columns=application,arch,branch,origin", "-a", gather_output=True)
         package_defs = [line for line in out.split("\n") if line]
         for package_def in package_defs:
             name, arch, branch, origin = package_def.split("\t")
@@ -217,7 +231,7 @@ class FlatpakRepos(FlatpakObject):
 
     def update(self):
         self.repos = {}
-        out = self.flatpak("remote-list", "--columns=name,title,url")
+        out = self.flatpak("remote-list", "--columns=name,title,url", gather_output=True)
         remotes = [line for line in out.split("\n") if line]
         for remote in remotes:
             name, title, url = remote.split("\t")
@@ -281,7 +295,7 @@ class FlatpakRepo(FlatpakObject):
             assert url
 
         self._app_registry = {}
-        output = self.flatpak("list", "--columns=application,branch", "-a")
+        output = self.flatpak("list", "--columns=application,branch", "-a", gather_output=True)
         for line in output.splitlines():
             name, branch = line.split("\t")
             self._app_registry[name] = branch
@@ -716,6 +730,7 @@ class WebkitFlatpak:
             "PLUGIN_PROCESS_CMD_PREFIX",
             "QML2_IMPORT_PATH",
             "RESULTS_SERVER_API_KEY",
+            "SSLKEYLOGFILE",
             "WAYLAND_DISPLAY",
             "WAYLAND_SOCKET",
             "WEB_PROCESS_CMD_PREFIX"
@@ -833,7 +848,7 @@ class WebkitFlatpak:
             self.run_in_sandbox('icecc', '--build-native', toolchain_path, stdout=tmpfile, cwd=self.source_root)
             tmpfile.flush()
             tmpfile.seek(0)
-            icc_version_filename, = re.findall(r'.*creating (.*)', tmpfile.read())
+            icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
             toolchains_directory = os.path.join(self.build_root, "Toolchains")
             if not os.path.isdir(toolchains_directory):
                 os.makedirs(toolchains_directory)

@@ -1,3 +1,26 @@
+2020-05-04  Patrick Griffis  <pgriffis@igalia.com>
+
+        [Flatpak SDK] Misc flatpakutils.py fixes
+        https://bugs.webkit.org/show_bug.cgi?id=211032
+
+        Reviewed by Philippe Normand.
+
+        Pass SSLKEYLOGFILE into sandbox which is useful for debugging with Wireshark.
+
+        Sanitize G_MESSAGES_DEBUG env var when checking output of flatpak command.
+
+        Fix check for --noninteractive support.
+
+        Fix python 3 exception when setting up icecc mixing strings and bytes.
+
+        * flatpak/flatpakutils.py:
+        (Console.warning_message):
+        (flatpak_check_output):
+        (check_flatpak):
+        (FlatpakObject.flatpak):
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-03  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the iOS build after r261068
