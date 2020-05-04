@@ -1852,12 +1852,12 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
 {
     ASSERT(!RunLoop::isMain());
 
-    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction was not completed due to failed insert attempt", this);
         return;
     }
+    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
     setUserInteraction(domain, true, WallTime::now());
     if (didHavePreviousUserInteraction) {
         completionHandler();

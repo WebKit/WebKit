@@ -1,3 +1,18 @@
+2020-05-04  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (JazzkonE): ResourceLoadStatisticsDatabaseStore checks 'hasHadUserInteraction' without ensuring the domain has been added to the ITP database (211388)
+        https://bugs.webkit.org/show_bug.cgi?id=211388
+        <rdar://problem/62849919>
+
+        Reviewed by John Wilander.
+
+        A spurious log entry is created if we check 'hasHadUserInteraction' before inserting a row for the domain
+        being checked (if that domain had not previosly been observed). This patch changes the order of the two
+        commands to avoid this possibility. This makes the database implementation behave like the in-memory version.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logUserInteraction):
+
 2020-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Reduce AlternativeService assertion to debug-only assert
