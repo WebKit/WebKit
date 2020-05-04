@@ -1,3 +1,28 @@
+2020-05-04  Tim Horton  <timothy_horton@apple.com>
+
+        Excessive error logging from daemons trying to use WebKit, under -[UIDevice currentDevice]
+        https://bugs.webkit.org/show_bug.cgi?id=211397
+        <rdar://problem/61635403>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::userInterfaceIdiomIsPad):
+        Adjust userInterfaceIdiomIsPad so that in daemons, it consults only MobileGestalt,
+        which returns the actual hardware model, and does not try to use UIDevice.
+        UIDevice is more accurate for applications because it will report that
+        the device is an iPhone when called inside an iPhone app running on iPad,
+        but it cannot be used in daemons that do not have a UIApplication.
+        
+        For the behaviors we gate on this bit, it makes sense to use iPhone
+        behaviors on iPad in the iPhone app jail, so we continue using
+        UIDevice if possible.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        Make use of the new mechanism instead of going straight to MobileGestalt,
+        for the aforementioned reasons.
+
 2020-05-04  Chris Dumez  <cdumez@apple.com>
 
         Stop hard-coding get-task-allow entitlement for simulator builds
