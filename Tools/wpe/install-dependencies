@@ -149,6 +149,7 @@ function installDependenciesWithApt {
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
         git-svn \
+        python3-secretstorage \
         subversion"
 
     apt-get install $packages
@@ -254,6 +255,7 @@ function installDependenciesWithPacman {
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
+        python-secretstorage \
         svn"
     pacman -S --needed $packages
 
@@ -375,6 +377,7 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for using webkit-patch
     packages="$packages
         git-svn \
+        python3-secretstorage \
         subversion"
 
     dnf install $packages

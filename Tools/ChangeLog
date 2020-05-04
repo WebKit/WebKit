@@ -1,3 +1,19 @@
+2020-05-04  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Should install python3-secretstorage
+        https://bugs.webkit.org/show_bug.cgi?id=207473
+
+        Reviewed by Adrian Perez de Castro.
+
+        If python3-secretstorage is not installed, webkit-patch will use a custom encrypted file
+        for password storage instead of utilizing the system keyring. This means unnecessary
+        password prompts to unlock the custom encrypted key storage.
+
+        There is no benefit to using custom key storage over the system keyring.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2020-05-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add WTR::AccessibilityUIElement::attributeValueAsync to retrieve attribute values in isolated tree mode.
