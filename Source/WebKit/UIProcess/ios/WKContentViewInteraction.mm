@@ -3646,7 +3646,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         _page->grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral);
 
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
-        [self hideGlobalMenuController];
+        [UIMenuController.sharedMenuController hideMenuFromView:self];
         pasteHandler(response);
         return YES;
     }
@@ -6068,31 +6068,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #endif
 }
 
-- (void)showGlobalMenuControllerInRect:(CGRect)rect
-{
-    UIMenuController *controller = UIMenuController.sharedMenuController;
-#if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
-    [controller showMenuFromView:self rect:rect];
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [controller setTargetRect:rect inView:self];
-    [controller setMenuVisible:YES animated:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-}
-
-- (void)hideGlobalMenuController
-{
-    UIMenuController *controller = UIMenuController.sharedMenuController;
-#if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
-    [controller hideMenuFromView:self];
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [controller setMenuVisible:NO animated:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-}
-
 static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const String& originIdentifier)
 {
     if (originIdentifier.isEmpty())
@@ -6140,7 +6115,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         menuControllerRect.inflate(interactionLocationMargin);
     }
 
-    [self showGlobalMenuControllerInRect:menuControllerRect];
+    [UIMenuController.sharedMenuController showMenuFromView:self rect:menuControllerRect];
 }
 
 - (void)_didUpdateEditorState

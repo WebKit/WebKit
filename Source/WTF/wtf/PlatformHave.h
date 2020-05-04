@@ -629,10 +629,6 @@
 #define HAVE_AVOBSERVATIONCONTROLLER 1
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#define HAVE_MENU_CONTROLLER_SHOW_HIDE_API 1
-#endif
-
 // FIXME: Should this be enabled on other iOS-family platforms?
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST)
 #define HAVE_CANCEL_WEB_TOUCH_EVENTS_GESTURE 1
