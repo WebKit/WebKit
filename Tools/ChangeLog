@@ -1,3 +1,13 @@
+2020-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Query the doc portal path with DBus
+        https://bugs.webkit.org/show_bug.cgi?id=211281
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-04  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Put lh / rlh units behind a flag until bug 211351 is sorted out.
