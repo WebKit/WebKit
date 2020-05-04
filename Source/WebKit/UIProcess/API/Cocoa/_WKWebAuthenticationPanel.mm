@@ -26,6 +26,7 @@
 #import "config.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 
+#import "LocalAuthenticator.h"
 #import "WebAuthenticationPanelClient.h"
 #import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/RetainPtr.h>
@@ -119,6 +120,13 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
 {
 }
 #endif // ENABLE(WEB_AUTHN)
+
++ (void)clearAllLocalAuthenticatorCredentials
+{
+#if ENABLE(WEB_AUTHN)
+    WebKit::LocalAuthenticator::clearAllCredentials();
+#endif
+}
 
 - (void)cancel
 {

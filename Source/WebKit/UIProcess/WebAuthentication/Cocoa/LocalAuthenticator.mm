@@ -172,6 +172,23 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
 
 } // LocalAuthenticatorInternal
 
+void LocalAuthenticator::clearAllCredentials()
+{
+    // FIXME<rdar://problem/57171201>: We should guard the method with a first party entitlement once WebAuthn is avaliable for third parties.
+    NSDictionary* deleteQuery = @{
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatiorAccessGroup),
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+        (id)kSecUseDataProtectionKeychain: @YES
+#else
+        (id)kSecAttrNoLegacy: @YES
+#endif
+    };
+    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+    if (status && status != errSecItemNotFound)
+        LOG_ERROR(makeString("Couldn't clear all credential: "_s, status).utf8().data());
+}
+
 LocalAuthenticator::LocalAuthenticator(UniqueRef<LocalConnection>&& connection)
     : m_connection(WTFMove(connection))
 {

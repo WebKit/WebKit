@@ -54,6 +54,8 @@ public:
         return adoptRef(*new LocalAuthenticator(WTFMove(connection)));
     }
 
+    static void clearAllCredentials();
+
 private:
     explicit LocalAuthenticator(UniqueRef<LocalConnection>&&);
 

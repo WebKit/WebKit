@@ -95,6 +95,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, copy) NSSet *transports;
 @property (nonatomic, readonly) _WKWebAuthenticationType type;
 
++ (void)clearAllLocalAuthenticatorCredentials;
+
 - (void)cancel;
 
 @end

@@ -1,3 +1,22 @@
+2020-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement +[_WKWebAuthenticationPanel clearAllLocalAuthenticatorCredentials]
+        https://bugs.webkit.org/show_bug.cgi?id=211369
+        <rdar://problem/60246635>
+
+        Reviewed by Brent Fulgham.
+
+        Adds a new SPI for UI clients to clear all existing credentials from the keychain.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel clearAllLocalAuthenticatorCredentials]):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::clearAllCredentials):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+
 2020-05-04  Tim Horton  <timothy_horton@apple.com>
 
         Excessive error logging from daemons trying to use WebKit, under -[UIDevice currentDevice]

@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
@@ -108,7 +109,7 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
             (id)kSecUseAuthenticationContext: context,
             (id)kSecAttrAccessControl: (id)accessControlRef,
             (id)kSecAttrIsPermanent: @YES,
-            (id)kSecAttrAccessGroup: @"com.apple.webkit.webauthn",
+            (id)kSecAttrAccessGroup: (id)String(LocalAuthenticatiorAccessGroup),
             (id)kSecAttrLabel: secAttrLabel,
             (id)kSecAttrApplicationTag: secAttrApplicationTag,
         }};
