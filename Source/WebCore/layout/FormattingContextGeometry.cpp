@@ -112,7 +112,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedContentWidth(const Box
 
 LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(const Box& layoutBox) const
 {
-    ASSERT(isHeightAuto(layoutBox) && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
+    ASSERT((isHeightAuto(layoutBox) || layoutBox.establishesTableFormattingContext()) && (layoutBox.establishesFormattingContext() || layoutBox.isDocumentBox()));
 
     // 10.6.7 'Auto' heights for block formatting context roots
 

@@ -1,5 +1,17 @@
 2020-05-04  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Override the table computed height when content needs more space
+        https://bugs.webkit.org/show_bug.cgi?id=211367
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+
+2020-05-04  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Use distributeAvailableSpace for row sizing
         https://bugs.webkit.org/show_bug.cgi?id=211366
 
