@@ -1,3 +1,22 @@
+2020-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: [ Mac WK1 ] inspector/console/console-api.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=211386
+
+        Reviewed by David Kilzer.
+
+        Add some temporary logging code to get data from Mojave bots related to this
+        NSScrollerImp crash.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::dumpPaintersWithDelegates):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+
 2020-05-04  Doug Kelly  <dougk@apple.com>
 
         Add additional null checks to MediaPlayerPrivateMediaSourceAVFObjC
