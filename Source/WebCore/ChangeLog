@@ -1,3 +1,16 @@
+2020-05-04  Youenn Fablet  <youenn@apple.com>
+
+        Camera video samples have a bad orientation if upside down
+        https://bugs.webkit.org/show_bug.cgi?id=211373
+
+        Reviewed by Eric Carlson.
+
+        Manually tested on iPad and iPhones.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::computeSampleRotation):
+        -90 should be the same as 270 not -270.
+
 2020-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [gtk] isMainThread() assert when running minibrowser in debug builds.

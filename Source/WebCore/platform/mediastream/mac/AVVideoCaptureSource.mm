@@ -525,10 +525,11 @@ void AVVideoCaptureSource::computeSampleRotation()
         sampleRotation = MediaSample::VideoRotation::UpsideDown;
         break;
     case 90:
+    case -270:
         sampleRotation = frontCamera ? MediaSample::VideoRotation::Left : MediaSample::VideoRotation::Right;
         break;
     case -90:
-    case -270:
+    case 270:
         sampleRotation = frontCamera ? MediaSample::VideoRotation::Right : MediaSample::VideoRotation::Left;
         break;
     default:
