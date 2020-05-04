@@ -557,7 +557,7 @@ enum CompositingPolicy {
     // Query if a timer is currently throttled, to debug timer throttling.
     [MayThrowException] boolean isTimerThrottled(long timerHandle);
 
-    boolean isRequestAnimationFrameThrottled();
+    DOMString requestAnimationFrameThrottlingReasons();
     boolean areTimersThrottled();
 
     [MayThrowException] void setLowPowerModeEnabled(boolean enabled);

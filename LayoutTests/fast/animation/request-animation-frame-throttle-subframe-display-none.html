@@ -13,7 +13,7 @@ function runTest()
     // Force layout.
     document.body.offsetTop;
 
-    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
     finishJSTest();
 }
 </script>

@@ -1,3 +1,162 @@
+2020-05-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Throttling requestAnimationFrame should be controlled by RenderingUpdateScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=204713
+
+        Reviewed by Simon Fraser.
+
+        rAF and Page rendering were managed by two different timers. Throttling
+        rAF was implemented by changing its timer. After r242624, RenderingUpdate
+        steps have been managed by RenderingUpdateScheduler. This means rAF is
+        now serviced by the preferredFramesPerSecond which is 60 fps regardless
+        it's throttled or not. Moreover the rAF throttling timer was mistakenly
+        kept and it has been running under the old assumption which is: rAF is
+        serviced by a timer only. This means rAF will be serviced by its timer
+        and by the RenderingUpdate steps at the same time when it is supposed to
+        throttle. This will make it fire more than 60 fps in cases which it is
+        supposed to run less than 60 fps.
+
+        The solution is to have two throttling types:
+
+        1) Page throttling (or full throttling): This slows down all the steps
+           of RenderingUpdate for the main document and all the sub-documents.
+           Page throttling reasons are:
+           -- VisuallyIdle: Aggressive throttling.
+           -- LowPowerMode: Half speed throttling.
+        2) Document throttling (or partial throttling): This only slows down the
+           rAF of a certain document. Document throttling reasons are:
+           -- OutsideViewport: Aggressive throttling.
+           -- NonInteractedCrossOriginFrame: Half speed throttling.
+
+        RenderingUpdate steps will still be managed by RenderingUpdateScheduler
+        which can be throttled. The assumption is none of these steps will need
+        to run faster than the Page preferredFramesPerSecond. If rAF wants to
+        run slower than the Page because of a Document throttling reason, no rAF
+        callbacks will be serviced before its preferredFrameInterval has elapsed.
+
+        In this patch, "Half speed throttling" is only implemented for the Page
+        and the Document throttling. The "Aggressive throttling" will be done in
+        following patches. Page rendering was never throttled before. We need to
+        make sure this is not going to affect PLT. Some tests need to be changed
+        and new tests need to be written.  All of the throttling tests checks the
+        state of the code but none of them checks the real user's experience.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animationInterval const):
+        (WebCore::DocumentTimeline::updateThrottlingState): Deleted.
+        * animation/DocumentTimeline.h:
+        There is no need to have DocumentTimeline throttling. It is already 
+        throttled when the page RenderingUpdate is throttled.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestAnimationFrame):
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+        LowPowerMode throttling is now handled by the Page. So remove its handling
+        from the Document.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::page const):
+        (WebCore::ScriptedAnimationController::interval const):
+        (WebCore::ScriptedAnimationController::preferredScriptedAnimationInterval const):
+        (WebCore::ScriptedAnimationController::throttlingReasons const):
+        (WebCore::ScriptedAnimationController::isThrottledRelativeToPage const):
+        (WebCore::ScriptedAnimationController::shouldRescheduleRequestAnimationFrame const):
+        (WebCore::ScriptedAnimationController::registerCallback):
+        (WebCore::ScriptedAnimationController::cancelCallback):
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::throttlingReasonToString): Deleted.
+        (WebCore::throttlingReasonsToString): Deleted.
+        (WebCore::ScriptedAnimationController::addThrottlingReason): Deleted.
+        (WebCore::ScriptedAnimationController::removeThrottlingReason): Deleted.
+        (WebCore::ScriptedAnimationController::isThrottled const): Deleted.
+        (WebCore::ScriptedAnimationController::animationTimerFired): Deleted.
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::addThrottlingReason):
+        (WebCore::ScriptedAnimationController::removeThrottlingReason):
+        Get rid of the rAF throttling timer. Service the rAF callback only when
+        the period from the current time stamp till the last service time stamp
+        is greater than the preferred rAF interval.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateScriptedAnimationsAndTimersThrottlingState):
+        ThrottlingReason is now defined outside ScriptedAnimationController.
+
+        * page/Page.cpp:
+        (WebCore::m_loadsFromNetwork):
+        (WebCore::Page::setLowPowerModeEnabledOverrideForTesting):
+
+        (WebCore::Page::preferredRenderingUpdateInterval const):
+        Calculate the preferred RenderingUpdate interval from the throttling
+        reasons.
+
+        (WebCore::Page::setIsVisuallyIdleInternal):
+        (WebCore::Page::handleLowModePowerChange):
+        Call adjustRenderingUpdateFrequency() when isLowPowerModeEnabled or 
+        IsVisuallyIdle is toggled.
+
+        (WebCore::Page::isLowPowerModeEnabled const): Deleted.
+        (WebCore::updateScriptedAnimationsThrottlingReason): Deleted.
+        * page/Page.h:
+        (WebCore::Page::isLowPowerModeEnabled const):
+        (WebCore::Page::throttlingReasons const):
+        (WebCore::Page::canUpdateThrottlingReason const):
+
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::setPreferredFramesPerSecond):
+        (WebCore::RenderingUpdateScheduler::scheduleAnimation):
+        (WebCore::RenderingUpdateScheduler::adjustRenderingUpdateFrequency):
+        Change the preferredFramesPerSecond of the DisplayRefreshMonitor if the
+        throttling is not aggressive e.g. 10_s. Otherwise use the timer.
+
+        (WebCore::RenderingUpdateScheduler::scheduleTimedRenderingUpdate):
+        Call adjustFramesPerSecond() when DisplayRefreshMonitor is created.
+
+        (WebCore::RenderingUpdateScheduler::startTimer):
+        * page/RenderingUpdateScheduler.h:
+        * platform/graphics/AnimationFrameRate.h: Added.
+        (WebCore::preferredFrameInterval):
+        (WebCore::preferredFramesPerSecond):
+        (WebCore::operator<<):
+        Push names of ThrottlingReasons to a TextStream.
+
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::setPreferredFramesPerSecond):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::monitorForClient):
+        Rename createMonitorForClient() to monitorForClient() since it may return
+        a cached DisplayRefreshMonitor.
+
+        (WebCore::DisplayRefreshMonitorManager::setPreferredFramesPerSecond):
+        (WebCore::DisplayRefreshMonitorManager::scheduleAnimation):
+        (WebCore::DisplayRefreshMonitorManager::windowScreenDidChange):
+        No need to call registerClient(). This function was just ensuring the
+        DisplayRefreshMonitor is created. scheduleAnimation() does the same thing.
+
+        (WebCore::DisplayRefreshMonitorManager::createMonitorForClient): Deleted.
+        (WebCore::DisplayRefreshMonitorManager::registerClient): Deleted.
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+        (WebCore::DisplayRefreshMonitorManager::DisplayRefreshMonitorManager): Deleted.
+
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::GraphicsLayerUpdater):
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (-[WebDisplayLinkHandler setPreferredFramesPerSecond:]):
+        Set the preferredFramesPerSecond of the CADisplayLink.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::requestAnimationFrameThrottlingReasons const):
+        (WebCore::Internals::isRequestAnimationFrameThrottled const): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Replace isRequestAnimationFrameThrottled() which returns a boolean by
+        requestAnimationFrameThrottlingReasons() which returns a string. The 
+        string represents the throttling reasons.
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Remove unneeded USE(MEDIAREMOTE)

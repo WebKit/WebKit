@@ -18,7 +18,7 @@
             if (match) {
                 var frameId = match[1];
                 if (window.internals)
-                    parent.window.postMessage("throttled[" + frameId + "]: " + internals.isRequestAnimationFrameThrottled(), "*");
+                    parent.window.postMessage("throttled[" + frameId + "]: " + internals.requestAnimationFrameThrottlingReasons(), "*");
             }
         }
 

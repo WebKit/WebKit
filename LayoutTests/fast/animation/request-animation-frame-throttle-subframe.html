@@ -8,8 +8,8 @@ window.jsTestIsAsync = true;
 
 function checkSubframesThrottled()
 {
-    shouldBeTrue("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
-    shouldBeTrue("grandChildFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport");
+    shouldBeEqualToString("grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport");
 
     finishJSTest();
 }
@@ -19,23 +19,23 @@ function scrollFrameOutOfView()
     debug("Scrolling frame out of view again.");
     window.scroll(0, 0);
 
-    shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-    shouldBecomeEqual("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()", "true", checkSubframesThrottled);
+    shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
+    shouldBecomeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport", checkSubframesThrottled);
 }
 
 function scrollFrameIntoView()
 {
-    shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-    shouldBeTrue("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
-    shouldBeTrue("grandChildFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport");
+    shouldBeEqualToString("grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport");
 
     debug("Scrolling frame into view.");
     window.internals.scrollElementToRect(testFrame, 0, 0, 300, 300);
 
     debug("RequestAnimationFrame should no longer be throttled");
-    shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
-    shouldBeFalse("grandChildFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
-    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
+    shouldBeEqualToString("grandChildFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
 
     scrollFrameOutOfView();
 }
@@ -45,7 +45,7 @@ function runTest()
     testFrame = document.getElementById("testFrame");
     grandChildFrame = testFrame.contentDocument.getElementById("grandChildFrame");
     debug("Frame is initially outside the viewport so requestAnimationFrame should be throttled");
-    shouldBecomeEqual("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()", "true", scrollFrameIntoView);
+    shouldBecomeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "OutsideViewport", scrollFrameIntoView);
 }
 
 var i = 0;

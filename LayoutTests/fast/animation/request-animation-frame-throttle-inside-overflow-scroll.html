@@ -14,7 +14,7 @@ function scrollOverflow()
     container.scrollLeft = window.innerWidth + 10;
 
     debug("requestAnimationFrame should still not be throttled");
-    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
     
     finishJSTest();
 }
@@ -23,7 +23,7 @@ function runTest()
 {
     testFrame = document.getElementById("testFrame");
     debug("Frame is initially inside the viewport so requestAnimationFrame should not be throttled");
-    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("testFrame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
     scrollOverflow();
 }
 </script>

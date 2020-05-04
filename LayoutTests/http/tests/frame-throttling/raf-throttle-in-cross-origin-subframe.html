@@ -54,15 +54,15 @@
 
     function checkInitiallyThrottled()
     {
-        shouldBeEqualToString("throttledState['cross']", "true");
-        shouldBeEqualToString("throttledState['same']", "false");
+        shouldBeEqualToString("throttledState['cross']", "NonInteractiveCrossOriginFrame");
+        shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
         interactWithSubframes();
     }
 
     function checkUnthrottledAfterInteraction()
     {
-        shouldBeEqualToString("throttledState['cross']", "false");
-        shouldBeEqualToString("throttledState['same']", "false");
+        shouldBeEqualToString("throttledState['cross']", "[Unthrottled]");
+        shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
         finishJSTest();
     }
 
@@ -75,7 +75,7 @@
             return;
         }
 
-        var re = /throttled\[(\w+)\]: (true|false)/;
+        var re = /throttled\[(\w+)\]: ((\w+)(\|\w+)*|\[Unthrottled\])/;
         var match = re.exec(message.data);
         if (match) {
             frameID = match[1];

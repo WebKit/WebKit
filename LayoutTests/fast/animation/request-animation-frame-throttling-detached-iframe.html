@@ -18,33 +18,33 @@ requestAnimationFrame(doWork);
 const frame = document.createElement("iframe");
 frame.src = "resources/frame-with-animation.html";
 frame.onload = function() {
-    shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
     shouldBe("internals.requestAnimationFrameInterval", "0.015");
-    shouldBeFalse("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("frame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
     shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.015");
 
     evalAndLog("internals.setLowPowerModeEnabled(true);");
-    shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "LowPowerMode");
     shouldBe("internals.requestAnimationFrameInterval", "0.030");
-    shouldBeTrue("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    shouldBeEqualToString("frame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "LowPowerMode");
     shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.030");
     evalAndLog("frame.remove()");
 
     evalAndLog("document.body.appendChild(frame)");
     frame.onload = function() {
-        shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+        shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "LowPowerMode");
         shouldBe("internals.requestAnimationFrameInterval", "0.030");
-        shouldBeTrue("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+        shouldBeEqualToString("frame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "LowPowerMode");
         shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.030");
 
         evalAndLog("frame.remove()");
         evalAndLog("internals.setLowPowerModeEnabled(false);");
-        shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+        shouldBeEqualToString("internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
         shouldBe("internals.requestAnimationFrameInterval", "0.015");
 
         evalAndLog("document.body.appendChild(frame)");
         frame.onload = function() {
-            shouldBeFalse("frame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+            shouldBeEqualToString("frame.contentWindow.internals.requestAnimationFrameThrottlingReasons()", "[Unthrottled]");
             shouldBe("frame.contentWindow.internals.requestAnimationFrameInterval", "0.015");
             finishJSTest();
         }
