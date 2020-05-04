@@ -1,3 +1,20 @@
+2020-05-04  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in CompositeEditCommand::moveParagraphs when changing style on elements that are
+        user-select:none and dir:rtl.
+        https://bugs.webkit.org/show_bug.cgi?id=211206
+        <rdar://problem/61830589>
+
+        Reviewed by Geoffrey Garen.
+
+        In function moveParagraphs check if the destination is an empty position and 
+        bail out before moving the paragraphs.
+
+        Test: fast/editing/justify-user-select-none-dir-rtl-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+
 2020-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement +[_WKWebAuthenticationPanel clearAllLocalAuthenticatorCredentials]

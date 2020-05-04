@@ -1398,7 +1398,7 @@ void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraph
 
 void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, const VisiblePosition& destination, bool preserveSelection, bool preserveStyle)
 {
-    if (startOfParagraphToMove == destination)
+    if (destination.isNull() || startOfParagraphToMove == destination)
         return;
     
     Optional<uint64_t> startIndex;
