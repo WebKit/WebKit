@@ -1,5 +1,33 @@
 2020-05-04  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Support for local repository and drive-by fixes
+        https://bugs.webkit.org/show_bug.cgi?id=211370
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds a new --repo option to webkit-flatpak, allowing
+        SDK developers to test local changes made to the SDK. As future
+        versions of the SDK will depend on the ffmpeg FDO extension,
+        flatpakutils installs it from now on. One consequence is that the
+        LD_LIBRARY_PATH set in the GTK layout test driver is no longer
+        overriden when running in the flatpak SDK, in order to allow the
+        extension to set it correctly.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * flatpak/flatpakutils.py:
+        (FlatpakRepos.add):
+        (FlatpakRepo.repo_file):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak._reset_repository):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak._get_packages):
+        (run_in_sandbox_if_available):
+
+2020-05-04  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Query the doc portal path with DBus
         https://bugs.webkit.org/show_bug.cgi?id=211281
 

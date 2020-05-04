@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2017 Igalia S.L.
 #
 # This program is free software; you can redistribute it and/or
@@ -195,7 +196,7 @@ class FlatpakObject:
         _log.debug("Executing %s" % ' '.join(command))
         output = flatpak_run_sanitized(command, gather_output=gather_output or show_output)
         if show_output:
-            print(output)
+            print(output.encode('utf-8'))
 
         return output
 
@@ -256,18 +257,19 @@ class FlatpakRepos(FlatpakObject):
 
         if same_name:
             if override:
-                self.flatpak("remote-modify", repo.name, "--url=" + repo.url,
-                             comment="Setting repo %s URL from %s to %s"
-                             % (repo.name, same_name.url, repo.url))
+                self.flatpak("remote-modify", repo.name, "--url=" + repo.url)
                 same_name.url = repo.url
 
                 return same_name
             else:
                 return None
         else:
-            self.flatpak("remote-add", repo.name, "--from", repo.repo_file.name,
-                         "--if-not-exists",
-                         comment="Adding repo %s" % repo.name)
+            args = ["remote-add", repo.name, "--if-not-exists"]
+            if repo.repo_file:
+                args.extend(["--from", repo.repo_file.name])
+            else:
+                args.extend(["--no-gpg-verify", repo.url])
+            self.flatpak(*args, comment="Adding repo %s" % repo.name)
 
         repo.repos = self
         return repo
@@ -316,7 +318,9 @@ class FlatpakRepo(FlatpakObject):
         if self._repo_file:
             return self._repo_file
 
-        assert self.repo_file_name
+        if not self.repo_file_name:
+            return None
+
         self._repo_file = tempfile.NamedTemporaryFile(mode="wb")
         self._repo_file.write(urlopen(self.repo_file_name).read())
         self._repo_file.flush()
@@ -418,6 +422,7 @@ class WebkitFlatpak:
         general.add_argument("--use-icecream", dest="use_icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
         general.add_argument("-r", "--regenerate-toolchains", dest="regenerate_toolchains", action="store_true",
                              help="Regenerate IceCC distribuable toolchain archives")
+        general.add_argument("--repo", help="Filesystem absolute path to the Flatpak repository to use", dest="user_repo")
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -440,6 +445,7 @@ class WebkitFlatpak:
         self.sdk_repo = None
         self.runtime = None
         self.sdk = None
+        self.user_repo = None
 
         self.verbose = False
         self.quiet = False
@@ -489,14 +495,18 @@ class WebkitFlatpak:
         return result
 
     def clean_args(self):
-        os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
+        if self.user_repo:
+            os.environ["FLATPAK_USER_DIR"] = FLATPAK_USER_DIR_PATH + ".Local"
+        else:
+            os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
+        self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
         try:
-            os.makedirs(os.environ["FLATPAK_USER_DIR"])
+            os.makedirs(self.flatpak_build_path)
         except OSError as e:
             pass
 
         configure_logging(logging.DEBUG if self.verbose else logging.INFO)
-        _log.debug("Using flatpak user dir: %s" % os.environ["FLATPAK_USER_DIR"])
+        _log.debug("Using flatpak user dir: %s" % self.flatpak_build_path)
 
         if not self.debug and not self.release:
             factory = PortFactory(SystemHost())
@@ -508,8 +518,6 @@ class WebkitFlatpak:
 
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = True
-
-        self.flatpak_build_path = os.environ["FLATPAK_USER_DIR"]
 
         self.build_root = os.path.join(self.source_root, 'WebKitBuild')
         self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
@@ -532,11 +540,12 @@ class WebkitFlatpak:
 
     def _reset_repository(self):
         self.repos = FlatpakRepos()
-        self.sdk_repo = self.repos.add(
-            FlatpakRepo("webkit-sdk",
-                        url="https://software.igalia.com/webkit-sdk-repo/",
-                        repo_file="https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo")
-        )
+        url = "https://software.igalia.com/webkit-sdk-repo/"
+        repo_file = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+        if self.user_repo:
+            url = "file://%s" % self.user_repo
+            repo_file = None
+        self.sdk_repo = self.repos.add(FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file))
 
     def setup_builddir(self, **kwargs):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
@@ -610,6 +619,12 @@ class WebkitFlatpak:
         if not isinstance(args, list):
             args = list(args)
 
+        sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
+        sandbox_environment = {
+            "WEBKIT_TOP_LEVEL": "/app/",
+            "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
+        }
+
         if args:
             if os.path.exists(args[0]):
                 command = os.path.normpath(os.path.abspath(args[0]))
@@ -617,11 +632,14 @@ class WebkitFlatpak:
                 args[0] = command.replace(self.source_root, self.sandbox_source_root)
             if args[0].endswith("build-webkit"):
                 args.append("--prefix=/app")
+
+            if args[0] == "bash":
+                args.extend(['--noprofile', '--norc', '-i'])
+                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ "
             building = os.path.basename(args[0]).startswith("build")
         else:
             building = False
 
-        sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
         # FIXME: Using the `run` flatpak command would be better, but it doesn't
         # have a --bind-mount option.
         flatpak_command = ["flatpak", "build",
@@ -652,11 +670,6 @@ class WebkitFlatpak:
         # The bind-mount is always needed, excepted during the initial setup (SDK install/updates).
         if os.path.isdir(self.build_path):
             flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
-
-        forwarded = {
-            "WEBKIT_TOP_LEVEL": "/app/",
-            "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
-        }
 
         if not building:
             flatpak_command.extend([
@@ -689,9 +702,9 @@ class WebkitFlatpak:
             else:
                 _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
 
-            forwarded.update({
+            sandbox_environment.update({
                 "TZ": "PST8PDT",
-                "LANG": "en_US.UTF-8"
+                "LANG": "en_US.UTF-8",
             })
 
         env_var_prefixes_to_keep = [
@@ -702,6 +715,7 @@ class WebkitFlatpak:
             "ICECC",
             "JSC",
             "SCCACHE",
+            "WAYLAND",
             "WEBKIT",
             "WEBKIT2",
             "WPE",
@@ -709,6 +723,7 @@ class WebkitFlatpak:
 
         env_var_suffixes_to_keep = [
             "JSC_ARGS",
+            "PROCESS_CMD_PREFIX",
             "WEBKIT_ARGS",
         ]
 
@@ -723,16 +738,10 @@ class WebkitFlatpak:
             "LANG",
             "LDFLAGS",
             "Malloc",
-            "GPU_PROCESS_CMD_PREFIX",
-            "NETWORK_PROCESS_CMD_PREFIX",
             "NUMBER_OF_PROCESSORS",
-            "PLUGIN_PROCESS_CMD_PREFIX",
             "QML2_IMPORT_PATH",
             "RESULTS_SERVER_API_KEY",
             "SSLKEYLOGFILE",
-            "WAYLAND_DISPLAY",
-            "WAYLAND_SOCKET",
-            "WEB_PROCESS_CMD_PREFIX"
         ]
 
         env_vars = os.environ
@@ -740,7 +749,7 @@ class WebkitFlatpak:
         for envvar, value in env_vars.items():
             var_tokens = envvar.split("_")
             if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or var_tokens[-1] in env_var_suffixes_to_keep:
-                forwarded[envvar] = value
+                sandbox_environment[envvar] = value
 
         share_network_option = "--share=network"
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
@@ -753,7 +762,7 @@ class WebkitFlatpak:
         override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
         if override_sccache_server_port:
             _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
-            forwarded["SCCACHE_SERVER_PORT"] = override_sccache_server_port
+            sandbox_environment["SCCACHE_SERVER_PORT"] = override_sccache_server_port
 
         if self.use_icecream and not self.regenerate_toolchains:
             _log.debug('Enabling the icecream compiler')
@@ -768,13 +777,13 @@ class WebkitFlatpak:
             if not os.path.isfile(toolchain_path):
                 Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", toolchain_path)
                 return 1
-            forwarded.update({
+            sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
                 "ICECC_VERSION": toolchain_path,
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
 
-        for envvar, value in forwarded.items():
+        for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
 
         gst_env = []
@@ -892,9 +901,11 @@ class WebkitFlatpak:
         self.flathub_repo = self.repos.add(
             FlatpakRepo("flathub", repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
         )
-        gl_extension = FlatpakPackage("org.freedesktop.Platform.GL.default", "19.08",
-                                      self.flathub_repo, "x86_64")
-        packages.append(gl_extension)
+
+        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", "19.08",
+                                       self.flathub_repo, "x86_64"))
+        packages.append(FlatpakPackage("org.freedesktop.Platform.ffmpeg-full", "19.08",
+                                       self.flathub_repo, "x86_64"))
 
         if self.debug:
             sdk_debug = FlatpakPackage('org.webkit.Sdk.Debug', self.sdk_branch,
@@ -952,7 +963,8 @@ def run_in_sandbox_if_available(args):
     if os.environ.get('WEBKIT_JHBUILD', '0') == '1':
         return None
 
-    if not os.path.isdir(FLATPAK_USER_DIR_PATH):
+    os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)
+    if not os.path.isdir(os.environ["FLATPAK_USER_DIR"]):
         return None
 
     if is_sandboxed():

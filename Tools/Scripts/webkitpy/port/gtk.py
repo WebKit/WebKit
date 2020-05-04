@@ -147,9 +147,6 @@ class GtkPort(Port):
                 # Force the Gallium llvmpipe software rasterizer
                 environment['LIBGL_ALWAYS_SOFTWARE'] = "1"
                 environment['LIBGL_DRIVERS_PATH'] = dri_libgl_path
-                environment['LD_LIBRARY_PATH'] = llvmpipe_libgl_path
-                if os.environ.get('LD_LIBRARY_PATH'):
-                    environment['LD_LIBRARY_PATH'] += ':%s' % os.environ.get('LD_LIBRARY_PATH')
             else:
                 _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs or update-webkit-flatpak")
         if self.get_option("leaks"):
