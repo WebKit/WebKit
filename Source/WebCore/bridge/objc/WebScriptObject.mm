@@ -645,13 +645,11 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
 @implementation WebUndefined
 
-+ (id)allocWithZone:(NSZone *)unusedZone
++ (instancetype)allocWithZone:(NSZone *)zone
 {
-    UNUSED_PARAM(unusedZone);
-
     static NeverDestroyed<RetainPtr<WebUndefined>> sharedUndefined;
     if (!sharedUndefined.get())
-        sharedUndefined.get() = adoptNS([super allocWithZone:nullptr]);
+        sharedUndefined.get() = adoptNS([super allocWithZone:zone]);
     return [sharedUndefined.get() retain];
 }
 
@@ -660,7 +658,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     return @"undefined";
 }
 
-- (id)initWithCoder:(NSCoder *)unusedCoder
+- (nullable instancetype)initWithCoder:(NSCoder *)unusedCoder
 {
     UNUSED_PARAM(unusedCoder);
 
@@ -679,7 +677,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     return self;
 }
 
-- (id)retain
+- (instancetype)retain
 {
     return self;
 }
@@ -693,7 +691,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     return NSUIntegerMax;
 }
 
-- (id)autorelease
+- (instancetype)autorelease
 {
     return self;
 }
@@ -707,7 +705,7 @@ IGNORE_WARNINGS_END
 
 + (WebUndefined *)undefined
 {
-    return [[WebUndefined allocWithZone:NULL] autorelease];
+    return [[[WebUndefined alloc] init] autorelease];
 }
 
 @end

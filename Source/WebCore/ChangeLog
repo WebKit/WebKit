@@ -1,3 +1,21 @@
+2020-05-03  David Kilzer  <ddkilzer@apple.com>
+
+        Fix static analyzer false positive in -[WebUndefined undefined]
+        <https://webkit.org/b/211353>
+
+        Reviewed by Darin Adler.
+
+        * bridge/objc/WebScriptObject.mm:
+        (+[WebUndefined allocWithZone:]):
+        (-[WebUndefined initWithCoder:]):
+        (-[WebUndefined retain]):
+        (-[WebUndefined autorelease]):
+        - Update method signatures.
+        (+[WebUndefined undefined]):
+        - Fix clang static analyzer false positive by using idiomatic
+          -alloc, -init calls to create object.  These methods call
+          -allocWithZone:, so this still uses the singleton pattern.
+
 2020-05-03  Daniel Bates  <dabates@apple.com>
 
         Sometimes cannot find <textarea> in list of editable elements
