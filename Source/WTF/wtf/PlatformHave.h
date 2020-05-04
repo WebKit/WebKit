@@ -305,10 +305,6 @@
 #define HAVE_QOS_CLASSES 1
 #endif
 
-#if !defined(HAVE_VOUCHERS) && PLATFORM(COCOA)
-#define HAVE_VOUCHERS 1
-#endif
-
 #if PLATFORM(COCOA)
 #define HAVE_AVASSETREADER 1
 #endif

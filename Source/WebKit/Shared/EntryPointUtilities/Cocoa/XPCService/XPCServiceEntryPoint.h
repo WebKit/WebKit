@@ -31,12 +31,11 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
-#if HAVE(VOUCHERS)
+// FIXME: This should be moved to an SPI header.
 #if USE(APPLE_INTERNAL_SDK)
 #include <os/voucher_private.h>
 #else
 extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
-#endif
 #endif
 
 #define WEBCONTENT_SERVICE_INITIALIZER WebContentServiceInitializer
@@ -122,10 +121,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
         exit(EXIT_FAILURE);
 
-#if HAVE(VOUCHERS)
     // Set the task default voucher to the current value (as propagated by XPC).
     voucher_replace_default_voucher();
-#endif
 
 #if HAVE(QOS_CLASSES)
     if (parameters.extraInitializationData.contains("always-runs-at-background-priority"_s))
