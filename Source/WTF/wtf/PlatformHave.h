@@ -145,10 +145,6 @@
 #endif
 
 #if OS(DARWIN)
-#define HAVE_STRINGS_H 1
-#endif
-
-#if OS(DARWIN)
 #define HAVE_STRNSTR 1
 #endif
 
