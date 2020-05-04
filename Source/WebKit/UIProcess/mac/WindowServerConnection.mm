@@ -26,12 +26,12 @@
 #import "config.h"
 #import "WindowServerConnection.h"
 
+#if PLATFORM(MAC)
+
 #import "WebProcessPool.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
 namespace WebKit {
-
-#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
 
 void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
 {
@@ -47,15 +47,12 @@ void WindowServerConnection::windowServerConnectionStateChanged()
         processPool->windowServerConnectionStateChanged();
 }
 
-#endif
-
 WindowServerConnection& WindowServerConnection::singleton()
 {
     static WindowServerConnection& windowServerConnection = *new WindowServerConnection;
     return windowServerConnection;
 }
 
-#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
 static bool registerOcclusionNotificationHandler(CGSNotificationType type, CGSNotifyConnectionProcPtr handler)
 {
     CGSConnectionID mainConnection = CGSMainConnectionID();
@@ -70,12 +67,10 @@ static bool registerOcclusionNotificationHandler(CGSNotificationType type, CGSNo
 
     return CGSRegisterConnectionNotifyProc(mainConnection, handler, type, nullptr) == kCGErrorSuccess;
 }
-#endif
 
 WindowServerConnection::WindowServerConnection()
     : m_applicationWindowModificationsHaveStopped(false)
 {
-#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
     struct OcclusionNotificationHandler {
         CGSNotificationType notificationType;
         CGSNotifyConnectionProcPtr handler;
@@ -100,8 +95,8 @@ WindowServerConnection::WindowServerConnection()
         UNUSED_PARAM(result);
         ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);
     }
-#endif
 }
 
 } // namespace WebKit
 
+#endif

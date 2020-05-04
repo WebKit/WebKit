@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 namespace WebKit {
 
 class WindowServerConnection {
@@ -36,11 +34,8 @@ public:
 private:
     WindowServerConnection();
 
-#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
     void windowServerConnectionStateChanged();
-
     void applicationWindowModificationsStopped(bool stopped);
-#endif
 
     bool m_applicationWindowModificationsHaveStopped;
 };

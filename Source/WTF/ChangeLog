@@ -1,5 +1,14 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneded HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=211380
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformHave.h: Don't define HAVE_WINDOW_SERVER_OCCLUSION_NOTIFICATIONS.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove unused USE(COREAUDIO)
         https://bugs.webkit.org/show_bug.cgi?id=211384
 

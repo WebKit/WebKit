@@ -1,5 +1,24 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneded HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=211380
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WindowServerConnection.h: Don't check
+        HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS) in this Mac-only header.
+        Also removed #pragma once in this header that is only included from .mm files.
+
+        * UIProcess/mac/WindowServerConnection.mm: Wrapped the whole file in
+        PLATFORM(MAC) because this is macOS-specific code that may be compiled on
+        iOS family platforms. Could wrap it in HAVE(WINDOW_SERVER) instead, but we
+        don't have anything like that and PageClientImplMac.mm, the client of this
+        code, uses PLATFORM(MAC).
+        (WebKit::registerOcclusionNotificationHandler): Ditto.
+        (WebKit::WindowServerConnection::WindowServerConnection): Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(UI_REMOTE_VIEW)
         https://bugs.webkit.org/show_bug.cgi?id=211382
 
