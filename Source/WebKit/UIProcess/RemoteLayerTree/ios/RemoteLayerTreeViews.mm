@@ -332,7 +332,6 @@ static Class scrollViewScrollIndicatorClass()
 
 @end
 
-#if HAVE(UI_REMOTE_VIEW)
 @implementation WKUIRemoteView
 
 - (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID
@@ -362,7 +361,6 @@ static Class scrollViewScrollIndicatorClass()
 }
 
 @end
-#endif
 
 @implementation WKBackdropView
 

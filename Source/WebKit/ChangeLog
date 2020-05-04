@@ -1,5 +1,22 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneeded HAVE(UI_REMOTE_VIEW)
+        https://bugs.webkit.org/show_bug.cgi?id=211382
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::createRemoteView): Deleted.
+        (WebKit::RemoteLayerTreeHost::makeNode): After researching to be sure the method
+        is present in the relevant versions of iOS 13, changed this code to use the
+        initWithFrame:pid:contextID: method without doing a selector check, and also
+        without a HAVE(UI_REMOTE_VIEW) conditional.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm: Removed the
+        HAVE(UI_REMOTE_VIEW) conditional.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
         https://bugs.webkit.org/show_bug.cgi?id=211381
 

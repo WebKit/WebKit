@@ -36,27 +36,9 @@
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/SoftLinking.h>
 
 namespace WebKit {
 using namespace WebCore;
-
-static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
-{
-#if HAVE(UI_REMOTE_VIEW)
-    // FIXME: Remove this respondsToSelector check when possible.
-    static BOOL canUseUIRemoteView;
-    static std::once_flag initializeCanUseUIRemoteView;
-    std::call_once(initializeCanUseUIRemoteView, [] {
-        canUseUIRemoteView = [_UIRemoteView instancesRespondToSelector:@selector(initWithFrame:pid:contextID:)];
-    });
-    if (canUseUIRemoteView)
-        return adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:pid contextID:contextID]);
-#else
-    UNUSED_PARAM(pid);
-#endif
-    return adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:contextID]);
-}
 
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
@@ -95,7 +77,8 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
-            auto view = createRemoteView(m_drawingArea->page().processIdentifier(), properties.hostingContextID);
+            auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero
+                pid:m_drawingArea->page().processIdentifier() contextID:properties.hostingContextID]);
             if (properties.type == PlatformCALayer::LayerTypeAVPlayerLayer) {
                 // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
                 float inverseScale = 1 / properties.hostingDeviceScaleFactor;
