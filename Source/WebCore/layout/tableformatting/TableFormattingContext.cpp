@@ -361,6 +361,20 @@ struct ColumnSpan {
     static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.columnSpan() - 1) * grid.horizontalSpacing(); }
 };
 
+struct RowSpan {
+    static size_t hasSpan(const TableGrid::Slot& slot) { return slot.hasRowSpan(); }
+    static size_t isSpanned(const TableGrid::Slot& slot) { return slot.isRowSpanned(); }
+
+    static size_t spanCount(const TableGrid::Cell& cell) { return cell.rowSpan(); }
+    static size_t startSpan(const TableGrid::Cell& cell) { return cell.startRow(); }
+    static size_t endSpan(const TableGrid::Cell& cell) { return cell.endRow(); }
+
+    static size_t index(size_t /*columnIndex*/, size_t rowIndex) { return rowIndex; }
+    static size_t size(const TableGrid& grid) { return grid.rows().size(); }
+
+    static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.rowSpan() - 1) * grid.verticalSpacing(); }
+};
+
 using DistributedSpaces = Vector<float>;
 template <typename SpanType>
 static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float spaceToDistribute, const WTF::Function<LayoutUnit(const TableGrid::Slot&, size_t)>& slotSpace)
@@ -441,8 +455,8 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
             // e.g. spanning width: [   9   ]. Resolved widths for the spanned columns: [ 1 ] [ 2 ]
             // New resolved widths: [ 3 ] [ 6 ].
             float resolvedSpace = 0;
-            for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-                resolvedSpace += resolvedSpaces[columnIndex]->value;
+            for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
+                resolvedSpace += resolvedSpaces[spanIndex]->value;
             if (resolvedSpace >= unresolvedSpanningSpace) {
                 // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
                 continue;
@@ -523,15 +537,15 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     auto& rows = grid.rows();
 
     struct RowHeight {
-        float value { 0 };
-        InlineLayoutUnit baselineOffset { 0 };
-        bool isFixed { false };
+        InlineLayoutUnit height() const { return ascent + descent; }
+
+        InlineLayoutUnit ascent { 0 };
+        InlineLayoutUnit descent { 0 };
     };
     Vector<RowHeight> rowHeight(rows.size());
     Vector<SlotPosition> spanningRowPositionList;
     float tableUsedHeight = 0;
-    // 1. Collect initial row heights.
-    float flexibleSpace = 0;
+    // 1. Collect initial, basline aligned row heights.
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
@@ -540,6 +554,8 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
             if (slot.isRowSpanned())
                 continue;
             layoutCell(slot.cell(), availableHorizontalSpace);
+            if (slot.hasRowSpan())
+                continue;
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cell = slot.cell();
@@ -549,37 +565,32 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
             maximumColumnDescent = std::max(maximumColumnDescent, geometryForBox(cellBox).height() - cell.baselineOffset());
         }
         // <tr style="height: 10px"> is considered as min height.
-        auto maximumRowHeight = maximumColumnAscent + maximumColumnDescent;
-        if (auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { }))
-            rowHeight[rowIndex] = { std::max(computedRowHeight->toFloat(), maximumRowHeight), maximumColumnAscent, true };
-        else {
-            flexibleSpace += maximumRowHeight;
-            rowHeight[rowIndex] = { maximumRowHeight, maximumColumnAscent, false };
-        }
-        tableUsedHeight += maximumRowHeight;
+        rowHeight[rowIndex] = { maximumColumnAscent, maximumColumnDescent };
+        tableUsedHeight += maximumColumnAscent + maximumColumnDescent;
     }
+    // FIXME: Collect spanning row maximum heights.
 
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
     auto minimumTableHeight = verticalConstraint;
     if (!minimumTableHeight)
         minimumTableHeight = geometry().fixedValue(root().style().logicalHeight());
-
-    if (minimumTableHeight && *minimumTableHeight > tableUsedHeight) {
-        float spaceToDistribute = std::max(0.0f, *minimumTableHeight - tableUsedHeight - ((rows.size() + 1) * grid.verticalSpacing()));
-        for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
-            if (rowHeight[rowIndex].isFixed)
-                continue;
-            rowHeight[rowIndex].value += spaceToDistribute / flexibleSpace * rowHeight[rowIndex].value;
-        }
-    }
+    float spaceToDistribute = 0;
+    if (minimumTableHeight)
+        spaceToDistribute = std::max(0.0f, *minimumTableHeight - ((rows.size() + 1) * grid.verticalSpacing()) - tableUsedHeight);
+    auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, spaceToDistribute, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
+        if (slot.hasRowSpan())
+            return geometryForBox(slot.cell().box()).height();
+        auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { });
+        return std::max(LayoutUnit { rowHeight[rowIndex].height() }, computedRowHeight.valueOr(0_lu));
+    });
 
     auto rowLogicalTop = grid.verticalSpacing();
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto& row = grid.rows().list()[rowIndex];
-        auto rowUsedHeight = LayoutUnit { rowHeight[rowIndex].value };
+        auto rowUsedHeight = LayoutUnit { distributedSpaces[rowIndex] };
 
         row.setLogicalHeight(rowUsedHeight);
-        row.setBaselineOffset(rowHeight[rowIndex].baselineOffset);
+        row.setBaselineOffset(rowHeight[rowIndex].ascent);
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += rowUsedHeight + grid.verticalSpacing();
     }
