@@ -63,8 +63,12 @@ WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_YES_DEPLOYMENT_YES =
 WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_NO_DEPLOYMENT_NO = ../../..;
 WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_YES_DEPLOYMENT_NO = ..;
 
-// We want this to always be NO. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
+// We want this to always be NO for non-simulator builds. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=*simulator] = YES;
+
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Resources/ios/XPCService-embedded-simulator.entitlements
 
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 
@@ -85,11 +89,5 @@ WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_macfamily_VARIANT_ = $(WK_LIBRARY_VALIDATI
 WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_macfamily_VARIANT_Normal = $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_macfamily_VARIANT_Normal_VALIDATION_$(WK_LIBRARY_VALIDATION_ENABLED));
 WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_macfamily_VARIANT_Normal_VALIDATION_YES = -o library;
 WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_iosdevicefamily = --entitlements $(WK_PROCESSED_XCENT_FILE);
-
-// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
-CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(WK_PLATFORM_NAME));
-CODE_SIGN_ENTITLEMENTS_iphonesimulator = Resources/ios/XPCService-embedded-simulator.entitlements
-CODE_SIGN_ENTITLEMENTS_appletvsimulator = Resources/ios/XPCService-embedded-simulator.entitlements
-CODE_SIGN_ENTITLEMENTS_watchsimulator = Resources/ios/XPCService-embedded-simulator.entitlements
 
 OTHER_CODE_SIGN_FLAGS = $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS);

@@ -1,3 +1,15 @@
+2020-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Stop hard-coding get-task-allow entitlement for simulator builds
+        https://bugs.webkit.org/show_bug.cgi?id=211392
+
+        Reviewed by Geoffrey Garen.
+
+        Stop hard-coding get-task-allow entitlement for simulator builds and let Xcode inject it as needed.
+
+        * Configurations/BaseXPCService.xcconfig:
+        * Resources/ios/XPCService-embedded-simulator.entitlements:
+
 2020-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (JazzkonE): ResourceLoadStatisticsDatabaseStore checks 'hasHadUserInteraction' without ensuring the domain has been added to the ITP database (211388)
