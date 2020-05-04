@@ -8,3 +8,4 @@ PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebConte
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.iconservices") is true
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.PowerManagement.control") is true
 PASS internals.hasSandboxMachLookupAccessToGlobalName("com.apple.WebKit.WebContent", "com.apple.frontboard.systemappservices") is true
+

@@ -4,6 +4,12 @@
 
         * fast/sandbox/ios/sandbox-mach-lookup-mail-expected.txt:
 
+2020-05-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed test gardening.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-mail-expected.txt:
+
 2020-05-04  Antoine Quint  <graouts@apple.com>
 
         Media controls tracks menu shows "Auto" selected instead of track selected via the JS API
