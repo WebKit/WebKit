@@ -1,3 +1,15 @@
+2020-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        [Catalina] ASSERTION FAILED: Unsafe to ref/deref from different threads seen with TestWebKitAPI.MultipleClientCertificateConnections.Failure
+        https://bugs.webkit.org/show_bug.cgi?id=211300
+
+        Reviewed by Youenn Fablet.
+
+        RequestData references are stored in blocks given to the network framework, which does things on background threads.
+        To make them safe to ref and deref on non-main threads, make RequestData ThreadSafeRefCounted.
+
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded HAVE(MEDIA_PLAYER)

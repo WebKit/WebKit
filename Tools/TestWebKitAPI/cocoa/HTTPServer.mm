@@ -32,12 +32,13 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
-struct HTTPServer::RequestData : public RefCounted<RequestData> {
+struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
     RequestData(std::initializer_list<std::pair<String, HTTPResponse>> responses)
     : requestMap([](std::initializer_list<std::pair<String, HTTPServer::HTTPResponse>> list) {
         HashMap<String, HTTPServer::HTTPResponse> map;
