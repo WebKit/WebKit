@@ -928,8 +928,6 @@ webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback
 
 webkit.org/b/208449 [ Debug ] mathml/presentation/attributes-accent-accentunder-dynamic.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208524 [ Release ] webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Timeout ]
-
 webkit.org/b/209479 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Pass Timeout ]
 
 webkit.org/b/209480 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Pass Timeout ]
