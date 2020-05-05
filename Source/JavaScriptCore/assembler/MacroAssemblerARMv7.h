@@ -46,6 +46,8 @@ public:
     static constexpr unsigned numGPRs = 16;
     static constexpr unsigned numFPRs = 16;
     
+    RegisterID scratchRegister() { return dataTempRegister; }
+
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)
     {

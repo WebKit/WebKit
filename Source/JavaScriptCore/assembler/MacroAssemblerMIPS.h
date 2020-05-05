@@ -75,6 +75,8 @@ public:
     // FP temp register
     static constexpr FPRegisterID fpTempRegister = MIPSRegisters::f16;
 
+    RegisterID scratchRegister() { return dataTempRegister; }
+
     static constexpr int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     enum RelationalCondition {

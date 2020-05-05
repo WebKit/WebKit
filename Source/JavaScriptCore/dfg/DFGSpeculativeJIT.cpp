@@ -34,6 +34,7 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
 #include "DFGCapabilities.h"
+#include "DFGClobberize.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
@@ -1854,7 +1855,31 @@ void SpeculativeJIT::compileCurrentBlock()
     }
 
     m_origin = NodeOrigin();
-    
+
+    if (Options::validateDFGClobberize()) {
+        bool clobberedWorld = m_block->predecessors.isEmpty() || m_block->isOSRTarget || m_block->isCatchEntrypoint;
+        auto validateClobberize = [&] () {
+            clobberedWorld = true;
+        };
+
+        for (auto* predecessor : m_block->predecessors) {
+            Node* terminal = predecessor->terminal();
+            // We sometimes fuse compare followed by branch.
+            if (terminal->isBranch())
+                terminal = terminal->child1().node();
+            clobberize(m_graph, terminal, [] (auto...) { }, [] (auto...) { }, [] (auto...) { }, validateClobberize);
+        }
+
+        if (!clobberedWorld) {
+            auto scratch = m_jit.scratchRegister();
+            m_jit.load8(&vm().didEnterVM, scratch);
+            auto ok = m_jit.branchTest32(MacroAssembler::Zero, scratch);
+            m_jit.breakpoint();
+            ok.link(&m_jit);
+        } else
+            m_jit.store8(TrustedImm32(0), &vm().didEnterVM);
+    }
+
     for (m_indexInBlock = 0; m_indexInBlock < m_block->size(); ++m_indexInBlock) {
         m_currentNode = m_block->at(m_indexInBlock);
         
@@ -1881,8 +1906,25 @@ void SpeculativeJIT::compileCurrentBlock()
 
         m_jit.pcToCodeOriginMapBuilder().appendItem(m_jit.labelIgnoringWatchpoints(), m_origin.semantic);
 
+        if (m_indexInBlock && Options::validateDFGClobberize()) {
+            bool clobberedWorld = false;
+            auto validateClobberize = [&] () {
+                clobberedWorld = true;
+            };
+
+            clobberize(m_graph, m_block->at(m_indexInBlock - 1), [] (auto...) { }, [] (auto...) { }, [] (auto...) { }, validateClobberize);
+            if (!clobberedWorld) {
+                auto scratch = m_jit.scratchRegister();
+                m_jit.load8(&vm().didEnterVM, scratch);
+                auto ok = m_jit.branchTest32(MacroAssembler::Zero, scratch);
+                m_jit.breakpoint();
+                ok.link(&m_jit);
+            } else
+                m_jit.store8(TrustedImm32(0), &vm().didEnterVM);
+        }
+
         compile(m_currentNode);
-        
+
         if (belongsInMinifiedGraph(m_currentNode->op()))
             m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
         

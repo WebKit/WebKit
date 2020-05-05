@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MacroAssemblerCodeRef.h"
+#include <wtf/Scope.h>
 
 namespace JSC {
 
@@ -40,6 +41,9 @@ extern "C" {
 
 inline EncodedJSValue vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
 {
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm->didEnterVM = true;
+    });
     code = retagCodePtr<WasmEntryPtrTag, JSEntryPtrTag>(code);
     return vmEntryToJavaScript(code, vm, frame);
 }

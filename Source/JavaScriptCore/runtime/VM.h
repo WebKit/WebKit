@@ -1189,6 +1189,9 @@ private:
     RefPtr<Thread> m_throwingThread;
 #endif
 
+public:
+    bool didEnterVM { false };
+private:
     bool m_failNextNewCodeBlock { false };
     DeletePropertyMode m_deletePropertyMode { DeletePropertyMode::Default };
     bool m_globalConstRedeclarationShouldThrow { true };

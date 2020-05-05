@@ -84,6 +84,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
@@ -105,6 +106,10 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame, ECMAMode ecmaMo
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
 
     if (!callFrame->argumentCount())
         return jsUndefined();
@@ -672,6 +677,10 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     JSGlobalObject* globalObject = scope->globalObject(vm);
     JSCallee* globalCallee = globalObject->globalCallee();
 
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
+
     ProgramExecutable* program = ProgramExecutable::create(globalObject, source);
     EXCEPTION_ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
@@ -861,6 +870,10 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
+
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     if (vm.isCollectorBusyOnCurrentThread())
@@ -932,6 +945,10 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
 {
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
 
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
@@ -1038,6 +1055,10 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
 
     ASSERT_UNUSED(lexicalGlobalObject, &vm == &lexicalGlobalObject->vm());
     throwScope.assertNoException();
@@ -1217,6 +1238,10 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm.didEnterVM = true;
+    });
 
     ASSERT_UNUSED(lexicalGlobalObject, &vm == &lexicalGlobalObject->vm());
     throwScope.assertNoException();

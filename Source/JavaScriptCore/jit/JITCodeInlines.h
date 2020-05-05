@@ -27,12 +27,16 @@
 
 #include "JITCode.h"
 #include "LLIntThunks.h"
+#include <wtf/Scope.h>
 
 namespace JSC {
 
 ALWAYS_INLINE JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(*vm);
+    auto clobberizeValidator = makeScopeExit([&] {
+        vm->didEnterVM = true;
+    });
     void* entryAddress;
     entryAddress = addressForCall(MustCheckArity).executableAddress();
     JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));

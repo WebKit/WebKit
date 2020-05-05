@@ -384,6 +384,8 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, validateExceptionChecks, false, Normal, "Verifies that needed exception checks are performed.") \
     v(Unsigned, unexpectedExceptionStackTraceLimit, 100, Normal, "Stack trace limit for debugging unexpected exceptions observed in the VM") \
     \
+    v(Bool, validateDFGClobberize, false, Normal, "Emits extra validation code in the DFG/FTL for the Clobberize phase")\
+    \
     v(Bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, Normal, nullptr) \

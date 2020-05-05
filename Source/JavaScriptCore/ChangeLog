@@ -1,3 +1,37 @@
+2020-05-05  Keith Miller  <keith_miller@apple.com>
+
+        Add Clobberize validator for clobber top.
+        https://bugs.webkit.org/show_bug.cgi?id=209432
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::scratchRegister):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::scratchRegister):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBlock):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * jit/JITCodeInlines.h:
+        (JSC::JITCode::execute):
+        * llint/LLIntThunks.h:
+        (JSC::vmEntryToWasm):
+        * runtime/OptionsList.h:
+        * runtime/VM.h:
+
 2020-05-05  Mark Lam  <mark.lam@apple.com>
 
         Allow Bitmap to use up to a UCPURegister word size for internal bit storage.

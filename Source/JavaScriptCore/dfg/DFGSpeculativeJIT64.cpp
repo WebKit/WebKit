@@ -33,6 +33,7 @@
 #include "CallFrameShuffler.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
+#include "DFGClobberize.h"
 #include "DFGDoesGC.h"
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"

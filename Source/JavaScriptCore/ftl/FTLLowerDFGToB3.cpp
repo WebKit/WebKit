@@ -44,6 +44,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCapabilities.h"
+#include "DFGClobberize.h"
 #include "DFGDoesGC.h"
 #include "DFGDominators.h"
 #include "DFGInPlaceAbstractState.h"
@@ -268,6 +269,8 @@ public:
         m_vmValue = m_out.constIntPtr(vm);
         m_numberTag = m_out.constInt64(JSValue::NumberTag);
         m_notCellMask = m_out.constInt64(JSValue::NotCellMask);
+        if (Options::validateDFGClobberize())
+            m_out.store32As8(m_out.int32Zero, m_out.absolute(reinterpret_cast<char*>(vm) + OBJECT_OFFSETOF(VM, didEnterVM)));
 
         // Make sure that B3 knows that we really care about the mask registers. This forces the
         // constants to be materialized in registers.
@@ -512,6 +515,25 @@ private:
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
         
+        if (Options::validateDFGClobberize()) {
+            bool clobberedWorld = m_highBlock->predecessors.isEmpty() || m_highBlock->isOSRTarget || m_highBlock->isCatchEntrypoint;
+            auto validateClobberize = [&] () {
+                clobberedWorld = true;
+            };
+
+            for (auto* predecessor : m_highBlock->predecessors)
+                clobberize(m_graph, predecessor->terminal(), [] (auto...) { }, [] (auto...) { }, [] (auto...) { }, validateClobberize);
+
+            if (!clobberedWorld) {
+                LValue didNotEnterVM = m_out.notZero32(m_out.load8ZeroExt32(m_out.absolute(&vm().didEnterVM)));
+                auto* check = m_out.speculate(didNotEnterVM);
+                check->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                    jit.breakpoint();
+                });
+            } else
+                m_out.store(m_out.int32Zero, m_out.absolute(&vm().didEnterVM));
+        }
+
         for (unsigned nodeIndex = 0; nodeIndex < m_highBlock->size(); ++nodeIndex) {
             if (!compileNode(nodeIndex))
                 break;
@@ -1623,7 +1645,24 @@ private:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
             break;
         }
-        
+
+        if (Options::validateDFGClobberize() && !m_node->isTerminal()) {
+            bool clobberedWorld = false;
+            auto validateClobberize = [&] () {
+                clobberedWorld = true;
+            };
+
+            clobberize(m_graph, m_node, [] (auto...) { }, [] (auto...) { }, [] (auto...) { }, validateClobberize);
+            if (!clobberedWorld) {
+                LValue didNotEnterVM = m_out.notZero32(m_out.load8ZeroExt32(m_out.absolute(&vm().didEnterVM)));
+                auto* check = m_out.speculate(didNotEnterVM);
+                check->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                    jit.breakpoint();
+                });
+            } else
+                m_out.store(m_out.int32Zero, m_out.absolute(&vm().didEnterVM));
+        }
+
         if (m_node->isTerminal())
             return false;
         
