@@ -2430,15 +2430,10 @@ void FrameSelection::setSelectionFromNone()
 {
     // Put a caret inside the body if the entire frame is editable (either the
     // entire WebView is editable or designMode is on for this document).
-
-#if !PLATFORM(IOS_FAMILY)
     bool caretBrowsing = m_document->settings().caretBrowsingEnabled();
-    if (!isNone() || !(m_document->hasEditableStyle() || caretBrowsing))
+
+    if (!m_document || !isNone() || !(m_document->hasEditableStyle() || caretBrowsing))
         return;
-#else
-    if (!m_document || !(isNone() || isStartOfDocument(VisiblePosition(m_selection.start(), m_selection.affinity()))) || !m_document->hasEditableStyle())
-        return;
-#endif
 
     if (auto* body = m_document->body())
         setSelection(VisibleSelection(firstPositionInOrBeforeNode(body), DOWNSTREAM));
