@@ -108,6 +108,8 @@ WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosit
 WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
 WEBCORE_EXPORT RefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
 WEBCORE_EXPORT RefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition&, int numberOfCharactersToExpand, SelectionDirection);
+enum class WithinWordBoundary : bool { No, Yes };
+WEBCORE_EXPORT std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCrossingLine(const VisiblePosition&);
 
 // helper function
 enum BoundarySearchContextAvailability { DontHaveMoreContext, MayHaveMoreContext };

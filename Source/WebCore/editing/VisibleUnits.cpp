@@ -2037,6 +2037,28 @@ RefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& pos
     }
     
     return makeRange(start, end);
-}    
+}
+
+std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCrossingLine(const VisiblePosition& position)
+{
+    if (atBoundaryOfGranularity(position, LineGranularity, DirectionForward))
+        return { position, WithinWordBoundary::No };
+
+    if (withinTextUnitOfGranularity(position, WordGranularity, DirectionForward)) {
+        auto adjustedPosition = position;
+        if (auto wordRange = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward)) {
+            adjustedPosition = wordRange->startPosition();
+            if (distanceBetweenPositions(position, adjustedPosition) > 1)
+                adjustedPosition = wordRange->endPosition();
+        }
+        return { adjustedPosition, WithinWordBoundary::Yes };
+    }
+
+    if (atBoundaryOfGranularity(position, WordGranularity, DirectionBackward))
+        return { position, WithinWordBoundary::No };
+
+    auto nextWordBoundary = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionForward);
+    return { nextWordBoundary.isNotNull() ? nextWordBoundary : endOfEditableContent(position), WithinWordBoundary::No };
+}
 
 }

@@ -1,3 +1,34 @@
+2020-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Tapping to focus editable elements should start caret selection at word boundary
+        https://bugs.webkit.org/show_bug.cgi?id=211409
+        <rdar://problem/62869098>
+
+        Reviewed by Megan Gardner.
+
+        Match platform behavior when focusing editable text content by beginning the caret selection at word
+        granularity (i.e. the start or end of a word), rather than character granularity. This will match behavior of
+        other editable widgets on iOS (such as UITextField and UITextView), as well as our current behavior when tapping
+        to change the selection when the text interaction is editable (i.e. when the caret is already visible when
+        tapping).
+
+        Rebaselined existing layout tests.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordBoundaryForPositionWithoutCrossingLine):
+
+        Move logic previously in `WebPage::selectWithGesture` down into `VisibleUnits.h`, as a new standalone helper
+        function. Given a `VisiblePosition`, this new helper will return the given position if it is either already at
+        word boundary or line boundary; if it is within the boundary of a word, it will instead return the start or end
+        of the word.
+
+        * editing/VisibleUnits.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
+        When setting the selection due to a synthetic single click, automatically adjust the caret position to be at
+        word boundary instead of using the hit-tested position directly.
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS

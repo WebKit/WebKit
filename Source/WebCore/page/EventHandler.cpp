@@ -685,10 +685,10 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         }
     }
 
-    VisiblePosition visiblePos(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
-    if (visiblePos.isNull())
-        visiblePos = VisiblePosition(firstPositionInOrBeforeNode(targetNode), DOWNSTREAM);
-    Position pos = visiblePos.deepEquivalent();
+    VisiblePosition visiblePosition(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
+    if (visiblePosition.isNull())
+        visiblePosition = VisiblePosition(firstPositionInOrBeforeNode(targetNode), DOWNSTREAM);
+    Position pos = visiblePosition.deepEquivalent();
 
     VisibleSelection newSelection = m_frame.selection().selection();
     TextGranularity granularity = CharacterGranularity;
@@ -723,8 +723,14 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
             granularity = m_frame.selection().granularity();
             newSelection.expandUsingGranularity(m_frame.selection().granularity());
         }
-    } else
-        newSelection = expandSelectionToRespectSelectOnMouseDown(*targetNode, visiblePos);
+    } else {
+        if (event.event().syntheticClickType() != SyntheticClickType::NoTap) {
+            auto adjustedVisiblePosition = wordBoundaryForPositionWithoutCrossingLine(visiblePosition).first;
+            if (adjustedVisiblePosition.isNotNull())
+                visiblePosition = WTFMove(adjustedVisiblePosition);
+        }
+        newSelection = expandSelectionToRespectSelectOnMouseDown(*targetNode, visiblePosition);
+    }
 
     bool handled = updateSelectionForMouseDownDispatchingSelectStart(targetNode, newSelection, granularity);
 
