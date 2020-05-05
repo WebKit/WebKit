@@ -2537,6 +2537,9 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
     m_elementUnderMouse = targetElement;
 
+    ASSERT_IMPLIES(m_elementUnderMouse, &m_elementUnderMouse->document() == m_frame.document());
+    ASSERT_IMPLIES(m_lastElementUnderMouse, &m_lastElementUnderMouse->document() == m_frame.document());
+
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut == FireMouseOverOut::Yes) {
         auto scrollableAreaForLastNode = enclosingScrollableArea(m_lastElementUnderMouse.get());
@@ -2621,6 +2624,11 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
                     chain->dispatchMouseEvent(platformMouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());
             }
         }
+
+        // Event handling may have moved the element to a different document.
+        if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document())
+            m_elementUnderMouse = nullptr;
+
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
 }

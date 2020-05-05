@@ -1,3 +1,18 @@
+2020-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Assert that EventHandler only tracks event target nodes in its own document
+        https://bugs.webkit.org/show_bug.cgi?id=211462
+
+        Reviewed by Zalan Bujtas.
+
+        EventHandler is per-Frame, so should not track Nodes from different documents. However, it did so
+        by mistake if an event handler moved a node between documents.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::targetNode const):
+
 2020-05-05  Antti Koivisto  <antti@apple.com>
 
         Factor RenderLayerBacking::updateEventRegion skip conditions into a lambda

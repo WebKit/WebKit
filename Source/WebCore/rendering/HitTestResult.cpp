@@ -718,7 +718,7 @@ Node* HitTestResult::targetNode() const
 {
     Node* node = innerNode();
     if (!node)
-        return 0;
+        return nullptr;
     if (node->isConnected())
         return node;
 
