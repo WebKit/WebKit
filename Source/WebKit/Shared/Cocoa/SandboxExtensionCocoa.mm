@@ -98,13 +98,7 @@ private:
         case SandboxExtension::Type::Mach:
             if (!auditToken)
                 return sandbox_extension_issue_mach("com.apple.webkit.extension.mach"_s, path, extensionFlags);
-#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach"_s, path, extensionFlags, *auditToken);
-#else
-            UNUSED_PARAM(auditToken);
-            ASSERT_NOT_REACHED();
-            return nullptr;
-#endif
         case SandboxExtension::Type::IOKit:
             if (!auditToken)
                 return sandbox_extension_issue_iokit_registry_entry_class("com.apple.webkit.extension.iokit"_s, path, extensionFlags);
@@ -112,15 +106,9 @@ private:
         case SandboxExtension::Type::Generic:
             return sandbox_extension_issue_generic(path, extensionFlags);
         case SandboxExtension::Type::ReadByProcess:
-#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             if (!auditToken)
                 return nullptr;
             return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
-#else
-            UNUSED_PARAM(auditToken);
-            ASSERT_NOT_REACHED();
-            return nullptr;
-#endif
         }
     }
 

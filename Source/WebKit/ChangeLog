@@ -1,5 +1,15 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneeded HAVE(SANDBOX_ISSUE_MACH/READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
+        https://bugs.webkit.org/show_bug.cgi?id=211427
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType): Remove #if HAVE.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(AUTHORIZATION_STATUS_FOR_MEDIA_TYPE)
         https://bugs.webkit.org/show_bug.cgi?id=211426
 
