@@ -370,8 +370,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     removeChildren(suppressOnDeselect)
     {
-        while (this.children.length) {
-            let child = this.children[0];
+        for (let child of this.children) {
             child.deselect(suppressOnDeselect);
 
             let treeOutline = child.treeOutline;
@@ -386,11 +385,11 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             child.nextSibling = null;
             child.previousSibling = null;
 
-            this.children.shift();
-
             if (treeOutline)
                 treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
         }
+
+        this.children = [];
     }
 
     _rememberTreeElement(element)

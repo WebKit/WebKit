@@ -63,8 +63,19 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
             resourceURLComponents.path = this.url;
 
         // Different schemes / hosts. Return the host + path of this resource.
-        if (resourceURLComponents.scheme !== sourceMappingBasePathURLComponents.scheme || resourceURLComponents.host !== sourceMappingBasePathURLComponents.host)
-            return resourceURLComponents.host + (resourceURLComponents.port ? (":" + resourceURLComponents.port) : "") + resourceURLComponents.path;
+        if (resourceURLComponents.scheme !== sourceMappingBasePathURLComponents.scheme || resourceURLComponents.host !== sourceMappingBasePathURLComponents.host) {
+            let subpath = "";
+            if (resourceURLComponents.host) {
+                subpath += resourceURLComponents.host;
+                if (resourceURLComponents.port)
+                    subpath += ":" + resourceURLComponents.port;
+                subpath += resourceURLComponents.path;
+            } else {
+                // Remove the leading "/" so there isn't an empty folder.
+                subpath += resourceURLComponents.path.substring(1);
+            }
+            return subpath;
+        }
 
         // Same host, but not a subpath of the base. This implies a ".." in the relative path.
         if (!resourceURLComponents.path.startsWith(sourceMappingBasePathURLComponents.path))

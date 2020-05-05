@@ -124,8 +124,10 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             }
         }
 
-        for (var i = 0; i < this.children.length; ++i)
-            findAndCombineFolderChains(this.children[i], null);
+        if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Type) {
+            for (let child of this.children)
+                findAndCombineFolderChains(child);
+        }
     }
 
     canSelectOnMouseDown(event)

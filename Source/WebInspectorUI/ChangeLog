@@ -1,5 +1,34 @@
 2020-05-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r239175): Source Maps: original source not shown when in nested folder
+        https://bugs.webkit.org/show_bug.cgi?id=198276
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.removeChildren):
+        r239175 made it so that `WI.TreeOutline.prototype.removeChildren` actually modified the
+        `this.children` member property array (which is not a getter), meaning that if a caller had
+        previously saved a reference to it before calling `removeChildren()`, the saved reference
+        would also be modified, preventing it from being of any real use afterwards. At that time,
+        `WI.TreeOutline` maintained an index value for each `WI.TreeElement`, which meant that it
+        was necessary to remove from `this.children` as otherwise `Array.prototype.indexOf` calls
+        would not be accurate. Since then, `WI.TreeOutline` has moved to using `representedObject`,
+        meaning it's no longer necessary to modify `this.children`.
+
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement.prototype.onpopulate):
+        (WI.SourceCodeTreeElement.prototype.onpopulate.combineFolderChain): Deleted.
+        (WI.SourceCodeTreeElement.prototype.onpopulate.findAndCombineFolderChains): Deleted.
+        Drive-by: don't attempt to combine folder chains when "Group by Path" to match the rest of
+                  the look/feel of the navigation sidebar.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.get sourceMapDisplaySubpath):
+        Drive-by: fix "null" being shown as the root subpath folder when using a local server.
+
+2020-05-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: the divider before the console message icons in the tab bar is shown even if there are no other icons
         https://bugs.webkit.org/show_bug.cgi?id=211390
 
