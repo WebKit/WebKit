@@ -1,3 +1,23 @@
+2020-05-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update svg/batik/text/xmlSpace.svg to yield consistent text metrics
+        https://bugs.webkit.org/show_bug.cgi?id=211005
+        <rdar://problem/62312187>
+
+        Reviewed by Darin Adler.
+
+        The test is rendering a bunch of characters without using a specified font.
+        This means that Core Text is picking an arbitrary font. However, the
+        -expected.txt file is measuring exact pixel widths. The solution is to just
+        give the test an explicit fallback font.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * svg/batik/text/xmlSpace-expected.txt: Removed. Platform-specific metrics
+              shouldn't live outside the platform/ directory.
+        * svg/batik/text/xmlSpace.svg:
+
 2020-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tapping to focus editable elements should start caret selection at word boundary

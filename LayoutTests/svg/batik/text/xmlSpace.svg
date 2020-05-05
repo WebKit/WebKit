@@ -55,7 +55,7 @@
                    fill: black } ]]>
       </style>
 
-      <g font-size="20" font-family="BlockSpace">
+      <g font-size="20" font-family="BlockSpace, sans-serif">
          <text x="10" y="75">  X  X  </text>
             <text class="cap" x="120" y="75">no xml:space attr</text>
 
