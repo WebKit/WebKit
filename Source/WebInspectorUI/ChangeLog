@@ -1,3 +1,28 @@
+2020-05-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add a tool for viewing UserInterface/Images files
+        https://bugs.webkit.org/show_bug.cgi?id=211422
+
+        Reviewed by Timothy Hatcher.
+
+        * Tools/Images/index.html: Added.
+        * Tools/Images/index.css: Added.
+        (body):
+        (h1):
+        (textarea):
+        (.flex):
+        (#preview):
+        (#preview > img):
+        (#preview > img.light):
+        (#preview > img.dark):
+        * Tools/Images/index.js: Added.
+        (async loadImage):
+        (async parseSVG):
+        (async loadPNG):
+        (normalizePath):
+        (changeSize):
+        (updateURL):
+
 2020-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Tabs jiggle on click
