@@ -533,6 +533,8 @@ enum CompositingPolicy {
     void setFullscreenAutoHideDuration(double duration);
     void setFullscreenControlsHidden(boolean hidden);
 
+    [Conditional=VIDEO_PRESENTATION_MODE] void setMockVideoPresentationModeEnabled(boolean enabled);
+
     void setApplicationCacheOriginQuota(unsigned long long quota);
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);

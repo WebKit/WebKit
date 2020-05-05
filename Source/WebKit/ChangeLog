@@ -1,3 +1,41 @@
+2020-05-05  Peng Liu  <peng.liu6@apple.com>
+
+        Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=203723
+
+        Reviewed by Jer Noble.
+
+        When the flag MockVideoPresentationModeEnabled is true, the VideoFullscreenManagerProxy in the UI process
+        will mock the behavior of the VideoFullscreenInterface[Mac|AVKit].
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        (WebKit::VideoFullscreenManagerProxy::setMockVideoPresentationModeEnabled):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::requestHideAndExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::applicationDidBecomeActive):
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideo):
+        (WebKit::VideoFullscreenManagerProxy::setVideoDimensions):
+        (WebKit::VideoFullscreenManagerProxy::enterFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        (WebKit::VideoFullscreenManagerProxy::setInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideoContentLayer):
+        (WebKit::VideoFullscreenManagerProxy::cleanupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        (WebKit::VideoFullscreenManagerProxy::preparedToExitFullscreen):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::setMockVideoPresentationModeEnabled):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setMockVideoPresentationModeEnabled):
+        (WebKit::WebChromeClient::setUpPlaybackControlsManager):
+        (WebKit::WebChromeClient::clearPlaybackControlsManager):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+
 2020-05-05  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed fix for MotionMark regression.

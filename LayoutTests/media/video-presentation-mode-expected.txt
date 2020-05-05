@@ -1,0 +1,32 @@
+
+Test the video presentation mode (video fullscreen and picture-in-picture) API.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.webkitSupportsFullscreen == 'true') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+
+** Try to enter fullscreen
+RUN(video.webkitSetPresentationMode('fullscreen'))
+EVENT(webkitpresentationmodechanged)
+
+** Entered fullscreen
+EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
+
+** Try to enter picture-in-picture
+RUN(video.webkitSetPresentationMode('picture-in-picture'))
+EVENT(webkitpresentationmodechanged)
+
+** Entered picture-in-picture
+EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
+
+** Try to return to inline
+RUN(video.webkitSetPresentationMode('inline'))
+EVENT(webkitpresentationmodechanged)
+
+** Returned to inline
+EXPECTED (video.webkitPresentationMode == 'inline') OK
+
+** Test Completed
+END OF TEST
+

@@ -273,12 +273,15 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_invalidateUserAgentCache;
 
 #if ENABLE(VIDEO) && defined(__cplusplus)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+- (void)_setMockVideoPresentationModeEnabled:(BOOL)enabled;
 - (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode;
 - (void)_exitVideoFullscreen;
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(MAC)
 - (BOOL)_hasActiveVideoForControlsInterface;
 - (void)_setUpPlaybackControlsManagerForMediaElement:(NakedRef<WebCore::HTMLMediaElement>)mediaElement;
 - (void)_clearPlaybackControlsManager;
+#endif
 #endif
 #endif
 

@@ -1,3 +1,13 @@
+2020-05-05  Peng Liu  <peng.liu6@apple.com>
+
+        Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=203723
+
+        Reviewed by Jer Noble.
+
+        * media/video-presentation-mode-expected.txt: Added.
+        * media/video-presentation-mode.html: Added.
+
 2020-05-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [ Mac ] fast/animation/request-animation-frame-timestamps.html is flaky failing.

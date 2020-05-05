@@ -130,6 +130,8 @@ public:
     void applicationDidBecomeActive();
     bool isVisible() const;
 
+    void setMockVideoPresentationModeEnabled(bool enabled) { m_mockVideoPresentationModeEnabled = enabled; }
+
     void requestRouteSharingPolicyAndContextUID(uint64_t contextId, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
     bool isPlayingVideoInEnhancedFullscreen() const;
@@ -179,6 +181,8 @@ private:
     void setVideoLayerGravity(uint64_t contextId, WebCore::MediaPlayerEnums::VideoGravity);
     void fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(uint64_t contextId);
+
+    bool m_mockVideoPresentationModeEnabled { false };
 
     WebPageProxy* m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;

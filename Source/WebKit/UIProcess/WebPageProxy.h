@@ -527,6 +527,7 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlaybackSessionManagerProxy* playbackSessionManager();
     VideoFullscreenManagerProxy* videoFullscreenManager();
+    void setMockVideoPresentationModeEnabled(bool);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2384,6 +2385,7 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<PlaybackSessionManagerProxy> m_playbackSessionManager;
     RefPtr<VideoFullscreenManagerProxy> m_videoFullscreenManager;
+    bool m_mockVideoPresentationModeEnabled { false };
 #endif
 
 #if ENABLE(MEDIA_USAGE)

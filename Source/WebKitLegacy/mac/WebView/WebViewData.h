@@ -216,7 +216,7 @@ private:
     BOOL shouldMaintainInactiveSelection;
 
     BOOL allowsUndo;
-        
+
     float zoomMultiplier;
     BOOL zoomsTextOnly;
 
@@ -293,7 +293,6 @@ private:
     RetainPtr<NSString> draggedLinkTitle;
 #endif
 
-
 #if !PLATFORM(IOS_FAMILY)
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
@@ -322,6 +321,10 @@ private:
 #if ENABLE(VIDEO)
     RetainPtr<WebVideoFullscreenController> fullscreenController;
     Vector<RetainPtr<WebVideoFullscreenController>> fullscreenControllersExiting;
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    BOOL mockVideoPresentationModeEnabled;
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

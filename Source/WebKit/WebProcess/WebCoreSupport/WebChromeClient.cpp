@@ -987,14 +987,9 @@ bool WebChromeClient::supportsVideoFullscreenStandby()
     return m_page.videoFullscreenManager().supportsVideoFullscreenStandby();
 }
 
-void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)
+void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
 {
-    m_page.playbackSessionManager().setUpPlaybackControlsManager(mediaElement);
-}
-
-void WebChromeClient::clearPlaybackControlsManager()
-{
-    m_page.playbackSessionManager().clearPlaybackControlsManager();
+    m_page.send(Messages::WebPageProxy::SetMockVideoPresentationModeEnabled(enabled));
 }
 
 void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode, bool standby)
@@ -1011,6 +1006,17 @@ void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& video
 {
     m_page.videoFullscreenManager().exitVideoFullscreenForVideoElement(videoElement);
 }
+
+void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)
+{
+    m_page.playbackSessionManager().setUpPlaybackControlsManager(mediaElement);
+}
+
+void WebChromeClient::clearPlaybackControlsManager()
+{
+    m_page.playbackSessionManager().clearPlaybackControlsManager();
+}
+
 #endif
 
 #if ENABLE(MEDIA_USAGE)

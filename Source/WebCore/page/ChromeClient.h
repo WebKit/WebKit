@@ -378,6 +378,10 @@ public:
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    virtual void setMockVideoPresentationModeEnabled(bool) { }
+#endif
+
 #if USE(COORDINATED_GRAPHICS)
     virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
 #endif

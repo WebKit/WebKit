@@ -961,6 +961,8 @@ void WebPageProxy::didAttachToRunningProcess()
     m_playbackSessionManager = PlaybackSessionManagerProxy::create(*this);
     ASSERT(!m_videoFullscreenManager);
     m_videoFullscreenManager = VideoFullscreenManagerProxy::create(*this, *m_playbackSessionManager);
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->setMockVideoPresentationModeEnabled(m_mockVideoPresentationModeEnabled);
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -6224,6 +6226,13 @@ PlaybackSessionManagerProxy* WebPageProxy::playbackSessionManager()
 VideoFullscreenManagerProxy* WebPageProxy::videoFullscreenManager()
 {
     return m_videoFullscreenManager.get();
+}
+
+void WebPageProxy::setMockVideoPresentationModeEnabled(bool enabled)
+{
+    m_mockVideoPresentationModeEnabled = enabled;
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->setMockVideoPresentationModeEnabled(enabled);
 }
 #endif
 

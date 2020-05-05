@@ -1,3 +1,21 @@
+2020-05-05  Peng Liu  <peng.liu6@apple.com>
+
+        Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
+        https://bugs.webkit.org/show_bug.cgi?id=203723
+
+        Reviewed by Jer Noble.
+
+        When the flag MockVideoPresentationModeEnabled is true, WebView will ignore the requests to
+        WebVideoFullscreenController, so that the DumpRenderTree can run multiple video fullscreen
+        and picture-in-picture tests in parallel.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setMockVideoPresentationModeEnabled):
+        * WebView/WebView.mm:
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2020-05-05  Darin Adler  <darin@apple.com>
 
         Remove now-uneeded HAVE macros related to PDF

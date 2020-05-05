@@ -965,6 +965,13 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
     return true;
 }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
+{
+    [m_webView _setMockVideoPresentationModeEnabled:enabled];
+}
+
 void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode, bool standby)
 {
     ASSERT_UNUSED(standby, !standby);
@@ -987,6 +994,8 @@ void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement
     [m_webView _exitVideoFullscreen];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
 #endif // ENABLE(VIDEO)
 

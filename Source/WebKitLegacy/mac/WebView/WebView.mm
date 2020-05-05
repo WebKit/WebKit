@@ -2351,7 +2351,7 @@ static bool fastDocumentTeardownEnabled()
         return;
     }
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(IOS_FAMILY)
     [self _exitVideoFullscreen];
 #endif
 
@@ -9259,8 +9259,19 @@ bool LayerFlushController::flushLayers()
 #endif
 
 #if ENABLE(VIDEO)
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+
+- (void)_setMockVideoPresentationModeEnabled:(BOOL)enabled
+{
+    _private->mockVideoPresentationModeEnabled = enabled;
+}
+
 - (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode
 {
+    if (_private->mockVideoPresentationModeEnabled)
+        return;
+
     if (_private->fullscreenController) {
         if ([_private->fullscreenController videoElement] == videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
@@ -9289,6 +9300,9 @@ bool LayerFlushController::flushLayers()
 
 - (void)_exitVideoFullscreen
 {
+    if (_private->mockVideoPresentationModeEnabled)
+        return;
+
     if (!_private->fullscreenController && _private->fullscreenControllersExiting.isEmpty())
         return;
 
@@ -9306,7 +9320,7 @@ bool LayerFlushController::flushLayers()
     [fullscreenController exitFullscreen];
 }
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(MAC)
 - (BOOL)_hasActiveVideoForControlsInterface
 {
     if (!_private->playbackSessionModel)
@@ -9346,7 +9360,11 @@ bool LayerFlushController::flushLayers()
     _private->playbackSessionInterface = nullptr;
     [self updateTouchBar];
 }
-#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+
+#endif // PLATFORM(MAC)
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY)
