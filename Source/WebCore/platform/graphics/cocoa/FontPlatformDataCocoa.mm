@@ -103,50 +103,22 @@ inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
     return TextSpacingProportional;
 }
 
-static CFDictionaryRef cascadeToLastResortAttributesDictionary()
+static RetainPtr<CFDictionaryRef> cascadeToLastResortAttributesDictionary()
 {
-    static CFDictionaryRef attributes = nullptr;
-    if (attributes)
-        return attributes;
-
-    RetainPtr<CTFontDescriptorRef> lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
+    auto lastResort = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("LastResort"), 0));
 
     CFTypeRef descriptors[] = { lastResort.get() };
     RetainPtr<CFArrayRef> array = adoptCF(CFArrayCreate(kCFAllocatorDefault, descriptors, WTF_ARRAY_LENGTH(descriptors), &kCFTypeArrayCallBacks));
 
     CFTypeRef keys[] = { kCTFontCascadeListAttribute };
     CFTypeRef values[] = { array.get() };
-    attributes = CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-
-    return attributes;
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
-static RetainPtr<CTFontDescriptorRef> cascadeToLastResortAndVariationsFontDescriptor(CTFontRef originalFont)
+static CTFontDescriptorRef cascadeToLastResortAndVariationsFontDescriptor()
 {
-// FIXME: Remove this when <rdar://problem/28449441> is fixed. NOTE: That radar was fixed 11/16/16, so this can be removed. TBD.
-#define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG (ENABLE(VARIATION_FONTS) && (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-
-    CFDictionaryRef attributes = cascadeToLastResortAttributesDictionary();
-#if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG
-    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(originalFont, kCTFontVariationAttribute)));
-    if (!variations || !CFDictionaryGetCount(variations.get()) || CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(originalFont)).get()))
-#endif
-    {
-        UNUSED_PARAM(originalFont);
-
-        static CTFontDescriptorRef descriptor = nullptr;
-        if (descriptor)
-            return descriptor;
-
-        descriptor = CTFontDescriptorCreateWithAttributes(attributes);
-        return descriptor;
-    }
-#if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG
-    auto mutableAttributes = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 2, attributes));
-    CFDictionaryAddValue(mutableAttributes.get(), kCTFontVariationAttribute, variations.get());
-    return adoptCF(CTFontDescriptorCreateWithAttributes(mutableAttributes.get()));
-#endif
-#undef WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG
+    static CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes(cascadeToLastResortAttributesDictionary().get());
+    return descriptor;
 }
 
 CTFontRef FontPlatformData::ctFont() const
@@ -155,7 +127,7 @@ CTFontRef FontPlatformData::ctFont() const
         return m_ctFont.get();
 
     ASSERT(m_font);
-    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, cascadeToLastResortAndVariationsFontDescriptor(m_font.get()).get()));
+    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, cascadeToLastResortAndVariationsFontDescriptor()));
 
     if (m_widthVariant != FontWidthVariant::RegularWidth) {
         int featureTypeValue = kTextSpacingType;

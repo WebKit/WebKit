@@ -156,7 +156,8 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomString& family,
     }
 
     if (equalLettersIgnoringASCIICase(family, "lastresort")) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
         return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));
 #else

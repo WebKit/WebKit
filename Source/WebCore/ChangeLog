@@ -1,5 +1,52 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=211402
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attributesForAttributedStringConversion): Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to !PLATFORM(WATCHOS) && !PLATFORM(APPLETV). Move NSExcludedElementsDocumentAttribute to
+        AttributedStringSPI.h.
+
+        * page/SettingsDefaultValues.h: Rewrite conic gradient conditional to call out
+        tvOS as an exception rather than doing that indirectly through __IPHONE_OS_VERSION_MIN_REQUIRED.
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint): Ditto.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp: Rewrite
+        HAS_CORE_TEXT_WIDTH_ATTRIBUTE to use !PLATFORM(WATCHOS) && !PLATFORM(APPLETV).
+        (WebCore::variationCapabilitiesForFontDescriptor): Ditto.
+        (WebCore::FontCache::lastResortFallbackFont): Ditto.
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::matchSystemFontUse): Use HAVE(SYSTEM_FONT_STYLE_TITLE_0) and
+        HAVE(SYSTEM_FONT_STYLE_TITLE_4) instead of __IPHONE_OS_VERSION_MIN_REQUIRED.
+        This consolidates the watchOS/tvOS issue into the PlatformHave.h file, and
+        does not change behavior at this time.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortAttributesDictionary): Changed this to not use
+        a global since it's only called as part of initializing another global, and
+        to return a RetainPtr.
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor): Removed
+        WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG after researching to
+        be sure it's fixed on recent watchOS and tvOS. Also changed this to return
+        a raw pointer instead of RetainPtr since it returns a single global object.
+        Also removed the CTFontRef argument.
+        (WebCore::FontPlatformData::ctFont const): Updated for the changes above.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::surfaceID const): Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to !PLATFORM(WATCHOS) && !PLATFORM(APPLETV).
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase): Ditto.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove HAVE(IOSURFACE) checks in Cocoa-platform-specific code
         https://bugs.webkit.org/show_bug.cgi?id=211389
 

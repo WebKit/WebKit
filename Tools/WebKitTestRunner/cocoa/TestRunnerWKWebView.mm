@@ -481,7 +481,9 @@ IGNORE_WARNINGS_END
 - (void)setOverrideSafeAreaInsets:(UIEdgeInsets)insets
 {
     _overrideSafeAreaInsets = insets;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     [self _updateSafeAreaInsets];
 #endif
 }

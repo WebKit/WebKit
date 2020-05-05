@@ -117,7 +117,7 @@ extern NSString *WebQuickLookFileNameKey;
 extern NSString *WebQuickLookUTIKey;
 #endif
 
-#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if TARGET_OS_IOS
 @protocol UIDropSession;
 #endif
 
@@ -479,7 +479,7 @@ Could be worth adding to the API.
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if TARGET_OS_IOS
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition;
 - (WebUITextIndicatorData *)_getDataInteractionData;
 @property (nonatomic, readonly, strong, getter=_dataOperationTextIndicator) WebUITextIndicatorData *dataOperationTextIndicator;

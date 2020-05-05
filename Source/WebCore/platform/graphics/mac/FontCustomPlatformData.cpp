@@ -56,7 +56,8 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
-#if PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     auto array = adoptCF(CTFontManagerCreateFontDescriptorsFromData(bufferData.get()));
     if (!array)
         return nullptr;

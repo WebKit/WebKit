@@ -34,7 +34,8 @@
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static NSString *const UIScrollViewIndicatorClass = @"_UIScrollViewScrollIndicator";
 #else
 static NSString *const UIScrollViewIndicatorClass = @"UIImageView";

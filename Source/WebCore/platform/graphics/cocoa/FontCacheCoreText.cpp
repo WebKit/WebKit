@@ -39,7 +39,9 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 
-#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+// FIXME: This seems like it should be in PlatformHave.h.
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#define HAS_CORE_TEXT_WIDTH_ATTRIBUTE (PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 namespace WebCore {
 
@@ -1064,7 +1066,8 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     }
 
     bool optOutFromGXNormalization = false;
-#if (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
 #endif
 
@@ -1642,7 +1645,8 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         return *result;
 
     // LastResort is guaranteed to be non-null.
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
     auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), fontDescription.computedPixelSize(), nullptr));
 #else

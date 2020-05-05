@@ -714,7 +714,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     UIEdgeInsets contentInsets = scrollView.adjustedContentInset;
 #else
     UIEdgeInsets contentInsets = scrollView.contentInset;
@@ -1709,7 +1710,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_viewLayoutSizeOverride)
         return WebCore::FloatSize(_viewLayoutSizeOverride.value());
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), self._scrollViewSystemContentInset).size);
 #else
     return WebCore::FloatSize { bounds.size };
@@ -1789,7 +1791,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return !pointsEqualInDevicePixels(contentOffset, boundedOffset, deviceScaleFactor);
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 - (void)safeAreaInsetsDidChange
 {
     [super safeAreaInsetsDidChange];
@@ -2312,7 +2315,8 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_updateScrollViewInsetAdjustmentBehavior
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (![_scrollView _contentInsetAdjustmentBehaviorWasExternallyOverridden])
         [_scrollView _setContentInsetAdjustmentBehaviorInternal:self._safeAreaShouldAffectObscuredInsets ? UIScrollViewContentInsetAdjustmentAlways : UIScrollViewContentInsetAdjustmentNever];
 #endif

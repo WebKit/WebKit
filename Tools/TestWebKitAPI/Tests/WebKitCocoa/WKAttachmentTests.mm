@@ -69,7 +69,7 @@ SOFT_LINK_CLASS(MapKit, MKPlacemark)
 }
 @end
 
-#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC))
+#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;

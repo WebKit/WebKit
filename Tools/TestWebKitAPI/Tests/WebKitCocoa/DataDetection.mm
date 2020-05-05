@@ -146,11 +146,9 @@ TEST(WebKit, AddAndRemoveDataDetectors)
         EXPECT_WK_STREQ("FlightInformation", results[2].type);
         EXPECT_WK_STREQ("AC780", results[2].value);
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
         EXPECT_EQ(DDResultCategoryUnknown, results[0].category);
         EXPECT_EQ(DDResultCategoryCalendarEvent, results[1].category);
         EXPECT_EQ(DDResultCategoryMisc, results[2].category);
-#endif
     };
 
     [webView synchronouslyDetectDataWithTypes:WKDataDetectorTypeAll];

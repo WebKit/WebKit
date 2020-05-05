@@ -1,3 +1,24 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=211402
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion): Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to PLATFORM(WATCHOS) || PLATFORM(APPLETV).
+
+        * WebView/WebUIDelegatePrivate.h: Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        TARGET_OS_IOS for a method that is based on dragging concepts not present in
+        watchOS and tvOS.
+
+        * WebView/WebView.mm: Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to PLATFORM(IOS).
+
+        * WebView/WebViewPrivate.h: Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        TARGET_OS_IOS.
+
 2020-05-04  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Put lh / rlh units behind a flag until bug 211351 is sorted out.

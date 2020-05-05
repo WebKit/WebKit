@@ -1,5 +1,29 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=211402
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+        Remove unneeded __IPHONE_OS_VERSION_MIN_REQUIRED check.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        !PLATFORM(WATCHOS) && !PLATFORM(APPLETV).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        PLATFORM(IOS).
+
+        * TestWebKitAPI/Tests/ios/OverflowScrollViewTests.mm:
+        Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        !PLATFORM(WATCHOS) && !PLATFORM(APPLETV).
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView setOverrideSafeAreaInsets:]): Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         [Cocoa] Remove a few unneeded __IPHONE_OS_VERSION_MIN_REQUIRED checks
         https://bugs.webkit.org/show_bug.cgi?id=211383
 

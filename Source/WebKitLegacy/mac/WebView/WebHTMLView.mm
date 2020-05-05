@@ -136,6 +136,7 @@
 #import <dlfcn.h>
 #import <limits>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>

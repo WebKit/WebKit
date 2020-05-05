@@ -25,7 +25,10 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || PLATFORM(WATCHOS))
+// FIXME: This should be in PlatformHave.h instead of here.
+// FIXME: Should be able to do this even without the Apple internal SDK.
+// FIXME: Is it correct to that we do not have this on tvOS?
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(COCOA) && !PLATFORM(APPLETV)
 #define HAVE_NW_ACTIVITY 1
 #endif
 

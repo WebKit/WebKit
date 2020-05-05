@@ -101,6 +101,8 @@ SOFT_LINK_CONSTANT(UIFoundation, NSTextAlternativesAttributeName, NSString *)
 // will continue to support it.
 static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 
+static NSString *const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
+
 @interface NSAttributedString ()
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
 - (id)initWithRTFD:(NSData *)data documentAttributes:(NSDictionary **)dict;
@@ -109,9 +111,6 @@ static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 - (BOOL)containsAttachments;
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
-
-#if PLATFORM(IOS_FAMILY)
 static NSString *const NSTextListMarkerCircle = @"{circle}";
 static NSString *const NSTextListMarkerDisc = @"{disc}";
 static NSString *const NSTextListMarkerSquare = @"{square}";
@@ -125,4 +124,5 @@ static NSString *const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
 static NSString *const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
 static NSString *const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
 static NSString *const NSTextListMarkerDecimal = @"{decimal}";
+
 #endif // PLATFORM(IOS_FAMILY)

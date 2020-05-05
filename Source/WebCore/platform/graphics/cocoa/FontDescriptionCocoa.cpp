@@ -82,8 +82,10 @@ static inline Optional<SystemFontKind> matchSystemFontUse(const AtomString& stri
         kCTUIFontTextStyleShortFootnote,
         kCTUIFontTextStyleShortCaption1,
         kCTUIFontTextStyleTallBody,
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if HAVE(SYSTEM_FONT_STYLE_TITLE_0)
         kCTUIFontTextStyleTitle0,
+#endif
+#if HAVE(SYSTEM_FONT_STYLE_TITLE_4)
         kCTUIFontTextStyleTitle4,
 #endif
     };

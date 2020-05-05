@@ -348,7 +348,8 @@ TEST(WKHTTPCookieStore, HttpOnly)
     [cookies release];
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+// FIXME: Would be good to enable this test for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 TEST(WKHTTPCookieStore, CreationTime)
 {   
     auto dataStore = [WKWebsiteDataStore defaultDataStore];
@@ -402,7 +403,7 @@ TEST(WKHTTPCookieStore, CreationTime)
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
 }
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#endif
 
 // FIXME: This #if should be removed once <rdar://problem/35344202> is resolved and bots are updated.
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301

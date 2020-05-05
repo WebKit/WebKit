@@ -1969,7 +1969,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     }
 }
 
-#elif __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#elif PLATFORM(IOS)
 
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
@@ -2039,6 +2039,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 }
 
 #endif
+
 #endif // PLATFORM(IOS_FAMILY)
 
 static NSMutableSet *knownPluginMIMETypes()

@@ -515,7 +515,7 @@ typedef enum {
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS)
 @interface NSURL ()
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
@@ -778,13 +778,11 @@ struct _UIWebTouchPoint {
     CGPoint locationInDocumentCoordinates;
     unsigned identifier;
     UITouchPhase phase;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 100000
     CGFloat majorRadiusInScreenCoordinates;
     CGFloat force;
     CGFloat altitudeAngle;
     CGFloat azimuthAngle;
     UIWebTouchPointType touchType;
-#endif
 };
 
 struct _UIWebTouchEvent {

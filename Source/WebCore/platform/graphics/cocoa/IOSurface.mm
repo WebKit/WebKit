@@ -375,7 +375,9 @@ IOSurface::Format IOSurface::format() const
 
 IOSurfaceID IOSurface::surfaceID() const
 {
-#if PLATFORM(IOS_FAMILY) && (!USE(APPLE_INTERNAL_SDK) || __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+// FIXME: Should be able to do this even without the Apple internal SDK.
+// FIXME: Should be able to do this on watchOS and tvOS.
+#if PLATFORM(IOS_FAMILY) && (!USE(APPLE_INTERNAL_SDK) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
     return 0;
 #else
     return IOSurfaceGetID(m_surface.get());

@@ -127,7 +127,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
     WKScrollViewDelegateForwarder *_delegateForwarder;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 #endif
     CGFloat _keyboardBottomInsetAdjustment;
@@ -153,7 +154,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     self.directionalLockEnabled = YES;
     [self _setIndicatorInsetAdjustmentBehavior:UIScrollViewIndicatorInsetAdjustmentAlways];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
@@ -278,7 +280,8 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+// FIXME: Likely we can remove this special case for watchOS and tvOS.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 - (BOOL)_contentInsetAdjustmentBehaviorWasExternallyOverridden
 {

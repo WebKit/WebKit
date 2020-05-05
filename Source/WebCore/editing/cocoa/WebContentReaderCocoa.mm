@@ -73,17 +73,13 @@
 #import "LocalDefaultSystemAppearance.h"
 #endif
 
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)
+// FIXME: Do we really need to keep the legacy code path around for watchOS and tvOS?
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 @interface NSAttributedString ()
-- (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+- (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)attributes subresources:(NSArray **)subresources;
 @end
-#elif PLATFORM(IOS_FAMILY)
+#else
 SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
-#elif PLATFORM(MAC)
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
-#endif
-
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 #endif
 
@@ -96,7 +92,7 @@ static FragmentAndResources createFragment(Frame&, NSAttributedString *)
     return { };
 }
 
-#elif (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)
+#elif !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 static NSDictionary *attributesForAttributedStringConversion()
 {
@@ -119,10 +115,6 @@ static NSDictionary *attributesForAttributedStringConversion()
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
         [excludedElements addObject:@"object"];
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
 #endif
 
     NSURL *baseURL = URL::fakeURLWithRelativePart(emptyString());
@@ -163,6 +155,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 
 #else
 
+// FIXME: Do we really need to keep this legacy code path around for watchOS and tvOS?
 static FragmentAndResources createFragment(Frame& frame, NSAttributedString *string)
 {
     FragmentAndResources result;

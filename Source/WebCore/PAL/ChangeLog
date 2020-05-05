@@ -1,3 +1,14 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=211402
+
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h: Moved iOS family version of
+        NSExcludedElementsDocumentAttribute to this header. For now didn't
+        change its implementation to match, just moved it as is.
+
 2020-05-04  Peng Liu  <peng.liu6@apple.com>
 
         Fix the mistake on macro HAVE_SYSTEM_FEATURE_FLAGS

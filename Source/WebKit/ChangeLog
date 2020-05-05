@@ -1,3 +1,36 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Make __IPHONE_OS_VERSION_MIN_REQUIRED checks against old versions explicit about watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=211402
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/NetworkActivityTracker.h: Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to !PLATFORM(APPLETV). There was already an explicit watchOS case here.
+
+        * Platform/spi/ios/UIKitSPI.h: Move from __IPHONE_OS_VERSION_MIN_REQUIRED to
+        PLATFORM(IOS) in one place, and in the other removed the conditional entirely.
+        THe one place here that does PLATFORM(IOS) is for a property that is not on
+        watchOS and tvOS at this time, related to dragging. Decided not to add a comment
+        about it.
+
+        * Shared/WebPreferencesDefaultValues.h: Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to !PLATFORM(APPLETV). There was already an explicit watchOS case here.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (contentOffsetBoundedInValidRange): Move from __IPHONE_OS_VERSION_MIN_REQUIRED
+        to !PLATFORM(WATCHOS) && !PLATFORM(APPLETV).
+        (-[WKWebView activeViewLayoutSize:]): Ditto.
+        (-[WKWebView _updateScrollViewInsetAdjustmentBehavior]): Ditto.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKChildScrollView initWithFrame:]): Ditto.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]): Ditto.
+        (-[WKContentView _showPlaybackTargetPicker:fromRect:routeSharingPolicy:routingContextUID:]): Ditto.
+        * UIProcess/ios/WKScrollView.h: Ditto.
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]): Ditto.
+
 2020-05-04  Peng Liu  <peng.liu6@apple.com>
 
         Fix the mistake on macro HAVE_SYSTEM_FEATURE_FLAGS
