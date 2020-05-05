@@ -468,8 +468,6 @@ webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-pa
 # WPT fetch tests.
 webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker.html [ Failure ]
 webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Failure ]
-# Stale-while-revalidate is not enabled for WPE
-webkit.org/b/206416 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
 webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
