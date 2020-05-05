@@ -55,6 +55,8 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
+#define STATIC_ASSERT(cond) static_assert(cond, "JSBigInt assumes " #cond)
+
 namespace JSC {
 
 const ClassInfo JSBigInt::s_info = { "BigInt", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
@@ -393,16 +395,6 @@ static ALWAYS_INLINE JSValue tryConvertToBigInt32(JSBigInt::ImplResult implResul
     return tryConvertToBigInt32(implResult.payload.asHeapBigInt());
 }
 
-static ALWAYS_INLINE JSBigInt::ImplResult zeroImpl(VM& vm)
-{
-#if USE(BIGINT32)
-    UNUSED_PARAM(vm);
-    return jsBigInt32(0);
-#else
-    return JSBigInt::createZero(vm);
-#endif
-}
-
 // Multiplies {this} with {factor} and adds {summand} to the result.
 void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
 {
@@ -574,8 +566,13 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
     // 2. Let quotient be the mathematical value of x divided by y.
     // 3. Return a BigInt representing quotient rounded towards 0 to the next
     //    integral value.
-    if (absoluteCompare(x, y) == ComparisonResult::LessThan)
-        return zeroImpl(vm);
+    if (absoluteCompare(x, y) == ComparisonResult::LessThan) {
+#if USE(BIGINT32)
+        return jsBigInt32(0);
+#else
+        return JSBigInt::createZero(vm);
+#endif
+    }
 
     JSBigInt* quotient = nullptr;
     bool resultSign = x.sign() != y.sign();
@@ -625,8 +622,13 @@ JSBigInt* JSBigInt::copy(VM& vm, BigIntImpl x)
 template <typename BigIntImpl>
 JSBigInt::ImplResult JSBigInt::unaryMinusImpl(VM& vm, BigIntImpl x)
 {
-    if (x.isZero())
-        return zeroImpl(vm);
+    if (x.isZero()) {
+#if USE(BIGINT32)
+        return jsBigInt32(0);
+#else
+        return JSBigInt::createZero(vm);
+#endif
+    }
 
     JSBigInt* result = copy(vm, x);
     result->setSign(!x.sign());
@@ -658,13 +660,23 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
     JSBigInt* remainder;
     if (y.length() == 1) {
         Digit divisor = y.digit(0);
-        if (divisor == 1)
-            return zeroImpl(vm);
+        if (divisor == 1) {
+#if USE(BIGINT32)
+        return jsBigInt32(0);
+#else
+        return JSBigInt::createZero(vm);
+#endif
+        }
 
         Digit remainderDigit;
         absoluteDivWithDigitDivisor(vm, x, divisor, nullptr, remainderDigit);
-        if (!remainderDigit)
-            return zeroImpl(vm);
+        if (!remainderDigit) {
+#if USE(BIGINT32)
+            return jsBigInt32(0);
+#else
+            return JSBigInt::createZero(vm);
+#endif
+        }
 
         remainder = createWithLengthUnchecked(vm, 1);
         remainder->setDigit(0, remainderDigit);
@@ -1173,7 +1185,7 @@ inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, 
     // left operand". We mask the right operand of the shift by {shiftMask} (`digitBits - 1`), which makes `digitBits - 0` zero.
     // This shifting produces a value which covers 0 < {s} <= (digitBits - 1) cases. {s} == digitBits never happen as we asserted.
     // Since {sZeroMask} clears the value in the case of {s} == 0, {s} == 0 case is also covered.
-    static_assert(sizeof(CPURegister) == sizeof(Digit));
+    STATIC_ASSERT(sizeof(CPURegister) == sizeof(Digit));
     Digit sZeroMask = static_cast<Digit>((-static_cast<CPURegister>(s)) >> (digitBits - 1));
     static constexpr unsigned shiftMask = digitBits - 1;
     Digit un32 = (high << s) | ((low >> ((digitBits - s) & shiftMask)) & sZeroMask);
@@ -1413,7 +1425,7 @@ JSBigInt::ImplResult JSBigInt::absoluteSub(VM& vm, BigIntImpl1 x, BigIntImpl2 y,
         return resultSign == x.sign() ? ImplResult { x } : JSBigInt::unaryMinusImpl(vm, x);
 
     if (comparisonResult == ComparisonResult::Equal)
-        return zeroImpl(vm);
+        return JSBigInt::createZero(vm);
 
     JSBigInt* result = JSBigInt::createWithLengthUnchecked(vm, x.length());
 
@@ -2718,206 +2730,5 @@ JSValue JSBigInt::toNumberHeap(JSBigInt* bigInt)
     ASSERT((doubleBits & ((static_cast<uint64_t>(1) << 52) - 1)) == mantissa);
     return jsNumber(bitwise_cast<double>(doubleBits));
 }
-
-template <typename BigIntImpl>
-JSBigInt::ImplResult JSBigInt::asIntNImpl(JSGlobalObject* globalObject, uint64_t n, BigIntImpl bigInt)
-{
-    VM& vm = globalObject->vm();
-
-    if (bigInt.isZero())
-        return bigInt;
-    if (n == 0)
-        return zeroImpl(vm);
-
-    uint64_t neededLength = (n + digitBits - 1) / digitBits;
-    uint64_t length = static_cast<uint64_t>(bigInt.length());
-    // If bigInt has less than n bits, return it directly.
-    if (length < neededLength)
-        return bigInt;
-    ASSERT(neededLength <= INT32_MAX);
-    Digit topDigit = bigInt.digit(static_cast<int32_t>(neededLength) - 1);
-    Digit compareDigit = static_cast<Digit>(1) << ((n - 1) % digitBits);
-    if (length == neededLength && topDigit < compareDigit)
-        return bigInt;
-
-    // Otherwise we have to truncate (which is a no-op in the special case
-    // of bigInt == -2^(n-1)), and determine the right sign. We also might have
-    // to subtract from 2^n to simulate having two's complement representation.
-    // In most cases, the result's sign is bigInt.sign() xor "(n-1)th bit present".
-    // The only exception is when bigInt is negative, has the (n-1)th bit, and all
-    // its bits below (n-1) are zero. In that case, the result is the minimum
-    // n-bit integer (example: asIntN(3, -12n) => -4n).
-    bool hasBit = (topDigit & compareDigit) == compareDigit;
-    ASSERT(n <= INT32_MAX);
-    int32_t N = static_cast<int32_t>(n);
-    if (!hasBit)
-        return truncateToNBits(vm, N, bigInt);
-    if (!bigInt.sign())
-        return truncateAndSubFromPowerOfTwo(vm, N, bigInt, true);
-
-    // Negative numbers must subtract from 2^n, except for the special case
-    // described above.
-    if ((topDigit & (compareDigit - 1)) == 0) {
-        for (int32_t i = static_cast<int32_t>(neededLength) - 2; i >= 0; i--) {
-            if (bigInt.digit(i) != 0)
-                return truncateAndSubFromPowerOfTwo(vm, N, bigInt, false);
-        }
-        // Truncation is no-op if bigInt == -2^(n-1).
-        if (length == neededLength && topDigit == compareDigit)
-            return bigInt;
-        return truncateToNBits(vm, N, bigInt);
-    }
-    return truncateAndSubFromPowerOfTwo(vm, N, bigInt, false);
-}
-
-template <typename BigIntImpl>
-JSBigInt::ImplResult JSBigInt::asUintNImpl(JSGlobalObject* globalObject, uint64_t n, BigIntImpl bigInt)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (bigInt.isZero())
-        return bigInt;
-    if (n == 0)
-        return zeroImpl(vm);
-
-    // If bigInt is negative, simulate two's complement representation.
-    if (bigInt.sign()) {
-        if (n > maxLengthBits) {
-            throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
-            return nullptr;
-        }
-        return truncateAndSubFromPowerOfTwo(vm, static_cast<int32_t>(n), bigInt, false);
-    }
-
-    // If bigInt is positive and has up to n bits, return it directly.
-    if (n >= maxLengthBits)
-        return bigInt;
-    static_assert(maxLengthBits < INT32_MAX - digitBits);
-    int32_t neededLength = static_cast<int32_t>((n + digitBits - 1) / digitBits);
-    if (static_cast<int32_t>(bigInt.length()) < neededLength)
-        return bigInt;
-
-    int32_t bitsInTopDigit = n % digitBits;
-    if (static_cast<int32_t>(bigInt.length()) == neededLength) {
-        if (bitsInTopDigit == 0)
-            return bigInt;
-        Digit topDigit = bigInt.digit(neededLength - 1);
-        if ((topDigit >> bitsInTopDigit) == 0)
-            return bigInt;
-    }
-
-    // Otherwise, truncate.
-    ASSERT(n <= INT32_MAX);
-    return truncateToNBits(vm, static_cast<int32_t>(n), bigInt);
-}
-
-template <typename BigIntImpl>
-JSBigInt::ImplResult JSBigInt::truncateToNBits(VM& vm, int32_t n, BigIntImpl bigInt)
-{
-    ASSERT(n != 0);
-    ASSERT(bigInt.length() > n / digitBits);
-
-    int32_t neededDigits = (n + (digitBits - 1)) / digitBits;
-    ASSERT(neededDigits <= static_cast<int32_t>(bigInt.length()));
-    JSBigInt* result = createWithLengthUnchecked(vm, neededDigits);
-    ASSERT(result);
-
-    // Copy all digits except the MSD.
-    int32_t last = neededDigits - 1;
-    for (int32_t i = 0; i < last; i++)
-        result->setDigit(i, bigInt.digit(i));
-
-    // The MSD might contain extra bits that we don't want.
-    Digit msd = bigInt.digit(last);
-    if (n % digitBits != 0) {
-        int32_t drop = digitBits - (n % digitBits);
-        msd = (msd << drop) >> drop;
-    }
-    result->setDigit(last, msd);
-    result->setSign(bigInt.sign());
-    return result->rightTrim(vm);
-}
-
-// Subtracts the least significant n bits of abs(bigInt) from 2^n.
-template <typename BigIntImpl>
-JSBigInt::ImplResult JSBigInt::truncateAndSubFromPowerOfTwo(VM& vm, int32_t n, BigIntImpl bigInt, bool resultSign)
-{
-    ASSERT(n != 0);
-    ASSERT(n <= static_cast<int32_t>(maxLengthBits));
-
-    int32_t neededDigits = (n + (digitBits - 1)) / digitBits;
-    ASSERT(neededDigits <= static_cast<int32_t>(maxLength)); // Follows from n <= maxLengthBits.
-    JSBigInt* result = createWithLengthUnchecked(vm, neededDigits);
-    ASSERT(result);
-
-    // Process all digits except the MSD.
-    int32_t i = 0;
-    int32_t last = neededDigits - 1;
-    int32_t length = bigInt.length();
-    Digit borrow = 0;
-    // Take digits from bigInt unless its length is exhausted.
-    int32_t limit = std::min(last, length);
-    for (; i < limit; i++) {
-        Digit newBorrow = 0;
-        Digit difference = digitSub(0, bigInt.digit(i), newBorrow);
-        difference = digitSub(difference, borrow, newBorrow);
-        result->setDigit(i, difference);
-        borrow = newBorrow;
-    }
-    // Then simulate leading zeroes in {bigInt} as needed.
-    for (; i < last; i++) {
-        Digit newBorrow = 0;
-        Digit difference = digitSub(0, borrow, newBorrow);
-        result->setDigit(i, difference);
-        borrow = newBorrow;
-    }
-
-    // The MSD might contain extra bits that we don't want.
-    Digit msd = last < length ? bigInt.digit(last) : 0;
-    int32_t msdBitsConsumed = n % digitBits;
-    Digit resultMSD;
-    if (msdBitsConsumed == 0) {
-        Digit newBorrow = 0;
-        resultMSD = digitSub(0, msd, newBorrow);
-        resultMSD = digitSub(resultMSD, borrow, newBorrow);
-    } else {
-        int32_t drop = digitBits - msdBitsConsumed;
-        msd = (msd << drop) >> drop;
-        Digit minuendMSD = static_cast<Digit>(1) << (digitBits - drop);
-        Digit newBorrow = 0;
-        resultMSD = digitSub(minuendMSD, msd, newBorrow);
-        resultMSD = digitSub(resultMSD, borrow, newBorrow);
-        ASSERT(newBorrow == 0); // result < 2^n.
-        // If all subtracted bits were zero, we have to get rid of the
-        // materialized minuendMSD again.
-        resultMSD &= (minuendMSD - 1);
-    }
-    result->setDigit(last, resultMSD);
-    result->setSign(resultSign);
-    return result->rightTrim(vm);
-}
-
-JSValue JSBigInt::asIntN(JSGlobalObject* globalObject, uint64_t n, JSBigInt* bigInt)
-{
-    return tryConvertToBigInt32(asIntNImpl(globalObject, n, HeapBigIntImpl { bigInt }));
-}
-
-JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, JSBigInt* bigInt)
-{
-    return tryConvertToBigInt32(asUintNImpl(globalObject, n, HeapBigIntImpl { bigInt }));
-}
-
-#if USE(BIGINT32)
-JSValue JSBigInt::asIntN(JSGlobalObject* globalObject, uint64_t n, int32_t bigInt)
-{
-    return tryConvertToBigInt32(asIntNImpl(globalObject, n, Int32BigIntImpl { bigInt }));
-}
-
-JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, int32_t bigInt)
-{
-    return tryConvertToBigInt32(asUintNImpl(globalObject, n, Int32BigIntImpl { bigInt }));
-}
-#endif
 
 } // namespace JSC
