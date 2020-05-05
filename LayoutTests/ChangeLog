@@ -1,3 +1,17 @@
+2020-05-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update baselines after r260889
+        https://bugs.webkit.org/show_bug.cgi?id=211440
+
+        Unreviewed gardening.
+
+        * platform/gtk/fast/canvas/webgl/webgl-compressed-texture-astc-expected.txt: Added.
+        * platform/gtk/fast/canvas/webgl/webgl-depth-texture-expected.txt: Added.
+        * platform/gtk/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-77-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/text-tspan-01-b-manual-expected.txt:
+        * platform/gtk/storage/domstorage/sessionstorage/blocked-file-access-expected.txt: Removed.
+
 2020-05-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update svg/batik/text/xmlSpace.svg to yield consistent text metrics
