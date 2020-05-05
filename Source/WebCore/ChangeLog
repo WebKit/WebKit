@@ -1,3 +1,82 @@
+2020-05-04  Ben Nham  <nham@apple.com>
+
+        IndexedDB WAL file keeps growing while app is in use
+        https://bugs.webkit.org/show_bug.cgi?id=202137
+
+        Reviewed by Brady Eidson.
+
+        It's easy to get into a situation where the WAL file associated with a SQLite-backed
+        IndexedDB grows indefinitely while a site is in use for two reasons:
+
+        1. We don't promptly reset cached prepared statements in SQLiteIDBBackingStore. Many
+        statements are left hanging in the SQLITE_ROW state without being reset or fully stepped to
+        the SQLITE_DONE state. These hanging statements keep their associated transactions open and
+        prevent the WAL checkpointer from progressing past those active transactions.
+
+        To fix this, I added SQLiteStatementAutoResetScope. This is a scope guard that
+        SQLiteIDBBackingStore uses to ensure that cached statements are reset in a timely manner.
+
+        While going through the reset code I also noticed we aren't clearing bindings after
+        resetting statements. We should be doing this because sqlite3_reset does not clear bindings
+        (and their associated copies of blobs/strings); sqlite3_clear_bindings does that.
+
+        2. The default WAL hook for auto-checkpointing in upstream SQLite uses the
+        SQLITE_CHECKPOINT_PASSIVE mode, which doesn't truncate the WAL until the next write
+        transaction occurs. (It actually doesn't truncate at all when compiled with default
+        settings, but macOS's SQLite sets SQLITE_DEFAULT_JOURNAL_SIZE_LIMIT, which causes the
+        truncation to occur on the next write.)
+
+        We want the WAL to be truncated more promptly, because otherwise the quota check that
+        happens on each mutation won't be as accurate. To do this, I installed a WAL hook that
+        truncates the WAL with SQLITE_CHECKPOINT_TRUNCATE after the default threshold of 1000 WAL
+        pages. I didn't enable this for all SQLiteDatabases because this checkpoint call can block
+        on the busy handler. This isn't a problem for IDB since we don't use busy handlers in IDB.
+
+        * Headers.cmake:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteUnusedBlobFileRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatementForGetAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatement):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::walAutomaticTruncationHook):
+        (WebCore::SQLiteDatabase::enableAutomaticWALTruncation):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::reset):
+        * platform/sql/SQLiteStatementAutoResetScope.cpp: Added.
+        (WebCore::SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope):
+        (WebCore::SQLiteStatementAutoResetScope::operator=):
+        (WebCore::SQLiteStatementAutoResetScope::~SQLiteStatementAutoResetScope):
+        * platform/sql/SQLiteStatementAutoResetScope.h: Added.
+        (WebCore::SQLiteStatementAutoResetScope::operator bool const):
+        (WebCore::SQLiteStatementAutoResetScope::operator! const):
+        (WebCore::SQLiteStatementAutoResetScope::get):
+        (WebCore::SQLiteStatementAutoResetScope::operator->):
+
 2020-05-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tapping to focus editable elements should start caret selection at word boundary

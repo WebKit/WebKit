@@ -160,6 +160,39 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     return isOpen();
 }
 
+static int walAutomaticTruncationHook(void* context, sqlite3* db, const char* dbName, int walPageCount)
+{
+    UNUSED_PARAM(context);
+
+    static constexpr int checkpointThreshold = 1000; // matches SQLITE_DEFAULT_WAL_AUTOCHECKPOINT
+
+    if (walPageCount >= checkpointThreshold) {
+        int newWalPageCount = 0;
+        int result = sqlite3_wal_checkpoint_v2(db, dbName, SQLITE_CHECKPOINT_TRUNCATE, &newWalPageCount, nullptr);
+
+#if LOG_DISABLED
+        UNUSED_VARIABLE(result);
+#else
+        if (result != SQLITE_OK || newWalPageCount) {
+            LOG(SQLDatabase, "Can't fully checkpoint SQLite db %p", db);
+
+            sqlite3_stmt* stmt = nullptr;
+            while ((stmt = sqlite3_next_stmt(db, stmt))) {
+                if (sqlite3_stmt_busy(stmt))
+                    LOG(SQLDatabase, "SQLite db %p has busy stmt %p blocking checkpoint: %s", db, stmt, sqlite3_sql(stmt));
+            }
+        }
+#endif
+    }
+
+    return SQLITE_OK;
+}
+
+void SQLiteDatabase::enableAutomaticWALTruncation()
+{
+    sqlite3_wal_hook(m_db, walAutomaticTruncationHook, nullptr);
+}
+
 void SQLiteDatabase::useWALJournalMode()
 {
     m_useWAL = true;

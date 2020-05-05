@@ -81,6 +81,12 @@ public:
     
     void setFullsync(bool);
     
+    // This enables automatic WAL truncation via a commit hook that uses SQLITE_CHECKPOINT_TRUNCATE.
+    // However, it shouldn't be used if you use a custom busy handler or timeout. This is because
+    // SQLITE_CHECKPOINT_TRUNCATE will invoke the busy handler if it can't acquire the necessary
+    // locks, which can lead to unintended delays.
+    void enableAutomaticWALTruncation();
+
     // Gets/sets the maximum size in bytes
     // Depending on per-database attributes, the size will only be settable in units that are the page size of the database, which is established at creation
     // These chunks will never be anything other than 512, 1024, 2048, 4096, 8192, 16384, or 32768 bytes in size.

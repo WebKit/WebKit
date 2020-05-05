@@ -5033,6 +5033,7 @@
 		E58B45BA20AD07DD00991025 /* DataListButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E58B45B820AD07DD00991025 /* DataListButtonElement.h */; };
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15683,6 +15684,8 @@
 		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
+		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
+		EBE5B227245A29CF003A5A88 /* SQLiteStatementAutoResetScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteStatementAutoResetScope.cpp; sourceTree = "<group>"; };
 		EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypeConversions.cpp; sourceTree = "<group>"; };
 		EBF5121B1696496C0056BD25 /* JSTypeConversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeConversions.h; sourceTree = "<group>"; };
 		ECA680C61E67724500731D20 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtilities.h; sourceTree = "<group>"; };
@@ -17257,6 +17260,8 @@
 				B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */,
 				1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */,
 				1A2246460CC98DDB00C05240 /* SQLiteStatement.h */,
+				EBE5B227245A29CF003A5A88 /* SQLiteStatementAutoResetScope.cpp */,
+				EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */,
 				1A2246470CC98DDB00C05240 /* SQLiteTransaction.cpp */,
 				1A2246480CC98DDB00C05240 /* SQLiteTransaction.h */,
 				1A2E6E580CC55213004A2062 /* SQLValue.h */,
@@ -32954,6 +32959,7 @@
 				511EC1301C50ABF50032F983 /* SQLiteIDBCursor.h in Headers */,
 				511EC12C1C50ABBF0032F983 /* SQLiteIDBTransaction.h in Headers */,
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
+				EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
 				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
 				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,

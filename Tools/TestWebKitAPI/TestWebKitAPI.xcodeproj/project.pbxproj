@@ -1034,6 +1034,8 @@
 		E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */; };
 		E3F8AB92241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */; };
 		E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E5036F77211BC22800BFDBE2 /* color-drop.html */; };
+		EB230D40245E727900C66AD1 /* IDBCheckpointWAL.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */; };
+		EB230D41245E813F00C66AD1 /* IDBCheckpointWAL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */; };
 		ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = ECA680CD1E68CC0900731D20 /* StringUtilities.mm */; };
 		F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */; };
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
@@ -1351,6 +1353,7 @@
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
 				9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */,
 				BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */,
+				EB230D41245E813F00C66AD1 /* IDBCheckpointWAL.html in Copy Resources */,
 				510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */,
 				510477721D298DDD009747EB /* IDBDeleteRecovery.sqlite3 in Copy Resources */,
 				510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */,
@@ -2668,6 +2671,8 @@
 		E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Deque.cpp; sourceTree = "<group>"; };
 		E4C9ABC71B3DB1710040A987 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		E5036F77211BC22800BFDBE2 /* color-drop.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-drop.html"; sourceTree = "<group>"; };
+		EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBCheckpointWAL.html; sourceTree = "<group>"; };
+		EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBCheckpointWAL.mm; sourceTree = "<group>"; };
 		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		ECA680CD1E68CC0900731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3079,6 +3084,7 @@
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
 				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
 				51AF23DE1EF1A3720072F281 /* IconLoadingDelegate.mm */,
+				EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
 				93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */,
@@ -3550,6 +3556,7 @@
 				07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */,
 				467C565121B5ECDF0057516D /* GetSessionCookie.html */,
 				F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */,
+				EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */,
 				510477761D298E57009747EB /* IDBDeleteRecovery.html */,
 				5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */,
 				510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */,
@@ -4934,6 +4941,7 @@
 				6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */,
 				5C7C24FC237C975400599C91 /* HTTPServer.mm in Sources */,
 				51AF23DF1EF1A3730072F281 /* IconLoadingDelegate.mm in Sources */,
+				EB230D40245E727900C66AD1 /* IDBCheckpointWAL.mm in Sources */,
 				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
 				93BCBC8323CC6F2A00CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm in Sources */,

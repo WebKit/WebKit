@@ -2092,6 +2092,7 @@ platform/sql/SQLiteDatabase.cpp
 platform/sql/SQLiteDatabaseTracker.cpp
 platform/sql/SQLiteFileSystem.cpp
 platform/sql/SQLiteStatement.cpp
+platform/sql/SQLiteStatementAutoResetScope.cpp
 platform/sql/SQLiteTransaction.cpp
 
 platform/text/BidiContext.cpp

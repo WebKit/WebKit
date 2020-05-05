@@ -1313,6 +1313,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/sql/SQLiteDatabaseTrackerClient.h
     platform/sql/SQLiteFileSystem.h
     platform/sql/SQLiteStatement.h
+    platform/sql/SQLiteStatementAutoResetScope.h
     platform/sql/SQLiteTransaction.h
 
     platform/text/BidiContext.h

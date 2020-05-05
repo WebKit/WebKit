@@ -32,6 +32,7 @@
 #include "IDBDatabaseInfo.h"
 #include "IDBResourceIdentifier.h"
 #include "SQLiteIDBTransaction.h"
+#include "SQLiteStatementAutoResetScope.h"
 #include <JavaScriptCore/Strong.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
@@ -193,8 +194,8 @@ private:
         Invalid,
     };
 
-    SQLiteStatement* cachedStatement(SQL, const char*);
-    SQLiteStatement* cachedStatementForGetAllObjectStoreRecords(const IDBGetAllRecordsData&);
+    SQLiteStatementAutoResetScope cachedStatement(SQL, const char*);
+    SQLiteStatementAutoResetScope cachedStatementForGetAllObjectStoreRecords(const IDBGetAllRecordsData&);
 
     std::unique_ptr<SQLiteStatement> m_cachedStatements[static_cast<int>(SQL::Invalid)];
 

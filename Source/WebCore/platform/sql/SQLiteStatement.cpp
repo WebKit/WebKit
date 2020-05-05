@@ -122,7 +122,9 @@ int SQLiteStatement::reset()
     if (!m_statement)
         return SQLITE_OK;
     LOG(SQLDatabase, "SQL - reset - %s", m_query.ascii().data());
-    return sqlite3_reset(m_statement);
+    int status = sqlite3_reset(m_statement);
+    sqlite3_clear_bindings(m_statement);
+    return status;
 }
 
 bool SQLiteStatement::executeCommand()
