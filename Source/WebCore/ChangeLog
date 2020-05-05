@@ -1,3 +1,29 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove now-unneeded USE(COREMEDIA) and USE(VIDEOTOOLBOX)
+        https://bugs.webkit.org/show_bug.cgi?id=211437
+
+        Reviewed by Eric Carlson.
+
+        * platform/cocoa/VideoToolboxSoftLink.cpp: Remove USE(VIDEOTOOLBOX).
+        * platform/cocoa/VideoToolboxSoftLink.h: Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage): Ditto.
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h: Ditto. Also remove
+        #pragma once since this header is only used with #import, not #include.
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm: Ditto.
+        * platform/graphics/cv/ImageRotationSessionVT.h: Ditto.
+        * platform/graphics/cv/ImageRotationSessionVT.mm: Ditto.
+        * platform/graphics/cv/ImageTransferSessionVT.h: Ditto.
+        * platform/graphics/cv/ImageTransferSessionVT.mm: Ditto.
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        (WebCore::PixelBufferConformerCV::PixelBufferConformerCV): Ditto.
+        (WebCore::PixelBufferConformerCV::convert): Ditto.
+        (WebCore::PixelBufferConformerCV::createImageFromPixelBuffer): Ditto.
+        * platform/graphics/cv/PixelBufferConformerCV.h: Ditto.
+
 2020-05-05  Youenn Fablet  <youenn@apple.com>
 
         Remove LegacySchemeRegistry::canServiceWorkersHandleURLScheme

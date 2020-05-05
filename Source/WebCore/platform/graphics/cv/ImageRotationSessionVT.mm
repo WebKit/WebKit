@@ -33,8 +33,6 @@
 #import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
-#if USE(VIDEOTOOLBOX)
-
 namespace WebCore {
 
 static ImageRotationSessionVT::RotationProperties transformToRotationProperties(const AffineTransform& inTransform)
@@ -129,5 +127,3 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(MediaSample& sample, 
 }
 
 }
-
-#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if USE(COREMEDIA)
-
-#include "../Clock.h"
-#include <wtf/MediaTime.h>
-#include <wtf/RetainPtr.h>
+#import "Clock.h"
+#import <wtf/RetainPtr.h>
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
 typedef struct OpaqueCMClock* CMClockRef;
@@ -39,31 +34,21 @@ namespace PAL {
 class ClockCM final : public Clock {
 public:
     ClockCM();
-    ClockCM(CMClockRef);
-
-    void setCurrentTime(double) override;
-    double currentTime() const override;
-
-    void setCurrentMediaTime(const MediaTime&);
-    MediaTime currentMediaTime() const;
-
-    void setPlayRate(double) override;
-    double playRate() const override { return m_rate; }
-
-    void start() override;
-    void stop() override;
-    bool isRunning() const override { return m_running; }
-
-    CMTimebaseRef timebase() const { return m_timebase.get(); }
 
 private:
-    void initializeWithTimingSource(CMClockRef);
+    void setCurrentTime(double) final;
+    double currentTime() const final;
+
+    void setPlayRate(double) final;
+    double playRate() const final { return m_rate; }
+
+    void start() final;
+    void stop() final;
+    bool isRunning() const final { return m_running; }
 
     RetainPtr<CMTimebaseRef> m_timebase;
-    double m_rate;
-    bool m_running;
+    double m_rate { 1 };
+    bool m_running { false };
 };
 
 }
-
-#endif

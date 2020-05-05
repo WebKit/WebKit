@@ -77,12 +77,14 @@
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <AVFoundation/AVPlayerLayer.h>
 #import <AVFoundation/AVTime.h>
+#import <CoreVideo/CoreVideo.h>
 #import <JavaScriptCore/DataView.h>
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <JavaScriptCore/Uint16Array.h>
 #import <JavaScriptCore/Uint32Array.h>
 #import <JavaScriptCore/Uint8Array.h>
+#import <VideoToolbox/VideoToolbox.h>
 #import <functional>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -110,11 +112,6 @@
 #else
 #import <Foundation/NSGeometry.h>
 #import <QuartzCore/CoreImage.h>
-#endif
-
-#if USE(VIDEOTOOLBOX)
-#import <CoreVideo/CoreVideo.h>
-#import <VideoToolbox/VideoToolbox.h>
 #endif
 
 #import "CoreVideoSoftLink.h"
@@ -622,10 +619,8 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!m_videoLayer)
             createAVPlayerLayer();
 
-#if USE(VIDEOTOOLBOX)
         if (!m_videoOutput)
             createVideoOutput();
-#endif
 
         player()->renderingModeChanged();
     });
@@ -2167,12 +2162,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     if (!m_avPlayerItem || m_videoOutput)
         return;
 
-#if USE(VIDEOTOOLBOX)
-    NSDictionary* attributes = nil;
-#else
-    NSDictionary* attributes = @{ kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-#endif
-    m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
+    m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:nil]);
     ASSERT(m_videoOutput);
 
     m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] init]);
@@ -2247,11 +2237,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
         return;
 
     if (!m_pixelBufferConformer) {
-#if USE(VIDEOTOOLBOX)
         NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
-#else
-        NSDictionary *attributes = nil;
-#endif
         m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
 

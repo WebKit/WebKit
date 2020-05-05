@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebCoreDecompressionSession.h"
 
-#if USE(VIDEOTOOLBOX)
-
 #import "Logging.h"
 #import "PixelBufferConformerCV.h"
 #import <CoreMedia/CMBufferQueue.h>
@@ -621,5 +619,3 @@ void WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(double ratio
 }
 
 }
-
-#endif

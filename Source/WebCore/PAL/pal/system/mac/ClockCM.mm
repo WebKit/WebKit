@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,13 @@
  */
 
 #import "config.h"
-
-#if USE(COREMEDIA)
 #import "ClockCM.h"
-
-#import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #import "CoreMediaSoftLink.h"
 
-using namespace PAL;
+namespace PAL {
 
-// A default time scale of 1000 allows milli-second CMTime precision without scaling the timebase.
+// A default time scale of 1000 allows millisecond CMTime precision without scaling the timebase.
 static const int32_t DefaultTimeScale = 1000;
 
 std::unique_ptr<Clock> Clock::create()
@@ -43,54 +39,27 @@ std::unique_ptr<Clock> Clock::create()
 }
 
 ClockCM::ClockCM()
-    : m_timebase(0)
-    , m_rate(1)
-    , m_running(false)
 {
-    CMClockRef rawClockPtr = 0;
+    CMClockRef rawClockPtr = nullptr;
 #if PLATFORM(IOS_FAMILY)
     CMAudioClockCreate(kCFAllocatorDefault, &rawClockPtr);
 #else
     CMAudioDeviceClockCreate(kCFAllocatorDefault, NULL, &rawClockPtr);
 #endif
-    RetainPtr<CMClockRef> clock = adoptCF(rawClockPtr);
-    initializeWithTimingSource(clock.get());
-}
-
-ClockCM::ClockCM(CMClockRef clock)
-    : m_timebase(0)
-    , m_running(false)
-{
-    initializeWithTimingSource(clock);
-}
-
-void ClockCM::initializeWithTimingSource(CMClockRef clock)
-{
-    CMTimebaseRef rawTimebasePtr = 0;
-    CMTimebaseCreateWithMasterClock(kCFAllocatorDefault, clock, &rawTimebasePtr);
+    auto clock = adoptCF(rawClockPtr);
+    CMTimebaseRef rawTimebasePtr = nullptr;
+    CMTimebaseCreateWithMasterClock(kCFAllocatorDefault, clock.get(), &rawTimebasePtr);
     m_timebase = adoptCF(rawTimebasePtr);
 }
 
 void ClockCM::setCurrentTime(double time)
 {
-    CMTime cmTime = CMTimeMakeWithSeconds(time, DefaultTimeScale);
-    CMTimebaseSetTime(m_timebase.get(), cmTime);
+    CMTimebaseSetTime(m_timebase.get(), CMTimeMakeWithSeconds(time, DefaultTimeScale));
 }
 
 double ClockCM::currentTime() const
 {
-    CMTime cmTime = CMTimebaseGetTime(m_timebase.get());
-    return CMTimeGetSeconds(cmTime);
-}
-
-void ClockCM::setCurrentMediaTime(const MediaTime& time)
-{
-    CMTimebaseSetTime(m_timebase.get(), PAL::toCMTime(time));
-}
-
-MediaTime ClockCM::currentMediaTime() const
-{
-    return PAL::toMediaTime(CMTimebaseGetTime(m_timebase.get()));
+    return CMTimeGetSeconds(CMTimebaseGetTime(m_timebase.get()));
 }
 
 void ClockCM::setPlayRate(double rate)
@@ -119,4 +88,4 @@ void ClockCM::stop()
     CMTimebaseSetRate(m_timebase.get(), 0);
 }
 
-#endif
+}

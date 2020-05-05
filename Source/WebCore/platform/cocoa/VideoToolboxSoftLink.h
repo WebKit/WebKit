@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(VIDEOTOOLBOX)
-
 #include <VideoToolbox/VideoToolbox.h>
 #include <wtf/SoftLinking.h>
 
@@ -123,5 +121,3 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerIsCon
 #define VTPixelBufferConformerIsConformantPixelBuffer softLink_VideoToolbox_VTPixelBufferConformerIsConformantPixelBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerCopyConformedPixelBuffer, OSStatus, (VTPixelBufferConformerRef conformer, CVPixelBufferRef sourceBuffer, Boolean ensureModifiable, CVPixelBufferRef* conformedBufferOut), (conformer, sourceBuffer, ensureModifiable, conformedBufferOut))
 #define VTPixelBufferConformerCopyConformedPixelBuffer softLink_VideoToolbox_VTPixelBufferConformerCopyConformedPixelBuffer
-
-#endif // USE(VIDEOTOOLBOX)

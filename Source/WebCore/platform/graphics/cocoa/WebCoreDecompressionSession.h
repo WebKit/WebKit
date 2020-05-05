@@ -23,10 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if USE(VIDEOTOOLBOX)
-
 #include <CoreMedia/CMTime.h>
 #include <functional>
 #include <wtf/Lock.h>
@@ -134,5 +130,3 @@ private:
 };
 
 }
-
-#endif

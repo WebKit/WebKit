@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(VIDEOTOOLBOX)
-
 #include "IntSize.h"
 #include "MediaSample.h"
 #include <wtf/RetainPtr.h>
@@ -93,5 +91,3 @@ private:
 };
 
 }
-
-#endif // USE(VIDEOTOOLBOX)

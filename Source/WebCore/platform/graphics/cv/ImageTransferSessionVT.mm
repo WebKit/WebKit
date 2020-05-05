@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ImageTransferSessionVT.h"
 
-#if USE(VIDEOTOOLBOX)
-
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
@@ -404,5 +402,3 @@ RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef 
 }
 
 } // namespace WebCore
-
-#endif // USE(VIDEOTOOLBOX)

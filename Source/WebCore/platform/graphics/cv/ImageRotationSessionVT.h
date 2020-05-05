@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(VIDEOTOOLBOX)
-
 #include "AffineTransform.h"
 #include "FloatSize.h"
 
@@ -90,5 +88,3 @@ inline bool operator!=(const ImageRotationSessionVT::RotationProperties& rotatio
 }
 
 }
-
-#endif

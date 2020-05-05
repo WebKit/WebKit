@@ -1,5 +1,14 @@
 2020-05-05  Darin Adler  <darin@apple.com>
 
+        Remove now-unneeded USE(COREMEDIA) and USE(VIDEOTOOLBOX)
+        https://bugs.webkit.org/show_bug.cgi?id=211437
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformUse.h: Don't set USE_COREMEDIA or USE_VIDEOTOOLBOX.
+
+2020-05-05  Darin Adler  <darin@apple.com>
+
         Remove now-uneeded HAVE macros related to PDF
         https://bugs.webkit.org/show_bug.cgi?id=211435
 

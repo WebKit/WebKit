@@ -43,9 +43,7 @@ public:
     RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
 
 private:
-#if USE(VIDEOTOOLBOX)
     RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;
-#endif
 };
 
 }

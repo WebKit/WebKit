@@ -1,3 +1,23 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove now-unneeded USE(COREMEDIA) and USE(VIDEOTOOLBOX)
+        https://bugs.webkit.org/show_bug.cgi?id=211437
+
+        Reviewed by Eric Carlson.
+
+        * pal/system/mac/ClockCM.h: Remove USE(COREMEDIA). Also made everything
+        private since nothing includes this header. Removed everything unused.
+
+        * pal/system/mac/ClockCM.mm: Remove USE(COREMEDIA). Put everything inside
+        the PAL namespace.
+        (PAL::ClockCM::ClockCM): Merged in the second constructor and initializeWithTimingSource.
+        (PAL::ClockCM::ClockCM): Deleted.
+        (PAL::ClockCM::initializeWithTimingSource): Deleted.
+        (PAL::ClockCM::setCurrentTime): Tweaked.
+        (PAL::ClockCM::currentTime const): Tweaked.
+        (PAL::ClockCM::setCurrentMediaTime): Deleted.
+        (PAL::ClockCM::currentMediaTime const): Deleted.
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
