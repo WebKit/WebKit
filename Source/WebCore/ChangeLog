@@ -1,3 +1,13 @@
+2020-05-05  Antti Koivisto  <antti@apple.com>
+
+        Factor RenderLayerBacking::updateEventRegion skip conditions into a lambda
+        https://bugs.webkit.org/show_bug.cgi?id=211450
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
 2020-05-05  Chris Dumez  <cdumez@apple.com>
 
         Drop code path using the legacy CFNetwork cookie change notification SPI

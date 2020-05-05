@@ -1656,23 +1656,30 @@ void RenderLayerBacking::updateEventRegion()
     if (paintsIntoCompositedAncestor())
         return;
 
-    bool needsEventRegionUpdateForNonCompositedFrame = renderer().view().needsEventRegionUpdateForNonCompositedFrame();
-    bool hasTouchActionElements = false;
-    bool hasEditableElements = false;
+    auto needsUpdate = [&] {
+        if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
+            return true;
+        
 #if PLATFORM(IOS_FAMILY)
-    hasTouchActionElements = renderer().document().mayHaveElementsWithNonAutoTouchAction();
+        if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
+            return true;
 #endif
 #if ENABLE(EDITABLE_REGION)
-    hasEditableElements = renderer().document().mayHaveEditableElements();
+        if (renderer().document().mayHaveEditableElements())
+            return true;
 #endif
-    if (!hasTouchActionElements && !hasEditableElements && !needsEventRegionUpdateForNonCompositedFrame) {
         if (m_owningLayer.isRenderViewLayer())
-            return;
+            return false;
 
         auto& settings = renderer().settings();
         if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
-            return;
-    }
+            return false;
+
+        return true;
+    };
+
+    if (!needsUpdate())
+        return;
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
         GraphicsContext nullContext(nullptr);
@@ -1710,8 +1717,7 @@ void RenderLayerBacking::updateEventRegion()
     if (m_scrolledContentsLayer)
         updateEventRegionForLayer(*m_scrolledContentsLayer);
 
-    if (needsEventRegionUpdateForNonCompositedFrame)
-        renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
+    renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
 }
 #endif
 
