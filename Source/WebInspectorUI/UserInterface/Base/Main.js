@@ -2415,15 +2415,19 @@ WI._updateInspectModeTabBarButton = function()
 
 WI._updateTabBarDividers = function()
 {
-    let closeHidden = WI._closeTabBarButton?.hidden;
-    let dockToSideHidden = WI._dockToSideTabBarButton?.hidden;
-    let dockBottomHidden = WI._dockBottomTabBarButton?.hidden;
-    let undockHidden = WI._undockTabBarButton?.hidden;
+    function isHidden(navigationItem) {
+        return !navigationItem || navigationItem.hidden;
+    }
 
-    let inspectModeHidden = WI._inspectModeTabBarButton.hidden;
-    let deviceSettingsHidden = WI._deviceSettingsTabBarButton && WI._deviceSettingsTabBarButton.hidden;
-    let reloadHidden = WI._reloadTabBarButton && WI._reloadTabBarButton.hidden;
-    let downloadHidden = WI._downloadTabBarButton && WI._downloadTabBarButton.hidden;
+    let closeHidden = isHidden(WI._closeTabBarButton);
+    let dockToSideHidden = isHidden(WI._dockToSideTabBarButton);
+    let dockBottomHidden = isHidden(WI._dockBottomTabBarButton);
+    let undockHidden = isHidden(WI._undockTabBarButton);
+
+    let inspectModeHidden = isHidden(WI._inspectModeTabBarButton);
+    let deviceSettingsHidden = isHidden(WI._deviceSettingsTabBarButton);
+    let reloadHidden = isHidden(WI._reloadTabBarButton);
+    let downloadHidden = isHidden(WI._downloadTabBarButton);
 
     let warningsHidden = WI._consoleWarningsTabBarButton.hidden;
     let errorsHidden = WI._consoleErrorsTabBarButton.hidden;
