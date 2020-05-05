@@ -89,7 +89,6 @@ struct NetworkProcessCreationParameters {
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
-    Vector<String> urlSchemesServiceWorkersCanHandle;
     bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
     bool shouldEnableITPDatabase { false };

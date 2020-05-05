@@ -28,5 +28,5 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker
 ] interface NavigatorServiceWorker {
-    [CallWith=ScriptExecutionContext, MayThrowException, SecureContext, ContextHasServiceWorkerScheme, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
+    [CallWith=ScriptExecutionContext, MayThrowException, SecureContext, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
 };

@@ -70,7 +70,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsNoAccess;
 
 #if ENABLE(SERVICE_WORKER)
-    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle << shouldDisableServiceWorkerProcessTerminationDelay;
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
     encoder << shouldEnableITPDatabase;
     encoder << enableAdClickAttributionDebugMode;
@@ -156,10 +156,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!serviceWorkerRegistrationDirectoryExtensionHandle)
         return false;
     result.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
-    
-    if (!decoder.decode(result.urlSchemesServiceWorkersCanHandle))
-        return false;
-    
+
     if (!decoder.decode(result.shouldDisableServiceWorkerProcessTerminationDelay))
         return false;
 #endif

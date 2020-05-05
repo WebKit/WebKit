@@ -92,9 +92,6 @@
         "ContextAllowsMediaDevices": {
             "contextsAllowed": ["attribute"]
         },
-        "ContextHasServiceWorkerScheme": {
-            "contextsAllowed": ["attribute"]
-        },
         "Custom": {
             "contextsAllowed": ["attribute", "operation"]
         },

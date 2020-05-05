@@ -545,12 +545,6 @@ bool ScriptExecutionContext::allowsMediaDevices() const
 #endif
 }
 
-bool ScriptExecutionContext::hasServiceWorkerScheme() const
-{
-    ASSERT(securityOrigin());
-    return LegacySchemeRegistry::isServiceWorkerContainerCustomScheme(securityOrigin()->protocol());
-}
-
 #if ENABLE(SERVICE_WORKER)
 
 ServiceWorker* ScriptExecutionContext::activeServiceWorker() const

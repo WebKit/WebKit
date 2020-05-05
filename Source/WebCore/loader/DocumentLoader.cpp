@@ -514,7 +514,7 @@ bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegist
 
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
-    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && LegacySchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
+    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && url.protocolIsInHTTPFamily();
     if (!shouldTryLoadingThroughServiceWorker) {
         callback(WTF::nullopt);
         return;
@@ -1107,7 +1107,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
                     document.setActiveServiceWorker(parent->activeServiceWorker());
             }
 
-            if (m_frame->document()->activeServiceWorker() || LegacySchemeRegistry::canServiceWorkersHandleURLScheme(document.url().protocol().toStringWithoutCopying()))
+            if (m_frame->document()->activeServiceWorker() || document.url().protocolIsInHTTPFamily())
                 document.setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
             // We currently unregister the temporary service worker client since we now registered the real document.

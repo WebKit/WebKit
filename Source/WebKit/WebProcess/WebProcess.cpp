@@ -420,9 +420,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
         registerURLSchemeAsCachePartitioned(scheme);
 
-    for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)
-        WebCore::LegacySchemeRegistry::registerURLSchemeServiceWorkersCanHandle(scheme);
-
     for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 

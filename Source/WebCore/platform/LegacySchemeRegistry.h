@@ -97,11 +97,6 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme); // Thread safe.
     static bool shouldPartitionCacheForURLScheme(const String& scheme); // Thread safe.
 
-    // Schemes besides http(s) that service workers are allowed to handle
-    WEBCORE_EXPORT static void registerURLSchemeServiceWorkersCanHandle(const String& scheme); // Thread safe.
-    WEBCORE_EXPORT static bool canServiceWorkersHandleURLScheme(const String& scheme); // Thread safe.
-    static bool isServiceWorkerContainerCustomScheme(const String& scheme); // Thread safe.
-
     static bool isUserExtensionScheme(const String& scheme);
 };
 

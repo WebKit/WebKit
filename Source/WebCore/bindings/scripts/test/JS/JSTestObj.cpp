@@ -67,7 +67,6 @@
 #include "JSNode.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
-#include "JSServiceWorker.h"
 #include "JSTestCallbackFunction.h"
 #include "JSTestCallbackInterface.h"
 #include "JSTestInterface.h"
@@ -1669,7 +1668,6 @@ bool setJSTestObjAnnotatedTypeInSequenceAttr(JSC::JSGlobalObject*, JSC::EncodedJ
 JSC::EncodedJSValue jsTestObjImplementationEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjImplementationEnumAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjMediaDevices(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestObjServiceWorkers(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjXMLObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjXMLObjAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCreate(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -2049,7 +2047,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "annotatedTypeInSequenceAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAnnotatedTypeInSequenceAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAnnotatedTypeInSequenceAttr) } },
     { "implementationEnumAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjImplementationEnumAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjImplementationEnumAttr) } },
     { "mediaDevices", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjMediaDevices), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "serviceWorkers", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjServiceWorkers), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "XMLObjAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjXMLObjAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjXMLObjAttr) } },
     { "create", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCreate), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCreate) } },
     { "reflectedStringAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReflectedStringAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjReflectedStringAttr) } },
@@ -2418,13 +2415,6 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->allowsMediaDevices())) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mediaDevices"), strlen("mediaDevices"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme())) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("serviceWorkers"), strlen("serviceWorkers"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -3726,20 +3716,6 @@ static inline JSValue jsTestObjMediaDevicesGetter(JSGlobalObject& lexicalGlobalO
 EncodedJSValue jsTestObjMediaDevices(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestObj>::get<jsTestObjMediaDevicesGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "mediaDevices");
-}
-
-static inline JSValue jsTestObjServiceWorkersGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<ServiceWorker>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.serviceWorkers());
-    return result;
-}
-
-EncodedJSValue jsTestObjServiceWorkers(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjServiceWorkersGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "serviceWorkers");
 }
 
 static inline JSValue jsTestObjXMLObjAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, ThrowScope& throwScope)

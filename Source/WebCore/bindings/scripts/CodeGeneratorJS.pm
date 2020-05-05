@@ -1726,7 +1726,6 @@ sub NeedsRuntimeCheck
         || $context->extendedAttributes->{EnabledBySetting}
         || $context->extendedAttributes->{DisabledByQuirk}
         || $context->extendedAttributes->{SecureContext}
-        || $context->extendedAttributes->{ContextHasServiceWorkerScheme}
         || $context->extendedAttributes->{CustomEnabled};
 }
 
@@ -3765,20 +3764,11 @@ sub GenerateRuntimeEnableConditionalString
     if ($context->extendedAttributes->{SecureContext}) {
         AddToImplIncludes("ScriptExecutionContext.h");
 
-        if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
-            push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
-                . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->hasServiceWorkerScheme())");
-        } elsif ($context->extendedAttributes->{ContextAllowsMediaDevices}) {
+        if ($context->extendedAttributes->{ContextAllowsMediaDevices}) {
             push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
                 . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->allowsMediaDevices())");
         } else {
             push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
-        }
-    } else {
-        if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
-            AddToImplIncludes("ScriptExecutionContext.h");
-
-            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->hasServiceWorkerScheme()");
         }
     }
 

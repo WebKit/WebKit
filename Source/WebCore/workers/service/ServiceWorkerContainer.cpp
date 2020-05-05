@@ -146,7 +146,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    if (!LegacySchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scriptURL.protocol().toStringWithoutCopying())) {
+    if (!jobData.scriptURL.protocolIsInHTTPFamily()) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
         promise->reject(Exception { TypeError, "serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS"_s });
         return;
@@ -164,7 +164,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     else
         jobData.scopeURL = URL(jobData.scriptURL, "./");
 
-    if (!jobData.scopeURL.isNull() && !LegacySchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scopeURL.protocol().toStringWithoutCopying())) {
+    if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily()) {
         CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("addRegistration: scopeURL scheme is not HTTP or HTTPS");
         promise->reject(Exception { TypeError, "Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS"_s });
         return;
