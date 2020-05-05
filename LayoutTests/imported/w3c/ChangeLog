@@ -1,3 +1,19 @@
+2020-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update two svg tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=211331
+        <rdar://problem/61844271>
+
+        Unreviewed.
+
+        Apply https://github.com/web-platform-tests/wpt/commit/51151cf5bfc32adb8d96fca51a30c126d1e0200d
+        to our own tree.
+
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/pservers-grad-08-b-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/text-altglyph-01-b-manual-expected.txt:
+        * web-platform-tests/svg/import/pservers-grad-08-b-manual.svg:
+        * web-platform-tests/svg/import/text-altglyph-01-b-manual.svg:
+
 2020-05-05  Rob Buis  <rbuis@igalia.com>
 
         A URL cannot have a username/password/port if its host is null
