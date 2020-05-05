@@ -1,3 +1,47 @@
+2020-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Code cleanup in EventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=211413
+
+        Reviewed by Tim Horton.
+
+        Use a better name for "hoveredNode" which is a HitTestResult.
+
+        Convert Frame* to Frame&.
+
+        Have a couple of helper functions return RefPtr<Frame>.
+
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::stopAutoscrollTimer):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::subframeForHitTestResult):
+        (WebCore::EventHandler::subframeForTargetNode):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::passMouseMovedEventToScrollbars):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        * page/EventHandler.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::tryToBeginDragAtPoint):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+
 2020-05-04  Ben Nham  <nham@apple.com>
 
         IndexedDB WAL file keeps growing while app is in use

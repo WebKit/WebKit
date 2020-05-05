@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
 {
 #if ENABLE(DRAG_SUPPORT)
     if (m_mouseDownMayStartDrag && !m_mouseDownWasInSubframe)
         return false;
 #endif
 
-    subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
+    subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult);
     return true;
 }
 

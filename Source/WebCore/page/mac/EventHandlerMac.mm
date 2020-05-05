@@ -375,7 +375,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe, HitTestResult* hoveredNode)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -388,7 +388,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         if (!m_mouseDownWasInSubframe)
             return false;
 #if ENABLE(DRAG_SUPPORT)
-        if (subframe->page()->dragController().didInitiateDrag())
+        if (subframe.page()->dragController().didInitiateDrag())
             return false;
 #endif
     case NSEventTypeMouseMoved:
@@ -397,7 +397,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         // currentNSEvent() that mouseMoved() does would have no effect.
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
-        subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
+        subframe.eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hitTestResult);
         m_sendingEventToSubview = false;
         return true;
         
@@ -421,7 +421,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             return false;
         ASSERT(!m_sendingEventToSubview);
         m_sendingEventToSubview = true;
-        subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
+        subframe.eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
         m_sendingEventToSubview = false;
         return true;
     }
@@ -683,22 +683,22 @@ static bool frameHasPlatformWidget(const Frame& frame)
     return false;
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
-        return passSubframeEventToSubframe(mev, subframe);
+        return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe->eventHandler().handleMousePressEvent(mev.event());
+    subframe.eventHandler().handleMousePressEvent(mouseEventAndResult.event());
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
-        return passSubframeEventToSubframe(mev, subframe, hoveredNode);
+        return passSubframeEventToSubframe(mouseEventAndResult, subframe, hitTestResult);
 
 #if ENABLE(DRAG_SUPPORT)
     // WebKit2 code path.
@@ -706,18 +706,18 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& me
         return false;
 #endif
 
-    subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
+    subframe.eventHandler().handleMouseMoveEvent(mouseEventAndResult.event(), hitTestResult);
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
-        return passSubframeEventToSubframe(mev, subframe);
+        return passSubframeEventToSubframe(mouseEventAndResult, subframe);
 
     // WebKit2 code path.
-    subframe->eventHandler().handleMouseReleaseEvent(mev.event());
+    subframe.eventHandler().handleMouseReleaseEvent(mouseEventAndResult.event());
     return true;
 }
 

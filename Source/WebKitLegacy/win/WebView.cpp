@@ -1916,7 +1916,7 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     logicalGestureBeginPoint.scale(inverseScaleFactor, inverseScaleFactor);
 
     HitTestRequest request { OptionSet<HitTestRequest::RequestType> { HitTestRequest::ReadOnly, HitTestRequest::DisallowUserAgentShadowContent } };
-    for (Frame* childFrame = &m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
+    for (RefPtr<Frame> childFrame = &m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
         FrameView* frameView = childFrame->view();
         if (!frameView)
             break;

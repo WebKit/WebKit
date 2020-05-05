@@ -187,8 +187,8 @@ public:
     IntPoint targetPositionInWindowForSelectionAutoscroll() const;
     bool shouldUpdateAutoscroll();
 
-    static Frame* subframeForTargetNode(Node*);
-    static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
+    static RefPtr<Frame> subframeForTargetNode(Node*);
+    static RefPtr<Frame> subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
     WEBCORE_EXPORT bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
     WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
@@ -203,7 +203,7 @@ public:
     void lostMouseCapture();
 
     WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&);
-    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = nullptr, bool onlyUpdateScrollbars = false);
+    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* = nullptr, bool onlyUpdateScrollbars = false);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleMouseForceEvent(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
@@ -430,11 +430,11 @@ private:
     
     bool mouseMovementExceedsThreshold(const FloatPoint&, int pointsThreshold) const;
 
-    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
-    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = nullptr);
-    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
+    bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame&);
+    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame&, HitTestResult* = nullptr);
+    bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame&);
 
-    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = nullptr);
+    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame&, HitTestResult* = nullptr);
 
     bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, Scrollbar*);
 
