@@ -25,14 +25,9 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY_SUPPORT)
-
 #if USE(APPLE_INTERNAL_SDK)
 
-// FIXME (46432011): We shouldn't need to wrap this include in extern "C".
-WTF_EXTERN_C_BEGIN
 #include <AccessibilitySupport.h>
-WTF_EXTERN_C_END
 
 #else
 
@@ -53,5 +48,3 @@ extern Boolean _AXSFullKeyboardAccessEnabled();
 WTF_EXTERN_C_END
 
 #endif
-
-#endif // HAVE(ACCESSIBILITY_SUPPORT)

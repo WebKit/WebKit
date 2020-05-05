@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(ACCESSIBILITY_SUPPORT)
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <AccessibilitySupport.h>
@@ -49,5 +47,3 @@ AXSIsolatedTreeMode _AXSIsolatedTreeMode(void);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // HAVE(ACCESSIBILITY_SUPPORT)

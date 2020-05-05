@@ -1,5 +1,15 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneeded HAVE(ACCESSIBILITY_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=211425
+
+        Reviewed by Alex Christensen.
+
+        * Platform/spi/Cocoa/AccessibilitySupportSPI.h: Remove HAVE(ACCESSIBILITY_SUPPORT)
+        and now-unnecessary C include guards.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(SEC_TRUST_EVALUATE_WITH_ERROR)
         https://bugs.webkit.org/show_bug.cgi?id=211429
 
