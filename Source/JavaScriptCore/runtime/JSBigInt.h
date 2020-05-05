@@ -412,6 +412,14 @@ public:
         return toNumberHeap(jsCast<JSBigInt*>(bigInt));
     }
 
+
+    static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
+    static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
+#if USE(BIGINT32)
+    static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
+    static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
+#endif
+
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(VM&);
@@ -541,6 +549,15 @@ private:
 
     template <typename BigIntImpl>
     static Optional<Digit> toShiftAmount(BigIntImpl x);
+
+    template <typename BigIntImpl>
+    static ImplResult asIntNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult asUintNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult truncateToNBits(VM&, int32_t, BigIntImpl);
+    template <typename BigIntImpl>
+    static ImplResult truncateAndSubFromPowerOfTwo(VM&, int32_t, BigIntImpl, bool resultSign);
 
     inline static size_t offsetOfData()
     {

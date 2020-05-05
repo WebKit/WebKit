@@ -1,3 +1,20 @@
+2020-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement BigInt.asIntN and BigInt.asUintN
+        https://bugs.webkit.org/show_bug.cgi?id=181144
+
+        Reviewed by Darin Adler.
+
+        * stress/bigint-asintn.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (BigInt.asIntN):
+        * stress/bigint-asuintn.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (BigInt.asUintN):
+        * test262/expectations.yaml:
+
 2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Alphabetize extension keys and correctly mark const methods
