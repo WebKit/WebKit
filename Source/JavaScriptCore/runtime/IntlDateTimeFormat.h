@@ -55,9 +55,9 @@ public:
     DECLARE_INFO;
 
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
-    JSValue format(JSGlobalObject*, double value);
-    JSValue formatToParts(JSGlobalObject*, double value);
-    JSObject* resolvedOptions(JSGlobalObject*);
+    JSValue format(JSGlobalObject*, double value) const;
+    JSValue formatToParts(JSGlobalObject*, double value) const;
+    JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);

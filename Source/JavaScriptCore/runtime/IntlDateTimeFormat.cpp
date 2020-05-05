@@ -47,10 +47,10 @@ static const double minECMAScriptTime = -8.64E15;
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 namespace IntlDateTimeFormatInternal {
-constexpr const char* relevantExtensionKeys[3] = { "ca", "nu", "hc" };
+constexpr const char* relevantExtensionKeys[3] = { "ca", "hc", "nu" };
 constexpr size_t calendarIndex = 0;
-constexpr size_t numberingSystemIndex = 1;
-constexpr size_t hourCycleIndex = 2;
+constexpr size_t hourCycleIndex = 1;
+constexpr size_t numberingSystemIndex = 2;
 }
 
 void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
@@ -209,9 +209,6 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIn
         uenum_close(calendars);
         break;
     }
-    case IntlDateTimeFormatInternal::numberingSystemIndex:
-        keyLocaleData = numberingSystemsForLocale(locale);
-        break;
     case IntlDateTimeFormatInternal::hourCycleIndex:
         // Null default so we know to use 'j' in pattern.
         keyLocaleData.append(String());
@@ -219,6 +216,9 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, size_t keyIn
         keyLocaleData.append("h12"_s);
         keyLocaleData.append("h23"_s);
         keyLocaleData.append("h24"_s);
+        break;
+    case IntlDateTimeFormatInternal::numberingSystemIndex:
+        keyLocaleData = numberingSystemsForLocale(locale);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -838,7 +838,7 @@ ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
 }
 
 // https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.resolvedoptions
-JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
+JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
 
@@ -884,7 +884,7 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
 }
 
 // https://tc39.es/ecma402/#sec-formatdatetime
-JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value)
+JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_dateFormat);
 
@@ -971,7 +971,7 @@ static ASCIILiteral partTypeString(UDateFormatField field)
 }
 
 // https://tc39.es/ecma402/#sec-formatdatetimetoparts
-JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value)
+JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_dateFormat);
 

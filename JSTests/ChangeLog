@@ -1,3 +1,14 @@
+2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Intl] Alphabetize extension keys and correctly mark const methods
+        https://bugs.webkit.org/show_bug.cgi?id=211359
+
+        Reviewed by Darin Adler.
+
+        * stress/intl-collator.js:
+        * stress/intl-datetimeformat.js:
+        Add tests.
+
 2020-05-05  Keith Miller  <keith_miller@apple.com>
 
         iterator_open should remap the symbolIterator argument correctly when inlined.

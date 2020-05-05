@@ -44,10 +44,10 @@ namespace JSC {
 const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
 
 namespace IntlCollatorInternal {
-constexpr const char* const relevantExtensionKeys[3] = { "co", "kn", "kf" };
+constexpr const char* relevantExtensionKeys[3] = { "co", "kf", "kn" };
 constexpr size_t collationIndex = 0;
-constexpr size_t numericIndex = 1;
-constexpr size_t caseFirstIndex = 2;
+constexpr size_t caseFirstIndex = 1;
+constexpr size_t numericIndex = 2;
 }
 
 void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
@@ -123,16 +123,16 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, size_t keyInde
         }
         break;
     }
-    case IntlCollatorInternal::numericIndex:
-        keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("true"_s);
-        break;
     case IntlCollatorInternal::caseFirstIndex:
         keyLocaleData.reserveInitialCapacity(3);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("lower"_s);
         keyLocaleData.uncheckedAppend("upper"_s);
+        break;
+    case IntlCollatorInternal::numericIndex:
+        keyLocaleData.reserveInitialCapacity(2);
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("true"_s);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -150,16 +150,16 @@ Vector<String> IntlCollator::searchLocaleData(const String&, size_t keyIndex)
         keyLocaleData.reserveInitialCapacity(1);
         keyLocaleData.append({ });
         break;
-    case IntlCollatorInternal::numericIndex:
-        keyLocaleData.reserveInitialCapacity(2);
-        keyLocaleData.uncheckedAppend("false"_s);
-        keyLocaleData.uncheckedAppend("true"_s);
-        break;
     case IntlCollatorInternal::caseFirstIndex:
         keyLocaleData.reserveInitialCapacity(3);
         keyLocaleData.uncheckedAppend("false"_s);
         keyLocaleData.uncheckedAppend("lower"_s);
         keyLocaleData.uncheckedAppend("upper"_s);
+        break;
+    case IntlCollatorInternal::numericIndex:
+        keyLocaleData.reserveInitialCapacity(2);
+        keyLocaleData.uncheckedAppend("false"_s);
+        keyLocaleData.uncheckedAppend("true"_s);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -295,7 +295,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 }
 
 // https://tc39.es/ecma402/#sec-collator-comparestrings
-JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x, StringView y)
+JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x, StringView y) const
 {
     ASSERT(m_collator);
 
@@ -369,7 +369,7 @@ ASCIILiteral IntlCollator::caseFirstString(CaseFirst caseFirst)
 }
 
 // https://tc39.es/ecma402/#sec-intl.collator.prototype.resolvedoptions
-JSObject* IntlCollator::resolvedOptions(JSGlobalObject* globalObject)
+JSObject* IntlCollator::resolvedOptions(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     JSObject* options = constructEmptyObject(globalObject);

@@ -53,9 +53,9 @@ public:
     DECLARE_INFO;
 
     void initializeRelativeTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
-    JSValue format(JSGlobalObject*, double, StringView unitString);
-    JSValue formatToParts(JSGlobalObject*, double, StringView unitString);
-    JSObject* resolvedOptions(JSGlobalObject*);
+    JSValue format(JSGlobalObject*, double, StringView unitString) const;
+    JSValue formatToParts(JSGlobalObject*, double, StringView unitString) const;
+    JSObject* resolvedOptions(JSGlobalObject*) const;
 
 private:
     IntlRelativeTimeFormat(VM&, Structure*);
@@ -64,7 +64,7 @@ private:
 
     static Vector<String> localeData(const String&, size_t);
 
-    String formatInternal(JSGlobalObject*, double, StringView unit);
+    String formatInternal(JSGlobalObject*, double, StringView unit) const;
 
     struct URelativeDateTimeFormatterDeleter {
         void operator()(URelativeDateTimeFormatter*) const;

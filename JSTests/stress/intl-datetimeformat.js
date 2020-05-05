@@ -214,6 +214,8 @@ shouldThrow(() => Intl.DateTimeFormat.prototype.resolvedOptions.call(5), TypeErr
 shouldThrow(() => Intl.DateTimeFormat('$'), RangeError);
 shouldThrow(() => Intl.DateTimeFormat('en', null), TypeError);
 
+shouldBe(new Intl.DateTimeFormat('en-u-nu-latn-hc-h12-ca-gregory-kf-upper').resolvedOptions().locale, 'en-u-ca-gregory-hc-h12-nu-latn');
+
 // Defaults to month, day, year.
 shouldBe(Intl.DateTimeFormat('en').resolvedOptions().weekday, undefined);
 shouldBe(Intl.DateTimeFormat('en').resolvedOptions().era, undefined);

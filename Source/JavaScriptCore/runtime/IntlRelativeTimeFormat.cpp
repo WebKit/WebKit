@@ -183,7 +183,7 @@ static ASCIILiteral numericString(bool numeric)
 }
 
 // https://tc39.es/ecma402/#sec-intl.relativetimeformat.prototype.resolvedoptions
-JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
+JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     JSObject* options = constructEmptyObject(globalObject);
@@ -225,7 +225,7 @@ static Optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit)
     return WTF::nullopt;
 }
 
-String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, double value, StringView unit)
+String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, double value, StringView unit) const
 {
     ASSERT(m_relativeDateTimeFormatter);
 
@@ -262,7 +262,7 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTime
-JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double value, StringView unit)
+JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double value, StringView unit) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -274,7 +274,7 @@ JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double valu
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTimeToParts
-JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, StringView unit)
+JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, StringView unit) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

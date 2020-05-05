@@ -182,7 +182,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
 }
 
 // https://tc39.es/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
-JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
+JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
 {
     ASSERT(m_pluralRules);
 
@@ -224,7 +224,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
 }
 
 // https://tc39.es/ecma402/#sec-resolveplural
-JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value)
+JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_pluralRules);
 

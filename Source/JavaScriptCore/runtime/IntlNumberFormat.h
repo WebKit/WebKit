@@ -56,10 +56,10 @@ public:
     DECLARE_INFO;
 
     void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
-    JSValue format(JSGlobalObject*, double);
-    JSValue format(JSGlobalObject*, JSBigInt*);
-    JSValue formatToParts(JSGlobalObject*, double);
-    JSObject* resolvedOptions(JSGlobalObject*);
+    JSValue format(JSGlobalObject*, double) const;
+    JSValue format(JSGlobalObject*, JSBigInt*) const;
+    JSValue formatToParts(JSGlobalObject*, double) const;
+    JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);

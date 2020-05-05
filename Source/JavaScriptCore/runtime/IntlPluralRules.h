@@ -54,8 +54,8 @@ public:
     DECLARE_INFO;
 
     void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
-    JSValue select(JSGlobalObject*, double value);
-    JSObject* resolvedOptions(JSGlobalObject*);
+    JSValue select(JSGlobalObject*, double value) const;
+    JSObject* resolvedOptions(JSGlobalObject*) const;
 
 private:
     IntlPluralRules(VM&, Structure*);

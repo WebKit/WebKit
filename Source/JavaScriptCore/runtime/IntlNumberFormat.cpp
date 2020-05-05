@@ -340,7 +340,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
-JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
+JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_numberFormat);
 
@@ -362,7 +362,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value)
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
-JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value)
+JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value) const
 {
     ASSERT(m_numberFormat);
 
@@ -418,7 +418,7 @@ ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDis
 }
 
 // https://tc39.es/ecma402/#sec-intl.numberformat.prototype.resolvedoptions
-JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject)
+JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     JSObject* options = constructEmptyObject(globalObject);
@@ -527,7 +527,7 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, doubl
 }
 
 // https://tc39.github.io/ecma402/#sec-formatnumbertoparts
-JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value)
+JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_numberFormat);
 

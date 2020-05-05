@@ -405,3 +405,5 @@ shouldThrow(() => Intl.Collator.prototype.resolvedOptions.call(5), TypeError);
     delete options.locale;
     shouldBe(JSON.stringify(options), '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false,"caseFirst":"false"}');
 }
+
+shouldBe(new Intl.Collator('de-u-kn-false-kf-upper-co-phonebk-hc-h12').resolvedOptions().locale, 'de-u-co-phonebk-kf-upper-kn-false');
