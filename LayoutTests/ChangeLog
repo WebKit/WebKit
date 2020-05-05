@@ -1,3 +1,25 @@
+2020-05-05  Chris Dumez  <cdumez@apple.com>
+
+        fast/overflow/horizontal-scroll-after-back.html is a flaky timeout on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=211473
+        <rdar://problem/61180247>
+
+        Reviewed by Darin Adler.
+
+        I made the following changes to the test:
+        - Stop relying on 200ms timers and instead just a 0 timer after the load event.
+        - Detect the case where we failed to enter page cache and fail nicely in this
+          case instead of timing out.
+        - Use Element.click() to trigger the navigation instead of dispatching a custom
+          click event.
+
+        I have not been able to reproduce the flakiness locally. However, the changes in
+        this patch will at the very least make the test faster to run and cause the test
+        to fail instead of timing out if the issue is that we fail to enter the back /
+        forward cache, which would help us fix this.
+
+        * fast/overflow/horizontal-scroll-after-back.html:
+
 2020-05-05  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r261113): [ Mac ] http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html is flaky failing.
