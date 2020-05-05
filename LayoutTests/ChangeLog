@@ -1,3 +1,12 @@
+2020-05-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: (r261113): [ Mac ] http/tests/frame-throttling/raf-throttle-in-cross-origin-subframe.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=211470
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-05-05  Peng Liu  <peng.liu6@apple.com>
 
         Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
