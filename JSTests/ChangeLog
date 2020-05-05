@@ -1,3 +1,15 @@
+2020-05-05  Keith Miller  <keith_miller@apple.com>
+
+        iterator_open should remap the symbolIterator argument correctly when inlined.
+        https://bugs.webkit.org/show_bug.cgi?id=211308
+        <rdar://problem/62287877>
+
+        Reviewed by Mark Lam.
+
+        * stress/inlining-for-of-should-validate.js: Added.
+        (bar):
+        (foo):
+
 2020-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reverting r261156.

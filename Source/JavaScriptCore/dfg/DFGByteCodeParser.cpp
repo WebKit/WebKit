@@ -6712,7 +6712,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             BytecodeIndex startIndex = m_currentIndex;
 
-            Node* symbolIterator = getDirect(bytecode.m_symbolIterator);
+            Node* symbolIterator = get(bytecode.m_symbolIterator);
             auto& arrayIteratorProtocolWatchpointSet = globalObject->arrayIteratorProtocolWatchpointSet();
 
             if (seenModes & IterationMode::FastArray && arrayIteratorProtocolWatchpointSet.isStillValid()) {

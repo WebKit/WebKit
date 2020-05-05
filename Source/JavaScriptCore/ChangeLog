@@ -1,3 +1,14 @@
+2020-05-05  Keith Miller  <keith_miller@apple.com>
+
+        iterator_open should remap the symbolIterator argument correctly when inlined.
+        https://bugs.webkit.org/show_bug.cgi?id=211308
+        <rdar://problem/62287877>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2020-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSBigInt::maxLengthBits and JSBigInt::maxLength are wrong
