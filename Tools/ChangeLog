@@ -1,3 +1,21 @@
+2020-05-04  Alexey Proskuryakov  <ap@apple.com>
+
+        block-spammers tool should hide attachments
+        https://bugs.webkit.org/show_bug.cgi?id=211406
+
+        Reviewed by Darin Adler.
+
+        The logic is nearly identical to hiding comments. Just need to limit fields in the
+        search, so that we don't have to download attachment data.
+
+        * Scripts/block-spammers:
+        (get_comments):
+        (get_bugs_with_attachments_created_by_user):
+        (get_attachments):
+        (hide_comments):
+        (hide_attachments):
+        (main):
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         Remove unneeded USE(MEDIAREMOTE)
