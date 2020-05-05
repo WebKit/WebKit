@@ -6529,7 +6529,7 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 #endif
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(IOS)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
 TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)

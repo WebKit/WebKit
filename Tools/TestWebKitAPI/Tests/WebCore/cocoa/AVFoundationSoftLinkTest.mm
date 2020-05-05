@@ -145,15 +145,11 @@ TEST(AVFoundationSoftLink, Constants)
     if (PAL::canLoad_AVFoundation_AVSampleRateKey())
         EXPECT_TRUE([AVSampleRateKey isEqualToString:@"AVSampleRateKey"]);
 
-#if PLATFORM(MAC) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey());
     EXPECT_TRUE([AVURLAssetOutOfBandMIMETypeKey isEqualToString:@"AVURLAssetOutOfBandMIMETypeKey"]);
-#endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVURLAssetUseClientURLLoadingExclusively());
     EXPECT_TRUE([AVURLAssetUseClientURLLoadingExclusively isEqualToString:@"AVURLAssetUseClientURLLoadingExclusively"]);
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming());
@@ -165,7 +161,7 @@ TEST(AVFoundationSoftLink, Constants)
     EXPECT_TRUE([AVContentKeyRequestProtocolVersionsKey isEqualToString:@"ProtocolVersionsKey"]);
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha());
     EXPECT_TRUE([AVVideoCodecTypeHEVCWithAlpha isEqualToString:@"muxa"]);
 #endif
