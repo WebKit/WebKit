@@ -1,3 +1,27 @@
+2020-05-04  Peng Liu  <peng.liu6@apple.com>
+
+        Fix the mistake on macro HAVE_SYSTEM_FEATURE_FLAGS
+        https://bugs.webkit.org/show_bug.cgi?id=211416
+
+        Reviewed by Tim Horton.
+
+        We should use "#if HAVE(SYSTEM_FEATURE_FLAGS)" instead of "#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)".
+        And we have to use the function _os_feature_enabled_impl() instead of the macro os_feature_enabled()
+        because WebKit is a namespace and cannot be used in os_feature_enabled().
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAsyncFrameAndOverflowScrollingEnabled):
+        (WebKit::defaultUseGPUProcessForMedia):
+        (WebKit::defaultRenderCanvasInGPUProcessEnabled):
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+        (WebKit::defaultWebRTCCodecsInGPUProcess):
+        (WebKit::defaultWebGL2Enabled):
+        (WebKit::defaultWebGPUEnabled):
+        (WebKit::defaultInAppBrowserPrivacy):
+        (WebKit::defaultIncrementalPDFEnabled):
+        (WebKit::defaultWebXREnabled):
+
 2020-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Eliminate SecurityServer and OCSPD from the WebContent sandbox

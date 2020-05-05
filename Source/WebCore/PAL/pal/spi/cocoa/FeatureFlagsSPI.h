@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -37,4 +37,4 @@
 extern "C" bool _os_feature_enabled_impl(const char *domain, const char *feature);
 #endif
 
-#endif // HAVE(HAVE_SYSTEM_FEATURE_FLAGS)
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
