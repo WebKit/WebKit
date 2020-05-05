@@ -434,8 +434,9 @@ private:
     // maxInt / digitBits. However, we use a lower limit for now, because
     // raising it later is easier than lowering it.
     // Support up to 1 million bits.
-    static constexpr unsigned maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
-    static constexpr unsigned maxLengthBits = maxInt - sizeof(void*) * bitsPerByte - 1;
+    static constexpr unsigned maxLengthBits = 1024 * 1024;
+    static constexpr unsigned maxLength = maxLengthBits / digitBits;
+    static_assert(maxLengthBits % digitBits == 0);
     
     static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
     

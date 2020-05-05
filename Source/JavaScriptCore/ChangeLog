@@ -1,5 +1,22 @@
 2020-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSBigInt::maxLengthBits and JSBigInt::maxLength are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=211445
+
+        Reviewed by Mark Lam.
+
+        JSBigInt::maxLengthBits and JSBigInt::maxLength definitions are wrong.
+
+        1. We are defining maxLength and maxLengthBits as an unrelated value to each other. This is wrong.
+           maxLength should be defined as maxLengthBits / (sizeof(Digit) * bitsPerByte).
+        2. We use `sizeof(void*)` and assume that `sizeof(Digit) == sizeof(void*)`. This is wrong in ARM64_32 environment
+           where Digit size is sizeof(uint64_t) while the pointer size is sizeof(uint32_t). This causes compile errors in ARM64_32
+           when the code is using these values with static_assert.
+
+        * runtime/JSBigInt.h:
+
+2020-05-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, reverting r261156.
 
         Break ARM64_32 build due to existing bug
