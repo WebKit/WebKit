@@ -1871,9 +1871,7 @@ void SpeculativeJIT::compileCurrentBlock()
         }
 
         if (!clobberedWorld) {
-            auto scratch = m_jit.scratchRegister();
-            m_jit.load8(&vm().didEnterVM, scratch);
-            auto ok = m_jit.branchTest32(MacroAssembler::Zero, scratch);
+            auto ok = m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::AbsoluteAddress(&vm().didEnterVM));
             m_jit.breakpoint();
             ok.link(&m_jit);
         } else
@@ -1914,9 +1912,7 @@ void SpeculativeJIT::compileCurrentBlock()
 
             clobberize(m_graph, m_block->at(m_indexInBlock - 1), [] (auto...) { }, [] (auto...) { }, [] (auto...) { }, validateClobberize);
             if (!clobberedWorld) {
-                auto scratch = m_jit.scratchRegister();
-                m_jit.load8(&vm().didEnterVM, scratch);
-                auto ok = m_jit.branchTest32(MacroAssembler::Zero, scratch);
+                auto ok = m_jit.branchTest8(MacroAssembler::Zero, MacroAssembler::AbsoluteAddress(&vm().didEnterVM));
                 m_jit.breakpoint();
                 ok.link(&m_jit);
             } else
