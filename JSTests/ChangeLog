@@ -1,3 +1,24 @@
+2020-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG NotCellUse is used without considering about BigInt32
+        https://bugs.webkit.org/show_bug.cgi?id=211395
+
+        Reviewed by Saam Barati.
+
+        * stress/non-cell-nor-bigint-should-be-emitted-for-to-number-target-if-bigint-appears.js: Added.
+        (shouldThrow):
+        (test):
+        (i.shouldThrow):
+        * stress/non-cell-nor-bigint-should-reject-bigint.js: Added.
+        (shouldBe):
+        (test):
+        * stress/should-not-emit-double-rep-for-bigint.js: Added.
+        (foo):
+        * stress/urshift-value-to-int32-should-reject-bigint.js: Added.
+        (shouldThrow):
+        (test):
+        (i.shouldThrow):
+
 2020-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix stress/big-int-negate-jit.js

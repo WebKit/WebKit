@@ -152,6 +152,11 @@ inline bool isNotCellSpeculation(SpeculatedType value)
     return !(value & SpecCellCheck) && value;
 }
 
+inline bool isNotCellNorBigIntSpeculation(SpeculatedType value)
+{
+    return !(value & (SpecCellCheck | SpecBigInt)) && value;
+}
+
 inline bool isObjectSpeculation(SpeculatedType value)
 {
     return !!(value & SpecObject) && !(value & ~SpecObject);

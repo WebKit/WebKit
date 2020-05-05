@@ -1639,6 +1639,7 @@ public:
     void speculateHeapBigInt(Edge);
     void speculateNotCell(Edge, JSValueRegs);
     void speculateNotCell(Edge);
+    void speculateNotCellNorBigInt(Edge);
     void speculateOther(Edge, JSValueRegs, GPRReg temp);
     void speculateOther(Edge, JSValueRegs);
     void speculateOther(Edge);

@@ -2383,7 +2383,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
     }
     
     case NumberUse:
-    case NotCellUse: {
+    case NotCellNorBigIntUse: {
         switch (checkGeneratedTypeForToInt32(node->child1().node())) {
         case GeneratedOperandInteger: {
             SpeculateInt32Operand op1(this, node->child1(), ManualOperandSpeculation);
@@ -2414,6 +2414,10 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 
                 DFG_TYPE_CHECK(
                     JSValueRegs(gpr), node->child1(), ~SpecCellCheck, m_jit.branchIfCell(JSValueRegs(gpr)));
+#if USE(BIGINT32)
+                DFG_TYPE_CHECK(
+                    JSValueRegs(gpr), node->child1(), ~SpecCellCheck & ~SpecBigInt, m_jit.branchIfBigInt32(JSValueRegs(gpr), resultGpr));
+#endif
                 
                 // It's not a cell: so true turns into 1 and all else turns into 0.
                 m_jit.compare64(JITCompiler::Equal, gpr, TrustedImm32(JSValue::ValueTrue), resultGpr);
@@ -2609,7 +2613,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
         return;
     }
     
-    case NotCellUse:
+    case NotCellNorBigIntUse:
     case NumberUse: {
         SpeculatedType possibleTypes = m_state.forNode(node->child1()).m_type;
         if (isInt32Speculation(possibleTypes)) {
@@ -2633,7 +2637,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
 
         JITCompiler::Jump isInteger = m_jit.branchIfInt32(op1GPR);
 
-        if (node->child1().useKind() == NotCellUse) {
+        if (node->child1().useKind() == NotCellNorBigIntUse) {
             JITCompiler::Jump isNumber = m_jit.branchIfNumber(op1GPR);
             JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1GPR);
 
@@ -2643,7 +2647,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             JITCompiler::Jump isNull = m_jit.branchIfNull(op1GPR);
             done.append(isNull);
 
-            DFG_TYPE_CHECK(JSValueRegs(op1GPR), node->child1(), ~SpecCellCheck,
+            DFG_TYPE_CHECK(JSValueRegs(op1GPR), node->child1(), ~SpecCellCheck & ~SpecBigInt,
                 m_jit.branchTest64(JITCompiler::Zero, op1GPR, TrustedImm32(JSValue::BoolTag)));
 
             JITCompiler::Jump isFalse = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(JSValue::ValueFalse));
@@ -2681,7 +2685,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
     
         JITCompiler::Jump isInteger = m_jit.branchIfInt32(op1TagGPR);
 
-        if (node->child1().useKind() == NotCellUse) {
+        if (node->child1().useKind() == NotCellNorBigIntUse) {
             JITCompiler::Jump isNumber = m_jit.branch32(JITCompiler::Below, op1TagGPR, JITCompiler::TrustedImm32(JSValue::LowestTag + 1));
             JITCompiler::Jump isUndefined = m_jit.branchIfUndefined(op1TagGPR);
 
@@ -10833,6 +10837,25 @@ void SpeculativeJIT::speculateNotCell(Edge edge)
     speculateNotCell(edge, operand.jsValueRegs());
 }
 
+void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
+{
+#if USE(BIGINT32)
+    if (!needsTypeCheck(edge, ~SpecCellCheck & ~SpecBigInt))
+        return;
+
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+
+    DFG_TYPE_CHECK(regs, edge, ~SpecCellCheck, m_jit.branchIfCell(regs));
+    DFG_TYPE_CHECK(regs, edge, ~SpecCellCheck & ~SpecBigInt, m_jit.branchIfBigInt32(regs, tempGPR));
+#else
+    speculateNotCell(edge);
+#endif
+}
+
 void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs, GPRReg tempGPR)
 {
     DFG_TYPE_CHECK(regs, edge, SpecOther, m_jit.branchIfNotOther(regs, tempGPR));
@@ -11011,6 +11034,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotCellUse:
         speculateNotCell(edge);
+        break;
+    case NotCellNorBigIntUse:
+        speculateNotCellNorBigInt(edge);
         break;
     case OtherUse:
         speculateOther(edge);

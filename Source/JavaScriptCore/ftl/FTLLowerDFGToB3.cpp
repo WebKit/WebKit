@@ -1754,9 +1754,9 @@ private:
             return;
         }
             
-        case NotCellUse:
+        case NotCellNorBigIntUse:
         case NumberUse: {
-            bool shouldConvertNonNumber = m_node->child1().useKind() == NotCellUse;
+            bool shouldConvertNonNumber = m_node->child1().useKind() == NotCellNorBigIntUse;
             
             LValue value = lowJSValue(m_node->child1(), ManualOperandSpeculation);
 
@@ -1819,7 +1819,7 @@ private:
                 m_out.appendTo(convertBooleanFalseCase, continuation);
 
                 LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(JSValue::ValueFalse));
-                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCellCheck, valueIsNotBooleanFalse);
+                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCellCheck & ~SpecBigInt, valueIsNotBooleanFalse);
                 ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
                 m_out.jump(continuation);
 
@@ -1914,7 +1914,7 @@ private:
             break;
             
         case NumberUse:
-        case NotCellUse: {
+        case NotCellNorBigIntUse: {
             LoweredNodeValue value = m_int32Values.get(m_node->child1().node());
             if (isValid(value)) {
                 setInt32(value.value());
@@ -1923,14 +1923,14 @@ private:
             
             value = m_jsValueValues.get(m_node->child1().node());
             if (isValid(value)) {
-                setInt32(numberOrNotCellToInt32(m_node->child1(), value.value()));
+                setInt32(numberOrNotCellNorBigIntToInt32(m_node->child1(), value.value()));
                 break;
             }
             
             // We'll basically just get here for constants. But it's good to have this
             // catch-all since we often add new representations into the mix.
             setInt32(
-                numberOrNotCellToInt32(
+                numberOrNotCellNorBigIntToInt32(
                     m_node->child1(),
                     lowJSValue(m_node->child1(), ManualOperandSpeculation)));
             break;
@@ -13165,13 +13165,13 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    LValue numberOrNotCellToInt32(Edge edge, LValue value)
+    LValue numberOrNotCellNorBigIntToInt32(Edge edge, LValue value)
     {
         LBasicBlock intCase = m_out.newBlock();
         LBasicBlock notIntCase = m_out.newBlock();
         LBasicBlock doubleCase = 0;
         LBasicBlock notNumberCase = 0;
-        if (edge.useKind() == NotCellUse) {
+        if (edge.useKind() == NotCellNorBigIntUse) {
             doubleCase = m_out.newBlock();
             notNumberCase = m_out.newBlock();
         }
@@ -13202,6 +13202,9 @@ private:
             m_out.appendTo(notNumberCase, continuation);
             
             FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck, isCell(value));
+#if USE(BIGINT32)
+            FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck & ~SpecBigInt, isBigInt32(value));
+#endif
             
             LValue specialResult = m_out.select(
                 m_out.equal(value, m_out.constInt64(JSValue::encode(jsBoolean(true)))),
@@ -17563,6 +17566,9 @@ private:
         case NotCellUse:
             speculateNotCell(edge);
             break;
+        case NotCellNorBigIntUse:
+            speculateNotCellNorBigInt(edge);
+            break;
         case OtherUse:
             speculateOther(edge);
             break;
@@ -17594,6 +17600,18 @@ private:
         if (!m_interpreter.needsTypeCheck(edge))
             return;
         lowNotCell(edge);
+    }
+
+    void speculateNotCellNorBigInt(Edge edge)
+    {
+#if USE(BIGINT32)
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        LValue nonCell = lowNotCell(edge);
+        FTL_TYPE_CHECK(jsValueValue(nonCell), edge, ~SpecCellCheck & ~SpecBigInt, isBigInt32(nonCell));
+#else
+        speculateNotCell(edge);
+#endif
     }
     
     void speculateCellOrOther(Edge edge)
