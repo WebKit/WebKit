@@ -1,3 +1,17 @@
+2020-05-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK4] Header bars no longer have title and subtitle properties
+        https://bugs.webkit.org/show_bug.cgi?id=211412
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp: For GTK4 use a vertical
+        box as title widget, with two labels acting as title and subtitle.
+        (webkit_inspector_window_init):
+        (webkitInspectorWindowSetSubtitle):
+
 2020-05-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Make sure TestController::statisticsResetToConsistentState() does not hang due to process suspension

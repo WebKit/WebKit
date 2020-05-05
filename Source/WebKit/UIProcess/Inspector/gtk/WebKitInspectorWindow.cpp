@@ -36,6 +36,10 @@ struct _WebKitInspectorWindow {
     GtkWindow parent;
 
     GtkWidget* headerBar;
+
+#if USE(GTK4)
+    GtkWidget* subtitleLabel;
+#endif
 };
 
 struct _WebKitInspectorWindowClass {
@@ -51,12 +55,34 @@ static void webkit_inspector_window_class_init(WebKitInspectorWindowClass*)
 static void webkit_inspector_window_init(WebKitInspectorWindow* window)
 {
     window->headerBar = gtk_header_bar_new();
+
+#if USE(GTK4)
+    GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
+
+    GtkWidget* titleLabel = gtk_label_new(_("Web Inspector"));
+    gtk_widget_set_halign(titleLabel, GTK_ALIGN_CENTER);
+    gtk_label_set_single_line_mode(GTK_LABEL(titleLabel), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(titleLabel), PANGO_ELLIPSIZE_END);
+    gtk_widget_add_css_class(titleLabel, GTK_STYLE_CLASS_TITLE);
+    gtk_widget_set_parent(titleLabel, box);
+
+    window->subtitleLabel = gtk_label_new(nullptr);
+    gtk_widget_set_halign(window->subtitleLabel, GTK_ALIGN_CENTER);
+    gtk_label_set_single_line_mode(GTK_LABEL(window->subtitleLabel), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(window->subtitleLabel), PANGO_ELLIPSIZE_END);
+    gtk_widget_add_css_class(window->subtitleLabel, GTK_STYLE_CLASS_SUBTITLE);
+    gtk_widget_set_parent(window->subtitleLabel, box);
+    gtk_widget_hide(window->subtitleLabel);
+
+    gtk_header_bar_set_title_widget(GTK_HEADER_BAR(window->headerBar), box);
+#else
     gtk_header_bar_set_title(GTK_HEADER_BAR(window->headerBar), _("Web Inspector"));
-#if !USE(GTK4)
     gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(window->headerBar), TRUE);
-#endif
-    gtk_window_set_titlebar(GTK_WINDOW(window), window->headerBar);
     gtk_widget_show(window->headerBar);
+#endif // USE(GTK4)
+
+    gtk_window_set_titlebar(GTK_WINDOW(window), window->headerBar);
 }
 
 GtkWidget* webkitInspectorWindowNew()
@@ -72,5 +98,13 @@ void webkitInspectorWindowSetSubtitle(WebKitInspectorWindow* window, const char*
 {
     g_return_if_fail(WEBKIT_IS_INSPECTOR_WINDOW(window));
 
+#if USE(GTK4)
+    if (subtitle) {
+        gtk_label_set_text(GTK_LABEL(window->subtitleLabel), subtitle);
+        gtk_widget_show(window->subtitleLabel);
+    } else
+        gtk_widget_hide(window->subtitleLabel);
+#else
     gtk_header_bar_set_subtitle(GTK_HEADER_BAR(window->headerBar), subtitle);
+#endif // USE(GTK4)
 }
