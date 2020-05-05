@@ -371,9 +371,7 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
 #if HAVE(PARENTAL_CONTROLS)
         EXPECT_EQ(static_cast<bool>(parentalControlsShouldBeLoaded), static_cast<bool>(parentalControlsLoaded));
 #endif
-#if HAVE(NETWORK_EXTENSION)
         EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
-#endif // HAVE(NETWORK_EXTENSION)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetworkExtensionContentFilter.h"
 
-#if HAVE(NETWORK_EXTENSION)
-
 #import "ContentFilterUnblockHandler.h"
 #import "Logging.h"
 #import "ResourceRequest.h"
@@ -234,5 +232,3 @@ void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasCons
 }
 
 } // namespace WebCore
-
-#endif // HAVE(NETWORK_EXTENSION)

@@ -1,5 +1,18 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        Remove now-unneeded HAVE(NETWORK_EXTENSION)
+        https://bugs.webkit.org/show_bug.cgi?id=211424
+
+        Reviewed by Alex Christensen.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::types): Remove check of HAVE(NETWORK_EXTENSION),
+        not needed because ENABLE(CONTENT_FILTER) is only done on Cocoa platforms,
+        and HAVE(NETWORK_EXTENSION) is true for all of those.
+        * platform/cocoa/NetworkExtensionContentFilter.mm: Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(SEC_TRUST_EVALUATE_WITH_ERROR)
         https://bugs.webkit.org/show_bug.cgi?id=211429
 

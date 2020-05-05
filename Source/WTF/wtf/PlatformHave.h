@@ -72,10 +72,6 @@
 #define HAVE_HISERVICES 1
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-#define HAVE_NETWORK_EXTENSION 1
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #define HAVE_READLINE 1
 #endif
