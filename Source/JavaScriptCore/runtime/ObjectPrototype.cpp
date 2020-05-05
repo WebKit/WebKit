@@ -325,29 +325,29 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
     if (result)
         return JSValue::encode(result);
 
-    PropertyName toStringTagSymbol = vm.propertyNames->toStringTagSymbol;
-    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPropertySlot(globalObject, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
-        if (found) {
-            JSValue stringTag = toStringTagSlot.getValue(globalObject, toStringTagSymbol);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (stringTag.isString()) {
-                JSString* result = jsString(globalObject, vm.smallStrings.objectStringStart(), asString(stringTag), vm.smallStrings.singleCharacterString(']'));
-                RETURN_IF_EXCEPTION(scope, { });
-                thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, result, toStringTagSlot);
-                return result;
-            }
-        }
+    String tag = thisObject->methodTable(vm)->toStringName(thisObject, globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    JSString* jsTag = nullptr;
 
-        String tag = thisObject->methodTable(vm)->toStringName(thisObject, globalObject);
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::Get);
+    bool hasProperty = thisObject->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
+        JSValue tagValue = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
         RETURN_IF_EXCEPTION(scope, { });
-        String newString = tryMakeString("[object ", WTFMove(tag), "]");
-        if (!newString)
-            return throwOutOfMemoryError(globalObject, scope);
+        if (tagValue.isString())
+            jsTag = asString(tagValue);
+    }
 
-        auto result = jsNontrivialString(vm, newString);
-        thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, result, toStringTagSlot);
-        return result;
-    })));
+    if (!jsTag) {
+        ASSERT_WITH_MESSAGE(tag.length() > 1, "toStringName() should return strings two or more characters long.");
+        jsTag = jsNontrivialString(vm, WTFMove(tag));
+    }
+
+    JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
+    RETURN_IF_EXCEPTION(scope, { });
+    thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, jsResult, slot);
+    return JSValue::encode(jsResult);
 }
 
 } // namespace JSC

@@ -1,3 +1,89 @@
+2020-05-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Object.prototype.toString is not spec-perfect
+        https://bugs.webkit.org/show_bug.cgi?id=199138
+
+        Reviewed by Darin Adler and Keith Miller.
+
+        Before ES6, Object.prototype.toString relied only on internal [[Class]] slot. Starting with ES6,
+        Object.prototype.toString checks for a handful of internal slots, mimicing [[Class]], to ensure
+        backwards compatibility for pre-ES6 instances. Newly-added built-ins provide @@toStringTag for
+        the method to use.
+
+        Before this change, Object.prototype.toString in JSC relied on className() a.k.a [[Class]] for
+        all instances. For (almost all) new built-ins, it was overriden by toStringName() returning
+        "Object", while @@toStringTag was set to correct value. This is quite an error-prone approach
+        and observable spec discrepancy if @@toStringTag is deleted or set to a non-string.
+
+        This change eliminates the above-mentioned discrepancy and fixes Object.prototype.toString
+        to return "[object Function]" for callable Proxy objects, aligning JSC with the spec [1], V8,
+        and SpiderMonkey.
+
+        For Object.prototype.toString to work through DebuggerScope and JSProxy, we perform all checks
+        in JSObject::toStringName(). Given that isArray() may throw a TypeError [2], we invoke
+        toStringName() before @@toStringTag lookup to accomodate revoked Proxy case.
+
+        Also, this patch defines @@toStringTag for WebAssembly namespace object (to match Chrome),
+        JSC shell, and ConsoleObject.
+
+        [1]: https://tc39.es/ecma262/#sec-object.prototype.tostring
+        [2]: https://tc39.es/ecma262/#sec-isarray (step 3.a)
+
+        * jsc.cpp:
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::toStringName): Deleted.
+        * runtime/BigIntObject.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::toStringName):
+        * runtime/BooleanObject.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::toStringName):
+        * runtime/DateInstance.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::toStringName):
+        * runtime/ErrorInstance.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::toStringName): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::toStringName): Deleted.
+        * runtime/JSMap.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toStringName):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::toStringName): Deleted.
+        * runtime/JSSet.h:
+        * runtime/JSWeakMap.cpp:
+        (JSC::JSWeakMap::toStringName): Deleted.
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakObjectRef.cpp:
+        (JSC::JSWeakObjectRef::toStringName): Deleted.
+        * runtime/JSWeakObjectRef.h:
+        * runtime/JSWeakSet.cpp:
+        (JSC::JSWeakSet::toStringName): Deleted.
+        * runtime/JSWeakSet.h:
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::toStringName):
+        * runtime/NumberObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::toStringName): Deleted.
+        * runtime/ProxyObject.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::toStringName):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::toStringName):
+        * runtime/StringObject.h:
+        * runtime/SymbolObject.cpp:
+        (JSC::SymbolObject::toStringName): Deleted.
+        * runtime/SymbolObject.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::finishCreation):
+
 2020-05-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement BigInt.asIntN and BigInt.asUintN

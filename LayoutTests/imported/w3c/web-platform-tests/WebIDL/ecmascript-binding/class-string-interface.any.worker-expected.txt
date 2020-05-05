@@ -5,6 +5,6 @@ PASS Object.prototype.toString applied to the prototype
 PASS Object.prototype.toString applied to an instance 
 PASS Object.prototype.toString applied after modifying the prototype's @@toStringTag 
 PASS Object.prototype.toString applied to the instance after modifying the instance's @@toStringTag 
-FAIL Object.prototype.toString applied to a null-prototype instance assert_equals: expected "[object Object]" but got "[object Blob]"
-FAIL Object.prototype.toString applied after deleting @@toStringTag assert_equals: prototype expected "[object Object]" but got "[object Blob]"
+PASS Object.prototype.toString applied to a null-prototype instance 
+PASS Object.prototype.toString applied after deleting @@toStringTag 
 

@@ -114,6 +114,7 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     if (Options::useWebAssemblyStreamingApi()) {
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming", webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming", webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));

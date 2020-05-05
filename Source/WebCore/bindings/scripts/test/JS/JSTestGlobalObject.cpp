@@ -700,9 +700,6 @@ const ClassInfo JSTestGlobalObjectPrototype::s_info = { "TestGlobalObject", &Bas
 void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-#if ENABLE(TEST_FEATURE)
-    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testPrivateFunctionPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestGlobalObjectInstanceFunctionTestPrivateFunction), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-#endif
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

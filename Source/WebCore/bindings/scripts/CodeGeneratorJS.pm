@@ -4301,11 +4301,12 @@ sub GenerateImplementation
     my $hashTable = $justGenerateValueArray ? "nullptr" : "&${className}PrototypeTable";
     push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${hashTable}, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
 
-    if (PrototypeHasStaticPropertyTable($interface) || IsGlobalInterface($interface)) {
-        push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    Base::finishCreation(vm);\n");
-        push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n") if !IsGlobalInterface($interface);
+    push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    Base::finishCreation(vm);\n");
+
+    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface)) {
+        push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
 
         my @runtimeEnabledProperties = @runtimeEnabledOperations;
         push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
@@ -4374,11 +4375,11 @@ sub GenerateImplementation
         push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n") if $interface->iterable and !IsKeyValueIterableInterface($interface);
 
         addUnscopableProperties($interface);
-
-        assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-        push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
-        push(@implContent, "}\n\n");
     }
+
+    assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
+    push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
+    push(@implContent, "}\n\n");
 
     # - Initialize static ClassInfo object
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
@@ -7339,12 +7340,8 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    {\n");
     push(@$outputArray, "    }\n");
 
-    if (PrototypeHasStaticPropertyTable($interface) || IsGlobalInterface($interface)) {
-        $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if IsGlobalInterface($interface);
-
-        push(@$outputArray, "\n");
-        push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
-    }
+    push(@$outputArray, "\n");
+    push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
 
     # FIXME: Should this override putByIndex as well?
     if ($interface->extendedAttributes->{CustomPutOnPrototype}) {
@@ -7357,6 +7354,7 @@ sub GeneratePrototypeDeclaration
         push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
     }
 
+    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if PrototypeHasStaticPropertyTable($interface) && IsGlobalInterface($interface);
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObjectOnPrototype};
 
     # structure flags

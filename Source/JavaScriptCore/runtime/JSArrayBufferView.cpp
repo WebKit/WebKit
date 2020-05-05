@@ -42,11 +42,6 @@ const ClassInfo JSArrayBufferView::s_info = {
     "ArrayBufferView", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferView)
 };
 
-String JSArrayBufferView::toStringName(const JSObject*, JSGlobalObject*)
-{
-    return "Object"_s;
-}
-
 JSArrayBufferView::ConstructionContext::ConstructionContext(
     Structure* structure, uint32_t length, void* vector)
     : m_structure(structure)

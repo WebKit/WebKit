@@ -817,7 +817,8 @@
 - path: ChakraCore/test/LetConst/defer5.js
   cmd: runChakra :baseline, "ReferenceError", "defer5.baseline-jsc", []
 - path: ChakraCore/test/LetConst/delete.js
-  cmd: runChakra :baseline, "NoException", "delete.baseline", []
+  # The test should use Reflect.ownKeys as `this` may have symbol properties.
+  cmd: runChakra :skipDueToOutdatedOrBadTest, "NoException", "", []
 - path: ChakraCore/test/LetConst/dop.js
   cmd: runChakra :baseline, "NoException", "dop.baseline-jsc", []
 - path: ChakraCore/test/LetConst/dop1.js

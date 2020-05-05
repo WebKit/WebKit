@@ -671,7 +671,7 @@ static void testJSCEvaluateInObject()
         g_assert_true(JSC_IS_VALUE(module.get()));
         g_assert_true(jsc_value_is_object(module.get()));
         GUniquePtr<char> valueString(jsc_value_to_string(module.get()));
-        g_assert_cmpstr(valueString.get(), ==, "[object GlobalObject]");
+        g_assert_cmpstr(valueString.get(), ==, "[object Object]");
         jsc_context_set_value(context.get(), "module", module.get());
 
         GRefPtr<JSCValue> bar = adoptGRef(jsc_value_object_get_property(module.get(), "bar"));

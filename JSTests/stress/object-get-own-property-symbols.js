@@ -3,8 +3,9 @@
 var global = (Function("return this")());
 
 // private names for privileged code should not be exposed.
-if (Object.getOwnPropertySymbols(global).length !== 0)
-    throw "Error: bad value " + Object.getOwnPropertySymbols(global).length;
+var globalSymbols = Object.getOwnPropertySymbols(global).filter(s => s !== Symbol.toStringTag);
+if (globalSymbols.length !== 0)
+    throw "Error: bad value " + globalSymbols.length;
 
 var object = {};
 var symbol = Symbol("Cocoa");

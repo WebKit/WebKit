@@ -50,6 +50,11 @@ void DateInstance::finishCreation(VM& vm, double time)
     m_internalNumber = timeClip(time);
 }
 
+String DateInstance::toStringName(const JSObject*, JSGlobalObject*)
+{
+    return "Date"_s;
+}
+
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM& vm) const
 {
     double milli = internalNumber();

@@ -53,8 +53,6 @@ public:
 
     static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
-    static String toStringName(const JSObject*, JSGlobalObject*);
-
 private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSValue);
     JS_EXPORT_PRIVATE BigIntObject(VM&, Structure*);

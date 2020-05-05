@@ -51,6 +51,8 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
+
+    static String toStringName(const JSObject*, JSGlobalObject*);
 };
 static_assert(sizeof(BooleanObject) == sizeof(JSWrapperObject));
 

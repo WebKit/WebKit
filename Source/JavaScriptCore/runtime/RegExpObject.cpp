@@ -167,6 +167,11 @@ bool RegExpObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
     return Base::put(cell, globalObject, propertyName, value, slot);
 }
 
+String RegExpObject::toStringName(const JSObject*, JSGlobalObject*)
+{
+    return "RegExp"_s;
+}
+
 JSValue RegExpObject::exec(JSGlobalObject* globalObject, JSString* string)
 {
     return execInline(globalObject, string);

@@ -58,8 +58,6 @@ private:
         : Base(vm, structure)
     {
     }
-
-    static String toStringName(const JSObject*, JSGlobalObject*);
 };
 
 static_assert(std::is_final<JSWeakMap>::value, "Required for JSType based casting");

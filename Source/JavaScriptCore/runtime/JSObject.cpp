@@ -24,6 +24,7 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "ArrayConstructor.h"
 #include "ButterflyInlines.h"
 #include "CatchScope.h"
 #include "CustomGetterSetter.h"
@@ -519,9 +520,16 @@ String JSObject::className(const JSObject* object, VM& vm)
 String JSObject::toStringName(const JSObject* object, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    const ClassInfo* info = object->classInfo(vm);
-    ASSERT(info);
-    return info->className;
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    bool objectIsArray = isArray(globalObject, object);
+    RETURN_IF_EXCEPTION(scope, String());
+    if (objectIsArray)
+        return "Array"_s;
+    if (TypeInfo::isArgumentsType(object->type()))
+        return "Arguments"_s;
+    if (const_cast<JSObject*>(object)->isCallable(vm))
+        return "Function"_s;
+    return "Object"_s;
 }
 
 String JSObject::calculatedClassName(JSObject* object)

@@ -166,6 +166,11 @@ void StringObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject*
     return JSObject::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
+String StringObject::toStringName(const JSObject*, JSGlobalObject*)
+{
+    return "String"_s;
+}
+
 StringObject* constructString(VM& vm, JSGlobalObject* globalObject, JSValue string)
 {
     StringObject* object = StringObject::create(vm, globalObject->stringObjectStructure());

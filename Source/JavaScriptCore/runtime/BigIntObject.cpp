@@ -56,11 +56,6 @@ void BigIntObject::finishCreation(VM& vm, JSValue bigInt)
     setInternalValue(vm, bigInt);
 }
 
-String BigIntObject::toStringName(const JSObject*, JSGlobalObject*)
-{
-    return "Object"_s;
-}
-
 JSValue BigIntObject::defaultValue(const JSObject* object, JSGlobalObject*, PreferredPrimitiveType)
 {
     const BigIntObject* bigIntObject = jsCast<const BigIntObject*>(object);

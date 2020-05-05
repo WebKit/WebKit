@@ -44,6 +44,11 @@ void NumberObject::finishCreation(VM& vm)
     ASSERT(type() == NumberObjectType);
 }
 
+String NumberObject::toStringName(const JSObject*, JSGlobalObject*)
+{
+    return "Number"_s;
+}
+
 NumberObject* constructNumber(JSGlobalObject* globalObject, JSValue number)
 {
     NumberObject* object = NumberObject::create(globalObject->vm(), globalObject->numberObjectStructure());

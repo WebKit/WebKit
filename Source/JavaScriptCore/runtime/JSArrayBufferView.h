@@ -212,8 +212,6 @@ protected:
 
     ArrayBuffer* existingBufferInButterfly();
 
-    static String toStringName(const JSObject*, JSGlobalObject*);
-
     VectorPtr m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;

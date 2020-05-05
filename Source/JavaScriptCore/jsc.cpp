@@ -494,6 +494,7 @@ private:
     void finishCreation(VM& vm, const Vector<String>& arguments)
     {
         Base::finishCreation(vm);
+        JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
         addFunction(vm, "debug", functionDebug, 1);
         addFunction(vm, "describe", functionDescribe, 1);

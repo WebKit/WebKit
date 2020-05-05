@@ -51,24 +51,6 @@ ProxyObject::ProxyObject(VM& vm, Structure* structure)
 {
 }
 
-String ProxyObject::toStringName(const JSObject* object, JSGlobalObject* globalObject)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    const ProxyObject* proxy = jsCast<const ProxyObject*>(object);
-    while (proxy) {
-        const JSObject* target = proxy->target();
-        bool targetIsArray = isArray(globalObject, target);
-        if (UNLIKELY(scope.exception()))
-            break;
-        if (targetIsArray)
-            RELEASE_AND_RETURN(scope, target->classInfo(vm)->methodTable.toStringName(target, globalObject));
-
-        proxy = jsDynamicCast<const ProxyObject*>(vm, target);
-    }
-    return "Object"_s;
-}
-
 Structure* ProxyObject::structureForTarget(JSGlobalObject* globalObject, JSValue target)
 {
     VM& vm = globalObject->vm();

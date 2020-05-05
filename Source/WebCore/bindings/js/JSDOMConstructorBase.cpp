@@ -46,19 +46,6 @@ CallData JSDOMConstructorBase::getCallData(JSCell*)
     return callData;
 }
 
-String JSDOMConstructorBase::className(const JSObject*, JSC::VM&)
-{
-    return "Function"_s;
-}
-
-String JSDOMConstructorBase::toStringName(const JSObject* object, JSC::JSGlobalObject* lexicalGlobalObject)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    const ClassInfo* info = object->classInfo(vm);
-    ASSERT(info);
-    return info->methodTable.className(object, vm);
-}
-
 JSC::IsoSubspace* JSDOMConstructorBase::subspaceForImpl(JSC::VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->domConstructorSpace();

@@ -311,4 +311,9 @@ bool ErrorInstance::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, P
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
+String ErrorInstance::toStringName(const JSObject*, JSGlobalObject*)
+{
+    return "Error"_s;
+}
+
 } // namespace JSC
