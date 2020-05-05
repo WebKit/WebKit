@@ -86,7 +86,7 @@ class AbstractQueueTest(CommandsTest):
         queue._options.port = port
 
         queue.run_webkit_patch(run_args)
-        expected_run_args = ["echo", "--status-host=example.com", "--bot-id=gort"]
+        expected_run_args = ["echo", "--bot-id=gort"]
         if port:
             expected_run_args.append("--port=%s" % port)
         expected_run_args.extend(run_args)
@@ -243,19 +243,19 @@ class CommitQueueTest(QueuesTest):
         tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=mac
+            "process_work_item": """Running: webkit-patch clean --port=mac
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=mac
+Running: webkit-patch update --port=mac
 MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
+Running: webkit-patch apply-attachment --no-update --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=mac
+Running: webkit-patch validate-changelog --check-oops --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
+Running: webkit-patch build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
+Running: webkit-patch build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
 MOCK: update_status: commit-queue Passed tests
-Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=mac
+Running: webkit-patch land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=mac
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
@@ -330,19 +330,19 @@ MOCK: release_work_item: commit-queue 10000
         tool.buildbot.light_tree_on_fire()
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
+            "process_work_item": """Running: webkit-patch clean --port=%(port)s
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=%(port)s
+Running: webkit-patch update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s
+Running: webkit-patch apply-attachment --no-update --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10000 --port=%(port)s
+Running: webkit-patch validate-changelog --check-oops --non-interactive 10000 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s
+Running: webkit-patch build --no-clean --no-update --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=%(port)s
+Running: webkit-patch build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Passed tests
-Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=%(port)s
+Running: webkit-patch land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
@@ -359,15 +359,15 @@ MOCK: release_work_item: commit-queue 10000
         assert(revert_patch.is_revert())
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s
+            "process_work_item": """Running: webkit-patch clean --port=%(port)s
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=%(port)s
+Running: webkit-patch update --port=%(port)s
 MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10005 --port=%(port)s
+Running: webkit-patch apply-attachment --no-update --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --check-oops --non-interactive 10005 --port=%(port)s
+Running: webkit-patch validate-changelog --check-oops --non-interactive 10005 --port=%(port)s
 MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10005 --port=%(port)s
+Running: webkit-patch land-attachment --force-clean --non-interactive --parent-command=commit-queue 10005 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10005
@@ -412,7 +412,7 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         queue._tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         queue._options = Mock()
         queue._options.port = None
-        expected_logs = """Running: webkit-patch --status-host=example.com clean --port=mac
+        expected_logs = """Running: webkit-patch clean --port=mac
 MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Error: commit-queue did not process patch. Reason: Patch is obsolete.
 MOCK: release_work_item: commit-queue 10000
@@ -475,15 +475,15 @@ class StyleQueueTest(QueuesTest):
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
             "process_work_item": """MOCK: update_status: style-queue Started processing patch
-Running: webkit-patch --status-host=example.com clean
+Running: webkit-patch clean
 MOCK: update_status: style-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update
+Running: webkit-patch update
 MOCK: update_status: style-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000
+Running: webkit-patch apply-attachment --no-update --non-interactive 10000
 MOCK: update_status: style-queue Applied patch
-Running: webkit-patch --status-host=example.com apply-watchlist-local 50000
+Running: webkit-patch apply-watchlist-local 50000
 MOCK: update_status: style-queue Watchlist applied
-Running: webkit-patch --status-host=example.com check-style-local --non-interactive --quiet
+Running: webkit-patch check-style-local --non-interactive --quiet
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000
@@ -498,18 +498,18 @@ MOCK: release_work_item: style-queue 10000
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
             "process_work_item": """MOCK: update_status: style-queue Started processing patch
-Running: webkit-patch --status-host=example.com clean
+Running: webkit-patch clean
 MOCK: update_status: style-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update
+Running: webkit-patch update
 MOCK: update_status: style-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000
+Running: webkit-patch apply-attachment --no-update --non-interactive 10000
 MOCK: update_status: style-queue Applied patch
-Running: webkit-patch --status-host=example.com apply-watchlist-local 50000
-Exception for ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000]
+Running: webkit-patch apply-watchlist-local 50000
+Exception for ['echo', 'apply-watchlist-local', 50000]
 
 MOCK command output
 MOCK: update_status: style-queue Unabled to apply watchlist
-Running: webkit-patch --status-host=example.com check-style-local --non-interactive --quiet
+Running: webkit-patch check-style-local --non-interactive --quiet
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000

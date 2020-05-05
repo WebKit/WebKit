@@ -1,5 +1,17 @@
 2020-05-05  Aakash Jain  <aakash_jain@apple.com>
 
+        webkitbot isn't responding properly in irc
+        https://bugs.webkit.org/show_bug.cgi?id=211458
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.run_webkit_patch): Removed status-host paramter since old ews server has been decommissioned.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py: Updated unit-tests.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2020-05-05  Aakash Jain  <aakash_jain@apple.com>
+
         EWS should skip Apple Win build and tests for patches that only change WebKit2 sources
         https://bugs.webkit.org/show_bug.cgi?id=211210
 
