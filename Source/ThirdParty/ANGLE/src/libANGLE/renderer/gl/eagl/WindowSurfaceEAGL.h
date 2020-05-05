@@ -9,10 +9,6 @@
 #ifndef LIBANGLE_RENDERER_GL_EAGL_WINDOWSURFACEEAGL_H_
 #define LIBANGLE_RENDERER_GL_EAGL_WINDOWSURFACEEAGL_H_
 
-#import "common/platform.h"
-
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
-
 #include "libANGLE/renderer/gl/SurfaceGL.h"
 
 #ifdef __OBJC__
@@ -108,7 +104,5 @@ class WindowSurfaceEAGL : public SurfaceGL
 };
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_WINDOWSURFACEEAGL_H_

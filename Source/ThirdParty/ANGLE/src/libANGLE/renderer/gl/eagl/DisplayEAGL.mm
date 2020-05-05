@@ -205,7 +205,11 @@ egl::ConfigSet DisplayEAGL::generateConfigs()
     config.bindToTextureRGB  = EGL_FALSE;
     config.bindToTextureRGBA = EGL_FALSE;
 
+#    if !ANGLE_PLATFORM_MACCATALYST
     config.bindToTextureTarget = EGL_TEXTURE_2D;
+#    else
+    config.bindToTextureTarget = EGL_TEXTURE_RECTANGLE_ANGLE;
+#    endif
 
     config.surfaceType = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;
 
@@ -374,4 +378,4 @@ void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#endif  // defined(ANGLE_PLATFORM_IOS)

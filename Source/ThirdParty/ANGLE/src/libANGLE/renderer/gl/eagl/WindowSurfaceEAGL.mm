@@ -305,4 +305,4 @@ FramebufferImpl *WindowSurfaceEAGL::createDefaultFramebuffer(const gl::Context *
 
 }  // namespace rx
 
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#endif  // defined(ANGLE_PLATFORM_IOS)

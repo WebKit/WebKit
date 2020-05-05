@@ -7,10 +7,6 @@
 #ifndef LIBANGLE_RENDERER_GL_EAGL_IOSURFACESURFACEEAGL_H_
 #define LIBANGLE_RENDERER_GL_EAGL_IOSURFACESURFACEEAGL_H_
 
-#include "common/platform.h"
-
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
-
 #include "libANGLE/renderer/gl/SurfaceGL.h"
 #include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
@@ -89,7 +85,5 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
 };
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_IOSURFACESURFACEEAGL_H_
