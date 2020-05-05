@@ -129,6 +129,7 @@ MESSAGE_RECEIVERS = \
     LegacyCustomProtocolManagerProxy \
     LibWebRTCCodecs \
     LibWebRTCCodecsProxy \
+    LibWebRTCNetwork \
     MediaPlayerPrivateRemote \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
@@ -228,7 +229,6 @@ MESSAGE_RECEIVERS = \
     WebProcessProxy \
     WebRTCMonitor \
     WebRTCResolver \
-    WebRTCSocket \
     WebResourceLoader \
     WebSWClientConnection \
     WebSWContextManagerConnection \

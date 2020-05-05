@@ -25,35 +25,35 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#include "Connection.h"
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCSocketFactory.h"
+#include "WebMDNSRegister.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCResolver.h"
-#include "WebRTCSocket.h"
-#endif
-
-#include "WebMDNSRegister.h"
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 
 namespace WebKit {
 
-class LibWebRTCNetwork {
+class LibWebRTCNetwork : public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCNetwork() = default;
+    ~LibWebRTCNetwork();
 
+    void setConnection(RefPtr<IPC::Connection>&&);
     void networkProcessCrashed();
 
     bool isActive() const;
 
 #if USE(LIBWEBRTC)
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
 
     void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
 
-    WebRTCSocket socket(WebCore::LibWebRTCSocketIdentifier identifier) { return WebRTCSocket(socketFactory(), identifier); }
     WebRTCResolver resolver(LibWebRTCResolverIdentifier identifier) { return WebRTCResolver(socketFactory(), identifier); }
 #endif
 
@@ -63,28 +63,25 @@ public:
 
 private:
 #if USE(LIBWEBRTC)
+    void signalReadPacket(WebCore::LibWebRTCSocketIdentifier, const IPC::DataReference&, const RTCNetwork::IPAddress&, uint16_t port, int64_t);
+    void signalSentPacket(WebCore::LibWebRTCSocketIdentifier, int, int64_t);
+    void signalAddressReady(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&);
+    void signalConnect(WebCore::LibWebRTCSocketIdentifier);
+    void signalClose(WebCore::LibWebRTCSocketIdentifier, int);
+    void signalNewConnection(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, const WebKit::RTCNetwork::SocketAddress&);
+#endif
+
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+
+#if USE(LIBWEBRTC)
     LibWebRTCSocketFactory m_socketFactory;
     WebRTCMonitor m_webNetworkMonitor;
 #endif
 #if ENABLE(WEB_RTC)
     WebMDNSRegister m_mdnsRegister;
 #endif
+    RefPtr<IPC::Connection> m_connection;
 };
-
-inline void LibWebRTCNetwork::networkProcessCrashed()
-{
-#if USE(LIBWEBRTC)
-    m_webNetworkMonitor.networkProcessCrashed();
-#endif
-}
-
-inline bool LibWebRTCNetwork::isActive() const
-{
-#if USE(LIBWEBRTC)
-    return WebCore::LibWebRTCProvider::hasWebRTCThreads();
-#else
-    return false;
-#endif
-}
 
 } // namespace WebKit

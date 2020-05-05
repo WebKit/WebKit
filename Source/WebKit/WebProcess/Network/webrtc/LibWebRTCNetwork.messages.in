@@ -22,13 +22,13 @@
 
 #if USE(LIBWEBRTC)
 
-messages -> WebRTCSocket NotRefCounted {
-    SignalReadPacket(IPC::DataReference data, WebKit::RTCNetwork::IPAddress address, uint16_t port, int64_t timestamp)
-    SignalSentPacket(int packetSize, int64_t timestamp)
-    SignalAddressReady(WebKit::RTCNetwork::SocketAddress address)
-    SignalConnect()
-    SignalClose(int error)
-    SignalNewConnection(WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, WebKit::RTCNetwork::SocketAddress remoteAddress)
+messages -> LibWebRTCNetwork NotRefCounted {
+    SignalReadPacket(WebCore::LibWebRTCSocketIdentifier socketIdentifier, IPC::DataReference data, WebKit::RTCNetwork::IPAddress address, uint16_t port, int64_t timestamp)
+    SignalSentPacket(WebCore::LibWebRTCSocketIdentifier socketIdentifier, int packetSize, int64_t timestamp)
+    SignalAddressReady(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebKit::RTCNetwork::SocketAddress address)
+    SignalConnect(WebCore::LibWebRTCSocketIdentifier socketIdentifier)
+    SignalClose(WebCore::LibWebRTCSocketIdentifier socketIdentifier, int error)
+    SignalNewConnection(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, WebKit::RTCNetwork::SocketAddress remoteAddress)
 }
 
 #endif // USE(LIBWEBRTC)

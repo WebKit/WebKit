@@ -1,3 +1,52 @@
+2020-05-05  Youenn Fablet  <youenn@apple.com>
+
+        Receiving WebRTC network packets should not go through the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=211290
+
+        Reviewed by Alex Christensen.
+
+        Instead of going to main thread before going to rtc network thread, we register a message receiver and dispatch directly to rtc network thread.
+        This ensures rtc packets are not blocked if main thread is busy.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        (WebKit::LibWebRTCSocketClient::signalSentPacket):
+        (WebKit::LibWebRTCSocketClient::signalAddressReady):
+        (WebKit::LibWebRTCSocketClient::signalConnect):
+        (WebKit::LibWebRTCSocketClient::signalClose):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::newConnection):
+        (WebKit::NetworkRTCProvider::closeListeningSockets):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.cpp: Added
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::connection):
+        (WebKit::LibWebRTCNetwork::~LibWebRTCNetwork):
+        (WebKit::LibWebRTCNetwork::networkProcessCrashed):
+        (WebKit::LibWebRTCNetwork::setConnection):
+        (WebKit::LibWebRTCNetwork::dispatchToThread):
+        (WebKit::LibWebRTCNetwork::signalAddressReady):
+        (WebKit::LibWebRTCNetwork::signalReadPacket):
+        (WebKit::LibWebRTCNetwork::signalSentPacket):
+        (WebKit::LibWebRTCNetwork::signalConnect):
+        (WebKit::LibWebRTCNetwork::signalClose):
+        (WebKit::LibWebRTCNetwork::signalNewConnection):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.messages.in: Added.
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        * WebProcess/Network/webrtc/WebRTCSocket.cpp: Removed.
+        * WebProcess/Network/webrtc/WebRTCSocket.h: Removed.
+
 2020-05-05  Tim Horton  <timothy_horton@apple.com>
 
         Excessive error logging from daemons trying to use WebKit, under -[UIDevice currentDevice]

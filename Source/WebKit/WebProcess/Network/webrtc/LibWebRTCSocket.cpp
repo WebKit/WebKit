@@ -81,13 +81,13 @@ void LibWebRTCSocket::signalAddressReady(const rtc::SocketAddress& address)
     SignalAddressReady(this, m_localAddress);
 }
 
-void LibWebRTCSocket::signalReadPacket(const WebCore::SharedBuffer& buffer, rtc::SocketAddress&& address, int64_t timestamp)
+void LibWebRTCSocket::signalReadPacket(const uint8_t* data, size_t size, rtc::SocketAddress&& address, int64_t timestamp)
 {
     if (m_isSuspended)
         return;
 
     m_remoteAddress = WTFMove(address);
-    SignalReadPacket(this, buffer.data(), buffer.size(), m_remoteAddress, timestamp);
+    SignalReadPacket(this, reinterpret_cast<const char*>(data), size, m_remoteAddress, timestamp);
 }
 
 void LibWebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)
