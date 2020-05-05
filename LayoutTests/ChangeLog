@@ -1,3 +1,16 @@
+2020-05-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [ Mac ] fast/animation/request-animation-frame-timestamps.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209079
+
+        Reviewed by Antoine Quint.
+
+        Make the test asynchronous instead of using timers to fix its flakiness.
+
+        * fast/animation/request-animation-frame-timestamps-expected.txt:
+        * fast/animation/request-animation-frame-timestamps.html:
+        * platform/mac/TestExpectations:
+
 2020-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rebaseline fast/css/font-face-opentype.html

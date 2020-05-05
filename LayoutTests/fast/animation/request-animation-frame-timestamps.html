@@ -4,46 +4,42 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<span id="e"></span>
-<span id="f"></span>
 <script>
-description("Tests the timestamps provided to requestAnimationFrame callbacks");
+    function busyWait(millis) {
+        let start = performance.now();
+        while (performance.now() - start < millis) { }
+    }
 
-function busyWait(millis) {
-    var start = Date.now();
-    while (Date.now()-start < millis) {}
-}
+    function firstRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(timestamp => {
+                debug("In firstRequestAnimationFrame()");
+                busyWait(10);
+                resolve(timestamp);
+            });
+        });
+    }
 
-var firstTimestamp = undefined;
+    function secondRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(timestamp => {
+                debug("In secondRequestAnimationFrame()");
+                resolve(timestamp);
+            });
+        });
+    }
 
-window.requestAnimationFrame(function(timestamp) {
-    firstTimestamp = timestamp;
-    shouldBeDefined("firstTimestamp");
-    busyWait(10);
-});
+    description("Tests the timestamps provided to requestAnimationFrame callbacks");
+    window.jsTestIsAsync = true;
 
-var secondTimestamp = undefined;
-window.requestAnimationFrame(function(timestamp) {
-    secondTimestamp = timestamp;
-    shouldBeDefined("secondTimestamp");
-    shouldBe("firstTimestamp", "secondTimestamp");
-});
-
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
-
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-setTimeout(function() {
-    shouldBeDefined("firstTimestamp");
-}, 100);
-
-setTimeout(function() {
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 200);
+    (async () => {
+        let timestamps = await Promise.all([firstRequestAnimationFrame(), secondRequestAnimationFrame()]);
+        firstTimestamp = timestamps[0];
+        secondTimestamp = timestamps[1];
+        shouldBe("firstTimestamp", "secondTimestamp");
+        finishJSTest();
+    })();
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
