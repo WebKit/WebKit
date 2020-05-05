@@ -879,6 +879,29 @@ TEST(RequestTextInputContext, TextInteraction_FocusingNonAssistedFocusedElementS
     EXPECT_TRUE(didScroll);
 }
 
+TEST(RequestTextInputContext, TextInteraction_HighlightSelectedText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<input id='input' value='hello'>")];
+
+    NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
+    EXPECT_EQ(1UL, contexts.count);
+    RetainPtr<_WKTextInputContext> inputElement = contexts[0];
+
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.focus()"];
+    [webView stringByEvaluatingJavaScript:@"input.setSelectionRange(0, 5)"];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+
+    {
+        TextInteractionForScope scope { webView, inputElement };
+        [webView waitForNextPresentationUpdate];
+        EXPECT_EQ(1UL, [[webView selectionViewRectsInContentCoordinates] count]);
+    }
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

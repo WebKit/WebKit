@@ -1,3 +1,35 @@
+2020-05-05  Daniel Bates  <dabates@apple.com>
+
+        Should show selection highlight during text interaction
+        https://bugs.webkit.org/show_bug.cgi?id=211362
+        <rdar://problem/59191873>
+
+        Reviewed by Wenson Hsieh.
+
+        Break out text interaction tracking into its own ivar instead of using the
+        WebKit::InteractionIsHappening selection suppression reason so that I can
+        key off it to only disallow zooming to reveal the focused element during
+        a text interaction. The selection suppression machinery does more than this.
+        It also deactivates selection assistance, painting of highlights, etc, which
+        I don't want.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]): Reset state.
+        (-[WKContentView becomeFirstResponderForWebView]): Activate selection assistant
+        during a text interaction if the selection assistant is not being suppressed.
+        (-[WKContentView _zoomToRevealFocusedElement]): Early return if called during a
+        text interaction. The function -_didFinishTextInteractionInTextInputContext will
+        trigger the zoom after the interaction completes.
+        (-[WKContentView _didCommitLoadForMainFrame]): Reset state.
+
+        (-[WKContentView _willBeginTextInteractionInTextInputContext:]):
+        (-[WKContentView _didFinishTextInteractionInTextInputContext:]):
+        Update state. While I am here, text interaction is considered a gesture so
+        also update _usingGestureForSelection. This means that the selection view
+        will be updated immediately on a selection change during a text interaction
+        instead of waiting until the next layer tree commit occurs.
+
 2020-05-05  Kate Cheney  <katherine_cheney@apple.com>
 
         Check for app-bound domains should confirm WKAppBoundDomains key exists when checking for default app-bound protocols.

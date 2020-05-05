@@ -354,6 +354,7 @@ struct WKAutoCorrectionData {
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
     BOOL _textInteractionDidChangeFocusedElement;
+    BOOL _textInteractionIsHappening;
 
     WebCore::PointerID m_commitPotentialTapPointerId;
 

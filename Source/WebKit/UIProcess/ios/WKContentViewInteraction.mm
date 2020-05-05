@@ -925,6 +925,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 
     _textInteractionDidChangeFocusedElement = NO;
+    _textInteractionIsHappening = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
@@ -1335,7 +1336,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
-        if ([self canShowNonEmptySelectionView])
+        if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _textInteractionIsHappening))
             [_textInteractionAssistant activateSelection];
 
         [self _scheduleResetInputViewDeferralAfterBecomingFirstResponder];
@@ -1929,7 +1930,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons)
+    if (_suppressSelectionAssistantReasons || _textInteractionIsHappening)
         return;
 
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
@@ -4252,6 +4253,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_webView _didCommitLoadForMainFrame];
 
     _textInteractionDidChangeFocusedElement = NO;
+    _textInteractionIsHappening = NO;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
 }
@@ -5172,13 +5174,15 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _textInteractionDidChangeFocusedElement = NO;
     _page->setShouldRevealCurrentSelectionAfterInsertion(false);
     _page->setCanShowPlaceholder(context._textInputContext, false);
-    [self _startSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    _usingGestureForSelection = YES;
+    _textInteractionIsHappening = YES;
 }
 
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    _textInteractionIsHappening = NO;
+    _usingGestureForSelection = NO;
     _page->setCanShowPlaceholder(context._textInputContext, true);
     if (_textInteractionDidChangeFocusedElement) {
         // Mark to zoom to reveal the newly focused element on the next editor state update.
