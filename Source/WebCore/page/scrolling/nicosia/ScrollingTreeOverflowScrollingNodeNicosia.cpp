@@ -101,7 +101,7 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 
 ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canScrollWithWheelEvent(wheelEvent))
+    if (!canHandleWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {

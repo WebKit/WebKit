@@ -103,6 +103,9 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!processWheelEventForScrollSnap(wheelEvent))
         return false;
 #endif
+    if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+        return false;
+
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);

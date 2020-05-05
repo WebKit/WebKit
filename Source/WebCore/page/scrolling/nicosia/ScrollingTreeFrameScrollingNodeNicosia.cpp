@@ -116,7 +116,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const Scro
 
 ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (!canScrollWithWheelEvent(wheelEvent))
+    if (!canHandleWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {

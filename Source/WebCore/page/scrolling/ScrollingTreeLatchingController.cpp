@@ -74,7 +74,7 @@ Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
     return m_latchedNodeID;
 }
 
-void ScrollingTreeLatchingController::nodeDidHandleEvent(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID)
+void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrollingNodeID, const PlatformWheelEvent& wheelEvent)
 {
     LockHolder locker(m_latchedNodeMutex);
 

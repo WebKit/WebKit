@@ -53,7 +53,7 @@ public:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    virtual bool canScrollWithWheelEvent(const PlatformWheelEvent&) const;
+    virtual bool canHandleWheelEvent(const PlatformWheelEvent&) const;
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }

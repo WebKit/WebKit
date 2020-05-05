@@ -1,3 +1,72 @@
+2020-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow scrollbars don't grow when hovered
+        https://bugs.webkit.org/show_bug.cgi?id=210692
+        <rdar://problem/61977273>
+
+        Reviewed by Tim Horton.
+
+        Overlay scrollar interaction has a few behaviors that are mediated by ScrollAnimatorMac. These
+        are a trackpad two-finger tap, which sends a "MayBegin" wheel event (which can be followed by
+        a "Cancelled" on fingers up, if they didn't move), and hovering the scrollbar when visible, which
+        causes it to expand (unhovering causes it to fade out).
+        
+        To track these gestures on the scrolling thread, give ScrollingTree a ScrollingTreeGestureState.
+
+        Flashing the scrollbars on "MayBegin" is driven by didBeginScrollGesture()/didEndScrollGesture().
+        This relies on sending these for the correct scrollable area, and matching the begin/cancel,
+        so use the normal scrolling tree event handling code path for "MayBegin", and always send
+        "Cancelled" on the node that received "MayBegin. Do the same for "Began" and "Ended".
+        
+        Scrollbars expanding on hover is controlled by these functions on ScrollAnimatorMac:
+            void mouseEnteredContentArea();
+            void mouseExitedContentArea();
+            void mouseMovedInContentArea();
+            void mouseEnteredScrollbar(Scrollbar*) const;
+            void mouseExitedScrollbar(Scrollbar*) const;
+
+        This mostly (webkit.org/b/211347) works now that the mayBegin/Canceled state is updated correctly,
+        and is tested by a new test.
+
+        Tests: fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html
+               fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeGestureState.cpp: Added.
+        (WebCore::ScrollingTreeGestureState::ScrollingTreeGestureState):
+        (WebCore::ScrollingTreeGestureState::receivedWheelEvent):
+        (WebCore::ScrollingTreeGestureState::handleGestureCancel):
+        (WebCore::ScrollingTreeGestureState::nodeDidHandleEvent):
+        (WebCore::ScrollingTreeGestureState::clearAllNodes):
+        * page/scrolling/ScrollingTreeGestureState.h: Copied from Source/WebCore/page/scrolling/ScrollingTreeLatchingController.h.
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::nodeDidHandleEvent):
+        * page/scrolling/ScrollingTreeLatchingController.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::canHandleWheelEvent const):
+        (WebCore::ScrollingTreeScrollingNode::canScrollWithWheelEvent const): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        * platform/Logging.cpp:
+        (WebCore::initializeLogChannelsIfNecessary):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::isGestureStart const):
+        (WebCore::PlatformWheelEvent::isGestureCancel const):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::scrollbarState):
+
 2020-05-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r261102.

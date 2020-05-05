@@ -348,6 +348,7 @@
 		0FD41E6821F80C0E000C006D /* ScrollingTreeFrameHostingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD41E6621F80282000C006D /* ScrollingTreeFrameHostingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD41E6921F80D14000C006D /* ScrollingStateFrameHostingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD41E6521F80261000C006D /* ScrollingStateFrameHostingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD975D5245CCB4700C42299 /* ScrollingTreeGestureState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD975D2245CBDAF00C42299 /* ScrollingTreeGestureState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDA7C17188322EB00C954B5 /* JSTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C11188322EB00C954B5 /* JSTouch.h */; };
 		0FDA7C19188322EB00C954B5 /* JSTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C13188322EB00C954B5 /* JSTouchEvent.h */; };
 		0FDA7C1B188322EB00C954B5 /* JSTouchList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C15188322EB00C954B5 /* JSTouchList.h */; };
@@ -5932,6 +5933,8 @@
 		0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatQuad.h; sourceTree = "<group>"; };
 		0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuad.cpp; sourceTree = "<group>"; };
 		0FD7C21D23CE41E30096D102 /* PlatformWheelEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformWheelEvent.cpp; sourceTree = "<group>"; };
+		0FD975D2245CBDAF00C42299 /* ScrollingTreeGestureState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeGestureState.h; sourceTree = "<group>"; };
+		0FD975D4245CBDD700C42299 /* ScrollingTreeGestureState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeGestureState.cpp; sourceTree = "<group>"; };
 		0FDA7C10188322EB00C954B5 /* JSTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTouch.cpp; sourceTree = "<group>"; };
 		0FDA7C11188322EB00C954B5 /* JSTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTouch.h; sourceTree = "<group>"; };
 		0FDA7C12188322EB00C954B5 /* JSTouchEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTouchEvent.cpp; sourceTree = "<group>"; };
@@ -17636,6 +17639,8 @@
 				0FD41E6621F80282000C006D /* ScrollingTreeFrameHostingNode.h */,
 				0FEA3E85191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.cpp */,
 				0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */,
+				0FD975D4245CBDD700C42299 /* ScrollingTreeGestureState.cpp */,
+				0FD975D2245CBDAF00C42299 /* ScrollingTreeGestureState.h */,
 				0FFD45A8243BF257000D4BEA /* ScrollingTreeLatchingController.cpp */,
 				0FFD45A7243BF257000D4BEA /* ScrollingTreeLatchingController.h */,
 				1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */,
@@ -32791,6 +32796,7 @@
 				0FD41E6821F80C0E000C006D /* ScrollingTreeFrameHostingNode.h in Headers */,
 				0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */,
 				93C4A4151629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.h in Headers */,
+				0FD975D5245CCB4700C42299 /* ScrollingTreeGestureState.h in Headers */,
 				0FFD45AA243C3027000D4BEA /* ScrollingTreeLatchingController.h in Headers */,
 				0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,

@@ -28,32 +28,32 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollTypes.h"
-#include <wtf/Lock.h>
 #include <wtf/Markable.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
 class PlatformWheelEvent;
+class ScrollingTree;
 
-class ScrollingTreeLatchingController {
+// This class tracks state related to MayBegin, Begin, Ended and Canceled wheel events, which
+// should propagate to the main thread in order to update overlay scrollbars.
+class ScrollingTreeGestureState {
 public:
-    ScrollingTreeLatchingController();
+    ScrollingTreeGestureState(ScrollingTree&);
 
     void receivedWheelEvent(const PlatformWheelEvent&);
-    Optional<ScrollingNodeID> latchedNodeForEvent(const PlatformWheelEvent&) const;
+
+    bool handleGestureCancel(const PlatformWheelEvent&);
+
     void nodeDidHandleEvent(ScrollingNodeID, const PlatformWheelEvent&);
-
-    Optional<ScrollingNodeID> latchedNodeID() const;
-
-    void nodeWasRemoved(ScrollingNodeID);
-    void clearLatchedNode();
-
+    
 private:
-    mutable Lock m_latchedNodeMutex;
-    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_latchedNodeID;
-    MonotonicTime m_lastLatchedNodeInterationTime;
+    void clearAllNodes();
+
+    ScrollingTree& m_scrollingTree;
+    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_mayBeginNodeID;
+    Markable<ScrollingNodeID, IntegralMarkableTraits<ScrollingNodeID, 0>> m_activeNodeID;
 };
 
 }

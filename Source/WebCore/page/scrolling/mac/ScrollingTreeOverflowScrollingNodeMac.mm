@@ -74,13 +74,10 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
         return ScrollingEventResult::SendToMainThread;
 #endif
 
-    if (!canScrollWithWheelEvent(wheelEvent))
+    if (!canHandleWheelEvent(wheelEvent))
         return ScrollingEventResult::DidNotHandleEvent;
 
     bool handled = m_delegate.handleWheelEvent(wheelEvent);
-
-    scrollingTree().handleWheelEventPhase(scrollingNodeID(), wheelEvent.phase());
-    
     return handled ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
 }
 

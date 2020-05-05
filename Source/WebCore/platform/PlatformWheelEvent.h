@@ -155,6 +155,10 @@ public:
 #if ENABLE(KINETIC_SCROLLING)
     PlatformWheelEventPhase phase() const { return m_phase; }
     PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
+
+    bool isGestureBegin() const;
+    bool isGestureCancel() const;
+
     bool isEndOfNonMomentumScroll() const;
     bool isTransitioningToMomentumScroll() const;
     FloatPoint swipeVelocity() const;
@@ -219,6 +223,17 @@ inline bool PlatformWheelEvent::isEndOfMomentumScroll() const
 #endif // ENABLE(ASYNC_SCROLLING)
 
 #if ENABLE(KINETIC_SCROLLING)
+
+inline bool PlatformWheelEvent::isGestureBegin() const
+{
+    return m_phase == PlatformWheelEventPhaseMayBegin
+        || m_phase == PlatformWheelEventPhaseBegan;
+}
+
+inline bool PlatformWheelEvent::isGestureCancel() const
+{
+    return m_phase == PlatformWheelEventPhaseCancelled;
+}
 
 inline bool PlatformWheelEvent::isEndOfNonMomentumScroll() const
 {

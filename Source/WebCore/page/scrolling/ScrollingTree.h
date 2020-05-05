@@ -34,6 +34,7 @@
 #include "Region.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinatorTypes.h"
+#include "ScrollingTreeGestureState.h"
 #include "ScrollingTreeLatchingController.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/HashMap.h>
@@ -123,6 +124,8 @@ public:
 
     virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
     virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
+#else
+    void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) { }
 #endif
 
 #if PLATFORM(COCOA)
@@ -201,6 +204,8 @@ private:
     ScrollingTreeNodeMap m_nodeMap;
 
     ScrollingTreeLatchingController m_latchingController;
+    ScrollingTreeGestureState m_gestureState;
+
     RelatedNodesMap m_overflowRelatedNodesMap;
 
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>> m_activeOverflowScrollProxyNodes;

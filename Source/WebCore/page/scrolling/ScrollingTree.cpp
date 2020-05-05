@@ -56,7 +56,11 @@ struct CommitTreeState {
     OrphanScrollingNodeMap orphanNodes;
 };
 
-ScrollingTree::ScrollingTree() = default;
+ScrollingTree::ScrollingTree()
+    : m_gestureState(*this)
+{
+}
+
 ScrollingTree::~ScrollingTree() = default;
 
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
@@ -106,11 +110,20 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
             return ScrollingEventResult::DidNotHandleEvent;
         }
 
+        if (m_gestureState.handleGestureCancel(wheelEvent))
+            return ScrollingEventResult::DidHandleEvent;
+
+        m_gestureState.receivedWheelEvent(wheelEvent);
+
         if (auto latchedNodeID = m_latchingController.latchedNodeForEvent(wheelEvent)) {
             LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::handleWheelEvent: has latched node " << latchedNodeID);
-            auto* node = nodeForID(latchedNodeID.value());
-            if (is<ScrollingTreeScrollingNode>(node))
-                return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
+            auto* node = nodeForID(*latchedNodeID);
+            if (is<ScrollingTreeScrollingNode>(node)) {
+                auto result = downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
+                if (result == ScrollingEventResult::DidHandleEvent)
+                    m_gestureState.nodeDidHandleEvent(*latchedNodeID, wheelEvent);
+                return result;
+            }
         }
         
         FloatPoint position = wheelEvent.position();
@@ -124,8 +137,10 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
                 auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
                 auto result = scrollingNode.handleWheelEvent(wheelEvent);
 
-                if (result == ScrollingEventResult::DidHandleEvent)
-                    m_latchingController.nodeDidHandleEvent(wheelEvent, scrollingNode.scrollingNodeID());
+                if (result == ScrollingEventResult::DidHandleEvent) {
+                    m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
+                    m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
+                }
 
                 if (result != ScrollingEventResult::DidNotHandleEvent)
                     return result;
