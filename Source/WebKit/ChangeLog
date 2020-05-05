@@ -1,3 +1,24 @@
+2020-05-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        Check for app-bound domains should confirm WKAppBoundDomains key exists when checking for default app-bound protocols.
+        https://bugs.webkit.org/show_bug.cgi?id=211451
+        <rdar://problem/62715316
+
+        Reviewed by Brent Fulgham.
+
+        Checks for WKAppBoundDomains key before treating a protocol as
+        app-bound. This is a regression in expected behavior after making
+        In-App Browser privacy opt-in based on the presence of the key.
+
+        Also moves the check for special protocols inside of the completion handler for
+        ensureAppBoundDomains to make sure the check for the key has finished.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        Added a comment to clarify why we need to check for both an empty
+        app-bound domains list and the presence of the key for testing
+        purposes.
+
 2020-05-05  Timothy Horton  <timothy_horton@apple.com>
 
         "Essential Skeleton" does not respond to mouse events, only touch events

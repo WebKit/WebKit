@@ -461,17 +461,19 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
 {
     ASSERT(RunLoop::isMain());
 
-    if (shouldTreatURLProtocolAsAppBound(requestURL)) {
-        listener.didReceiveAppBoundDomainResult(NavigatingToAppBoundDomain::Yes);
-        return;
-    }
-
-    ensureAppBoundDomains([domain = WebCore::RegistrableDomain(requestURL), listener = makeRef(listener)] (auto& domains) mutable {
-        if (domains.isEmpty() && !keyExists) {
+    ensureAppBoundDomains([&requestURL, listener = makeRef(listener)] (auto& domains) mutable {
+        // Must check for both an empty app bound domains list and an empty key before returning nullopt
+        // because test cases may have app bound domains but no key.
+        bool hasAppBoundDomains = keyExists || !domains.isEmpty();
+        if (!hasAppBoundDomains) {
             listener->didReceiveAppBoundDomainResult(WTF::nullopt);
             return;
         }
-        listener->didReceiveAppBoundDomainResult(domains.contains(domain) ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No);
+        if (shouldTreatURLProtocolAsAppBound(requestURL)) {
+            listener->didReceiveAppBoundDomainResult(NavigatingToAppBoundDomain::Yes);
+            return;
+        }
+        listener->didReceiveAppBoundDomainResult(domains.contains(WebCore::RegistrableDomain(requestURL)) ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No);
     });
 }
 
