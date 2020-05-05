@@ -1,3 +1,21 @@
+2020-05-04  Tim Horton  <timothy_horton@apple.com>
+
+        Relax WKRemoteObjectRegistry signature validation for bool-equivalent types
+        https://bugs.webkit.org/show_bug.cgi?id=211419
+
+        Reviewed by Saam Barati.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (blockSignaturesAreCompatible):
+        (replyBlockSignature):
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        (validateReplyBlockSignature): Deleted.
+        Relax reply block signature validation slightly, considering signed char and BOOL,
+        which are equivalent and sometimes substituted for each other, to be equal.
+
+        This is still stricter than NSXPC's validation, but this is one of the
+        exceptions that they make.
+
 2020-05-04  Darin Adler  <darin@apple.com>
 
         [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
