@@ -21,6 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+GPUProcess/gstreamer/GPUProcessGStreamer.cpp
+GPUProcess/gstreamer/GPUProcessMainGStreamer.cpp
+
+GPUProcess/media/RemoteAudioDestinationManager.cpp
+
+GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
+
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 NetworkProcess/Classifier/WebResourceLoadStatisticsTelemetry.cpp
 
@@ -219,6 +226,8 @@ UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/wpe/WebPageProxyWPE.cpp
+
+WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
