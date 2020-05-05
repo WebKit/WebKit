@@ -1,3 +1,19 @@
+2020-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rebaseline fast/css/font-face-opentype.html
+        https://bugs.webkit.org/show_bug.cgi?id=211332
+        <rdar://problem/61833165>
+
+        Update for iOS. Also make the test insensitive to platform fallback fonts.
+
+        Unreviewed.
+
+        * fast/css/font-face-opentype.html:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/css/font-face-opentype-expected.txt:
+        * platform/mac/fast/css/font-face-opentype-expected.txt:
+
 2020-05-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [ Mac ] fast/animation/request-animation-frame-cancel2.html is flaky failing.

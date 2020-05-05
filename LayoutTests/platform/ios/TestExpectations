@@ -1306,7 +1306,6 @@ webkit.org/b/178955 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/178957 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
 
 webkit.org/b/178958 fast/css/font-face-multiple-faces.html [ Failure ]
-webkit.org/b/178958 fast/css/font-face-opentype.html [ Failure ]
 webkit.org/b/178958 fast/css/font-face-repeated-url.html [ Failure ]
 webkit.org/b/178958 fast/css/font-face-synthetic-bold-italic.html [ Failure ]
 webkit.org/b/178958 fast/css/font-face-weight-matching.html [ Failure ]
