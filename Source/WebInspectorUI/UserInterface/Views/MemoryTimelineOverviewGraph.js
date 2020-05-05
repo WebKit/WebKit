@@ -165,7 +165,7 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
             if (!(previousRecord || nextRecord))
                 return;
 
-            let xStart = xScale(startDiscontinuity.startTime);
+            let xStart = xScale(previousRecord ? previousRecord.endTime : startDiscontinuity.startTime);
             let xEnd = xScale(endDiscontinuity.endTime);
 
             // Extend the previous record to the start of the discontinuity.
@@ -208,7 +208,7 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
             // Extend the last value to current / end time.
             let lastRecord = visibleRecords.lastValue;
             if (lastRecord.startTime <= visibleEndTime) {
-                let x = Math.floor(xScale(visibleEndTime));
+                let x = Math.floor(xScale(lastRecord.endTime));
                 this._chart.addPointSet(x, pointSetForRecord(lastRecord));
             }
         }
