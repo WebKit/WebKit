@@ -58,7 +58,7 @@ String URLDecomposition::username() const
 void URLDecomposition::setUsername(StringView user)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.cannotBeABaseURL())
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"))
         return;
     fullURL.setUser(user);
     setFullURL(fullURL);
@@ -72,7 +72,7 @@ String URLDecomposition::password() const
 void URLDecomposition::setPassword(StringView password)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.cannotBeABaseURL())
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file"))
         return;
     fullURL.setPassword(password);
     setFullURL(fullURL);
@@ -180,7 +180,7 @@ static Optional<Optional<uint16_t>> parsePort(StringView string, StringView prot
 void URLDecomposition::setPort(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.cannotBeABaseURL() || fullURL.protocolIs("file") || !fullURL.canSetHostOrPort())
+    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIs("file") || !fullURL.canSetHostOrPort())
         return;
     auto port = parsePort(value, fullURL.protocol());
     if (!port)

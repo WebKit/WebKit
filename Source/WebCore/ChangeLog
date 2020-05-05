@@ -1,3 +1,22 @@
+2020-05-05  Rob Buis  <rbuis@igalia.com>
+
+        A URL cannot have a username/password/port if its host is null
+        https://bugs.webkit.org/show_bug.cgi?id=211358
+
+        Reviewed by Darin Adler.
+
+        A URL cannot have a username/password/port if its host is null [1], so
+        adjust URL.cpp accordingly.
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://url.spec.whatwg.org/#cannot-have-a-username-password-port
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setUsername):
+        (WebCore::URLDecomposition::setPassword):
+        (WebCore::URLDecomposition::setPort):
+
 2020-05-05  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerPrivateMediaStreamAVFObjC should unobserve the tracks from its audio and video track sets
