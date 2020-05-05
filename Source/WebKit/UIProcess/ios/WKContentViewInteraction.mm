@@ -8421,6 +8421,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (WebCore::IOSApplication::isPocketCity())
             return NO;
 
+        // <rdar://problem/62694519> "Essential Skeleton" does not respond to mouse events, only touch events
+        if (WebCore::IOSApplication::isEssentialSkeleton())
+            return NO;
+
         return YES;
     }();
 

@@ -369,6 +369,12 @@ bool IOSApplication::isPocketCity()
     return isPocketCity;
 }
 
+bool IOSApplication::isEssentialSkeleton()
+{
+    static bool isEssentialSkeleton = applicationBundleIsEqualTo("com.3d4medical.EssentialSkeleton"_s);
+    return isEssentialSkeleton;
+}
+
 #endif
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2020-05-05  Timothy Horton  <timothy_horton@apple.com>
+
+        "Essential Skeleton" does not respond to mouse events, only touch events
+        https://bugs.webkit.org/show_bug.cgi?id=211439
+        <rdar://problem/62694519>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldUseMouseGestureRecognizer]):
+        Add a quirk.
+
 2020-05-05  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Compile GPUProcess in WPE port as experimental feature
