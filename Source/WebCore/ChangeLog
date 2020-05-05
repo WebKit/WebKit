@@ -1,3 +1,28 @@
+2020-05-05  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Video loops when ran in rr record --chaos
+        https://bugs.webkit.org/show_bug.cgi?id=211182
+
+        Reviewed by Philippe Normand.
+
+        While trying to investigate a different bug, I ran the browser with
+        `rr record --chaos`, which makes it run very slowly and shuffles
+        thread scheduling to try to make existing race conditions more likely
+        to show up, also inevitably making the software run very slow.
+
+        Doing so I found something strange: the video kept looping even though
+        it didn't have the `loop` attribute set.
+
+        After some debugging I found that MediaPlayer decides if the video has
+        ended in part by checking `currentMediaTime()` is greater or equal to
+        the video duration, which was not guaranteed to be the case in
+        MediaPlayerPrivateGStreamer.
+
+        As a consequence of this patch, one new LayoutTest has passed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+
 2020-05-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Rename computedContentHeight/Width to computedHeight/Width
