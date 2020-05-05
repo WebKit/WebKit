@@ -2018,13 +2018,8 @@ webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-vali
 
 media/encrypted-media [ Pass ]
 media/encrypted-media/encrypted-media-constants.html [ Skip ]
-media/encrypted-media/encrypted-media-events.html [ Skip ]
 media/encrypted-media/encrypted-media-is-type-supported.html [ Skip ]
-media/encrypted-media/encrypted-media-not-loaded.html [ Skip ]
 media/encrypted-media/encrypted-media-session-lifetime.html [ Skip ]
-media/encrypted-media/encrypted-media-syntax.html [ Skip ]
-media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
-media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]

@@ -198,9 +198,6 @@ media/fullscreen-api-enabled-media-with-presentation-mode.html [ Skip ]
 
 media/encrypted-media/clearKey [ Skip ]
 
-media/encrypted-media/encrypted-media-events.html [ Skip ]
-media/encrypted-media/encrypted-media-not-loaded.html [ Skip ]
-media/encrypted-media/encrypted-media-syntax.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
 

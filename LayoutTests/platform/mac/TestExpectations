@@ -719,11 +719,6 @@ media/video-does-not-loop.html [ WontFix ]
 # This test uses movie matricies, which AVFoundation and QTKit64 do not support.
 media/video-size-intrinsic-scale.html [ WontFix ]
 
-# These tests are for an obsolete version of the EME spec.
-media/encrypted-media/encrypted-media-events.html [ WontFix ]
-media/encrypted-media/encrypted-media-not-loaded.html [ WontFix ]
-media/encrypted-media/encrypted-media-syntax.html [ WontFix ]
-
 # This test requires media engines not purge buffered date before currentTime.
 http/tests/media/video-buffered.html [ WontFix ]
 ## --- End media wontfix tests ---

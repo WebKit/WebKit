@@ -1713,8 +1713,6 @@ webkit.org/b/88230 svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure 
 webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Failure Timeout Crash ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout Crash ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Crash ]
 
 # This test also crashes after the FTL merge
@@ -4429,10 +4427,7 @@ webkit.org/b/190990 fast/block/basic/inline-content-with-floating-image.html [ F
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-events.html [ Crash Timeout ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-events.html [ Timeout ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-v2-syntax.html [ Timeout ]
 webkit.org/b/190991 http/tests/navigation/page-cache-mediakeysession.html [ Skip ]
 
 webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-list.html [ Failure ]

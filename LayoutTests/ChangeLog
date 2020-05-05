@@ -1,3 +1,30 @@
+2020-05-05  Charlie Turner  <cturner@igalia.com>
+
+        [EME] media/encrypted-media/encrypted-media-can-play-type.html is outdated
+        https://bugs.webkit.org/show_bug.cgi?id=154848
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Remove out-of-date EME tests and expectations.
+
+        * gpu-process/TestExpectations:
+        * media/encrypted-media/encrypted-media-events-expected.txt: Removed.
+        * media/encrypted-media/encrypted-media-events.html: Removed.
+        * media/encrypted-media/encrypted-media-not-loaded-expected.txt: Removed.
+        * media/encrypted-media/encrypted-media-not-loaded.html: Removed.
+        * media/encrypted-media/encrypted-media-syntax-expected.txt: Removed.
+        * media/encrypted-media/encrypted-media-syntax.html: Removed.
+        * media/encrypted-media/encrypted-media-v2-events-expected.txt: Removed.
+        * media/encrypted-media/encrypted-media-v2-events.html: Removed.
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt: Removed.
+        * media/encrypted-media/encrypted-media-v2-syntax.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/media/encrypted-media/encrypted-media-can-play-type-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/win/media/encrypted-media/encrypted-media-can-play-type-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
 2020-05-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update baselines after r260889
