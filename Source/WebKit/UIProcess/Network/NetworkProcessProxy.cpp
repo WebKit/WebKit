@@ -849,7 +849,9 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Regis
 
 void NetworkProcessProxy::setUseITPDatabase(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetUseITPDatabase(sessionID, value), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetUseITPDatabase(sessionID, value), [activity = throttler().backgroundActivity("NetworkProcessProxy::setUseITPDatabase"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::requestStorageAccessConfirm(WebPageProxyIdentifier pageID, FrameIdentifier frameID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
@@ -980,7 +982,9 @@ void NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionI
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::resetParametersToDefaultValues(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -990,7 +994,9 @@ void NetworkProcessProxy::resetParametersToDefaultValues(PAL::SessionID sessionI
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetParametersToDefaultValues(sessionID), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::ResetParametersToDefaultValues(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetParametersToDefaultValues"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::submitTelemetry(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -1010,7 +1016,9 @@ void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sess
         return;
     }
 
-    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), [activity = throttler().backgroundActivity("NetworkProcessProxy::scheduleClearInMemoryAndPersistent"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::logTestingEvent(PAL::SessionID sessionID, const String& event)
@@ -1088,7 +1096,9 @@ void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::S
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetCrossSiteLoadsWithLinkDecorationForTesting(sessionID), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCrossSiteLoadsWithLinkDecorationForTesting(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::deleteCookiesForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, bool includeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
@@ -1133,17 +1143,23 @@ void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, Com
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldDowngradeReferrerForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, blockingMode), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, blockingMode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID sessionID, WebCore::SameSiteStrictEnforcementEnabled enabled, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldEnbleSameSiteStrictEnforcementForTesting(sessionID, enabled), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldEnbleSameSiteStrictEnforcementForTesting(sessionID, enabled), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, FirstPartyWebsiteDataRemovalMode mode, CompletionHandler<void()>&& completionHandler)
@@ -1153,7 +1169,9 @@ void NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::Ses
         return;
     }
 
-    sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyWebsiteDataRemovalModeForTesting(sessionID, mode), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyWebsiteDataRemovalModeForTesting(sessionID, mode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcessProxy::setToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
