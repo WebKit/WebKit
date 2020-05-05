@@ -31,11 +31,6 @@
 
 namespace WebKit {
 
-SecItemRequestData::SecItemRequestData()
-    : m_type(Invalid)
-{
-}
-
 SecItemRequestData::SecItemRequestData(Type type, CFDictionaryRef query)
     : m_type(type)
     , m_queryDictionary(query)

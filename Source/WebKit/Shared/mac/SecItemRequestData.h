@@ -45,7 +45,7 @@ public:
         Delete,
     };
 
-    SecItemRequestData();
+    SecItemRequestData() = default;
     SecItemRequestData(Type, CFDictionaryRef query);
     SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
 
@@ -58,7 +58,7 @@ public:
     CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
 
 private:
-    Type m_type;
+    Type m_type { Invalid };
     RetainPtr<CFDictionaryRef> m_queryDictionary;
     RetainPtr<CFDictionaryRef> m_attributesToMatch;
 };

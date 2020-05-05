@@ -1,3 +1,17 @@
+2020-05-04  David Kilzer  <ddkilzer@apple.com>
+
+        Use default constructor and default initializer for SecItemRequestData
+        <https://webkit.org/b/211399>
+        <rdar://problem/62861551>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/SecItemRequestData.cpp:
+        - Remove default constructor implementation.
+        * Shared/mac/SecItemRequestData.h:
+        - Use default constructor for class.
+        - Use default initializer for m_type.
+
 2020-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r259470): Accessibility Stereo to Mono is not working
