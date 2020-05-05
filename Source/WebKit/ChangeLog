@@ -1,3 +1,19 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove now-uneeded HAVE macros related to PDF
+        https://bugs.webkit.org/show_bug.cgi?id=211435
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/spi/ios/PDFKitSPI.h: Removed HAVE(PDFHOSTVIEWCONTROLLER_SNAPSHOTTING).
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:mimeType:]): Removed
+        HAVE(PDF_HOST_VIEW_CONTROLLER_WITH_BACKGROUND_COLOR).
+        (+[WKPDFView web_requiresCustomSnapshotting]): Removed HAVE(PDFHOSTVIEWCONTROLLER_SNAPSHOTTING).
+        (-[WKPDFView web_snapshotRectInContentViewCoordinates:snapshotWidth:completionHandler:]):
+        Ditto.
+
 2020-05-05  Youenn Fablet  <youenn@apple.com>
 
         Receiving WebRTC network packets should not go through the main thread

@@ -2070,11 +2070,7 @@ static NSMutableSet *knownPluginMIMETypes()
 #if PLATFORM(IOS_FAMILY)
 #define WebPDFView ([WebView _getPDFViewClass])
 #endif
-#if !HAVE(LEGACY_PDF_SUPPORT)
-    if (!viewClass || !repClass) {
-#else
     if (!viewClass || !repClass || [[WebPDFView supportedMIMETypes] containsObject:MIMEType]) {
-#endif
 #if PLATFORM(IOS_FAMILY)
 #undef WebPDFView
 #endif
