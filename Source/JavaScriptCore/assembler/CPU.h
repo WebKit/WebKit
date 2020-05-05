@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,9 @@
 
 #include "Options.h"
 #include <wtf/NumberOfCores.h>
+#include <wtf/StdIntExtras.h>
 
 namespace JSC {
-
-#if USE(JSVALUE64)
-using CPURegister = int64_t;
-using UCPURegister = uint64_t;
-#else
-using CPURegister = int32_t;
-using UCPURegister = uint32_t;
-#endif
 
 using UCPUStrictInt32 = UCPURegister;
 

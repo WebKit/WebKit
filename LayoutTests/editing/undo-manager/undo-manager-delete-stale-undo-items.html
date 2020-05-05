@@ -48,9 +48,12 @@
             // handlers are not properly relinquished once they're no longer needed.
             const minimumNumberOfWrappersToCollectBeforePassing = 3 * undoItemCount - 300;
             objectCountAfterClearingUndoStack = objectCountBeforeClearingUndoStack;
+            var tries = 0;
             while (objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack < minimumNumberOfWrappersToCollectBeforePassing) {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 objectCountAfterClearingUndoStack = objectCountAfterSimulatingMemoryPressureAndGarbageCollection();
+                if (tries++ > 10)
+                    break;
             }
 
             shouldBeGreaterThanOrEqual("objectCountBeforeClearingUndoStack - objectCountAfterClearingUndoStack", `${minimumNumberOfWrappersToCollectBeforePassing}`);

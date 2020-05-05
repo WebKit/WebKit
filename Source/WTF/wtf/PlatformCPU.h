@@ -311,6 +311,15 @@
 #endif
 #endif
 
+/* CPU general purpose register width. */
+#if !defined(WTF_CPU_REGISTER64) && !defined(WTF_CPU_REGISTER32)
+#if CPU(ADDRESS64) || CPU(ARM64)
+#define WTF_CPU_REGISTER64 1
+#else
+#define WTF_CPU_REGISTER32 1
+#endif
+#endif
+
 /* CPU(BIG_ENDIAN) or CPU(MIDDLE_ENDIAN) or neither, as appropriate. */
 
 #if COMPILER(GCC_COMPATIBLE)

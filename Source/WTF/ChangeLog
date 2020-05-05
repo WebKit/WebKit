@@ -1,3 +1,54 @@
+2020-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Allow Bitmap to use up to a UCPURegister word size for internal bit storage.
+        https://bugs.webkit.org/show_bug.cgi?id=211328
+        <rdar://problem/62755865>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Moved the definition of CPURegister and UCPURegister down into WTF.
+           Added CPU(REGISTER64) and CPU(REGISTER32) for determining what size a CPU
+           general purpose register is.
+
+        2. Updated Bitmap so that it will automatically choose the minimal required
+           word size for the number of bits it needs to store.  This means the Bitmap
+           can automatically choose a WordType from uint8_t up to UCPURegister.
+           Previously, the WordType is always uint32_t by default.
+
+           This should improve perf with use of Bitmap on 64-bit platforms.  The size
+           optimization is necessary to prevent bloat on 64-bit platforms which would have
+           resulted if we simply set the default to always be UCPURegister.
+
+        3. Added a check in findRunOfZeros() for handling the edge case where the
+           requested runLength exceeds the bitmapSize.
+
+        4. Fixed a bug in count() that was unnecessarily casting the bits to unsigned
+           instead of just using the Bitmap WordType.  As a result, when using a WordType
+           of uint64_t, it was discarding bits from the count.
+
+        5. Fixed invert() to leave the bits beyond bitmapSize untouched.
+           Fixed isFull() to ignore the bits beyond bitmapSize.
+
+           By fixing invert() to leave those bits as 0, isEmpty() and hash() will
+           continue to work.  Otherwise, inverting those bits will cause isEmpty() to
+           always fail, and hash()'s result may be different for the same set of bit
+           values within bitmapSize.
+
+           isFull(), on the other hand, checks for set bits in the words.  Since there
+           may be 0 valued bits beyond bitmapSize, isFull() needs to be fixed to ignore
+           those.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bitmap.h:
+        (WTF::WordType>::invert):
+        (WTF::WordType>::findRunOfZeros const):
+        (WTF::WordType>::count const):
+        (WTF::WordType>::isFull const):
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformCPU.h:
+        * wtf/PlatformUse.h:
+        * wtf/StdIntExtras.h: Copied from Source/WTF/wtf/StdIntExtras.h.
+
 2020-05-05  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded USE(COREMEDIA) and USE(VIDEOTOOLBOX)

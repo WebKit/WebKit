@@ -1,3 +1,48 @@
+2020-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Allow Bitmap to use up to a UCPURegister word size for internal bit storage.
+        https://bugs.webkit.org/show_bug.cgi?id=211328
+        <rdar://problem/62755865>
+
+        Reviewed by Yusuke Suzuki.
+
+        Added API tests for WTF::Bitmap to make sure that Bitmap is behaving correctly.
+        Since Bitmap is used in critical infrastructure like the GC, it is important to
+        ensure that there are no latent bugs.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Bitmap.cpp: Added.
+        (TestWebKitAPI::countBits):
+        (TestWebKitAPI::testBitmapSize):
+        (TestWebKitAPI::testBitmapConstructedEmpty):
+        (TestWebKitAPI::testBitmapSetGet):
+        (TestWebKitAPI::testBitmapTestAndSet):
+        (TestWebKitAPI::testBitmapTestAndClear):
+        (TestWebKitAPI::testBitmapConcurrentTestAndSet):
+        (TestWebKitAPI::testBitmapConcurrentTestAndClear):
+        (TestWebKitAPI::testBitmapClear):
+        (TestWebKitAPI::testBitmapClearAll):
+        (TestWebKitAPI::testBitmapInvert):
+        (TestWebKitAPI::testBitmapFindRunOfZeros):
+        (TestWebKitAPI::testBitmapCount):
+        (TestWebKitAPI::testBitmapIsEmpty):
+        (TestWebKitAPI::testBitmapIsFull):
+        (TestWebKitAPI::testBitmapMerge):
+        (TestWebKitAPI::testBitmapFilter):
+        (TestWebKitAPI::testBitmapExclude):
+        (TestWebKitAPI::testBitmapConcurrentFilter):
+        (TestWebKitAPI::testBitmapSubsumes):
+        (TestWebKitAPI::testBitmapForEachSetBit):
+        (TestWebKitAPI::testBitmapFindBit):
+        (TestWebKitAPI::testBitmapIteration):
+        (TestWebKitAPI::testBitmapMergeAndClear):
+        (TestWebKitAPI::testBitmapSetAndClear):
+        (TestWebKitAPI::testBitmapOperatorEqual):
+        (TestWebKitAPI::testBitmapOperatorNotEqual):
+        (TestWebKitAPI::testBitmapHash):
+        (TestWebKitAPI::TEST):
+
 2020-05-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Object.prototype.toString is not spec-perfect

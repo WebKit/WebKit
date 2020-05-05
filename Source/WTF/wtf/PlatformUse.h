@@ -131,13 +131,11 @@
 #define USE_SYSTEM_MALLOC 1
 #endif
 
-#if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
-#if CPU(ADDRESS64) || CPU(ARM64)
+#if CPU(REGISTER64)
 #define USE_JSVALUE64 1
 #else
 #define USE_JSVALUE32_64 1
 #endif
-#endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 
 #if USE(JSVALUE64)
 #define USE_BIGINT32 1

@@ -26,6 +26,7 @@ set(TestWTF_SOURCES
     WTFStringUtilities.cpp
 
     Tests/WTF/AtomString.cpp
+    Tests/WTF/Bitmap.cpp
     Tests/WTF/BloomFilter.cpp
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
