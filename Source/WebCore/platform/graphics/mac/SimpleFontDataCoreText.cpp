@@ -80,12 +80,4 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
-bool Font::isUserInstalledFont() const
-{
-    auto isUserInstalledFont = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(getCTFont(), kCTFontUserInstalledAttribute)));
-    return isUserInstalledFont && CFBooleanGetValue(isUserInstalledFont.get());
-}
-#endif
-
 } // namespace WebCore

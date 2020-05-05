@@ -850,32 +850,16 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
 
 class FontDatabase {
 public:
-#if !HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
-    static FontDatabase& singleton()
-    {
-        static NeverDestroyed<FontDatabase> database(AllowUserInstalledFonts::Yes);
-        return database;
-    }
-#endif
-
     static FontDatabase& singletonAllowingUserInstalledFonts()
     {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
         static NeverDestroyed<FontDatabase> database(AllowUserInstalledFonts::Yes);
         return database;
-#else
-        return singleton();
-#endif
     }
 
     static FontDatabase& singletonDisallowingUserInstalledFonts()
     {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
         static NeverDestroyed<FontDatabase> database(AllowUserInstalledFonts::No);
         return database;
-#else
-        return singleton();
-#endif
     }
 
     FontDatabase(const FontDatabase&) = delete;
@@ -1397,19 +1381,15 @@ static inline bool isArabicCharacter(UChar character)
 #endif
 
 #if ASSERT_ENABLED
-static inline bool isUserInstalledFont(CTFontRef font)
+static bool isUserInstalledFont(CTFontRef font)
 {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
-    auto isUserInstalledFont = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)));
-    return isUserInstalledFont && CFBooleanGetValue(isUserInstalledFont.get());
-#else
-    UNUSED_PARAM(font);
-    return false;
-#endif
+    auto attribute = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)));
+    return attribute && CFBooleanGetValue(attribute.get());
 }
-#endif // ASSERT_ENABLED
+#endif
 
-#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS))
+// FIXME: Why not do this on watchOS and tvOS?
+#if !USE(PLATFORM_SYSTEM_FALLBACK_LIST) && (PLATFORM(MAC) || PLATFORM(IOS))
 static RetainPtr<CTFontRef> createFontForCharacters(CTFontRef font, CFStringRef localeString, AllowUserInstalledFonts, const UChar* characters, unsigned length)
 {
     CFIndex coveredLength = 0;
@@ -1435,7 +1415,8 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     ASSERT(length > 0);
 
     RetainPtr<CFStringRef> localeString;
-#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
+// FIXME: Why not do this on watchOS and tvOS?
+#if PLATFORM(IOS) || PLATFORM(MAC)
     if (!locale.isNull())
         localeString = locale.string().createCFString();
 #else
@@ -1553,17 +1534,12 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
 
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
         CFDictionaryAddValue(attributes, kCTFontUserInstalledAttribute, kCFBooleanFalse);
         CTFontFallbackOption fallbackOption = kCTFontFallbackOptionSystem;
         auto fallbackOptionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &fallbackOption));
         CFDictionaryAddValue(attributes, kCTFontFallbackOptionAttribute, fallbackOptionNumber.get());
     }
-#else
-    UNUSED_PARAM(attributes);
-    UNUSED_PARAM(allowUserInstalledFonts);
-#endif
 }
 
 RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef fontDescriptor, CGFloat size, AllowUserInstalledFonts allowUserInstalledFonts)
@@ -1579,7 +1555,6 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontDescriptorRef fontDescrip
 
 static inline bool isFontMatchingUserInstalledFontFallback(CTFontRef font, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
     bool willFallbackToSystemOnly = false;
     if (auto fontFallbackOptionAttributeRef = adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(font, kCTFontFallbackOptionAttribute)))) {
         int64_t fontFallbackOptionAttribute;
@@ -1589,11 +1564,6 @@ static inline bool isFontMatchingUserInstalledFontFallback(CTFontRef font, Allow
 
     bool shouldFallbackToSystemOnly = allowUserInstalledFonts == AllowUserInstalledFonts::No;
     return willFallbackToSystemOnly == shouldFallbackToSystemOnly;
-#else
-    UNUSED_PARAM(font);
-    UNUSED_PARAM(allowUserInstalledFonts);
-    return true;
-#endif
 }
 
 RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef font, AllowUserInstalledFonts allowUserInstalledFonts)
@@ -1612,28 +1582,19 @@ RetainPtr<CTFontRef> createFontForInstalledFonts(CTFontRef font, AllowUserInstal
 
 void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
         CTFontFallbackOption fallbackOption = kCTFontFallbackOptionSystem;
         auto fallbackOptionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &fallbackOption));
         CFDictionaryAddValue(attributes, kCTFontFallbackOptionAttribute, fallbackOptionNumber.get());
     }
-#else
-    UNUSED_PARAM(attributes);
-    UNUSED_PARAM(allowUserInstalledFonts);
-#endif
 }
 
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts allowUserInstalledFonts)
 {
-#if HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
         CFTypeRef mandatoryAttributesValues[] = { kCTFontFamilyNameAttribute, kCTFontPostScriptNameAttribute, kCTFontEnabledAttribute, kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
         return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, WTF_ARRAY_LENGTH(mandatoryAttributesValues), &kCFTypeSetCallBacks));
     }
-#else
-    UNUSED_PARAM(allowUserInstalledFonts);
-#endif
     return nullptr;
 }
 

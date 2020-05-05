@@ -1,3 +1,33 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove now-unneeded HAVE(DISALLOWABLE_USER_INSTALLED_FONTS)
+        https://bugs.webkit.org/show_bug.cgi?id=211428
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/Font.h: Removed isUserInstalledFont, only used for
+        an assertion that I took the liberty of removing.
+
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback): Removed an
+        assertion since it was the only reason to introduce the concept of a
+        user-installed font to the cross-platform code. The assertion is a bit
+        of a self-check that doesn't seem critical.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::singleton): Deleted.
+        (WebCore::FontDatabase::singletonAllowingUserInstalledFonts): Remove
+        HAVE(DISALLOWABLE_USER_INSTALLED_FONTS).
+        (WebCore::FontDatabase::singletonDisallowingUserInstalledFonts): Ditto.
+        (WebCore::isUserInstalledFont): Ditto.
+        (WebCore::addAttributesForInstalledFonts): Ditto.
+        (WebCore::isFontMatchingUserInstalledFontFallback): Ditto.
+        (WebCore::addAttributesForWebFonts): Ditto.
+        (WebCore::installedFontMandatoryAttributes): Ditto.
+
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::isUserInstalledFont const): Deleted.
+
 2020-05-05  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Video loops when ran in rr record --chaos
