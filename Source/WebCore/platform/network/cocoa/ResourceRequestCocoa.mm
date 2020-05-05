@@ -88,12 +88,10 @@ void ResourceRequest::doUpdateResourceRequest()
     m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
     m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     URL siteForCookies { [m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
     m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
     m_isTopSite = static_cast<NSNumber*>([m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
-#endif
 
     if (NSString* method = [m_nsRequest.get() HTTPMethod])
         m_httpMethod = method;
@@ -137,7 +135,6 @@ void ResourceRequest::doUpdateResourceHTTPBody()
     }
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, NSURL *url)
 {
     switch (disposition) {
@@ -150,7 +147,6 @@ static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, N
         return emptyURL;
     }
 }
-#endif
 
 void ResourceRequest::doUpdatePlatformRequest()
 {
@@ -190,10 +186,8 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, nsRequest.URL) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
     [nsRequest _setProperty:m_isTopSite ? @YES : @NO forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
-#endif
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
     for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])

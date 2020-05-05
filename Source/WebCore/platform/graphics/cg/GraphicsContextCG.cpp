@@ -47,7 +47,8 @@
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
-#define USE_DRAW_PATH_DIRECT (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
+// FIXME: This should probably be HAVE(CG_CONTEXT_DRAW_PATH_DIRECT) and be in PlatformHave.h.
+#define USE_DRAW_PATH_DIRECT PLATFORM(COCOA)
 
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;

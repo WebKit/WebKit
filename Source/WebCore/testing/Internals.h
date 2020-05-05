@@ -336,9 +336,9 @@ public:
 
     void updateEditorUINowIfScheduled();
 
-    bool sentenceRetroCorrectionEnabled() const
+    static bool sentenceRetroCorrectionEnabled()
     {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
         return true;
 #else
         return false;

@@ -29,7 +29,7 @@
 // FIXME: Remove NS_ASSUME_NONNULL_BEGIN/END and all _Nullable annotations once we remove the NSHTTPCookie forward declaration below.
 NS_ASSUME_NONNULL_BEGIN
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500
 typedef NSString * NSHTTPCookieStringPolicy;
 @interface NSHTTPCookie (Staging)
 @property (nullable, readonly, copy) NSHTTPCookieStringPolicy sameSitePolicy;
@@ -92,7 +92,6 @@ static Optional<double> cookieExpiry(NSHTTPCookie *cookie)
     return [expiryDate timeIntervalSince1970] * 1000.0;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
     if (!policy)
@@ -120,7 +119,6 @@ static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolic
     ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 }
-#endif
 
 Cookie::Cookie(NSHTTPCookie *cookie)
     : name { cookie.name }
@@ -136,12 +134,10 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(cookie.portList) }
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([cookie respondsToSelector:@selector(sameSitePolicy)])
         sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
     ALLOW_NEW_API_WITHOUT_GUARDS_END
-#endif
 }
 
 Cookie::operator NSHTTPCookie * _Nullable () const
@@ -174,9 +170,7 @@ Cookie::operator NSHTTPCookie * _Nullable () const
         [properties setObject:expirationDate forKey:NSHTTPCookieExpires];
     }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     [properties setObject:@(created / 1000.0 - NSTimeIntervalSince1970) forKey:@"Created"];
-#endif
 
     auto* portString = portStringFromVector(ports);
     if (portString)
@@ -191,10 +185,8 @@ Cookie::operator NSHTTPCookie * _Nullable () const
     if (httpOnly)
         [properties setObject:@YES forKey:@"HttpOnly"];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
     if (auto* sameSitePolicy = nsSameSitePolicy(sameSite))
         [properties setObject:sameSitePolicy forKey:@"SameSite"];
-#endif
 
     [properties setObject:@"1" forKey:NSHTTPCookieVersion];
 

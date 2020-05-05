@@ -1,5 +1,23 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
+        https://bugs.webkit.org/show_bug.cgi?id=211420
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/CtapPinTest.cpp: Remove
+        __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        Removed code disabling this test for __MAC_OS_X_VERSION_MIN_REQUIRED < 101400.
+
+        * TestWebKitAPI/config.h: Removed __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::installFakeHelvetica): Removed __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(NETWORK_EXTENSION)
         https://bugs.webkit.org/show_bug.cgi?id=211424
 

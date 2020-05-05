@@ -125,7 +125,9 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinTokenResponse, sizeof(TestData::kCtapClientPinTokenResponse))); // wrong response
     EXPECT_FALSE(result);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS)
+// FIXME: When can we enable this for non-Cocoa platforms?
+// FIXME: Can we enable this for watchOS and tvOS?
+#if PLATFORM(MAC) || PLATFORM(IOS)
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinInvalidKeyAgreementResponse, sizeof(TestData::kCtapClientPinInvalidKeyAgreementResponse))); // The point is not on the curve.
     EXPECT_FALSE(result);
 #endif

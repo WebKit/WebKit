@@ -26,15 +26,10 @@
 #if USE(APPKIT)
 
 @interface NSApplication ()
-
 - (void)speakString:(NSString *)string;
 - (void)_setCurrentEvent:(NSEvent *)event;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 + (void)_accessibilityInitialize;
 + (void)_preventDockConnections;
-#endif
-
 @end
 
 #endif // USE(APPKIT)

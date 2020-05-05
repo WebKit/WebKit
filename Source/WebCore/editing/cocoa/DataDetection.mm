@@ -54,7 +54,7 @@
 
 #import "DataDetectorsCoreSoftLink.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 template<> struct WTF::CFTypeTrait<DDResultRef> {
     static inline CFTypeID typeID(void) { return DDResultGetCFTypeID(); }
 };
@@ -86,11 +86,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
     Optional<SimpleRange> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-        DDResultRef result = checked_cf_cast<DDResultRef>(CFArrayGetValueAtIndex(results.get(), i));
-#else
-        DDResultRef result = static_cast<DDResultRef>(const_cast<CF_BRIDGED_TYPE(id) void*>(CFArrayGetValueAtIndex(results.get(), i)));
-#endif
+        auto result = checked_cf_cast<DDResultRef>(CFArrayGetValueAtIndex(results.get(), i));
         CFRange resultRangeInContext = DDResultGetRange(result);
         if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
             mainResult = result;

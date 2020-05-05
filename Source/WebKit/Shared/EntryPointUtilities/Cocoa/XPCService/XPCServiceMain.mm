@@ -33,7 +33,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 #import <pal/spi/mac/NSApplicationSPI.h>
 #endif
 
@@ -160,13 +160,11 @@ int XPCServiceMain(int argc, const char** argv)
     // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
     setenv("__APPLEEVENTSSERVICENAME", "", 1);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     // We don't need to talk to the dock.
     if (Class nsApplicationClass = NSClassFromString(@"NSApplication")) {
         if ([nsApplicationClass respondsToSelector:@selector(_preventDockConnections)])
             [nsApplicationClass _preventDockConnections];
     }
-#endif
 #endif
 
     xpc_main(XPCServiceEventHandler);

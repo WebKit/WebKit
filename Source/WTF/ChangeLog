@@ -1,5 +1,28 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
+        https://bugs.webkit.org/show_bug.cgi?id=211420
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj: Removed DeprecatedSymbolsUsedBySafari.mm.
+
+        * wtf/PlatformEnableCocoa.h: Removed __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+        * wtf/PlatformHave.h: Ditto. This leaves behind some cases of
+        "PLATFORM(MAC) || PLATFORM(IOS)" that should probably be turned on for watchOS
+        and tvOS too, eventually. Also "PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST)".
+
+        * wtf/PlatformMac.cmake: Removed DeprecatedSymbolsUsedBySafari.mm.
+
+        * wtf/PlatformUse.h: Removed __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm: Removed.
+
+        * wtf/spi/darwin/ProcessMemoryFootprint.h: Removed
+        __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(SANDBOX_ISSUE_MACH/READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
         https://bugs.webkit.org/show_bug.cgi?id=211427
 

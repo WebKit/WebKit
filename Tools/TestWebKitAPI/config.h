@@ -107,26 +107,33 @@
 #define WK_HAVE_C_SPI 1
 #endif
 
+// FIXME: Move this to PlatformHave.h.
 #if !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST)
 #define HAVE_SSL 1
 #endif
 
+// FIXME: Move this to PlatformHave.h.
 #if PLATFORM(MAC) || PLATFORM(IOS)
 #define HAVE_PDFKIT 1
 #endif
 
-#if (PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)) || (PLATFORM(MACCATALYST) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600)
+// FIXME: Move this to PlatformHave.h.
+#if PLATFORM(IOS_FAMILY) && !(PLATFORM(MACCATALYST) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101600)
 #define HAVE_UIWEBVIEW 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS)
+// FIXME: Move this to PlatformHave.h.
+// FIXME: Seems like this should be on for watchOS and tvOS too.
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #define HAVE_NETWORK_FRAMEWORK 1
 #endif
 
+// FIXME: Move this to PlatformHave.h.
 #if PLATFORM(COCOA) && !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500)
 #define HAVE_TLS_PROTOCOL_VERSION_T 1
 #endif
 
+// FIXME: Move this to PlatformHave.h.
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000)
 #define HAVE_TLS_VERSION_DURING_CHALLENGE 1
 #endif

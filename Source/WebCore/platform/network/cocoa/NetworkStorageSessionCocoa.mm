@@ -230,7 +230,7 @@ void NetworkStorageSession::deleteHTTPCookie(CFHTTPCookieStorageRef cookieStorag
     CFHTTPCookieStorageDeleteCookie(cookieStorage, [cookie _GetInternalCFHTTPCookie]);
 }
 
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static RetainPtr<NSDictionary> policyProperties(const SameSiteInfo& sameSiteInfo, NSURL *url)
 {
     static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
@@ -249,7 +249,8 @@ static NSArray *cookiesForURL(NSHTTPCookieStorage *storage, NSURL *url, NSURL *m
     auto completionHandler = [&cookiesPtr] (NSArray *cookies) {
         cookiesPtr = retainPtr(cookies);
     };
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Seems like this newer code path can be used for watchOS and tvOS too.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if ([storage respondsToSelector:@selector(_getCookiesForURL:mainDocumentURL:partition:policyProperties:completionHandler:)])
         [storage _getCookiesForURL:url mainDocumentURL:mainDocumentURL partition:partition policyProperties:sameSiteInfo ? policyProperties(sameSiteInfo.value(), url).get() : nullptr completionHandler:completionHandler];
     else
@@ -266,7 +267,8 @@ void NetworkStorageSession::setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieSt
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
     if (!cookieStorage) {
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Seems like this newer code path can be used for watchOS and tvOS too.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         if ([NSHTTPCookieStorage instancesRespondToSelector:@selector(_setCookies:forURL:mainDocumentURL:policyProperties:)])
             [[NSHTTPCookieStorage sharedHTTPCookieStorage] _setCookies:cookies forURL:url mainDocumentURL:mainDocumentURL policyProperties:policyProperties(sameSiteInfo, url).get()];
         else
@@ -274,7 +276,8 @@ void NetworkStorageSession::setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieSt
             [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:url mainDocumentURL:mainDocumentURL];
         return;
     }
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+// FIXME: Seems like this newer code path can be used for watchOS and tvOS too.
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if ([NSHTTPCookieStorage instancesRespondToSelector:@selector(_setCookies:forURL:mainDocumentURL:policyProperties:)]) {
         // FIXME: Stop creating a new NSHTTPCookieStorage object each time we want to query the cookie jar.
         // NetworkStorageSession could instead keep a NSHTTPCookieStorage object for us.
@@ -284,7 +287,7 @@ void NetworkStorageSession::setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieSt
 #endif
         auto cfCookies = adoptCF([NSHTTPCookie _ns2cfCookies:cookies]);
         CFHTTPCookieStorageSetCookies(cookieStorage, cfCookies.get(), [url _cfurl], [mainDocumentURL _cfurl]);
-#if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     }
 #else
     UNUSED_PARAM(sameSiteInfo);

@@ -282,8 +282,7 @@
 #endif
 
 /* The override isn't needed on iOS family, as the default behavior is to not sniff. */
-/* FIXME: This should probably be enabled on 10.13.2 and newer, not just 10.14 and newer. */
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 #define USE_CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE 1
 #endif
 

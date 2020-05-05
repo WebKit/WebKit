@@ -31,9 +31,7 @@
 #    include <libproc.h>
 #    if RUSAGE_INFO_CURRENT >= 4
 #        define HAS_MAX_FOOTPRINT
-#        if defined(RLIMIT_FOOTPRINT_INTERVAL) && __has_include(<libproc_internal.h>) \
-             && (PLATFORM(IOS_FAMILY) \
-                 || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
+#        if defined(RLIMIT_FOOTPRINT_INTERVAL) && __has_include(<libproc_internal.h>) && PLATFORM(COCOA)
 #            define HAS_RESET_FOOTPRINT_INTERVAL
 #            define MAX_FOOTPRINT_FIELD ri_interval_max_phys_footprint
 #            include <libproc_internal.h>

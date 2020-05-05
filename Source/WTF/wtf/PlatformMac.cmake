@@ -72,7 +72,6 @@ list(APPEND WTF_SOURCES
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
-    mac/DeprecatedSymbolsUsedBySafari.mm
     mac/FileSystemMac.mm
     mac/SchedulePairMac.mm
 

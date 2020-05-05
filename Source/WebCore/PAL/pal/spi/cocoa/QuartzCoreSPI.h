@@ -75,7 +75,7 @@ typedef struct _CARenderContext CARenderContext;
 - (void)setFencePort:(mach_port_t)port;
 - (void)setFencePort:(mach_port_t)port commitHandler:(void(^)(void))block;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 + (void)setAllowsCGSConnections:(BOOL)flag;
 #endif
 

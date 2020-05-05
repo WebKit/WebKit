@@ -1,5 +1,17 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
+        https://bugs.webkit.org/show_bug.cgi?id=211420
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cocoa/NSColorSPI.h: Remove __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+        * pal/spi/cocoa/QuartzCoreSPI.h: Ditto.
+        * pal/spi/mac/DataDetectorsSPI.h: Ditto.
+        * pal/spi/mac/NSApplicationSPI.h: Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(ACCESSIBILITY_SUPPORT)
         https://bugs.webkit.org/show_bug.cgi?id=211425
 

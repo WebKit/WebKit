@@ -28,10 +28,7 @@
 #if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSColor_Private.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 #import <AppKit/NSColor_UserAccent.h>
-#endif
 
 #else
 
@@ -51,7 +48,6 @@
 + (NSColor *)containerBorderColor;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 typedef NS_ENUM(NSInteger, NSUserAccentColor) {
     NSUserAccentColorRed = 0,
     NSUserAccentColorOrange,
@@ -65,6 +61,5 @@ typedef NS_ENUM(NSInteger, NSUserAccentColor) {
 };
 
 extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
-#endif
 
 #endif

@@ -30,12 +30,9 @@
 #if PLATFORM(MAC)
 
 #import "WKFullKeyboardAccessWatcher.h"
-#import <wtf/ProcessPrivilege.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 #import <Kernel/kern/cs_blobs.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
-#endif
 
 namespace WebKit {
 
@@ -46,7 +43,6 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 
 bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     static bool isSystemWebKit = [] {
         NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
         return [webkit2Bundle.bundlePath hasPrefix:@"/System/"];
@@ -61,9 +57,6 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 
     const String& path = m_processPool->configuration().injectedBundlePath();
     return !path.isEmpty() && !path.startsWith("/System/");
-#else
-    return false;
-#endif
 }
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

@@ -683,8 +683,6 @@ TEST(WebKit, DISABLED_AlternativeService)
 
 #endif // HAVE(NETWORK_FRAMEWORK)
 
-// FIXME: investigate why this test times out on High Sierra
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(IOS_FAMILY)
 TEST(WebKit, MediaCache)
 {
     JSC::Config::configureForTesting();
@@ -758,4 +756,3 @@ TEST(WebKit, MediaCache)
     [fileManager removeItemAtPath:path error:&error];
     EXPECT_FALSE(error);
 }
-#endif

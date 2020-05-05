@@ -1,5 +1,33 @@
 2020-05-04  Darin Adler  <darin@apple.com>
 
+        [Mac] Remove __MAC_OS_X_VERSION_MIN_REQUIRED checks for versions older than 10.14
+        https://bugs.webkit.org/show_bug.cgi?id=211420
+
+        Reviewed by Alex Christensen.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItem): Remove __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400.
+        * editing/cocoa/HTMLConverter.mm:
+        (_WebMessageDocumentClass): Ditto.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Ditto.
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        (-[WebCoreFullScreenPlaceholderView initWithFrame:]): Ditto.
+        * platform/network/cocoa/CookieCocoa.mm:
+        (WebCore::nsSameSitePolicy): Ditto.
+        (WebCore::Cookie::operator NSHTTPCookie * _Nullable  const): Ditto.
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::cookiesForURL): Ditto.
+        (WebCore::NetworkStorageSession::setHTTPCookiesForURL const): Ditto.
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Ditto.
+        (WebCore::siteForCookies): Ditto.
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField): Ditto.
+        * testing/Internals.h: Ditto.
+
+2020-05-04  Darin Adler  <darin@apple.com>
+
         Remove now-unneeded HAVE(NETWORK_EXTENSION)
         https://bugs.webkit.org/show_bug.cgi?id=211424
 
