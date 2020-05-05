@@ -81,6 +81,7 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 void MediaStreamTrackPrivate::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
+    ASSERT(!m_observers.hasNullReferences());
     auto protectedThis = makeRef(*this);
     m_observers.forEach(apply);
 }
