@@ -1,3 +1,23 @@
+2020-05-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r260791?): Assert not reached in ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary() and ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
+        https://bugs.webkit.org/show_bug.cgi?id=211305
+        <rdar://problem/62737871>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds a busy timeout for the ITP database to allow for
+        some concurrency flexibility when running many WebKitTestRunner tests, which
+        recreate the ITP database store very often to test both the memory and
+        database stores.
+
+        With the timeout, an attempt to write to the database when another
+        thread is holding the lock will keep attempting to insert for 5
+        seconds as long as the statement execution returns SQLITE_BUSY.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+
 2020-05-04  Alex Christensen  <achristensen@webkit.org>
 
         TestWebKitAPI.WebKit.CustomDisplayName is a flaky timeout

@@ -350,6 +350,13 @@ void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
         ASSERT_NOT_REACHED();
     }
     
+    SQLiteStatement setBusyTimeout(m_database, "PRAGMA busy_timeout = 5000");
+    if (setBusyTimeout.prepare() != SQLITE_OK || setBusyTimeout.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::setBusyTimeout failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (m_isNewResourceLoadStatisticsDatabaseFile) {
         if (!createSchema()) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
