@@ -66,6 +66,9 @@ WI.TabBar = class TabBar extends WI.View
         this._tabPickerTabBarItem.hidden = true;
         this._tabPickerTabBarItem.element.classList.add("tab-picker");
         this.addTabBarItem(this._tabPickerTabBarItem, {suppressAnimations: true});
+
+        this._mouseDownPageX = NaN;
+        this._isDragging = false;
     }
 
     // Static
@@ -732,7 +735,7 @@ WI.TabBar = class TabBar extends WI.View
             break;
         }
 
-        this._mouseIsDown = true;
+        this._mouseDownPageX = event.pageX;
 
         this._mouseMovedEventListener = this._handleMouseMoved.bind(this);
         this._mouseUpEventListener = this._handleMouseUp.bind(this);
@@ -784,13 +787,24 @@ WI.TabBar = class TabBar extends WI.View
     _handleMouseMoved(event)
     {
         console.assert(event.button === 0);
-        console.assert(this._mouseIsDown);
-        if (!this._mouseIsDown)
+        console.assert(typeof this._mouseDownPageX === "number" && !isNaN(this._mouseDownPageX));
+        if (isNaN(this._mouseDownPageX))
             return;
 
         console.assert(this._selectedTabBarItem);
         if (!this._selectedTabBarItem)
             return;
+
+        if (this._mouseOffset === undefined)
+            this._mouseOffset = event.pageX - this._selectedTabBarItem.element.totalOffsetLeft;
+
+        if (!this._isDragging) {
+            const dragThreshold = 12;
+            if (Math.abs(this._mouseDownPageX - event.pageX) < dragThreshold)
+                return;
+
+            this._isDragging = true;
+        }
 
         const tabBarLeftPadding = WI.TabBar.horizontalPadding / 2;
         const tabBarItemHorizontalMargin = WI.TabBarItem.horizontalMargin;
@@ -805,9 +819,6 @@ WI.TabBar = class TabBar extends WI.View
         }
 
         let containerOffset = this._tabContainer.totalOffsetLeft;
-
-        if (this._mouseOffset === undefined)
-            this._mouseOffset = event.pageX - this._selectedTabBarItem.element.totalOffsetLeft;
 
         let tabBarMouseOffset = event.pageX - containerOffset;
         var newLeft = tabBarMouseOffset - this._mouseOffset;
@@ -882,8 +893,8 @@ WI.TabBar = class TabBar extends WI.View
     _handleMouseUp(event)
     {
         console.assert(event.button === 0);
-        console.assert(this._mouseIsDown);
-        if (!this._mouseIsDown)
+        console.assert(typeof this._mouseDownPageX === "number" && !isNaN(this._mouseDownPageX));
+        if (isNaN(this._mouseDownPageX))
             return;
 
         this._tabContainer.classList.remove("dragging-tab");
@@ -900,7 +911,8 @@ WI.TabBar = class TabBar extends WI.View
             }
         }
 
-        this._mouseIsDown = false;
+        this._isDragging = false;
+        this._mouseDownPageX = NaN;
         this._mouseOffset = undefined;
 
         document.removeEventListener("mousemove", this._mouseMovedEventListener, true);
@@ -917,7 +929,7 @@ WI.TabBar = class TabBar extends WI.View
 
     _handleTabContainerMouseLeave(event)
     {
-        if (this._mouseIsDown || !this._tabAnimatedClosedSinceMouseEnter || !this._tabContainer.classList.contains("static-layout") || this._tabContainer.classList.contains("animating"))
+        if (!isNaN(this._mouseDownPageX) || !this._tabAnimatedClosedSinceMouseEnter || !this._tabContainer.classList.contains("static-layout") || this._tabContainer.classList.contains("animating"))
             return;
 
         // This event can still fire when the mouse is inside the element if DOM nodes are added, removed or generally change inside.

@@ -1,3 +1,21 @@
+2020-05-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Tabs jiggle on click
+        https://bugs.webkit.org/show_bug.cgi?id=211177
+        <rdar://problem/62590810>
+
+        Reviewed by Devin Rousso.
+
+        Currently, tab dragging starts immediately after mouse down. With this patch,
+        dragging starts only after the mouse cursor moving 12 pixels. This roughly matches
+        macOS Safari tabs.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype._handleTabContainerMouseDown):
+        (WI.TabBar.prototype._handleMouseUp):
+        (WI.TabBar.prototype._handleTabContainerMouseLeave):
+
 2020-05-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: drop support for iOS 9.*
