@@ -1,3 +1,15 @@
+2020-05-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Eliminate SecurityServer and OCSPD from the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=211417
+        <rdar://problem/46235370>
+
+        Reviewed by Per Arne Vollan.
+
+        We can now re-block access to these services.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-05-04  Timothy Horton  <timothy_horton@apple.com>
 
         Unreviewed, reverting r261117.
