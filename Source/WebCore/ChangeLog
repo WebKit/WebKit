@@ -1,3 +1,17 @@
+2020-05-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r261102.
+        https://bugs.webkit.org/show_bug.cgi?id=211418
+
+        Revert some debug logging (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION: [ Mac WK1 ] inspector/console/console-api.html is
+        flaky crashing"
+        https://bugs.webkit.org/show_bug.cgi?id=211386
+        https://trac.webkit.org/changeset/261102
+
 2020-05-04  Chris Dumez  <cdumez@apple.com>
 
         Drop code path using the legacy CFNetwork cookie change notification SPI

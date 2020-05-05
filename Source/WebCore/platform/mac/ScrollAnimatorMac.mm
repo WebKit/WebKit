@@ -730,23 +730,6 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
     return makeUnique<ScrollAnimatorMac>(scrollableArea);
 }
 
-#define INVESTIGATE_211386 1
-
-#if INVESTIGATE_211386
-static HashSet<NSScrollerImp *> paintersWithDelegates()
-{
-    static NeverDestroyed<HashSet<NSScrollerImp *>> painterSet;
-    return painterSet;
-}
-
-static void dumpPaintersWithDelegates(const char* msg)
-{
-    WTFLogAlways("%s: %u NSScrollerImp with delegates", msg, paintersWithDelegates().size());
-    for (auto* painter : paintersWithDelegates())
-        WTFLogAlways(" painter %p", painter);
-}
-#endif
-
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_initialScrollbarPaintTimer(*this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
@@ -761,10 +744,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollerImpPair setDelegate:m_scrollerImpPairDelegate.get()];
     [m_scrollerImpPair setScrollerStyle:ScrollerStyle::recommendedScrollerStyle()];
-
-#if INVESTIGATE_211386
-    dumpPaintersWithDelegates("ScrollAnimatorMac ctor: ");
-#endif
 }
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
@@ -776,10 +755,6 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
     [m_verticalScrollerImpDelegate invalidate];
     [m_scrollAnimationHelperDelegate invalidate];
     END_BLOCK_OBJC_EXCEPTIONS;
-    
-#if INVESTIGATE_211386
-    dumpPaintersWithDelegates("ScrollAnimatorMac dtor: ");
-#endif
 }
 
 static bool scrollAnimationEnabledForSystem()
@@ -1135,10 +1110,6 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
     m_verticalScrollerImpDelegate = adoptNS([[WebScrollerImpDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_verticalScrollerImpDelegate.get()];
-#if INVESTIGATE_211386
-    paintersWithDelegates().add(painter);
-#endif
-
     if (GraphicsLayer* layer = scrollbar->scrollableArea().layerForVerticalScrollbar())
         [painter setLayer:layer->platformLayer()];
 
@@ -1158,10 +1129,6 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
     m_verticalScrollerImpDelegate = nullptr;
 
     [painter setDelegate:nil];
-#if INVESTIGATE_211386
-    paintersWithDelegates().remove(painter);
-#endif
-
     [m_scrollerImpPair setVerticalScrollerImp:nil];
 }
 
@@ -1175,10 +1142,6 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     m_horizontalScrollerImpDelegate = adoptNS([[WebScrollerImpDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_horizontalScrollerImpDelegate.get()];
-#if INVESTIGATE_211386
-    paintersWithDelegates().add(painter);
-#endif
-
     if (GraphicsLayer* layer = scrollbar->scrollableArea().layerForHorizontalScrollbar())
         [painter setLayer:layer->platformLayer()];
 
@@ -1198,10 +1161,6 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
     m_horizontalScrollerImpDelegate = nullptr;
 
     [painter setDelegate:nil];
-#if INVESTIGATE_211386
-    paintersWithDelegates().remove(painter);
-#endif
-
     [m_scrollerImpPair setHorizontalScrollerImp:nil];
 }
 
