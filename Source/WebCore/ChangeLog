@@ -1,3 +1,32 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Remove HAVE(IOSURFACE) checks in Cocoa-platform-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211389
+
+        Reviewed by Alexey Proskuryakov.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory): Remove HAVE(IOSURFACE) since it's always true
+        on Cocoa platforms.
+        * platform/graphics/RemoteVideoSample.cpp:
+        (WebCore::RemoteVideoSample::surface const): Ditto.
+        * platform/graphics/RemoteVideoSample.h: Ditto.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore): Ditto.
+        (WebCore::GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer): Ditto.
+        * platform/graphics/cocoa/IOSurface.mm: Ditto.
+        * platform/graphics/cocoa/IOSurfacePoolCocoa.mm: Ditto.
+        * platform/graphics/cocoa/WebGLLayer.h: Ditto.
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer display]): Ditto.
+        * platform/graphics/cv/ImageTransferSessionVT.h: Ditto.
+        * platform/graphics/cv/ImageTransferSessionVT.mm: Ditto.
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::YCbCrToRGBMatrixForRangeAndTransferFunction): Ditto.
+        (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture): Ditto.
+        * platform/graphics/cv/VideoTextureCopierCV.h: Ditto.
+        * rendering/RenderThemeIOS.h: Ditto.
+
 2020-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow scrollbars don't grow when hovered

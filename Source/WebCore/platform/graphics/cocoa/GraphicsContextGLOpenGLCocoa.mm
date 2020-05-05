@@ -779,21 +779,16 @@ void GraphicsContextGLOpenGL::updateCGLContext()
 
 void GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore(IntSize size)
 {
-#if HAVE(IOSURFACE)
     LOG(WebGL, "GraphicsContextGLOpenGL::allocateIOSurfaceBackingStore at %d x %d. (%p)", size.width(), size.height(), this);
     [m_webGLLayer allocateIOSurfaceBackingStoreWithSize:size usingAlpha:contextAttributes().alpha];
-#else
-    UNUSED_PARAM(size);
-#endif
 }
 
 void GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer()
 {
-#if HAVE(IOSURFACE)
     LOG(WebGL, "GraphicsContextGLOpenGL::updateFramebufferTextureBackingStoreFromLayer(). (%p)", this);
     [m_webGLLayer bindFramebufferToNextAvailableSurface];
-#endif
 }
+
 #endif // USE(ANGLE)
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const

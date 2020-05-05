@@ -115,11 +115,9 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& w
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy, process)
     , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
-#if HAVE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
     // FIXME: We should do this somewhere else.
     IOSurfacePool::sharedPool().setPoolSize(0);
-#endif
 
     process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
 

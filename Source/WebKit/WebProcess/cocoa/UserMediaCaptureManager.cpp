@@ -193,7 +193,6 @@ public:
         RealtimeMediaSource::audioSamplesAvailable(time, audioData, m_description, numberOfFrames);
     }
 
-#if HAVE(IOSURFACE)
     void remoteVideoSampleAvailable(RemoteVideoSample&& remoteSample)
     {
         ASSERT(type() == Type::Video);
@@ -216,7 +215,6 @@ public:
 
         RealtimeMediaSource::videoSampleAvailable(*sampleRef);
     }
-#endif
 
     void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
     {
@@ -396,18 +394,11 @@ void UserMediaCaptureManager::audioSamplesAvailable(RealtimeMediaSourceIdentifie
     }
 }
 
-#if HAVE(IOSURFACE)
 void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier id, RemoteVideoSample&& sample)
 {
     if (auto source = m_sources.get(id))
         source->remoteVideoSampleAvailable(WTFMove(sample));
 }
-#else
-NO_RETURN_DUE_TO_ASSERT void UserMediaCaptureManager::remoteVideoSampleAvailable(RealtimeMediaSourceIdentifier, RemoteVideoSample&&)
-{
-    ASSERT_NOT_REACHED();
-}
-#endif
 
 IPC::Connection* UserMediaCaptureManager::Source::connection()
 {

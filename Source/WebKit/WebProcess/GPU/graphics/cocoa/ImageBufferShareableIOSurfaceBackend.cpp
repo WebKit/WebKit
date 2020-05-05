@@ -27,7 +27,6 @@
 #include "ImageBufferShareableIOSurfaceBackend.h"
 
 #if ENABLE(GPU_PROCESS)
-#if HAVE(IOSURFACE)
 
 #include <WebCore/GraphicsContextCG.h>
 #include <wtf/IsoMallocInlines.h>
@@ -78,5 +77,4 @@ ImageBufferBackendHandle ImageBufferShareableIOSurfaceBackend::createImageBuffer
 
 } // namespace WebKit
 
-#endif // HAVE(IOSURFACE)
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)

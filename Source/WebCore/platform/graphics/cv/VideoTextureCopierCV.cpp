@@ -57,7 +57,6 @@
 
 namespace WebCore {
 
-#if HAVE(IOSURFACE)
 enum class PixelRange {
     Unknown,
     Video,
@@ -374,7 +373,6 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
     ASSERT(iterator != matrices.get().end());
     return iterator->second;
 }
-#endif // HAVE(IOSURFACE)
 
 VideoTextureCopierCV::VideoTextureCopierCV(GraphicsContextGLOpenGL& context)
     : m_sharedContext(context)
@@ -802,7 +800,6 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     }
 #endif // USE(ANGLE)
 
-#if HAVE(IOSURFACE)
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
     if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
@@ -944,9 +941,6 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_lastFlipY = flipY;
 
     return true;
-#else
-    return false;
-#endif // HAVE(IOSURFACE)
 }
 
 bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY, bool swapColorChannels)

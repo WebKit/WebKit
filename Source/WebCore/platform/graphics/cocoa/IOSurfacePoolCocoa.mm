@@ -26,8 +26,6 @@
 #import "config.h"
 #import "IOSurfacePool.h"
 
-#if HAVE(IOSURFACE)
-
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
@@ -43,5 +41,3 @@ void IOSurfacePool::platformGarbageCollectNow()
 }
 
 }
-
-#endif // HAVE(IOSURFACE)

@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
+#include "GraphicsContextCG.h"
 #include "IOSurface.h"
 #include "Logging.h"
 #include "MediaSample.h"
@@ -36,17 +37,12 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-#if HAVE(IOSURFACE)
-#include "GraphicsContextCG.h"
-#endif
-
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
 using namespace PAL;
 
-#if HAVE(IOSURFACE)
 static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPixelBufferRef pixelBuffer)
 {
 #if USE(ACCELERATE)
@@ -148,7 +144,6 @@ IOSurfaceRef RemoteVideoSample::surface() const
 
     return m_ioSurface ? m_ioSurface->surface() : nullptr;
 }
-#endif
 
 }
 

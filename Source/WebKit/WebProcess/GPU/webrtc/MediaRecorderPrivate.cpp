@@ -84,12 +84,8 @@ void MediaRecorderPrivate::sampleBufferUpdated(const WebCore::MediaStreamTrackPr
 {
     if (track.id() != m_recordedVideoTrackID)
         return;
-#if HAVE(IOSURFACE)
     if (auto remoteSample = RemoteVideoSample::create(sample))
         m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample) }, m_identifier);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)

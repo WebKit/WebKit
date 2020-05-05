@@ -47,7 +47,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     NakedPtr<WebCore::GraphicsContextGLOpenGL> _context;
     float _devicePixelRatio;
-#if HAVE(IOSURFACE) && (USE(OPENGL) || USE(ANGLE))
+#if USE(OPENGL) || USE(ANGLE)
     std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
     std::unique_ptr<WebCore::IOSurface> _drawingBuffer;
     std::unique_ptr<WebCore::IOSurface> _spareBuffer;
@@ -70,7 +70,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 
-#if HAVE(IOSURFACE) && (USE(OPENGL) || USE(ANGLE))
+#if USE(OPENGL) || USE(ANGLE)
 - (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
 - (void)bindFramebufferToNextAvailableSurface;
 #endif

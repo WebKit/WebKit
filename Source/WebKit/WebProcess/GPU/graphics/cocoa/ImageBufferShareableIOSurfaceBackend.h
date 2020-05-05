@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(GPU_PROCESS)
-#if HAVE(IOSURFACE)
 
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
@@ -50,5 +49,4 @@ public:
 
 } // namespace WebKit
 
-#endif // HAVE(IOSURFACE)
 #endif // ENABLE(GPU_PROCESS)

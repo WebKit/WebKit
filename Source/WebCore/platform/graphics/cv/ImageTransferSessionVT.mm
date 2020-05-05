@@ -35,7 +35,7 @@
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 
-#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST)
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
@@ -268,7 +268,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CGImag
     return createCMSampleBuffer(pixelBuffer.get(), sampleTime, size);
 }
 
-#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)
 static int32_t roundUpToMacroblockMultiple(int32_t size)
@@ -367,7 +367,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& samp
     return MediaSampleAVFObjC::create(resizedBuffer.get(), sample.videoRotation(), sample.videoMirrored());
 }
 
-#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST)
 #if ENABLE(MEDIA_STREAM)
 RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(const RemoteVideoSample& remoteSample)
 {

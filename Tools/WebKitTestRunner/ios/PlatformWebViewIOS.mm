@@ -312,17 +312,8 @@ void PlatformWebView::setDrawsBackground(bool)
 {
 }
 
-#if !HAVE(IOSURFACE)
-static void releaseDataProviderData(void* info, const void*, size_t)
-{
-    CARenderServerDestroyBuffer(static_cast<CARenderServerBufferRef>(info));
-}
-#endif
-
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
     CGSize viewSize = m_view.bounds.size;
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
@@ -346,11 +337,10 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
         viewsToUnhide.uncheckedAppend(endGrabberView);
     }
 
-#if HAVE(IOSURFACE)
     __block bool isDone = false;
     __block RetainPtr<CGImageRef> result;
     
-    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration setRect:CGRectMake(0, 0, viewSize.width, viewSize.height)];
     [snapshotConfiguration setSnapshotWidth:@(viewSize.width)];
     
@@ -365,32 +355,11 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     }];
     while (!isDone)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-#else
-    CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
-    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
-    
-    int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
-    int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
 
-    CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
-    RELEASE_ASSERT(buffer);
-
-    CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, m_view.layer.context.contextId, reinterpret_cast<uint64_t>(m_view.layer), buffer, 0, 0, &transform);
-
-    uint8_t* data = CARenderServerGetBufferData(buffer);
-    size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
-
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    auto provider = adoptCF(CGDataProviderCreateWithData(buffer, data, CARenderServerGetBufferDataSize(buffer), releaseDataProviderData));
-    
-    auto result = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
-    RELEASE_ASSERT(result);
-#endif
     for (auto view : viewsToUnhide)
         [view setHidden:NO];
 
     return result;
-    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void PlatformWebView::setNavigationGesturesEnabled(bool enabled)

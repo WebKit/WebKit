@@ -157,7 +157,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     }
 #elif USE(OPENGL_ES)
     _context->presentRenderbuffer();
-#elif HAVE(IOSURFACE) && USE(ANGLE)
+#elif USE(ANGLE)
     if (!_context->makeContextCurrent()) {
         // Context is likely being torn down.
         return;
@@ -211,7 +211,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 }
 #endif
 
-#if HAVE(IOSURFACE) & (USE(OPENGL) || USE(ANGLE))
+#if USE(OPENGL) || USE(ANGLE)
 - (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha
 {
     _bufferSize = size;

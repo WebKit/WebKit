@@ -1,3 +1,17 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Remove HAVE(IOSURFACE) checks in Cocoa-platform-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211389
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView): Remove BEGIN/END_BLOCK_OBJC_EXCEPTIONS
+        since they are not needed/appropriate in test code. Remove HAVE(IOSURFACE)
+        since this is Cocoa-specific.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage): Ditto.
+
 2020-05-04  Alexey Proskuryakov  <ap@apple.com>
 
         block-spammers tool should hide attachments

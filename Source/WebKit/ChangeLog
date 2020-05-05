@@ -1,3 +1,44 @@
+2020-05-04  Darin Adler  <darin@apple.com>
+
+        Remove HAVE(IOSURFACE) checks in Cocoa-platform-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211389
+
+        Reviewed by Alexey Proskuryakov.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::encodeFrame): Remove HAVE(IOSURFACE) since
+        this is Cocoa-specific code.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore): Ditto.
+        (WebKit::RemoteLayerBackingStore::clearBackingStore): Ditto.
+        (WebKit::RemoteLayerBackingStore::encode const): Ditto.
+        (WebKit::RemoteLayerBackingStore::decode): Ditto.
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel const): Ditto.
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer): Ditto.
+        (WebKit::RemoteLayerBackingStore::display): Ditto.
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer): Ditto.
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility): Ditto.
+        (WebKit::RemoteLayerBackingStore::Buffer::discard): Ditto.
+        (WebKit::RemoteLayerBackingStore::surfaceBufferFormat const): Ditto.
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _takeViewSnapshot]): Ditto.
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): Ditto.
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp: Ditto.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy): Ditto.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::recursivelyMapIOSurfaceBackingStore): Ditto.
+        (WebKit::RemoteLayerTreeHost::mapAllIOSurfaceBackingStore): Ditto.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp: Ditto.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h: Ditto.
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::sampleBufferUpdated): Ditto.
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createDecoderFactory): Ditto.
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::remoteVideoSampleAvailable): Ditto.
+        (WebKit::UserMediaCaptureManager::remoteVideoSampleAvailable): Ditto.
+
 2020-05-04  David Kilzer  <ddkilzer@apple.com>
 
         Use default constructor and default initializer for SecItemRequestData

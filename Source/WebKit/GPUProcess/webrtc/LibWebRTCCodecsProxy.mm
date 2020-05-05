@@ -146,7 +146,7 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoFormat())
         m_imageTransferSession = WebCore::ImageTransferSessionVT::create(sample.videoFormat());
 
-#if HAVE(IOSURFACE) && !PLATFORM(MACCATALYST)
+#if !PLATFORM(MACCATALYST)
     auto pixelBuffer = m_imageTransferSession->createPixelBuffer(sample.surface());
     webrtc::encodeLocalEncoderFrame(encoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
 #endif

@@ -143,7 +143,6 @@ private:
 
     void videoSampleAvailable(MediaSample& sample) final
     {
-#if HAVE(IOSURFACE)
         std::unique_ptr<RemoteVideoSample> remoteSample;
         if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
             auto pixelBuffer = rotatePixelBuffer(sample);
@@ -152,9 +151,6 @@ private:
             remoteSample = RemoteVideoSample::create(sample);
         if (remoteSample)
             m_connection->send(Messages::UserMediaCaptureManager::RemoteVideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
-#else
-        ASSERT_NOT_REACHED();
-#endif
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)

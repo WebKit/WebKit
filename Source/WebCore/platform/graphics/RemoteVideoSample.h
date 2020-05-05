@@ -27,14 +27,11 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
 
+#include "IOSurface.h"
 #include "MediaSample.h"
 #include "RemoteVideoSample.h"
 #include <wtf/MachSendRight.h>
 #include <wtf/MediaTime.h>
-
-#if HAVE(IOSURFACE)
-#include "IOSurface.h"
-#endif
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
@@ -47,11 +44,9 @@ public:
     RemoteVideoSample& operator=(RemoteVideoSample&&) = default;
     ~RemoteVideoSample() = default;
 
-#if HAVE(IOSURFACE)
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&);
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
     WEBCORE_EXPORT IOSurfaceRef surface() const;
-#endif
 
     const MediaTime& time() const { return m_time; }
     uint32_t videoFormat() const { return m_videoFormat; }
@@ -61,12 +56,10 @@ public:
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
-#if HAVE(IOSURFACE)
         if (m_ioSurface)
             encoder << m_ioSurface->createSendRight();
         else
             encoder << WTF::MachSendRight();
-#endif
         encoder << m_rotation;
         encoder << m_time;
         encoder << m_videoFormat;
@@ -76,12 +69,11 @@ public:
 
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, RemoteVideoSample& sample)
     {
-#if HAVE(IOSURFACE)
         MachSendRight sendRight;
         if (!decoder.decode(sendRight))
             return false;
         sample.m_sendRight = WTFMove(sendRight);
-#endif
+
         MediaSample::VideoRotation rotation;
         if (!decoder.decode(rotation))
             return false;
@@ -111,13 +103,10 @@ public:
     }
 
 private:
-
-#if HAVE(IOSURFACE)
     RemoteVideoSample(IOSurfaceRef, CGColorSpaceRef, MediaTime&&, MediaSample::VideoRotation, bool);
 
     std::unique_ptr<WebCore::IOSurface> m_ioSurface;
     WTF::MachSendRight m_sendRight;
-#endif
     MediaSample::VideoRotation m_rotation { MediaSample::VideoRotation::None };
     MediaTime m_time;
     uint32_t m_videoFormat { 0 };

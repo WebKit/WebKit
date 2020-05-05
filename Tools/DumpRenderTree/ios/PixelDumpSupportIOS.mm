@@ -54,9 +54,6 @@ extern DumpRenderTreeBrowserView *gWebBrowserView;
 
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
-    // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
     WebThreadLock();
     [CATransaction flush];
 
@@ -66,7 +63,6 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     int bufferWidth = ceil(viewSize.width * deviceScaleFactor);
     int bufferHeight = ceil(viewSize.height * deviceScaleFactor);
 
-#if HAVE(IOSURFACE)
     WebCore::FloatSize snapshotSize(viewSize);
     snapshotSize.scale(deviceScaleFactor);
 
@@ -86,38 +82,4 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
 
     CGContextDrawImage(bitmapContext->cgContext(), CGRectMake(0, 0, bufferWidth, bufferHeight), cgImage.get());
     return bitmapContext;
-#else
-    CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-
-    CARenderServerBufferRef buffer = CARenderServerCreateBuffer(bufferWidth, bufferHeight);
-    if (!buffer) {
-        WTFLogAlways("CARenderServerCreateBuffer failed for buffer with width %d height %d\n", bufferWidth, bufferHeight);
-        return nullptr;
-    }
-
-    CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, [gWebBrowserView layer].context.contextId, reinterpret_cast<uint64_t>([gWebBrowserView layer]), buffer, 0, 0, &transform);
-
-    uint8_t* data = CARenderServerGetBufferData(buffer);
-    size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
-
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(0, data, CARenderServerGetBufferDataSize(buffer), nullptr));
-    
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
-
-    void* bitmapBuffer = nullptr;
-    size_t bitmapRowBytes = 0;
-    auto bitmapContext = createBitmapContext(bufferWidth, bufferHeight, bitmapRowBytes, bitmapBuffer);
-    if (!bitmapContext) {
-        CARenderServerDestroyBuffer(buffer);
-        return nullptr;
-    }
-
-    CGContextDrawImage(bitmapContext->cgContext(), CGRectMake(0, 0, bufferWidth, bufferHeight), cgImage.get());
-    CARenderServerDestroyBuffer(buffer);
-
-    return bitmapContext;
-#endif
-
-    END_BLOCK_OBJC_EXCEPTIONS;
 }

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "IOSurface.h"
 
-#if HAVE(IOSURFACE)
-
 #import "GraphicsContextCG.h"
 #import "GraphicsContextGLOpenGL.h"
 #import "HostWindow.h"
@@ -499,5 +497,3 @@ TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 }
 
 } // namespace WebCore
-
-#endif // HAVE(IOSURFACE)

@@ -1009,7 +1009,6 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
-#if HAVE(IOSURFACE)
 #if HAVE(IOSURFACE_RGB10)
     WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
 #else
@@ -1034,16 +1033,6 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
     return WebKit::ViewSnapshot::create(WTFMove(surface));
-#else // HAVE(IOSURFACE)
-    uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
-
-    if (!slotID)
-        return nullptr;
-
-    CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, slotID, 0, 0, &transform);
-    WebCore::IntSize imageSize = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
-    return WebKit::ViewSnapshot::create(slotID, imageSize, (imageSize.area() * 4).unsafeGet());
-#endif // HAVE(IOSURFACE)
 #else // HAVE(CORE_ANIMATION_RENDER_SERVER)
     return nullptr;
 #endif
@@ -2888,7 +2877,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return;
     }
 
-#if HAVE(CORE_ANIMATION_RENDER_SERVER) && HAVE(IOSURFACE)
+#if HAVE(CORE_ANIMATION_RENDER_SERVER)
     // If we are parented and not hidden, and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
     NSString *displayName = self.window.screen.displayConfiguration.name;
     if (displayName && !self.window.hidden) {
