@@ -1,3 +1,12 @@
+2020-05-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed fix for MotionMark regression.
+
+        Revert minor part of r260017. Remove telemetry from IOKit filtering allow rules. This telemetry is causing higher
+        CPU usage on the system, and is not needed, since we have already confirmed these messages are being used.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-05-05  Daniel Bates  <dabates@apple.com>
 
         Should show selection highlight during text interaction
