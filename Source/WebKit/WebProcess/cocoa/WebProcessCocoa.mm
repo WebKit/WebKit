@@ -380,14 +380,6 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
-#if PLATFORM(MAC)
-static WorkQueue& setProcessNameQueue()
-{
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("setProcessNameQueue"));
-    return queue.get().get();
-}
-#endif
-
 void WebProcess::updateProcessName()
 {
 #if PLATFORM(MAC)
@@ -410,7 +402,7 @@ void WebProcess::updateProcessName()
         break;
     }
 
-    setProcessNameQueue().dispatch([this, applicationName = WTFMove(applicationName)] {
+    RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
         // Note that it is important for _RegisterApplication() to have been called before setting the display name.
         auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
         ASSERT(!error);
@@ -678,11 +670,11 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 #if PLATFORM(MAC)
     if (!overrideDisplayName) {
-        setProcessNameQueue().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
+        RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activeOrigins.get(), nullptr);
         });
     } else {
-        setProcessNameQueue().dispatch([name = overrideDisplayName.createCFString()] {
+        RunLoop::main().dispatch([name = overrideDisplayName.createCFString()] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, name.get(), nullptr);
         });
     }

@@ -1,3 +1,21 @@
+2020-05-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash under _LSSetApplicationInformationItem()
+        https://bugs.webkit.org/show_bug.cgi?id=211478
+        <rdar://problem/62201314>
+
+        Reviewed by Alex Christensen.
+
+        Given the crashes, I suspect it is not actually safe to call _LSSetApplicationInformationItem()
+        from a non main-thread like it was done in r238289. We still run the code asynchronously to
+        address the issue that r238289 was trying to fix but we now call _LSSetApplicationInformationItem()
+        on the main thread.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::updateActivePages):
+        (WebKit::setProcessNameQueue): Deleted.
+
 2020-05-05  Peng Liu  <peng.liu6@apple.com>
 
         Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
