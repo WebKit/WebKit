@@ -28,11 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <UIKit/UIDevice_Private.h>
-#else
-#import <UIKit/UIDevice.h>
-#endif
+#import "UIKitSPI.h"
+#import <WebCore/Device.h>
 
 namespace WebKit {
 
@@ -44,9 +41,14 @@ enum class UserInterfaceIdiomState : uint8_t {
 
 static UserInterfaceIdiomState userInterfaceIdiomIsPadState = UserInterfaceIdiomState::Unknown;
 
-#if PLATFORM(IOS_FAMILY)
 static inline bool userInterfaceIdiomIsPad()
 {
+    // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
+    // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
+    // but is not sufficient in the application case.
+    if (![UIApplication sharedApplication])
+        return WebCore::deviceClass() == MGDeviceClassiPad;
+
     // This inline function exists to thwart unreachable code
     // detection on platforms where UICurrentUserInterfaceIdiomIsPad
     // is defined directly to false.
@@ -56,7 +58,6 @@ static inline bool userInterfaceIdiomIsPad()
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
 #endif
 }
-#endif
 
 bool currentUserInterfaceIdiomIsPad()
 {

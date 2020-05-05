@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "InstanceMethodSwizzler.h"
+#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
 
 namespace TestWebKitAPI {
@@ -38,6 +39,10 @@ public:
     UserInterfaceSwizzler()
         : InstanceMethodSwizzler { UIDevice.class, @selector(userInterfaceIdiom), reinterpret_cast<IMP>(effectiveUserInterfaceIdiom) }
     {
+        if (!UIApplication.sharedApplication) {
+            UIApplicationInitialize();
+            UIApplicationInstantiateSingleton(UIApplication.class);
+        }
     }
 
 private:
