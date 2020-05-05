@@ -423,9 +423,6 @@ WTF_EXTERN_C_END
 - (NSArray* __nullable)_getCookiesForDomain:(NSString*)domain;
 - (void)_setCookiesChangedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* addedCookies, NSString* domainForChangedCookie))cookiesChangedHandler onQueue:(dispatch_queue_t __nullable)queue;
 - (void)_setCookiesRemovedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable removedCookies, NSString* __nullable domainForRemovedCookies, bool removeAllCookies))cookiesRemovedHandler onQueue:(dispatch_queue_t __nullable)queue;
-// FIXME: The following 2 should be removed are only kept to ensure smooth transition to the new _setCookiesChangedHandler / _setCookiesRemovedHandler SPI.
-- (void)_setCookiesAddedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* addedCookies, NSURL* __nullable urlForAddedCookies))cookiesAddedHandler onQueue:(dispatch_queue_t __nullable)queue;
-- (void)_setCookiesDeletedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable deletedCookies, bool deletedAllCookies))cookiesDeletedHandler onQueue:(dispatch_queue_t __nullable)queue;
 @end
 
 @interface NSURLResponse ()
