@@ -304,6 +304,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'jsc': jsc_paths,
         'webkitpy': webkitpy_paths,
         'wk1-tests': wk1_paths,
+        'windows': wk1_paths,
     }
 
     def _patch_is_relevant(self, patch, builderName):

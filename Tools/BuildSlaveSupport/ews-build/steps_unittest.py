@@ -2216,17 +2216,25 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
+    def test_relevant_windows_wk1_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'Windows-EWS')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.runStep()
+
     def test_queues_without_relevance_info(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Mojave-Release-Build-EWS', 'macOS-Mojave-Release-WK2-Tests-EWS', 'macOS-Mojave-Debug-Build-EWS',
-                  'Windows-EWS', 'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
+                  'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckPatchRelevance())
             self.setProperty('buildername', queue)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
-        return self.runStep()
+            rc = self.runStep()
+        return rc
 
     def test_non_relevant_patch(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
