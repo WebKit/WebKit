@@ -66,7 +66,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, horizontalConstraints);
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-        auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedContentHeight(layoutBox);
+        auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedHeight(layoutBox);
 
         if (height)
             return { *height, nonCollapsedMargin };
@@ -106,7 +106,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
     };
 
     // 10.6.7 'Auto' heights for block formatting context roots
-    auto isAutoHeight = !overrideVerticalValues.height && !computedContentHeight(layoutBox);
+    auto isAutoHeight = !overrideVerticalValues.height && !computedHeight(layoutBox);
     if (isAutoHeight && layoutBox.establishesBlockFormattingContext())
         return compute( OverrideVerticalValues { contentHeightForFormattingContextRoot(layoutBox) });
     return compute(overrideVerticalValues);
@@ -142,7 +142,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAn
         auto containingBlockWidth = horizontalConstraints.logicalWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
-        auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedContentWidth(layoutBox, containingBlockWidth);
+        auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
         auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = boxGeometry.borderLeft();
@@ -258,7 +258,7 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(c
     // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
     if (layoutBox.establishesTableFormattingContext()) {
         auto& tableBox = downcast<ContainerBox>(layoutBox);
-        auto computedTableHeight = computedContentHeight(tableBox);
+        auto computedTableHeight = computedHeight(tableBox);
         auto contentHeight = contentHeightForFormattingContextRoot(tableBox);
         if (computedTableHeight && contentHeight > computedTableHeight) {
             // Table content needs more vertical space than the table has.
@@ -304,7 +304,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(con
             intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
         else
             intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, layoutState())->computedIntrinsicWidthConstraints();
-        auto computedTableWidth = computedContentWidth(tableBox, horizontalConstraints.logicalWidth);
+        auto computedTableWidth = computedWidth(tableBox, horizontalConstraints.logicalWidth);
         auto usedWidth = computedTableWidth;
         if (computedTableWidth && intrinsicWidthConstraints.minimum > computedTableWidth) {
             // Table content needs more space than the table has.

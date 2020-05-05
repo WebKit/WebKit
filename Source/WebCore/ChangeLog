@@ -1,3 +1,37 @@
+2020-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Rename computedContentHeight/Width to computedHeight/Width
+        https://bugs.webkit.org/show_bug.cgi?id=211432
+
+        Reviewed by Darin Adler.
+
+        These functions used to return the computed content box height/width but with box-sizing
+        support the name is not correct anymore. 
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::computedWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases const):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedContentHeight const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedContentWidth const): Deleted.
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::cellHeigh const):
+        (WebCore::Layout::TableFormattingContext::Geometry::computedColumnWidth const):
+
 2020-05-05  Antoine Quint  <graouts@apple.com>
 
         Unreviewed, reverting r260989.

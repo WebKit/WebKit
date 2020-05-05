@@ -580,7 +580,7 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, spaceToDistribute, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
             return geometryForBox(slot.cell().box()).height();
-        auto computedRowHeight = geometry().computedContentHeight(rows.list()[rowIndex].box(), { });
+        auto computedRowHeight = geometry().computedHeight(rows.list()[rowIndex].box(), { });
         return std::max(LayoutUnit { rowHeight[rowIndex].height() }, computedRowHeight.valueOr(0_lu));
     });
 

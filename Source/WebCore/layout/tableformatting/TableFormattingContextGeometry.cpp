@@ -39,7 +39,7 @@ namespace Layout {
 LayoutUnit TableFormattingContext::Geometry::cellHeigh(const ContainerBox& cellBox) const
 {
     ASSERT(cellBox.isInFlow());
-    if (auto height = computedContentHeight(cellBox))
+    if (auto height = computedHeight(cellBox))
         return *height;
     return contentHeightForFormattingContextRoot(cellBox);
 }
@@ -48,7 +48,7 @@ Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const
 {
     // Check both style and <col>'s width attribute.
     // FIXME: Figure out what to do with calculated values, like <col style="width: 10%">.
-    if (auto computedWidthValue = computedContentWidth(columnBox, { }))
+    if (auto computedWidthValue = computedWidth(columnBox, { }))
         return computedWidthValue;
     return columnBox.columnWidth();
 }

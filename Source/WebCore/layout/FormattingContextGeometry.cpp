@@ -88,7 +88,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
     return valueForLength(height, *containingBlockHeight);
 }
 
-Optional<LayoutUnit> FormattingContext::Geometry::computedContentHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
+Optional<LayoutUnit> FormattingContext::Geometry::computedHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
 {
     if (auto height = computedHeightValue(layoutBox, HeightType::Normal, containingBlockHeight)) {
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
@@ -99,7 +99,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedContentHeight(const Bo
     return { };
 }
 
-Optional<LayoutUnit> FormattingContext::Geometry::computedContentWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
+Optional<LayoutUnit> FormattingContext::Geometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     if (auto width = computedValueIfNotAuto(layoutBox.style().logicalWidth(), containingBlockWidth)) {
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
@@ -199,10 +199,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedMaxHeight(const Box& l
 
 Optional<LayoutUnit> FormattingContext::Geometry::computedMinHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
 {
-    if (auto minHeightValue = computedHeightValue(layoutBox, HeightType::Min, containingBlockHeight))
-        return minHeightValue;
-
-    return { LayoutUnit { } };
+    return computedHeightValue(layoutBox, HeightType::Min, containingBlockHeight);
 }
 
 Optional<LayoutUnit> FormattingContext::Geometry::computedMinWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
@@ -332,7 +329,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
 
     auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
-    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedContentHeight(layoutBox, containingBlockHeight);
+    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedHeight(layoutBox, containingBlockHeight);
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
     auto paddingTop = boxGeometry.paddingTop().valueOr(0);
@@ -452,7 +449,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
-    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedContentWidth(layoutBox, containingBlockWidth);
+    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
     UsedHorizontalMargin usedHorizontalMargin;
     auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
@@ -758,7 +755,7 @@ ContentHeightAndMargin FormattingContext::Geometry::complicatedCases(const Box& 
     // 1. If 'margin-top', or 'margin-bottom' are 'auto', their used value is 0.
     // 2. If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
 
-    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedContentHeight(layoutBox);
+    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedHeight(layoutBox);
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     // #1
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
@@ -788,7 +785,7 @@ ContentWidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMa
     // #1
     auto usedHorizontallMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
     // #2
-    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedContentWidth(layoutBox, horizontalConstraints.logicalWidth);
+    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedWidth(layoutBox, horizontalConstraints.logicalWidth);
     if (!width)
         width = shrinkToFitWidth(layoutBox, horizontalConstraints.logicalWidth);
 
@@ -875,7 +872,7 @@ ContentHeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargi
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto& style = replacedBox.style();
 
-    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedContentHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
+    auto height = overrideVerticalValues.height ? overrideVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
     auto heightIsAuto = !overrideVerticalValues.height && isHeightAuto(replacedBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
 
@@ -935,9 +932,9 @@ ContentWidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(
         return computedHorizontalMargin.end.valueOr(0_lu);
     };
 
-    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedContentWidth(replacedBox, horizontalConstraints.logicalWidth);
+    auto width = overrideHorizontalValues.width ? overrideHorizontalValues.width : computedWidth(replacedBox, horizontalConstraints.logicalWidth);
     auto heightIsAuto = isHeightAuto(replacedBox);
-    auto height = computedContentHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
+    auto height = computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
 
     if (!width && heightIsAuto && replacedBox.hasIntrinsicWidth()) {
         // #1

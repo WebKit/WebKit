@@ -164,10 +164,8 @@ protected:
         friend class FormattingContext;
         Geometry(const FormattingContext&);
 
-        enum class HeightType { Min, Max, Normal };
-        Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight) const;
-        Optional<LayoutUnit> computedContentHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
-        Optional<LayoutUnit> computedContentWidth(const Box&, LayoutUnit containingBlockWidth) const;
+        Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+        Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
         const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         LayoutState& layoutState() { return m_formattingContext.layoutState(); }
@@ -187,6 +185,9 @@ protected:
 
         LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const Box&, const VerticalConstraints&) const;
         LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const HorizontalConstraints&) const;
+
+        enum class HeightType { Min, Max, Normal };
+        Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight) const;
 
         const FormattingContext& m_formattingContext;
     };
