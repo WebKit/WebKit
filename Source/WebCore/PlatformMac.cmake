@@ -257,7 +257,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
     platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
-    platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
     platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm

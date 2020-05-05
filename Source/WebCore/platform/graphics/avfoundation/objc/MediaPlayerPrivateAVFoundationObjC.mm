@@ -46,7 +46,6 @@
 #import "ImageRotationSessionVT.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
-#import "InbandTextTrackPrivateLegacyAVFObjC.h"
 #import "LocalizedDeviceModel.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
@@ -98,6 +97,7 @@
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 #if ENABLE(AVF_CAPTIONS)
 #import "TextTrack.h"
@@ -269,7 +269,7 @@ static dispatch_queue_t globalPullDelegateQueue()
     return globalQueue;
 }
 
-class MediaPlayerFactoryAVFoundationObjC final : public MediaPlayerFactory {
+class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundation; };
 
@@ -316,7 +316,7 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 
     ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
 
-    registrar(makeUnique<MediaPlayerFactoryAVFoundationObjC>());
+    registrar(makeUnique<Factory>());
 }
 
 static AVAssetCache *assetCacheForPath(const String& path)
@@ -432,27 +432,11 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(logger(), logIdentifier()))
-    , m_videoFullscreenGravity(MediaPlayer::VideoGravity::ResizeAspect)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
-    , m_videoFrameHasDrawn(false)
-    , m_haveCheckedPlayability(false)
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:makeWeakPtr(*this)]))
 #endif
-    , m_currentTextTrack(0)
-    , m_cachedRate(0)
-    , m_cachedTotalBytes(0)
-    , m_pendingStatusChanges(0)
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
-    , m_cachedLikelyToKeepUp(false)
-    , m_cachedBufferEmpty(false)
-    , m_cachedBufferFull(false)
-    , m_cachedHasEnabledAudio(false)
-    , m_cachedIsReadyForDisplay(false)
-    , m_haveBeenAskedToCreateLayer(false)
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    , m_allowsWirelessVideoPlayback(true)
-#endif
 {
 }
 
@@ -466,6 +450,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     for (auto& pair : m_resourceLoaderMap)
         pair.value->invalidate();
 #endif
+
     [m_videoOutput setDelegate:nil queue:0];
 
     if (m_videoLayer)
@@ -2335,12 +2320,6 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
         m_keyURIToRequestMap.remove(keyId);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::removeSession(LegacyCDMSession& session)
-{
-    ASSERT_UNUSED(session, &session == m_session);
-    m_session = nullptr;
-}
-
 std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient* client)
 {
     if (!keySystemIsSupported(keySystem))
@@ -2349,9 +2328,9 @@ std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSess
     m_session = makeWeakPtr(*session);
     return WTFMove(session);
 }
+
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
 void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool newValue)
 {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -2366,7 +2345,6 @@ void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternal
     UNUSED_PARAM(newValue);
 #endif
 }
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached(CDMInstance& instance)

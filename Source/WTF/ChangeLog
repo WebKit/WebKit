@@ -1,3 +1,12 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=211461
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h: Don't define HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT.
+
 2020-05-05  Mark Lam  <mark.lam@apple.com>
 
         Allow Bitmap to use up to a UCPURegister word size for internal bit storage.

@@ -1,3 +1,28 @@
+2020-05-05  Darin Adler  <darin@apple.com>
+
+        Remove HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+        https://bugs.webkit.org/show_bug.cgi?id=211461
+
+        Reviewed by Eric Carlson.
+
+        * PlatformMac.cmake: Removed InbandTextTrackPrivateLegacyAVFObjC.mm.
+        * SourcesCocoa.txt: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto, also the header.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h: Removed.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm: Removed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Removed HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT). Also moved data member
+        initialization to the class definition, made more things private and final,
+        made outputObscuredDueToInsufficientExternalProtectionChanged unconditional,
+        changed friend class MediaPlayerFactoryAVFoundationObjC into member class
+        MediaPlayerPrivateAVFoundationObjC::Factory, removed unused removeSession function,
+        and tweaked conditionals.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        Removed import of InbandTextTrackPrivateLegacyAVFObjC.h. Moved data member
+        initialization to the class definition. Moved include of BinarySemaphore here.
+
 2020-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Assert that EventHandler only tracks event target nodes in its own document
