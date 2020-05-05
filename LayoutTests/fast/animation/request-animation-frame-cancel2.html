@@ -4,41 +4,39 @@
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<span id="e"></span>
-<span id="f"></span>
 <script>
-description("Tests one requestAnimationFrame callback cancelling a second");
+    var callbackFired = false;
+    var cancelFired = false;
 
-var e = document.getElementById("e");
-var secondCallbackId;
-var callbackFired = false;
-var cancelFired = false;
+    function firstRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(() => {
+                window.cancelAnimationFrame(secondCallbackId);
+                cancelFired = true;
+                resolve();
+            });
+        });
+    }
 
-window.requestAnimationFrame(function() {
-    cancelFired = true;
-    window.cancelAnimationFrame(secondCallbackId);
-}, e);
+    function secondRequestAnimationFrame() {
+        return new Promise(resolve => {
+            secondCallbackId = window.requestAnimationFrame(() => {
+                callbackFired = true;
+                resolve();
+            });
+            setTimeout(resolve, 100);
+        });
+    }
 
-secondCallbackId = window.requestAnimationFrame(function() {
-    callbackFired = true;
-}, e);
+    description("Tests one requestAnimationFrame callback cancelling a second");
+    window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
-
-setTimeout(function() {
-    shouldBeFalse("callbackFired");
-    shouldBeTrue("cancelFired");
-}, 100);
-
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-setTimeout(function() {
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 200);
+    Promise.all([firstRequestAnimationFrame(), secondRequestAnimationFrame()]).then(() => {
+        shouldBeFalse("callbackFired");
+        shouldBeTrue("cancelFired");
+        finishJSTest();
+    });
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
