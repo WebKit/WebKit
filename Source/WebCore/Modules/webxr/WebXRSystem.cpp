@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBXR)
 
+#include "Document.h"
+#include "FeaturePolicy.h"
 #include "PlatformXR.h"
 #include "RuntimeEnabledFeatures.h"
 #include "WebXRSession.h"
@@ -50,13 +52,88 @@ WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
 
 WebXRSystem::~WebXRSystem() = default;
 
-void WebXRSystem::isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&)
+// https://immersive-web.github.io/webxr/#ensures-an-immersive-xr-device-is-selected
+void WebXRSystem::ensureImmersiveXRDeviceIsSelected()
 {
-    // When the supportsSession(mode) method is invoked, it MUST return a new Promise promise and run the following steps in parallel:
-    //   1. Ensure an XR device is selected.
-    //   2. If the XR device is null, reject promise with a "NotSupportedError" DOMException and abort these steps.
-    //   3. If the XR device's list of supported modes does not contain mode, reject promise with a "NotSupportedError" DOMException and abort these steps.
-    //   4. Else resolve promise.
+    // Don't ask platform code for XR devices, we're using simulated ones.
+    // TODO: should be have a MockPlatformXR implementation instead ?
+    if (UNLIKELY(m_testingMode))
+        return;
+
+    if (m_activeImmersiveDevice)
+        return;
+
+    // https://immersive-web.github.io/webxr/#enumerate-immersive-xr-devices
+    auto& platformXR = PlatformXR::Instance::singleton();
+    bool isFirstXRDevicesEnumeration = !m_immersiveXRDevicesHaveBeenEnumerated;
+    platformXR.enumerateImmersiveXRDevices();
+    m_immersiveXRDevicesHaveBeenEnumerated = true;
+    const Vector<std::unique_ptr<PlatformXR::Device>>& immersiveXRDevices = platformXR.immersiveXRDevices();
+
+    // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
+    auto* oldDevice = m_activeImmersiveDevice.get();
+    if (immersiveXRDevices.isEmpty()) {
+        m_activeImmersiveDevice = nullptr;
+        return;
+    }
+    if (immersiveXRDevices.size() == 1) {
+        m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+        return;
+    }
+
+    if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findMatching([&] (auto& entry) { return entry.get() == oldDevice; }) != notFound)
+        ASSERT(m_activeImmersiveDevice.get() == oldDevice);
+    else {
+        // TODO: implement a better UA selection mechanism if required.
+        m_activeImmersiveDevice = makeWeakPtr(immersiveXRDevices.first().get());
+    }
+
+    if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice)
+        return;
+
+    // TODO: 7. Shut down any active XRSessions.
+    // TODO: 8. Set the XR compatible boolean of all WebGLRenderingContextBase instances to false.
+    // TODO: 9. Queue a task to fire an event named devicechange on the context object.
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsystem-issessionsupported
+void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromise&& promise)
+{
+    // 1. Let promise be a new Promise.
+    // 2. If mode is "inline", resolve promise with true and return it.
+    if (mode == XRSessionMode::Inline) {
+        promise.resolve(true);
+        return;
+    }
+
+    // 3. If the requesting document’s origin is not allowed to use the "xr-spatial-tracking" feature policy,
+    //    reject promise with a "SecurityError" DOMException and return it.
+    auto document = downcast<Document>(scriptExecutionContext());
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::XRSpatialTracking, *document, LogFeaturePolicyFailure::Yes)) {
+        promise.reject(Exception { SecurityError });
+        return;
+    }
+
+    // 4. Run the following steps in parallel:
+    scriptExecutionContext()->postTask([this, promise = WTFMove(promise), mode] (ScriptExecutionContext&) mutable {
+        // 4.1 Ensure an immersive XR device is selected.
+        ensureImmersiveXRDeviceIsSelected();
+
+        // 4.2 If the immersive XR device is null, resolve promise with false and abort these steps.
+        if (!m_activeImmersiveDevice) {
+            promise.resolve(false);
+            return;
+        }
+
+        // 4.3 If the immersive XR device's list of supported modes does not contain mode, resolve promise with false and abort these steps.
+        if (!m_activeImmersiveDevice->supports(mode)) {
+            promise.resolve(false);
+            return;
+        }
+
+        // 4.4 Resolve promise with true.
+        promise.resolve(true);
+    });
 }
 
 void WebXRSystem::requestSession(XRSessionMode, const XRSessionInit&, RequestSessionPromise&&)
@@ -94,6 +171,7 @@ void WebXRSystem::registerSimulatedXRDeviceForTesting(const PlatformXR::Device& 
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
         return;
+    m_testingMode = true;
     if (device.supports(PlatformXR::SessionMode::ImmersiveVr) || device.supports(PlatformXR::SessionMode::ImmersiveAr)) {
         m_immersiveDevices.append(makeWeakPtr(device));
         m_activeImmersiveDevice = m_immersiveDevices.last();
@@ -108,9 +186,13 @@ void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device* devi
         return;
     ASSERT(m_immersiveDevices.contains(device));
     m_immersiveDevices.removeFirst(device);
+    if (m_activeImmersiveDevice == device)
+        m_activeImmersiveDevice = nullptr;
     if (m_inlineXRDevice == device)
         m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
+    m_testingMode = false;
 }
+
 
 } // namespace WebCore
 

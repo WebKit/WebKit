@@ -1082,6 +1082,9 @@ imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ Pas
 
 # WebXR
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html [ Pass ]
 
 # Passing since r259006.
 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-010.html

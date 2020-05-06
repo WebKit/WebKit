@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace PlatformXR {
@@ -70,12 +71,16 @@ public:
 
     static Device::DeviceId nextDeviceId();
 
+    void enumerateImmersiveXRDevices();
+    const Vector<std::unique_ptr<Device>>& immersiveXRDevices() const { return m_immersiveXRDevices; }
 private:
     Instance();
     ~Instance();
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;
+
+    Vector<std::unique_ptr<Device>> m_immersiveXRDevices;
 };
 
 #endif // ENABLE(WEBXR)

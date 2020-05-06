@@ -67,6 +67,7 @@ public:
     ~Impl();
 
 #if USE_OPENXR
+    void collectSupportedSessionModes(Device&, XrSystemId);
     XrInstance m_instance { XR_NULL_HANDLE };
 #endif // USE_OPENXR
 };
@@ -147,6 +148,43 @@ Instance::Impl::~Impl()
 {
 }
 
+#if USE_OPENXR
+
+void Instance::Impl::collectSupportedSessionModes(Device& device, XrSystemId systemId)
+{
+    uint32_t viewConfigurationCount;
+    XrResult result = xrEnumerateViewConfigurations(m_instance, systemId, 0, &viewConfigurationCount, nullptr);
+    if (result != XR_SUCCESS) {
+        WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
+        return;
+    }
+
+    XrViewConfigurationType viewConfigurations[viewConfigurationCount];
+    result = xrEnumerateViewConfigurations(m_instance, systemId, viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
+    if (result != XR_SUCCESS) {
+        WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
+        WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
+        return;
+    }
+
+    Device::ListOfSupportedModes supportedModes;
+    for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
+        auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
+        result = xrGetViewConfigurationProperties(m_instance, systemId, viewConfigurations[i], &viewConfigurationProperties);
+        if (result != XR_SUCCESS) {
+            WTFLogAlways("xrGetViewConfigurationProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
+            return;
+        }
+        if (viewConfigurationProperties.viewConfigurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO)
+            supportedModes.append(SessionMode::ImmersiveAr);
+        else if (viewConfigurationProperties.viewConfigurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO)
+            supportedModes.append(SessionMode::ImmersiveVr);
+    }
+    device.setSupportedModes(supportedModes);
+}
+
+#endif // USE_OPENXR
+
 Instance& Instance::singleton()
 {
     static LazyNeverDestroyed<Instance> s_instance;
@@ -160,6 +198,30 @@ Instance& Instance::singleton()
 
 Instance::Instance() = default;
 Instance::~Instance() = default;
+
+void Instance::enumerateImmersiveXRDevices()
+{
+#if USE_OPENXR
+    if (m_impl->m_instance == XR_NULL_HANDLE) {
+        WTFLogAlways("%s Unable to enumerate XR devices. No XrInstance present\n", __FUNCTION__);
+        return;
+    }
+
+    auto systemGetInfo = createStructure<XrSystemGetInfo, XR_TYPE_SYSTEM_GET_INFO>();
+    systemGetInfo.formFactor = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
+
+    XrSystemId systemId;
+    XrResult result = xrGetSystem(m_impl->m_instance, &systemGetInfo, &systemId);
+    if (result != XR_SUCCESS) {
+        WTFLogAlways("xrGetSystem(): error %s\n", resultToString(result, m_impl->m_instance).utf8().data());
+        return;
+    }
+
+    auto device = makeUnique<Device>();
+    m_impl->collectSupportedSessionModes(*device, systemId);
+    m_immersiveXRDevices.append(WTFMove(device));
+#endif // USE_OPENXR
+}
 
 } // namespace PlatformXR
 

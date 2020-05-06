@@ -74,6 +74,8 @@ protected:
 private:
     WebXRSystem(ScriptExecutionContext&);
 
+    void ensureImmersiveXRDeviceIsSelected();
+
     // https://immersive-web.github.io/webxr/#default-inline-xr-device
     class DummyInlineDevice final : public PlatformXR::Device {
     public:
@@ -83,6 +85,9 @@ private:
         }
     };
     DummyInlineDevice m_defaultInlineDevice;
+
+    bool m_immersiveXRDevicesHaveBeenEnumerated { false };
+    bool m_testingMode { false };
 
     WeakPtr<WebXRSession> m_activeImmersiveSession;
 

@@ -1,3 +1,51 @@
+2020-04-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement isSessionSupported()
+        https://bugs.webkit.org/show_bug.cgi?id=211187
+
+        Reviewed by Dean Jackson.
+
+        The isSessionSupported() method queries if a given mode may be supported
+        by the UA and device capabilities. Apart from the needed machinery in
+        the webxr Module we're adding an OpenXR implementation of the
+        enumerateImmersiveXRDevices() method required by isSessionSupported().
+
+        The method is not completely implemented as it lacks a few action at its
+        very end, like firing events. They'll be implemented in follow up
+        patches as they require additional changes.
+
+        Some OpenXR runtimes as Monado always enumerate at least one device even
+        if none is connected. This dummy device might interfere with tests
+        execution (as there will be more devices than expected) so we're adding
+        a testMode to WebXRSystem which does not query platform for existing
+        devices.
+
+        Added expected results and unskipped some WPT that are now passing.
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::ensureImmersiveXRDeviceIsSelected): Asks platform
+        code for the list of attached XR devices and properly set the active
+        immersive device if any.
+        (WebCore::WebXRSystem::isSessionSupported): Partially implemented.
+        (WebCore::WebXRSystem::registerSimulatedXRDeviceForTesting): Set the
+        passed in mock device as either the current active immersive or inline
+        device.
+        (WebCore::WebXRSystem::unregisterSimulatedXRDeviceForTesting): Removes
+        the passed in mock device from the list of immersive devices.
+        * Modules/webxr/WebXRSystem.h:
+        * html/FeaturePolicy.cpp:
+        (WebCore::policyTypeName): Handle XRSpatialTracking.
+        (WebCore::FeaturePolicy::parse): Parse "xr-spatial-tracking".
+        (WebCore::FeaturePolicy::allows const): Handle XRSpatialTracking.
+        * html/FeaturePolicy.h: Added XRSpatialTracking.
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Instance::immersiveXRDevices const): Keep a list of immersive devices.
+        * platform/xr/openxr/PlatformXR.cpp:
+        (PlatformXR::Instance::Impl::collectSupportedSessionModes): Gather supported session
+        modes for a given device from OpenXR.
+        (PlatformXR::Instance::enumerateImmersiveXRDevices): Collect devices from OpenXR. We
+        are currently asking for HMD devices.
+
 2020-05-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Coordinate "update animations and send events" procedure across multiple timelines
