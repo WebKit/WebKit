@@ -1,3 +1,22 @@
+2020-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        EventHandler::dispatchMouseEvent() cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=211491
+
+        Reviewed by Zalan Bujtas.
+
+        Replace the last bool argument with FireMouseOverOut, and remove the "cancelable" argument that was unused.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleMouseForceEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * page/EventHandler.h:
+
 2020-05-05  Rob Buis  <rbuis@igalia.com>
 
         Fix setting host on URL when no port is specified

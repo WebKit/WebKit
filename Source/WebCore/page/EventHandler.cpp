@@ -1804,7 +1804,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
 
     m_frame.selection().setCaretBlinkingSuspended(true);
 
-    bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, true);
+    bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
     m_capturesDragging = !swallowEvent || mouseEvent.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
@@ -1866,9 +1866,9 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
         return true;
 
     m_clickCount = platformMouseEvent.clickCount();
-    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, false);
+    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
 
-    bool swallowClickEvent = platformMouseEvent.button() != RightButton && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, true);
+    bool swallowClickEvent = platformMouseEvent.button() != RightButton && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
     if (m_lastScrollbarUnderMouse)
         swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(platformMouseEvent);
@@ -1978,7 +1978,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     }
 
     if (m_frameSetBeingResized)
-        return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, platformMouseEvent, false);
+        return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), 0, platformMouseEvent, FireMouseOverOut::No);
 
     // On iOS, our scrollbars are managed by UIKit.
 #if !PLATFORM(IOS_FAMILY)
@@ -2050,13 +2050,14 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         if (auto* view = m_frame.view())
             updateCursor(*view, mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
     }
-    
+
     m_lastMouseMoveEventSubframe = newSubframe;
 
     if (swallowEvent)
         return true;
     
-    swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mouseEvent.targetNode(), false, 0, platformMouseEvent, true);
+    swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mouseEvent.targetNode(), 0, platformMouseEvent, FireMouseOverOut::Yes);
+
 #if ENABLE(DRAG_SUPPORT)
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mouseEvent);
@@ -2143,22 +2144,20 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
     }
 
     if (m_frameSetBeingResized)
-        return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, platformMouseEvent, false);
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
 
     // If an immediate action began or was completed using this series of mouse events, then we should send mouseup to
     // the DOM and return now so that we don't perform our own default behaviors.
     if (m_immediateActionStage == ImmediateActionStage::ActionCompleted || m_immediateActionStage == ImmediateActionStage::ActionUpdated || m_immediateActionStage == ImmediateActionStage::ActionCancelledAfterUpdate) {
         m_immediateActionStage = ImmediateActionStage::None;
-        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), true, m_clickCount, platformMouseEvent, false);
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
     }
     m_immediateActionStage = ImmediateActionStage::None;
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
         m_lastScrollbarUnderMouse->mouseUp(platformMouseEvent);
-        bool cancelable = true;
-        bool setUnder = false;
-        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), cancelable, m_clickCount, platformMouseEvent, setUnder);
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
     }
 
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::Release, HitTestRequest::DisallowUserAgentShadowContent };
@@ -2169,12 +2168,12 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
     if (subframe && passMouseReleaseEventToSubframe(mouseEvent, *subframe))
         return true;
 
-    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, false);
+    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
 
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 
     auto nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), true, m_clickCount, platformMouseEvent, true);
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
@@ -2216,11 +2215,11 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
 
     auto mouseEvent = prepareMouseEvent(hitType, event);
 
-    bool swallowedEvent = !dispatchMouseEvent(eventNames().webkitmouseforcechangedEvent, mouseEvent.targetNode(), false, 0, event, false);
+    bool swallowedEvent = !dispatchMouseEvent(eventNames().webkitmouseforcechangedEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
     if (event.type() == PlatformEvent::MouseForceDown)
-        swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforcedownEvent, mouseEvent.targetNode(), false, 0, event, false);
+        swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforcedownEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
     if (event.type() == PlatformEvent::MouseForceUp)
-        swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforceupEvent, mouseEvent.targetNode(), false, 0, event, false);
+        swallowedEvent |= !dispatchMouseEvent(eventNames().webkitmouseforceupEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
 
     return swallowedEvent;
 }
@@ -2653,11 +2652,11 @@ static RefPtr<Element> findFirstMouseFocusableElementInComposedTree(Element& hos
     return nullptr;
 }
 
-bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& platformMouseEvent, bool setUnder)
+bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, int clickCount, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {
     Ref<Frame> protectedFrame(m_frame);
 
-    updateMouseEventTargetNode(targetNode, platformMouseEvent, setUnder ? FireMouseOverOut::Yes : FireMouseOverOut::No);
+    updateMouseEventTargetNode(targetNode, platformMouseEvent, fireMouseOverOut);
 
     if (m_elementUnderMouse && !m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount))
         return false;
@@ -3001,7 +3000,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         selectClosestContextualWordOrLinkFromMouseEvent(mouseEvent);
     }
 
-    swallowEvent = !dispatchMouseEvent(eventNames().contextmenuEvent, mouseEvent.targetNode(), true, 0, event, false);
+    swallowEvent = !dispatchMouseEvent(eventNames().contextmenuEvent, mouseEvent.targetNode(), 0, event, FireMouseOverOut::No);
     
     return swallowEvent;
 }
