@@ -1040,33 +1040,46 @@ bool AccessibilityRenderObject::hasPopup() const
     });
 }
 
-bool AccessibilityRenderObject::supportsARIADropping() const 
+bool AccessibilityRenderObject::supportsDropping() const 
 {
-    const AtomString& dropEffect = getAttribute(aria_dropeffectAttr);
-    return !dropEffect.isEmpty();
+    return determineDropEffects().size();
 }
 
-bool AccessibilityRenderObject::supportsARIADragging() const
+bool AccessibilityRenderObject::supportsDragging() const
 {
     const AtomString& grabbed = getAttribute(aria_grabbedAttr);
-    return equalLettersIgnoringASCIICase(grabbed, "true") || equalLettersIgnoringASCIICase(grabbed, "false");
+    return equalLettersIgnoringASCIICase(grabbed, "true") || equalLettersIgnoringASCIICase(grabbed, "false") || hasAttribute(draggableAttr);
 }
 
-bool AccessibilityRenderObject::isARIAGrabbed()
+bool AccessibilityRenderObject::isGrabbed()
 {
+#if ENABLE(DRAG_SUPPORT)
+    if (mainFrame() && mainFrame()->eventHandler().draggingElement() == element())
+        return true;
+#endif
+
     return elementAttributeValue(aria_grabbedAttr);
 }
 
-Vector<String> AccessibilityRenderObject::determineARIADropEffects()
+Vector<String> AccessibilityRenderObject::determineDropEffects() const
 {
+    // Order is aria-dropeffect, dropzone, webkitdropzone
     const AtomString& dropEffects = getAttribute(aria_dropeffectAttr);
-    if (dropEffects.isEmpty()) {
-        return { };
+    if (!dropEffects.isEmpty()) {
+        String dropEffectsString = dropEffects.string();
+        dropEffectsString.replace('\n', ' ');
+        return dropEffectsString.split(' ');
     }
     
-    String dropEffectsString = dropEffects.string();
-    dropEffectsString.replace('\n', ' ');
-    return dropEffectsString.split(' ');
+    auto dropzone = getAttribute(dropzoneAttr);
+    if (!dropzone.isEmpty())
+        return Vector<String> { dropzone };
+    
+    auto webkitdropzone = getAttribute(webkitdropzoneAttr);
+    if (!webkitdropzone.isEmpty())
+        return Vector<String> { webkitdropzone };
+    
+    return { };
 }
     
 bool AccessibilityRenderObject::exposesTitleUIElement() const

@@ -172,10 +172,10 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::SupportsPosInSet, object.supportsPosInSet());
     setProperty(AXPropertyName::SetSize, object.setSize());
     setProperty(AXPropertyName::PosInSet, object.posInSet());
-    setProperty(AXPropertyName::SupportsARIADropping, object.supportsARIADropping());
-    setProperty(AXPropertyName::SupportsARIADragging, object.supportsARIADragging());
-    setProperty(AXPropertyName::IsARIAGrabbed, object.isARIAGrabbed());
-    setProperty(AXPropertyName::ARIADropEffects, object.determineARIADropEffects());
+    setProperty(AXPropertyName::SupportsDropping, object.supportsDropping());
+    setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
+    setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
+    setProperty(AXPropertyName::DropEffects, object.determineDropEffects());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
     setProperty(AXPropertyName::ExposesTitleUIElement, object.exposesTitleUIElement());
     setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));

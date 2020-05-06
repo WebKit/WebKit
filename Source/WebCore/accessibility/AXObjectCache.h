@@ -303,7 +303,12 @@ public:
         AXRequiredStatusChanged,
         AXTextChanged,
         AXAriaAttributeChanged,
-        AXElementBusyChanged
+        AXElementBusyChanged,
+        AXDraggingStarted,
+        AXDraggingEnded,
+        AXDraggingEnteredDropZone,
+        AXDraggingDropped,
+        AXDraggingExitedDropZone
     };
 
     void postNotification(RenderObject*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);

@@ -563,9 +563,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!dropEffect.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "dropeffect", dropEffect.utf8().data());
 
-    if (coreObject->isARIAGrabbed())
+    if (coreObject->isGrabbed())
         attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "true");
-    else if (coreObject->supportsARIADragging())
+    else if (coreObject->supportsDragging())
         attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "false");
 
     // The Core AAM states the author-provided value should be exposed as-is.

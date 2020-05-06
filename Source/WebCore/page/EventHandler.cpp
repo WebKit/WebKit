@@ -2288,7 +2288,26 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
         event.modifiers(), 0, 0, nullptr, event.force(), NoTap, &dataTransfer);
 
     dragTarget.dispatchEvent(dragEvent);
+
+    if (auto* cache = m_frame.document()->existingAXObjectCache()) {
+        if (eventType == eventNames().dragstartEvent)
+            cache->postNotification(&dragTarget, AXObjectCache::AXDraggingStarted);
+        else if (eventType == eventNames().dragendEvent)
+            cache->postNotification(&dragTarget, AXObjectCache::AXDraggingEnded);
+        else if (eventType == eventNames().dragenterEvent)
+            cache->postNotification(&dragTarget, AXObjectCache::AXDraggingEnteredDropZone);
+        else if (eventType == eventNames().dragleaveEvent)
+            cache->postNotification(&dragTarget, AXObjectCache::AXDraggingExitedDropZone);
+        else if (eventType == eventNames().dropEvent)
+            cache->postNotification(&dragTarget, AXObjectCache::AXDraggingDropped);
+    }
+
     return dragEvent->defaultPrevented();
+}
+
+Element* EventHandler::draggingElement() const
+{
+    return dragState().source.get();
 }
 
 static bool targetIsFrame(Node* target, Frame*& frame)

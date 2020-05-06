@@ -171,10 +171,10 @@ public:
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
     bool hasPopup() const override;
 
-    bool supportsARIADropping() const override;
-    bool supportsARIADragging() const override;
-    bool isARIAGrabbed() override;
-    Vector<String> determineARIADropEffects() override;
+    bool supportsDropping() const override;
+    bool supportsDragging() const override;
+    bool isGrabbed() override;
+    Vector<String> determineDropEffects() const override;
     
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
     VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;

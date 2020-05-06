@@ -1,3 +1,49 @@
+2020-05-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement accessibility of HTML 5.1 Drag & Drop
+        https://bugs.webkit.org/show_bug.cgi?id=211415
+        <rdar://problem/22695531>
+
+        Reviewed by Joanmarie Diggs.
+        Support HTML5 drag and drop. Support dropzone attribute.
+        Add new notifications for VoiceOver to consume.
+
+        It appears that most of the dragging tests are skipped because of eventSender issues.
+        I think this test could do a little more if those issues were resolved. Specifically, not all
+        the notifications are seen that are expected.
+
+        Test: accessibility/mac/draggable.html
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAAttributes const):
+        (WebCore::AccessibilityObject::isAXHidden const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsDropping const):
+        (WebCore::AccessibilityRenderObject::supportsDragging const):
+        (WebCore::AccessibilityRenderObject::isGrabbed):
+        (WebCore::AccessibilityRenderObject::determineDropEffects):
+        (WebCore::AccessibilityRenderObject::supportsARIADropping const): Deleted.
+        (WebCore::AccessibilityRenderObject::supportsARIADragging const): Deleted.
+        (WebCore::AccessibilityRenderObject::isARIAGrabbed): Deleted.
+        (WebCore::AccessibilityRenderObject::determineARIADropEffects): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLAttributeNames.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::draggingElement const):
+        * page/EventHandler.h:
+
 2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Cut and paste from Google Doc to Notes in several (non-Latin) languages doesn't work

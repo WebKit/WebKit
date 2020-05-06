@@ -89,7 +89,7 @@ private:
         AutoCompleteValue,
         ARIAControlsElements,
         ARIADetailsElements,
-        ARIADropEffects,
+        DropEffects,
         ARIAErrorMessageElements,
         ARIAIsMultiline,
         ARIAFlowToElements,
@@ -161,7 +161,7 @@ private:
         IsAccessibilityIgnored,
         IsActiveDescendantOfFocusedContainer,
         IsAnonymousMathOperator,
-        IsARIAGrabbed,
+        IsGrabbed,
         IsARIATreeGridRow,
         IsAttachment,
         IsButton,
@@ -299,8 +299,8 @@ private:
         SpeakAs,
         SpeechHint,
         StringValue,
-        SupportsARIADragging,
-        SupportsARIADropping,
+        SupportsDragging,
+        SupportsDropping,
         SupportsARIAOwns,
         SupportsCurrent,
         SupportsDatetimeAttribute,
@@ -504,10 +504,10 @@ private:
     bool supportsPosInSet() const override { return boolAttributeValue(AXPropertyName::SupportsPosInSet); }
     int setSize() const override { return intAttributeValue(AXPropertyName::SetSize); }
     int posInSet() const override { return intAttributeValue(AXPropertyName::PosInSet); }
-    bool supportsARIADropping() const override { return boolAttributeValue(AXPropertyName::SupportsARIADropping); }
-    bool supportsARIADragging() const override { return boolAttributeValue(AXPropertyName::SupportsARIADragging); }
-    bool isARIAGrabbed() override { return boolAttributeValue(AXPropertyName::IsARIAGrabbed); }
-    Vector<String> determineARIADropEffects() override { return vectorAttributeValue<String>(AXPropertyName::ARIADropEffects); }
+    bool supportsDropping() const override { return boolAttributeValue(AXPropertyName::SupportsDropping); }
+    bool supportsDragging() const override { return boolAttributeValue(AXPropertyName::SupportsDragging); }
+    bool isGrabbed() override { return boolAttributeValue(AXPropertyName::IsGrabbed); }
+    Vector<String> determineDropEffects() const override { return vectorAttributeValue<String>(AXPropertyName::DropEffects); }
     AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* focusedUIElement() const override;
     AXCoreObject* parentObject() const override { return parentObjectUnignored(); }

@@ -756,11 +756,11 @@ public:
     virtual int posInSet() const = 0;
 
     // ARIA drag and drop
-    virtual bool supportsARIADropping() const = 0;
-    virtual bool supportsARIADragging() const = 0;
-    virtual bool isARIAGrabbed() = 0;
+    virtual bool supportsDropping() const = 0;
+    virtual bool supportsDragging() const = 0;
+    virtual bool isGrabbed() = 0;
     virtual void setARIAGrabbed(bool) = 0;
-    virtual Vector<String> determineARIADropEffects() = 0;
+    virtual Vector<String> determineDropEffects() const = 0;
 
     // Called on the root AX object to return the deepest available element.
     virtual AXCoreObject* accessibilityHitTest(const IntPoint&) const = 0;

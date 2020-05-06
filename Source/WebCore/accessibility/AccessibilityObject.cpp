@@ -2534,8 +2534,8 @@ bool AccessibilityObject::supportsARIAAttributes() const
 {
     // This returns whether the element supports any global ARIA attributes.
     return supportsLiveRegion()
-        || supportsARIADragging()
-        || supportsARIADropping()
+        || supportsDragging()
+        || supportsDropping()
         || supportsARIAOwns()
         || hasAttribute(aria_atomicAttr)
         || hasAttribute(aria_busyAttr)

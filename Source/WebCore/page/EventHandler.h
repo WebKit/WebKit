@@ -339,6 +339,9 @@ public:
 
     WEBCORE_EXPORT Optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
 
+#if ENABLE(DRAG_SUPPORT)
+    Element* draggingElement() const;
+#endif
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();

@@ -1350,10 +1350,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         || backingObject->isToolbar())
         [additional addObject:NSAccessibilityOrientationAttribute];
 
-    if (backingObject->supportsARIADragging())
+    if (backingObject->supportsDragging())
         [additional addObject:NSAccessibilityGrabbedAttribute];
 
-    if (backingObject->supportsARIADropping())
+    if (backingObject->supportsDropping())
         [additional addObject:NSAccessibilityDropEffectsAttribute];
 
     if (backingObject->isTable() && backingObject->isExposable() && backingObject->supportsSelectedRows())
@@ -2917,10 +2917,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return @(backingObject->setSize());
 
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
-        return [NSNumber numberWithBool:backingObject->isARIAGrabbed()];
+        return [NSNumber numberWithBool:backingObject->isGrabbed()];
 
     if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute])
-        return createNSArray(backingObject->determineARIADropEffects()).autorelease();
+        return createNSArray(backingObject->determineDropEffects()).autorelease();
 
     if ([attributeName isEqualToString:NSAccessibilityPlaceholderValueAttribute])
         return backingObject->placeholderValue();
