@@ -107,7 +107,7 @@ void URLDecomposition::setHost(StringView value)
         return;
 
     if (separator == notFound)
-        fullURL.setHostAndPort(value);
+        fullURL.setHost(value);
     else {
         unsigned portLength = countASCIIDigits(value.substring(separator + 1));
         if (!portLength) {

@@ -1,3 +1,17 @@
+2020-05-05  Rob Buis  <rbuis@igalia.com>
+
+        Fix setting host on URL when no port is specified
+        https://bugs.webkit.org/show_bug.cgi?id=211453
+
+        Reviewed by Darin Adler.
+
+        Update improved test expectations.
+
+        * fast/dom/DOMURL/set-href-attribute-host-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-host.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-host.html:
+
 2020-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         Minor EventHandler and test cleanup

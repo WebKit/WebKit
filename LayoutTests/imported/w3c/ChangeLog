@@ -1,3 +1,14 @@
+2020-05-05  Rob Buis  <rbuis@igalia.com>
+
+        Fix setting host on URL when no port is specified
+        https://bugs.webkit.org/show_bug.cgi?id=211453
+
+        Reviewed by Darin Adler.
+
+        Update improved test expectations.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2020-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update two svg tests from WPT
