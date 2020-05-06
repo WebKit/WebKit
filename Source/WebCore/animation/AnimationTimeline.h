@@ -53,7 +53,6 @@ public:
     virtual bool isDocumentTimeline() const { return false; }
 
     const AnimationCollection& relevantAnimations() const { return m_animations; }
-    const Vector<WeakPtr<WebAnimation>>& allAnimations() const { return m_allAnimations; }
 
     void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
