@@ -119,148 +119,148 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 )
 
 set(WebKit_MESSAGES_IN_FILES
-    GPUProcess/GPUConnectionToWebProcess.messages.in
-    GPUProcess/GPUProcess.messages.in
+    GPUProcess/GPUConnectionToWebProcess
+    GPUProcess/GPUProcess
 
-    GPUProcess/graphics/RemoteRenderingBackendProxy.messages.in
+    GPUProcess/graphics/RemoteRenderingBackendProxy
 
-    GPUProcess/media/RemoteAudioDestinationManager.messages.in
-    GPUProcess/media/RemoteAudioSessionProxy.messages.in
-    GPUProcess/media/RemoteCDMFactoryProxy.messages.in
-    GPUProcess/media/RemoteCDMInstanceProxy.messages.in
-    GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in
-    GPUProcess/media/RemoteCDMProxy.messages.in
-    GPUProcess/media/RemoteLegacyCDMFactoryProxy.messages.in
-    GPUProcess/media/RemoteLegacyCDMProxy.messages.in
-    GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in
-    GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
-    GPUProcess/media/RemoteMediaPlayerProxy.messages.in
-    GPUProcess/media/RemoteMediaResourceManager.messages.in
+    GPUProcess/media/RemoteAudioDestinationManager
+    GPUProcess/media/RemoteAudioSessionProxy
+    GPUProcess/media/RemoteCDMFactoryProxy
+    GPUProcess/media/RemoteCDMInstanceProxy
+    GPUProcess/media/RemoteCDMInstanceSessionProxy
+    GPUProcess/media/RemoteCDMProxy
+    GPUProcess/media/RemoteLegacyCDMFactoryProxy
+    GPUProcess/media/RemoteLegacyCDMProxy
+    GPUProcess/media/RemoteLegacyCDMSessionProxy
+    GPUProcess/media/RemoteMediaPlayerManagerProxy
+    GPUProcess/media/RemoteMediaPlayerProxy
+    GPUProcess/media/RemoteMediaResourceManager
 
-    GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in
-    GPUProcess/webrtc/RemoteMediaRecorder.messages.in
-    GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
-    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
+    GPUProcess/webrtc/LibWebRTCCodecsProxy
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer
+    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager
+    GPUProcess/webrtc/RemoteMediaRecorder
+    GPUProcess/webrtc/RemoteMediaRecorderManager
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayer
+    GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager
 
-    NetworkProcess/Cookies/WebCookieManager.messages.in
+    NetworkProcess/Cookies/WebCookieManager
 
-    NetworkProcess/IndexedDB/WebIDBServer.messages.in
+    NetworkProcess/IndexedDB/WebIDBServer
 
-    NetworkProcess/NetworkConnectionToWebProcess.messages.in
-    NetworkProcess/NetworkContentRuleListManager.messages.in
-    NetworkProcess/NetworkProcess.messages.in
-    NetworkProcess/NetworkResourceLoader.messages.in
-    NetworkProcess/NetworkSocketChannel.messages.in
-    NetworkProcess/NetworkSocketStream.messages.in
+    NetworkProcess/NetworkConnectionToWebProcess
+    NetworkProcess/NetworkContentRuleListManager
+    NetworkProcess/NetworkProcess
+    NetworkProcess/NetworkResourceLoader
+    NetworkProcess/NetworkSocketChannel
+    NetworkProcess/NetworkSocketStream
 
-    NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
-    NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
-    NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
+    NetworkProcess/ServiceWorker/ServiceWorkerFetchTask
+    NetworkProcess/ServiceWorker/WebSWServerConnection
+    NetworkProcess/ServiceWorker/WebSWServerToContextConnection
 
-    NetworkProcess/WebStorage/StorageManagerSet.messages.in
+    NetworkProcess/WebStorage/StorageManagerSet
 
-    NetworkProcess/cache/CacheStorageEngineConnection.messages.in
+    NetworkProcess/cache/CacheStorageEngineConnection
 
-    NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
-    NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
-    NetworkProcess/webrtc/NetworkRTCProvider.messages.in
-    NetworkProcess/webrtc/NetworkRTCSocket.messages.in
+    NetworkProcess/webrtc/NetworkMDNSRegister
+    NetworkProcess/webrtc/NetworkRTCMonitor
+    NetworkProcess/webrtc/NetworkRTCProvider
+    NetworkProcess/webrtc/NetworkRTCSocket
 
-    PluginProcess/PluginControllerProxy.messages.in
-    PluginProcess/PluginProcess.messages.in
-    PluginProcess/WebProcessConnection.messages.in
+    PluginProcess/PluginControllerProxy
+    PluginProcess/PluginProcess
+    PluginProcess/WebProcessConnection
 
-    Shared/AuxiliaryProcess.messages.in
-    Shared/WebConnection.messages.in
+    Shared/AuxiliaryProcess
+    Shared/WebConnection
 
-    Shared/Authentication/AuthenticationManager.messages.in
+    Shared/Authentication/AuthenticationManager
 
-    Shared/Plugins/NPObjectMessageReceiver.messages.in
+    Shared/Plugins/NPObjectMessageReceiver
 
-    UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/VisitedLinkStore.messages.in
-    UIProcess/WebCookieManagerProxy.messages.in
-    UIProcess/WebFullScreenManagerProxy.messages.in
-    UIProcess/WebGeolocationManagerProxy.messages.in
-    UIProcess/WebPageProxy.messages.in
-    UIProcess/WebPasteboardProxy.messages.in
-    UIProcess/WebProcessPool.messages.in
-    UIProcess/WebProcessProxy.messages.in
+    UIProcess/DrawingAreaProxy
+    UIProcess/VisitedLinkStore
+    UIProcess/WebCookieManagerProxy
+    UIProcess/WebFullScreenManagerProxy
+    UIProcess/WebGeolocationManagerProxy
+    UIProcess/WebPageProxy
+    UIProcess/WebPasteboardProxy
+    UIProcess/WebProcessPool
+    UIProcess/WebProcessProxy
 
-    UIProcess/Automation/WebAutomationSession.messages.in
+    UIProcess/Automation/WebAutomationSession
 
-    UIProcess/Downloads/DownloadProxy.messages.in
+    UIProcess/Downloads/DownloadProxy
 
-    UIProcess/GPU/GPUProcessProxy.messages.in
+    UIProcess/GPU/GPUProcessProxy
 
-    UIProcess/Inspector/RemoteWebInspectorProxy.messages.in
-    UIProcess/Inspector/WebInspectorProxy.messages.in
+    UIProcess/Inspector/RemoteWebInspectorProxy
+    UIProcess/Inspector/WebInspectorProxy
 
-    UIProcess/Network/NetworkProcessProxy.messages.in
+    UIProcess/Network/NetworkProcessProxy
 
-    UIProcess/Plugins/PluginProcessProxy.messages.in
+    UIProcess/Plugins/PluginProcessProxy
 
-    UIProcess/UserContent/WebUserContentControllerProxy.messages.in
+    UIProcess/UserContent/WebUserContentControllerProxy
 
-    WebProcess/WebProcess.messages.in
+    WebProcess/WebProcess
 
-    WebProcess/Automation/WebAutomationSessionProxy.messages.in
+    WebProcess/Automation/WebAutomationSessionProxy
 
-    WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in
+    WebProcess/Databases/IndexedDB/WebIDBConnectionToServer
 
-    WebProcess/FullScreen/WebFullScreenManager.messages.in
+    WebProcess/FullScreen/WebFullScreenManager
 
-    WebProcess/GPU/GPUProcessConnection.messages.in
+    WebProcess/GPU/GPUProcessConnection
 
-    WebProcess/GPU/graphics/RemoteRenderingBackend.messages.in
+    WebProcess/GPU/graphics/RemoteRenderingBackend
 
-    WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in
-    WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in
-    WebProcess/GPU/media/RemoteAudioSession.messages.in
-    WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
-    WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
-    WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in
+    WebProcess/GPU/media/MediaPlayerPrivateRemote
+    WebProcess/GPU/media/RemoteAudioDestinationProxy
+    WebProcess/GPU/media/RemoteAudioSession
+    WebProcess/GPU/media/RemoteCDMInstanceSession
+    WebProcess/GPU/media/RemoteLegacyCDMSession
+    WebProcess/GPU/media/RemoteMediaPlayerManager
 
-    WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in
-    WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
+    WebProcess/GPU/webrtc/LibWebRTCCodecs
+    WebProcess/GPU/webrtc/SampleBufferDisplayLayer
 
-    WebProcess/Geolocation/WebGeolocationManager.messages.in
+    WebProcess/Geolocation/WebGeolocationManager
 
-    WebProcess/Inspector/RemoteWebInspectorUI.messages.in
-    WebProcess/Inspector/WebInspector.messages.in
-    WebProcess/Inspector/WebInspectorInterruptDispatcher.messages.in
-    WebProcess/Inspector/WebInspectorUI.messages.in
+    WebProcess/Inspector/RemoteWebInspectorUI
+    WebProcess/Inspector/WebInspector
+    WebProcess/Inspector/WebInspectorInterruptDispatcher
+    WebProcess/Inspector/WebInspectorUI
 
-    WebProcess/Network/webrtc/LibWebRTCNetwork.messages.in
-    WebProcess/Network/webrtc/WebMDNSRegister.messages.in
-    WebProcess/Network/webrtc/WebRTCMonitor.messages.in
-    WebProcess/Network/webrtc/WebRTCResolver.messages.in
+    WebProcess/Network/webrtc/LibWebRTCNetwork
+    WebProcess/Network/webrtc/WebMDNSRegister
+    WebProcess/Network/webrtc/WebRTCMonitor
+    WebProcess/Network/webrtc/WebRTCResolver
 
-    WebProcess/Network/NetworkProcessConnection.messages.in
-    WebProcess/Network/WebResourceLoader.messages.in
-    WebProcess/Network/WebSocketChannel.messages.in
-    WebProcess/Network/WebSocketStream.messages.in
+    WebProcess/Network/NetworkProcessConnection
+    WebProcess/Network/WebResourceLoader
+    WebProcess/Network/WebSocketChannel
+    WebProcess/Network/WebSocketStream
 
-    WebProcess/Notifications/WebNotificationManager.messages.in
+    WebProcess/Notifications/WebNotificationManager
 
-    WebProcess/Plugins/PluginProcessConnection.messages.in
-    WebProcess/Plugins/PluginProcessConnectionManager.messages.in
-    WebProcess/Plugins/PluginProxy.messages.in
+    WebProcess/Plugins/PluginProcessConnection
+    WebProcess/Plugins/PluginProcessConnectionManager
+    WebProcess/Plugins/PluginProxy
 
-    WebProcess/Storage/WebSWClientConnection.messages.in
-    WebProcess/Storage/WebSWContextManagerConnection.messages.in
+    WebProcess/Storage/WebSWClientConnection
+    WebProcess/Storage/WebSWContextManagerConnection
 
-    WebProcess/UserContent/WebUserContentController.messages.in
+    WebProcess/UserContent/WebUserContentController
 
-    WebProcess/WebPage/DrawingArea.messages.in
-    WebProcess/WebPage/EventDispatcher.messages.in
-    WebProcess/WebPage/VisitedLinkTableController.messages.in
-    WebProcess/WebPage/WebPage.messages.in
+    WebProcess/WebPage/DrawingArea
+    WebProcess/WebPage/EventDispatcher
+    WebProcess/WebPage/VisitedLinkTableController
+    WebProcess/WebPage/WebPage
 
-    WebProcess/WebStorage/StorageAreaMap.messages.in
+    WebProcess/WebStorage/StorageAreaMap
 )
 
 # FIXME: https://bugs.webkit.org/show_bug.cgi?id=210366
@@ -406,23 +406,38 @@ endif ()
 
 # Helper macro which wraps the generate-message-receiver.py script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
-#   _input_files are messages.in files to generate.
-macro(GENERATE_MESSAGE_SOURCES _output_source _input_files)
-    foreach (_file ${_input_files})
+#   _inputs are messages.in files to generate.
+macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
+    unset(_input_files)
+    unset(_outputs)
+    foreach (_file IN ITEMS ${_inputs})
         get_filename_component(_name ${_file} NAME_WE)
-        add_custom_command(
-            OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
-            MAIN_DEPENDENCY ${_file}
-            DEPENDS ${WEBKIT_DIR}/Scripts/webkit/__init__.py
-                    ${WEBKIT_DIR}/Scripts/webkit/messages.py
-                    ${WEBKIT_DIR}/Scripts/webkit/model.py
-                    ${WEBKIT_DIR}/Scripts/webkit/parser.py
-            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py ${_file} --implementation ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp --header ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h --reply-header ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
-            WORKING_DIRECTORY ${WEBKIT_DIR}
-            VERBATIM)
-
+        list(APPEND _input_files ${WEBKIT_DIR}/${_file}.messages.in)
+        list(APPEND _outputs
+            ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp
+            ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
+            ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
+        )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
+    list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp)
+
+    add_custom_command(
+        OUTPUT
+            ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
+            ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.h
+            ${_outputs}
+        MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-message-receiver.py
+        DEPENDS
+            ${WEBKIT_DIR}/Scripts/webkit/__init__.py
+            ${WEBKIT_DIR}/Scripts/webkit/messages.py
+            ${WEBKIT_DIR}/Scripts/webkit/model.py
+            ${WEBKIT_DIR}/Scripts/webkit/parser.py
+            ${_input_files}
+        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py ${WEBKIT_DIR} ${_inputs}
+        WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
+        VERBATIM
+    )
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 

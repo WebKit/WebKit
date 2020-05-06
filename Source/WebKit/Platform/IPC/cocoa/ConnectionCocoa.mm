@@ -214,7 +214,7 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = makeUnique<Encoder>("IPC", "InitializeConnection", 0);
+        auto encoder = makeUnique<Encoder>(MessageName::InitializeConnection, 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         initializeSendSource();
@@ -273,7 +273,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         return false;
 
     default:
-        CString messageName = makeString(message->messageReceiverName().data(), "::", message->messageName().data()).utf8();
+        CString messageName(description(message->messageName()));
         WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%s', hash %d", kr, messageName.data(), messageName.hash()]);
         CRASH_WITH_INFO(kr, messageName.hash());
     }
@@ -308,7 +308,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
     }
 
     size_t safeMessageSize = messageSize.unsafeGet();
-    auto message = MachMessage::create(encoder->messageReceiverName().toString(), encoder->messageName().toString(), safeMessageSize);
+    auto message = MachMessage::create(encoder->messageName(), safeMessageSize);
     if (!message)
         return false;
 
@@ -533,7 +533,7 @@ void Connection::receiveSourceEventHandler()
     decoder->setImportanceAssertion(makeUnique<ImportanceAssertion>(header));
 #endif
 
-    if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "InitializeConnection") {
+    if (decoder->messageName() == MessageName::InitializeConnection) {
         ASSERT(m_isServer);
         ASSERT(!m_isConnected);
         ASSERT(!m_sendPort);

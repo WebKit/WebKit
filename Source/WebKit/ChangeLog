@@ -1,3 +1,286 @@
+2020-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce IPC overhead for message receiver name and message name to 2 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=211112
+
+        Reviewed by Chris Dumez.
+
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didReceiveInvalidMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::didReceiveSyncMessage):
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver): Deleted.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorRemoveMessageReceiver): Deleted.
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::WaitForMessageState::WaitForMessageState):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::addThreadMessageReceiver):
+        (IPC::Connection::removeThreadMessageReceiver):
+        (IPC::Connection::dispatchThreadMessageReceiverMessage):
+        (IPC::Connection::createSyncMessageEncoder):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::waitForSyncReply):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::dispatchMessage):
+        (IPC::Connection::dispatchMessageToWorkQueueReceiver):
+        (IPC::Connection::dispatchMessageToThreadReceiver):
+        (IPC::Connection::dispatchIncomingMessages):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithAsyncReply):
+        (IPC::Connection::sendSync):
+        (IPC::Connection::waitForAndDispatchImmediately):
+        * Platform/IPC/Decoder.cpp:
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::messageReceiverName const):
+        (IPC::Decoder::messageName const):
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::Encoder):
+        (IPC::Encoder::encodeHeader):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsync):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::addMessageReceiver):
+        (IPC::MessageReceiverMap::removeMessageReceiver):
+        (IPC::MessageReceiverMap::dispatchMessage):
+        (IPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/IPC/MessageReceiverMap.h:
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::open):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendOutgoingMessage):
+        (IPC::Connection::receiveSourceEventHandler):
+        * Platform/IPC/cocoa/MachMessage.cpp:
+        (IPC::MachMessage::create):
+        (IPC::MachMessage::MachMessage):
+        * Platform/IPC/cocoa/MachMessage.h:
+        (IPC::MachMessage::messageReceiverName const):
+        (IPC::MachMessage::messageName const):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveInvalidMessage):
+        * PluginProcess/WebProcessConnection.h:
+        * Scripts/Makefile:
+        * Scripts/generate-message-receiver.py:
+        (main):
+        * Scripts/webkit/LegacyMessages-expected.h: Removed.
+        * Scripts/webkit/LegacyMessagesReplies-expected.h: Removed.
+        * Scripts/webkit/MessageNames.cpp: Added.
+        (IPC::description):
+        * Scripts/webkit/MessageNames.h: Added.
+        (IPC::receiverName):
+        (WTF::isValidEnum):
+        * Scripts/webkit/MessageReceiver-expected.cpp: Removed.
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp: Removed.
+        * Scripts/webkit/Messages-expected.h: Removed.
+        * Scripts/webkit/MessagesReplies-expected.h: Removed.
+        * Scripts/webkit/MessagesRepliesSuperclassReplies-expected.h: Removed.
+        * Scripts/webkit/MessagesSuperclass-expected.h: Removed.
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/test-legacy-messages.in: Removed.
+        * Scripts/webkit/test-legacy.messages.in: Copied from Source/WebKit/Scripts/webkit/test-legacy-messages.in.
+        * Scripts/webkit/test-legacyMessageReceiver.cpp: Added.
+        (Messages::WebPage::GetPluginProcessConnection::send):
+        (Messages::WebPage::TestMultipleAttributes::send):
+        (WebKit::WebPage::didReceiveWebPageMessage):
+        (WebKit::WebPage::didReceiveSyncWebPageMessage):
+        * Scripts/webkit/test-legacyMessages.h: Added.
+        (Messages::WebPage::messageReceiverName):
+        (Messages::WebPage::LoadURL::name):
+        (Messages::WebPage::LoadURL::LoadURL):
+        (Messages::WebPage::LoadURL::arguments const):
+        (Messages::WebPage::LoadSomething::name):
+        (Messages::WebPage::LoadSomething::LoadSomething):
+        (Messages::WebPage::LoadSomething::arguments const):
+        (Messages::WebPage::TouchEvent::name):
+        (Messages::WebPage::TouchEvent::TouchEvent):
+        (Messages::WebPage::TouchEvent::arguments const):
+        (Messages::WebPage::AddEvent::name):
+        (Messages::WebPage::AddEvent::AddEvent):
+        (Messages::WebPage::AddEvent::arguments const):
+        (Messages::WebPage::LoadSomethingElse::name):
+        (Messages::WebPage::LoadSomethingElse::LoadSomethingElse):
+        (Messages::WebPage::LoadSomethingElse::arguments const):
+        (Messages::WebPage::DidReceivePolicyDecision::name):
+        (Messages::WebPage::DidReceivePolicyDecision::DidReceivePolicyDecision):
+        (Messages::WebPage::DidReceivePolicyDecision::arguments const):
+        (Messages::WebPage::Close::name):
+        (Messages::WebPage::Close::arguments const):
+        (Messages::WebPage::PreferencesDidChange::name):
+        (Messages::WebPage::PreferencesDidChange::PreferencesDidChange):
+        (Messages::WebPage::PreferencesDidChange::arguments const):
+        (Messages::WebPage::SendDoubleAndFloat::name):
+        (Messages::WebPage::SendDoubleAndFloat::SendDoubleAndFloat):
+        (Messages::WebPage::SendDoubleAndFloat::arguments const):
+        (Messages::WebPage::SendInts::name):
+        (Messages::WebPage::SendInts::SendInts):
+        (Messages::WebPage::SendInts::arguments const):
+        (Messages::WebPage::CreatePlugin::name):
+        (Messages::WebPage::CreatePlugin::CreatePlugin):
+        (Messages::WebPage::CreatePlugin::arguments const):
+        (Messages::WebPage::RunJavaScriptAlert::name):
+        (Messages::WebPage::RunJavaScriptAlert::RunJavaScriptAlert):
+        (Messages::WebPage::RunJavaScriptAlert::arguments const):
+        (Messages::WebPage::GetPlugins::name):
+        (Messages::WebPage::GetPlugins::GetPlugins):
+        (Messages::WebPage::GetPlugins::arguments const):
+        (Messages::WebPage::GetPluginProcessConnection::name):
+        (Messages::WebPage::GetPluginProcessConnection::GetPluginProcessConnection):
+        (Messages::WebPage::GetPluginProcessConnection::arguments const):
+        (Messages::WebPage::TestMultipleAttributes::name):
+        (Messages::WebPage::TestMultipleAttributes::arguments const):
+        (Messages::WebPage::TestParameterAttributes::name):
+        (Messages::WebPage::TestParameterAttributes::TestParameterAttributes):
+        (Messages::WebPage::TestParameterAttributes::arguments const):
+        (Messages::WebPage::TemplateTest::name):
+        (Messages::WebPage::TemplateTest::TemplateTest):
+        (Messages::WebPage::TemplateTest::arguments const):
+        (Messages::WebPage::SetVideoLayerID::name):
+        (Messages::WebPage::SetVideoLayerID::SetVideoLayerID):
+        (Messages::WebPage::SetVideoLayerID::arguments const):
+        (Messages::WebPage::DidCreateWebProcessConnection::name):
+        (Messages::WebPage::DidCreateWebProcessConnection::DidCreateWebProcessConnection):
+        (Messages::WebPage::DidCreateWebProcessConnection::arguments const):
+        (Messages::WebPage::InterpretKeyEvent::name):
+        (Messages::WebPage::InterpretKeyEvent::InterpretKeyEvent):
+        (Messages::WebPage::InterpretKeyEvent::arguments const):
+        (Messages::WebPage::DeprecatedOperation::name):
+        (Messages::WebPage::DeprecatedOperation::DeprecatedOperation):
+        (Messages::WebPage::DeprecatedOperation::arguments const):
+        (Messages::WebPage::ExperimentalOperation::name):
+        (Messages::WebPage::ExperimentalOperation::ExperimentalOperation):
+        (Messages::WebPage::ExperimentalOperation::arguments const):
+        * Scripts/webkit/test-legacyMessagesReplies.h: Added.
+        * Scripts/webkit/test-messages.in: Removed.
+        * Scripts/webkit/test-superclass-messages.in: Removed.
+        * Scripts/webkit/test-superclass.messages.in: Copied from Source/WebKit/Scripts/webkit/test-superclass-messages.in.
+        * Scripts/webkit/test-superclassMessageReceiver.cpp: Added.
+        (Messages::WebPage::TestAsyncMessage::callReply):
+        (Messages::WebPage::TestAsyncMessage::cancelReply):
+        (Messages::WebPage::TestAsyncMessage::send):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::callReply):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::send):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::callReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::send):
+        (Messages::WebPage::TestSyncMessage::send):
+        (Messages::WebPage::TestSynchronousMessage::send):
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * Scripts/webkit/test-superclassMessages.h: Added.
+        (Messages::WebPage::messageReceiverName):
+        (Messages::WebPage::LoadURL::name):
+        (Messages::WebPage::LoadURL::LoadURL):
+        (Messages::WebPage::LoadURL::arguments const):
+        (Messages::WebPage::TestAsyncMessage::name):
+        (Messages::WebPage::TestAsyncMessage::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessage::TestAsyncMessage):
+        (Messages::WebPage::TestAsyncMessage::arguments const):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::name):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::arguments const):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::name):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::arguments const):
+        (Messages::WebPage::TestSyncMessage::name):
+        (Messages::WebPage::TestSyncMessage::TestSyncMessage):
+        (Messages::WebPage::TestSyncMessage::arguments const):
+        (Messages::WebPage::TestSynchronousMessage::name):
+        (Messages::WebPage::TestSynchronousMessage::TestSynchronousMessage):
+        (Messages::WebPage::TestSynchronousMessage::arguments const):
+        * Scripts/webkit/test-superclassMessagesReplies.h: Added.
+        * Scripts/webkit/test.messages.in: Added.
+        * Scripts/webkit/testMessageReceiver.cpp: Added.
+        * Scripts/webkit/testMessages.h: Added.
+        (Messages::None::messageReceiverName):
+        * Scripts/webkit/testMessagesReplies.h: Added.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy):
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::addMessageReceiver):
+        (WebKit::AuxiliaryProcess::removeMessageReceiver):
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        * Shared/AuxiliaryProcess.h:
+        (WebKit::AuxiliaryProcess::addMessageReceiver):
+        (WebKit::AuxiliaryProcess::removeMessageReceiver):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        * SourcesCocoa.txt:
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::addMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::removeMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::logInvalidMessage):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::addMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::removeMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::send):
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorAddMessageReceiver): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorRemoveMessageReceiver): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::messageNamesToIgnoreWhileSuspended):
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveInvalidMessage):
+        (WebKit::WebProcessPool::addMessageReceiver):
+        (WebKit::WebProcessPool::removeMessageReceiver):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shouldSendPendingMessage):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/Inspector/WebInspector.h:
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
 2020-05-06  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r260684): Reader background is lost after multitasking

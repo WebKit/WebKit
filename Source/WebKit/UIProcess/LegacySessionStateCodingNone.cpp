@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "MessageNames.h"
 #include "SessionState.h"
 #include "WebCoreArgumentCoders.h"
 
@@ -37,8 +38,8 @@ namespace WebKit {
 
 RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 {
-    // FIXME: I'm not sure whether these are the proper arguments for the encoder.
-    IPC::Encoder encoder("IPC", "LegacySessionState", 0);
+    // FIXME: This should use WTF::Persistence::Encoder instead.
+    IPC::Encoder encoder(IPC::MessageName::LegacySessionState, 0);
     encoder << sessionState.backForwardListState;
     encoder << sessionState.renderTreeSize;
     encoder << sessionState.provisionalURL;
@@ -48,15 +49,25 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
     IPC::Decoder decoder(data, dataSize, nullptr, Vector<IPC::Attachment>());
+
     Optional<BackForwardListState> backForwardListState;
     decoder >> backForwardListState;
     if (!backForwardListState)
         return false;
     sessionState.backForwardListState = WTFMove(*backForwardListState);
-    if (!decoder.decode(sessionState.renderTreeSize))
+
+    Optional<uint64_t> renderTreeSize;
+    decoder >> renderTreeSize;
+    if (!renderTreeSize)
         return false;
-    if (!decoder.decode(sessionState.provisionalURL))
+    sessionState.renderTreeSize = *renderTreeSize;
+
+    Optional<URL> provisionalURL;
+    decoder >> provisionalURL;
+    if (!provisionalURL)
         return false;
+    sessionState.provisionalURL = WTFMove(*provisionalURL);
+
     return true;
 }
 

@@ -61,33 +61,33 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
 }
 
 #if !LOG_DISABLED
-static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
+using MessageNameSet = HashSet<IPC::MessageName, WTF::IntHash<IPC::MessageName>, WTF::StrongEnumHashTraits<IPC::MessageName>>;
+static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 {
-    static NeverDestroyed<HashSet<IPC::StringReference>> messageNames;
+    static NeverDestroyed<MessageNameSet> messageNames;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        messageNames.get().add("BackForwardAddItem");
-        messageNames.get().add("ClearAllEditCommands");
-        messageNames.get().add("DidChangeContentSize");
-        messageNames.get().add("DidChangeMainDocument");
-        messageNames.get().add("DidChangeProgress");
-        messageNames.get().add("DidCommitLoadForFrame");
-        messageNames.get().add("DidDestroyNavigation");
-        messageNames.get().add("DidFinishDocumentLoadForFrame");
-        messageNames.get().add("DidFinishProgress");
-        messageNames.get().add("DidCompletePageTransition");
-        messageNames.get().add("DidFirstLayoutForFrame");
-        messageNames.get().add("DidFirstVisuallyNonEmptyLayoutForFrame");
-        messageNames.get().add("DidNavigateWithNavigationData");
-        messageNames.get().add("DidReachLayoutMilestone");
-        messageNames.get().add("DidRestoreScrollPosition");
-        messageNames.get().add("DidStartProgress");
-        messageNames.get().add("DidStartProvisionalLoadForFrame");
-        messageNames.get().add("EditorStateChanged");
-        messageNames.get().add("PageExtendedBackgroundColorDidChange");
-        messageNames.get().add("SetRenderTreeSize");
-        messageNames.get().add("SetStatusText");
-        messageNames.get().add("SetNetworkRequestsInProgress");
+        messageNames.get().add(IPC::MessageName::WebPageProxy_BackForwardAddItem);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_ClearAllEditCommands);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidChangeContentSize);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidChangeMainDocument);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidChangeProgress);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidCommitLoadForFrame);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidDestroyNavigation);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidFinishDocumentLoadForFrame);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidFinishProgress);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidFirstLayoutForFrame);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidFirstVisuallyNonEmptyLayoutForFrame);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidNavigateWithNavigationData);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidReachLayoutMilestone);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidRestoreScrollPosition);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidStartProgress);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_DidStartProvisionalLoadForFrame);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_EditorStateChanged);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_PageExtendedBackgroundColorDidChange);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_SetRenderTreeSize);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_SetStatusText);
+        messageNames.get().add(IPC::MessageName::WebPageProxy_SetNetworkRequestsInProgress);
     });
 
     return messageNames;
@@ -255,7 +255,7 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 
 #if !LOG_DISABLED
     if (!messageNamesToIgnoreWhileSuspended().contains(decoder.messageName()))
-        LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", decoder.messageName().toString().data());
+        LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", description(decoder.messageName()));
 #endif
 }
 

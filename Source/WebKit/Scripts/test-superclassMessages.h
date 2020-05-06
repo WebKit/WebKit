@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#include "MessageNames.h"
 #include "TestClassName.h"
 #include "WebPageMessagesReplies.h"
 #include <wtf/Forward.h>
@@ -40,17 +41,16 @@ enum class TestTwoStateEnum : bool;
 namespace Messages {
 namespace WebPage {
 
-static inline IPC::StringReference messageReceiverName()
+static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::StringReference("WebPage");
+    return IPC::ReceiverName::WebPage;
 }
 
 class LoadURL {
 public:
     typedef std::tuple<const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("LoadURL"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadURL; }
     static const bool isSync = false;
 
     explicit LoadURL(const String& url)
@@ -72,13 +72,12 @@ class TestAsyncMessage {
 public:
     typedef std::tuple<WebKit::TestTwoStateEnum> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessage"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessage; }
     static const bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(uint64_t&&)>&&);
     static void cancelReply(CompletionHandler<void(uint64_t&&)>&&);
-    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageReply" }; }
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_TestAsyncMessageReply; }
     using AsyncReply = TestAsyncMessageAsyncReply;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, uint64_t result);
     using Reply = std::tuple<uint64_t&>;
@@ -103,13 +102,12 @@ class TestAsyncMessageWithNoArguments {
 public:
     typedef std::tuple<> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessageWithNoArguments"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithNoArguments; }
     static const bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
     static void cancelReply(CompletionHandler<void()>&&);
-    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageWithNoArgumentsReply" }; }
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_TestAsyncMessageWithNoArgumentsReply; }
     using AsyncReply = TestAsyncMessageWithNoArgumentsAsyncReply;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
     using Reply = std::tuple<>;
@@ -129,13 +127,12 @@ class TestAsyncMessageWithMultipleArguments {
 public:
     typedef std::tuple<> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessageWithMultipleArguments"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithMultipleArguments; }
     static const bool isSync = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&, uint64_t&&)>&&);
     static void cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&&);
-    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageWithMultipleArgumentsReply" }; }
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_TestAsyncMessageWithMultipleArgumentsReply; }
     using AsyncReply = TestAsyncMessageWithMultipleArgumentsAsyncReply;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, bool flag, uint64_t value);
     using Reply = std::tuple<bool&, uint64_t&>;
@@ -154,8 +151,7 @@ class TestSyncMessage {
 public:
     typedef std::tuple<uint32_t> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestSyncMessage"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestSyncMessage; }
     static const bool isSync = true;
 
     using DelayedReply = TestSyncMessageDelayedReply;
@@ -180,8 +176,7 @@ class TestSynchronousMessage {
 public:
     typedef std::tuple<bool> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestSynchronousMessage"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestSynchronousMessage; }
     static const bool isSync = true;
 
     using DelayedReply = TestSynchronousMessageDelayedReply;

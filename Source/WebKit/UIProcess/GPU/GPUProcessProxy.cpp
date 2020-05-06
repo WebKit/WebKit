@@ -211,11 +211,11 @@ void GPUProcessProxy::didClose(IPC::Connection&)
     gpuProcessCrashed();
 }
 
-void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    logInvalidMessage(connection, messageReceiverName, messageName);
+    logInvalidMessage(connection, messageName);
 
-    WebProcessPool::didReceiveInvalidMessage(messageReceiverName, messageName);
+    WebProcessPool::didReceiveInvalidMessage(messageName);
 
     // Terminate the GPU process.
     terminate();

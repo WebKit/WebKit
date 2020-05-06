@@ -128,7 +128,7 @@ void PluginProcessConnection::didClose(IPC::Connection&)
     }
 }
 
-void PluginProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
+void PluginProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
 {
 }
 

@@ -50,7 +50,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { close(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override { close(); }
 
     void show();
     void close();

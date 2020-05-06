@@ -51,8 +51,8 @@ public:
     class ConnectionProxy {
     public:
         virtual ~ConnectionProxy() = default;
-        virtual void addMessageReceiver(IPC::StringReference, IPC::MessageReceiver&) = 0;
-        virtual void removeMessageReceiver(IPC::StringReference) = 0;
+        virtual void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) = 0;
+        virtual void removeMessageReceiver(IPC::ReceiverName) = 0;
         virtual IPC::Connection& connection() = 0;
         virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType) const = 0;
         virtual Logger& logger() = 0;

@@ -211,7 +211,7 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
 #endif
 }
 
-void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
+void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
 {
 }
 

@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "MessageNames.h"
 #include <mach/message.h>
 #include <memory>
 #include <wtf/CheckedArithmetic.h>
@@ -37,7 +38,7 @@ namespace IPC {
 class MachMessage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MachMessage> create(CString&& messageReceiverName, CString&& messageName, size_t);
+    static std::unique_ptr<MachMessage> create(MessageName, size_t);
     ~MachMessage();
 
     static CheckedSize messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
@@ -47,14 +48,13 @@ public:
 
     void leakDescriptors();
 
-    const CString& messageReceiverName() const { return m_messageReceiverName; }
-    const CString& messageName() const { return m_messageName; }
+    ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
+    MessageName messageName() const { return m_messageName; }
 
 private:
-    MachMessage(CString&& messageReceiverName, CString&& messageName, size_t);
+    MachMessage(MessageName, size_t);
 
-    CString m_messageReceiverName;
-    CString m_messageName;
+    MessageName m_messageName;
     size_t m_size;
     bool m_shouldFreeDescriptors { true };
     mach_msg_header_t m_messageHeader[];

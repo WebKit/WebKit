@@ -43,9 +43,9 @@ if (NOT USE_GTK4)
         WebProcess/WebPage/ViewGestureGeometryCollector.cpp
     )
     list(APPEND WebKit_MESSAGES_IN_FILES
-        UIProcess/ViewGestureController.messages.in
+        UIProcess/ViewGestureController
 
-        WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
+        WebProcess/WebPage/ViewGestureGeometryCollector
     )
 endif ()
 

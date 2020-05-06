@@ -23,33 +23,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import with_statement
-import argparse
 import sys
 
 import webkit.messages
 import webkit.parser
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('source')
-    parser.add_argument('--implementation', required=True)
-    parser.add_argument('--header', required=True)
-    parser.add_argument('--reply-header', required=True)
+def main(argv):
+    receivers = []
 
-    args = parser.parse_args()
+    first_arg = True
+    second_arg = False
+    for parameter in argv:
+        if first_arg:
+            first_arg = False
+            second_arg = True
+            continue
+        if second_arg:
+            base_dir = parameter
+            second_arg = False
+            continue
 
-    with open(args.source) as source_file:
-        receiver = webkit.parser.parse(source_file)
+        receiver_name = parameter.rsplit('/', 1).pop()
+        print 'Generating message receiver for %s' % receiver_name
 
-    with open(args.implementation, "w+") as implementation_output:
-        implementation_output.write(webkit.messages.generate_message_handler(receiver))
+        with open('%s/%s.messages.in' % (base_dir, parameter)) as source_file:
+            receiver = webkit.parser.parse(source_file)
+        receivers.append(receiver)
 
-    with open(args.header, "w+") as header_output:
-        header_output.write(webkit.messages.generate_messages_header(receiver))
+        with open('%sMessageReceiver.cpp' % receiver_name, "w+") as implementation_output:
+            implementation_output.write(webkit.messages.generate_message_handler(receiver))
 
-    with open(args.reply_header, "w+") as reply_header_output:
-        reply_header_output.write(webkit.messages.generate_messages_reply_header(receiver))
+        with open('%sMessages.h' % receiver_name, "w+") as header_output:
+            header_output.write(webkit.messages.generate_messages_header(receiver))
+
+        with open('%sMessagesReplies.h' % receiver_name, "w+") as reply_header_output:
+            reply_header_output.write(webkit.messages.generate_messages_reply_header(receiver))
+
+    with open('MessageNames.h', "w+") as message_names_header_output:
+        message_names_header_output.write(webkit.messages.generate_message_names_header(receivers))
+
+    with open('MessageNames.cpp', "w+") as message_names_implementation_output:
+        message_names_implementation_output.write(webkit.messages.generate_message_names_implementation(receivers))
 
     return 0
 

@@ -43,7 +43,7 @@ public:
     {
         static_assert(!U::isSync, "Message is sync!");
 
-        auto encoder = makeUnique<Encoder>(U::receiverName(), U::name(), destinationID);
+        auto encoder = makeUnique<Encoder>(U::name(), destinationID);
         encoder->encode(message.arguments());
         
         return sendMessage(WTFMove(encoder), sendOptions);
@@ -88,7 +88,7 @@ public:
     {
         COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-        auto encoder = makeUnique<IPC::Encoder>(T::receiverName(), T::name(), destinationID);
+        auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
         encoder->encode(listenerID);
         encoder->encode(message.arguments());

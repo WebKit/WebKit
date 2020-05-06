@@ -73,7 +73,7 @@ void GPUProcessConnection::didClose(IPC::Connection&)
 {
 }
 
-void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
+void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
 {
 }
 

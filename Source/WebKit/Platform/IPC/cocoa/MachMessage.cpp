@@ -39,18 +39,17 @@ static inline CheckedSize safeRoundMsg(CheckedSize value)
     return ((value + (alignment - 1)) / alignment) * alignment;
 }
 
-std::unique_ptr<MachMessage> MachMessage::create(CString&& messageReceiverName, CString&& messageName, size_t size)
+std::unique_ptr<MachMessage> MachMessage::create(MessageName messageName, size_t size)
 {
     auto bufferSize = CheckedSize(sizeof(MachMessage)) + size;
     if (bufferSize.hasOverflowed())
         return nullptr;
     void* memory = WTF::fastZeroedMalloc(bufferSize.unsafeGet());
-    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { WTFMove(messageReceiverName), WTFMove(messageName), size } };
+    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { messageName, size } };
 }
 
-MachMessage::MachMessage(CString&& messageReceiverName, CString&& messageName, size_t size)
-    : m_messageReceiverName(WTFMove(messageReceiverName))
-    , m_messageName(WTFMove(messageName))
+MachMessage::MachMessage(MessageName messageName, size_t size)
+    : m_messageName { messageName }
     , m_size { size }
 {
 }

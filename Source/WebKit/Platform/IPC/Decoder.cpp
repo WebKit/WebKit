@@ -66,9 +66,6 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDealloca
     if (!decode(m_messageFlags))
         return;
 
-    if (!decode(m_messageReceiverName))
-        return;
-
     if (!decode(m_messageName))
         return;
 

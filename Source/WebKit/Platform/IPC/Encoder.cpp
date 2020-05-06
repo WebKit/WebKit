@@ -61,9 +61,8 @@ static inline void freeBuffer(void* addr, size_t size)
 #endif
 }
 
-Encoder::Encoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
-    : m_messageReceiverName(messageReceiverName)
-    , m_messageName(messageName)
+Encoder::Encoder(MessageName messageName, uint64_t destinationID)
+    : m_messageName(messageName)
     , m_destinationID(destinationID)
     , m_buffer(m_inlineBuffer)
     , m_bufferPointer(m_inlineBuffer)
@@ -168,10 +167,7 @@ void Encoder::reserve(size_t size)
 
 void Encoder::encodeHeader()
 {
-    ASSERT(!m_messageReceiverName.isEmpty());
-
     *this << defaultMessageFlags;
-    *this << m_messageReceiverName;
     *this << m_messageName;
     *this << m_destinationID;
 }

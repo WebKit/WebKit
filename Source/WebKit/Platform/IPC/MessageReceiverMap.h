@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageReceiverMap_h
-#define MessageReceiverMap_h
+#pragma once
 
 #include "StringReference.h"
 #include <wtf/HashMap.h>
@@ -36,17 +35,18 @@ class Connection;
 class Encoder;
 class Decoder;
 class MessageReceiver;
+enum class ReceiverName : uint8_t;
 
 class MessageReceiverMap {
 public:
     MessageReceiverMap();
     ~MessageReceiverMap();
 
-    void addMessageReceiver(StringReference messageReceiverName, MessageReceiver&);
-    void addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver&);
+    void addMessageReceiver(ReceiverName, MessageReceiver&);
+    void addMessageReceiver(ReceiverName, uint64_t destinationID, MessageReceiver&);
 
-    void removeMessageReceiver(StringReference messageReceiverName);
-    void removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID);
+    void removeMessageReceiver(ReceiverName);
+    void removeMessageReceiver(ReceiverName, uint64_t destinationID);
     void removeMessageReceiver(MessageReceiver&);
 
     void invalidate();
@@ -56,11 +56,18 @@ public:
 
 private:
     // Message receivers that don't require a destination ID.
-    HashMap<StringReference, MessageReceiver*> m_globalMessageReceivers;
+    HashMap<ReceiverName, MessageReceiver*, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>> m_globalMessageReceivers;
 
-    HashMap<std::pair<StringReference, uint64_t>, MessageReceiver*> m_messageReceivers;
+    HashMap<std::pair<ReceiverName, uint64_t>, MessageReceiver*, DefaultHash<std::pair<ReceiverName, uint64_t>>::Hash, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
 };
 
 };
 
-#endif // MessageReceiverMap_h
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<IPC::ReceiverName> {
+    using Hash = IntHash<IPC::ReceiverName>;
+};
+
+}

@@ -116,8 +116,8 @@ public:
 
 private:
     Logger& logger() final { return m_process.logger(); }
-    void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& receiver) final { }
-    void removeMessageReceiver(IPC::StringReference messageReceiverName) final { }
+    void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) final { }
+    void removeMessageReceiver(IPC::ReceiverName messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.connection(); }
     bool willStartCapture(CaptureDevice::DeviceType type) const final
     {
@@ -187,9 +187,9 @@ Logger& GPUConnectionToWebProcess::logger()
     return *m_logger;
 }
 
-void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
+    WTFLogAlways("Received an invalid message \"%s\" from the web process.\n", description(messageName));
     CRASH();
 }
 

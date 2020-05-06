@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,29 +24,13 @@
 
 #pragma once
 
-#include "TestClassName.h"
+#include "MessageNames.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 
 namespace Messages {
-namespace WebPage {
+namespace None {
 
-#if ENABLE(TEST_FEATURE)
-using TestAsyncMessageAsyncReply = CompletionHandler<void(uint64_t result)>;
-#endif
 
-#if ENABLE(TEST_FEATURE)
-using TestAsyncMessageWithNoArgumentsAsyncReply = CompletionHandler<void()>;
-#endif
-
-#if ENABLE(TEST_FEATURE)
-using TestAsyncMessageWithMultipleArgumentsAsyncReply = CompletionHandler<void(bool flag, uint64_t value)>;
-#endif
-
-using TestSyncMessageDelayedReply = CompletionHandler<void(uint8_t reply)>;
-
-using TestSynchronousMessageDelayedReply = CompletionHandler<void(const Optional<WebKit::TestClassName>& optionalReply)>;
-
-} // namespace WebPage
+} // namespace None
 } // namespace Messages

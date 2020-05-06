@@ -39,7 +39,7 @@ MessageReceiverMap::~MessageReceiverMap()
 {
 }
 
-void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, MessageReceiver& messageReceiver)
+void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, MessageReceiver& messageReceiver)
 {
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
 
@@ -47,7 +47,7 @@ void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName,
     m_globalMessageReceivers.set(messageReceiverName, &messageReceiver);
 }
 
-void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
+void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
 {
     ASSERT(destinationID);
     ASSERT(!m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
@@ -57,7 +57,7 @@ void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName,
     m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), &messageReceiver);
 }
 
-void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverName)
+void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName)
 {
     ASSERT(m_globalMessageReceivers.contains(messageReceiverName));
 
@@ -67,7 +67,7 @@ void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverNa
     m_globalMessageReceivers.remove(it);
 }
 
-void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID)
+void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID)
 {
     ASSERT(m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
 
@@ -79,7 +79,7 @@ void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverNa
 
 void MessageReceiverMap::removeMessageReceiver(MessageReceiver& messageReceiver)
 {
-    Vector<StringReference> globalReceiversToRemove;
+    Vector<ReceiverName> globalReceiversToRemove;
     for (auto& [name, receiver] : m_globalMessageReceivers) {
         if (receiver == &messageReceiver)
             globalReceiversToRemove.append(name);
@@ -88,7 +88,7 @@ void MessageReceiverMap::removeMessageReceiver(MessageReceiver& messageReceiver)
     for (auto& globalReceiverToRemove : globalReceiversToRemove)
         removeMessageReceiver(globalReceiverToRemove);
 
-    Vector<std::pair<StringReference, uint64_t>> receiversToRemove;
+    Vector<std::pair<ReceiverName, uint64_t>> receiversToRemove;
     for (auto& [nameAndDestinationID, receiver] : m_messageReceivers) {
         if (receiver == &messageReceiver)
             receiversToRemove.append(std::make_pair(nameAndDestinationID.first, nameAndDestinationID.second));

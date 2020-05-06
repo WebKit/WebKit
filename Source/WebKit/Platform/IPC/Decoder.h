@@ -27,6 +27,7 @@
 
 #include "ArgumentCoder.h"
 #include "Attachment.h"
+#include "MessageNames.h"
 #include "StringReference.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
@@ -51,8 +52,8 @@ public:
     Decoder(const Decoder&) = delete;
     Decoder(Decoder&&) = delete;
 
-    StringReference messageReceiverName() const { return m_messageReceiverName; }
-    StringReference messageName() const { return m_messageName; }
+    ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
+    MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
 
     bool isSyncMessage() const;
@@ -106,7 +107,7 @@ public:
         typename std::underlying_type<E>::type value;
         if (!decode(value))
             return false;
-        if (!isValidEnum<E>(value))
+        if (!WTF::isValidEnum<E>(value))
             return false;
 
         e = static_cast<E>(value);
@@ -118,7 +119,7 @@ public:
     {
         Optional<typename std::underlying_type<E>::type> value;
         *this >> value;
-        if (value && isValidEnum<E>(*value))
+        if (value && WTF::isValidEnum<E>(*value))
             optional = static_cast<E>(*value);
         return *this;
     }
@@ -198,8 +199,7 @@ private:
     Vector<Attachment> m_attachments;
 
     uint8_t m_messageFlags;
-    StringReference m_messageReceiverName;
-    StringReference m_messageName;
+    MessageName m_messageName;
 
     uint64_t m_destinationID;
 

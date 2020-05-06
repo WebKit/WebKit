@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#include "MessageNames.h"
 #include "Plugin.h"
 #include "WebPageMessagesReplies.h"
 #include <WebCore/GraphicsLayer.h>
@@ -53,17 +54,16 @@ class WebTouchEvent;
 namespace Messages {
 namespace WebPage {
 
-static inline IPC::StringReference messageReceiverName()
+static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::StringReference("WebPage");
+    return IPC::ReceiverName::WebPage;
 }
 
 class LoadURL {
 public:
     typedef std::tuple<const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("LoadURL"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadURL; }
     static const bool isSync = false;
 
     explicit LoadURL(const String& url)
@@ -85,8 +85,7 @@ class LoadSomething {
 public:
     typedef std::tuple<const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("LoadSomething"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomething; }
     static const bool isSync = false;
 
     explicit LoadSomething(const String& url)
@@ -109,8 +108,7 @@ class TouchEvent {
 public:
     typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TouchEvent"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TouchEvent; }
     static const bool isSync = false;
 
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
@@ -133,8 +131,7 @@ class AddEvent {
 public:
     typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("AddEvent"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_AddEvent; }
     static const bool isSync = false;
 
     explicit AddEvent(const WebKit::WebTouchEvent& event)
@@ -157,8 +154,7 @@ class LoadSomethingElse {
 public:
     typedef std::tuple<const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("LoadSomethingElse"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomethingElse; }
     static const bool isSync = false;
 
     explicit LoadSomethingElse(const String& url)
@@ -180,8 +176,7 @@ class DidReceivePolicyDecision {
 public:
     typedef std::tuple<uint64_t, uint64_t, uint32_t> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("DidReceivePolicyDecision"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidReceivePolicyDecision; }
     static const bool isSync = false;
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
@@ -202,8 +197,7 @@ class Close {
 public:
     typedef std::tuple<> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("Close"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_Close; }
     static const bool isSync = false;
 
     const Arguments& arguments() const
@@ -219,8 +213,7 @@ class PreferencesDidChange {
 public:
     typedef std::tuple<const WebKit::WebPreferencesStore&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("PreferencesDidChange"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_PreferencesDidChange; }
     static const bool isSync = false;
 
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
@@ -241,8 +234,7 @@ class SendDoubleAndFloat {
 public:
     typedef std::tuple<double, float> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("SendDoubleAndFloat"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendDoubleAndFloat; }
     static const bool isSync = false;
 
     SendDoubleAndFloat(double d, float f)
@@ -263,8 +255,7 @@ class SendInts {
 public:
     typedef std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("SendInts"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendInts; }
     static const bool isSync = false;
 
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
@@ -285,8 +276,7 @@ class CreatePlugin {
 public:
     typedef std::tuple<uint64_t, const WebKit::Plugin::Parameters&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("CreatePlugin"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_CreatePlugin; }
     static const bool isSync = true;
 
     using Reply = std::tuple<bool&>;
@@ -309,8 +299,7 @@ class RunJavaScriptAlert {
 public:
     typedef std::tuple<uint64_t, const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("RunJavaScriptAlert"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_RunJavaScriptAlert; }
     static const bool isSync = true;
 
     using Reply = std::tuple<>;
@@ -333,8 +322,7 @@ class GetPlugins {
 public:
     typedef std::tuple<bool> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("GetPlugins"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPlugins; }
     static const bool isSync = true;
 
     using Reply = std::tuple<Vector<WebCore::PluginInfo>&>;
@@ -357,8 +345,7 @@ class GetPluginProcessConnection {
 public:
     typedef std::tuple<const String&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("GetPluginProcessConnection"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPluginProcessConnection; }
     static const bool isSync = true;
 
     using DelayedReply = GetPluginProcessConnectionDelayedReply;
@@ -383,8 +370,7 @@ class TestMultipleAttributes {
 public:
     typedef std::tuple<> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestMultipleAttributes"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestMultipleAttributes; }
     static const bool isSync = true;
 
     using DelayedReply = TestMultipleAttributesDelayedReply;
@@ -404,8 +390,7 @@ class TestParameterAttributes {
 public:
     typedef std::tuple<uint64_t, double, double> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestParameterAttributes"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestParameterAttributes; }
     static const bool isSync = false;
 
     TestParameterAttributes(uint64_t foo, double bar, double baz)
@@ -426,8 +411,7 @@ class TemplateTest {
 public:
     typedef std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TemplateTest"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TemplateTest; }
     static const bool isSync = false;
 
     explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
@@ -448,8 +432,7 @@ class SetVideoLayerID {
 public:
     typedef std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("SetVideoLayerID"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SetVideoLayerID; }
     static const bool isSync = false;
 
     explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
@@ -471,8 +454,7 @@ class DidCreateWebProcessConnection {
 public:
     typedef std::tuple<const IPC::MachPort&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("DidCreateWebProcessConnection"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidCreateWebProcessConnection; }
     static const bool isSync = false;
 
     explicit DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier)
@@ -495,8 +477,7 @@ class InterpretKeyEvent {
 public:
     typedef std::tuple<uint32_t> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("InterpretKeyEvent"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_InterpretKeyEvent; }
     static const bool isSync = true;
 
     using Reply = std::tuple<Vector<WebCore::KeypressCommand>&>;
@@ -521,8 +502,7 @@ class DeprecatedOperation {
 public:
     typedef std::tuple<const IPC::DummyType&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("DeprecatedOperation"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DeprecatedOperation; }
     static const bool isSync = false;
 
     explicit DeprecatedOperation(const IPC::DummyType& dummy)
@@ -545,8 +525,7 @@ class ExperimentalOperation {
 public:
     typedef std::tuple<const IPC::DummyType&> Arguments;
 
-    static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("ExperimentalOperation"); }
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_ExperimentalOperation; }
     static const bool isSync = false;
 
     explicit ExperimentalOperation(const IPC::DummyType& dummy)
