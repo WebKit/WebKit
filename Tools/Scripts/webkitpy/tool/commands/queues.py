@@ -44,7 +44,6 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.unicode_compatibility import BytesIO
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
-from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
@@ -171,39 +170,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
             message = "Error: %s" % message
         failure_log = cls._log_from_script_error_for_upload(script_error)
         return tool.status_server.update_status(cls.name, message, state["patch"], failure_log)
-
-
-class FeederQueue(AbstractQueue):
-    name = "feeder-queue"
-
-    _sleep_duration = 30  # seconds
-
-    # AbstractQueue methods
-
-    def begin_work_queue(self):
-        AbstractQueue.begin_work_queue(self)
-        self.feeders = [
-            CommitQueueFeeder(self._tool),
-            EWSFeeder(self._tool),
-        ]
-
-    def next_work_item(self):
-        # This really show inherit from some more basic class that doesn't
-        # understand work items, but the base class in the heirarchy currently
-        # understands work items.
-        return "synthetic-work-item"
-
-    def process_work_item(self, work_item):
-        for feeder in self.feeders:
-            feeder.feed()
-        time.sleep(self._sleep_duration)
-        return True
-
-    def work_item_log_path(self, work_item):
-        return None
-
-    def handle_unexpected_error(self, work_item, message):
-        _log.error(message)
 
 
 class AbstractPatchQueue(AbstractQueue):

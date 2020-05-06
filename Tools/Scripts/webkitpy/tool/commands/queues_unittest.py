@@ -68,10 +68,6 @@ class TestReviewQueue(AbstractReviewQueue):
     name = "test-review-queue"
 
 
-class TestFeederQueue(FeederQueue):
-    _sleep_duration = 0
-
-
 class AbstractQueueTest(CommandsTest):
     def test_log_directory(self):
         self.assertEqual(TestQueue()._log_directory(), os.path.join("..", "test-queue-logs"))
@@ -126,30 +122,6 @@ class AbstractQueueTest(CommandsTest):
         script_error = ScriptError(unicode_tor, output=unicode_tor)
         expected_output = "%s\nLast %s characters of output:\n%s" % (utf8_tor, 10, utf8_tor[-10:])
         self._assert_log_message(script_error, expected_output)
-
-
-class FeederQueueTest(QueuesTest):
-    def test_feeder_queue(self):
-        self.maxDiff = None
-        queue = TestFeederQueue()
-        tool = MockTool(log_executive=True)
-        expected_logs = {
-            "begin_work_queue": self._default_begin_work_queue_logs("feeder-queue"),
-            "process_work_item": """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
-Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.\n\nnon-committer@example.com does not have committer permissions according to https://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/contributors.json.
-
-- If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
-
-- If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/contributors.json by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
-Feeding commit-queue high priority items [10005], regular items [10000]
-MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding EWS (1 r? patch, 1 new)
-MOCK: submit_to_old_ews: 10002
-""",
-            "handle_unexpected_error": "Mock error message\n",
-        }
-        self.assert_queue_outputs(queue, tool=tool, expected_logs=expected_logs)
 
 
 class AbstractPatchQueueTest(CommandsTest):
