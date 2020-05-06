@@ -109,7 +109,7 @@
     if (!page)
         return;
 
-    page->setShouldFireEvents(false);
+    page->setShouldFireResizeEvents(false);
 }
 
 - (void)_didCompleteSnapshotSequence
@@ -118,7 +118,7 @@
     if (!page)
         return;
 
-    page->setShouldFireEvents(true);
+    page->setShouldFireResizeEvents(true);
 }
 
 - (BOOL)isBackground

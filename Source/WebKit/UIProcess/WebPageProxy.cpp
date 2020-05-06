@@ -10121,9 +10121,9 @@ void WebPageProxy::setOverriddenMediaType(const String& mediaType)
     send(Messages::WebPage::SetOverriddenMediaType(mediaType));
 }
 
-void WebPageProxy::setShouldFireEvents(bool shouldFireEvents)
+void WebPageProxy::setShouldFireResizeEvents(bool shouldFireResizeEvents)
 {
-    send(Messages::WebPage::SetShouldFireEvents(shouldFireEvents));
+    send(Messages::WebPage::SetShouldFireResizeEvents(shouldFireResizeEvents));
 }
 
 void WebPageProxy::setNeedsDOMWindowResizeEvent()

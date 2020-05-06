@@ -1,3 +1,22 @@
+2020-05-06  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r260684): Reader background is lost after multitasking
+        https://bugs.webkit.org/show_bug.cgi?id=211533
+        <rdar://problem/62941837>
+
+        Unreviewed, revert r260684 due to regression.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setShouldFireResizeEvents):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView _willBeginSnapshotSequence]):
+        (-[WKApplicationStateTrackingView _didCompleteSnapshotSequence]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setShouldFireResizeEvents):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-05-06  Kate Cheney  <katherine_cheney@apple.com>
 
         ResourceLoadStatistics data summary call should create a web process pool if one doesn't exist

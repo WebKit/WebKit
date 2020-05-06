@@ -1,3 +1,19 @@
+2020-05-06  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r260684): Reader background is lost after multitasking
+        https://bugs.webkit.org/show_bug.cgi?id=211533
+        <rdar://problem/62941837>
+
+        Unreviewed, revert r260684 due to regression.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/Page.h:
+        (WebCore::Page::shouldFireResizeEvents const):
+        (WebCore::Page::setShouldFireResizeEvents):
+
 2020-05-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement accessibility of HTML 5.1 Drag & Drop
