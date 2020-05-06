@@ -199,7 +199,10 @@ static HashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
 {
     HashSet<Color> colors;
     for (TextIterator iterator(range); !iterator.atEnd(); iterator.advance()) {
-        auto renderer = iterator.node()->renderer();
+        auto node = iterator.node();
+        if (!node)
+            continue;
+        auto renderer = node->renderer();
         if (is<RenderText>(renderer))
             colors.add(renderer->style().color());
     }
