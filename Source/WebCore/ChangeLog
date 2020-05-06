@@ -1,3 +1,16 @@
+2020-05-06  Antoine Quint  <graouts@apple.com>
+
+        Add watchOS media controls assets
+        https://bugs.webkit.org/show_bug.cgi?id=211508
+        <rdar://problem/62926565>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/modern-media-controls/images/watchOS/ActivityIndicatorSpriteCompact@2x.png: Added.
+        * Modules/modern-media-controls/images/watchOS/InvalidCompact.pdf: Added.
+        * Modules/modern-media-controls/images/watchOS/PlayCompact.pdf: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-05-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] FormattingContext::ConstraintsForInFlowContent should include the computed value of height

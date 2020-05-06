@@ -743,7 +743,6 @@
 		2D50A4B71CE10E0000198049 /* AttachmentPlaceholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D50A4B51CE10E0000198049 /* AttachmentPlaceholder.png */; };
 		2D50A4B81CE10E0000198049 /* AttachmentPlaceholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D50A4B61CE10E0000198049 /* AttachmentPlaceholder@2x.png */; };
 		2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5646AF1B8F8493003C4994 /* DictionaryPopupInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2D56800323888604007ECB8A /* auto-hide-controller.js in Resources */ = {isa = PBXBuildFile; fileRef = 2D56800123888603007ECB8A /* auto-hide-controller.js */; };
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9CFC19C7B52E00B3C5C1 /* PageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9689,6 +9688,9 @@
 		71D02D901DB55C4E00DD5CF5 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		71D02D921DB55C4E00DD5CF5 /* media-controller.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "media-controller.js"; sourceTree = "<group>"; };
 		71D2554F1DB900020004D76B /* skip-back-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "skip-back-support.js"; sourceTree = "<group>"; };
+		71D474A22462E834002F0106 /* PlayCompact.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PlayCompact.pdf; sourceTree = "<group>"; };
+		71D474A32462E834002F0106 /* InvalidCompact.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InvalidCompact.pdf; sourceTree = "<group>"; };
+		71D474A42462E834002F0106 /* ActivityIndicatorSpriteCompact@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityIndicatorSpriteCompact@2x.png"; sourceTree = "<group>"; };
 		71D6AA711DA4EAF700B23969 /* airplay-placard@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@1x.png"; sourceTree = "<group>"; };
 		71D6AA721DA4EAF700B23969 /* airplay-placard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@2x.png"; sourceTree = "<group>"; };
 		71D6AA731DA4EAF700B23969 /* airplay-placard@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@3x.png"; sourceTree = "<group>"; };
@@ -21450,6 +21452,16 @@
 			path = media;
 			sourceTree = "<group>";
 		};
+		71D474A12462E834002F0106 /* watchOS */ = {
+			isa = PBXGroup;
+			children = (
+				71D474A42462E834002F0106 /* ActivityIndicatorSpriteCompact@2x.png */,
+				71D474A32462E834002F0106 /* InvalidCompact.pdf */,
+				71D474A22462E834002F0106 /* PlayCompact.pdf */,
+			);
+			path = watchOS;
+			sourceTree = "<group>";
+		};
 		71D6AA391DA4EAF700B23969 /* modern-media-controls */ = {
 			isa = PBXGroup;
 			children = (
@@ -21468,6 +21480,7 @@
 			children = (
 				71D6AA701DA4EAF700B23969 /* iOS */,
 				71D6AA8F1DA4EAF700B23969 /* macOS */,
+				71D474A12462E834002F0106 /* watchOS */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -33899,7 +33912,6 @@
 			files = (
 				2D50A4B71CE10E0000198049 /* AttachmentPlaceholder.png in Resources */,
 				2D50A4B81CE10E0000198049 /* AttachmentPlaceholder@2x.png in Resources */,
-				2D56800323888604007ECB8A /* auto-hide-controller.js in Resources */,
 				A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */,
 				A11E8C051B1E28F40003A7C7 /* copyCursor.png in Resources */,
 				2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */,
@@ -34059,7 +34071,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "WKA_DIR=\"$BUILT_PRODUCTS_DIR/usr/local/include/WebKitAdditions/compact-media-controls\"\nSRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${WK_PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nelse\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\nif [ -d \"$WKA_DIR\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$WKA_DIR/\" \"$DST_DIR/images/\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
+			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${WK_PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nelse\n    if [[ \"${WK_PLATFORM_NAME}\" == *\"watch\"* ]]; then\n        IMG_OS_PREFIX=\"watchOS\"\n    else\n        IMG_OS_PREFIX=\"iOS\"\n    fi\nfi\n\necho ${WK_PLATFORM_NAME};\necho $IMG_OS_PREFIX;\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
 		};
 		A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
