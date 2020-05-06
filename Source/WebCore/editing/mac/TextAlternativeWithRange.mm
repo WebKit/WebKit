@@ -22,10 +22,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 #import "TextAlternativeWithRange.h"
-
-#if USE(DICTATION_ALTERNATIVES)
 
 #if USE(APPKIT)
 #import <AppKit/NSTextAlternatives.h>
@@ -57,5 +56,3 @@ void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlt
 }
 
 } // namespace WebCore
-
-#endif // USE(DICTATION_ALTERNATIVES)

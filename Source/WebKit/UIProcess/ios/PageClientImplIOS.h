@@ -260,9 +260,7 @@ private:
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 
-#if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t dictationContext) override;
-#endif
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;

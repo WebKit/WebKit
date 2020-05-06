@@ -113,6 +113,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
+#import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
@@ -162,10 +163,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
-#endif
-
-#if USE(DICTATION_ALTERNATIVES)
-#import <WebCore/TextAlternativeWithRange.h>
 #endif
 
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -4783,8 +4780,6 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     _page->insertTextAsync(aStringValue, WebKit::EditingRange(), WTFMove(options));
 }
 
-#if USE(DICTATION_ALTERNATIVES)
-
 - (void)insertText:(NSString *)aStringValue alternatives:(NSArray<NSString *> *)alternatives style:(UITextAlternativeStyle)style
 {
     if (!alternatives.count)
@@ -4799,8 +4794,6 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         _page->insertDictatedTextAsync(aStringValue, { }, { textAlternativeWithRange }, WTFMove(options));
     }
 }
-
-#endif
 
 - (BOOL)hasText
 {

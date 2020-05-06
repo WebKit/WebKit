@@ -69,7 +69,6 @@ void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionRespon
 }
 #endif
 
-#if USE(DICTATION_ALTERNATIVES)
 void WebAlternativeTextClient::removeDictationAlternatives(uint64_t dictationContext)
 {
     m_page->send(Messages::WebPageProxy::RemoveDictationAlternatives(dictationContext));
@@ -86,5 +85,5 @@ Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictatio
     m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext), Messages::WebPageProxy::DictationAlternatives::Reply(result));
     return result;
 }
-#endif
+
 }

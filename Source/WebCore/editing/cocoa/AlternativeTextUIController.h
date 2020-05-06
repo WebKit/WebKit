@@ -23,10 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if USE(DICTATION_ALTERNATIVES)
-
 #import "AlternativeTextContextController.h"
 #import <wtf/RetainPtr.h>
 
@@ -42,7 +38,7 @@ class AlternativeTextUIController {
 public:
     AlternativeTextUIController() = default;
 
-    WEBCORE_EXPORT uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&); // Returns a context ID.
+    WEBCORE_EXPORT uint64_t addAlternatives(NSTextAlternatives *); // Returns a context ID.
 
     WEBCORE_EXPORT void clear();
 
@@ -64,5 +60,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(DICTATION_ALTERNATIVES)

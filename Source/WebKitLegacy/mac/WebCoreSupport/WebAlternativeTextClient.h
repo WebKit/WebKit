@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "CorrectionPanel.h"
 #import <WebCore/AlternativeTextClient.h>
 
@@ -33,7 +31,7 @@
 class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WebAlternativeTextClient(WebView*);
+    explicit WebAlternativeTextClient(WebView *);
     virtual ~WebAlternativeTextClient();
 #if USE(AUTOCORRECTION_PANEL)
     void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
@@ -41,20 +39,12 @@ public:
     String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
     void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) override;
 #endif
-#if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) override;
     void removeDictationAlternatives(uint64_t dictationContext) override;
     Vector<String> dictationAlternatives(uint64_t dictationContext) override;
-#endif
 
 private:
-#if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
-    IGNORE_WARNINGS_BEGIN("unused-private-field")
-#endif
-    WebView* m_webView;
-#if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
-    IGNORE_WARNINGS_END
-#endif
+    WebView *m_webView;
 
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;

@@ -34,6 +34,7 @@
 #import "WebTypesInternal.h"
 
 #ifdef __cplusplus
+
 #import <WebCore/AlternativeTextClient.h>
 #import <WebCore/FindOptions.h>
 #import <WebCore/FloatRect.h>
@@ -80,6 +81,7 @@ class WebSelectionServiceController;
 #endif
 
 @class NSCandidateListTouchBarItem;
+@class NSTextAlternatives;
 @class WebBasePluginPackage;
 @class WebDownload;
 @class WebImmediateActionController;
@@ -91,10 +93,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 
 OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones);
 WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
-
-#if USE(DICTATION_ALTERNATIVES)
-OBJC_CLASS NSTextAlternatives;
-#endif
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
 @interface WebUITextIndicatorData (WebUITextIndicatorInternal)
@@ -135,12 +133,10 @@ OBJC_CLASS NSTextAlternatives;
 - (void)handleAcceptedAlternativeText:(NSString*)text;
 #endif
 
-#if USE(DICTATION_ALTERNATIVES)
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange;
 - (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext;
 - (void)_removeDictationAlternatives:(uint64_t)dictationContext;
 - (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 - (WebSelectionServiceController&)_selectionServiceController;

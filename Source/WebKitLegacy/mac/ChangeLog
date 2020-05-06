@@ -1,3 +1,19 @@
+2020-05-06  Darin Adler  <darin@apple.com>
+
+        Eliminate checks of USE(DICTATION_ALTERNATIVES) in Cocoa-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211460
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebAlternativeTextClient.h: Removed USE(DICTATION_ALTERNATIVES).
+        * WebCoreSupport/WebAlternativeTextClient.mm:
+        (WebAlternativeTextClient::dictationAlternatives): Ditto.
+        * WebView/WebHTMLView.mm: Ditto.
+        * WebView/WebView.mm: Ditto. Also use modern for loop.
+        * WebView/WebViewData.h: Ditto.
+        * WebView/WebViewData.mm: Ditto.
+        * WebView/WebViewInternal.h: Ditto.
+
 2020-05-05  David Kilzer  <ddkilzer@apple.com>
 
         Fix deprecated NSGraphicsContext methods using 'graphicsPort'

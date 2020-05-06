@@ -6255,9 +6255,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSUnderlineColorAttributeName,
         NSMarkedClauseSegmentAttributeName,
         NSTextInputReplacementRangeAttributeName,
-#if USE(DICTATION_ALTERNATIVES)
         NSTextAlternativesAttributeName,
-#endif
 #if USE(INSERTION_UNDO_GROUPING)
         NSTextInsertionUndoableAttributeName,
 #endif
@@ -6634,12 +6632,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     Vector<WebCore::DictationAlternative> dictationAlternativeLocations;
 #if PLATFORM(MAC)
     if (isAttributedString) {
-#if USE(DICTATION_ALTERNATIVES)
         Vector<WebCore::TextAlternativeWithRange> textAlternatives;
         collectDictationTextAlternatives(string, textAlternatives);
         if (!textAlternatives.isEmpty())
             [[self _webView] _getWebCoreDictationAlternatives:dictationAlternativeLocations fromTextAlternatives:textAlternatives];
-#endif
 #if USE(INSERTION_UNDO_GROUPING)
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
 #endif

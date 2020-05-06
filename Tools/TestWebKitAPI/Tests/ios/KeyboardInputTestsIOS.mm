@@ -694,8 +694,6 @@ TEST(KeyboardInputTests, InsertTextSimulatingKeyboardInput)
     EXPECT_NS_EQUAL((@[@"keydown", @"beforeinput", @"input", @"keyup", @"change"]), [webView objectByEvaluatingJavaScript:@"firedEvents"]);
 }
 
-#if USE(DICTATION_ALTERNATIVES)
-
 TEST(KeyboardInputTests, InsertDictationAlternativesSimulatingKeyboardInput)
 {
     InstanceMethodSwizzler overrideShouldSimulateKeyboardInputOnTextInsertion { NSClassFromString(@"WKContentView"), @selector(_shouldSimulateKeyboardInputOnTextInsertion), reinterpret_cast<IMP>(shouldSimulateKeyboardInputOnTextInsertionOverride) };
@@ -711,8 +709,6 @@ TEST(KeyboardInputTests, InsertDictationAlternativesSimulatingKeyboardInput)
     [[webView textInputContentView] insertText:@"hello" alternatives:@[ @"helo" ] style:UITextAlternativeStyleNone];
     EXPECT_NS_EQUAL((@[@"keydown", @"beforeinput", @"input", @"keyup", @"change"]), [webView objectByEvaluatingJavaScript:@"firedEvents"]);
 }
-
-#endif
 
 } // namespace TestWebKitAPI
 

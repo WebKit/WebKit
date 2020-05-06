@@ -4703,10 +4703,11 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
 {
     static NSArray *validAttributes;
     if (!validAttributes) {
-        validAttributes = @[ NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName,
-#if USE(DICTATION_ALTERNATIVES)
+        validAttributes = @[
+            NSUnderlineStyleAttributeName,
+            NSUnderlineColorAttributeName,
+            NSMarkedClauseSegmentAttributeName,
             NSTextAlternativesAttributeName,
-#endif
 #if USE(INSERTION_UNDO_GROUPING)
             NSTextInsertionUndoableAttributeName,
 #endif
@@ -4845,9 +4846,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
 
     bool registerUndoGroup = false;
     if (isAttributedString) {
-#if USE(DICTATION_ALTERNATIVES)
         WebCore::collectDictationTextAlternatives(string, dictationAlternatives);
-#endif
 #if USE(INSERTION_UNDO_GROUPING)
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
 #endif

@@ -23,18 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "AlternativeTextClient.h"
 #include <wtf/RetainPtr.h>
 
-#if USE(DICTATION_ALTERNATIVES)
-OBJC_CLASS NSTextAlternatives;
-#endif
+@class NSTextAlternatives;
 
 namespace WebCore {
 
-#if USE(DICTATION_ALTERNATIVES)
 struct TextAlternativeWithRange {
     WEBCORE_EXPORT TextAlternativeWithRange(NSTextAlternatives* anAlternatives, NSRange aRange);
     NSRange range;
@@ -42,9 +37,5 @@ struct TextAlternativeWithRange {
 };
 
 WEBCORE_EXPORT void collectDictationTextAlternatives(NSAttributedString*, Vector<TextAlternativeWithRange>& alternatives);
-
-#else
-struct TextAlternativeWithRange { };
-#endif
 
 } // namespace WebCore

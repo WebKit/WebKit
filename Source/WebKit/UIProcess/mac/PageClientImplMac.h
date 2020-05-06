@@ -180,9 +180,7 @@ private:
 
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) override;
 
-#if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) override;
-#endif
 
     void setEditableElementIsFocused(bool) override;
 

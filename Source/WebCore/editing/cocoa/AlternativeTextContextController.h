@@ -23,14 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if USE(DICTATION_ALTERNATIVES)
-
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 
-OBJC_CLASS NSTextAlternatives;
+@class NSTextAlternatives;
 
 namespace WebCore {
 
@@ -40,7 +36,7 @@ public:
     WEBCORE_EXPORT AlternativeTextContextController();
     WEBCORE_EXPORT ~AlternativeTextContextController();
 
-    uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&);
+    uint64_t addAlternatives(NSTextAlternatives *);
 
     void clear();
 
@@ -55,5 +51,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(DICTATION_ALTERNATIVES)

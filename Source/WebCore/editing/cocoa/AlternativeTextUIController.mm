@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AlternativeTextUIController.h"
 
-#if USE(DICTATION_ALTERNATIVES)
-
 #import "FloatRect.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -35,13 +33,15 @@
 #import <AppKit/NSSpellChecker.h>
 #import <AppKit/NSTextAlternatives.h>
 #import <AppKit/NSView.h>
-#elif PLATFORM(IOS_FAMILY)
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 
 namespace WebCore {
 
-uint64_t AlternativeTextUIController::addAlternatives(const RetainPtr<NSTextAlternatives>& alternatives)
+uint64_t AlternativeTextUIController::addAlternatives(NSTextAlternatives *alternatives)
 {
     return m_contextController.addAlternatives(alternatives);
 }
@@ -106,5 +106,3 @@ void AlternativeTextUIController::removeAlternatives(uint64_t context)
 }
 
 } // namespace WebCore
-
-#endif // USE(DICTATION_ALTERNATIVES)

@@ -358,9 +358,7 @@ private:
     WebFixedPositionContent* _fixedPositionContent;
 #endif
 
-#if USE(DICTATION_ALTERNATIVES)
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
-#endif
 
     RetainPtr<NSData> sourceApplicationAuditData;
 

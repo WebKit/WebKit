@@ -78,7 +78,6 @@ void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionRespon
 }
 #endif
 
-#if USE(DICTATION_ALTERNATIVES)
 void WebAlternativeTextClient::removeDictationAlternatives(uint64_t dictationContext)
 {
     [m_webView _removeDictationAlternatives:dictationContext];
@@ -93,4 +92,3 @@ Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictatio
 {
     return [m_webView _dictationAlternatives:dictationContext];
 }
-#endif

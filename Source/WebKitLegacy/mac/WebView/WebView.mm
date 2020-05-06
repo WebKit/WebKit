@@ -9404,13 +9404,10 @@ bool LayerFlushController::flushLayers()
 }
 #endif
 
-#if USE(DICTATION_ALTERNATIVES)
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange
 {
-    for (size_t i = 0; i < alternativesWithRange.size(); ++i) {
-        const WebCore::TextAlternativeWithRange& alternativeWithRange = alternativesWithRange[i];
-        uint64_t dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives);
-        if (dictationContext)
+    for (auto& alternativeWithRange : alternativesWithRange) {
+        if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
             alternatives.append(WebCore::DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
     }
 }
@@ -9433,7 +9430,6 @@ bool LayerFlushController::flushLayers()
 {
     return _private->m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 - (WebSelectionServiceController&)_selectionServiceController

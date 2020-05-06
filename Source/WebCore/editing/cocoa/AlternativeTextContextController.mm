@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AlternativeTextContextController.h"
 
-#if USE(DICTATION_ALTERNATIVES)
-
 #import <wtf/RetainPtr.h>
 
 #if USE(APPKit)
@@ -42,9 +40,10 @@ AlternativeTextContextController::AlternativeTextContextController() = default;
 
 AlternativeTextContextController::~AlternativeTextContextController() = default;
 
-uint64_t AlternativeTextContextController::addAlternatives(const RetainPtr<NSTextAlternatives>& alternatives)
+uint64_t AlternativeTextContextController::addAlternatives(NSTextAlternatives *alternatives)
 {
-    uint64_t context = reinterpret_cast<uint64_t>(alternatives.get());
+    // FIXME: Turning a pointer into an integer is a flawed algorithm to generate a unique ID. Can lead to aliasing to a new object that happens to occupy the same memory as an old one.
+    uint64_t context = reinterpret_cast<uint64_t>(alternatives);
     if (!context)
         return invalidContext;
     if (alternativesForContext(context))
@@ -69,5 +68,3 @@ void AlternativeTextContextController::clear()
 }
 
 } // namespace WebCore
-
-#endif // USE(DICTATION_ALTERNATIVES)

@@ -45,13 +45,10 @@
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
+#import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
-
-#if USE(DICTATION_ALTERNATIVES)
-#import <WebCore/TextAlternativeWithRange.h>
-#endif
 
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
@@ -247,13 +244,12 @@ void WebPageProxy::performDictionaryLookupOfCurrentSelection()
 
 void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, InsertTextOptions&& options)
 {
-#if USE(DICTATION_ALTERNATIVES)
     if (!hasRunningProcess())
         return;
 
     Vector<DictationAlternative> dictationAlternatives;
     for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
-        uint64_t dictationContext = pageClient().addDictationAlternatives(alternativeWithRange.alternatives);
+        uint64_t dictationContext = pageClient().addDictationAlternatives(alternativeWithRange.alternatives.get());
         if (dictationContext)
             dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
     }
@@ -264,9 +260,6 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     process().send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) }, m_webPageID);
-#else
-    insertTextAsync(text, replacementRange, WTFMove(options));
-#endif
 }
     
 #if ENABLE(APPLE_PAY)

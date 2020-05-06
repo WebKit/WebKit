@@ -1,3 +1,19 @@
+2020-05-06  Darin Adler  <darin@apple.com>
+
+        Eliminate checks of USE(DICTATION_ALTERNATIVES) in Cocoa-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211460
+
+        Reviewed by Anders Carlsson.
+
+        * editing/cocoa/AlternativeTextContextController.h: Remove USE(DICTATION_ALTERNATIVES).
+        Also remove unnecessary use of RetainPtr and add a FIXME. Also remove #pragma once
+        since this header is only imported from Objective-C++ sources.
+        * editing/cocoa/AlternativeTextContextController.mm: Ditto.
+        * editing/cocoa/AlternativeTextUIController.h: Ditto.
+        * editing/cocoa/AlternativeTextUIController.mm: Ditto.
+        * editing/mac/TextAlternativeWithRange.h: Ditto.
+        * editing/mac/TextAlternativeWithRange.mm: Ditto.
+
 2020-05-06  Simon Fraser  <simon.fraser@apple.com>
 
         Factor EventHandler code that sends mouseEnteredContentArea/mouseExitedContentArea into its own function

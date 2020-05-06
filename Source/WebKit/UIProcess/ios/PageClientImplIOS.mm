@@ -949,14 +949,10 @@ void PageClientImpl::handleAutocorrectionContext(const WebAutocorrectionContext&
     [m_contentView _handleAutocorrectionContext:context];
 }
 
-#if USE(DICTATION_ALTERNATIVES)
-
 void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t)
 {
     notImplemented();
 }
-
-#endif
 
 } // namespace WebKit
 

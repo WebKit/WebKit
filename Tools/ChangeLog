@@ -1,3 +1,12 @@
+2020-05-06  Darin Adler  <darin@apple.com>
+
+        Eliminate checks of USE(DICTATION_ALTERNATIVES) in Cocoa-specific code
+        https://bugs.webkit.org/show_bug.cgi?id=211460
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm: Remove USE(DICTATION_ALTERNATIVES).
+
 2020-05-06  Pablo Saavedra  <psaavedra@igalia.com>
 
         Python3: Support Python3 in Tools/webkitpy/benchmark_runner

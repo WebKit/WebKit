@@ -206,9 +206,7 @@ void WebViewLayerFlushScheduler::layerFlushCallback()
 
     pluginDatabaseClientCount++;
 
-#if USE(DICTATION_ALTERNATIVES)
     m_alternativeTextUIController = makeUnique<WebCore::AlternativeTextUIController>();
-#endif
 
     return self;
 }
