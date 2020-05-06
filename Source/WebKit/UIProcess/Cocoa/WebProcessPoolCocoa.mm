@@ -298,9 +298,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 
 #if HAVE(HOSTED_CORE_ANIMATION)
-#if !PLATFORM(IOS_FAMILY)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
-#endif
 #endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.

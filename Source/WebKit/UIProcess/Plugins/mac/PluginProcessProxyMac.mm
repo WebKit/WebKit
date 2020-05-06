@@ -82,9 +82,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
     // For now only Flash is known to behave with asynchronous plug-in initialization.
     parameters.supportsAsynchronousPluginInitialization = m_pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
 
-#if HAVE(HOSTED_CORE_ANIMATION)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
-#endif
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 }
 
