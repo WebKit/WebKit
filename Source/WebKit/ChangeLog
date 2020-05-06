@@ -1,3 +1,27 @@
+2020-05-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Cleanup KeyBindingTranslator on WebView disposal
+        https://bugs.webkit.org/show_bug.cgi?id=211465
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fixes assertion in debug mode when a test failed and the widget
+        followed a destruction pattern where KeyBindingTranslator would be
+        destroyed before the container widget is cleaned up.
+
+        Also renamed the method from 'destroyed' to 'invalidate' to try to
+        better convey the action being performed on the KeyBindingTranslator.
+
+        Covered by existing tests.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerRemove): Update method name.
+        (webkitWebViewBaseDispose): Cleanup keyBindingTranslator when
+        disposing this widget.
+        * UIProcess/gtk/KeyBindingTranslator.h:
+        (WebKit::KeyBindingTranslator::invalidate): Renamed from destroyed.
+        (WebKit::KeyBindingTranslator::destroyed): Deleted.
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Reduce HAVE(HOSTED_CORE_ANIMATION)

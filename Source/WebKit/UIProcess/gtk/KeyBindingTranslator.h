@@ -37,7 +37,7 @@ public:
     ~KeyBindingTranslator();
 
     GtkWidget* widget() const { return m_nativeWidget; }
-    void destroyed() { m_nativeWidget = nullptr; }
+    void invalidate() { m_nativeWidget = nullptr; }
 
 #if USE(GTK4)
     Vector<String> commandsForKeyEvent(GtkEventControllerKey*);

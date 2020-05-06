@@ -529,7 +529,7 @@ static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget*
         if (gtk_widget_get_visible(widgetContainer))
             gtk_widget_grab_focus(widgetContainer);
     } else if (priv->keyBindingTranslator.widget() == widget)
-        priv->keyBindingTranslator.destroyed();
+        priv->keyBindingTranslator.invalidate();
     else {
         ASSERT(priv->children.contains(widget));
         priv->children.remove(widget);
@@ -600,6 +600,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
     webView->priv->pageProxy->close();
     webView->priv->acceleratedBackingStore = nullptr;
     webView->priv->sleepDisabler = nullptr;
+    webView->priv->keyBindingTranslator.invalidate();
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
