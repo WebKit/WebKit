@@ -32,7 +32,7 @@ class OSXSafariDriver(OSXBrowserDriver):
             safari_app_in_build_path = os.path.join(browser_build_absolute_path, 'Safari.app/Contents/MacOS/Safari')
             has_safari_app = os.path.exists(safari_app_in_build_path)
             content_in_path = os.listdir(browser_build_absolute_path)
-            contains_frameworks = any(itertools.imap(lambda entry: entry.endswith('.framework'), os.listdir(browser_build_absolute_path)))
+            contains_frameworks = any(map(lambda entry: entry.endswith('.framework'), os.listdir(browser_build_absolute_path)))
 
             if has_safari_app:
                 args = [safari_app_in_build_path]

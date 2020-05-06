@@ -85,7 +85,7 @@ class BenchmarkResults(object):
         values = list(map(float, values))
         total = sum(values)
         mean = total / len(values)
-        square_sum = sum(map(lambda x: x * x, values))
+        square_sum = sum([x * x for x in values])
         sample_count = len(values)
 
         # With sum and sum of squares, we can compute the sample standard deviation in O(1).
@@ -101,13 +101,13 @@ class BenchmarkResults(object):
         if not scale_unit:
             formatted_value = '{mean:.3f}{unit} stdev={delta:.1%}'.format(mean=mean, delta=sample_stdev / mean, unit=unit)
             if show_iteration_values:
-                formatted_value += ' [' + ', '.join(map(lambda value: '{value:.3f}'.format(value=value), values)) + ']'
+                formatted_value += ' [' + ', '.join(['{value:.3f}'.format(value=value) for value in values]) + ']'
             return formatted_value
 
         if unit == 'ms':
             unit = 's'
             mean = float(mean) / 1000
-            values = list(map(lambda value: float(value) / 1000, values))
+            values = list([float(value) / 1000 for value in values])
             sample_stdev /= 1000
 
         base = 1024 if unit == 'B' else 1000
@@ -126,7 +126,7 @@ class BenchmarkResults(object):
 
         formatted_value = '{mean}{prefix}{unit} stdev={delta:.1%}'.format(mean=format_scaled(scaled_mean), delta=sample_stdev / mean, prefix=SI_prefix, unit=unit)
         if show_iteration_values:
-            formatted_value += ' [' + ', '.join(map(lambda value: format_scaled(value * scaling_factor), values)) + ']'
+            formatted_value += ' [' + ', '.join([format_scaled(value * scaling_factor) for value in values]) + ']'
         return formatted_value
 
     @classmethod
@@ -182,7 +182,7 @@ class BenchmarkResults(object):
                 results_for_aggregator = results_for_metric.get(aggregator)
             elif None in results_for_metric:
                 results_for_aggregator = results_for_metric.get(None)
-            elif len(results_for_metric.keys()) == 1:
+            elif len(list(results_for_metric.keys())) == 1:
                 results_for_aggregator = results_for_metric.get(list(results_for_metric.keys())[0])
             else:
                 results_for_aggregator = {}

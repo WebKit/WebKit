@@ -1,3 +1,33 @@
+2020-05-06  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Python3: Support Python3 in Tools/webkitpy/benchmark_runner
+        https://bugs.webkit.org/show_bug.cgi?id=211249
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder._fetch_remote_archive):
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults._format_values):
+        (BenchmarkResults._subtest_values_by_config_iteration):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (istext):
+        (BenchmarkRunner._run_benchmark):
+        (BenchmarkRunner._merge):
+        (BenchmarkRunner.show_results):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver._wait_for_http_server):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (parse_args):
+        (list_benchmark_plans):
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._create_checker):
+
 2020-05-06  Aakash Jain  <aakash_jain@apple.com>
 
         Delete code for QueueStatusServer

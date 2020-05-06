@@ -40,7 +40,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         _log.info('Start to fetching the port number of the http server')
         try:
             import psutil
-            for attempt in xrange(max_attempt):
+            for attempt in range(max_attempt):
                 connections = psutil.Process(self._server_process.pid).connections()
                 if connections and connections[0].laddr and connections[0].laddr[1] and connections[0].status == 'LISTEN':
                     self._server_port = connections[0].laddr[1]
@@ -52,7 +52,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
             else:
                 raise Exception("Server is not listening on port, max tries exceeded. HTTP server may be installing dependent modules.")
         except ImportError:
-            for attempt in xrange(max_attempt):
+            for attempt in range(max_attempt):
                 try:
                     output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
                     self._server_port = int(re.search('TCP .*:(\d+) \(LISTEN\)', output).group(1))
@@ -71,7 +71,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def _wait_for_http_server(self):
         max_attempt = 5
         # Wait for server to be up completely before exiting
-        for attempt in xrange(max_attempt):
+        for attempt in range(max_attempt):
             try:
                 subprocess.check_call(["curl", "--silent", "--head", "--fail", "--output", "/dev/null", self.base_url()])
                 return

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod, ABCMeta
+from six import with_metaclass
 
 
-class HTTPServerDriver(object):
+class HTTPServerDriver(with_metaclass(ABCMeta, object)):
     platforms = []
-
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def serve(self, webRoot):
