@@ -178,23 +178,17 @@ Vector<char, 32> localeIDBufferForLanguageTag(const CString& tag)
 
 String languageTagForLocaleID(const char* localeID, bool isImmortal)
 {
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> buffer(32);
-    auto length = uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        buffer.grow(length);
-        status = U_ZERO_ERROR;
-        uloc_toLanguageTag(localeID, buffer.data(), length, false, &status);
-    }
+    Vector<char, 32> buffer;
+    auto status = callBufferProducingFunction(uloc_toLanguageTag, localeID, buffer, false);
     if (U_FAILURE(status))
         return String();
 
     // This is used to store into static variables that may be shared across JSC execution threads.
     // This must be immortal to make concurrent ref/deref safe.
     if (isImmortal)
-        return String(StringImpl::createStaticStringImpl(buffer.data(), length));
+        return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
 
-    return String(buffer.data(), length);
+    return String(buffer.data(), buffer.size());
 }
 
 const HashSet<String>& intlAvailableLocales()

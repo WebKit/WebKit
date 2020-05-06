@@ -90,18 +90,12 @@ CString LocaleIDBuilder::toCanonical()
 {
     ASSERT(m_buffer.size());
 
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> result(32);
-    auto resultLength = uloc_canonicalize(m_buffer.data(), result.data(), result.size(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        result.grow(resultLength);
-        status = U_ZERO_ERROR;
-        uloc_canonicalize(m_buffer.data(), result.data(), resultLength, &status);
-    }
+    Vector<char, 32> result;
+    auto status = callBufferProducingFunction(uloc_canonicalize, m_buffer.data(), result);
     if (U_FAILURE(status))
         return CString();
 
-    return CString(result.data(), resultLength);
+    return CString(result.data(), result.size());
 }
 
 // Because ICU's C API doesn't have set[Language|Script|Region] functions...
@@ -386,17 +380,10 @@ const String& IntlLocale::baseName()
 const String& IntlLocale::language()
 {
     if (m_language.isNull()) {
-        UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 8> buffer(8);
-        auto bufferLength = uloc_getLanguage(m_localeID.data(), buffer.data(), buffer.size(), &status);
-        if (needsToGrowToProduceBuffer(status)) {
-            buffer.grow(bufferLength);
-            status = U_ZERO_ERROR;
-            uloc_getLanguage(m_localeID.data(), buffer.data(), bufferLength, &status);
-        }
-        ASSERT(U_SUCCESS(status));
-
-        m_language = String(buffer.data(), bufferLength);
+        Vector<char, 8> buffer;
+        auto status = callBufferProducingFunction(uloc_getLanguage, m_localeID.data(), buffer);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+        m_language = String(buffer.data(), buffer.size());
     }
     return m_language;
 }
@@ -405,17 +392,10 @@ const String& IntlLocale::language()
 const String& IntlLocale::script()
 {
     if (m_script.isNull()) {
-        UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 4> buffer(4);
-        auto bufferLength = uloc_getScript(m_localeID.data(), buffer.data(), buffer.size(), &status);
-        if (needsToGrowToProduceBuffer(status)) {
-            buffer.grow(bufferLength);
-            status = U_ZERO_ERROR;
-            uloc_getScript(m_localeID.data(), buffer.data(), bufferLength, &status);
-        }
-        ASSERT(U_SUCCESS(status));
-
-        m_script = String(buffer.data(), bufferLength);
+        Vector<char, 4> buffer;
+        auto status = callBufferProducingFunction(uloc_getScript, m_localeID.data(), buffer);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+        m_script = String(buffer.data(), buffer.size());
     }
     return m_script;
 }
@@ -424,17 +404,10 @@ const String& IntlLocale::script()
 const String& IntlLocale::region()
 {
     if (m_region.isNull()) {
-        UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 3> buffer(3);
-        auto bufferLength = uloc_getCountry(m_localeID.data(), buffer.data(), buffer.size(), &status);
-        if (needsToGrowToProduceBuffer(status)) {
-            buffer.grow(bufferLength);
-            status = U_ZERO_ERROR;
-            uloc_getCountry(m_localeID.data(), buffer.data(), bufferLength, &status);
-        }
-        ASSERT(U_SUCCESS(status));
-
-        m_region = String(buffer.data(), bufferLength);
+        Vector<char, 3> buffer;
+        auto status = callBufferProducingFunction(uloc_getCountry, m_localeID.data(), buffer);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+        m_region = String(buffer.data(), buffer.size());
     }
     return m_region;
 }

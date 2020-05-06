@@ -1557,12 +1557,6 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto convertCase = [&] (auto&&... args) {
-        if (mode == CaseConversionMode::Lower)
-            return u_strToLower(std::forward<decltype(args)>(args)...);
-        return u_strToUpper(std::forward<decltype(args)>(args)...);
-    };
-
     // 1. Let O be RequireObjectCoercible(this value).
     JSValue thisValue = callFrame->thisValue();
     if (!checkObjectCoercible(thisValue))
@@ -1609,10 +1603,6 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     if (locale.isNull())
         locale = "und"_s;
 
-    CString utf8LocaleBuffer = locale.utf8();
-    const StringView view(s);
-    const int32_t viewLength = view.length();
-
     // Delegate the following steps to icu u_strToLower or u_strToUpper.
     // 13. Let cpList be a List containing in order the code points of S as defined in ES2015, 6.1.4, starting at the first element of S.
     // 14. For each code point c in cpList, if the Unicode Character Database provides a lower(/upper) case equivalent of c that is either language insensitive or for the language locale, then replace c in cpList with that/those equivalent code point(s).
@@ -1621,25 +1611,15 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     // 17. Let L be a String whose elements are, in order, the elements of cuList.
 
     // Most strings lower/upper case will be the same size as original, so try that first.
-    UErrorCode error = U_ZERO_ERROR;
-    Vector<UChar> buffer(viewLength);
-    String lower;
-    const int32_t resultLength = convertCase(buffer.data(), viewLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
-    if (U_SUCCESS(error))
-        lower = String(buffer.data(), resultLength);
-    else if (needsToGrowToProduceBuffer(error)) {
-        // Converted case needs more space than original. Try again.
-        UErrorCode error = U_ZERO_ERROR;
-        Vector<UChar> buffer(resultLength);
-        convertCase(buffer.data(), resultLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
-        if (U_FAILURE(error))
-            return throwVMTypeError(globalObject, scope, u_errorName(error));
-        lower = String(buffer.data(), resultLength);
-    } else
-        return throwVMTypeError(globalObject, scope, u_errorName(error));
+    Vector<UChar> buffer;
+    buffer.reserveInitialCapacity(s.length());
+    auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
+    auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters(), s.length(), locale.utf8().data());
+    if (U_FAILURE(status))
+        return throwVMTypeError(globalObject, scope, u_errorName(status));
 
     // 18. Return L.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, lower)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String(buffer))));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(JSGlobalObject* globalObject, CallFrame* callFrame)

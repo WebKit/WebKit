@@ -1,3 +1,32 @@
+2020-05-06  Darin Adler  <darin@apple.com>
+
+        Make a helper for the pattern of ICU functions that may need to be called twice to populate a buffer
+        https://bugs.webkit.org/show_bug.cgi?id=211499
+
+        Reviewed by Ross Kirsling.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::defaultTimeZone): Use callBufferProducingFunction.
+        (JSC::canonicalizeTimeZoneName): Ditto.
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Ditto.
+        (JSC::IntlDateTimeFormat::format const): Ditto.
+        (JSC::IntlDateTimeFormat::formatToParts const): Ditto.
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::toCanonical): Ditto.
+        (JSC::IntlLocale::language): Ditto.
+        (JSC::IntlLocale::script): Ditto.
+        (JSC::IntlLocale::region): Ditto.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::format const): Ditto.
+        (JSC::IntlNumberFormat::formatToParts const): Ditto.
+        * runtime/IntlObject.cpp:
+        (JSC::languageTagForLocaleID): Ditto.
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::formatInternal const): Ditto.
+        (JSC::IntlRelativeTimeFormat::formatToParts const): Ditto.
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase): Ditto.
+
 2020-05-06  Devin Rousso  <drousso@apple.com>
 
         ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread()) when web inspecting

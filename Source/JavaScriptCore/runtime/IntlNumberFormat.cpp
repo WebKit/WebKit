@@ -347,18 +347,12 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<UChar, 32> buffer(32);
-    auto length = unum_formatDouble(m_numberFormat.get(), value, buffer.data(), buffer.size(), nullptr, &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        buffer.grow(length);
-        status = U_ZERO_ERROR;
-        unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
-    }
+    Vector<UChar, 32> buffer;
+    auto status = callBufferProducingFunction(unum_formatDouble, m_numberFormat.get(), value, buffer, nullptr);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a number."_s);
 
-    return jsString(vm, String(buffer.data(), length));
+    return jsString(vm, String(buffer));
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
@@ -375,18 +369,12 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, JSBigInt* value) 
     ASSERT(string.is8Bit() && string.isAllASCII());
     auto* rawString = reinterpret_cast<const char*>(string.characters8());
 
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<UChar, 32> buffer(32);
-    auto length = unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), buffer.size(), nullptr, &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        buffer.grow(length);
-        status = U_ZERO_ERROR;
-        unum_formatDecimal(m_numberFormat.get(), rawString, string.length(), buffer.data(), length, nullptr, &status);
-    }
+    Vector<UChar, 32> buffer;
+    auto status = callBufferProducingFunction(unum_formatDecimal, m_numberFormat.get(), rawString, string.length(), buffer, nullptr);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a BigInt."_s);
 
-    return jsString(vm, String(buffer.data(), length));
+    return jsString(vm, String(buffer));
 }
 
 ASCIILiteral IntlNumberFormat::styleString(Style style)
@@ -539,17 +527,12 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result(32);
-    auto resultLength = unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), result.size(), fieldItr.get(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        result.grow(resultLength);
-        unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), resultLength, fieldItr.get(), &status);
-    }
+    Vector<UChar, 32> result;
+    status = callBufferProducingFunction(unum_formatDoubleForFields, m_numberFormat.get(), value, result, fieldItr.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a number."_s);
 
-    auto resultString = String(result.data(), resultLength);
+    auto resultString = String(result);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)

@@ -105,27 +105,15 @@ static ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
 // https://tc39.es/ecma402/#sec-defaulttimezone
 static String defaultTimeZone()
 {
-    UErrorCode status = U_ZERO_ERROR;
     String canonical;
 
-    Vector<UChar, 32> buffer(32);
-    auto bufferLength = ucal_getDefaultTimeZone(buffer.data(), buffer.size(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        buffer.grow(bufferLength);
-        ucal_getDefaultTimeZone(buffer.data(), bufferLength, &status);
-    }
+    Vector<UChar, 32> buffer;
+    auto status = callBufferProducingFunction(ucal_getDefaultTimeZone, buffer);
     if (U_SUCCESS(status)) {
-        status = U_ZERO_ERROR;
-        Vector<UChar, 32> canonicalBuffer(32);
-        auto canonicalLength = ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalBuffer.size(), nullptr, &status);
-        if (needsToGrowToProduceBuffer(status)) {
-            status = U_ZERO_ERROR;
-            canonicalBuffer.grow(canonicalLength);
-            ucal_getCanonicalTimeZoneID(buffer.data(), bufferLength, canonicalBuffer.data(), canonicalLength, nullptr, &status);
-        }
+        Vector<UChar, 32> canonicalBuffer;
+        status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
         if (U_SUCCESS(status))
-            canonical = String(canonicalBuffer.data(), canonicalLength);
+            canonical = String(canonicalBuffer);
     }
 
     if (canonical.isNull() || isUTCEquivalent(canonical))
@@ -146,7 +134,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     do {
         status = U_ZERO_ERROR;
         int32_t ianaTimeZoneLength;
-        // Time zone names are respresented as UChar[] in all related ICU apis.
+        // Time zone names are represented as UChar[] in all related ICU APIs.
         const UChar* ianaTimeZone = uenum_unext(timeZones, &ianaTimeZoneLength, &status);
         ASSERT(U_SUCCESS(status));
 
@@ -163,16 +151,10 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         // 1. Let ianaTimeZone be the Zone or Link name of the IANA Time Zone Database such that timeZone, converted to upper case as described in 6.1, is equal to ianaTimeZone, converted to upper case as described in 6.1.
         // 2. If ianaTimeZone is a Link name, then let ianaTimeZone be the corresponding Zone name as specified in the “backward” file of the IANA Time Zone Database.
 
-        Vector<UChar, 32> buffer(ianaTimeZoneLength);
-        status = U_ZERO_ERROR;
-        auto canonicalLength = ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), ianaTimeZoneLength, nullptr, &status);
-        if (needsToGrowToProduceBuffer(status)) {
-            buffer.grow(canonicalLength);
-            status = U_ZERO_ERROR;
-            ucal_getCanonicalTimeZoneID(ianaTimeZone, ianaTimeZoneLength, buffer.data(), canonicalLength, nullptr, &status);
-        }
-        ASSERT(U_SUCCESS(status));
-        canonical = String(buffer.data(), canonicalLength);
+        Vector<UChar, 32> buffer;
+        auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, ianaTimeZone, ianaTimeZoneLength, buffer, nullptr);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+        canonical = String(buffer);
     } while (canonical.isNull());
     uenum_close(timeZones);
 
@@ -636,14 +618,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     String skeleton = skeletonBuilder.toString();
     StringView skeletonView(skeleton);
-    Vector<UChar, 32> patternBuffer(32);
-    status = U_ZERO_ERROR;
-    auto patternLength = udatpg_getBestPatternWithOptions(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer.data(), patternBuffer.size(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        patternBuffer.grow(patternLength);
-        udatpg_getBestPattern(generator, skeletonView.upconvertedCharacters(), skeletonView.length(), patternBuffer.data(), patternLength, &status);
-    }
+    Vector<UChar, 32> patternBuffer;
+    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator, skeletonView.upconvertedCharacters(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
     udatpg_close(generator);
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
@@ -662,12 +638,11 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
         bool isEscaped = false;
         bool hasHour = false;
-        for (auto i = 0; i < patternLength; ++i) {
-            UChar c = patternBuffer[i];
+        for (auto& c : patternBuffer) {
             if (c == '\'')
                 isEscaped = !isEscaped;
             else if (!isEscaped && (c == 'h' || c == 'H' || c == 'k' || c == 'K')) {
-                patternBuffer[i] = hour;
+                c = hour;
                 hasHour = true;
             }
         }
@@ -675,7 +650,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             m_hourCycle = String();
     }
 
-    StringView pattern(patternBuffer.data(), patternLength);
+    StringView pattern(patternBuffer.data(), patternBuffer.size());
     setFormatsFromPattern(pattern);
 
     status = U_ZERO_ERROR;
@@ -894,18 +869,12 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
 
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<UChar, 32> result(32);
-    auto resultLength = udat_format(m_dateFormat.get(), value, result.data(), result.size(), nullptr, &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        result.grow(resultLength);
-        udat_format(m_dateFormat.get(), value, result.data(), resultLength, nullptr, &status);
-    }
+    Vector<UChar, 32> result;
+    auto status = callBufferProducingFunction(udat_format, m_dateFormat.get(), value, result, nullptr);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
 
-    return jsString(vm, String(result.data(), resultLength));
+    return jsString(vm, String(result));
 }
 
 static ASCIILiteral partTypeString(UDateFormatField field)
@@ -986,14 +955,8 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    status = U_ZERO_ERROR;
-    Vector<UChar, 32> result(32);
-    auto resultLength = udat_formatForFields(m_dateFormat.get(), value, result.data(), result.size(), fields.get(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        result.grow(resultLength);
-        udat_formatForFields(m_dateFormat.get(), value, result.data(), resultLength, fields.get(), &status);
-    }
+    Vector<UChar, 32> result;
+    status = callBufferProducingFunction(udat_formatForFields, m_dateFormat.get(), value, result, fields.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
 
@@ -1001,9 +964,10 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
 
-    auto resultString = String(result.data(), resultLength);
+    auto resultString = String(result);
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
+    int32_t resultLength = result.size();
     int32_t previousEndIndex = 0;
     int32_t beginIndex = 0;
     int32_t endIndex = 0;

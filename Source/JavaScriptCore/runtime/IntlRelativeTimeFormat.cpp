@@ -245,20 +245,14 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
 
     auto formatRelativeTime = m_numeric ? ureldatefmt_formatNumeric : ureldatefmt_format;
 
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<UChar, 32> result(32);
-    auto resultLength = formatRelativeTime(m_relativeDateTimeFormatter.get(), value, unitType.value(), result.data(), result.size(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        result.grow(resultLength);
-        formatRelativeTime(m_relativeDateTimeFormatter.get(), value, unitType.value(), result.data(), resultLength, &status);
-    }
+    Vector<UChar, 32> result;
+    auto status = callBufferProducingFunction(formatRelativeTime, m_relativeDateTimeFormatter.get(), value, unitType.value(), result);
     if (UNLIKELY(U_FAILURE(status))) {
         throwTypeError(globalObject, scope, "failed to format relative time"_s);
         return String();
     }
 
-    return String(result.data(), resultLength);
+    return String(result);
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTime
@@ -288,17 +282,12 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
 
     double absValue = std::abs(value);
 
-    Vector<UChar, 32> buffer(32);
-    auto numberLength = unum_formatDoubleForFields(m_numberFormat.get(), absValue, buffer.data(), buffer.size(), iterator.get(), &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        status = U_ZERO_ERROR;
-        buffer.grow(numberLength);
-        unum_formatDoubleForFields(m_numberFormat.get(), absValue, buffer.data(), numberLength, iterator.get(), &status);
-    }
+    Vector<UChar, 32> buffer;
+    status = callBufferProducingFunction(unum_formatDoubleForFields, m_numberFormat.get(), absValue, buffer, iterator.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);
 
-    auto formattedNumber = String(buffer.data(), numberLength);
+    auto formattedNumber = String(buffer);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
@@ -311,7 +300,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     size_t numberEnd = 0;
     size_t numberStart = formattedRelativeTime.find(formattedNumber);
     if (numberStart != notFound) {
-        numberEnd = numberStart + numberLength;
+        numberEnd = numberStart + buffer.size();
 
         // Add initial literal if there is one.
         if (numberStart) {
