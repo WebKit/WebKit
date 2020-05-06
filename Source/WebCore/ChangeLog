@@ -1,3 +1,19 @@
+2020-05-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] BlockFormattingContext::computeHeightAndMargin should special case the table box
+        https://bugs.webkit.org/show_bug.cgi?id=211493
+
+        Reviewed by Antti Koivisto.
+
+        By the time we get to BlockFormattingContext::computeHeightAndMargin(), the used valued for the table height is already been computed.
+        (Table box height is mostly content driven, and both the computed height and the min/max pair are taken into account
+        while we are laying out the table content).
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+
 2020-05-06  Antoine Quint  <graouts@apple.com>
 
         Add watchOS media controls assets

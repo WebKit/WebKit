@@ -255,17 +255,6 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(c
         return inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, overrideVerticalValues);
 
     ContentHeightAndMargin contentHeightAndMargin;
-    // FIXME: Let's special case the table height computation for now -> figure out whether tables fall into the "inFlowNonReplacedHeightAndMargin" category.
-    if (layoutBox.establishesTableFormattingContext()) {
-        auto& tableBox = downcast<ContainerBox>(layoutBox);
-        auto computedTableHeight = computedHeight(tableBox);
-        auto contentHeight = contentHeightForFormattingContextRoot(tableBox);
-        if (computedTableHeight && contentHeight > computedTableHeight) {
-            // Table content needs more vertical space than the table has.
-            return complicatedCases(tableBox, horizontalConstraints, { contentHeight });
-        }
-        return complicatedCases(tableBox, horizontalConstraints, overrideVerticalValues);
-    }
     if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
         // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
         contentHeightAndMargin = inFlowNonReplacedHeightAndMargin(layoutBox, horizontalConstraints, overrideVerticalValues);
