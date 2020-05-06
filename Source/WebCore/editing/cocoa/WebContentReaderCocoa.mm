@@ -449,7 +449,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
 
     if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(frame, fragment, markupAndArchive.archive->subresources());
-        return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
+        return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, AddMetaCharsetIfNeeded::No, msoListQuirks, markupAndArchive.markup);
     }
 
     HashMap<AtomString, AtomString> blobURLMap;
@@ -492,7 +492,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
 
     replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
 
-    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
+    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, AddMetaCharsetIfNeeded::No, msoListQuirks, markupAndArchive.markup);
 }
 
 bool WebContentReader::readWebArchive(SharedBuffer& buffer)
@@ -580,7 +580,7 @@ bool WebContentReader::readHTML(const String& string)
 
     String markup;
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
-        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, AddMetaCharsetIfNeeded::No, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
                 return shouldReplaceSubresourceURL(url);
             });
@@ -599,7 +599,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
 
     String rawHTML = stripMicrosoftPrefix(string);
     if (shouldSanitize()) {
-        markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+        markup = sanitizeMarkup(rawHTML, AddMetaCharsetIfNeeded::No, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
                 return shouldReplaceSubresourceURL(url);
             });

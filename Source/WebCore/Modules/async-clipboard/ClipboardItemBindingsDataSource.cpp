@@ -269,7 +269,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         if (markupToSanitize.isEmpty())
             return;
 
-        m_data = { sanitizeMarkup(markupToSanitize) };
+        m_data = { sanitizeMarkup(markupToSanitize, AddMetaCharsetIfNeeded::Yes) };
     }
 
     if (m_type == "image/png"_s) {

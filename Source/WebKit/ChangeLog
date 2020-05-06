@@ -1,3 +1,18 @@
+2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Cut and paste from Google Doc to Notes in several (non-Latin) languages doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=211498
+        <rdar://problem/56675345>
+
+        Reviewed by Darin Adler.
+
+        Add a new header to allow Cocoa code to reason about UIColors and NSColors on iOS and macOS (respectively)
+        without requiring platform ifdefs. A followup patch will adopt this in several places in WebKit, where we
+        currently need ifdefs for iOS and macOS.
+
+        * Platform/cocoa/CocoaColor.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-06  Antoine Quint  <graouts@apple.com>
 
         pointermove event sometimes has incorrect pointerType of 'mouse' on touch interactions

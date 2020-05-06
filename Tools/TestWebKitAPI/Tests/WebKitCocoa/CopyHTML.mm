@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "CocoaColor.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -44,12 +45,25 @@
 @end
 
 #if PLATFORM(MAC)
-NSString *readHTMLFromPasteboard()
+
+NSData *readHTMLDataFromPasteboard()
+{
+    return [[NSPasteboard generalPasteboard] dataForType:NSHTMLPboardType];
+}
+
+NSString *readHTMLStringFromPasteboard()
 {
     return [[NSPasteboard generalPasteboard] stringForType:NSHTMLPboardType];
 }
+
 #else
-NSString *readHTMLFromPasteboard()
+
+NSData *readHTMLDataFromPasteboard()
+{
+    return [[UIPasteboard generalPasteboard] dataForPasteboardType:(__bridge NSString *)kUTTypeHTML];
+}
+
+NSString *readHTMLStringFromPasteboard()
 {
     id value = [[UIPasteboard generalPasteboard] valueForPasteboardType:(__bridge NSString *)kUTTypeHTML];
     if ([value isKindOfClass:[NSData class]])
@@ -57,6 +71,7 @@ NSString *readHTMLFromPasteboard()
     ASSERT([value isKindOfClass:[NSString class]]);
     return (NSString *)value;
 }
+
 #endif
 
 static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
@@ -80,11 +95,61 @@ TEST(CopyHTML, Sanitizes)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"didPaste"].boolValue);
     EXPECT_WK_STREQ("<meta content=\"secret\"><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>",
         [webView stringByEvaluatingJavaScript:@"pastedHTML"]);
-    String htmlInNativePasteboard = readHTMLFromPasteboard();
+    String htmlInNativePasteboard = readHTMLStringFromPasteboard();
     EXPECT_TRUE(htmlInNativePasteboard.contains("hello"));
     EXPECT_TRUE(htmlInNativePasteboard.contains(", world"));
     EXPECT_FALSE(htmlInNativePasteboard.contains("secret"));
     EXPECT_FALSE(htmlInNativePasteboard.contains("dangerousCode"));
+}
+
+TEST(CopyHTML, SanitizationPreservesCharacterSet)
+{
+    Vector<std::pair<RetainPtr<NSString>, RetainPtr<NSData>>, 3> markupStringsAndData;
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    for (NSString *encodingName in @[ @"utf-8", @"windows-1252", @"bogus-encoding" ]) {
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<!DOCTYPE html>"
+            "<body>"
+            "<meta charset='%@'>"
+            "<p id='copy'>Copy me</p>"
+            "<script>"
+            "copy.addEventListener('copy', e => {"
+            "    e.clipboardData.setData('text/html', `<span style='color: red;'>我叫謝文昇</span>`);"
+            "    e.preventDefault();"
+            "});"
+            "getSelection().selectAllChildren(copy);"
+            "</script>"
+            "</body>", encodingName]];
+        [webView copy:nil];
+        [webView waitForNextPresentationUpdate];
+
+        markupStringsAndData.append({ readHTMLStringFromPasteboard(), readHTMLDataFromPasteboard() });
+    }
+
+    for (auto& [copiedMarkup, copiedData] : markupStringsAndData) {
+        EXPECT_TRUE([copiedMarkup containsString:@"<span "]);
+        EXPECT_TRUE([copiedMarkup containsString:@"color: red;"]);
+        EXPECT_TRUE([copiedMarkup containsString:@"我叫謝文昇"]);
+        EXPECT_TRUE([copiedMarkup containsString:@"</span>"]);
+
+        NSError *attributedStringConversionError = nil;
+
+        auto attributedString = adoptNS([[NSAttributedString alloc] initWithData:copiedData.get() options:@{ NSDocumentTypeDocumentOption: NSHTMLTextDocumentType } documentAttributes:nil error:&attributedStringConversionError]);
+        EXPECT_WK_STREQ("我叫謝文昇", [attributedString string]);
+
+        __block BOOL foundColorAttribute = NO;
+        [attributedString enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(CocoaColor *color, NSRange range, BOOL *) {
+            CGFloat redComponent = 0;
+            CGFloat greenComponent = 0;
+            CGFloat blueComponent = 0;
+            [color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:nil];
+
+            EXPECT_EQ(1., redComponent);
+            EXPECT_EQ(0., greenComponent);
+            EXPECT_EQ(0., blueComponent);
+            foundColorAttribute = YES;
+        }];
+        EXPECT_TRUE(foundColorAttribute);
+    }
 }
 
 #if PLATFORM(MAC)

@@ -1,3 +1,23 @@
+2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Cut and paste from Google Doc to Notes in several (non-Latin) languages doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=211498
+        <rdar://problem/56675345>
+
+        Reviewed by Darin Adler.
+
+        Add a test to verify that when writing markup to the clipboard via DOM API, if non-ASCII characters appear in
+        the written markup, they can still be converted to `NSAttributedString`s containing the expected non-Latin text.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+
+        Adjust header search paths so that we can import CocoaColor.h in WebKit.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        (readHTMLDataFromPasteboard):
+        (readHTMLStringFromPasteboard):
+        (readHTMLFromPasteboard): Deleted.
+
 2020-05-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r260278): TestWebKitAPI.Fullscreen.Delegate is timing out on macOS bots
