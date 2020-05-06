@@ -7,10 +7,10 @@ CONSOLE MESSAGE: RenderListBox: mouseIsUpInVerticalScrollbar
 CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseExitedVerticalScrollbar
 CONSOLE MESSAGE: RenderListBox: mouseExitedContentArea
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Test for https://bugs.webkit.org/show_bug.cgi?id=153398.
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

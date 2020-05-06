@@ -6,10 +6,10 @@ CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: FrameView: mouseExitedHorizontalScrollbar
 CONSOLE MESSAGE: FrameView: mouseExitedContentArea
 CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Test for https://bugs.webkit.org/show_bug.cgi?id=153304.
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

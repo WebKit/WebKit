@@ -1890,10 +1890,17 @@ static ScrollableArea* enclosingScrollableArea(Node* node)
         if (!renderer)
             continue;
 
-        if (is<RenderListBox>(*renderer))
-            return downcast<RenderListBox>(renderer);
+        if (is<RenderListBox>(*renderer)) {
+            auto* scrollableArea = static_cast<ScrollableArea*>(downcast<RenderListBox>(renderer));
+            if (scrollableArea->isScrollableOrRubberbandable())
+                return scrollableArea;
+        }
 
-        return renderer->enclosingLayer();
+        auto* layer = renderer->enclosingLayer();
+        if (!layer)
+            return nullptr;
+
+        return layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
     }
 
     return nullptr;
@@ -2546,7 +2553,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         auto scrollableAreaForNodeUnderMouse = enclosingScrollableArea(m_elementUnderMouse.get());
         Page* page = m_frame.page();
 
-        if (m_lastElementUnderMouse && (!m_elementUnderMouse || &m_elementUnderMouse->document() != m_frame.document())) {
+        if (m_lastElementUnderMouse && !m_elementUnderMouse) {
             // The mouse has moved between frames.
             if (Frame* frame = m_lastElementUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view())
@@ -2562,7 +2569,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         }
 
-        if (m_elementUnderMouse && (!m_lastElementUnderMouse || &m_lastElementUnderMouse->document() != m_frame.document())) {
+        if (m_elementUnderMouse && !m_lastElementUnderMouse) {
             // The mouse has moved between frames.
             if (Frame* frame = m_elementUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view())

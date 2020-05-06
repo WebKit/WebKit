@@ -1,30 +1,25 @@
 <html>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-if (window.internals) {
-    window.internals.setUsesMockScrollAnimator(true);
-    window.internals.setUsesOverlayScrollbars(true);
-}
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function runTest() {
-    if (window.internals)
-        internals.updateLayoutAndStyleForAllFrames();
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(0, 0);
-        // Move to a position that is over the vertical scrollbar and the iframe.
-        eventSender.mouseMoveTo(window.innerWidth - 4, 100);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-        eventSender.mouseMoveTo(0, 0);
+    jsTestIsAsync = true;
+    if (window.internals) {
+        window.internals.setUsesMockScrollAnimator(true);
+        window.internals.setUsesOverlayScrollbars(true);
     }
-    if (window.testRunner)
-        testRunner.notifyDone();
-};
+
+    function runTest() {
+        if (window.internals)
+            internals.updateLayoutAndStyleForAllFrames();
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(0, 0);
+            // Move to a position that is over the vertical scrollbar and the iframe.
+            eventSender.mouseMoveTo(window.innerWidth - 4, 100);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+            eventSender.mouseMoveTo(0, 0);
+        }
+        finishJSTest();
+    };
 </script>
 <script src="../../resources/js-test-post.js"></script>
 <body>

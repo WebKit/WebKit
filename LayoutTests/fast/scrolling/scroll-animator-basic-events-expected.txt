@@ -11,9 +11,9 @@ CONSOLE MESSAGE: RenderLayer: mouseIsUpInVerticalScrollbar
 CONSOLE MESSAGE: RenderLayer: mouseExitedVerticalScrollbar
 CONSOLE MESSAGE: RenderLayer: mouseExitedContentArea
 CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+This is a scrollable div.
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
-This is a scrollable div.
-
 

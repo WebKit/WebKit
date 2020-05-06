@@ -11,28 +11,24 @@
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-  if (window.internals) {
-      window.internals.setUsesMockScrollAnimator(true);
-  }
-  if (window.testRunner) {
-      testRunner.waitUntilDone();
-      testRunner.dumpAsText();
-  }
-  window.onload = function () {
+    jsTestIsAsync = true;
     if (window.internals)
-        internals.updateLayoutAndStyleForAllFrames();
-      var div = document.querySelector('#scrollme');
-      if (window.eventSender) {
-          eventSender.mouseMoveTo(0, 0);
-          eventSender.mouseMoveTo(div.offsetLeft + 1, div.offsetTop + 1);
-          eventSender.mouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
-          eventSender.mouseDown();
-          eventSender.mouseUp();
-          eventSender.mouseMoveTo(0, 0);
-      }
-      if (window.testRunner)
-          testRunner.notifyDone();
-  };
+        window.internals.setUsesMockScrollAnimator(true);
+
+    window.onload = function() {
+        if (window.internals)
+            internals.updateLayoutAndStyleForAllFrames();
+        var div = document.querySelector('#scrollme');
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(0, 0);
+            eventSender.mouseMoveTo(div.offsetLeft + 1, div.offsetTop + 1);
+            eventSender.mouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+            eventSender.mouseMoveTo(0, 0);
+        }
+        finishJSTest();
+    };
 </script>
 <script src="../../resources/js-test-post.js"></script>
 <body>

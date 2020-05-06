@@ -1,3 +1,21 @@
+2020-05-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor EventHandler and test cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=211475
+
+        Reviewed by Zalan Bujtas.
+
+        Now that we assert that m_elementUnderMouse and m_lastElementUnderMouse are either null
+        or in this EventHandler's document, we can remove the document comparisons (but this code
+        is probably wrong as well).
+
+        Fix enclosingScrollableArea(), which would return any RenderLayer, but should only
+        return scrollable ones, and should only return scrollable RenderListBoxes.
+
+        * page/EventHandler.cpp:
+        (WebCore::enclosingScrollableArea):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
 2020-05-05  David Kilzer  <ddkilzer@apple.com>
 
         Fix deprecated NSGraphicsContext methods using 'graphicsPort'
