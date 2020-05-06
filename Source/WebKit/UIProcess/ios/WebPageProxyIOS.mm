@@ -1366,85 +1366,93 @@ static bool webViewSizeIsNarrow(WebCore::IntSize viewSize)
 
 #endif // !PLATFORM(MACCATALYST)
 
-static bool desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request)
+enum class RecommendDesktopClassBrowsingForRequest { No, Yes, Auto };
+static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request)
 {
     // FIXME: This should be additionally gated on site-specific quirks being enabled. However, site-specific quirks are already
     // disabled by default in WKWebView, so we would need a new preference for controlling site-specific quirks that are on-by-default
     // in all apps, but may be turned off via SPI (or via Web Inspector). See also: <rdar://problem/50035167>.
     auto host = request.url().host();
     if (equalLettersIgnoringASCIICase(host, "tv.kakao.com") || host.endsWithIgnoringASCIICase(".tv.kakao.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "tving.com") || host.endsWithIgnoringASCIICase(".tving.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com") || host.endsWithIgnoringASCIICase(".live.iqiyi.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "jsfiddle.net") || host.endsWithIgnoringASCIICase(".jsfiddle.net"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn") || host.endsWithIgnoringASCIICase(".video.sina.com.cn"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "huya.com") || host.endsWithIgnoringASCIICase(".huya.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "video.tudou.com") || host.endsWithIgnoringASCIICase(".video.tudou.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "cctv.com") || host.endsWithIgnoringASCIICase(".cctv.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "v.china.com.cn"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (equalLettersIgnoringASCIICase(host, "ted.com") || host.endsWithIgnoringASCIICase(".ted.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     if (host.containsIgnoringASCIICase("hsbc.")) {
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.au") || host.endsWithIgnoringASCIICase(".hsbc.com.au"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.eg") || host.endsWithIgnoringASCIICase(".hsbc.com.eg"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.lk") || host.endsWithIgnoringASCIICase(".hsbc.lk"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.co.uk") || host.endsWithIgnoringASCIICase(".hsbc.co.uk"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.hk") || host.endsWithIgnoringASCIICase(".hsbc.com.hk"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.mx") || host.endsWithIgnoringASCIICase(".hsbc.com.mx"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.ca") || host.endsWithIgnoringASCIICase(".hsbc.ca"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.ar") || host.endsWithIgnoringASCIICase(".hsbc.com.ar"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.ph") || host.endsWithIgnoringASCIICase(".hsbc.com.ph"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com") || host.endsWithIgnoringASCIICase(".hsbc.com"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
         if (equalLettersIgnoringASCIICase(host, "hsbc.com.cn") || host.endsWithIgnoringASCIICase(".hsbc.com.cn"))
-            return false;
+            return RecommendDesktopClassBrowsingForRequest::No;
     }
 
     // FIXME: Remove this quirk when <rdar://problem/59480381> is complete.
     if (equalLettersIgnoringASCIICase(host, "fidelity.com") || host.endsWithIgnoringASCIICase(".fidelity.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
     // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
     if (equalLettersIgnoringASCIICase(host, "roblox.com") || host.endsWithIgnoringASCIICase(".roblox.com"))
-        return false;
+        return RecommendDesktopClassBrowsingForRequest::No;
 
-    return true;
+    if (equalLettersIgnoringASCIICase(host, "stackoverflow.com") && request.url().path().startsWithIgnoringASCIICase("/jobs/"))
+        return RecommendDesktopClassBrowsingForRequest::Yes;
+
+    return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
 enum class IgnoreAppCompatibilitySafeguards : bool { No, Yes };
 static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& request, WebCore::IntSize viewSize, IgnoreAppCompatibilitySafeguards ignoreSafeguards)
 {
-    if (!desktopClassBrowsingRecommendedForRequest(request))
+    auto desktopClassBrowsingRecommendation = desktopClassBrowsingRecommendedForRequest(request);
+    if (desktopClassBrowsingRecommendation == RecommendDesktopClassBrowsingForRequest::Yes)
+        return true;
+
+    if (desktopClassBrowsingRecommendation == RecommendDesktopClassBrowsingForRequest::No)
         return false;
 
 #if !PLATFORM(MACCATALYST)
@@ -1491,7 +1499,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         useDesktopBrowsingMode = false;
         break;
     case WebContentMode::Desktop:
-        useDesktopBrowsingMode = !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request);
+        useDesktopBrowsingMode = !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
         break;
     default:
         ASSERT_NOT_REACHED();

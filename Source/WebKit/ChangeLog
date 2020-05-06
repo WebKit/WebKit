@@ -1,3 +1,18 @@
+2020-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        [Quirk] Job listing page goes blank when scrolling on stackoverflow.com
+        https://bugs.webkit.org/show_bug.cgi?id=211480
+        <rdar://problem/62558405>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the option of returning "use desktop web content" on any configuration when the host application asks for content recommendation.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommendedForRequest):
+        (WebKit::desktopClassBrowsingRecommended):
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+
 2020-05-05  Chris Dumez  <cdumez@apple.com>
 
         Crash under _LSSetApplicationInformationItem()
