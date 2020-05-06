@@ -1,3 +1,20 @@
+2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        GTK] Gardening, update expectations and baselines after r261191
+        https://bugs.webkit.org/show_bug.cgi?id=211502
+
+        Unreviewed gardening.
+
+        embedded-credentials.tentative.sub-expected.txt is passing more tests
+        than the general baseline since r260937.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/font-face-opentype-expected.txt: Updated after r261190.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-08-b-manual-expected.txt: Updated after r261191.
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/text-altglyph-01-b-manual-expected.txt: Updated after r261191.
+        * platform/gtk/svg/batik/text/xmlSpace-expected.txt: Updated after r261154.
+
 2020-05-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update expectations after r260889
