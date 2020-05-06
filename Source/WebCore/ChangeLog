@@ -1,3 +1,39 @@
+2020-05-06  Antti Koivisto  <antti@apple.com>
+
+        Add basic support for generating accurate wheel event listener region
+        https://bugs.webkit.org/show_bug.cgi?id=211512
+
+        Reviewed by Simon Fraser.
+
+        Add fake properties for wheel event listeners to RenderStyle and use them to
+        generate regions in EventRegion. There is a separate region for non-passive
+        wheel event listeners (that will require synchronous handling).
+
+        The generated regions are not used for anything in this patch.
+        Style is not yet invalided on event listener additions and removals.
+
+        Test: fast/scrolling/mac/wheel-event-listener-region-basic.html
+
+        * dom/Node.h:
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::unite):
+        (WebCore::EventRegion::uniteEventListeners):
+        (WebCore::EventRegion::dump const):
+        * rendering/EventRegion.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::eventListenerRegionTypes const):
+        (WebCore::RenderStyle::setEventListenerRegionTypes):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::computeEventListenerRegionTypes):
+        (WebCore::Style::Adjuster::adjust const):
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded USE(GRAMMAR_CHECKING)

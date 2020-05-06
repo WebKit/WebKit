@@ -33,6 +33,7 @@
 #include "AnimationBase.h"
 #include "CSSFontSelector.h"
 #include "Element.h"
+#include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -190,6 +191,44 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
         return { TouchAction::None };
 
     return sharedTouchActions;
+}
+
+static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const Element& element, OptionSet<EventListenerRegionType> parentTypes)
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (!element.hasEventListeners())
+        return parentTypes;
+
+    auto types = parentTypes;
+
+    auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
+        auto* eventListenerVector = element.eventTargetData()->eventListenerMap.find(eventName);
+        if (!eventListenerVector)
+            return;
+
+        types.add(type);
+
+        auto isPassiveOnly = [&] {
+            for (auto& listener : *eventListenerVector) {
+                if (!listener->isPassive())
+                    return false;
+            }
+            return true;
+        }();
+
+        if (!isPassiveOnly)
+            types.add(nonPassiveType);
+    };
+
+    findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+    findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+
+    return types;
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(parentTypes);
+    return { };
+#endif
 }
 
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
@@ -436,6 +475,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         style.setJustifyItems(m_parentBoxStyle.justifyItems());
 
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, m_parentStyle.effectiveTouchActions()));
+
+    if (m_element)
+        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(*m_element, m_parentStyle.eventListenerRegionTypes()));
 
 #if ENABLE(TEXT_AUTOSIZING)
     if (m_element)
