@@ -1,3 +1,20 @@
+2020-05-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove orphaned WPT expectations & unused harness
+        https://bugs.webkit.org/show_bug.cgi?id=211454
+
+        Reviewed by Darin Adler.
+
+        1. wpt/html/dom/interfaces was renamed to wpt/html/dom/idlharness.
+        2. wpt/dom/nodes/Document-createEvent was superseded by HTTPS version.
+        3. w3c/resources/WebIDLParser.js is unused.
+
+        * resources/WebIDLParser.js: Removed.
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt: Removed.
+        * web-platform-tests/html/dom/interfaces-expected.txt: Removed.
+        * web-platform-tests/html/dom/interfaces.worker-expected.txt: Removed.
+        * web-platform-tests/html/dom/interfaces.worker.html: Removed.
+
 2020-04-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Implement isSessionSupported()

@@ -1394,12 +1394,6 @@
     "imported/w3c/web-platform-tests/html/dom/idlharness.https.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/dom/interfaces.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/dom/interfaces.https.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/dom/reflection-embedded.html": [
         "slow"
     ],

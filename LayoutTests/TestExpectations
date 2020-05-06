@@ -786,7 +786,6 @@ imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constru
 imported/w3c/web-platform-tests/eventsource/request-credentials.htm [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
-webkit.org/b/185407 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
 webkit.org/b/189906 imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html [ Skip ]

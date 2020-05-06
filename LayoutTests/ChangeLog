@@ -1,3 +1,22 @@
+2020-05-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove orphaned WPT expectations & unused harness
+        https://bugs.webkit.org/show_bug.cgi?id=211454
+
+        Reviewed by Darin Adler.
+
+        1. wpt/html/dom/interfaces was renamed to wpt/html/dom/idlharness.
+        2. wpt/dom/nodes/Document-createEvent was superseded by HTTPS version.
+        3. w3c/resources/WebIDLParser.js is unused.
+
+        * TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/interfaces.worker-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Removed.
+        * tests-options.json:
+
 2020-05-06  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r261163): [ Mac WK2 ] webrtc/libwebrtc/descriptionGetters.html is a flaky failure
