@@ -2241,7 +2241,6 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     } else {
         misspelledWord = TextCheckingHelper(*client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
-#if USE(GRAMMAR_CHECKING)
         grammarSearchRange = spellingSearchRange->cloneRange();
         if (!misspelledWord.isEmpty()) {
             // Stop looking at start of next misspelled word
@@ -2252,7 +2251,6 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 
         if (isGrammarCheckingEnabled())
             badGrammarPhrase = TextCheckingHelper(*client(), *grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
-#endif
     }
 
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
@@ -2276,7 +2274,6 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         } else {
             misspelledWord = TextCheckingHelper(*client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
-#if USE(GRAMMAR_CHECKING)
             grammarSearchRange = spellingSearchRange->cloneRange();
             if (!misspelledWord.isEmpty()) {
                 // Stop looking at start of next misspelled word
@@ -2287,14 +2284,9 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 
             if (isGrammarCheckingEnabled())
                 badGrammarPhrase = TextCheckingHelper(*client(), *grammarSearchRange).findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
-#endif
         }
     }
     
-#if !USE(GRAMMAR_CHECKING)
-    ASSERT(badGrammarPhrase.isEmpty());
-    UNUSED_PARAM(grammarPhraseOffset);
-#else
     if (!badGrammarPhrase.isEmpty()) {
         // We found bad grammar. Since we only searched for bad grammar up to the first misspelled word, the bad grammar
         // takes precedence and we ignore any potential misspelled word. Select the grammar detail, update the spelling
@@ -2310,9 +2302,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         
         client()->updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
         document().markers().addMarker(badGrammarRange, DocumentMarker::Grammar, grammarDetail.userDescription);
-    } else
-#endif
-    if (!misspelledWord.isEmpty()) {
+    } else if (!misspelledWord.isEmpty()) {
         // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
         // a marker so we draw the red squiggle later.
         
@@ -2385,14 +2375,10 @@ String Editor::misspelledSelectionString() const
 
 bool Editor::isSelectionUngrammatical()
 {
-#if USE(GRAMMAR_CHECKING)
     auto range = m_document.selection().selection().toNormalizedRange();
     if (!range || !client())
         return false;
     return TextCheckingHelper(*client(), *range).isUngrammatical();
-#else
-    return false;
-#endif
 }
 
 Vector<String> Editor::guessesForMisspelledWord(const String& word) const
@@ -2644,14 +2630,8 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
     TextCheckingHelper checker(*client(), *searchRange);
     if (checkSpelling)
         checker.markAllMisspellings(firstMisspellingRange);
-    else {
-#if USE(GRAMMAR_CHECKING)
-        if (isGrammarCheckingEnabled())
-            checker.markAllBadGrammar();
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    }    
+    else if (isGrammarCheckingEnabled())
+        checker.markAllBadGrammar();
 #else
     UNUSED_PARAM(selection);
     UNUSED_PARAM(checkSpelling);
@@ -2685,12 +2665,8 @@ void Editor::markMisspellings(const VisibleSelection& selection, RefPtr<Range>& 
     
 void Editor::markBadGrammar(const VisibleSelection& selection)
 {
-#if USE(GRAMMAR_CHECKING)
     RefPtr<Range> firstMisspellingRange;
     markMisspellingsOrBadGrammar(selection, false, firstMisspellingRange);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType> textCheckingOptions, RefPtr<Range>&& spellingRange, RefPtr<Range>&& automaticReplacementRange, RefPtr<Range>&& grammarRange)

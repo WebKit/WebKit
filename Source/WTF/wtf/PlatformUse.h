@@ -195,8 +195,6 @@
 #define USE_ZLIB 1
 #endif
 
-#define USE_GRAMMAR_CHECKING 1
-
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #define USE_UNIFIED_TEXT_CHECKING 1
 #endif

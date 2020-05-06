@@ -83,11 +83,9 @@ public:
     String findFirstMisspelling(uint64_t& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
     String findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, uint64_t& outFirstFoundOffset, GrammarDetail& outGrammarDetail);
     void markAllMisspellings(RefPtr<Range>& firstMisspellingRange);
-#if USE(GRAMMAR_CHECKING)
     String findFirstBadGrammar(GrammarDetail& outGrammarDetail, uint64_t& outGrammarPhraseOffset, bool markAll) const;
     void markAllBadGrammar();
     bool isUngrammatical() const;
-#endif
     Vector<String> guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const;
 
 private:
@@ -95,9 +93,7 @@ private:
     SimpleRange m_range;
 
     bool unifiedTextCheckerEnabled() const;
-#if USE(GRAMMAR_CHECKING)
     int findFirstGrammarDetail(const Vector<GrammarDetail>&, uint64_t badGrammarPhraseLocation, uint64_t startOffset, uint64_t endOffset, bool markAll) const;
-#endif
 };
 
 void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextCheckingType>, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);

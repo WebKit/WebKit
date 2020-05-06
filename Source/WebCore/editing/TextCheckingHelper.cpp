@@ -44,8 +44,6 @@ namespace WebCore {
 
 #if !USE(UNIFIED_TEXT_CHECKING)
 
-#if USE(GRAMMAR_CHECKING)
-
 static void findGrammaticalErrors(TextCheckerClient& client, StringView text, Vector<TextCheckingResult>& results)
 {
     for (unsigned checkLocation = 0; checkLocation < text.length(); ) {
@@ -70,8 +68,6 @@ static void findGrammaticalErrors(TextCheckerClient& client, StringView text, Ve
         checkLocation += badGrammarLocation + badGrammarLength;
     }
 }
-
-#endif
 
 static void findMisspellings(TextCheckerClient& client, StringView text, Vector<TextCheckingResult>& results)
 {
@@ -420,8 +416,6 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     return firstFoundItem;
 }
 
-#if USE(GRAMMAR_CHECKING)
-
 int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, uint64_t badGrammarPhraseLocation, uint64_t startOffset, uint64_t endOffset, bool markAll) const
 {
     // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
@@ -555,8 +549,6 @@ bool TextCheckingHelper::isUngrammatical() const
     return true;
 }
 
-#endif // USE(GRAMMAR_CHECKING)
-
 Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const
 {
     if (!unifiedTextCheckerEnabled())
@@ -628,7 +620,6 @@ void TextCheckingHelper::markAllMisspellings(RefPtr<Range>& firstMisspellingRang
     findFirstMisspelling(ignoredOffset, true, firstMisspellingRange);
 }
 
-#if USE(GRAMMAR_CHECKING)
 void TextCheckingHelper::markAllBadGrammar()
 {
     // Use the "markAll" feature of ofindFirstBadGrammar. Ignore the return value and "out parameters"; all we need to
@@ -637,7 +628,6 @@ void TextCheckingHelper::markAllBadGrammar()
     uint64_t ignoredOffset;
     findFirstBadGrammar(ignoredGrammarDetail, ignoredOffset, true);
 }
-#endif
 
 bool TextCheckingHelper::unifiedTextCheckerEnabled() const
 {
@@ -651,27 +641,25 @@ void checkTextOfParagraph(TextCheckerClient& client, StringView text, OptionSet<
 #else
     UNUSED_PARAM(currentSelection);
 
-    Vector<TextCheckingResult> mispellings;
+    Vector<TextCheckingResult> misspellings;
     if (checkingTypes.contains(TextCheckingType::Spelling))
-        findMisspellings(client, text, mispellings);
+        findMisspellings(client, text, misspellings);
 
-#if USE(GRAMMAR_CHECKING)
     // Look for grammatical errors that occur before the first misspelling.
     Vector<TextCheckingResult> grammaticalErrors;
     if (checkingTypes.contains(TextCheckingType::Grammar)) {
         unsigned grammarCheckLength = text.length();
-        for (auto& mispelling : mispellings)
-            grammarCheckLength = std::min<unsigned>(grammarCheckLength, mispelling.range.location);
+        for (auto& misspelling : misspellings)
+            grammarCheckLength = std::min<unsigned>(grammarCheckLength, misspelling.range.location);
         findGrammaticalErrors(client, text.substring(0, grammarCheckLength), grammaticalErrors);
     }
 
     results = WTFMove(grammaticalErrors);
-#endif
 
     if (results.isEmpty())
-        results = WTFMove(mispellings);
+        results = WTFMove(misspellings);
     else
-        results.appendVector(mispellings);
+        results.appendVector(misspellings);
 #endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
