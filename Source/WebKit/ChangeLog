@@ -1,3 +1,17 @@
+2020-05-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILED: !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) in -[WebEvent charactersIgnoringModifiers] when pressing modifier on PDF
+        https://bugs.webkit.org/show_bug.cgi?id=211472
+
+        Reviewed by Darin Adler.
+
+        Do not ask for event character string for a flags changed event: they don't have one.
+
+        Test: fast/events/ios/pdf-modifer-key-down-crash.html
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator keyboardScrollForEvent:]):
+
 2020-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         [MacCatalyst] Processes should check for network entitlement as we do for macOS apps

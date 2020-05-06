@@ -184,6 +184,9 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     if (![_scrollable isKeyboardScrollable])
         return WTF::nullopt;
 
+    if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
+        return WTF::nullopt;
+
     NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
     if (!charactersIgnoringModifiers.length)
         return WTF::nullopt;
