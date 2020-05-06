@@ -9,6 +9,9 @@
             },
             "testShouldHandleAlertOnPageBeforeUnload": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+            },
+            "testShouldHandleAlertOnPageLoad": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
@@ -63,6 +66,16 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py": {
+        "subtests": {
+            "testShouldNotTimeoutIfScriptCallsbackInsideAZeroTimeout": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211496"}}
+            },
+            "testShouldBeAbleToExecuteAsynchronousScripts": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211496"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py": {
         "subtests": {
             "testShouldNotSwitchMagicallyToTheTopWindow": {
@@ -94,6 +107,12 @@
             },
             "testShouldGetCoordinatesOfAnElementInANestedFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
+            },
+            "testShouldGetCoordinatesOfAnElement[hidden]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
+            },
+            "testShouldGetCoordinatesOfAnInvisibleElement": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211492"}}
             }
         }
     },
@@ -155,6 +174,22 @@
             },
             "testShouldSayElementsWithParentWithNegativeTransformAreNotDisplayed": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldModifyTheVisibilityOfAnElementDynamically" : {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py": {
+        "subtests": {
+            "testExpectedConditionVisibilityOfElementLocated": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
+            },
+            "testExpectedConditionVisibilityOf": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
+            },
+            "testExpectedConditionElementToBeClickable": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
@@ -162,6 +197,9 @@
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184963"}}
+            },
+            "testThatAccessingFindingAnElementAfterWindowIsClosedAndHaventswitchedDoesntCrash": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211330"}}
             }
         }
     },
