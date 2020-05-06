@@ -1,3 +1,17 @@
+2020-05-05  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Crash in match_constness<WebCore::CSSValue, WebCore::CSSPrimitiveValue>::type& WTF::downcast<WebCore::CSSPrimitiveValue, WebCore::CSSValue> -- ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=211479
+
+        Reviewed by Geoffrey Garen.
+    
+        Added check to downcast CSSValue to CSSPrimitiveValue, only if valid CSSPrimitveValue is associated with the property.
+
+        New test would be added to Internal repository.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::pageBreakPropertyValue const):
+
 2020-05-05  Peng Liu  <peng.liu6@apple.com>
 
         Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously
