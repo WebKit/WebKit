@@ -2889,7 +2889,7 @@ void WebViewImpl::updateFontManagerIfNeeded()
         if (!attributeDictionary)
             return;
 
-        PlatformFont *font = fontWithAttributes(attributeDictionary, fontSize);
+        auto font = fontWithAttributes(attributeDictionary, fontSize);
         if (!font)
             return;
 

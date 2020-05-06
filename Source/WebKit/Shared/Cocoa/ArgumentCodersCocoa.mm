@@ -29,6 +29,8 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
+#import "CocoaColor.h"
+#import "CocoaFont.h"
 #import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
@@ -45,14 +47,6 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIFont.h>
 #import <UIKit/UIFontDescriptor.h>
-#endif
-
-#if USE(APPKIT)
-using PlatformColor = NSColor;
-using PlatformFont = NSFont;
-#else
-using PlatformColor = UIColor;
-using PlatformFont = UIFont;
 #endif
 
 #if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
@@ -99,34 +93,6 @@ enum class NSType {
 
 #pragma mark - Helpers
 
-static Class platformColorClass()
-{
-    static Class colorClass;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-#if USE(APPKIT)
-        colorClass = NSClassFromString(@"NSColor");
-#else
-        colorClass = NSClassFromString(@"UIColor");
-#endif
-    });
-    return colorClass;
-}
-
-static Class platformFontClass()
-{
-    static Class fontClass;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-#if USE(APPKIT)
-        fontClass = NSClassFromString(@"NSFont");
-#else
-        fontClass = NSClassFromString(@"UIFont");
-#endif
-    });
-    return fontClass;
-}
-
 static NSType typeFromObject(id object)
 {
     ASSERT(object);
@@ -134,7 +100,7 @@ static NSType typeFromObject(id object)
     // Specific classes handled.
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-    if ([object isKindOfClass:platformColorClass()])
+    if ([object isKindOfClass:[CocoaColor class]])
         return NSType::Color;
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
@@ -142,7 +108,7 @@ static NSType typeFromObject(id object)
         return NSType::Date;
     if ([object isKindOfClass:[NSDictionary class]])
         return NSType::Dictionary;
-    if ([object isKindOfClass:platformFontClass()])
+    if ([object isKindOfClass:[CocoaFont class]])
         return NSType::Font;
     if ([object isKindOfClass:[NSNumber class]])
         return NSType::Number;
@@ -168,7 +134,7 @@ static inline bool isSerializableFont(CTFontRef font)
 
 static inline bool isSerializableValue(id value)
 {
-    if ([value isKindOfClass:[PlatformFont class]])
+    if ([value isKindOfClass:[CocoaFont class]])
         return isSerializableFont((__bridge CTFontRef)value);
     return typeFromObject(value) != NSType::Unknown;
 }
@@ -339,7 +305,7 @@ static Optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder, NSArra
 
 #pragma mark - NSFont / UIFont
 
-static inline void encodeFontInternal(Encoder& encoder, PlatformFont *font)
+static inline void encodeFontInternal(Encoder& encoder, CocoaFont *font)
 {
     encode(encoder, font.fontDescriptor.fontAttributes);
 }
@@ -465,13 +431,13 @@ void encodeObject(Encoder& encoder, id object)
         encodeArrayInternal(encoder, static_cast<NSArray *>(object));
         return;
     case NSType::Color:
-        encodeColorInternal(encoder, static_cast<PlatformColor *>(object));
+        encodeColorInternal(encoder, static_cast<CocoaColor *>(object));
         return;
     case NSType::Dictionary:
         encodeDictionaryInternal(encoder, static_cast<NSDictionary *>(object));
         return;
     case NSType::Font:
-        encodeFontInternal(encoder, static_cast<PlatformFont *>(object));
+        encodeFontInternal(encoder, static_cast<CocoaFont *>(object));
         return;
     case NSType::Number:
         encodeNumberInternal(encoder, static_cast<NSNumber *>(object));

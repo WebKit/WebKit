@@ -29,15 +29,9 @@
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if USE(APPKIT)
-using PlatformFontDescriptor = NSFontDescriptor;
-#else
-using PlatformFontDescriptor = UIFontDescriptor;
-#endif
-
 namespace WebKit {
 
-PlatformFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
+CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -51,12 +45,12 @@ PlatformFont *fontWithAttributes(NSDictionary *attributes, CGFloat size)
         }
     }
 
-    auto descriptor = [PlatformFontDescriptor fontDescriptorWithFontAttributes:mutableDictionary.get()];
+    auto descriptor = [CocoaFontDescriptor fontDescriptorWithFontAttributes:mutableDictionary.get()];
 #else
-    auto descriptor = [PlatformFontDescriptor fontDescriptorWithFontAttributes:attributes];
+    auto descriptor = [CocoaFontDescriptor fontDescriptorWithFontAttributes:attributes];
 #endif
 
-    return [PlatformFont fontWithDescriptor:descriptor size:size];
+    return [CocoaFont fontWithDescriptor:descriptor size:size];
 
     END_BLOCK_OBJC_EXCEPTIONS
 

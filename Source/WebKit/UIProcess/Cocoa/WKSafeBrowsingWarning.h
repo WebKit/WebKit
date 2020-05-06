@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "CocoaColor.h"
 #import "WKFoundation.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
@@ -45,20 +46,18 @@ OBJC_CLASS WKSafeBrowsingTextView;
 #if PLATFORM(MAC)
 using ViewType = NSView;
 using RectType = NSRect;
-using ColorType = NSColor;
 #else
 using ViewType = UIView;
 using RectType = CGRect;
-using ColorType = UIColor;
 #endif
 
 @interface WKSafeBrowsingBox : ViewType {
 @package
 #if PLATFORM(MAC)
-    RetainPtr<ColorType> _backgroundColor;
+    RetainPtr<CocoaColor> _backgroundColor;
 #endif
 }
-- (void)setSafeBrowsingBackgroundColor:(ColorType *)color;
+- (void)setSafeBrowsingBackgroundColor:(CocoaColor *)color;
 @end
 
 #if PLATFORM(MAC)

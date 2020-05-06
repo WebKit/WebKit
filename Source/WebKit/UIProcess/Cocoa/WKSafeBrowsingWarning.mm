@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKSafeBrowsingWarning.h"
 
+#import "CocoaFont.h"
 #import "PageClient.h"
 #import "SafeBrowsingWarning.h"
 #import <WebCore/LocalizedStrings.h>
@@ -50,13 +51,11 @@ constexpr CGFloat maxWidth = 675;
 #endif
 
 #if PLATFORM(MAC)
-using FontType = NSFont;
 using TextViewType = NSTextView;
 using ButtonType = NSButton;
 using AlignmentType = NSLayoutAttribute;
 using SizeType = NSSize;
 #else
-using FontType = UIFont;
 using TextViewType = UITextView;
 using ButtonType = UIButton;
 using AlignmentType = UIStackViewAlignment;
@@ -78,7 +77,7 @@ enum class WarningTextSize : uint8_t {
     Body
 };
 
-static FontType *fontOfSize(WarningTextSize size)
+static CocoaFont *fontOfSize(WarningTextSize size)
 {
 #if PLATFORM(MAC)
     switch (size) {
@@ -103,12 +102,12 @@ static FontType *fontOfSize(WarningTextSize size)
 #endif
 }
 
-static ColorType *colorForItem(WarningItem item, ViewType *warning)
+static CocoaColor *colorForItem(WarningItem item, ViewType *warning)
 {
     ASSERT([warning isKindOfClass:[WKSafeBrowsingWarning class]]);
 #if PLATFORM(MAC)
 
-    auto colorNamed = [] (NSString *name) -> ColorType* {
+    auto colorNamed = [] (NSString *name) -> CocoaColor * {
 #if HAVE(SAFE_BROWSING)
         return [NSColor colorNamed:name bundle:[NSBundle bundleWithIdentifier:@"com.apple.WebKit"]];
 #else
@@ -261,7 +260,7 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
 
 @implementation WKSafeBrowsingBox
 
-- (void)setSafeBrowsingBackgroundColor:(ColorType *)color
+- (void)setSafeBrowsingBackgroundColor:(CocoaColor *)color
 {
 #if PLATFORM(MAC)
     _backgroundColor = color;
@@ -435,7 +434,7 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
 #endif
 
     WKSafeBrowsingBox *line = [[WKSafeBrowsingBox new] autorelease];
-    [line setSafeBrowsingBackgroundColor:[ColorType lightGrayColor]];
+    [line setSafeBrowsingBackgroundColor:[CocoaColor lightGrayColor]];
     for (ViewType *view in @[details, bottom, line])
         view.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -570,7 +569,7 @@ static ViewType *makeLabel(NSAttributedString *attributedString)
     self->_warning = warning;
     self.delegate = warning;
 
-    ColorType *foregroundColor = colorForItem(WarningItem::MessageText, warning);
+    CocoaColor *foregroundColor = colorForItem(WarningItem::MessageText, warning);
     NSMutableAttributedString *string = [[attributedString mutableCopy] autorelease];
     [string addAttributes:@{ NSForegroundColorAttributeName : foregroundColor } range:NSMakeRange(0, string.length)];
     [self setBackgroundColor:colorForItem(WarningItem::BoxBackground, warning)];

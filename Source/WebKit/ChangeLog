@@ -1,3 +1,43 @@
+2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use CocoaColor in more places instead of platform defines
+        https://bugs.webkit.org/show_bug.cgi?id=211527
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        Use CocoaColor (added in r261247) in more places, and also introduce `CocoaFont.h` and use it to simplify some
+        existing code that uses platform ifdefs for UIFont, NSFont, UIFontDescriptor and NSFontDescriptor.
+
+        No change in behavior.
+
+        * Platform/cocoa/CocoaColor.h:
+        * Platform/cocoa/CocoaFont.h: Copied from Source/WebKit/Platform/cocoa/CocoaColor.h.
+        * Platform/cocoa/CocoaImage.h:
+
+        Change `@class`es to `OBJC_CLASS`, so that this header can be safely imported in C++ code.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::typeFromObject):
+        (IPC::isSerializableValue):
+        (IPC::encodeFontInternal):
+        (IPC::encodeObject):
+        (IPC::platformColorClass): Deleted.
+        (IPC::platformFontClass): Deleted.
+        * Shared/Cocoa/CoreTextHelpers.h:
+        * Shared/Cocoa/CoreTextHelpers.mm:
+        (WebKit::fontWithAttributes):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (fontOfSize):
+        (colorForItem):
+        (-[WKSafeBrowsingBox setSafeBrowsingBackgroundColor:]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Reduce IPC overhead for message receiver name and message name to 2 bytes

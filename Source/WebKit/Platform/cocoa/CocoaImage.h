@@ -23,10 +23,12 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <wtf/Compiler.h>
+
 #if USE(APPKIT)
-@class NSImage;
+OBJC_CLASS NSImage;
 using CocoaImage = NSImage;
 #else
-@class UIImage;
+OBJC_CLASS UIImage;
 using CocoaImage = UIImage;
 #endif

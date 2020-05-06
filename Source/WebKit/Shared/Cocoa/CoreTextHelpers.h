@@ -25,22 +25,17 @@
 
 #pragma once
 
+#import "CocoaFont.h"
+#import <wtf/RetainPtr.h>
+
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
 #else
 #import <UIKit/UIKit.h>
 #endif
 
-#import <wtf/RetainPtr.h>
-
 namespace WebKit {
 
-#if USE(APPKIT)
-using PlatformFont = NSFont;
-#else
-using PlatformFont = UIFont;
-#endif
-
-PlatformFont *fontWithAttributes(NSDictionary *attributes, CGFloat size);
+CocoaFont *fontWithAttributes(NSDictionary *attributes, CGFloat size);
 
 }

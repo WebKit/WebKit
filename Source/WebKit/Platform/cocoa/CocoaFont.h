@@ -28,9 +28,13 @@
 #include <wtf/Compiler.h>
 
 #if USE(APPKIT)
-OBJC_CLASS NSColor;
-using CocoaColor = NSColor;
+OBJC_CLASS NSFont;
+OBJC_CLASS NSFontDescriptor;
+using CocoaFont = NSFont;
+using CocoaFontDescriptor = NSFontDescriptor;
 #else
-OBJC_CLASS UIColor;
-using CocoaColor = UIColor;
+OBJC_CLASS UIFont;
+OBJC_CLASS UIFontDescriptor;
+using CocoaFont = UIFont;
+using CocoaFontDescriptor = UIFontDescriptor;
 #endif

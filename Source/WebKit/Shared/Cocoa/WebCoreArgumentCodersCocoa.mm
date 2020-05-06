@@ -27,6 +27,7 @@
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCocoa.h"
+#import "CocoaFont.h"
 #import <WebCore/AttributedString.h>
 #import <WebCore/DictionaryPopupInfo.h>
 #import <WebCore/Font.h>
@@ -524,12 +525,6 @@ Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformD
         return WTF::nullopt;
     return attributes;
 }
-
-#if PLATFORM(IOS_FAMILY)
-#define CocoaFont UIFont
-#else
-#define CocoaFont NSFont
-#endif
 
 void ArgumentCoder<FontHandle>::encodePlatformData(Encoder& encoder, const FontHandle& handle)
 {
