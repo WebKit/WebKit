@@ -1,3 +1,20 @@
+2020-05-06  Chris Dumez  <cdumez@apple.com>
+
+        fast/overflow/horizontal-scroll-after-back.html is a flaky timeout on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=211515
+        <rdar://problem/61180247>
+
+        Reviewed by Darin Adler.
+
+        Update test to navigate to fast/history/resources/page-cache-helper.html instead of
+        a data URL which calls history.back() on load. Unlike the data URL, page-cache-helper.html
+        only navigates back in a 0-timer after the load event has fired. This is important to
+        guarantee that the current history item has been created before navigating back. If we
+        navigate back too early, then the current history item is still the one for the previous
+        page and we end up navigating back to the previous test, which would cause the timeout.
+
+        * fast/overflow/horizontal-scroll-after-back.html:
+
 2020-05-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove orphaned WPT expectations & unused harness
