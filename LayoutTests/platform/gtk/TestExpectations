@@ -1420,10 +1420,6 @@ webkit.org/b/209533 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure Pa
 webkit.org/b/209533 fast/preloader/document-write.html [ Failure Pass ]
 webkit.org/b/209533 webgl/many-contexts.html [ Failure Pass ]
 
-webkit.org/b/210515 svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg [ Failure ]
-webkit.org/b/210515 svg/W3C-SVG-1.1-SE/types-dom-05-b.svg [ Failure ]
-webkit.org/b/210515 svg/custom/glyph-transformation-with-hkern.svg [ Failure ]
-
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php [ Failure ]
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
 
@@ -1439,8 +1435,6 @@ webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mappin
 
 # Failing in test bots. Started failing since r260615.
 webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
-
-webkit.org/b/211167 editing/inserting/insert-list-then-edit-command-crash.html [ Failure ]
 
 # WebGL failures after r261023.
 webkit.org/b/211338 webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs.html [ Crash ]
@@ -1611,7 +1605,7 @@ webkit.org/b/198126 http/tests/xmlhttprequest/access-control-response-with-body-
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure Crash ]
 webkit.org/b/199010 css2.1/t1204-order-01-d.html [ Pass Crash ]
 
-webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
+webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Crash ]
 
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
@@ -3393,8 +3387,7 @@ webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.h
 
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
-webkit.org/b/207711 [ Release ] fast/history/page-cache-webdatabase-pending-transaction.html [ Timeout ]
-webkit.org/b/207711 [ Debug ] fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
+webkit.org/b/207711 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
@@ -4605,7 +4598,6 @@ webkit.org/b/199876 webaudio/oscillator-triangle.html [ Failure ]
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
-webkit.org/b/201263 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
 webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure ]
 
 webkit.org/b/201266 media/audio-playback-restriction-autoplay.html [ Failure Pass ]
