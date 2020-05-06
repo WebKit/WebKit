@@ -1,3 +1,15 @@
+2020-05-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update expectations after r260889
+        https://bugs.webkit.org/show_bug.cgi?id=211500
+
+        Unreviewed gardening.
+
+        These failures started to happen once the GTK Test bot was
+        switched to Flatpak, which occurred on build #13542 (r260889).
+
+        * platform/gtk/TestExpectations:
+
 2020-05-05  Rob Buis  <rbuis@igalia.com>
 
         Fix setting host on URL when no port is specified
