@@ -39,10 +39,8 @@ bool gigacageEnabledForProcess();
 inline bool gigacageEnabledForProcess() { return true; }
 #endif
 
-#if BUSE(CHECK_NANO_MALLOC)
+#if BPLATFORM(IOS_FAMILY)
 bool shouldProcessUnconditionallyUseBmalloc();
-#else
-inline bool shouldProcessUnconditionallyUseBmalloc() { return true; }
 #endif
 
 }

@@ -63,6 +63,9 @@
 #if TARGET_OS_SIMULATOR
 #define BPLATFORM_IOS_SIMULATOR 1
 #endif
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
+#define BPLATFORM_MACCATALYST 1
+#endif
 #endif
 #if TARGET_OS_IPHONE
 #define BPLATFORM_IOS_FAMILY 1
@@ -301,12 +304,6 @@
 
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
-
-#if BPLATFORM(IOS_FAMILY) && (BCPU(ARM64) || BCPU(ARM))
-#define BUSE_CHECK_NANO_MALLOC 1
-#else
-#define BUSE_CHECK_NANO_MALLOC 0
-#endif
 
 #if BPLATFORM(MAC)
 #define BUSE_PARTIAL_SCAVENGE 1

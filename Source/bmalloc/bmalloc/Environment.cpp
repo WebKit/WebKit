@@ -34,6 +34,12 @@
 #include <dlfcn.h>
 #endif
 
+#if BPLATFORM(IOS_FAMILY) && !BPLATFORM(MACCATALYST) && !BPLATFORM(IOS_FAMILY_SIMULATOR)
+#define BUSE_CHECK_NANO_MALLOC 1
+#else
+#define BUSE_CHECK_NANO_MALLOC 0
+#endif
+
 #if BUSE(CHECK_NANO_MALLOC)
 extern "C" {
 #if __has_include(<malloc_private.h>)
@@ -140,13 +146,16 @@ bool Environment::computeIsDebugHeapEnabled()
         return true;
     if (isSanitizerEnabled())
         return true;
+
 #if BUSE(CHECK_NANO_MALLOC)
     if (!isNanoMallocEnabled() && !shouldProcessUnconditionallyUseBmalloc())
         return true;
 #endif
+
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
     return true;
 #endif
+
     return false;
 }
 

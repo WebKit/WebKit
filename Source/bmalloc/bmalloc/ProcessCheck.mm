@@ -53,7 +53,7 @@ bool gigacageEnabledForProcess()
 }
 #endif // !BPLATFORM(WATCHOS)
 
-#if BUSE(CHECK_NANO_MALLOC)
+#if BPLATFORM(IOS_FAMILY)
 bool shouldProcessUnconditionallyUseBmalloc()
 {
     static bool result;
@@ -74,6 +74,6 @@ bool shouldProcessUnconditionallyUseBmalloc()
 
     return result;
 }
-#endif // BUSE(CHECK_NANO_MALLOC)
+#endif // BPLATFORM(IOS_FAMILY)
 
 }

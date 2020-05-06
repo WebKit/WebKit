@@ -280,6 +280,11 @@ TEST(bmalloc, BisoMallocedInline)
 
 TEST(bmalloc, ScavengedMemoryShouldBeReused)
 {
+    if (Environment::get()->isDebugHeapEnabled()) {
+        printf("    skipping test because DebugHeap.\n");
+        return;
+    }
+
     static IsoHeap<double> heap;
 
     auto run = [] (unsigned numPagesToCommit) {
