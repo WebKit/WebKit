@@ -615,9 +615,7 @@ static NSURL *createUniqueWebDataURL();
 #if !PLATFORM(IOS_FAMILY)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGContextRef ctx = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    CGContextRef ctx = [[NSGraphicsContext currentContext] CGContext];
 #else
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif

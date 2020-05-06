@@ -1,3 +1,21 @@
+2020-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        Fix deprecated NSGraphicsContext methods using 'graphicsPort'
+        <https://webkit.org/b/211481>
+
+        Reviewed by Darin Adler.
+
+        - Replace uses of -graphicsPort with -CGContext.
+        - Replace uses of -graphicsContextWithGraphicsPort:flipped: with
+          -graphicsContextWithCGContext:flipped:.
+        - Remove ALLOW_DEPRECATED_DECLARATIONS_{BEGIN,END} if possible.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]):
+        (-[WKPrintingView _drawPreview:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage):
+
 2020-05-05  Zalan Bujtas  <zalan@apple.com>
 
         [Quirk] Job listing page goes blank when scrolling on stackoverflow.com

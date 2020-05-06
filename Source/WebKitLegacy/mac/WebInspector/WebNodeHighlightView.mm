@@ -98,9 +98,7 @@ using namespace WebCore;
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        GraphicsContext context((PlatformGraphicsContext*)[[NSGraphicsContext currentContext] graphicsPort]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        GraphicsContext context([[NSGraphicsContext currentContext] CGContext]);
         [_webNodeHighlight inspectorController]->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }

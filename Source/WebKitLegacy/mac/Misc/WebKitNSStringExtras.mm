@@ -77,9 +77,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         point.y = CGCeiling(point.y);
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        CGContextRef cgContext = [nsContext CGContext];
         GraphicsContext graphicsContext { cgContext };
 
         // WebCore requires a flipped graphics context.

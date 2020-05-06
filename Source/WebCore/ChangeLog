@@ -1,3 +1,24 @@
+2020-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        Fix deprecated NSGraphicsContext methods using 'graphicsPort'
+        <https://webkit.org/b/211481>
+
+        Reviewed by Darin Adler.
+
+        - Replace uses of -graphicsPort with -CGContext.
+        - Replace uses of -graphicsContextWithGraphicsPort:flipped: with
+          -graphicsContextWithCGContext:flipped:.
+        - Remove ALLOW_DEPRECATED_DECLARATIONS_{BEGIN,END} if possible.
+
+        * platform/cocoa/DragImageCocoa.mm:
+        (WebCore::createDragImageForLink):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2020-05-05  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Crash in match_constness<WebCore::CSSValue, WebCore::CSSPrimitiveValue>::type& WTF::downcast<WebCore::CSSPrimitiveValue, WebCore::CSSValue> -- ASAN

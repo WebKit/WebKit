@@ -476,17 +476,15 @@ extern "C" {
     }
 
     if (_proxy) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (_softwareRenderer) {
             if ([NSGraphicsContext currentContextDrawingToScreen]) {
-                _softwareRenderer->render((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], NSRectToCGRect(rect));
+                _softwareRenderer->render([[NSGraphicsContext currentContext] CGContext], NSRectToCGRect(rect));
                 _proxy->didDraw();
             } else
-                _proxy->print(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
+                _proxy->print([[NSGraphicsContext currentContext] CGContext], [self bounds].size.width, [self bounds].size.height);
         } else if (_snapshotting && [self supportsSnapshotting]) {
-            _proxy->snapshot(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
+            _proxy->snapshot([[NSGraphicsContext currentContext] CGContext], [self bounds].size.width, [self bounds].size.height);
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
 
         return;
     }

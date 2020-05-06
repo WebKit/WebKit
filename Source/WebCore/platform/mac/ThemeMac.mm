@@ -387,9 +387,7 @@ static NSButtonCell *sharedCheckboxCell(const ControlStates& states, const IntSi
 
 static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval timeOffset)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
 
     CGContextStateSaver stateSaver(cgContext);
 

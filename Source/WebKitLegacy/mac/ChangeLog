@@ -1,3 +1,31 @@
+2020-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        Fix deprecated NSGraphicsContext methods using 'graphicsPort'
+        <https://webkit.org/b/211481>
+
+        Reviewed by Darin Adler.
+
+        - Replace uses of -graphicsPort with -CGContext.
+        - Replace uses of -graphicsContextWithGraphicsPort:flipped: with
+          -graphicsContextWithCGContext:flipped:.
+        - Remove ALLOW_DEPRECATED_DECLARATIONS_{BEGIN,END} if possible.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView sendDrawRectEvent:]):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView drawRect:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebPDFView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebPDFView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+
 2020-05-05  Peng Liu  <peng.liu6@apple.com>
 
         Update WebKitTestRunner to support running multiple video fullscreen and Picture-in-Picture tests simultaneously

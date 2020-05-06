@@ -243,9 +243,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             
             ASSERT([NSView focusView] == self);
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+            CGContextRef context = [[NSGraphicsContext currentContext] CGContext];
 
             PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
             portState = (PortState)cgPortState;
@@ -387,9 +385,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(_eventHandler);
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    CGContextRef context = [[NSGraphicsContext currentContext] CGContext];
     _eventHandler->drawRect(context, rect);
 }
 

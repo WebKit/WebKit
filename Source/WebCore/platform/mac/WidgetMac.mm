@@ -239,9 +239,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     }
 
     CGContextRef cgContext = p.platformContext();
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    ASSERT(cgContext == [currentContext graphicsPort]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    ASSERT(cgContext == [currentContext CGContext]);
     CGContextSaveGState(cgContext);
 
     NSRect viewFrame = [view frame];
@@ -255,9 +253,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:NO];
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
     }
     END_BLOCK_OBJC_EXCEPTIONS;
