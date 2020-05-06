@@ -52,10 +52,7 @@ static ScrollbarThemeMac* macScrollbarTheme()
 
 static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 {
-    if (ScrollbarThemeMac* scrollbarTheme = macScrollbarTheme())
-        return scrollbarTheme->painterForScrollbar(scrollbar);
-
-    return nil;
+    return ScrollbarThemeMac::painterForScrollbar(scrollbar);
 }
 
 } // namespace WebCore
@@ -1464,10 +1461,10 @@ void ScrollAnimatorMac::updateScrollerStyle()
         verticalScrollbar->invalidate();
 
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
-        NSScrollerImp *newVerticalPainter = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)verticalScrollbar->controlSize() horizontal:NO replacingScrollerImp:oldVerticalPainter];
+        auto newVerticalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)verticalScrollbar->controlSize() horizontal:NO replacingScrollerImp:oldVerticalPainter]);
 
-        [m_scrollerImpPair setVerticalScrollerImp:newVerticalPainter];
-        macTheme->setNewPainterForScrollbar(*verticalScrollbar, newVerticalPainter);
+        [m_scrollerImpPair setVerticalScrollerImp:newVerticalPainter.get()];
+        macTheme->setNewPainterForScrollbar(*verticalScrollbar, WTFMove(newVerticalPainter));
         macTheme->didCreateScrollerImp(*verticalScrollbar);
 
         // The different scrollbar styles have different thicknesses, so we must re-set the 
@@ -1481,10 +1478,10 @@ void ScrollAnimatorMac::updateScrollerStyle()
         horizontalScrollbar->invalidate();
 
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];
-        NSScrollerImp *newHorizontalPainter = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)horizontalScrollbar->controlSize() horizontal:YES replacingScrollerImp:oldHorizontalPainter];
+        auto newHorizontalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)horizontalScrollbar->controlSize() horizontal:YES replacingScrollerImp:oldHorizontalPainter]);
 
-        [m_scrollerImpPair setHorizontalScrollerImp:newHorizontalPainter];
-        macTheme->setNewPainterForScrollbar(*horizontalScrollbar, newHorizontalPainter);
+        [m_scrollerImpPair setHorizontalScrollerImp:newHorizontalPainter.get()];
+        macTheme->setNewPainterForScrollbar(*horizontalScrollbar, WTFMove(newHorizontalPainter));
         macTheme->didCreateScrollerImp(*horizontalScrollbar);
 
         // The different scrollbar styles have different thicknesses, so we must re-set the 

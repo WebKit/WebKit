@@ -60,8 +60,8 @@ public:
     void registerScrollbar(Scrollbar&) override;
     void unregisterScrollbar(Scrollbar&) override;
 
-    void setNewPainterForScrollbar(Scrollbar&, NSScrollerImp *);
-    NSScrollerImp *painterForScrollbar(Scrollbar&);
+    void setNewPainterForScrollbar(Scrollbar&, RetainPtr<NSScrollerImp>&&);
+    static NSScrollerImp *painterForScrollbar(Scrollbar&);
 
     void setPaintCharacteristicsForScrollbar(Scrollbar&);
 
