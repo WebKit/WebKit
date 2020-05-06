@@ -458,7 +458,7 @@ private:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void setShouldBlockThirdPartyCookiesForTesting(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
+    void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
 #endif
 
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);

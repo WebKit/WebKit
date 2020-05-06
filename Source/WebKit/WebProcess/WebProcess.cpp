@@ -1895,7 +1895,7 @@ bool WebProcess::areAllPagesThrottleable() const
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebProcess::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
+void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
     m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
     completionHandler();

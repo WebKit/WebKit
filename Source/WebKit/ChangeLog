@@ -1,3 +1,99 @@
+2020-05-06  John Wilander  <wilander@apple.com>
+
+        Exempt app-bound domains from ITP's website data deletion and third-party cookie blocking between themselves
+        https://bugs.webkit.org/show_bug.cgi?id=210674
+        <rdar://problem/61950767>
+
+        Reviewed by Chris Dumez.
+
+        This change forwards information about app-bound domains to ITP and web
+        processes so that they can be exempt from website data deletion and
+        third-party cookie blocking between themselves.
+
+        App-bound domains are configured statically and apply to all website
+        data stores. Therefore the setting needs to be forwarded to all
+        website data stores and ITP functionality in all network and web
+        content processes. This is done through the new static function
+        WebsiteDataStore::setAppBoundDomainsForITPIfInitialized().
+
+        Since app-bound domains are loaded lazily from disk and on a background
+        thread, this patch forwards them in ResourceLoadStatisticsParameters if
+        they've already been loaded. Then every time app-bound domains are
+        updated, they are forwarded to ITP. This ensures that ITP will have them
+        as soon as possible.
+
+        Setting app-bound domains for the purposes of ITP automatically switches
+        ITP's cookie blocking policy to the new
+        WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains.
+        This is done in WebResourceLoadStatisticsStore::setAppBoundDomains().
+
+        The C API changes are for test purposes.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setAppBoundDomains):
+        (WebKit::ResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        (WebKit::ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::standaloneApplicationDomain const): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setAppBoundDomains):
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setAppBoundDomainsForResourceLoadStatistics):
+        (WebKit::NetworkProcess::setThirdPartyCookieBlockingMode):
+        (WebKit::NetworkProcess::setShouldBlockThirdPartyCookiesForTesting): Deleted.
+            Renamed setThirdPartyCookieBlockingMode.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/ResourceLoadStatisticsParameters.h:
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetAppBoundDomainsForTesting):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics):
+        (WebKit::NetworkProcessProxy::setThirdPartyCookieBlockingMode):
+        (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting): Deleted.
+            Renamed setThirdPartyCookieBlockingMode.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setThirdPartyCookieBlockingMode):
+        (WebKit::WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting): Deleted.
+            Renamed setThirdPartyCookieBlockingMode.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        (WebKit::WebsiteDataStore::appBoundDomainsIfInitialized):
+            This function allows fetching of app-bound domains without triggering
+            the lazy loading. This is just to allow speculative configuration of ITP
+            right when it's created — if any app-bound domains are already configured,
+            forward them to ITP via ResourceLoadStatisticsParameters.
+        (WebKit::WebsiteDataStore::setAppBoundDomainsForTesting):
+            This function is Cocoa-specific and only accepts localhost and 127.0.0.1
+            to be configured as app-bound domains.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        (WebKit::WebsiteDataStore::setThirdPartyCookieBlockingMode):
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized):
+        (WebKit::WebsiteDataStore::setAppBoundDomainsForITP):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setThirdPartyCookieBlockingMode):
+        (WebKit::WebProcess::setShouldBlockThirdPartyCookiesForTesting): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-05-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILED: !(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged) in -[WebEvent charactersIgnoringModifiers] when pressing modifier on PDF

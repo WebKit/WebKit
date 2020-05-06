@@ -90,7 +90,9 @@ public:
     void didReceiveLoadedThirdPartyDomains(Vector<String>&& domains);
 
     void didRemoveAllSessionCredentials();
-    
+
+    void didSetAppBoundDomains();
+
     void dumpResourceLoadStatistics();
 
     bool canOpenWindows() const { return m_canOpenWindows; }

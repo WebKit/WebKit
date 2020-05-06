@@ -1136,6 +1136,13 @@ void NetworkProcessProxy::hasIsolatedSession(PAL::SessionID sessionID, const Reg
     sendWithAsyncReply(Messages::NetworkProcess::HasIsolatedSession(sessionID, domain), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, const HashSet<RegistrableDomain>& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetAppBoundDomainsForResourceLoadStatistics(sessionID, appBoundDomains), [activity = throttler().backgroundActivity("NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
+}
+
 void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
@@ -1148,9 +1155,9 @@ void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, Com
     });
 }
 
-void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setThirdPartyCookieBlockingMode(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldBlockThirdPartyCookiesForTesting(sessionID, blockingMode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::SetThirdPartyCookieBlockingMode(sessionID, blockingMode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setThirdPartyCookieBlockingMode"_s), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }

@@ -413,6 +413,9 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
         keyExists = domains ? true : false;
         
         RunLoop::main().dispatch([isInAppBrowserPrivacyEnabled, forceReinitialization, domains = retainPtr(domains)] {
+            if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
+                return;
+
             if (forceReinitialization == ForceReinitialization::Yes)
                 appBoundDomains().clear();
 
@@ -433,6 +436,8 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 WEBSITE_DATA_STORE_ADDITIONS
             }
             hasInitializedAppBoundDomains = true;
+            if (isAppBoundITPRelaxationEnabled)
+                forwardAppBoundDomainsToITPIfInitialized([] { });
         });
     });
 }
@@ -444,6 +449,8 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
         return;
     }
 
+    // Hopping to the background thread then back to the main thread
+    // ensures that initializeAppBoundDomains() has finished.
     appBoundDomainQueue().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
@@ -484,6 +491,24 @@ void WebsiteDataStore::getAppBoundDomains(CompletionHandler<void(const HashSet<W
     ensureAppBoundDomains([completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
         completionHandler(domains);
     });
+}
+
+Optional<HashSet<WebCore::RegistrableDomain>> WebsiteDataStore::appBoundDomainsIfInitialized()
+{
+    ASSERT(RunLoop::isMain());
+    if (!hasInitializedAppBoundDomains)
+        return WTF::nullopt;
+    return appBoundDomains();
+}
+
+void WebsiteDataStore::setAppBoundDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& domain : domains)
+        RELEASE_ASSERT(domain == "localhost"_s || domain == "127.0.0.1"_s);
+
+    appBoundDomains() = WTFMove(domains);
+    hasInitializedAppBoundDomains = true;
+    forwardAppBoundDomainsToITPIfInitialized(WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::reinitializeAppBoundDomains()

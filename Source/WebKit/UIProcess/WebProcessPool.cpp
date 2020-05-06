@@ -605,9 +605,10 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::No;
 #endif
-    WebCore::RegistrableDomain standaloneApplicationDomain { };
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
-    WebCore::RegistrableDomain manualPrevalentResource { };
+    WebCore::RegistrableDomain standaloneApplicationDomain;
+    HashSet<WebCore::RegistrableDomain> appBoundDomains;
+    WebCore::RegistrableDomain manualPrevalentResource;
     WEB_PROCESS_POOL_ADDITIONS_2
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
@@ -624,6 +625,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             standaloneApplicationDomain = networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain;
+            appBoundDomains = networkSessionParameters.resourceLoadStatisticsParameters.appBoundDomains;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource;
         }
 
@@ -650,6 +652,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             standaloneApplicationDomain = networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain;
+            appBoundDomains = networkSessionParameters.resourceLoadStatisticsParameters.appBoundDomains;
             manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource;
         }
 
@@ -689,6 +692,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         sameSiteStrictEnforcementEnabled,
 #endif
         firstPartyWebsiteDataRemovalMode,
+        standaloneApplicationDomain,
+        appBoundDomains,
         manualPrevalentResource,
     };
 

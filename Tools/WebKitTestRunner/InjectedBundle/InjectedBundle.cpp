@@ -518,7 +518,12 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->performCustomMenuAction();
         return;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetAppBoundDomains")) {
+        m_testRunner->didSetAppBoundDomainsCallback();
+        return;
+    }
+
     WKRetainPtr<WKStringRef> errorMessageName = adoptWK(WKStringCreateWithUTF8CString("Error"));
     WKRetainPtr<WKStringRef> errorMessageBody = adoptWK(WKStringCreateWithUTF8CString("Unknown"));
     WKBundlePagePostMessage(page, errorMessageName.get(), errorMessageBody.get());

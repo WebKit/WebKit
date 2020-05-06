@@ -1862,16 +1862,22 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForT
     WebCore::ThirdPartyCookieBlockingMode blockingMode = WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy;
     if (enabled)
         blockingMode = onlyOnSitesWithoutUserInteraction ? WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction : WebCore::ThirdPartyCookieBlockingMode::All;
+    setThirdPartyCookieBlockingMode(blockingMode, WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     if (thirdPartyCookieBlockingMode() != blockingMode) {
         m_thirdPartyCookieBlockingMode = blockingMode;
         for (auto& webProcess : processes())
-            webProcess.setShouldBlockThirdPartyCookiesForTesting(blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
+            webProcess.setThirdPartyCookieBlockingMode(blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 
     for (auto& processPool : processPools()) {
         if (auto* networkProcess = processPool->networkProcess())
-            networkProcess->setShouldBlockThirdPartyCookiesForTesting(m_sessionID, blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
+            networkProcess->setThirdPartyCookieBlockingMode(m_sessionID, blockingMode, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
@@ -2225,8 +2231,13 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool shouldIncludeLocalhostInResourceLoadStatistics = false;
     bool enableResourceLoadStatisticsDebugMode = false;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
-    WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
-
+    WebCore::RegistrableDomain standaloneApplicationDomain;
+    HashSet<WebCore::RegistrableDomain> appBoundDomains;
+#if PLATFORM(COCOA)
+    if (isAppBoundITPRelaxationEnabled)
+        appBoundDomains = appBoundDomainsIfInitialized().valueOr(HashSet<WebCore::RegistrableDomain> { });
+#endif
+    WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource;
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
@@ -2245,6 +2256,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WebCore::SameSiteStrictEnforcementEnabled::No,
 #endif
         firstPartyWebsiteDataRemovalMode,
+        WTFMove(standaloneApplicationDomain),
+        WTFMove(appBoundDomains),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),
     };
 
@@ -2423,5 +2436,40 @@ void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, O
         }
     }
 }
+
+#if PLATFORM(COCOA)
+void WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto appBoundDomains = appBoundDomainsIfInitialized();
+    if (!appBoundDomains)
+        return;
+
+    auto propagateAppBoundDomains = [callbackAggregator = callbackAggregator.copyRef()] (WebsiteDataStore* store, const HashSet<WebCore::RegistrableDomain>& domains) {
+        if (!store)
+            return;
+
+        if (store->thirdPartyCookieBlockingMode() != WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains)
+            store->setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains, [callbackAggregator = callbackAggregator.copyRef()] { });
+
+        store->setAppBoundDomainsForITP(domains, [callbackAggregator = callbackAggregator.copyRef()] { });
+    };
+
+    propagateAppBoundDomains(globalDefaultDataStore().get(), *appBoundDomains);
+
+    for (auto* store : nonDefaultDataStores().values())
+        propagateAppBoundDomains(store, *appBoundDomains);
+}
+
+void WebsiteDataStore::setAppBoundDomainsForITP(const HashSet<WebCore::RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& processPool : processPools()) {
+        if (auto* networkProcess = processPool->networkProcess())
+            networkProcess->setAppBoundDomainsForResourceLoadStatistics(m_sessionID, domains, [callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+#endif
 
 }

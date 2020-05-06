@@ -279,6 +279,7 @@ struct ThirdPartyData {
     void setSameSiteStrictEnforcementEnabled(WebCore::SameSiteStrictEnforcementEnabled);
     void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode, CompletionHandler<void()>&&);
     void setStandaloneApplicationDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
+    void setAppBoundDomains(HashSet<RegistrableDomain>&&, CompletionHandler<void()>&&);
     void didCreateNetworkProcess();
 
     void notifyResourceLoadStatisticsProcessed();

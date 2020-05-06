@@ -169,6 +169,7 @@ public:
     bool isSameSiteStrictEnforcementEnabled() const { return m_sameSiteStrictEnforcementEnabled == WebCore::SameSiteStrictEnforcementEnabled::Yes; };
     void setFirstPartyWebsiteDataRemovalMode(WebCore::FirstPartyWebsiteDataRemovalMode mode) { m_firstPartyWebsiteDataRemovalMode = mode; }
     void setStandaloneApplicationDomain(RegistrableDomain&& domain) { m_standaloneApplicationDomain = WTFMove(domain); }
+    void setAppBoundDomains(HashSet<RegistrableDomain>&&);
 
     virtual bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) = 0;
     virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
@@ -249,7 +250,7 @@ protected:
     bool debugLoggingEnabled() const { return m_debugLoggingEnabled; };
     bool debugModeEnabled() const { return m_debugModeEnabled; }
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode() const { return m_firstPartyWebsiteDataRemovalMode; }
-    RegistrableDomain standaloneApplicationDomain() const { return m_standaloneApplicationDomain; }
+    bool shouldExemptFromWebsiteDataDeletion(const RegistrableDomain&) const;
 
     static constexpr unsigned maxNumberOfRecursiveCallsInRedirectTraceBack { 50 };
     
@@ -291,6 +292,7 @@ private:
     ShouldIncludeLocalhost m_shouldIncludeLocalhost { ShouldIncludeLocalhost::Yes };
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     RegistrableDomain m_standaloneApplicationDomain;
+    HashSet<RegistrableDomain> m_appBoundDomains;
 };
 
 } // namespace WebKit

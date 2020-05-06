@@ -763,6 +763,7 @@ enum {
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
     CustomMenuActionCallbackID,
+    DidSetAppBoundDomainsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -2973,6 +2974,45 @@ bool TestRunner::hasAppBoundSession()
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
 
     return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
+void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(DidSetAppBoundDomainsCallbackID, completionHandler);
+
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page()));
+
+    if (!JSValueIsArray(context, originArray))
+        return;
+
+    JSObjectRef origins = JSValueToObject(context, originArray, nullptr);
+    static auto lengthProperty = adopt(JSStringCreateWithUTF8CString("length"));
+    JSValueRef originsLengthValue = JSObjectGetProperty(context, origins, lengthProperty.get(), nullptr);
+    if (!JSValueIsNumber(context, originsLengthValue))
+        return;
+
+    auto originURLs = adoptWK(WKMutableArrayCreate());
+    auto originsLength = static_cast<size_t>(JSValueToNumber(context, originsLengthValue, nullptr));
+    for (size_t i = 0; i < originsLength; ++i) {
+        JSValueRef originValue = JSObjectGetPropertyAtIndex(context, origins, i, nullptr);
+        if (!JSValueIsString(context, originValue))
+            continue;
+
+        auto origin = adopt(JSValueToStringCopy(context, originValue, nullptr));
+        size_t originBufferSize = JSStringGetMaximumUTF8CStringSize(origin.get()) + 1;
+        auto originBuffer = makeUniqueArray<char>(originBufferSize);
+        JSStringGetUTF8CString(origin.get(), originBuffer.get(), originBufferSize);
+
+        WKArrayAppendItem(originURLs.get(), adoptWK(WKURLCreateWithUTF8CString(originBuffer.get())).get());
+    }
+
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetAppBoundDomains"));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), originURLs.get());
+}
+
+void TestRunner::didSetAppBoundDomainsCallback()
+{
+    callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
 }
 
 } // namespace WTR

@@ -317,6 +317,11 @@ void ResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const Registr
     m_debugManualPrevalentResource = domain;
 }
 
+void ResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
+{
+    m_appBoundDomains = WTFMove(domains);
+}
+
 void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary()
 {
     ASSERT(!RunLoop::isMain());
@@ -568,6 +573,7 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
     ASSERT(!RunLoop::isMain());
 
     m_parameters = { };
+    m_appBoundDomains.clear();
 }
 
 void ResourceLoadStatisticsStore::logTestingEvent(const String& event)
@@ -650,6 +656,11 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
     }
     if (!batch.isEmpty())
         RELEASE_LOG_INFO(ITPDebug, "%" PUBLIC_LOG_STRING " to (%{public}d of %u): %" PUBLIC_LOG_STRING ".", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
+}
+
+bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const
+{
+    return !domain.isEmpty() && (domain == m_standaloneApplicationDomain || m_appBoundDomains.contains(domain));
 }
 
 } // namespace WebKit

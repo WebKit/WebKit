@@ -77,7 +77,7 @@ struct SameSiteInfo;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
-enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
+enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoundDomains, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
 enum class SameSiteStrictEnforcementEnabled : bool { Yes, No };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ShouldAskITP : bool { No, Yes };
@@ -95,6 +95,9 @@ public:
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubResourceDomain = WebCore::RegistrableDomain;
+
     WEBCORE_EXPORT static void permitProcessToUseCookieAPI(bool);
     WEBCORE_EXPORT static bool processMayUseCookieAPI();
 
@@ -196,6 +199,8 @@ public:
     WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
     WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
+    WEBCORE_EXPORT void setAppBoundDomains(HashSet<RegistrableDomain>&&);
+    WEBCORE_EXPORT void resetAppBoundDomains();
 #endif
 
 private:
@@ -241,7 +246,8 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_isResourceLoadStatisticsEnabled = false;
-    Optional<Seconds> clientSideCookieCap(const RegistrableDomain& firstParty, Optional<PageIdentifier>) const;
+    Optional<Seconds> clientSideCookieCap(const TopFrameDomain&, Optional<PageIdentifier>) const;
+    bool shouldExemptDomainPairFromThirdPartyCookieBlocking(const TopFrameDomain&, const SubResourceDomain&) const;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockAndDeleteCookiesFor;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockButKeepCookiesFor;
     HashSet<RegistrableDomain> m_registrableDomainsWithUserInteractionAsFirstParty;
@@ -253,6 +259,7 @@ private:
     HashMap<WebCore::PageIdentifier, RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
     ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::All };
+    HashSet<RegistrableDomain> m_appBoundDomains;
 #endif
 
 #if PLATFORM(COCOA)
@@ -277,6 +284,7 @@ template<> struct EnumTraits<WebCore::ThirdPartyCookieBlockingMode> {
     using values = EnumValues<
         WebCore::ThirdPartyCookieBlockingMode,
         WebCore::ThirdPartyCookieBlockingMode::All,
+        WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains,
         WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction,
         WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy
     >;

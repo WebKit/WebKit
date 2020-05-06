@@ -42,6 +42,7 @@
 #include "WebsiteDataRecord.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/URL.h>
 
@@ -614,6 +615,31 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsToSameSiteStrictCookiesForTestin
     });
 #else
     completionHandler(context);
+#endif
+}
+
+void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetAppBoundDomainsForTestingFunction completionHandler)
+{
+#if PLATFORM(COCOA)
+    RefPtr<API::Array> originURLsArray = toImpl(originURLsRef);
+    size_t newSize = originURLsArray ? originURLsArray->size() : 0;
+    HashSet<WebCore::RegistrableDomain> domains;
+    domains.reserveInitialCapacity(newSize);
+    for (size_t i = 0; i < newSize; ++i) {
+        auto* originURL = originURLsArray->at<API::URL>(i);
+        if (!originURL)
+            continue;
+        
+        domains.add(WebCore::RegistrableDomain { URL(URL(), originURL->string()) });
+    }
+
+    WebKit::WebsiteDataStore::setAppBoundDomainsForTesting(WTFMove(domains), [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    UNUSED_PARAM(originURLsRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(completionHandler);
 #endif
 }
 

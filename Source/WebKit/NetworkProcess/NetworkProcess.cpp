@@ -1307,6 +1307,18 @@ void NetworkProcess::hasIsolatedSession(PAL::SessionID sessionID, const WebCore:
     completionHandler(result);
 }
 
+void NetworkProcess::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, HashSet<WebCore::RegistrableDomain>&& appBoundDomains, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->setAppBoundDomains(WTFMove(appBoundDomains), WTFMove(completionHandler));
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
+    completionHandler();
+}
+
 void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     forEachNetworkSession([enabled](auto& networkSession) {
@@ -1315,7 +1327,7 @@ void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, Completi
     completionHandler();
 }
 
-void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, WebCore::ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setThirdPartyCookieBlockingMode(PAL::SessionID sessionID, WebCore::ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID))
         networkSession->setThirdPartyCookieBlockingMode(blockingMode);

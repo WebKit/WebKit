@@ -3777,6 +3777,30 @@ void TestController::setStatisticsToSameSiteStrictCookies(WKStringRef hostName)
     m_currentInvocation->didSetToSameSiteStrictCookies();
 }
 
+struct AppBoundDomainsCallbackContext {
+    explicit AppBoundDomainsCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    bool done { false };
+    TestController& testController;
+};
+
+static void didSetAppBoundDomainsCallback(void* callbackContext)
+{
+    auto* context = static_cast<AppBoundDomainsCallbackContext*>(callbackContext);
+    context->done = true;
+}
+
+void TestController::setAppBoundDomains(WKArrayRef originURLs)
+{
+    AppBoundDomainsCallbackContext context(*this);
+    WKWebsiteDataStoreSetAppBoundDomainsForTesting(originURLs, &context, didSetAppBoundDomainsCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetAppBoundDomains();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

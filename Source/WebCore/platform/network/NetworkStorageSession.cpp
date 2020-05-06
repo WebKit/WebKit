@@ -134,6 +134,8 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     switch (m_thirdPartyCookieBlockingMode) {
     case ThirdPartyCookieBlockingMode::All:
         return true;
+    case ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains:
+        return !shouldExemptDomainPairFromThirdPartyCookieBlocking(firstPartyDomain, resourceDomain);
     case ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction:
         if (!hasHadUserInteractionAsFirstParty(firstPartyDomain))
             return true;
@@ -143,6 +145,15 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+bool NetworkStorageSession::shouldExemptDomainPairFromThirdPartyCookieBlocking(const RegistrableDomain& topFrameDomain, const RegistrableDomain& resourceDomain) const
+{
+    ASSERT(topFrameDomain != resourceDomain);
+    if (topFrameDomain.isEmpty() || resourceDomain.isEmpty())
+        return false;
+
+    return topFrameDomain == resourceDomain || (m_appBoundDomains.contains(topFrameDomain) && m_appBoundDomains.contains(resourceDomain));
 }
 
 Optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
@@ -290,6 +301,16 @@ void NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting()
 void NetworkStorageSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode blockingMode)
 {
     m_thirdPartyCookieBlockingMode = blockingMode;
+}
+
+void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
+{
+    m_appBoundDomains = WTFMove(domains);
+}
+
+void NetworkStorageSession::resetAppBoundDomains()
+{
+    m_appBoundDomains.clear();
 }
 
 Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, Optional<PageIdentifier> pageID) const

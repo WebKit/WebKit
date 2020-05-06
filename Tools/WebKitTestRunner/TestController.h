@@ -266,6 +266,7 @@ public:
     void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
     void setStatisticsToSameSiteStrictCookies(WKStringRef hostName);
+    void setAppBoundDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
@@ -351,6 +352,8 @@ public:
     void setAdClickAttributionOverrideTimerForTesting(bool value);
     void setAdClickAttributionConversionURLForTesting(WKURLRef);
     void markAdClickAttributionsAsExpiredForTesting();
+
+    void didSetAppBoundDomains() const;
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);

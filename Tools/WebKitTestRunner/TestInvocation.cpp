@@ -994,6 +994,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAppBoundDomains")) {
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+        WKArrayRef originURLs = static_cast<WKArrayRef>(messageBody);
+        TestController::singleton().setAppBoundDomains(originURLs);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -2009,6 +2016,12 @@ void TestInvocation::didRemoveAllSessionCredentials()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidRemoveAllSessionCredentialsCallback"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didSetAppBoundDomains()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetAppBoundDomains"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
 }
 
 void TestInvocation::dumpResourceLoadStatistics()

@@ -678,6 +678,33 @@ void WebResourceLoadStatisticsStore::setStandaloneApplicationDomain(const Regist
     });
 }
 
+void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral() || domains.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    auto domainsCopy = crossThreadCopy(domains);
+
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            storageSession->setAppBoundDomains(WTFMove(domains));
+            storageSession->setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains);
+        }
+    }
+
+    postTask([this, domains = WTFMove(domainsCopy), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore) {
+            m_statisticsStore->setAppBoundDomains(WTFMove(domains));
+            m_statisticsStore->setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains);
+        }
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
     ASSERT(RunLoop::isMain());
@@ -1278,6 +1305,11 @@ void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHa
     if (isEphemeral()) {
         completionHandler();
         return;
+    }
+
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->resetAppBoundDomains();
     }
 
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {

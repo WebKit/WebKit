@@ -500,7 +500,10 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned);
     bool isMockRealtimeMediaSourceCenterEnabled();
+
     bool hasAppBoundSession();
+    void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
+    void didSetAppBoundDomainsCallback();
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);
