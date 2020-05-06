@@ -1162,9 +1162,9 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JS
         m_continueToLocationBreakpointID = JSC::noBreakpointID;
     }
 
-    RefPtr<Stopwatch> stopwatch = m_injectedScriptManager.inspectorEnvironment().executionStopwatch();
-    if (stopwatch && stopwatch->isActive()) {
-        stopwatch->stop();
+    auto& stopwatch = m_injectedScriptManager.inspectorEnvironment().executionStopwatch();
+    if (stopwatch.isActive()) {
+        stopwatch.stop();
         m_didPauseStopwatch = true;
     }
 }
@@ -1182,7 +1182,7 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalOb
         .setProbeId(action.identifier)
         .setBatchId(batchId)
         .setSampleId(sampleId)
-        .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch()->elapsedTime().seconds())
+        .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch().elapsedTime().seconds())
         .setPayload(WTFMove(payload))
         .release();
     m_frontendDispatcher->didSampleProbe(WTFMove(result));
@@ -1192,7 +1192,7 @@ void InspectorDebuggerAgent::didContinue()
 {
     if (m_didPauseStopwatch) {
         m_didPauseStopwatch = false;
-        m_injectedScriptManager.inspectorEnvironment().executionStopwatch()->start();
+        m_injectedScriptManager.inspectorEnvironment().executionStopwatch().start();
     }
 
     m_pausedGlobalObject = nullptr;

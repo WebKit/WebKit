@@ -1,3 +1,49 @@
+2020-05-06  Devin Rousso  <drousso@apple.com>
+
+        ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread()) when web inspecting
+        https://bugs.webkit.org/show_bug.cgi?id=203638
+        <rdar://problem/56761893>
+
+        Reviewed by Brian Burg.
+
+        Mark the `InspectorEnvironment::executionStopwatch` abstract function as `const` and have it
+        return a `Stopwatch&` instead of a `RefPtr<Stopwatch>&` as callers assume that it exists.
+        By not using a `RefPtr`, an additional `copyRef` can be avoided.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::executionStopwatch const): Added.
+        (WebCore::InspectorController::executionStopwatch): Deleted.
+        * inspector/WorkerInspectorController.h:
+        (WebCore::WorkerInspectorController::executionStopwatch const): Added.
+        (WebCore::WorkerInspectorController::executionStopwatch): Deleted.
+
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        (WebCore::InspectorAnimationAgent::startTracking):
+        (WebCore::InspectorAnimationAgent::stopTracking):
+        (WebCore::InspectorAnimationAgent::willApplyKeyframeEffect):
+        (WebCore::InspectorAnimationAgent::stopTrackingDeclarativeAnimation):
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        (WebCore::InspectorCPUProfilerAgent::startTracking):
+        (WebCore::InspectorCPUProfilerAgent::stopTracking):
+        (WebCore::InspectorCPUProfilerAgent::collectSample):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::mediaMetricsTimerFired):
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::startTracking):
+        (WebCore::InspectorMemoryAgent::stopTracking):
+        (WebCore::InspectorMemoryAgent::didHandleMemoryPressure):
+        (WebCore::InspectorMemoryAgent::collectSample):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+        (WebCore::InspectorNetworkAgent::timestamp):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::enable):
+        (WebCore::InspectorPageAgent::timestamp):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::timestamp):
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Eliminate checks of USE(DICTATION_ALTERNATIVES) in Cocoa-specific code

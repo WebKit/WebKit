@@ -218,7 +218,7 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
     auto& loadTiming = resourceLoader.loadTiming();
 
     auto elapsedTimeSince = [&] (const MonotonicTime& time) {
-        return m_environment.executionStopwatch()->elapsedTimeSince(time).seconds();
+        return m_environment.executionStopwatch().elapsedTimeSince(time).seconds();
     };
     Optional<NetworkLoadMetrics> empty;
     if (!timing) {
@@ -415,7 +415,7 @@ Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildOb
 
 double InspectorNetworkAgent::timestamp()
 {
-    return m_environment.executionStopwatch()->elapsedTime().seconds();
+    return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
 void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
@@ -576,7 +576,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     double elapsedFinishTime;
     if (resourceLoader && networkLoadMetrics.isComplete()) {
         MonotonicTime fetchStart = resourceLoader->loadTiming().fetchStart();
-        Seconds fetchStartInInspector = m_environment.executionStopwatch()->elapsedTimeSince(fetchStart);
+        Seconds fetchStartInInspector = m_environment.executionStopwatch().elapsedTimeSince(fetchStart);
         elapsedFinishTime = (fetchStartInInspector + networkLoadMetrics.responseEnd).seconds();
     } else
         elapsedFinishTime = timestamp();

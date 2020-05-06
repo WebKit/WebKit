@@ -247,9 +247,9 @@ void JSGlobalObjectInspectorController::frontendInitialized()
 #endif
 }
 
-Ref<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
+Stopwatch& JSGlobalObjectInspectorController::executionStopwatch() const
 {
-    return m_executionStopwatch.copyRef();
+    return m_executionStopwatch;
 }
 
 JSGlobalObjectScriptDebugServer& JSGlobalObjectInspectorController::scriptDebugServer()

@@ -41,8 +41,8 @@ public:
     void start();
     void stop();
 
-    Seconds elapsedTime();
-    Seconds elapsedTimeSince(MonotonicTime);
+    Seconds elapsedTime() const;
+    Seconds elapsedTimeSince(MonotonicTime) const;
 
     bool isActive() const { return !std::isnan(m_lastStartTime); }
 private:
@@ -73,7 +73,7 @@ inline void Stopwatch::stop()
     m_lastStartTime = MonotonicTime::nan();
 }
 
-inline Seconds Stopwatch::elapsedTime()
+inline Seconds Stopwatch::elapsedTime() const
 {
     if (!isActive())
         return m_elapsedTime;
@@ -81,7 +81,7 @@ inline Seconds Stopwatch::elapsedTime()
     return m_elapsedTime + (MonotonicTime::now() - m_lastStartTime);
 }
 
-inline Seconds Stopwatch::elapsedTimeSince(MonotonicTime timeStamp)
+inline Seconds Stopwatch::elapsedTimeSince(MonotonicTime timeStamp) const
 {
     if (!isActive())
         return m_elapsedTime;

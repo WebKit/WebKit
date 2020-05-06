@@ -92,7 +92,7 @@ void InspectorMemoryAgent::startTracking(ErrorString&)
 
     m_tracking = true;
 
-    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 void InspectorMemoryAgent::stopTracking(ErrorString&)
@@ -104,13 +104,13 @@ void InspectorMemoryAgent::stopTracking(ErrorString&)
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
 {
     MemoryFrontendDispatcher::Severity severity = critical == Critical::Yes ? MemoryFrontendDispatcher::Severity::Critical : MemoryFrontendDispatcher::Severity::NonCritical;
-    m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch()->elapsedTime().seconds(), severity);
+    m_frontendDispatcher->memoryPressure(m_environment.executionStopwatch().elapsedTime().seconds(), severity);
 }
 
 void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
@@ -154,7 +154,7 @@ void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
     categories->addItem(WTFMove(otherCategory));
 
     auto event = Protocol::Memory::Event::create()
-        .setTimestamp(m_environment.executionStopwatch()->elapsedTimeSince(data.timestamp).seconds())
+        .setTimestamp(m_environment.executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
         .setCategories(WTFMove(categories))
         .release();
 

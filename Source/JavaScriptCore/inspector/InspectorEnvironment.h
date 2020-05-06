@@ -51,7 +51,7 @@ public:
     virtual InspectorFunctionCallHandler functionCallHandler() const = 0;
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
     virtual void frontendInitialized() = 0;
-    virtual Ref<WTF::Stopwatch> executionStopwatch() = 0;
+    virtual WTF::Stopwatch& executionStopwatch() const = 0;
     virtual ScriptDebugServer& scriptDebugServer() = 0;
     virtual JSC::VM& vm() = 0;
 };

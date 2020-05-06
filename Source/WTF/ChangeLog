@@ -1,3 +1,17 @@
+2020-05-06  Devin Rousso  <drousso@apple.com>
+
+        ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread()) when web inspecting
+        https://bugs.webkit.org/show_bug.cgi?id=203638
+        <rdar://problem/56761893>
+
+        Reviewed by Brian Burg.
+
+        * wtf/Stopwatch.h:
+        (WTF::Stopwatch::elapsedTime const): Added.
+        (WTF::Stopwatch::elapsedTimeSince const): Added.
+        (WTF::Stopwatch::elapsedTime): Deleted.
+        (WTF::Stopwatch::elapsedTimeSince): Deleted.
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Reduce HAVE(HOSTED_CORE_ANIMATION)

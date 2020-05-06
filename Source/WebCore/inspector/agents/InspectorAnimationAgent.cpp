@@ -347,7 +347,7 @@ void InspectorAnimationAgent::startTracking(ErrorString& errorString)
 
     ASSERT(m_trackedDeclarativeAnimationData.isEmpty());
 
-    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 void InspectorAnimationAgent::stopTracking(ErrorString&)
@@ -359,7 +359,7 @@ void InspectorAnimationAgent::stopTracking(ErrorString&)
 
     m_trackedDeclarativeAnimationData.clear();
 
-    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 static bool isDelayed(ComputedEffectTiming& computedTiming)
@@ -431,7 +431,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(Element& target, KeyframeE
             ASSERT_NOT_REACHED();
     }
 
-    m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch()->elapsedTime().seconds(), WTFMove(event));
+    m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
 }
 
 void InspectorAnimationAgent::didSetWebAnimationEffect(WebAnimation& animation)
@@ -592,7 +592,7 @@ void InspectorAnimationAgent::stopTrackingDeclarativeAnimation(DeclarativeAnimat
             .setTrackingAnimationId(it->value.trackingAnimationId)
             .setAnimationState(Inspector::Protocol::Animation::AnimationState::Canceled)
             .release();
-        m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch()->elapsedTime().seconds(), WTFMove(event));
+        m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
     }
 
     m_trackedDeclarativeAnimationData.remove(it);

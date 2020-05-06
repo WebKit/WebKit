@@ -166,7 +166,7 @@ public:
         { }
     };
 
-    SamplingProfiler(VM&, RefPtr<Stopwatch>&&);
+    SamplingProfiler(VM&, Ref<Stopwatch>&&);
     ~SamplingProfiler();
     void noticeJSLockAcquisition();
     void noticeVMEntry();
@@ -208,7 +208,7 @@ private:
     bool m_needsReportAtExit { false };
     VM& m_vm;
     WeakRandom m_weakRandom;
-    RefPtr<Stopwatch> m_stopwatch;
+    Ref<Stopwatch> m_stopwatch;
     Vector<StackTrace> m_stackTraces;
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;
     Seconds m_timingInterval;

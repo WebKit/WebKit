@@ -352,9 +352,9 @@ void InspectorPageAgent::enable(ErrorString& errorString)
 
     m_instrumentingAgents.setInspectorPageAgent(this);
 
-    auto stopwatch = m_environment.executionStopwatch();
-    stopwatch->reset();
-    stopwatch->start();
+    auto& stopwatch = m_environment.executionStopwatch();
+    stopwatch.reset();
+    stopwatch.start();
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
     defaultAppearanceDidChange(m_inspectedPage.defaultUseDarkAppearance());
@@ -392,7 +392,7 @@ void InspectorPageAgent::disable(ErrorString&)
 
 double InspectorPageAgent::timestamp()
 {
-    return m_environment.executionStopwatch()->elapsedTime().seconds();
+    return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
 void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources)

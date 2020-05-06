@@ -293,7 +293,7 @@ private:
     void* m_machineFrame;
 };
 
-SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
+SamplingProfiler::SamplingProfiler(VM& vm, Ref<Stopwatch>&& stopwatch)
     : m_isPaused(false)
     , m_isShutDown(false)
     , m_vm(vm)

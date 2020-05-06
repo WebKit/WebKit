@@ -485,9 +485,9 @@ void InspectorController::frontendInitialized()
 #endif
 }
 
-Ref<Stopwatch> InspectorController::executionStopwatch()
+Stopwatch& InspectorController::executionStopwatch() const
 {
-    return m_executionStopwatch.copyRef();
+    return m_executionStopwatch;
 }
 
 PageScriptDebugServer& InspectorController::scriptDebugServer()

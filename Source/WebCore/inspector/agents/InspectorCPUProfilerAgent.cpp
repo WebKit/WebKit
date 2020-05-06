@@ -70,7 +70,7 @@ void InspectorCPUProfilerAgent::startTracking(ErrorString&)
 
     m_tracking = true;
 
-    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 void InspectorCPUProfilerAgent::stopTracking(ErrorString&)
@@ -82,7 +82,7 @@ void InspectorCPUProfilerAgent::stopTracking(ErrorString&)
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch()->elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch().elapsedTime().seconds());
 }
 
 static Ref<Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const ThreadCPUInfo& thread)
@@ -108,7 +108,7 @@ static Ref<Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const ThreadCPUInf
 void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
 {
     auto event = Protocol::CPUProfiler::Event::create()
-        .setTimestamp(m_environment.executionStopwatch()->elapsedTimeSince(data.timestamp).seconds())
+        .setTimestamp(m_environment.executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
         .setUsage(data.cpuExcludingDebuggerThreads)
         .release();
 

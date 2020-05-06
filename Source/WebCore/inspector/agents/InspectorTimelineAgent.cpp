@@ -267,7 +267,7 @@ void InspectorTimelineAgent::internalStop()
 
 double InspectorTimelineAgent::timestamp()
 {
-    return m_environment.executionStopwatch()->elapsedTime().seconds();
+    return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
 void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* exec, const String& title)
