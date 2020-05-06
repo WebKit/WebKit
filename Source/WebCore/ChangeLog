@@ -1,3 +1,28 @@
+2020-05-05  Antoine Quint  <graouts@apple.com>
+
+        Fix animation ordering to make imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative.html pass
+        https://bugs.webkit.org/show_bug.cgi?id=211468
+        <rdar://problem/62732578>
+
+        Reviewed by David Kilzer.
+
+        The "Animation composite order" section of the CSS Animations Level 2 specification (https://drafts.csswg.org/css-animations-2/#animation-composite-order)
+        defines the relative composite order of animations. We bake this into compareAnimationsByCompositeOrder(), but this function would not yield consistent
+        results if it is called in a non-stable sort, because if both CSSAnimation objects passed to this function have the same backing Animation object, they
+        would not return the same value if passed in a different order. The Web Animations spec always ensures that procedures that sort using the composite
+        order are called as part of a stable sort. So we change all call sites to use std::stable_sort and add an assertion in case we have two CSSAnimation
+        objects with the same backing Animation objects to catch cases like this in the future.
+
+        Finally, since we already know only relevant animations can find their way into the output of Document::getAnimations(), we also ensure we iterate over
+        m_animations (which holds only relevant animations) rather than m_allAnimations (which may not).
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::ensureEffectsAreSorted):
+        * animation/WebAnimationUtilities.cpp:
+        (WebCore::compareAnimationsByCompositeOrder):
+
 2020-05-05  Simon Fraser  <simon.fraser@apple.com>
 
         EventHandler::dispatchMouseEvent() cleanup
