@@ -966,3 +966,5 @@ webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.htm
 webkit.org/b/210198 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]
 
 webkit.org/b/210219 [ Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Failure ]
+
+webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
