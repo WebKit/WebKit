@@ -1,3 +1,40 @@
+2020-05-06  Keith Rollin  <krollin@apple.com>
+
+        Better surfacing of the presenting parent PID in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=211495
+        <rdar://problem/62917205>
+
+        Reviewed by Youenn Fablet.
+
+        In Bug 205295, NetworkResourceLoader logging was improved, with one of
+        the changes being that the PID of parent process that invoked the
+        Network process was logged at the start of
+        NetworkResourceLoader::start(). However, there was an execution path
+        that skipped calling start()
+        (NetworkConnectionToWebProcess::scheduleResourceLoad ->
+        NetworkResourceLoader::startWithServiceWorker ->
+        serviceWorkerDidNotHandle -> restartNetworkLoad -> startNetworkLoad),
+        and so the the logging would not show the parent PID. This logging is
+        needed for diagnostic purposes, so tweak the logging a little bit more
+        in order to ensure we emit it. In this change, logging is added to
+        various loading-related NetworkConnectionToWebProcess entry points
+        (not just scheduleResourceLoad) in order to (a) ensure we emit the
+        logging we want and (b) to give a clearer picture of what operations
+        are being invoked in the Network process.
+
+        No new tests -- no new or changed functionality.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::hasUploadStateChanged):
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        (WebKit::NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
 2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Cut and paste from Google Doc to Notes in several (non-Latin) languages doesn't work

@@ -175,7 +175,7 @@ bool NetworkResourceLoader::isSynchronous() const
 void NetworkResourceLoader::start()
 {
     ASSERT(RunLoop::isMain());
-    RELEASE_LOG_IF_ALLOWED("start: parentPID=%d, hasNetworkLoadChecker=%d", m_parameters.parentPID, !!m_networkLoadChecker);
+    RELEASE_LOG_IF_ALLOWED("start: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
 
     m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainFrameLoad());
 
