@@ -1180,11 +1180,6 @@ enum class FontLoadingBehavior : uint8_t {
     Optional
 };
 
-enum class EventListenerRegionType : uint8_t {
-    Wheel           = 1 << 0,
-    NonPassiveWheel = 1 << 1,
-};
-
 extern const float defaultMiterLimit;
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationFillMode);

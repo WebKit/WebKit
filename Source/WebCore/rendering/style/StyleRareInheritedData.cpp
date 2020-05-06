@@ -133,7 +133,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , joinStyle(RenderStyle::initialJoinStyle())
     , hasSetStrokeWidth(false)
     , hasSetStrokeColor(false)
-    , effectiveTouchActions(RenderStyle::initialTouchActions())
+    , effectiveTouchActions(static_cast<unsigned>(RenderStyle::initialTouchActions()))
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
     , miterLimit(RenderStyle::initialStrokeMiterLimit())
@@ -228,7 +228,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hasSetStrokeWidth(o.hasSetStrokeWidth)
     , hasSetStrokeColor(o.hasSetStrokeColor)
     , effectiveTouchActions(o.effectiveTouchActions)
-    , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
     , strokeColor(o.strokeColor)
     , visitedLinkStrokeColor(o.visitedLinkStrokeColor)
@@ -350,7 +349,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hasSetStrokeWidth == o.hasSetStrokeWidth
         && hasSetStrokeColor == o.hasSetStrokeColor
         && effectiveTouchActions == o.effectiveTouchActions
-        && eventListenerRegionTypes == o.eventListenerRegionTypes
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor

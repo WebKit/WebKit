@@ -1668,10 +1668,6 @@ void RenderLayerBacking::updateEventRegion()
         if (renderer().document().mayHaveEditableElements())
             return true;
 #endif
-#if !PLATFORM(IOS_FAMILY)
-        if (renderer().document().wheelEventTargets())
-            return true;
-#endif
         if (m_owningLayer.isRenderViewLayer())
             return false;
 

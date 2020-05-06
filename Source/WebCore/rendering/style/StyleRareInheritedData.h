@@ -30,7 +30,6 @@
 #include "TabSize.h"
 #include "TextDecorationThickness.h"
 #include "TextUnderlineOffset.h"
-#include "TouchAction.h"
 #include <wtf/DataRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomString.h>
@@ -155,8 +154,7 @@ public:
     unsigned hasSetStrokeWidth : 1;
     unsigned hasSetStrokeColor : 1;
 
-    OptionSet<TouchAction> effectiveTouchActions;
-    OptionSet<EventListenerRegionType> eventListenerRegionTypes;
+    unsigned effectiveTouchActions : 6; // OptionSet<TouchAction>
 
     Length strokeWidth;
     Color strokeColor;

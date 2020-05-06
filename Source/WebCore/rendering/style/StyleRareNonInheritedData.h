@@ -173,7 +173,7 @@ public:
     DataRef<StyleCustomPropertyData> customProperties;
     std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
 
-    OptionSet<TouchAction> touchActions;
+    unsigned touchActions : 6; // TouchAction
 
     unsigned pageSizeType : 2; // PageSizeType
     unsigned transformStyle3D : 1; // TransformStyle3D

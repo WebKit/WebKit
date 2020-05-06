@@ -27,7 +27,6 @@
 
 #include "AffineTransform.h"
 #include "Region.h"
-#include "RenderStyleConstants.h"
 #include "TouchAction.h"
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -77,6 +76,7 @@ public:
 
     bool hasTouchActions() const { return !m_touchActionRegions.isEmpty(); }
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
+
     const Region* regionForTouchAction(TouchAction) const;
 
 #if ENABLE(EDITABLE_REGION)
@@ -93,12 +93,9 @@ public:
 
 private:
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
-    void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
 
     Region m_region;
     Vector<Region> m_touchActionRegions;
-    Region m_wheelEventListenerRegion;
-    Region m_nonPassiveWheelEventListenerRegion;
 #if ENABLE(EDITABLE_REGION)
     Region m_editableRegion;
 #endif

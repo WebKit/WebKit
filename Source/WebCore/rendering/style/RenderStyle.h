@@ -691,10 +691,9 @@ public:
     int initialLetterDrop() const { return initialLetter().width(); }
     int initialLetterHeight() const { return initialLetter().height(); }
 
-    OptionSet<TouchAction> touchActions() const { return m_rareNonInheritedData->touchActions; }
+    OptionSet<TouchAction> touchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareNonInheritedData->touchActions); }
     // 'touch-action' behavior depends on values in ancestors. We use an additional inherited property to implement that.
-    OptionSet<TouchAction> effectiveTouchActions() const { return m_rareInheritedData->effectiveTouchActions; }
-    OptionSet<EventListenerRegionType> eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
+    OptionSet<TouchAction> effectiveTouchActions() const { return OptionSet<TouchAction>::fromRaw(m_rareInheritedData->effectiveTouchActions); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     // Scroll snap port style.
@@ -1227,9 +1226,8 @@ public:
     
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
     
-    void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions); }
-    void setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareInheritedData, effectiveTouchActions, touchActions); }
-    void setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET_VAR(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
+    void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions.toRaw()); }
+    void setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareInheritedData, effectiveTouchActions, touchActions.toRaw()); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(const ScrollSnapType&);
