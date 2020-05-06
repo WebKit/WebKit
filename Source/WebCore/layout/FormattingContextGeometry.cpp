@@ -1107,7 +1107,8 @@ FormattingContext::ConstraintsForOutOfFlowContent FormattingContext::Geometry::c
 FormattingContext::ConstraintsForInFlowContent FormattingContext::Geometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<EscapeReason> escapeReason)
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
-    return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), { } } };
+    // FIXME: Find out if min/max-height properties should also be taken into account here.
+    return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };
 }
 
 }

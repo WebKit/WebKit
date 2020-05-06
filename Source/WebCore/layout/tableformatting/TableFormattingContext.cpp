@@ -530,7 +530,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     computeColumnWidths(ColumnWidthBalancingBase::MinimumWidth, horizontalSpaceToDistribute);
 }
 
-void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> verticalConstraint)
+void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace)
 {
     auto& grid = formattingState().tableGrid();
     auto& columns = grid.columns().list();
@@ -571,12 +571,9 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     // FIXME: Collect spanning row maximum heights.
 
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
-    auto minimumTableHeight = verticalConstraint;
-    if (!minimumTableHeight)
-        minimumTableHeight = geometry().fixedValue(root().style().logicalHeight());
     float spaceToDistribute = 0;
-    if (minimumTableHeight)
-        spaceToDistribute = std::max(0.0f, *minimumTableHeight - ((rows.size() + 1) * grid.verticalSpacing()) - tableUsedHeight);
+    if (availableVerticalSpace)
+        spaceToDistribute = std::max(0.0f, *availableVerticalSpace - ((rows.size() + 1) * grid.verticalSpacing()) - tableUsedHeight);
     auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, spaceToDistribute, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
             return geometryForBox(slot.cell().box()).height();

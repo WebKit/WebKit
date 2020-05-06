@@ -1,3 +1,18 @@
+2020-05-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] FormattingContext::ConstraintsForInFlowContent should include the computed value of height
+        https://bugs.webkit.org/show_bug.cgi?id=211487
+
+        Reviewed by Antti Koivisto.
+
+        When the formatting context root has fixed height, the computed value should be passed in to the formatting context layout
+        as the available vertical space.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::constraintsForInFlowContent):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+
 2020-04-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Implement isSessionSupported()
