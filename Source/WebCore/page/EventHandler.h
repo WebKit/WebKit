@@ -403,6 +403,8 @@ private:
     enum class FireMouseOverOut { No, Yes };
     void updateMouseEventTargetNode(Node*, const PlatformMouseEvent&, FireMouseOverOut);
 
+    void notifyScrollableAreasOfMouseEnterExit(Element* lastElementUnderMouse, Element* elementUnderMouse);
+
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 
     enum class Cancelable { No, Yes };

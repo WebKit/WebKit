@@ -1,3 +1,20 @@
+2020-05-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Factor EventHandler code that sends mouseEnteredContentArea/mouseExitedContentArea into its own function
+        https://bugs.webkit.org/show_bug.cgi?id=211494
+
+        Reviewed by Antti Koivisto.
+
+        mouseEnteredContentArea/mouseEnteredContentArea are used only to notify overlay scrollbars
+        of state changes. Factor the code that calls these functions into a separate EventHandler
+        function, and refactor it for clarity, now we know that both lastElementUnderMouse and elementUnderMouse
+        must belong to this EventHandler's Frame's Document.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::notifyScrollableAreasOfMouseEnterExit):
+        * page/EventHandler.h:
+
 2020-05-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] BlockFormattingContext::computeHeightAndMargin should special case the table box

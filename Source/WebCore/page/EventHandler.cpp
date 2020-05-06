@@ -2548,41 +2548,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut == FireMouseOverOut::Yes) {
-        auto scrollableAreaForLastNode = enclosingScrollableArea(m_lastElementUnderMouse.get());
-        auto scrollableAreaForNodeUnderMouse = enclosingScrollableArea(m_elementUnderMouse.get());
-        Page* page = m_frame.page();
-
-        if (m_lastElementUnderMouse && !m_elementUnderMouse) {
-            // The mouse has moved between frames.
-            if (Frame* frame = m_lastElementUnderMouse->document().frame()) {
-                if (FrameView* frameView = frame->view())
-                    frameView->mouseExitedContentArea();
-            }
-        } else if (page && (scrollableAreaForLastNode && (!scrollableAreaForNodeUnderMouse || scrollableAreaForNodeUnderMouse != scrollableAreaForLastNode))) {
-            // The mouse has moved between layers.
-            if (Frame* frame = m_lastElementUnderMouse->document().frame()) {
-                if (FrameView* frameView = frame->view()) {
-                    if (frameView->containsScrollableArea(scrollableAreaForLastNode))
-                        scrollableAreaForLastNode->mouseExitedContentArea();
-                }
-            }
-        }
-
-        if (m_elementUnderMouse && !m_lastElementUnderMouse) {
-            // The mouse has moved between frames.
-            if (Frame* frame = m_elementUnderMouse->document().frame()) {
-                if (FrameView* frameView = frame->view())
-                    frameView->mouseEnteredContentArea();
-            }
-        } else if (page && (scrollableAreaForNodeUnderMouse && (!scrollableAreaForLastNode || scrollableAreaForNodeUnderMouse != scrollableAreaForLastNode))) {
-            // The mouse has moved between layers.
-            if (Frame* frame = m_elementUnderMouse->document().frame()) {
-                if (FrameView* frameView = frame->view()) {
-                    if (frameView->containsScrollableArea(scrollableAreaForNodeUnderMouse))
-                        scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
-                }
-            }
-        }
+        notifyScrollableAreasOfMouseEnterExit(m_lastElementUnderMouse.get(), m_elementUnderMouse.get());
 
         if (m_lastElementUnderMouse && &m_lastElementUnderMouse->document() != m_frame.document()) {
             m_lastElementUnderMouse = nullptr;
@@ -2637,6 +2603,38 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
+}
+
+void EventHandler::notifyScrollableAreasOfMouseEnterExit(Element* lastElementUnderMouse, Element* elementUnderMouse)
+{
+    auto* frameView = m_frame.view();
+    if (!frameView)
+        return;
+
+    auto scrollableAreaForLastNode = enclosingScrollableArea(lastElementUnderMouse);
+    auto scrollableAreaForNodeUnderMouse = enclosingScrollableArea(elementUnderMouse);
+
+    if (!!lastElementUnderMouse != !!elementUnderMouse) {
+        if (elementUnderMouse) {
+            frameView->mouseEnteredContentArea();
+            if (scrollableAreaForNodeUnderMouse)
+                scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
+        } else {
+            if (scrollableAreaForLastNode)
+                scrollableAreaForLastNode->mouseExitedContentArea();
+            frameView->mouseExitedContentArea();
+        }
+        return;
+    }
+    
+    if ((!scrollableAreaForLastNode && !scrollableAreaForNodeUnderMouse) || scrollableAreaForLastNode == scrollableAreaForNodeUnderMouse)
+        return;
+
+    if (scrollableAreaForLastNode)
+        scrollableAreaForLastNode->mouseExitedContentArea();
+
+    if (scrollableAreaForNodeUnderMouse)
+        scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
 }
 
 static RefPtr<Element> findFirstMouseFocusableElementInComposedTree(Element& host)
