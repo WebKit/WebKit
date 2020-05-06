@@ -1,3 +1,14 @@
+2020-05-06  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r261163): [ Mac WK2 ] webrtc/libwebrtc/descriptionGetters.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211455
+        <rdar://problem/62895451>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/libwebrtc/descriptionGetters.html:
+        Sanitize SDP before comparison as port information and candidates are no longer blocked by main thread.
+
 2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, expected to fail but passed
