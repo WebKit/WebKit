@@ -1,3 +1,17 @@
+2020-05-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        ResourceLoadStatistics data summary call should create a web process pool if one doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=211520
+        <rdar://problem/59869619>
+
+        Reviewed by Chris Dumez.
+
+        Ensures that a process pool and network process exist when requesting
+        resource load statistics data.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+
 2020-05-06  Keith Rollin  <krollin@apple.com>
 
         Better surfacing of the presenting parent PID in the Network process

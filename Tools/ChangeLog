@@ -1,3 +1,24 @@
+2020-05-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        ResourceLoadStatistics data summary call should create a web process pool if one doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=211520
+        <rdar://problem/59869619>
+
+        Reviewed by Chris Dumez.
+
+        Added API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        Removed stray comment from previous test.
+
+        (TEST):
+        * TestWebKitAPI/basicITPDatabase.db: Added.
+        * TestWebKitAPI/basicITPDatabase.db-shm: Added.
+        * TestWebKitAPI/basicITPDatabase.db-wal: Added.
+        New database resource with 2 entries: apple.com and webkit.org, with
+        webkit.org registered as a subframe of apple.com
+
 2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Cut and paste from Google Doc to Notes in several (non-Latin) languages doesn't work

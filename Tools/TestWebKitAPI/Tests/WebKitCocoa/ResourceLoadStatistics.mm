@@ -1477,7 +1477,6 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
         EXPECT_EQ(static_cast<int>([thirdPartyData count]), 1);
         NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
 
-        // evil3
         _WKResourceLoadStatisticsThirdParty *thirdParty = [thirdPartyDomains nextObject];
         EXPECT_WK_STREQ(thirdParty.thirdPartyDomain, @"webkit.org");
 
@@ -1544,6 +1543,44 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
     doneFlag = false;
     [dataStore _statisticsDatabaseHasAllTables:^(BOOL hasAllTables) {
         EXPECT_TRUE(hasAllTables);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+}
+
+TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
+{
+    auto defaultFileManager = [NSFileManager defaultManager];
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
+    auto *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration] autorelease];
+    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
+    NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
+
+    // Load a a pre-seeded ITP database.
+    [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"basicITPDatabase" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
+    [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    static bool doneFlag = false;
+    [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
+    {
+        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 1);
+        NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
+
+        _WKResourceLoadStatisticsThirdParty *thirdParty = [thirdPartyDomains nextObject];
+        EXPECT_WK_STREQ(thirdParty.thirdPartyDomain, @"webkit.org");
+
+        NSEnumerator *enumerator = [thirdParty.underFirstParties objectEnumerator];
+        _WKResourceLoadStatisticsFirstParty *firstParty = [enumerator nextObject];
+
+        EXPECT_WK_STREQ(firstParty.firstPartyDomain, @"apple.com");
+
         doneFlag = true;
     }];
 
