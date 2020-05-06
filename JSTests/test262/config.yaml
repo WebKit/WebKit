@@ -2,6 +2,7 @@
 ---
 flags:
   BigInt: useBigInt
+  Intl.Locale: useIntlLocale
   Intl.RelativeTimeFormat: useIntlRelativeTimeFormat
   WeakRef: useWeakRefs
   class-fields-public: usePublicClassFields
@@ -30,7 +31,6 @@ skip:
     - Intl.DateTimeFormat-fractionalSecondDigits
     - Intl.DisplayNames
     - Intl.ListFormat
-    - Intl.Locale
     - Intl.NumberFormat-unified
     - Intl.Segmenter
   paths:

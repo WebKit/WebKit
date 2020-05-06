@@ -4333,6 +4333,12 @@
 		A1E0451B1C25B4B100BB663C /* StringPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringPrototype.js; sourceTree = "<group>"; };
 		A1FE1EB01C2C537E00A289FF /* DatePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DatePrototype.js; sourceTree = "<group>"; };
 		A27958D7FA1142B0AC9E364D /* WasmContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmContextInlines.h; sourceTree = "<group>"; };
+		A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlLocale.h; sourceTree = "<group>"; };
+		A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlLocaleConstructor.h; sourceTree = "<group>"; };
+		A3AFF92D245A3CFA00C9BA3B /* IntlLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlLocale.cpp; sourceTree = "<group>"; };
+		A3AFF92E245A3CFB00C9BA3B /* IntlLocalePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlLocalePrototype.cpp; sourceTree = "<group>"; };
+		A3AFF92F245A3CFB00C9BA3B /* IntlLocaleConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlLocaleConstructor.cpp; sourceTree = "<group>"; };
+		A3AFF930245A3CFC00C9BA3B /* IntlLocalePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlLocalePrototype.h; sourceTree = "<group>"; };
 		A3BF884B24480BDE001B9F35 /* IntlRelativeTimeFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlRelativeTimeFormatPrototype.cpp; sourceTree = "<group>"; };
 		A3BF884C24480BDF001B9F35 /* IntlRelativeTimeFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlRelativeTimeFormatPrototype.h; sourceTree = "<group>"; };
 		A3BF884D24480BDF001B9F35 /* IntlRelativeTimeFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlRelativeTimeFormatConstructor.cpp; sourceTree = "<group>"; };
@@ -7254,6 +7260,12 @@
 				A1587D6A1B4DC14100D69849 /* IntlDateTimeFormatConstructor.h */,
 				A1587D6B1B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp */,
 				A1587D6C1B4DC14100D69849 /* IntlDateTimeFormatPrototype.h */,
+				A3AFF92D245A3CFA00C9BA3B /* IntlLocale.cpp */,
+				A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */,
+				A3AFF92F245A3CFB00C9BA3B /* IntlLocaleConstructor.cpp */,
+				A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */,
+				A3AFF92E245A3CFB00C9BA3B /* IntlLocalePrototype.cpp */,
+				A3AFF930245A3CFC00C9BA3B /* IntlLocalePrototype.h */,
 				A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */,
 				A1D792F71B43864B004516F5 /* IntlNumberFormat.h */,
 				A1D792F81B43864B004516F5 /* IntlNumberFormatConstructor.cpp */,

@@ -40,6 +40,7 @@
     macro(Infinity) \
     macro(Intl) \
     macro(Loader) \
+    macro(Locale) \
     macro(Map) \
     macro(NaN) \
     macro(Number) \
@@ -137,6 +138,7 @@
     macro(isWatchpoint) \
     macro(jettisonReason) \
     macro(join) \
+    macro(language) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \
@@ -166,8 +168,10 @@
     macro(propertyIsEnumerable) \
     macro(prototype) \
     macro(raw) \
+    macro(region) \
     macro(replace) \
     macro(resolve) \
+    macro(script) \
     macro(second) \
     macro(sensitivity) \
     macro(set) \

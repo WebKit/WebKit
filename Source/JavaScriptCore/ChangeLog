@@ -1,3 +1,63 @@
+2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Implement Intl.Locale
+        https://bugs.webkit.org/show_bug.cgi?id=209772
+
+        Reviewed by Darin Adler and Saam Barati.
+
+        This patch implements the recent ECMA-402 feature Intl.Locale.
+
+        This is effectively a wrapper class for all the pieces of uloc.h that ECMA-402 cares about.
+        (If we used the C++ API, there's a LocaleBuilder that would make this much easier, but in sticking to the C API,
+        it's basically an object that has an ICU localeID as data and uloc_* functions as methods / getters.
+        Furthermore, there's no way to modify said data, so every method / getter can be lazy and cache its result.)
+
+        Usage example:
+          >>> locale = new Intl.Locale('ja', { region: 'JP', calendar: 'japanese', numeric: false })
+          "ja-JP-u-ca-japanese-kn-false"
+          >>> locale.baseName
+          "ja-JP"
+
+        Intl.Locale can be used anywhere that Intl APIs accept locale strings as input parameters,
+        and is moreover hoped to be the class by which future Web APIs will handle the current locale.
+
+        This feature is runtime-guarded by the `useIntlLocale` option.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlLocale.cpp: Added.
+        * runtime/IntlLocale.h: Added.
+        * runtime/IntlLocaleConstructor.cpp: Added.
+        * runtime/IntlLocaleConstructor.h: Added.
+        * runtime/IntlLocalePrototype.cpp: Added.
+        * runtime/IntlLocalePrototype.h: Added.
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        (JSC::localeIDBufferForLanguageTag): Added.
+        (JSC::languageTagForLocaleID): Renamed from JSC::convertICULocaleToBCP47LanguageTag.
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleList):
+        (JSC::defaultLocale):
+        * runtime/IntlObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::collatorStructure):
+        (JSC::JSGlobalObject::numberFormatStructure):
+        (JSC::JSGlobalObject::localeStructure):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2020-05-05  Keith Miller  <keith_miller@apple.com>
 
         clobberize validator should use branchTest8 directly.

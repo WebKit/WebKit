@@ -68,6 +68,8 @@ TriState intlBooleanOption(JSGlobalObject*, JSValue options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSValue options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSValue options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
+Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
+String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 HashMap<String, String> resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t));
 JSValue supportedLocales(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);

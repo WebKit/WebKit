@@ -136,6 +136,7 @@ $(PROJECT_DIR)/runtime/IntlCollatorConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlCollatorPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlDateTimeFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlDateTimeFormatPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlLocalePrototype.cpp
 $(PROJECT_DIR)/runtime/IntlNumberFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlNumberFormatPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlObject.cpp

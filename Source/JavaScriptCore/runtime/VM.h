@@ -126,6 +126,7 @@ class Identifier;
 class Interpreter;
 class IntlCollator;
 class IntlDateTimeFormat;
+class IntlLocale;
 class IntlNumberFormat;
 class IntlPluralRules;
 class IntlRelativeTimeFormat;
@@ -400,6 +401,7 @@ public:
 #endif
     std::unique_ptr<IsoHeapCellType> intlCollatorHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlDateTimeFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlLocaleHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlNumberFormatHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlPluralRulesHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlRelativeTimeFormatHeapCellType;
@@ -557,6 +559,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(withScopeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlCollatorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlDateTimeFormatSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlLocaleSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlNumberFormatSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlRelativeTimeFormatSpace)

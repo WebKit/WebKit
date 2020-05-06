@@ -1,3 +1,13 @@
+2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [ECMA-402] Implement Intl.Locale
+        https://bugs.webkit.org/show_bug.cgi?id=209772
+
+        Reviewed by Darin Adler and Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+        Add runIntlLocaleEnabled.
+
 2020-05-05  Saam Barati  <sbarati@apple.com>
 
         Don't use the DebugHeap for catalyst

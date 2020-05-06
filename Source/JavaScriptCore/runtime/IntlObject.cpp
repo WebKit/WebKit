@@ -35,6 +35,9 @@
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormatConstructor.h"
 #include "IntlDateTimeFormatPrototype.h"
+#include "IntlLocale.h"
+#include "IntlLocaleConstructor.h"
+#include "IntlLocalePrototype.h"
 #include "IntlNumberFormatConstructor.h"
 #include "IntlNumberFormatPrototype.h"
 #include "IntlPluralRulesConstructor.h"
@@ -136,6 +139,10 @@ IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* 
 void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
+    if (Options::useIntlLocale()) {
+        auto* localeConstructor = IntlLocaleConstructor::create(vm, IntlLocaleConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlLocalePrototype*>(globalObject->localeStructure()->storedPrototypeObject()));
+        putDirectWithoutTransition(vm, vm.propertyNames->Locale, localeConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
     if (Options::useIntlRelativeTimeFormat()) {
         auto* relativeTimeFormatConstructor = IntlRelativeTimeFormatConstructor::create(vm, IntlRelativeTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlRelativeTimeFormatPrototype*>(globalObject->relativeTimeFormatStructure()->storedPrototypeObject()));
         putDirectWithoutTransition(vm, vm.propertyNames->RelativeTimeFormat, relativeTimeFormatConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -147,7 +154,29 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-static String convertICULocaleToBCP47LanguageTag(const char* localeID)
+Vector<char, 32> localeIDBufferForLanguageTag(const CString& tag)
+{
+    if (!tag.length())
+        return { };
+
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<char, 32> buffer(32);
+    int32_t parsedLength;
+    auto bufferLength = uloc_forLanguageTag(tag.data(), buffer.data(), buffer.size(), &parsedLength, &status);
+    if (needsToGrowToProduceCString(status)) {
+        // Before ICU 64, there's a chance uloc_forLanguageTag will "buffer overflow" while requesting a *smaller* size.
+        buffer.resize(bufferLength + 1);
+        status = U_ZERO_ERROR;
+        uloc_forLanguageTag(tag.data(), buffer.data(), bufferLength + 1, &parsedLength, &status);
+    }
+    if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(tag.length()))
+        return { };
+
+    ASSERT(buffer.contains('\0'));
+    return buffer;
+}
+
+String languageTagForLocaleID(const char* localeID, bool isImmortal)
 {
     UErrorCode status = U_ZERO_ERROR;
     Vector<char, 32> buffer(32);
@@ -155,15 +184,17 @@ static String convertICULocaleToBCP47LanguageTag(const char* localeID)
     if (needsToGrowToProduceBuffer(status)) {
         buffer.grow(length);
         status = U_ZERO_ERROR;
-        uloc_toLanguageTag(localeID, buffer.data(), buffer.size(), false, &status);
+        uloc_toLanguageTag(localeID, buffer.data(), length, false, &status);
     }
-    if (!U_FAILURE(status)) {
-        // This is used to store into static variables that may be shared across 
-        // JSC execution threads. This must be immortal to make concurrent ref/deref
-        // safe.
+    if (U_FAILURE(status))
+        return String();
+
+    // This is used to store into static variables that may be shared across JSC execution threads.
+    // This must be immortal to make concurrent ref/deref safe.
+    if (isImmortal)
         return String(StringImpl::createStaticStringImpl(buffer.data(), length));
-    }
-    return String();
+
+    return String(buffer.data(), length);
 }
 
 const HashSet<String>& intlAvailableLocales()
@@ -174,9 +205,10 @@ const HashSet<String>& intlAvailableLocales()
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
         ASSERT(availableLocales.isEmpty());
+        constexpr bool isImmortal = true;
         int32_t count = uloc_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(uloc_getAvailable(i));
+            String locale = languageTagForLocaleID(uloc_getAvailable(i), isImmortal);
             if (!locale.isEmpty())
                 availableLocales.add(locale);
         }
@@ -192,9 +224,10 @@ const HashSet<String>& intlCollatorAvailableLocales()
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
         ASSERT(availableLocales.isEmpty());
+        constexpr bool isImmortal = true;
         int32_t count = ucol_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
-            String locale = convertICULocaleToBCP47LanguageTag(ucol_getAvailable(i));
+            String locale = languageTagForLocaleID(ucol_getAvailable(i), isImmortal);
             if (!locale.isEmpty())
                 availableLocales.add(locale);
         }
@@ -316,40 +349,13 @@ bool isUnicodeLocaleIdentifierType(StringView string)
 
 // https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
-static String canonicalizeLanguageTag(const CString& input)
+static String canonicalizeLanguageTag(const CString& tag)
 {
-    if (!input.length())
+    auto buffer = localeIDBufferForLanguageTag(tag);
+    if (buffer.isEmpty())
         return String();
 
-    // We need to be careful with the output of uloc_forLanguageTag:
-    // - uloc_toLanguageTag doesn't take an input size param so we must ensure the string is null-terminated ourselves
-    // - before ICU 64, there's a chance that it will "buffer overflow" while requesting a *smaller* size
-    UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> intermediate(32);
-    int32_t parsedLength;
-    auto intermediateLength = uloc_forLanguageTag(input.data(), intermediate.data(), intermediate.size(), &parsedLength, &status);
-    if (needsToGrowToProduceCString(status)) {
-        intermediate.resize(intermediateLength + 1);
-        status = U_ZERO_ERROR;
-        uloc_forLanguageTag(input.data(), intermediate.data(), intermediateLength + 1, &parsedLength, &status);
-    }
-    if (U_FAILURE(status) || parsedLength != static_cast<int32_t>(input.length()))
-        return String();
-
-    ASSERT(intermediate.contains('\0'));
-
-    status = U_ZERO_ERROR;
-    Vector<char, 32> result(32);
-    auto resultLength = uloc_toLanguageTag(intermediate.data(), result.data(), result.size(), false, &status);
-    if (needsToGrowToProduceBuffer(status)) {
-        result.grow(resultLength);
-        status = U_ZERO_ERROR;
-        uloc_toLanguageTag(intermediate.data(), result.data(), resultLength, false, &status);
-    }
-    if (U_FAILURE(status))
-        return String();
-
-    return String(result.data(), resultLength);
+    return languageTagForLocaleID(buffer.data());
 }
 
 Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
@@ -366,7 +372,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
         return seen;
 
     JSObject* localesObject;
-    if (locales.isString()) {
+    if (locales.isString() || locales.inherits<IntlLocale>(vm)) {
         JSArray* localesArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
         if (!localesArray) {
             throwOutOfMemoryError(globalObject, scope);
@@ -402,13 +408,18 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
                 return { };
             }
 
-            JSString* tag = kValue.toString(globalObject);
-            RETURN_IF_EXCEPTION(scope, Vector<String>());
+            Expected<CString, UTF8ConversionError> rawTag;
+            if (kValue.inherits<IntlLocale>(vm))
+                rawTag = jsCast<IntlLocale*>(kValue)->toString().tryGetUtf8();
+            else {
+                JSString* tag = kValue.toString(globalObject);
+                RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            auto tagValue = tag->value(globalObject);
-            RETURN_IF_EXCEPTION(scope, Vector<String>());
+                auto tagValue = tag->value(globalObject);
+                RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            auto rawTag = tagValue.tryGetUtf8();
+                rawTag = tagValue.tryGetUtf8();
+            }
             if (!rawTag) {
                 if (rawTag.error() == UTF8ConversionError::OutOfMemory)
                     throwOutOfMemoryError(globalObject, scope);
@@ -417,7 +428,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
 
             String canonicalizedTag = canonicalizeLanguageTag(rawTag.value());
             if (canonicalizedTag.isNull()) {
-                String errorMessage = tryMakeString("invalid language tag: ", tagValue);
+                String errorMessage = tryMakeString("invalid language tag: ", rawTag->data());
                 if (UNLIKELY(!errorMessage)) {
                     throwException(globalObject, scope, createOutOfMemoryError(globalObject));
                     return { };
@@ -483,7 +494,8 @@ String defaultLocale(JSGlobalObject* globalObject)
     static NeverDestroyed<String> icuDefaultLocalString;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        icuDefaultLocalString.get() = convertICULocaleToBCP47LanguageTag(uloc_getDefault());
+        constexpr bool isImmortal = true;
+        icuDefaultLocalString.get() = languageTagForLocaleID(uloc_getDefault(), isImmortal);
     });
     if (!icuDefaultLocalString->isEmpty())
         return icuDefaultLocalString.get();

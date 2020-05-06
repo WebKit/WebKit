@@ -70,6 +70,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/IntlCollatorPrototype.cpp
     runtime/IntlDateTimeFormatConstructor.cpp
     runtime/IntlDateTimeFormatPrototype.cpp
+    runtime/IntlLocalePrototype.cpp
     runtime/IntlNumberFormatConstructor.cpp
     runtime/IntlNumberFormatPrototype.cpp
     runtime/IntlObject.cpp
