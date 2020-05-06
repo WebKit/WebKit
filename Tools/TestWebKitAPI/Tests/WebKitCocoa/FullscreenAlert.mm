@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 static bool isInFullscreen = false;
 static bool isOutOfFullscreen = false;
 
-TEST(Fullscreen, Alert)
+TEST(Fullscreen, DISABLED_Alert)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
