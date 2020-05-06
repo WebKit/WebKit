@@ -1,3 +1,18 @@
+2020-05-06  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in indentOutdentCommand::formatRange with asynchronous commands: indent and insert list.
+        https://bugs.webkit.org/show_bug.cgi?id=211466
+        <rdar://problem/62845430>
+
+        Reviewed by Geoffrey Garen.
+
+        Check for null outerBlock returned by splitTreeToNode and bail out.
+
+        Test: fast/editing/indent-then-insertUL-crash.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Make a helper for the pattern of ICU functions that may need to be called twice to populate a buffer

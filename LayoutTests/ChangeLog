@@ -1,5 +1,18 @@
 2020-05-06  Jack Lee  <shihchieh_lee@apple.com>
 
+        Nullptr crash in indentOutdentCommand::formatRange with asynchronous commands: indent and insert list.
+        https://bugs.webkit.org/show_bug.cgi?id=211466
+        <rdar://problem/62845430>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test for the crash.
+
+        * fast/editing/indent-then-insertUL-crash-expected.txt: Added.
+        * fast/editing/indent-then-insertUL-crash.html: Added.
+
+2020-05-06  Jack Lee  <shihchieh_lee@apple.com>
+
         Nullptr crash in InsertListCommand::doApply with user-select:none elements
         https://bugs.webkit.org/show_bug.cgi?id=211534
         <rdar://problem/62898521>
