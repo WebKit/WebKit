@@ -1,3 +1,20 @@
+2020-05-06  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete code for QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=211504
+
+        Reviewed by Jonathan Bedard.
+
+        * QueueStatusServer: Removed.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Removed QueueStatusServer.
+        * Scripts/webkitpy/tool/steps/checkpatchrelevance.py:
+        (CheckPatchRelevance): Removed QueueStatusServer.
+        * Scripts/webkitpy/common/net/statusserver.py: Removed implementation of most methods. Will delete it completely
+        in subsequent patch along-with all its callers.
+        * Scripts/webkitpy/common/net/statusserver_unittest.py: Removed.
+        * Scripts/webkitpy/test/main.py:
+
 2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Implement Intl.Locale

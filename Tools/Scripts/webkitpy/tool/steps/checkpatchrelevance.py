@@ -66,7 +66,6 @@ class CheckPatchRelevance(AbstractStep):
 
     webkitpy_paths = [
         "Tools/Scripts/webkitpy/",
-        "Tools/QueueStatusServer/",
     ]
 
     group_to_paths_mapping = {

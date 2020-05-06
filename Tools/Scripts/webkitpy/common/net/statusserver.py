@@ -29,13 +29,9 @@
 #
 # This the client designed to talk to Tools/QueueStatusServer.
 
-import logging
 import sys
 
 from webkitpy.common.config.urls import statusserver_default_host
-from webkitpy.common.net.networktransaction import NetworkTransaction
-from webkitpy.common.unicode_compatibility import StringIO
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 if sys.version_info > (3, 0):
     from urllib.error import HTTPError
@@ -43,16 +39,10 @@ if sys.version_info > (3, 0):
 else:
     from urllib2 import HTTPError, Request, urlopen
 
-_log = logging.getLogger(__name__)
-
 
 class StatusServer:
     def __init__(self, host=statusserver_default_host, browser=None, bot_id=None):
         self.set_host(host)
-        self._api_key = ''
-        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-        self._browser = browser or Browser()
-        self._browser.set_handle_robots(False)
         self.set_bot_id(bot_id)
 
     def set_host(self, host):
@@ -63,128 +53,31 @@ class StatusServer:
         self.bot_id = bot_id
 
     def results_url_for_status(self, status_id):
-        return '{}/results/{}'.format(self.url, status_id)
-
-    def _add_patch(self, patch):
-        if not patch:
-            return
-        if patch.bug_id():
-            self._browser["bug_id"] = unicode(patch.bug_id())
-        if patch.id():
-            self._browser["patch_id"] = unicode(patch.id())
-
-    def _add_results_file(self, results_file):
-        if not results_file:
-            return
-        self._browser.add_file(results_file, "text/plain", "results.txt", 'results_file')
-
-    # 500 is the AppEngine limit for TEXT fields (which most of our fields are).
-    # Exceeding the limit will result in a 500 error from the server.
-    def _set_field(self, field_name, value, limit=500):
-        if len(value) > limit:
-            _log.warn("Attempted to set %s to value exceeding %s characters, truncating." % (field_name, limit))
-        self._browser[field_name] = value[:limit]
-
-    def _post_status_to_server(self, queue_name, status, patch, results_file):
-        if results_file:
-            # We might need to re-wind the file if we've already tried to post it.
-            results_file.seek(0)
-
-        update_status_url = '{}/update-status'.format(self.url)
-        self._browser.open(update_status_url)
-        self._browser.select_form(name="update_status")
-        self._browser["queue_name"] = queue_name
-        if self.bot_id:
-            self._browser["bot_id"] = self.bot_id
-        self._add_patch(patch)
-        self._set_field("status", status, limit=500)
-        self._add_results_file(results_file)
-        return self._browser.submit().read()  # This is the id of the newly created status object.
-
-    def _post_svn_revision_to_server(self, svn_revision_number, broken_bot):
-        update_svn_revision_url = '{}/update-svn-revision'.format(self.url)
-        self._browser.open(update_svn_revision_url)
-        self._browser.select_form(name="update_svn_revision")
-        self._browser["number"] = unicode(svn_revision_number)
-        self._browser["broken_bot"] = broken_bot
-        return self._browser.submit().read()
-
-    def _post_work_items_to_server(self, queue_name, high_priority_work_items, work_items):
-        update_work_items_url = '{}/update-work-items'.format(self.url)
-        self._browser.open(update_work_items_url)
-        self._browser.select_form(name="update_work_items")
-        self._browser["queue_name"] = queue_name
-        work_items = map(unicode, work_items)  # .join expects strings
-        self._browser["work_items"] = " ".join(work_items)
-        high_priority_work_items = map(unicode, high_priority_work_items)
-        self._browser["high_priority_work_items"] = " ".join(high_priority_work_items)
-        return self._browser.submit().read()
-
-    def _post_work_item_to_ews(self, attachment_id):
-        submit_to_ews_url = '{}/submit-to-ews'.format(self.url)
-        self._browser.open(submit_to_ews_url)
-        self._browser.select_form(name="submit_to_ews")
-        self._browser["attachment_id"] = unicode(attachment_id)
-        self._browser.submit()
+        return None
 
     def submit_to_ews(self, attachment_id):
-        _log.info("Submitting attachment %s to old EWS queues" % attachment_id)
-        return NetworkTransaction().run(lambda: self._post_work_item_to_ews(attachment_id))
+        return None
 
     def next_work_item(self, queue_name):
-        _log.info("Fetching next work item for %s" % queue_name)
-        next_patch_url = '{}/next-patch/{}'.format(self.url, queue_name)
-        return self._fetch_url(next_patch_url)
-
-    def _post_release_work_item(self, queue_name, patch):
-        release_patch_url = '{}/release-patch'.format(self.url)
-        self._browser.open(release_patch_url)
-        self._browser.select_form(name="release_patch")
-        self._browser["queue_name"] = queue_name
-        self._browser["attachment_id"] = unicode(patch.id())
-        self._browser.submit()
+        return None
 
     def release_work_item(self, queue_name, patch):
-        _log.info("Releasing work item %s from %s" % (patch.id(), queue_name))
-        return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_work_item(queue_name, patch))
-
-    def _post_release_lock(self, queue_name, patch):
-        release_lock_url = '{}/release-lock'.format(self.url)
-        self._browser.open(release_lock_url)
-        self._browser.select_form(name="release_lock")
-        self._browser["queue_name"] = queue_name
-        self._browser["attachment_id"] = unicode(patch.id())
-        self._browser.submit()
+        return None
 
     def release_lock(self, queue_name, patch):
-        _log.info("Releasing lock for work item %s from %s" % (patch.id(), queue_name))
-        return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_lock(queue_name, patch))
+        return None
 
     def update_work_items(self, queue_name, high_priority_work_items, work_items):
-        _log.info("Recording work items: %s for %s" % (high_priority_work_items + work_items, queue_name))
-        return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, high_priority_work_items, work_items))
+        return None
 
     def update_status(self, queue_name, status, patch=None, results_file=None):
-        _log.info(status)
-        return NetworkTransaction().run(lambda: self._post_status_to_server(queue_name, status, patch, results_file))
+        return None
 
     def update_svn_revision(self, svn_revision_number, broken_bot):
-        _log.info("SVN revision: %s broke %s" % (svn_revision_number, broken_bot))
-        return NetworkTransaction().run(lambda: self._post_svn_revision_to_server(svn_revision_number, broken_bot))
-
-    def _fetch_url(self, url):
-        # FIXME: This should use NetworkTransaction's 404 handling instead.
-        try:
-            return urlopen(url, timeout=300).read()
-        except HTTPError as e:
-            if e.code == 404:
-                return None
-            raise e
+        return None
 
     def patch_status(self, queue_name, patch_id):
-        patch_status_url = '{}/patch-status/{}/{}'.format(self.url, queue_name, patch_id)
-        return self._fetch_url(patch_status_url)
+        return None
 
     def svn_revision(self, svn_revision_number):
-        svn_revision_url = '{}/svn-revision/{}'.format(self.url, svn_revision_number)
-        return self._fetch_url(svn_revision_url)
+        return None

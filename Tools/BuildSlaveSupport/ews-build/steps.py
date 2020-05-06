@@ -295,7 +295,6 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
     webkitpy_paths = [
         'Tools/Scripts/webkitpy/',
-        'Tools/QueueStatusServer/',
     ]
 
     group_to_paths_mapping = {

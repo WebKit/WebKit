@@ -1,6 +1,6 @@
 # Copyright (C) 2012 Google, Inc.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,20 +70,6 @@ def main():
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.common.config', 'webkitpy.tool'), 'fail horribly on win32', 54526)
-
-    # This only needs to run on Unix, so don't worry about win32 for now.
-    appengine_sdk_path = '/usr/local/google_appengine'
-    if os.path.exists(appengine_sdk_path):
-        if not appengine_sdk_path in sys.path:
-            sys.path.append(appengine_sdk_path)
-        import dev_appserver
-        from google.appengine.dist import use_library
-        use_library('django', '1.2')
-        dev_appserver.fix_sys_path()
-        tester.add_tree(os.path.join(_webkit_root, 'Tools', 'QueueStatusServer'))
-    else:
-        _log.info('Skipping QueueStatusServer tests; the Google AppEngine Python SDK is not installed.')
-
     return not tester.run()
 
 
