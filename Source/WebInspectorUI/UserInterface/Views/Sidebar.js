@@ -148,11 +148,12 @@ WI.Sidebar = class Sidebar extends WI.View
 
     get minimumWidth()
     {
+        let minimumWidth = WI.Sidebar.AbsoluteMinimumWidth;
         if (this._navigationBar)
-            return Math.max(WI.Sidebar.AbsoluteMinimumWidth, this._navigationBar.minimumWidth);
+            minimumWidth = Math.max(minimumWidth, this._navigationBar.minimumWidth);
         if (this._selectedSidebarPanel)
-            return Math.max(WI.Sidebar.AbsoluteMinimumWidth, this._selectedSidebarPanel.minimumWidth);
-        return WI.Sidebar.AbsoluteMinimumWidth;
+            minimumWidth = Math.max(minimumWidth, this._selectedSidebarPanel.minimumWidth);
+        return minimumWidth;
     }
 
     get maximumWidth()

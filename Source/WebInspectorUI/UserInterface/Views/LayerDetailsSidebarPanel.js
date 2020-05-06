@@ -40,11 +40,24 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         this._dataGridNodesByLayerId = new Map;
 
         this._bottomBar = null;
+        this._bottomBarWidth = NaN;
         this._layersCountLabel = null;
         this._layersMemoryLabel = null;
     }
 
     // Public
+
+    get minimumWidth()
+    {
+        let minimumWidth = super.minimumWidth;
+
+        if (isNaN(this._bottomBarWidth) && this._layersCountLabel && this._layersMemoryLabel)
+            this._bottomBarWidth = this._layersCountLabel.realOffsetWidth + this._layersMemoryLabel.realOffsetWidth;
+        if (!isNaN(this._bottomBarWidth))
+            minimumWidth = Math.max(minimumWidth, this._bottomBarWidth);
+
+        return minimumWidth;
+    }
 
     inspect(objects)
     {
@@ -126,6 +139,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
         this._layersMemoryLabel = this._bottomBar.appendChild(document.createElement("div"));
         this._layersMemoryLabel.className = "layers-memory-label";
+
+        this._bottomBarWidth = NaN;
     }
 
     _sortDataGrid()
@@ -232,6 +247,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
         let totalMemory = newLayers.reduce((total, layer) => total + (layer.memory || 0), 0);
         this._layersMemoryLabel.textContent = WI.UIString("Memory: %s").format(Number.bytesToString(totalMemory));
+
+        this._bottomBarWidth = NaN;
     }
 };
 

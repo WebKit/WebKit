@@ -1,3 +1,36 @@
+2020-05-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Layers: the text at the bottom of the details sidebar can get squished
+        https://bugs.webkit.org/show_bug.cgi?id=211486
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.get minimumWidth):
+        Ask both the `this._navigationBar` and `this._selectedSidebarPanel` instead of just one.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.get minimumWidth): Added.
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.get minimumWidth): Addede.
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow):
+        (WI.BoxModelDetailsSectionRow.prototype.get minimumWidth): Added.
+        (WI.BoxModelDetailsSectionRow.prototype._updateMetrics):
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (.details-section .row.box-model):
+        Keep track of the outermost box and provide a way to report its width.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel):
+        (WI.LayerDetailsSidebarPanel.prototype.get minimumWidth): Added.
+        (WI.LayerDetailsSidebarPanel.prototype._buildBottomBar):
+        (WI.LayerDetailsSidebarPanel.prototype._updateBottomBar):
+        * UserInterface/Views/LayerDetailsSidebarPanel.css:
+        (.panel.details.layer .bottom-bar):
+        (.panel.details.layer .bottom-bar > div):
+        Cache the width of the items in the bottom bar and use it in `get minimumWidth`.
+
 2020-05-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r239175): Source Maps: original source not shown when in nested folder

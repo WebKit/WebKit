@@ -24,7 +24,7 @@
  */
 
 .details-section .row.box-model {
-    padding: 6px;
+    padding-bottom: 6px;
     text-align: center;
     white-space: nowrap;
 }
@@ -32,7 +32,7 @@
 .details-section .row.box-model .box {
     display: inline-block;
     position: relative;
-    margin: 3px;
+    margin: 3px; /* Keep this in sync with `WI.BoxModelDetailsSectionRow.prototype.get minimumWidth`. */
     padding: 3px;
     text-align: center;
     vertical-align: middle;

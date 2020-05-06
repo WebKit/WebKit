@@ -43,6 +43,11 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     get panel() { return this._panel; }
 
+    get minimumWidth()
+    {
+        return Math.max(super.minimumWidth, this._panel.minimumWidth || 0);
+    }
+
     supportsDOMNode(nodeToInspect)
     {
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;

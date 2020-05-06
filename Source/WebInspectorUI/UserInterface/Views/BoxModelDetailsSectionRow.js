@@ -32,6 +32,9 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
         this.element.classList.add("box-model");
 
         this._nodeStyles = null;
+
+        this._outermostBox = null;
+        this._outermostBoxWidth = NaN;
     }
 
     // Public
@@ -51,6 +54,15 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             this._nodeStyles.computedStyle.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
 
         this._refresh();
+    }
+
+    get minimumWidth()
+    {
+        if (isNaN(this._outermostBoxWidth) && this._outermostBox) {
+            const margin = 6; // Keep this in sync with `.details-section .row.box-model .box`.
+            this._outermostBoxWidth = this._outermostBox.realOffsetWidth + margin;
+        }
+        return this._outermostBoxWidth || 0;
     }
 
     // Private
@@ -235,7 +247,9 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             return;
         }
 
-        var previousBox = null;
+        this._outermostBox = null;
+        this._outermostBoxWidth = NaN;
+
         for (let name of ["content", "padding", "border", "margin", "position"]) {
 
             if (name === "margin" && noMarginDisplayType[displayProperty.value])
@@ -303,8 +317,8 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
                 boxElement.appendChild(document.createElement("br"));
                 boxElement.appendChild(leftElement);
 
-                if (previousBox)
-                    boxElement.appendChild(previousBox);
+                if (this._outermostBox)
+                    boxElement.appendChild(this._outermostBox);
 
                 boxElement.appendChild(rightElement);
                 boxElement.appendChild(document.createElement("br"));
@@ -318,10 +332,10 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
                     boxElement.appendChild(borderBottomRightRadiusElement);
             }
 
-            previousBox = boxElement;
+            this._outermostBox = boxElement;
         }
 
-        metricsElement.appendChild(previousBox);
+        metricsElement.appendChild(this._outermostBox);
         metricsElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, false, ""), false);
 
         this.hideEmptyMessage();

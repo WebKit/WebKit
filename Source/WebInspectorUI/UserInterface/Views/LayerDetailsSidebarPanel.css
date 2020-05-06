@@ -55,6 +55,7 @@
 .panel.details.layer .bottom-bar {
     position: absolute;
     display: flex;
+    justify-content: space-between;
     bottom: 0;
     height: var(--console-prompt-min-height);
     width: 100%;
@@ -63,7 +64,6 @@
 
 .panel.details.layer .bottom-bar > div {
     display: flex;
-    flex: 1;
     padding: 4px 6px;
     line-height: 20px;
     white-space: nowrap;

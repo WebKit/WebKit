@@ -37,6 +37,11 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     // Public
 
+    get minimumWidth()
+    {
+        return this._boxModelDiagramRow.minimumWidth;
+    }
+
     refresh(significantChange)
     {
         // We only need to do a rebuild on significant changes. Other changes are handled
