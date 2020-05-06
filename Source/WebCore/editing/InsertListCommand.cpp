@@ -140,12 +140,12 @@ void InsertListCommand::doApply()
             VisiblePosition endOfSelection = selection.visibleEnd();
             VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
 
-            if (startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
+            if (startOfLastParagraph.isNotNull() && startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
                 bool forceCreateList = !selectionHasListOfType(selection, listTag);
 
                 auto currentSelection = createLiveRange(endingSelection().firstRange());
                 VisiblePosition startOfCurrentParagraph = startOfSelection;
-                while (!startOfCurrentParagraph.isNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
+                while (startOfCurrentParagraph.isNotNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
                     // doApply() may operate on and remove the last paragraph of the selection from the document
                     // if it's in the same list item as startOfCurrentParagraph. Return early to avoid an
                     // infinite loop and because there is no more work to be done.
