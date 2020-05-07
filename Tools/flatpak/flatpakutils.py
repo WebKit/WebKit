@@ -700,6 +700,10 @@ class WebkitFlatpak:
                 else:
                     _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
 
+            coredumps_dir = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
+            if coredumps_dir and os.path.isdir(coredumps_dir):
+                flatpak_command.append("--bind-mount={coredumps_dir}={coredumps_dir}".format(coredumps_dir))
+
             sandbox_environment.update({
                 "TZ": "PST8PDT",
                 "LANG": "en_US.UTF-8",

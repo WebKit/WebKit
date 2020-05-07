@@ -1,3 +1,15 @@
+2020-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Doesn't generate crash logs on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=211568
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Bind-mount the
+        WEBKIT_CORE_DUMPS_DIRECTORY so that the crash-log generator is
+        able to write crash log reports there.
+
 2020-05-07  Truitt Savell  <tsavell@apple.com>
 
         Unskip the test since it should now be passing
