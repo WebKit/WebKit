@@ -1,3 +1,49 @@
+2020-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Sending WebRTC network packets should not go through the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=211291
+
+        Reviewed by Eric Carlson.
+
+        Following on receiving RTC packets from a background thread, we also send RTC packets from a background thread.
+        Creation of the sockets also happens in a background thread.
+        LibWebRTCNetwork is getting the connection whenever a new connection to network process is created.
+        It will then hop to the RTC network thread to set the IPC connection to the libwebrtc socket factory.
+
+        At creation of the socket, we get the IPC connection to the network process and keep a ref in the RTC socket.
+        In case network process crashed and the IPC connection of the RTC network is null, we hop to the main thread to create a new IPC connection.
+        This will fail the creation of the socket (as well as new ones as well) as long as the IPC connection to network process is not valid again.
+
+        Covered by existing tests.
+
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.cpp:
+        (WebKit::LibWebRTCNetwork::setAsActive):
+        (WebKit::LibWebRTCNetwork::setConnection):
+        (WebKit::LibWebRTCNetwork::dispatchToThread):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        (WebKit::LibWebRTCNetwork::connection):
+        (WebKit::LibWebRTCNetwork::isActive const):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::startedNetworkThread):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::SendTo):
+        (WebKit::LibWebRTCSocket::Close):
+        (WebKit::LibWebRTCSocket::SetOption):
+        (WebKit::LibWebRTCSocket::suspend):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::setConnection):
+        (WebKit::LibWebRTCSocketFactory::connection):
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        (WebKit::LibWebRTCSocketFactory::addSocket):
+        (WebKit::LibWebRTCSocketFactory::removeSocket):
+        (WebKit::LibWebRTCSocketFactory::forSocketInGroup):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2020-05-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK4] Stop using the GtkWidget.destroy vfunc

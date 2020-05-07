@@ -57,6 +57,7 @@ private:
     void unregisterMDNSNames(WebCore::DocumentIdentifier) final;
     void registerMDNSName(WebCore::DocumentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
     void disableNonLocalhostConnections() final;
+    void startedNetworkThread() final;
 
 #if PLATFORM(COCOA)
     std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;

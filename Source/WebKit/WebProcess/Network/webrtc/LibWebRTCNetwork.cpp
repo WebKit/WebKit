@@ -39,6 +39,19 @@ LibWebRTCNetwork::~LibWebRTCNetwork()
     setConnection(nullptr);
 }
 
+void LibWebRTCNetwork::setAsActive()
+{
+    ASSERT(!m_isActive);
+    m_isActive = true;
+#if USE(LIBWEBRTC)
+    if (m_connection) {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection = m_connection]() mutable {
+            m_socketFactory.setConnection(WTFMove(connection));
+        });
+    }
+#endif
+}
+
 void LibWebRTCNetwork::networkProcessCrashed()
 {
     setConnection(nullptr);
@@ -53,6 +66,11 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
 #if USE(LIBWEBRTC)
     if (m_connection)
         m_connection->removeThreadMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName());
+    if (m_isActive) {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection]() mutable {
+            m_socketFactory.setConnection(WTFMove(connection));
+        });
+    }
 #endif
     m_connection = WTFMove(connection);
 #if USE(LIBWEBRTC)
@@ -61,18 +79,9 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
 #endif
 }
 
-bool LibWebRTCNetwork::isActive() const
-{
-#if USE(LIBWEBRTC)
-    return WebCore::LibWebRTCProvider::hasWebRTCThreads();
-#else
-    return false;
-#endif
-}
-
 void LibWebRTCNetwork::dispatchToThread(Function<void()>&& callback)
 {
-    if (!isActive()) {
+    if (!m_isActive) {
         RELEASE_LOG_ERROR(WebRTC, "Received WebRTCSocket message while libWebRTCNetwork is not active");
         return;
     }

@@ -439,23 +439,32 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
 
     StringBuilder filteredSDP;
     sdp.split('\n', [this, &filteredSDP](StringView line) {
-        if (line.startsWith("c=IN IP4"))
-            filteredSDP.append("c=IN IP4 0.0.0.0\r");
-        else if (line.startsWith("c=IN IP6"))
-            filteredSDP.append("c=IN IP6 ::\r");
-        else if (!line.startsWith("a=candidate"))
-            filteredSDP.append(line);
-        else if (line.find(" host ", 11) == notFound)
-            filteredSDP.append(filterICECandidate(line.toString()));
-        else {
-            auto ipAddress = extractIPAddress(line);
-            auto mdnsName = m_ipAddressToMDNSNameMap.get(ipAddress);
-            if (!mdnsName.isEmpty()) {
-                auto sdp = line.toString();
-                sdp.replace(ipAddress, mdnsName);
-                filteredSDP.append(sdp);
-            }
+        if (line.startsWith("c=IN IP4")) {
+            filteredSDP.append("c=IN IP4 0.0.0.0\r\n");
+            return;
         }
+        if (line.startsWith("c=IN IP6")) {
+            filteredSDP.append("c=IN IP6 ::\r\n");
+            return;
+        }
+        if (!line.startsWith("a=candidate")) {
+            filteredSDP.append(line);
+            filteredSDP.append('\n');
+            return;
+        }
+        if (line.find(" host ", 11) == notFound) {
+            filteredSDP.append(filterICECandidate(line.toString()));
+            filteredSDP.append('\n');
+            return;
+        }
+
+        auto ipAddress = extractIPAddress(line);
+        auto mdnsName = m_ipAddressToMDNSNameMap.get(ipAddress);
+        if (mdnsName.isEmpty())
+            return;
+        auto sdp = line.toString();
+        sdp.replace(ipAddress, mdnsName);
+        filteredSDP.append(sdp);
         filteredSDP.append('\n');
     });
     return filteredSDP.toString();

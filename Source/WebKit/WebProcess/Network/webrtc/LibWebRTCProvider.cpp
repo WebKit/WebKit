@@ -131,6 +131,11 @@ void RTCSocketFactory::resume()
     });
 }
 
+void LibWebRTCProvider::startedNetworkThread()
+{
+    WebProcess::singleton().libWebRTCNetwork().setAsActive();
+}
+
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent)
 {
     return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
