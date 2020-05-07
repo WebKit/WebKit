@@ -103,6 +103,7 @@ private:
     void progressEventTimerFired();
     static const Vector<WTF::AtomString>& observedEventNames();
     const WTF::AtomString& eventNameAll();
+    bool isStalled() const;
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };

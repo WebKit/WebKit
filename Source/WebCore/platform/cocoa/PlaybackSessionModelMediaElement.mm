@@ -140,8 +140,10 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
     if (all
         || eventName == eventNames().pauseEvent
         || eventName == eventNames().playEvent
-        || eventName == eventNames().ratechangeEvent) {
-        bool isPlaying = this->isPlaying();
+        || eventName == eventNames().ratechangeEvent
+        || eventName == eventNames().waitingEvent
+        || eventName == eventNames().canplayEvent) {
+        bool isPlaying = this->isPlaying() && !isStalled();
         float playbackRate = this->playbackRate();
         for (auto client : m_clients)
             client->rateChanged(isPlaying, playbackRate);
@@ -427,6 +429,11 @@ double PlaybackSessionModelMediaElement::bufferedTime() const
 bool PlaybackSessionModelMediaElement::isPlaying() const
 {
     return m_mediaElement ? !m_mediaElement->paused() : false;
+}
+
+bool PlaybackSessionModelMediaElement::isStalled() const
+{
+    return m_mediaElement && m_mediaElement->readyState() <= HTMLMediaElement::HAVE_CURRENT_DATA;
 }
 
 float PlaybackSessionModelMediaElement::playbackRate() const
