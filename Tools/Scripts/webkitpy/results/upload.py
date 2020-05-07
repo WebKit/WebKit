@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import webkitpy.thirdparty.autoinstalled.requests
+from webkitpy.port.config import apple_additions
 
 import math
 import os
@@ -176,6 +177,14 @@ class Upload(object):
         result.update({key: value for key, value in optional_data.items() if value is not None})
         return result
 
+    @staticmethod
+    def certificate_chain():
+        if apple_additions() and getattr(apple_additions(), 'certificate_chain', False):
+            return apple_additions().certificate_chain()
+
+        import certifi
+        return certifi.where()
+
     def upload(self, hostname, log_line_func=lambda val: sys.stdout.write(val + '\n')):
         try:
             data = Upload.Encoder().default(self)
@@ -185,6 +194,7 @@ class Upload(object):
                 '{}{}'.format(hostname, self.UPLOAD_ENDPOINT),
                 headers={'Content-type': 'application/json'},
                 data=json.dumps(data),
+                verify=Upload.certificate_chain(),
             )
         except requests.exceptions.ConnectionError:
             log_line_func(' ' * 4 + 'Failed to upload to {}, results server not online'.format(hostname))
@@ -222,6 +232,7 @@ class Upload(object):
                 '{}{}'.format(hostname, self.ARCHIVE_UPLOAD_ENDPOINT),
                 data=meta_data,
                 files=dict(file=archive),
+                verify=Upload.certificate_chain(),
             )
 
         except requests.exceptions.ConnectionError:
