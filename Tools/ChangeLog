@@ -1,3 +1,11 @@
+2020-05-07  Truitt Savell  <tsavell@apple.com>
+
+        Unskip the test since it should now be passing
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+
 2020-05-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Test failures after Flatpak upgrade

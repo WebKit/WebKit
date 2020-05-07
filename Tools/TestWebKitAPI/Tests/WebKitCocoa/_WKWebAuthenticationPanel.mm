@@ -1331,9 +1331,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeCreate);
 }
 
-// Skip the test because of <rdar://problem/59635486>.
-#if PLATFORM(MAC)
-
 TEST(WebAuthenticationPanel, LAGetAssertion)
 {
     reset();
@@ -1397,8 +1394,6 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 
     cleanUpKeychain("");
 }
-
-#endif // PLATFORM(MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
