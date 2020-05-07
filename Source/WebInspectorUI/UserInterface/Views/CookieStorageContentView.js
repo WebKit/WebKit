@@ -35,6 +35,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._filteredCookies = [];
         this._sortComparator = null;
         this._table = null;
+        this._knownCells = new WeakSet;
 
         this._emptyFilterResultsMessageElement = null;
 
@@ -146,13 +147,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
         contextMenu.appendSeparator();
 
-        if (InspectorBackend.hasCommand("Page.setCookie")) {
-            contextMenu.appendItem(WI.UIString("Edit"), () => {
-                console.assert(!this._editingCookie);
-                this._editingCookie = this._filteredCookies[rowIndex];
-
-                let popover = new WI.CookiePopover(this);
-                popover.show(this._editingCookie, this._table.cellForRowAndColumn(rowIndex, this._table.columns[0]), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X]);
+        if (InspectorBackend.hasCommand("Page.setCookie") && column.identifier !== "size") {
+            contextMenu.appendItem(WI.UIString("Edit %s").format(column.name), () => {
+                this._showCookiePopover(cell, this._filteredCookies[rowIndex], column.identifier);
             });
         }
 
@@ -200,7 +197,22 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     tablePopulateCell(table, cell, column, rowIndex)
     {
         let cookie = this._filteredCookies[rowIndex];
+
         cell.textContent = this._formatCookiePropertyForColumn(cookie, column);
+
+        if (!this._knownCells.has(cell)) {
+            this._knownCells.add(cell);
+
+            cell.addEventListener("dblclick", (event) => {
+                if (column.identifier === "size") {
+                    InspectorFrontendHost.beep();
+                    return;
+                }
+
+                this._showCookiePopover(cell, cookie, column.identifier);
+            });
+        }
+
         return cell;
     }
 
@@ -374,6 +386,43 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._sortComparator = (a, b) => reverseFactor * comparator(a, b);
     }
 
+    _showCookiePopover(targetElement, cookie, columnIdentifier) {
+        console.assert(!this._editingCookie);
+        this._editingCookie = cookie;
+
+        let options = {};
+        if (columnIdentifier) {
+            switch (columnIdentifier) {
+            case "name":
+            case "value":
+            case "domain":
+            case "path":
+            case "secure":
+                options.focusField = columnIdentifier;
+                break;
+
+            case "expires":
+                options.focusField = this._editingCookie.session ? "session" : "expires";
+                break;
+
+            case "httpOnly":
+                options.focusField = "http-only";
+                break;
+
+            case "sameSite":
+                options.focusField = "same-site";
+                break;
+
+            default:
+                console.assert();
+                break;
+            }
+        }
+
+        let popover = new WI.CookiePopover(this);
+        popover.show(this._editingCookie, targetElement, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MIN_X, WI.RectEdge.MAX_X], options);
+    }
+
     async _willDismissCookiePopover(popover)
     {
         let editingCookie = this._editingCookie;
@@ -416,8 +465,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _handleSetCookieButtonClick(event)
     {
-        let popover = new WI.CookiePopover(this);
-        popover.show(null, this._setCookieButtonNavigationItem.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X]);
+        this._showCookiePopover(this._setCookieButtonNavigationItem.element, null, "name");
     }
 
     _refreshButtonClicked(event)

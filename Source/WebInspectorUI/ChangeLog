@@ -1,3 +1,26 @@
+2020-05-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: double clicking on a cookie field doesn't start editing it
+        https://bugs.webkit.org/show_bug.cgi?id=211598
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        (WI.CookieStorageContentView.prototype.tablePopulateCell):
+        (WI.CookieStorageContentView.prototype._showCookiePopover):
+        (WI.CookieStorageContentView.prototype._handleSetCookieButtonClick):
+        Add a `"dblclick"` event listener to each cell that shows a `WI.CookiePopover` for that cell
+        and automatically select the current value of that field in the `WI.Cookie`. Unify the few
+        different ways to show a `WI.CookiePopover`.
+
+        * UserInterface/Views/CookiePopover.js:
+        (WI.CookiePopover.prototype.show.createRow):
+        Provide a way to programmatically trigger the focusing of an editor once shown.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-05-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Layers: the text at the bottom of the details sidebar can get squished

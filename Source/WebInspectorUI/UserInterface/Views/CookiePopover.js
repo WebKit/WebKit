@@ -98,7 +98,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         return data;
     }
 
-    show(cookie, targetElement, preferredEdges)
+    show(cookie, targetElement, preferredEdges, options = {})
     {
         console.assert(!cookie || cookie instanceof WI.Cookie, cookie);
         console.assert(targetElement instanceof Element, targetElement);
@@ -137,20 +137,27 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         let tableElement = popoverContentElement.appendChild(document.createElement("table"));
 
         function createRow(id, label, editorElement) {
-            id = `cookie-popover-${id}-editor`;
+            let domId = `cookie-popover-${id}-editor`;
 
             let rowElement = tableElement.appendChild(document.createElement("tr"));
 
             let headerElement = rowElement.appendChild(document.createElement("th"));
 
             let labelElement = headerElement.appendChild(document.createElement("label"));
-            labelElement.setAttribute("for", id);
+            labelElement.setAttribute("for", domId);
             labelElement.textContent = label;
 
             let dataElement = rowElement.appendChild(document.createElement("td"));
 
-            editorElement.id = id;
+            editorElement.id = domId;
             dataElement.appendChild(editorElement);
+
+            if (id === options.focusField) {
+                setTimeout(() => {
+                    editorElement.focus();
+                    editorElement.select?.();
+                });
+            }
 
             return {rowElement};
         }

@@ -230,7 +230,6 @@ localizedStrings["Call Frames Truncated"] = "Call Frames Truncated";
 localizedStrings["Call Stack"] = "Call Stack";
 localizedStrings["Call Stack Unavailable"] = "Call Stack Unavailable";
 localizedStrings["Call Trees"] = "Call Trees";
-localizedStrings["Calls"] = "Calls";
 localizedStrings["Cancel Automatic Continue"] = "Cancel Automatic Continue";
 localizedStrings["Cancel comparison"] = "Cancel comparison";
 /* Tooltip for a timestamp marker that represents when a CSS animation/transition is canceled */
