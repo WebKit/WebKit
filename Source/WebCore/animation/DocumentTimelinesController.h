@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "GenericTaskQueue.h"
 #include "ReducedResolutionSeconds.h"
+#include "Timer.h"
+#include <wtf/Markable.h>
+#include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -46,14 +50,28 @@ public:
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
+    Optional<Seconds> currentTime();
+
+    WEBCORE_EXPORT void suspendAnimations();
+    WEBCORE_EXPORT void resumeAnimations();
+    WEBCORE_EXPORT bool animationsAreSuspended() const;
+
 private:
     struct AnimationsToProcess {
         Vector<RefPtr<WebAnimation>> animationsToRemove;
         Vector<RefPtr<CSSTransition>> completedTransitions;
     };
 
+    ReducedResolutionSeconds liveCurrentTime() const;
+    void cacheCurrentTime(ReducedResolutionSeconds);
+    void maybeClearCachedCurrentTime();
+
     WeakHashSet<DocumentTimeline> m_timelines;
+    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     Document& m_document;
+    Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
+    bool m_isSuspended { false };
+    bool m_waitingOnVMIdle { false };
 };
 
 } // namespace WebCore

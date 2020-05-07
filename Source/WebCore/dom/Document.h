@@ -1496,7 +1496,7 @@ public:
     Vector<RefPtr<WebAnimation>> getAnimations();
     Vector<RefPtr<WebAnimation>> matchingAnimations(const WTF::Function<bool(Element&)>&);
     DocumentTimelinesController* timelinesController() const { return m_timelinesController.get(); }
-    DocumentTimelinesController& ensureTimelinesController();
+    WEBCORE_EXPORT DocumentTimelinesController& ensureTimelinesController();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&);

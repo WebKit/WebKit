@@ -2052,8 +2052,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
             if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
                 forEachDocument([] (Document& document) {
-                    if (auto* timeline = document.existingTimeline())
-                        timeline->resumeAnimations();
+                    if (auto* timelines = document.timelinesController())
+                        timelines->resumeAnimations();
                 });
             } else
                 mainFrame().legacyAnimation().resumeAnimations();
@@ -2076,8 +2076,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
             if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
                 forEachDocument([] (Document& document) {
-                    if (auto* timeline = document.existingTimeline())
-                        timeline->suspendAnimations();
+                    if (auto* timelines = document.timelinesController())
+                        timelines->suspendAnimations();
                 });
             } else
                 mainFrame().legacyAnimation().suspendAnimations();
@@ -2427,11 +2427,11 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
     if (!isVisible()) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
             forEachDocument([&] (Document& document) {
-                if (auto* timeline = document.existingTimeline()) {
+                if (auto* timelines = document.timelinesController()) {
                     if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-                        timeline->suspendAnimations();
+                        timelines->suspendAnimations();
                     else
-                        timeline->resumeAnimations();
+                        timelines->resumeAnimations();
                 }
             });
         } else {

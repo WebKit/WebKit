@@ -1,3 +1,72 @@
+2020-05-07  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211232
+        <rdar://problem/62650227>
+
+        Reviewed by Dean Jackson.
+
+        The flakiness came from this porting of the test:
+        
+            animA.finished.then(() => { animB.cancel() });
+            animB.finished.then(() => { animA.cancel() });
+
+        Sometimes, animA and animB would finish in different frames even though they were designed to finish at the
+        same time. If this happened, animA.finished would resolve and trigger animB.cancel, which then rejected
+        animB.finished. This happened because animB was attached to a DocumentTimeline created by script which isn't
+        the main DocumenTimeline accessed via document.timeline. Some curious code would handle syncing of the
+        various timelines such that they would use a shared timebase. This was in DocumentTimeline::currentTime():
+
+            auto& mainDocumentTimeline = m_document->timeline();
+            if (&mainDocumentTimeline != this) {
+                if (auto mainDocumentTimelineCurrentTime = mainDocumentTimeline.currentTime())
+                    return *mainDocumentTimelineCurrentTime - m_originTime;
+                return WTF::nullopt;
+            }
+
+        We now move the currentTime caching at the DocumentTimelinesController level which ensures all DocumentTimeline
+        objects attached to a given Document use the exact same currentTime(). This prompted some overdue refactoring
+        where also all the related animation suspension code is moved from DocumentTimeline up to DocumentTimelinesController.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::detachFromDocument):
+        (WebCore::DocumentTimeline::suspendAnimations):
+        (WebCore::DocumentTimeline::resumeAnimations):
+        (WebCore::DocumentTimeline::animationsAreSuspended const):
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        (WebCore::DocumentTimeline::documentWillUpdateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::animationsAreSuspended): Deleted.
+        (WebCore::DocumentTimeline::liveCurrentTime const): Deleted.
+        (WebCore::DocumentTimeline::cacheCurrentTime): Deleted.
+        (WebCore::DocumentTimeline::maybeClearCachedCurrentTime): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::detachFromDocument):
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        (WebCore::DocumentTimelinesController::suspendAnimations):
+        (WebCore::DocumentTimelinesController::resumeAnimations):
+        (WebCore::DocumentTimelinesController::animationsAreSuspended const):
+        (WebCore::DocumentTimelinesController::liveCurrentTime const):
+        (WebCore::DocumentTimelinesController::currentTime):
+        (WebCore::DocumentTimelinesController::cacheCurrentTime):
+        (WebCore::DocumentTimelinesController::maybeClearCachedCurrentTime):
+        * animation/DocumentTimelinesController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::resume):
+        * dom/Document.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations):
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * testing/Internals.cpp:
+        (WebCore::Internals::animationsAreSuspended const):
+        (WebCore::Internals::suspendAnimations const):
+        (WebCore::Internals::resumeAnimations const):
+
 2020-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r252161): Animation of box-shadow with border-radius set is flashy

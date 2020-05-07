@@ -718,8 +718,8 @@ void Frame::clearTimers(FrameView *view, Document *document)
     if (view) {
         view->layoutContext().unscheduleLayout();
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (auto* timeline = document->existingTimeline())
-                timeline->suspendAnimations();
+            if (auto* timelines = document->timelinesController())
+                timelines->suspendAnimations();
         } else
             view->frame().legacyAnimation().suspendAnimationsForDocument(document);
         view->frame().eventHandler().stopAutoscrollTimer();
@@ -1013,8 +1013,8 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
     // Frame::clearTimers() suspended animations and pending relayouts.
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = m_doc->existingTimeline())
-            timeline->resumeAnimations();
+        if (auto* timelines = m_doc->timelinesController())
+            timelines->resumeAnimations();
     } else
         legacyAnimation().resumeAnimationsForDocument(m_doc.get());
     if (m_view)

@@ -27,10 +27,7 @@
 
 #include "AnimationTimeline.h"
 #include "DocumentTimelineOptions.h"
-#include "GenericTaskQueue.h"
-#include "ReducedResolutionSeconds.h"
 #include "Timer.h"
-#include <wtf/Markable.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -75,15 +72,15 @@ public:
     void enqueueAnimationEvent(AnimationEventBase&);
     
     enum class ShouldUpdateAnimationsAndSendEvents : uint8_t { Yes, No };
-    ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents(ReducedResolutionSeconds);
+    ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents();
     void removeReplacedAnimations();
     AnimationEvents prepareForPendingAnimationEventsDispatch();
     void documentDidUpdateAnimationsAndSendEvents();
 
     WEBCORE_EXPORT Seconds animationInterval() const;
-    WEBCORE_EXPORT void suspendAnimations();
-    WEBCORE_EXPORT void resumeAnimations();
-    WEBCORE_EXPORT bool animationsAreSuspended();
+    void suspendAnimations();
+    void resumeAnimations();
+    bool animationsAreSuspended() const;
     WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForElement(Element&) const;    
     WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
@@ -92,10 +89,7 @@ private:
     DocumentTimeline(Document&, Seconds);
 
     DocumentTimelinesController* controller() const;
-    ReducedResolutionSeconds liveCurrentTime() const;
     void applyPendingAcceleratedAnimations();
-    void cacheCurrentTime(ReducedResolutionSeconds);
-    void maybeClearCachedCurrentTime();
     void scheduleInvalidationTaskIfNeeded();
     void scheduleAnimationResolution();
     void clearTickScheduleTimer();
@@ -106,16 +100,12 @@ private:
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
 
     Timer m_tickScheduleTimer;
-    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
     HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
     HashSet<Element*> m_elementsWithRunningAcceleratedAnimations;
     AnimationEvents m_pendingAnimationEvents;
     WeakPtr<Document> m_document;
-    Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     Seconds m_originTime;
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
-    bool m_isSuspended { false };
-    bool m_waitingOnVMIdle { false };
     bool m_animationResolutionScheduled { false };
     bool m_shouldScheduleAnimationResolutionForNewPendingEvents { true };
 };

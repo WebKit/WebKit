@@ -29,7 +29,6 @@
 #include "AnimationEventBase.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
-#include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimelinesController.h"
@@ -44,7 +43,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "Settings.h"
-#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 
@@ -92,7 +90,6 @@ void DocumentTimeline::detachFromDocument()
         controller->removeTimeline(*this);
 
     m_pendingAnimationEvents.clear();
-    m_currentTimeClearingTaskQueue.close();
     m_elementsWithRunningAcceleratedAnimations.clear();
 
     auto& animationsToRemove = m_animations;
@@ -220,16 +217,8 @@ Seconds DocumentTimeline::animationInterval() const
 
 void DocumentTimeline::suspendAnimations()
 {
-    if (animationsAreSuspended())
-        return;
-
-    if (!m_cachedCurrentTime)
-        m_cachedCurrentTime = liveCurrentTime();
-
     for (const auto& animation : m_animations)
         animation->setSuspended(true);
-
-    m_isSuspended = true;
 
     applyPendingAcceleratedAnimations();
 
@@ -238,22 +227,15 @@ void DocumentTimeline::suspendAnimations()
 
 void DocumentTimeline::resumeAnimations()
 {
-    if (!animationsAreSuspended())
-        return;
-
-    m_cachedCurrentTime = WTF::nullopt;
-
-    m_isSuspended = false;
-
     for (const auto& animation : m_animations)
         animation->setSuspended(false);
 
     scheduleAnimationResolution();
 }
 
-bool DocumentTimeline::animationsAreSuspended()
+bool DocumentTimeline::animationsAreSuspended() const
 {
-    return m_isSuspended;
+    return controller() && controller()->animationsAreSuspended();
 }
 
 unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
@@ -266,54 +248,14 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
-ReducedResolutionSeconds DocumentTimeline::liveCurrentTime() const
-{
-    return m_document->domWindow()->nowTimestamp();
-}
-
 Optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (!m_document || !m_document->domWindow())
-        return AnimationTimeline::currentTime();
-
-    auto& mainDocumentTimeline = m_document->timeline();
-    if (&mainDocumentTimeline != this) {
-        if (auto mainDocumentTimelineCurrentTime = mainDocumentTimeline.currentTime())
-            return *mainDocumentTimelineCurrentTime - m_originTime;
+    if (auto* controller = this->controller()) {
+        if (auto currentTime = controller->currentTime())
+            return *currentTime - m_originTime;
         return WTF::nullopt;
     }
-
-    if (!m_cachedCurrentTime)
-        cacheCurrentTime(liveCurrentTime());
-    
-    return m_cachedCurrentTime.value() - m_originTime;
-}
-
-void DocumentTimeline::cacheCurrentTime(ReducedResolutionSeconds newCurrentTime)
-{
-    ASSERT(m_document);
-
-    m_cachedCurrentTime = newCurrentTime;
-    // We want to be sure to keep this time cached until we've both finished running JS and finished updating
-    // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
-    // fire syncronously if no JS is running.
-    m_waitingOnVMIdle = true;
-    if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimeline::maybeClearCachedCurrentTime, this));
-    m_document->vm().whenIdle([this, protectedThis = makeRefPtr(this)]() {
-        m_waitingOnVMIdle = false;
-        maybeClearCachedCurrentTime();
-    });
-}
-
-void DocumentTimeline::maybeClearCachedCurrentTime()
-{
-    // We want to make sure we only clear the cached current time if we're not currently running
-    // JS or waiting on all current animation updating code to have completed. This is so that
-    // we're guaranteed to have a consistent current time reported for all work happening in a given
-    // JS frame or throughout updating animations in WebCore.
-    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_cachedCurrentTime = WTF::nullopt;
+    return AnimationTimeline::currentTime();
 }
 
 void DocumentTimeline::animationTimingDidChange(WebAnimation& animation)
@@ -332,7 +274,7 @@ void DocumentTimeline::removeAnimation(WebAnimation& animation)
 
 void DocumentTimeline::scheduleAnimationResolution()
 {
-    if (m_isSuspended || m_animationResolutionScheduled || !m_document || !m_document->page())
+    if (animationsAreSuspended() || m_animationResolutionScheduled || !m_document || !m_document->page())
         return;
 
     // We need some relevant animations or pending events to proceed.
@@ -353,19 +295,13 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
+DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
-    // We need to freeze the current time even if no animation is running.
-    // document.timeline.currentTime may be called from a rAF callback and
-    // it has to match the rAF timestamp.
-    if (!m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        cacheCurrentTime(timestamp);
-
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
     // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
     bool wasAnimationResolutionScheduled = std::exchange(m_animationResolutionScheduled, false);
 
-    if (!wasAnimationResolutionScheduled || m_isSuspended || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
+    if (!wasAnimationResolutionScheduled || animationsAreSuspended() || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
         return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 
     m_numberOfAnimationTimelineInvalidationsForTesting++;

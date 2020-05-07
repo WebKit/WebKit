@@ -28,11 +28,13 @@
 
 #include "AnimationEventBase.h"
 #include "CSSTransition.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventLoop.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 
@@ -57,6 +59,8 @@ void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
 
 void DocumentTimelinesController::detachFromDocument()
 {
+    m_currentTimeClearingTaskQueue.close();
+
     while (!m_timelines.computesEmpty())
         m_timelines.begin()->detachFromDocument();
 }
@@ -70,12 +74,18 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     for (auto& timeline : m_timelines)
         protectedTimelines.append(&timeline);
 
+    // We need to freeze the current time even if no animation is running.
+    // document.timeline.currentTime may be called from a rAF callback and
+    // it has to match the rAF timestamp.
+    if (!m_isSuspended)
+        cacheCurrentTime(timestamp);
+
     // 1. Update the current time of all timelines associated with doc passing now as the timestamp.
     Vector<DocumentTimeline*> timelinesToUpdate;
     Vector<RefPtr<WebAnimation>> animationsToRemove;
     Vector<RefPtr<CSSTransition>> completedTransitions;
     for (auto& timeline : protectedTimelines) {
-        auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents(timestamp);
+        auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents();
         if (shouldUpdateAnimationsAndSendEvents == DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No)
             continue;
 
@@ -154,6 +164,81 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
     for (auto& timeline : timelinesToUpdate)
         timeline->documentDidUpdateAnimationsAndSendEvents();
+}
+
+void DocumentTimelinesController::suspendAnimations()
+{
+    if (m_isSuspended)
+        return;
+
+    if (!m_cachedCurrentTime)
+        m_cachedCurrentTime = liveCurrentTime();
+
+    for (auto& timeline : m_timelines)
+        timeline.suspendAnimations();
+
+    m_isSuspended = true;
+}
+
+void DocumentTimelinesController::resumeAnimations()
+{
+    if (!m_isSuspended)
+        return;
+
+    m_cachedCurrentTime = WTF::nullopt;
+
+    m_isSuspended = false;
+
+    for (auto& timeline : m_timelines)
+        timeline.resumeAnimations();
+}
+
+bool DocumentTimelinesController::animationsAreSuspended() const
+{
+    return m_isSuspended;
+}
+
+ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
+{
+    return m_document.domWindow()->nowTimestamp();
+}
+
+Optional<Seconds> DocumentTimelinesController::currentTime()
+{
+    if (!m_document.domWindow())
+        return WTF::nullopt;
+
+    if (!m_cachedCurrentTime)
+        cacheCurrentTime(liveCurrentTime());
+
+    return *m_cachedCurrentTime;
+}
+
+void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newCurrentTime)
+{
+    m_cachedCurrentTime = newCurrentTime;
+    // We want to be sure to keep this time cached until we've both finished running JS and finished updating
+    // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
+    // fire syncronously if no JS is running.
+    m_waitingOnVMIdle = true;
+    if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
+        m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+    // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
+    // is owned by the Document.
+    m_document.vm().whenIdle([this, protectedDocument = makeRefPtr(m_document)]() {
+        m_waitingOnVMIdle = false;
+        maybeClearCachedCurrentTime();
+    });
+}
+
+void DocumentTimelinesController::maybeClearCachedCurrentTime()
+{
+    // We want to make sure we only clear the cached current time if we're not currently running
+    // JS or waiting on all current animation updating code to have completed. This is so that
+    // we're guaranteed to have a consistent current time reported for all work happening in a given
+    // JS frame or throughout updating animations in WebCore.
+    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
+        m_cachedCurrentTime = WTF::nullopt;
 }
 
 } // namespace WebCore

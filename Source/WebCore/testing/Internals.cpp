@@ -1071,7 +1071,7 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
         return Exception { InvalidAccessError };
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
-        return document->timeline().animationsAreSuspended();
+        return document->ensureTimelinesController().animationsAreSuspended();
     return document->frame()->legacyAnimation().animationsAreSuspendedForDocument(document);
 }
 
@@ -1099,10 +1099,10 @@ ExceptionOr<void> Internals::suspendAnimations() const
         return Exception { InvalidAccessError };
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        document->timeline().suspendAnimations();
+        document->ensureTimelinesController().suspendAnimations();
         for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
             if (Document* document = frame->document())
-                document->timeline().suspendAnimations();
+                document->ensureTimelinesController().suspendAnimations();
         }
     } else {
         document->frame()->legacyAnimation().suspendAnimationsForDocument(document);
@@ -1123,10 +1123,10 @@ ExceptionOr<void> Internals::resumeAnimations() const
         return Exception { InvalidAccessError };
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        document->timeline().resumeAnimations();
+        document->ensureTimelinesController().resumeAnimations();
         for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
             if (Document* document = frame->document())
-                document->timeline().resumeAnimations();
+                document->ensureTimelinesController().resumeAnimations();
         }
     } else {
         document->frame()->legacyAnimation().resumeAnimationsForDocument(document);

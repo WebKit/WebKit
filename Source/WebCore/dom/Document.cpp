@@ -2403,16 +2403,16 @@ void Document::didBecomeCurrentDocumentInFrame()
     // back/forward cache, or simply newly created).
     if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (auto* timeline = existingTimeline())
-                timeline->suspendAnimations();
+            if (m_timelinesController)
+                m_timelinesController->suspendAnimations();
         } else
             m_frame->legacyAnimation().suspendAnimationsForDocument(this);
         suspendScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
     } else {
         resumeScheduledTasks(ReasonForSuspension::PageWillBeSuspended);
         if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-            if (auto* timeline = existingTimeline())
-                timeline->resumeAnimations();
+            if (m_timelinesController)
+                m_timelinesController->resumeAnimations();
         } else
             m_frame->legacyAnimation().resumeAnimationsForDocument(this);
     }
@@ -5399,8 +5399,8 @@ void Document::resume(ReasonForSuspension reason)
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
-        if (auto* timeline = existingTimeline())
-            timeline->resumeAnimations();  
+        if (m_timelinesController)
+            m_timelinesController->resumeAnimations();  
     } else
         m_frame->legacyAnimation().resumeAnimationsForDocument(this);
 
