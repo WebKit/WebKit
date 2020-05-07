@@ -500,6 +500,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case ProxyObjectUse:
                 case DerivedArrayUse:
                 case NotCellUse:
+                case NotCellNorBigIntUse:
                 case OtherUse:
                 case KnownOtherUse:
                 case MiscUse:

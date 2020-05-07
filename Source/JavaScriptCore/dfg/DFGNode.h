@@ -2765,6 +2765,11 @@ public:
     {
         return isNotCellSpeculation(prediction());
     }
+
+    bool shouldSpeculateNotCellNorBigInt()
+    {
+        return isNotCellNorBigIntSpeculation(prediction());
+    }
     
     bool shouldSpeculateUntypedForArithmetic()
     {

@@ -429,7 +429,7 @@ private:
         }
 
         case ArithClz32: {
-            if (node->child1()->shouldSpeculateNotCell()) {
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
                 fixIntConvertingEdge(node->child1());
                 node->clearFlags(NodeMustGenerate);
             } else
@@ -476,7 +476,7 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
-            if (node->child1()->shouldSpeculateNotCell()) {
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
                 node->setOp(ArithNegate);
                 fixDoubleOrBooleanEdge(node->child1());
                 node->setResult(NodeResultDouble);
@@ -741,7 +741,7 @@ private:
                 break;
             }
 
-            if (node->child1()->shouldSpeculateNotCell()) {
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
                 fixDoubleOrBooleanEdge(node->child1());
                 node->clearFlags(NodeMustGenerate);
             } else
@@ -800,7 +800,7 @@ private:
                 node->convertToIdentity();
                 break;
             }
-            if (node->child1()->shouldSpeculateNotCell()) {
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
                 fixDoubleOrBooleanEdge(node->child1());
 
                 if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
@@ -823,7 +823,7 @@ private:
         case ArithSqrt:
         case ArithUnary: {
             Edge& child1 = node->child1();
-            if (child1->shouldSpeculateNotCell()) {
+            if (child1->shouldSpeculateNotCellNorBigInt()) {
                 fixDoubleOrBooleanEdge(child1);
                 node->clearFlags(NodeMustGenerate);
             } else
@@ -910,9 +910,12 @@ private:
                 fixDoubleOrBooleanEdge(node->child1());
                 fixDoubleOrBooleanEdge(node->child2());
             }
+
+            // FIXME: We can convert BigInt32 to Double in Compare nodes since they do not require ToNumber semantics.
+            // https://bugs.webkit.org/show_bug.cgi?id=211407
             if (node->op() != CompareEq
-                && node->child1()->shouldSpeculateNotCell()
-                && node->child2()->shouldSpeculateNotCell()) {
+                && node->child1()->shouldSpeculateNotCellNorBigInt()
+                && node->child2()->shouldSpeculateNotCellNorBigInt()) {
                 if (node->child1()->shouldSpeculateNumberOrBoolean())
                     fixDoubleOrBooleanEdge(node->child1());
                 else
@@ -3690,7 +3693,7 @@ private:
         else if (node->shouldSpeculateNumber())
             useKind = DoubleRepUse;
         else
-            useKind = NotCellUse;
+            useKind = NotCellNorBigIntUse;
         Node* newNode = m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32Only, ValueToInt32, m_currentNode->origin,
             Edge(node, useKind));
@@ -4341,7 +4344,7 @@ private:
                             else if (edge->shouldSpeculateNumber())
                                 useKind = NumberUse;
                             else
-                                useKind = NotCellUse;
+                                useKind = NotCellNorBigIntUse;
 
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecBytecodeDouble, DoubleRep, originForChecks,

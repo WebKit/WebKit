@@ -709,7 +709,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         SpeculatedType type = forNode(node->child1()).m_type;
         switch (node->child1().useKind()) {
-        case NotCellUse: {
+        case NotCellNorBigIntUse: {
             if (type & SpecOther) {
                 type &= ~SpecOther;
                 type |= SpecDoublePureNaN | SpecBoolInt32; // Null becomes zero, undefined becomes NaN.

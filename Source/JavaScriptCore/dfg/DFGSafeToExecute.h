@@ -87,6 +87,7 @@ public:
         case NotStringVarUse:
         case NotSymbolUse:
         case NotCellUse:
+        case NotCellNorBigIntUse:
         case OtherUse:
         case MiscUse:
         case AnyIntUse:

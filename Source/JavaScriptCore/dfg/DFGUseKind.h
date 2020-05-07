@@ -80,6 +80,7 @@ enum UseKind {
     NotStringVarUse,
     NotSymbolUse,
     NotCellUse,
+    NotCellNorBigIntUse,
     KnownOtherUse,
     OtherUse,
     MiscUse,
@@ -184,6 +185,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return ~SpecSymbol;
     case NotCellUse:
         return ~SpecCellCheck;
+    case NotCellNorBigIntUse:
+        return ~SpecCellCheck & ~SpecBigInt;
     case KnownOtherUse:
     case OtherUse:
         return SpecOther;
@@ -301,6 +304,7 @@ inline bool checkMayCrashIfInputIsEmpty(UseKind kind)
     case OtherUse:
     case MiscUse:
     case NotCellUse:
+    case NotCellNorBigIntUse:
         return false;
     default:
         return true;
