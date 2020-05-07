@@ -37,13 +37,11 @@ import traceback
 
 from optparse import make_option
 
-from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.unicode_compatibility import BytesIO
 from webkitpy.tool.bot.botinfo import BotInfo
-from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
@@ -288,123 +286,6 @@ class PatchProcessingQueue(AbstractPatchQueue):
         comment_text += BotInfo(self._tool, self._port.name()).summary_text()
         if self._can_access_bug(patch.bug_id()):
             self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
-
-
-class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
-    def __init__(self, commit_queue_task_class=CommitQueueTask):
-        self._commit_queue_task_class = commit_queue_task_class
-        PatchProcessingQueue.__init__(self)
-
-    name = "commit-queue"
-    port_name = "mac"
-
-    # AbstractPatchQueue methods
-
-    def begin_work_queue(self):
-        PatchProcessingQueue.begin_work_queue(self)
-        self.committer_validator = CommitterValidator(self._tool)
-        self._layout_test_results_reader = LayoutTestResultsReader(self._tool, self._port.results_directory(), self._log_directory())
-
-    def next_work_item(self):
-        return self._next_patch()
-
-    def process_work_item(self, patch):
-        self._cc_watchers(patch.bug_id())
-        task = self._commit_queue_task_class(self, patch)
-        try:
-            if task.run():
-                self._did_pass(patch)
-                return True
-            self._unlock_patch(patch)
-            return False
-        except PatchIsNotValid as error:
-            self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
-            return False
-        except ScriptError as e:
-            if self._can_access_bug(patch.bug_id()):
-                validator = CommitterValidator(self._tool)
-                validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
-            results_archive = task.results_archive_from_patch_test_run(patch)
-            if results_archive:
-                self._upload_results_archive_for_patch(patch, results_archive)
-            self._did_fail(patch)
-            return False
-
-    def _failing_tests_message(self, task, patch):
-        results = task.results_from_patch_test_run(patch)
-
-        if not results:
-            return None
-
-        if results.did_exceed_test_failure_limit():
-            return "Number of test failures exceeded the failure limit."
-        return "New failing tests:\n%s" % "\n".join(results.failing_tests())
-
-    def _error_message_for_bug(self, task, patch, script_error):
-        message = self._failing_tests_message(task, patch)
-        if not message:
-            message = script_error.message_with_output(output_limit=5000)
-        results_link = self._tool.status_server.results_url_for_status(task.failure_status_id)
-        return "%s\nFull output: %s" % (message, results_link)
-
-    def handle_unexpected_error(self, patch, message):
-        self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
-
-    # CommitQueueTaskDelegate methods
-
-    def run_command(self, command):
-        self.run_webkit_patch(command + [self._deprecated_port.flag()])
-
-    def command_passed(self, message, patch):
-        self._update_status(message, patch=patch)
-
-    def command_failed(self, message, script_error, patch):
-        failure_log = self._log_from_script_error_for_upload(script_error)
-        return self._update_status(message, patch=patch, results_file=failure_log)
-
-    def expected_failures(self):
-        return self._expected_failures
-
-    def test_results(self):
-        return self._layout_test_results_reader.results()
-
-    def archive_last_test_results(self, patch):
-        return self._layout_test_results_reader.archive(patch)
-
-    def refetch_patch(self, patch):
-        return self._tool.bugs.fetch_attachment(patch.id())
-
-    def report_flaky_tests(self, patch, flaky_test_results, results_archive=None):
-        reporter = FlakyTestReporter(self._tool, self.name)
-        reporter.report_flaky_tests(patch, flaky_test_results, results_archive)
-
-    def did_pass_testing_ews(self, patch):
-        # Only Mac and Mac WK2 run tests
-        # FIXME: We shouldn't have to hard-code it here.
-        patch_status = self._tool.status_server.patch_status
-        return patch_status("mac-ews", patch.id()) == self._pass_status or patch_status("mac-wk2-ews", patch.id()) == self._pass_status
-
-    # StepSequenceErrorHandler methods
-
-    @classmethod
-    def handle_script_error(cls, tool, state, script_error):
-        # Hitting this error handler should be pretty rare.  It does occur,
-        # however, when a patch no longer applies to top-of-tree in the final
-        # land step.
-        _log.error(script_error.message_with_output(output_limit=5000))
-
-    @classmethod
-    def handle_checkout_needs_update(cls, tool, state, options, error):
-        message = "Tests passed, but commit failed (checkout out of date).  Updating, then landing without building or re-running tests."
-        tool.status_server.update_status(cls.name, message, state["patch"])
-        # The only time when we find out that out checkout needs update is
-        # when we were ready to actually pull the trigger and land the patch.
-        # Rather than spinning in the master process, we retry without
-        # building or testing, which is much faster.
-        options.build = False
-        options.test = False
-        options.update = True
-        raise TryAgain()
 
 
 class AbstractReviewQueue(PatchProcessingQueue, StepSequenceErrorHandler):

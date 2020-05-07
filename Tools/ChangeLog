@@ -1,3 +1,27 @@
+2020-05-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete code for old commit queue
+        https://bugs.webkit.org/show_bug.cgi?id=211581
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/committervalidator.py: Removed.
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py: Removed.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._upload_results_archive_for_patch):
+        (CommitQueue): Deleted.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (NeedsUpdateSequence._run):
+        (TestCommitQueue): Deleted.
+        (AlwaysCommitQueueTool): Deleted.
+        (SecondThoughtsCommitQueue): Deleted.
+        (CommitQueueTest): Deleted.
+        (test_did_pass_testing_ews): Deleted.
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2020-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261286.

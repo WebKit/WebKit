@@ -36,7 +36,6 @@ from webkitpy.tool.steps.options import Options
 _log = logging.getLogger(__name__)
 
 
-# FIXME: Some of this logic should probably be unified with CommitterValidator?
 class ValidateReviewer(AbstractStep):
     @classmethod
     def options(cls):

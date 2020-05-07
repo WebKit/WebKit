@@ -37,7 +37,7 @@ from webkitpy.common.checkout.diff_parser import DiffParser
 _log = logging.getLogger(__name__)
 
 
-# This is closely related to the ValidateReviewer step and the CommitterValidator class.
+# This is closely related to the ValidateReviewer step.
 # We may want to unify more of this code in one place.
 class ValidateChangeLogs(AbstractStep):
     @classmethod
