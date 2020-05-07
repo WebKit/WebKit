@@ -100,7 +100,6 @@ public:
     void setShouldDowngradeReferrerForTesting(bool);
     bool shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
-    void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -139,6 +138,7 @@ protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void destroyResourceLoadStatistics();
     void forwardResourceLoadStatisticsSettings();
 #endif
 
