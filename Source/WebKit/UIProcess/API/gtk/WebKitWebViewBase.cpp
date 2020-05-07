@@ -1646,6 +1646,7 @@ static gboolean webkitWebViewBaseGrabFocus(GtkWidget* widget)
     gtk_root_set_focus(gtk_widget_get_root(widget), widget);
     return TRUE;
 }
+#endif
 
 static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direction)
 {
@@ -1660,7 +1661,6 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
 
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
-#endif
 
 static void webkitWebViewBaseConstructed(GObject* object)
 {
@@ -1727,9 +1727,9 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 #endif
     widgetClass->map = webkitWebViewBaseMap;
     widgetClass->unmap = webkitWebViewBaseUnmap;
+    widgetClass->focus = webkitWebViewBaseFocus;
 #if USE(GTK4)
     widgetClass->grab_focus = webkitWebViewBaseGrabFocus;
-    widgetClass->focus = webkitWebViewBaseFocus;
 #else
     widgetClass->focus_in_event = webkitWebViewBaseFocusInEvent;
     widgetClass->focus_out_event = webkitWebViewBaseFocusOutEvent;
