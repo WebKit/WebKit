@@ -586,6 +586,7 @@ static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webV
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
+    g_clear_pointer(&webView->priv->dialog, gtk_widget_destroy);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
     if (webView->priv->accessible)
         webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
@@ -1661,15 +1662,6 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
 
-static void webkitWebViewBaseDestroy(GtkWidget* widget)
-{
-    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
-    if (priv->dialog)
-        gtk_widget_destroy(priv->dialog);
-
-    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->destroy(widget);
-}
-
 static void webkitWebViewBaseConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->constructed(object);
@@ -1770,7 +1762,6 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 #if !USE(GTK4)
     widgetClass->hierarchy_changed = webkitWebViewBaseHierarchyChanged;
 #endif
-    widgetClass->destroy = webkitWebViewBaseDestroy;
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
     gobjectClass->constructed = webkitWebViewBaseConstructed;
