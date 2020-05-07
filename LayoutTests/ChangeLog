@@ -1,3 +1,11 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order.html as flaky on iOS.
+
+        This test has been flaky on iOS since its import.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC[TFC] Adjust the table wrapper box style

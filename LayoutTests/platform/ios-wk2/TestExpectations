@@ -384,6 +384,9 @@ http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]
 http/tests/webarchive/test-preload-resources.html [ Failure Pass ]
 http/tests/xmlhttprequest/event-listener-gc.html [ Failure Pass ]
 
+# This test has been failing on iOS since import and its failing out varies from run to run.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order.html [ Failure Pass ]
+
 # <rdar://problem/19270403> BitmapImage::cacheFrame(); ASSERT(isInBounds<ToType>(value)) fails in WTF::safeCast(FromType)
 fast/images/large-size-image-crash.html
 
