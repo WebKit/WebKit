@@ -1045,6 +1045,7 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure Timeout ]
+webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ]
@@ -2070,8 +2071,6 @@ webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageO
 
 webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Pass Failure ]
 
-webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
-
 webkit.org/b/174353 media/video-restricted-invisible-autoplay-not-allowed.html [ Crash Pass ]
 
 webkit.org/b/175933 media/audio-controls-timeline-in-media-document.html [ Pass Failure Crash ]
@@ -2755,9 +2754,6 @@ webkit.org/b/198830 media/video-plays-past-end-of-test.html [ Crash Pass ]
 webkit.org/b/198830 media/audio-play-with-video-element.html [ Crash Pass ]
 
 webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
-webkit.org/b/205110 media/media-source/media-source-canplaythrough.html [ Crash Pass ]
-
-webkit.org/b/206146 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
 
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
 
@@ -3154,10 +3150,6 @@ webkit.org/b/159754 workers/bomb.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm [ Slow ]
-
-webkit.org/b/207246 fast/forms/image/image-error-event-modifies-type-crash.html [ Slow ]
-webkit.org/b/207246 http/tests/contentextensions/make-https.html [ Slow ]
-webkit.org/b/207246 js/dom/custom-constructors.html [ Slow ]
 
 fast/frames/lots-of-iframes.html [ Slow ]
 
@@ -4643,8 +4635,6 @@ webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-b
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
 webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
 
-webkit.org/b/204636 http/wpt/service-workers/header-filtering.https.html [ Failure Timeout Pass ]
-
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
 
 webkit.org/b/202459 imported/w3c/web-platform-tests/2dcontext/compositing/2d.composite.globalAlpha.canvascopy.html [ Failure ]
@@ -4668,6 +4658,7 @@ webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-dispos
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
+# Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
