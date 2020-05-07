@@ -1,3 +1,23 @@
+2020-05-07  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r261257): Lifetime problem with upconverted characters in toLocaleCase
+        https://bugs.webkit.org/show_bug.cgi?id=211580
+        rdar://62980449
+
+        Reviewed by Yusuke Suzuki.
+
+        The problem comes from the fact that callBufferProducingFunction is moving the same
+        arguments multiple times. At the moment, this works around the only practical
+        problem with that, but later it should be fixed in callBufferProducingFunction.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Work around mistakes in how
+        callBufferProducingFunction works with arguments by calling get() explicitly on the
+        result of upconvertedCharacters. Later we could fix callBufferProducingFunction to
+        be safer, but for now this solves the problem.
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase): Ditto.
+
 2020-05-07  Keith Miller  <keith_miller@apple.com>
 
         Fix ArrayMode nodes after r261260

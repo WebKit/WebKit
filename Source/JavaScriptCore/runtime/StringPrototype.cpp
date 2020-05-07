@@ -1614,7 +1614,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     Vector<UChar> buffer;
     buffer.reserveInitialCapacity(s.length());
     auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
-    auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters(), s.length(), locale.utf8().data());
+    auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters().get(), s.length(), locale.utf8().data());
     if (U_FAILURE(status))
         return throwVMTypeError(globalObject, scope, u_errorName(status));
 
