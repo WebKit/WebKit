@@ -231,7 +231,7 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
     if (!hasRunningProcess())
         return;
     
-    process().send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_webPageID);
+    send(Messages::WebPage::PerformDictionaryLookupAtLocation(point));
 }
 
 void WebPageProxy::performDictionaryLookupOfCurrentSelection()
@@ -239,7 +239,7 @@ void WebPageProxy::performDictionaryLookupOfCurrentSelection()
     if (!hasRunningProcess())
         return;
     
-    process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_webPageID);
+    send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection());
 }
 
 void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, InsertTextOptions&& options)
@@ -259,7 +259,7 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
         return;
     }
 
-    process().send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) }, m_webPageID);
+    send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) });
 }
     
 #if ENABLE(APPLE_PAY)
@@ -313,17 +313,17 @@ void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 
 void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    process().send(Messages::WebPage::SpeakingErrorOccurred(), m_webPageID);
+    send(Messages::WebPage::SpeakingErrorOccurred());
 }
 
 void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex)
 {
-    process().send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex), m_webPageID);
+    send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex));
 }
 
 void WebPageProxy::voicesDidChange()
 {
-    process().send(Messages::WebPage::VoicesDidChange(), m_webPageID);
+    send(Messages::WebPage::VoicesDidChange());
 }
 #endif // ENABLE(SPEECH_SYNTHESIS)
 

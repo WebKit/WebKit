@@ -502,7 +502,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-        m_inspectorPage->process().send(Messages::WebInspectorUI::DidSave([actualURL absoluteString]), m_inspectorPage->webPageID());
+        m_inspectorPage->send(Messages::WebInspectorUI::DidSave([actualURL absoluteString]));
     };
 
     if (!forceSaveDialog) {
@@ -547,7 +547,7 @@ void WebInspectorProxy::platformAppend(const String& suggestedURL, const String&
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    m_inspectorPage->process().send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]), m_inspectorPage->webPageID());
+    m_inspectorPage->send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
 void WebInspectorProxy::windowFrameDidChange()

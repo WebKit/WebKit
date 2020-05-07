@@ -622,12 +622,12 @@ void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const S
 
 void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t requestID)
 {
-    process().send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, modifiers, requestID), m_webPageID);
+    send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, modifiers, requestID));
 }
 
 void WebPageProxy::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
 {
-    process().send(Messages::WebPage::HandleStylusSingleTapAtPoint(point, requestID), m_webPageID);
+    send(Messages::WebPage::HandleStylusSingleTapAtPoint(point, requestID));
 }
 
 void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
@@ -848,7 +848,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference
     if (!hasRunningProcess())
         return;
     
-    process().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_webPageID);
+    send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken));
 }
 
 void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t, bool)
@@ -881,58 +881,58 @@ bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
 
 void WebPageProxy::willStartUserTriggeredZooming()
 {
-    process().send(Messages::WebPage::WillStartUserTriggeredZooming(), m_webPageID);
+    send(Messages::WebPage::WillStartUserTriggeredZooming());
 }
 
 void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation, uint64_t& requestID)
 {
     hideValidationMessage();
-    process().send(Messages::WebPage::PotentialTapAtPosition(requestID, position, shouldRequestMagnificationInformation), m_webPageID);
+    send(Messages::WebPage::PotentialTapAtPosition(requestID, position, shouldRequestMagnificationInformation));
 }
 
 void WebPageProxy::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID pointerId)
 {
-    process().send(Messages::WebPage::CommitPotentialTap(modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId), m_webPageID);
+    send(Messages::WebPage::CommitPotentialTap(modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId));
 }
 
 void WebPageProxy::cancelPotentialTap()
 {
-    process().send(Messages::WebPage::CancelPotentialTap(), m_webPageID);
+    send(Messages::WebPage::CancelPotentialTap());
 }
 
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
 {
-    process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_webPageID);
+    send(Messages::WebPage::TapHighlightAtPosition(requestID, position));
 }
 
 void WebPageProxy::handleTap(const FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
-    process().send(Messages::WebPage::HandleTap(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart), m_webPageID);
+    send(Messages::WebPage::HandleTap(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart));
 }
 
 void WebPageProxy::didRecognizeLongPress()
 {
-    process().send(Messages::WebPage::DidRecognizeLongPress(), m_webPageID);
+    send(Messages::WebPage::DidRecognizeLongPress());
 }
 
 void WebPageProxy::handleDoubleTapForDoubleClickAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
-    process().send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastTouchStart), m_webPageID);
+    send(Messages::WebPage::HandleDoubleTapForDoubleClickAtPoint(point, modifiers, layerTreeTransactionIdAtLastTouchStart));
 }
 
 void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)
 {
-    process().send(Messages::WebPage::InspectorNodeSearchMovedToPosition(position), m_webPageID);
+    send(Messages::WebPage::InspectorNodeSearchMovedToPosition(position));
 }
 
 void WebPageProxy::inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint& position)
 {
-    process().send(Messages::WebPage::InspectorNodeSearchEndedAtPosition(position), m_webPageID);
+    send(Messages::WebPage::InspectorNodeSearchEndedAtPosition(position));
 }
 
 void WebPageProxy::blurFocusedElement()
 {
-    process().send(Messages::WebPage::BlurFocusedElement(), m_webPageID);
+    send(Messages::WebPage::BlurFocusedElement());
 }
 
 FloatSize WebPageProxy::screenSize()
@@ -977,7 +977,7 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
 
 void WebPageProxy::setIsShowingInputViewForFocusedElement(bool showingInputView)
 {
-    process().send(Messages::WebPage::SetIsShowingInputViewForFocusedElement(showingInputView), m_webPageID);
+    send(Messages::WebPage::SetIsShowingInputViewForFocusedElement(showingInputView));
 }
 
 void WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement()
@@ -1069,17 +1069,17 @@ void WebPageProxy::focusNextFocusedElement(bool isForward, CompletionHandler<voi
 
 void WebPageProxy::setFocusedElementValue(const String& value)
 {
-    process().send(Messages::WebPage::SetFocusedElementValue(value), m_webPageID);
+    send(Messages::WebPage::SetFocusedElementValue(value));
 }
 
 void WebPageProxy::setFocusedElementValueAsNumber(double value)
 {
-    process().send(Messages::WebPage::SetFocusedElementValueAsNumber(value), m_webPageID);
+    send(Messages::WebPage::SetFocusedElementValueAsNumber(value));
 }
 
 void WebPageProxy::setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
 {
-    process().send(Messages::WebPage::SetFocusedElementSelectedIndex(index, allowMultipleSelection), m_webPageID);
+    send(Messages::WebPage::SetFocusedElementSelectedIndex(index, allowMultipleSelection));
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
@@ -1143,13 +1143,13 @@ uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frame
 
     uint32_t pageCount = 0;
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::computePagesForPrintingAndDrawToPDF"_s));
-    process().sendSync(Messages::WebPage::ComputePagesForPrintingAndDrawToPDF(frameID, printInfo, callbackID), Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::Reply(pageCount), m_webPageID, Seconds::infinity());
+    sendSync(Messages::WebPage::ComputePagesForPrintingAndDrawToPDF(frameID, printInfo, callbackID), Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::Reply(pageCount), Seconds::infinity());
     return pageCount;
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
-    process().send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), m_webPageID);
+    send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory));
 }
 
 void WebPageProxy::generateSyntheticEditingCommand(WebKit::SyntheticEditingCommandType command)
@@ -1157,7 +1157,7 @@ void WebPageProxy::generateSyntheticEditingCommand(WebKit::SyntheticEditingComma
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::GenerateSyntheticEditingCommand(command), m_webPageID);
+    send(Messages::WebPage::GenerateSyntheticEditingCommand(command));
 }
 
 void WebPageProxy::updateEditorState(const EditorState& editorState)

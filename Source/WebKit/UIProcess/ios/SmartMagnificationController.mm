@@ -63,7 +63,7 @@ SmartMagnificationController::~SmartMagnificationController()
 
 void SmartMagnificationController::handleSmartMagnificationGesture(FloatPoint origin)
 {
-    m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.webPageID());
+    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin));
 }
 
 void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint origin)

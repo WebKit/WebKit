@@ -57,7 +57,7 @@ void RemoteWebInspectorProxy::invalidate()
 void RemoteWebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)
-    m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available), m_inspectorPage->webPageID());
+    m_inspectorPage->send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available));
 #else
     UNUSED_PARAM(available);
 #endif

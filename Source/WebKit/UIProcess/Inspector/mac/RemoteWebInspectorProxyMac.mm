@@ -180,7 +180,7 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-        m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidSave([actualURL absoluteString]), m_inspectorPage->webPageID());
+        m_inspectorPage->send(Messages::RemoteWebInspectorUI::DidSave([actualURL absoluteString]));
     };
 
     if (!forceSaveDialog) {
@@ -228,7 +228,7 @@ void RemoteWebInspectorProxy::platformAppend(const String& suggestedURL, const S
     [handle closeFile];
 
     WebPageProxy* inspectorPage = webView()->_page.get();
-    inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]), inspectorPage->webPageID());
+    inspectorPage->send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
 void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)

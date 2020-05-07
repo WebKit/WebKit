@@ -109,7 +109,7 @@ static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResul
 
     auto* page = static_cast<WebPageProxy*>(userData);
     GUniquePtr<char> path(g_file_get_path(file));
-    page->process().send(Messages::RemoteWebInspectorUI::DidSave(path.get()), page->webPageID());
+    page->send(Messages::RemoteWebInspectorUI::DidSave(path.get()));
 }
 
 void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)

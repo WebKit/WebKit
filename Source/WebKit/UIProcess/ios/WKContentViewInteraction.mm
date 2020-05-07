@@ -2216,7 +2216,7 @@ static Class tapAndAHalfRecognizerClass()
     if ([self _hasValidOutstandingPositionInformationRequest:request])
         return connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 
-    bool receivedResponse = _page->process().sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), _page->webPageID(), 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
+    bool receivedResponse = _page->sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
     _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     
     // FIXME: We need to clean up these handlers in the event that we are not able to collect data, or if the WebProcess crashes.

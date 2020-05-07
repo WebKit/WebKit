@@ -480,7 +480,7 @@ static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* res
 
     auto* page = static_cast<WebPageProxy*>(userData);
     GUniquePtr<char> path(g_file_get_path(file));
-    page->process().send(Messages::WebInspectorUI::DidSave(path.get()), page->webPageID());
+    page->send(Messages::WebInspectorUI::DidSave(path.get()));
 }
 
 void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)

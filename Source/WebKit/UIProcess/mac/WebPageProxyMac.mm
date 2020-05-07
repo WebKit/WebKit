@@ -174,7 +174,7 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
     m_uiClient->windowFrame(*this, [this, protectedThis = makeRef(*this), viewFrameInWindowCoordinates, accessibilityViewCoordinates] (FloatRect windowFrameInScreenCoordinates) {
         FloatRect windowFrameInUnflippedScreenCoordinates = pageClient().convertToUserSpace(windowFrameInScreenCoordinates);
-        process().send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_webPageID);
+        send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates));
     });
 }
 
@@ -183,7 +183,7 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_webPageID);
+    send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable));
 }
 
 void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, Function<void(const WebCore::AttributedString&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
@@ -195,7 +195,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
 
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::attributedSubstringForCharacterRangeAsync"_s));
 
-    process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_webPageID);
+    send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID));
 }
 
 void WebPageProxy::attributedStringForCharacterRangeCallback(const WebCore::AttributedString& string, const EditingRange& actualRange, CallbackID callbackID)
@@ -220,7 +220,7 @@ void WebPageProxy::fontAtSelection(Function<void(const FontInfo&, double, bool, 
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::fontAtSelection"_s));
-    process().send(Messages::WebPage::FontAtSelection(callbackID), m_webPageID);
+    send(Messages::WebPage::FontAtSelection(callbackID));
 }
 
 void WebPageProxy::fontAtSelectionCallback(const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts, CallbackID callbackID)
@@ -241,7 +241,7 @@ String WebPageProxy::stringSelectionForPasteboard()
         return value;
     
     const Seconds messageTimeout(20);
-    process().sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), Messages::WebPage::GetStringSelectionForPasteboard::Reply(value), m_webPageID, messageTimeout);
+    sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), Messages::WebPage::GetStringSelectionForPasteboard::Reply(value), messageTimeout);
     return value;
 }
 
@@ -252,8 +252,7 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     SharedMemory::Handle handle;
     uint64_t size = 0;
     const Seconds messageTimeout(20);
-    process().sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType),
-        Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), m_webPageID, messageTimeout);
+    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), messageTimeout);
     MESSAGE_CHECK_WITH_RETURN_VALUE(!handle.isNull(), nullptr);
     // SharedMemory::Handle::size() is rounded up to the nearest page.
     MESSAGE_CHECK_WITH_RETURN_VALUE(size <= handle.size(), nullptr);
@@ -271,14 +270,14 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
     bool result = false;
     const Seconds messageTimeout(20);
-    process().sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), m_webPageID, messageTimeout);
+    sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), messageTimeout);
     return result;
 }
 
 #if ENABLE(SERVICE_CONTROLS)
 void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
-    process().send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data), m_webPageID);
+    send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }
 #endif
 
@@ -319,22 +318,22 @@ void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputI
     if (!hasRunningProcess())
         return;
     
-    process().send(Messages::WebPage::SendComplexTextInputToPlugin(pluginComplexTextInputIdentifier, textInput), m_webPageID);
+    send(Messages::WebPage::SendComplexTextInputToPlugin(pluginComplexTextInputIdentifier, textInput));
 }
 
 void WebPageProxy::uppercaseWord()
 {
-    process().send(Messages::WebPage::UppercaseWord(), m_webPageID);
+    send(Messages::WebPage::UppercaseWord());
 }
 
 void WebPageProxy::lowercaseWord()
 {
-    process().send(Messages::WebPage::LowercaseWord(), m_webPageID);
+    send(Messages::WebPage::LowercaseWord());
 }
 
 void WebPageProxy::capitalizeWord()
 {
-    process().send(Messages::WebPage::CapitalizeWord(), m_webPageID);
+    send(Messages::WebPage::CapitalizeWord());
 }
 
 void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
@@ -344,7 +343,7 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 
     TextChecker::setSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled);
     m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled;
-    process().send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled), m_webPageID);
+    send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled));
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
@@ -380,7 +379,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_webPageID);
+    send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken));
 }
 
 void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
@@ -409,7 +408,7 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
 
     bool result = false;
     const Seconds messageTimeout(3);
-    process().sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), m_webPageID, messageTimeout);
+    sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), messageTimeout);
     return result;
 }
 
@@ -420,7 +419,7 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
 
     bool result = false;
     const Seconds messageTimeout(3);
-    process().sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), m_webPageID, messageTimeout);
+    sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), messageTimeout);
     return result;
 }
 

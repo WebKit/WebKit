@@ -1,3 +1,107 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Simplify several IPC sending call sites in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=211575
+
+        Reviewed by Alex Christensen.
+
+        Simplify several IPC sending call sites in the UIProcess by leveraging the fact
+        that WebPageProxy subclasses IPC::MessageSender.
+
+        * UIProcess/Cocoa/TextCheckingController.mm:
+        (WebKit::TextCheckingController::replaceRelativeToSelection):
+        (WebKit::TextCheckingController::removeAnnotationRelativeToSelection):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation):
+        (WebKit::WebPageProxy::performDictionaryLookupOfCurrentSelection):
+        (WebKit::WebPageProxy::insertDictatedTextAsync):
+        (WebKit::WebPageProxy::speakingErrorOccurred):
+        (WebKit::WebPageProxy::boundaryEventOccurred):
+        (WebKit::WebPageProxy::voicesDidChange):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision):
+        * UIProcess/Inspector/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::setDiagnosticLoggingAvailable):
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setDiagnosticLoggingAvailable):
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::remoteFileReplaceContentsCallback):
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::fileReplaceContentsCallback):
+        * UIProcess/Inspector/mac/RemoteWebInspectorProxyMac.mm:
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        (WebKit::RemoteWebInspectorProxy::platformAppend):
+        * UIProcess/Inspector/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit::WebInspectorProxy::platformAppend):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::createRequest):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureDevicesChanged):
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::collapseSelection):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::willEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::didEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::willExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::didExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::setAnimatingFullScreen):
+        (WebKit::WebFullScreenManagerProxy::requestExitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::saveScrollPosition):
+        (WebKit::WebFullScreenManagerProxy::restoreScrollPosition):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenInsets):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenAutoHideDuration):
+        (WebKit::WebFullScreenManagerProxy::setFullscreenControlsHidden):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getCenterForZoomGesture):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::handleSmartMagnificationGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        (WebKit::WebPageProxy::handleStylusSingleTapAtPoint):
+        (WebKit::WebPageProxy::registerUIProcessAccessibilityTokens):
+        (WebKit::WebPageProxy::willStartUserTriggeredZooming):
+        (WebKit::WebPageProxy::potentialTapAtPosition):
+        (WebKit::WebPageProxy::commitPotentialTap):
+        (WebKit::WebPageProxy::cancelPotentialTap):
+        (WebKit::WebPageProxy::tapHighlightAtPosition):
+        (WebKit::WebPageProxy::handleTap):
+        (WebKit::WebPageProxy::didRecognizeLongPress):
+        (WebKit::WebPageProxy::handleDoubleTapForDoubleClickAtPoint):
+        (WebKit::WebPageProxy::inspectorNodeSearchMovedToPosition):
+        (WebKit::WebPageProxy::inspectorNodeSearchEndedAtPosition):
+        (WebKit::WebPageProxy::blurFocusedElement):
+        (WebKit::WebPageProxy::setIsShowingInputViewForFocusedElement):
+        (WebKit::WebPageProxy::setFocusedElementValue):
+        (WebKit::WebPageProxy::setFocusedElementValueAsNumber):
+        (WebKit::WebPageProxy::setFocusedElementSelectedIndex):
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        (WebKit::WebPageProxy::contentSizeCategoryDidChange):
+        (WebKit::WebPageProxy::generateSyntheticEditingCommand):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::handleMagnificationGestureEvent):
+        (WebKit::ViewGestureController::handleSmartMagnificationGesture):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        (WebKit::WebPageProxy::setMainFrameIsScrollable):
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPageProxy::fontAtSelection):
+        (WebKit::WebPageProxy::stringSelectionForPasteboard):
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        (WebKit::WebPageProxy::readSelectionFromPasteboard):
+        (WebKit::WebPageProxy::replaceSelectionWithPasteboardData):
+        (WebKit::WebPageProxy::sendComplexTextInputToPlugin):
+        (WebKit::WebPageProxy::uppercaseWord):
+        (WebKit::WebPageProxy::lowercaseWord):
+        (WebKit::WebPageProxy::capitalizeWord):
+        (WebKit::WebPageProxy::setSmartInsertDeleteEnabled):
+        (WebKit::WebPageProxy::registerUIProcessAccessibilityTokens):
+        (WebKit::WebPageProxy::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebPageProxy::acceptsFirstMouse):
+
 2020-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260769.

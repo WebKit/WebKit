@@ -66,7 +66,7 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     String authorizationToken = allowed ? createCanonicalUUIDString() : String();
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
-    m_page.process().send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageID());
+    m_page.send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken));
 #else
     UNUSED_PARAM(allowed);
 #endif

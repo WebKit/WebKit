@@ -50,7 +50,7 @@ Ref<NotificationPermissionRequest> NotificationPermissionRequestManagerProxy::cr
 {
     auto request = NotificationPermissionRequest::create([this, notificationID, page = makeRef(m_page)](bool allowed) {
         m_pendingRequests.take(notificationID);
-        page->process().send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allowed), page->webPageID());
+        page->send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allowed));
     });
     m_pendingRequests.add(notificationID, request.ptr());
     return request;

@@ -159,7 +159,7 @@ void WebPageProxy::setInputMethodState(Optional<InputMethodState>&& state)
 
 void WebPageProxy::getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& center)
 {
-    process().sendSync(Messages::WebPage::GetCenterForZoomGesture(centerInViewCoordinates), Messages::WebPage::GetCenterForZoomGesture::Reply(center), m_webPageID);
+    sendSync(Messages::WebPage::GetCenterForZoomGesture(centerInViewCoordinates), Messages::WebPage::GetCenterForZoomGesture::Reply(center));
 }
 
 bool WebPageProxy::makeGLContextCurrent()

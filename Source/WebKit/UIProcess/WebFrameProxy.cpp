@@ -263,7 +263,7 @@ void WebFrameProxy::collapseSelection()
     if (!m_page)
         return;
 
-    m_page->process().send(Messages::WebPage::CollapseSelectionInFrame(m_frameID), m_page->webPageID());
+    m_page->send(Messages::WebPage::CollapseSelectionInFrame(m_frameID));
 }
 #endif
 
