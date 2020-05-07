@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2020 Igalia S.L -->
+<component type="runtime">
+  <id>org.webkit.Platform</id>
+  <metadata_license>CC0</metadata_license>
+  <!-- FIXME -->
+  <project_license>LGPL-2.1+</project_license>
+  <name>WebKit Platform (__SDK_BRANCH__)</name>
+  <summary>Shared libraries used by WebKit Developer SDK</summary>
+  <releases>
+    <release version="__RUNTIME_VERSION__" date="__RUNTIME_VERSION_DATE__"/>
+  </releases>
+  <url type="homepage">https://webkit.org/</url>
+</component>

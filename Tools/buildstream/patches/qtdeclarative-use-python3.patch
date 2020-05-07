@@ -1,0 +1,55 @@
+diff --git a/qtdeclarative.pro b/qtdeclarative.pro
+index 5b94da9b6..0e3496ce8 100644
+--- a/qtdeclarative.pro
++++ b/qtdeclarative.pro
+@@ -2,7 +2,7 @@ CONFIG += tests_need_tools examples_need_tools
+ load(qt_parts)
+ 
+ !python_available {
+-    py_out = $$system('python -c "print(1)"')
++    py_out = $$system('python3 -c "print(1)"')
+     !equals(py_out, 1): error("Building QtQml requires Python.")
+     tmp = python_available
+     CONFIG += $$tmp
+diff --git a/src/3rdparty/masm/masm.pri b/src/3rdparty/masm/masm.pri
+index 0e63ac2ce..7a30ab64e 100644
+--- a/src/3rdparty/masm/masm.pri
++++ b/src/3rdparty/masm/masm.pri
+@@ -58,7 +58,7 @@ contains(DEFINES, WTF_USE_UDIS86=1) {
+     udis86.output = udis86_itab.h
+     udis86.input = ITAB
+     udis86.CONFIG += no_link
+-    udis86.commands = python $$PWD/disassembler/udis86/itab.py ${QMAKE_FILE_IN}
++    udis86.commands = python3 $$PWD/disassembler/udis86/itab.py ${QMAKE_FILE_IN}
+     QMAKE_EXTRA_COMPILERS += udis86
+ 
+     udis86_tab_cfile.target = $$OUT_PWD/udis86_itab.c
+@@ -113,7 +113,7 @@ retgen.output = $$GENERATEDDIR/RegExpJitTables.h
+ retgen.script = $$PWD/yarr/create_regex_tables
+ retgen.input = retgen.script
+ retgen.CONFIG += no_link
+-retgen.commands = python $$retgen.script > ${QMAKE_FILE_OUT}
++retgen.commands = python3 $$retgen.script > ${QMAKE_FILE_OUT}
+ QMAKE_EXTRA_COMPILERS += retgen
+ 
+ # Taken from WebKit/Tools/qmake/mkspecs/features/unix/default_post.prf
+diff --git a/src/3rdparty/masm/yarr/create_regex_tables b/src/3rdparty/masm/yarr/create_regex_tables
+index 4c3dbbe3f..d13084d6c 100644
+--- a/src/3rdparty/masm/yarr/create_regex_tables
++++ b/src/3rdparty/masm/yarr/create_regex_tables
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ 
+ # Copyright (C) 2010, 2013-2017 Apple Inc. All rights reserved.
+ # 
+diff --git a/src/3rdparty/masm/yarr/generateYarrCanonicalizeUnicode b/src/3rdparty/masm/yarr/generateYarrCanonicalizeUnicode
+index a103bcdf1..20a358c1a 100644
+--- a/src/3rdparty/masm/yarr/generateYarrCanonicalizeUnicode
++++ b/src/3rdparty/masm/yarr/generateYarrCanonicalizeUnicode
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#! /usr/bin/env python3
+ 
+ # Copyright (C) 2016 Apple Inc. All rights reserved.
+ #

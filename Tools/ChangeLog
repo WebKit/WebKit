@@ -1,3 +1,178 @@
+2020-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Import build definitions
+        https://bugs.webkit.org/show_bug.cgi?id=211448
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        To build the SDK, run `Tools/Scripts/webkit-flatpak-sdk --build`,
+        this can take hours and use gigabytes of your hard-drive. To build
+        a single recipe, use something like:
+
+        `Tools/Scripts/bst-wrapper build sdk/gtk.bst`
+
+        To enter the Buildstream SDK shell and debug stuff when hacking on
+        a specific dependency, `Tools/Scripts/bst-wrapper shell sdk/gtk.bst`.
+
+        To test your changes in WebKit:
+        ```shell
+        $ Tools/Scripts/webkit-flatpak -u --repo=Tools/buildstream/repo
+        $ Tools/Scripts/run-minibrowser --gtk --flatpak-repo=Tools/buildstream/repo <url>
+        ...
+        ```
+
+        bst-wrapper has the same options as bst itself, documented on
+        https://docs.buildstream.build/1.4.2/index.html.
+
+        Internally the bst-wrapper will install Buildstream and a few
+        other python dependencies in a local virtualenv managed by pipenv.
+        This is all abstracted though, in theory direct access to the
+        pipenv environment shouldn't be needed.
+
+        * Scripts/bst-wrapper: Added.
+        * Scripts/webkit-flatpak-sdk: Added.
+        * buildstream/Makefile: Added.
+        * buildstream/Pipfile: Added.
+        * buildstream/Pipfile.lock: Added.
+        * buildstream/elements/filtered-openh264.bst: Added.
+        * buildstream/elements/filtered.bst: Added.
+        * buildstream/elements/flatpak-platform-extensions.bst: Added.
+        * buildstream/elements/flatpak-runtimes.bst: Added.
+        * buildstream/elements/flatpak/platform-arch-libs-debug.bst: Added.
+        * buildstream/elements/flatpak/platform-arch-libs.bst: Added.
+        * buildstream/elements/flatpak/platform-image.bst: Added.
+        * buildstream/elements/flatpak/platform-locale.bst: Added.
+        * buildstream/elements/flatpak/platform.bst: Added.
+        * buildstream/elements/flatpak/sdk-arch-libs-debug.bst: Added.
+        * buildstream/elements/flatpak/sdk-arch-libs.bst: Added.
+        * buildstream/elements/flatpak/sdk-debug.bst: Added.
+        * buildstream/elements/flatpak/sdk-docs.bst: Added.
+        * buildstream/elements/flatpak/sdk-image.bst: Added.
+        * buildstream/elements/flatpak/sdk-locale.bst: Added.
+        * buildstream/elements/flatpak/sdk.bst: Added.
+        * buildstream/elements/freedesktop-sdk.bst: Added.
+        * buildstream/elements/manifests/platform-manifest.bst: Added.
+        * buildstream/elements/manifests/sdk-manifest.bst: Added.
+        * buildstream/elements/qt5.bst: Added.
+        * buildstream/elements/qt5/qtbase.bst: Added.
+        * buildstream/elements/qt5/qtdeclarative.bst: Added.
+        * buildstream/elements/qt5/qtquickcontrols.bst: Added.
+        * buildstream/elements/qt5/qtquickcontrols2.bst: Added.
+        * buildstream/elements/qt5/qtwayland.bst: Added.
+        * buildstream/elements/qt5/qtx11extras.bst: Added.
+        * buildstream/elements/sdk-build-depends/libusb.bst: Added.
+        * buildstream/elements/sdk-build-depends/sassc.bst: Added.
+        * buildstream/elements/sdk-build-depends/utf8proc.bst: Added.
+        * buildstream/elements/sdk-depends/libsass.bst: Added.
+        * buildstream/elements/sdk-platform.bst: Added.
+        * buildstream/elements/sdk.bst: Added.
+        * buildstream/elements/sdk/adwaita-icon-theme.bst: Added.
+        * buildstream/elements/sdk/at-spi2-atk.bst: Added.
+        * buildstream/elements/sdk/at-spi2-core.bst: Added.
+        * buildstream/elements/sdk/atk.bst: Added.
+        * buildstream/elements/sdk/brotli.bst: Added.
+        * buildstream/elements/sdk/capnp.bst: Added.
+        * buildstream/elements/sdk/enchant-2.bst: Added.
+        * buildstream/elements/sdk/glib-networking.bst: Added.
+        * buildstream/elements/sdk/glib.bst: Added.
+        * buildstream/elements/sdk/gobject-introspection.bst: Added.
+        * buildstream/elements/sdk/graphene.bst: Added.
+        * buildstream/elements/sdk/graphviz.bst: Added.
+        * buildstream/elements/sdk/gst-libav.bst: Added.
+        * buildstream/elements/sdk/gst-plugins-bad.bst: Added.
+        * buildstream/elements/sdk/gst-plugins-base.bst: Added.
+        * buildstream/elements/sdk/gst-plugins-good.bst: Added.
+        * buildstream/elements/sdk/gst-plugins-ugly.bst: Added.
+        * buildstream/elements/sdk/gstreamer.bst: Added.
+        * buildstream/elements/sdk/gtk+-3.bst: Added.
+        * buildstream/elements/sdk/gtk.bst: Added.
+        * buildstream/elements/sdk/icecc.bst: Added.
+        * buildstream/elements/sdk/intltool.bst: Added.
+        * buildstream/elements/sdk/krb5.bst: Added.
+        * buildstream/elements/sdk/libcap-ng.bst: Added.
+        * buildstream/elements/sdk/libevent.bst: Added.
+        * buildstream/elements/sdk/libgcrypt.bst: Added.
+        * buildstream/elements/sdk/libmanette.bst: Added.
+        * buildstream/elements/sdk/libnotify.bst: Added.
+        * buildstream/elements/sdk/libopenh264.bst: Added.
+        * buildstream/elements/sdk/libsecret.bst: Added.
+        * buildstream/elements/sdk/libsoup.bst: Added.
+        * buildstream/elements/sdk/libsrtp2.bst: Added.
+        * buildstream/elements/sdk/libusrsctp.bst: Added.
+        * buildstream/elements/sdk/libwpe.bst: Added.
+        * buildstream/elements/sdk/libzstd.bst: Added.
+        * buildstream/elements/sdk/lzo2.bst: Added.
+        * buildstream/elements/sdk/openjpeg.bst: Added.
+        * buildstream/elements/sdk/openxr.bst: Added.
+        * buildstream/elements/sdk/os-release.bst: Added.
+        * buildstream/elements/sdk/patchelf.bst: Added.
+        * buildstream/elements/sdk/psmisc.bst: Added.
+        * buildstream/elements/sdk/pycairo.bst: Added.
+        * buildstream/elements/sdk/pygobject.bst: Added.
+        * buildstream/elements/sdk/python2-pycairo.bst: Added.
+        * buildstream/elements/sdk/python2-pygobject.bst: Added.
+        * buildstream/elements/sdk/python2-six.bst: Added.
+        * buildstream/elements/sdk/python2-subprocess32.bst: Added.
+        * buildstream/elements/sdk/python2.bst: Added.
+        * buildstream/elements/sdk/rr.bst: Added.
+        * buildstream/elements/sdk/sccache.bst: Added.
+        * buildstream/elements/sdk/shared-mime-info.bst: Added.
+        * buildstream/elements/sdk/subversion.bst: Added.
+        * buildstream/elements/sdk/v4lutils.bst: Added.
+        * buildstream/elements/sdk/woff2.bst: Added.
+        * buildstream/elements/sdk/wpebackend-fdo.bst: Added.
+        * buildstream/elements/sdk/x264.bst: Added.
+        * buildstream/elements/sdk/xorg-server.bst: Added.
+        * buildstream/elements/test-infra.bst: Added.
+        * buildstream/elements/test-infra/apr-util.bst: Added.
+        * buildstream/elements/test-infra/apr.bst: Added.
+        * buildstream/elements/test-infra/httpd.bst: Added.
+        * buildstream/elements/test-infra/perl-cgi-pm.bst: Added.
+        * buildstream/elements/test-infra/perl-http-date-pm.bst: Added.
+        * buildstream/elements/test-infra/php.bst: Added.
+        * buildstream/elements/test-infra/webkitgtk-test-dicts.bst: Added.
+        * buildstream/elements/test-infra/webkitgtk-test-fonts.bst: Added.
+        * buildstream/files/krb5/krb5.conf: Added.
+        * buildstream/files/os-release/issue.in: Added.
+        * buildstream/files/os-release/issue.net.in: Added.
+        * buildstream/files/os-release/org.webkit.Platform.appdata.xml.in: Added.
+        * buildstream/files/os-release/org.webkit.Sdk.appdata.xml.in: Added.
+        * buildstream/files/os-release/os-release.in: Added.
+        * buildstream/patches/fdo-0001-Update-gcc-to-9.3.0.patch: Added.
+        * buildstream/patches/fdo/0001-Add-Jack.patch: Added.
+        * buildstream/patches/fdo/0001-components-xdg-desktop-portal.bst-Update-to-1.6.0.patch: Added.
+        * buildstream/patches/fdo/0001-ffmpeg-Add-MS-MPEG-DivX-variants.patch: Added.
+        * buildstream/patches/fdo/0002-Update-PipeWire-to-0.3.1.patch: Added.
+        * buildstream/patches/fdo/0002-ffmpeg-Add-VP6-and-Sorenson-Spark-video-codecs.patch: Added.
+        * buildstream/patches/fdo/0003-Add-Bluez.patch: Added.
+        * buildstream/patches/fdo/0003-ffmpeg-Add-Intel-Indeo-and-Cinepak-video-support.patch: Added.
+        * buildstream/patches/fdo/0004-ffmpeg-Add-MPEG-2-video-decoder.patch: Added.
+        * buildstream/patches/fdo/0005-ffmpeg-Add-msmpeg4v3-support.patch: Added.
+        * buildstream/patches/gst-libav-stop-caching-codecs.patch: Added.
+        * buildstream/patches/gst-plugins-bad-0001-h264parse-Post-a-WARNING-when-data-is-broken.patch: Added.
+        * buildstream/patches/gst-plugins-base-0001-glupload-Fix-fallback-from-direct-dmabuf-to-dmabuf-u.patch: Added.
+        * buildstream/patches/gst-plugins-base-0001-playbin-Handle-error-message-with-redirection-indica.patch: Added.
+        * buildstream/patches/gst-plugins-base-0002-glupload-fix-segfault.patch: Added.
+        * buildstream/patches/gst-plugins-good-qtdemux-Specify-REDIRECT-information-in-error-messag.patch: Added.
+        * buildstream/patches/gtk-meson-Bump-to-latest-version-of-the-3.24-branch.patch: Added.
+        * buildstream/patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch: Added.
+        * buildstream/patches/libav-0001-gstavviddec-Limit-default-number-of-decoder-threads.patch: Added.
+        * buildstream/patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch: Added.
+        * buildstream/patches/libgcrypt-use-only-dev-urandom-for-testing.patch: Added.
+        * buildstream/patches/libsecret-b53e9876f4611525b7a8f69a3110fbec51dcede0.patch: Added.
+        * buildstream/patches/nettle-no-debug.diff: Added.
+        * buildstream/patches/qtbase-avoid-hardcoding-kernel-version.patch: Added.
+        * buildstream/patches/qtbase-revert-correct-handling-for-xdg-runtime-dir.patch: Added.
+        * buildstream/patches/qtbase-use-wayland-on-gnome.patch: Added.
+        * buildstream/patches/qtdeclarative-use-python3.patch: Added.
+        * buildstream/patches/qtwayland-use-gnome-platform-theme-on-gnome-based-desktops.patch: Added.
+        * buildstream/patches/sccache-no-selenium.patch: Added.
+        * buildstream/patches/xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch: Added.
+        * buildstream/project.conf: Added.
+        * buildstream/utils/generate-version: Added.
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2020-05-07  Mark Lam  <mark.lam@apple.com>
 
         Fix broken exceptionFuzz tests.

@@ -114,7 +114,8 @@ function installDependenciesWithApt {
 
     # These are dependencies necessary for building with the Flatpak SDK.
     packages="$packages \
-        flatpak"
+        flatpak \
+        pipenv"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
@@ -223,7 +224,8 @@ function installDependenciesWithPacman {
 
     # These are dependencies necessary for building with the Flatpak SDK.
     packages="$packages \
-        flatpak"
+        flatpak \
+        python-pipenv"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
@@ -341,7 +343,8 @@ function installDependenciesWithDnf {
 
     # These are dependencies necessary for building with the Flatpak SDK.
     packages="$packages \
-        flatpak"
+        flatpak \
+        pipenv"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \

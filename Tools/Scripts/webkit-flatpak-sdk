@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2020 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import argparse
+import os
+import subprocess
+import sys
+
+scriptdir = os.path.abspath(os.path.dirname(__file__))
+SDK_PROJECT_PATH = os.path.join(scriptdir, "..", "buildstream")
+wrapper = os.path.join(scriptdir, "bst-wrapper")
+
+def run_wrapper(args: list, **kw) -> subprocess.CompletedProcess:
+    kw["cwd"] = SDK_PROJECT_PATH
+    return subprocess.run(["make", f"BST={wrapper}",] + args, **kw)
+
+def main(args: list) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build", dest='build', action='store_true')
+    parsed_args, command = parser.parse_known_args()
+
+    if parsed_args.build:
+        result = run_wrapper(command)
+        return result.returncode
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

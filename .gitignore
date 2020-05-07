@@ -13,6 +13,12 @@ project.xcworkspace
 xcuserdata
 .mailmap
 
+# Ignore Buildstream local files
+/Tools/buildstream/.bst
+/Tools/buildstream/.venv
+/Tools/buildstream/cache
+/Tools/buildstream/flatpak-version.yml
+
 # Ignore auto-generated files by VS & VSCode.
 *.vcproj.*.user
 *.suo
