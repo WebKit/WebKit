@@ -1,5 +1,52 @@
 2020-05-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261187. rdar://problem/62993016
+
+    Check for app-bound domains should confirm WKAppBoundDomains key exists when checking for default app-bound protocols.
+    https://bugs.webkit.org/show_bug.cgi?id=211451
+    <rdar://problem/62715316
+    
+    Reviewed by Brent Fulgham.
+    
+    Checks for WKAppBoundDomains key before treating a protocol as
+    app-bound. This is a regression in expected behavior after making
+    In-App Browser privacy opt-in based on the presence of the key.
+    
+    Also moves the check for special protocols inside of the completion handler for
+    ensureAppBoundDomains to make sure the check for the key has finished.
+    
+    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+    (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+    Added a comment to clarify why we need to check for both an empty
+    app-bound domains list and the presence of the key for testing
+    purposes.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261187 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-05  Kate Cheney  <katherine_cheney@apple.com>
+
+            Check for app-bound domains should confirm WKAppBoundDomains key exists when checking for default app-bound protocols.
+            https://bugs.webkit.org/show_bug.cgi?id=211451
+            <rdar://problem/62715316
+
+            Reviewed by Brent Fulgham.
+
+            Checks for WKAppBoundDomains key before treating a protocol as
+            app-bound. This is a regression in expected behavior after making
+            In-App Browser privacy opt-in based on the presence of the key.
+
+            Also moves the check for special protocols inside of the completion handler for
+            ensureAppBoundDomains to make sure the check for the key has finished.
+
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+            Added a comment to clarify why we need to check for both an empty
+            app-bound domains list and the presence of the key for testing
+            purposes.
+
+2020-05-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261140. rdar://problem/62993055
 
     [iOS] Make sure TestController::statisticsResetToConsistentState() does not hang due to process suspension
