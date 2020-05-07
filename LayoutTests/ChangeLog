@@ -1,5 +1,18 @@
 2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        Unreviewed, reverting r260713.
+
+        Change not needed after r260844.
+
+        Reverted changeset:
+
+        "[GTK] Gardening, temporarily skip WebInspector tests after
+        r210942 and r260696"
+        https://bugs.webkit.org/show_bug.cgi?id=211035
+        https://trac.webkit.org/changeset/260713
+
+2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, dump stderr in console log for several web-animation tests
         https://bugs.webkit.org/show_bug.cgi?id=211549
 
