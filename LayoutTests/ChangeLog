@@ -1,5 +1,16 @@
 2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        Unreviewed, reverting r260737.
+
+        Change not needed after r261267.
+
+        Reverted changeset:
+
+        "[GTK] Gardening, skipping more inspector tests."
+        https://trac.webkit.org/changeset/260737
+
+2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
         Unreviewed, reverting r260713.
 
         Change not needed after r260844.
