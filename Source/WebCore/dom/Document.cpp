@@ -2596,8 +2596,8 @@ void Document::willBeRemovedFromFrame()
         page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
     }
 
-    editor().clear();
     selection().willBeRemovedFromFrame();
+    editor().clear();
     detachFromFrame();
 
 #if ENABLE(CSS_PAINTING_API)
