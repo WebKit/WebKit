@@ -1,3 +1,19 @@
+2020-05-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crash in AXIsolatedObject::identifierAttribute.
+        https://bugs.webkit.org/show_bug.cgi?id=211565
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        When adding the identifierAttribute property to the AXIsolatedObject's
+        properties map, must make an isolatedCopy of it in order to retrieve it
+        on the secondary thread.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+
 2020-05-07  Antti Koivisto  <antti@apple.com>
 
         Add basic support for generating accurate wheel event listener region

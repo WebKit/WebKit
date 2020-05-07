@@ -161,7 +161,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::SortDirection, static_cast<int>(object.sortDirection()));
     setProperty(AXPropertyName::CanvasHasFallbackContent, object.canvasHasFallbackContent());
     setProperty(AXPropertyName::SupportsRangeValue, object.supportsRangeValue());
-    setProperty(AXPropertyName::IdentifierAttribute, object.identifierAttribute());
+    setProperty(AXPropertyName::IdentifierAttribute, object.identifierAttribute().isolatedCopy());
     setProperty(AXPropertyName::LinkRelValue, object.linkRelValue());
     setProperty(AXPropertyName::CurrentState, static_cast<int>(object.currentState()));
     setProperty(AXPropertyName::CurrentValue, object.currentValue());
