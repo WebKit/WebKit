@@ -116,9 +116,7 @@ public:
     virtual void scheduleRenderingUpdate() = 0;
     virtual void scheduleImmediateRenderingUpdate() = 0;
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
-#endif
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ThreadedDisplayRefreshMonitor.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "CompositingRunLoop.h"
 #include "ThreadedCompositor.h"
@@ -124,4 +124,4 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+#endif // USE(COORDINATED_GRAPHICS)

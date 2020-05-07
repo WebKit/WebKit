@@ -477,9 +477,7 @@ private:
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
-#endif
 
     // Non layout-dependent
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;

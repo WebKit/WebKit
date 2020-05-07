@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayRefreshMonitorManager.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorClient.h"
 #include "Logging.h"
@@ -138,5 +136,3 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::monitorForDisplayID(Platfor
 }
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

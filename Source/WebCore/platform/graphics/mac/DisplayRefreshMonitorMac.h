@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include "DisplayRefreshMonitor.h"
 #include <wtf/WeakPtr.h>
@@ -55,4 +55,4 @@ private:
 
 }
 
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !USE(GTK4)
+#if !USE(GTK4)
 
 #include "DisplayRefreshMonitor.h"
 
@@ -53,4 +53,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !USE(GTK4)
+#endif // !USE(GTK4)

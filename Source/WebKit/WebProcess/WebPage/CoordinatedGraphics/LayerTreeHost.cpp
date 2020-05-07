@@ -338,12 +338,10 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
     m_compositor->setScaleFactor(m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     return m_compositor->displayRefreshMonitor(displayID);
 }
-#endif
 
 void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 {

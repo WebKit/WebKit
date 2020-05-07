@@ -1119,9 +1119,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID)
             frame->document()->windowScreenDidChange(displayID);
     }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     renderingUpdateScheduler().windowScreenDidChange(displayID);
-#endif
 
     setNeedsRecalcStyleInAllFrames();
 }

@@ -4826,7 +4826,6 @@ GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
     return page().chrome().client().graphicsLayerFactory();
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     if (auto monitor = page().chrome().client().createDisplayRefreshMonitor(displayID))
@@ -4834,7 +4833,6 @@ RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor
 
     return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
 }
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView) const

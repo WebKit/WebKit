@@ -31,18 +31,12 @@
 
 namespace WebCore {
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient& client, PlatformDisplayID displayID)
     : m_client(client)
 {
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
     DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 }
-#else
-GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient&, PlatformDisplayID)
-{
-}
-#endif
 
 GraphicsLayerUpdater::~GraphicsLayerUpdater()
 {
@@ -54,34 +48,24 @@ void GraphicsLayerUpdater::scheduleUpdate()
     if (m_scheduled)
         return;
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
-#endif
     m_scheduled = true;
 }
 
 void GraphicsLayerUpdater::screenDidChange(PlatformDisplayID displayID)
 {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
-#else
-    UNUSED_PARAM(displayID);
-#endif
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 void GraphicsLayerUpdater::displayRefreshFired()
 {
     m_scheduled = false;
     m_client.flushLayersSoon(*this);
 }
-#endif
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> GraphicsLayerUpdater::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     return m_client.createDisplayRefreshMonitor(displayID);
 }
-#endif
 
 } // namespace WebCore

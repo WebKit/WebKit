@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 class DisplayRefreshMonitorMac : public DisplayRefreshMonitor {
 public:
@@ -109,6 +109,6 @@ RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(
 {
     return DisplayRefreshMonitorMac::create(displayID);
 }
-#endif
+#endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 }

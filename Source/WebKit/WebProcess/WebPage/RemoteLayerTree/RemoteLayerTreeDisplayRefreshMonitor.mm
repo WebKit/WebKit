@@ -26,8 +26,6 @@
 #import "config.h"
 #import "RemoteLayerTreeDisplayRefreshMonitor.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -79,5 +77,3 @@ void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDraw
 }
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

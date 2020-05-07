@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "RemoteLayerTreeDrawingArea.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
@@ -55,5 +53,3 @@ private:
 };
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

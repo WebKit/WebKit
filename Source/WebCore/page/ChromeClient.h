@@ -305,9 +305,7 @@ public:
     // Allows ports to customize the type of graphics layers created by this page.
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return nullptr; }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const { return nullptr; }
-#endif
 
     virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, ShouldAccelerate, ShouldUseDisplayList, RenderingPurpose, float, ColorSpace) const { return nullptr; }
     virtual std::unique_ptr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, float, ColorSpace) const { return nullptr; }

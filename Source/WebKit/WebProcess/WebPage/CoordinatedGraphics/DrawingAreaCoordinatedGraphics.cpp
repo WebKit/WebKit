@@ -370,14 +370,12 @@ void DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers()
 }
 #endif
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     if (!m_layerTreeHost || m_wantsToExitAcceleratedCompositingMode || exitAcceleratedCompositingModePending())
         return nullptr;
     return m_layerTreeHost->createDisplayRefreshMonitor(displayID);
 }
-#endif
 
 void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&)
 {

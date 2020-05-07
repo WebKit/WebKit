@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "PlatformScreen.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -60,5 +58,3 @@ private:
 };
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

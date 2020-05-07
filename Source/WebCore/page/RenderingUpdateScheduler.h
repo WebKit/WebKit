@@ -34,10 +34,7 @@ namespace WebCore {
 class Page;
 class Timer;
 
-class RenderingUpdateScheduler
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    : public DisplayRefreshMonitorClient
-#endif
+class RenderingUpdateScheduler : public DisplayRefreshMonitorClient
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -53,19 +50,13 @@ public:
     void scheduleImmediateRenderingUpdate();
     void scheduleRenderingUpdate();
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void windowScreenDidChange(PlatformDisplayID);
-#endif
 
 private:
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     void setPreferredFramesPerSecond(FramesPerSecond);
     bool scheduleAnimation(FramesPerSecond);
     RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const final;
     void displayRefreshFired() final;
-#else
-    void displayRefreshFired();
-#endif
 
     bool isScheduled() const;
     void startTimer(Seconds);
@@ -74,9 +65,7 @@ private:
     Page& m_page;
     bool m_scheduled { false };
     std::unique_ptr<Timer> m_refreshTimer;
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
-#endif
 };
 
 }

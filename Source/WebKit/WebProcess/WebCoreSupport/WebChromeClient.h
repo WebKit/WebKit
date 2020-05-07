@@ -230,9 +230,7 @@ private:
     void AXFinishFrameLoad() final { }
 #endif
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
-#endif
 
 #if ENABLE(GPU_PROCESS)
     RemoteRenderingBackend& ensureRemoteRenderingBackend() const;

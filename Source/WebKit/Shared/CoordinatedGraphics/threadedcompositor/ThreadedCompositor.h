@@ -29,6 +29,7 @@
 
 #include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
+#include "ThreadedDisplayRefreshMonitor.h"
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
@@ -37,10 +38,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-#include "ThreadedDisplayRefreshMonitor.h"
-#endif
 
 namespace WebKit {
 
@@ -75,9 +72,7 @@ public:
 
     void forceRepaint();
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
-#endif
 
     void frameComplete();
 
@@ -116,9 +111,7 @@ private:
         bool clientRendersNextFrame { false };
     } m_attributes;
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
-#endif
 };
 
 } // namespace WebKit

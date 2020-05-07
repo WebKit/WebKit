@@ -76,9 +76,7 @@ private:
     void layerHostDidFlushLayers() override;
 #endif
     
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
-#endif
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& /* callbackIDs */) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;

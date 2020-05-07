@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisplayRefreshMonitor.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "DisplayRefreshMonitorClient.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Logging.h"
@@ -135,5 +133,3 @@ void DisplayRefreshMonitor::displayDidRefresh()
 }
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

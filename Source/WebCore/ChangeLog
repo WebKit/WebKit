@@ -1,3 +1,45 @@
+2020-05-07  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove unused USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        https://bugs.webkit.org/show_bug.cgi?id=211582
+
+        Reviewed by Fujii Hironori.
+
+        After r261264 all ports implemented USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::createDisplayRefreshMonitor const):
+        * page/Page.cpp:
+        (WebCore::Page::windowScreenDidChange):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::RenderingUpdateScheduler):
+        (WebCore::RenderingUpdateScheduler::adjustRenderingUpdateFrequency):
+        (WebCore::RenderingUpdateScheduler::scheduleTimedRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::windowScreenDidChange):
+        * page/RenderingUpdateScheduler.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/DisplayRefreshMonitorClient.cpp:
+        * platform/graphics/DisplayRefreshMonitorClient.h:
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::GraphicsLayerUpdater):
+        (WebCore::GraphicsLayerUpdater::scheduleUpdate):
+        (WebCore::GraphicsLayerUpdater::screenDidChange):
+        (WebCore::GraphicsLayerUpdater::displayRefreshFired):
+        (WebCore::GraphicsLayerUpdater::createDisplayRefreshMonitor const):
+        * platform/graphics/GraphicsLayerUpdater.h:
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp:
+        * platform/graphics/gtk/DisplayRefreshMonitorGtk.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::createDisplayRefreshMonitor const):
+        * rendering/RenderLayerCompositor.h:
+
 2020-05-07  Antoine Quint  <graouts@apple.com>
 
         Add watchOS media controls assets

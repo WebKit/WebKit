@@ -890,14 +890,12 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
     return nullptr;
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> WebChromeClient::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     if (auto* drawingArea = m_page.drawingArea())
         return drawingArea->createDisplayRefreshMonitor(displayID);
     return nullptr;
 }
-#endif
 
 #if ENABLE(GPU_PROCESS)
 

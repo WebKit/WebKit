@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "AnimationFrameRate.h"
 #include "PlatformScreen.h"
 #include <wtf/HashSet.h>
@@ -103,6 +101,3 @@ private:
 };
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include "AnimationFrameRate.h"
 #include "DisplayRefreshMonitor.h"
 #include "PlatformScreen.h"
@@ -75,5 +73,3 @@ private:
 };
 
 }
-
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

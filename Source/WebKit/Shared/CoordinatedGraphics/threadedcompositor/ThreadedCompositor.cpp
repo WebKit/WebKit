@@ -54,9 +54,7 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
     : m_client(client)
     , m_paintFlags(paintFlags)
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient))
-#endif
 {
     {
         // Locking isn't really necessary here, but it's done for consistency.
@@ -95,9 +93,7 @@ void ThreadedCompositor::invalidate()
 {
     m_scene->detach();
     m_compositingRunLoop->stopUpdates();
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     m_displayRefreshMonitor->invalidate();
-#endif
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         if (!m_context || !m_context->makeContextCurrent())
             return;
@@ -242,20 +238,14 @@ void ThreadedCompositor::sceneUpdateFinished()
     {
         LockHolder locker(m_attributes.lock);
         shouldDispatchDisplayRefreshCallback = m_attributes.clientRendersNextFrame
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
             || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
-#else
-            ;
-#endif
     }
 
     LockHolder stateLocker(m_compositingRunLoop->stateLock());
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Schedule the DisplayRefreshMonitor callback, if necessary.
     if (shouldDispatchDisplayRefreshCallback)
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
-#endif
 
     // Mark the scene update as completed.
     m_compositingRunLoop->updateCompleted(stateLocker);
@@ -273,12 +263,10 @@ void ThreadedCompositor::updateScene()
     m_compositingRunLoop->scheduleUpdate();
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)
 {
     return m_displayRefreshMonitor.copyRef();
 }
-#endif
 
 void ThreadedCompositor::frameComplete()
 {

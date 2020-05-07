@@ -37,13 +37,9 @@ namespace WebCore {
 RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
     : m_page(page)
 {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     windowScreenDidChange(page.chrome().displayID());
-#endif
 }
 
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 void RenderingUpdateScheduler::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
     if (m_preferredFramesPerSecond == preferredFramesPerSecond)
@@ -64,17 +60,15 @@ bool RenderingUpdateScheduler::scheduleAnimation(FramesPerSecond preferredFrames
     setPreferredFramesPerSecond(preferredFramesPerSecond);
     return DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 }
-#endif
 
 void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     Seconds interval = m_page.preferredRenderingUpdateInterval();
 
     // PreferredFramesPerSecond is an integer and should be > 0.
     if (interval <= 1_s)
         setPreferredFramesPerSecond(preferredFramesPerSecond(interval));
-#endif
+
     if (isScheduled()) {
         clearScheduled();
         scheduleTimedRenderingUpdate();
@@ -96,11 +90,9 @@ void RenderingUpdateScheduler::scheduleTimedRenderingUpdate()
 
     Seconds interval = m_page.preferredRenderingUpdateInterval();
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // PreferredFramesPerSecond is an integer and should be > 0.
     if (interval <= 1_s)
         m_scheduled = scheduleAnimation(preferredFramesPerSecond(interval));
-#endif
 
     if (!isScheduled())
         startTimer(interval);
@@ -126,7 +118,6 @@ void RenderingUpdateScheduler::clearScheduled()
     m_refreshTimer = nullptr;
 }
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> RenderingUpdateScheduler::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
     if (auto monitor = m_page.chrome().client().createDisplayRefreshMonitor(displayID))
@@ -139,7 +130,6 @@ void RenderingUpdateScheduler::windowScreenDidChange(PlatformDisplayID displayID
 {
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
 }
-#endif
 
 void RenderingUpdateScheduler::displayRefreshFired()
 {

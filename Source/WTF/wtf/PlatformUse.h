@@ -187,8 +187,6 @@
 #define USE_AV_SAMPLE_BUFFER_DISPLAY_LAYER 1
 #endif
 
-#define USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR 1
-
 #if !defined(USE_ZLIB)
 #define USE_ZLIB 1
 #endif

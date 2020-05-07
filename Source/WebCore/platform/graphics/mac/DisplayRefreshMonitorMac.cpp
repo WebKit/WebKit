@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DisplayRefreshMonitorMac.h"
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <QuartzCore/QuartzCore.h>
 #include <wtf/RunLoop.h>
@@ -103,4 +103,4 @@ void DisplayRefreshMonitorMac::displayLinkFired()
 
 }
 
-#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)
