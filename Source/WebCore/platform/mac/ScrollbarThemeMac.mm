@@ -180,11 +180,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
 
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar& scrollbar)
 {
-    auto iter = scrollbarMap().find(&scrollbar);
-    if (iter != scrollbarMap().end()) {
-        [iter->value setDelegate:nil];
-        scrollbarMap().remove(iter);
-    }
+    [scrollbarMap().take(&scrollbar) setDelegate:nil];
 }
 
 void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar& scrollbar, RetainPtr<NSScrollerImp>&& newPainter)
