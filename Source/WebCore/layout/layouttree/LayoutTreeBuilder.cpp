@@ -216,7 +216,24 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
             childLayoutBox = &createLineBreakBox(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
-            childLayoutBox = &createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(clonedStyle));
+            // The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left' on the table element
+            // are used on the table wrapper box and not the table box; all other values of non-inheritable properties are used
+            // on the table box and not the table wrapper box.
+            auto tableWrapperBoxStyle = RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), renderer.style().display() == DisplayType::Table ? DisplayType::Block : DisplayType::Inline);
+            tableWrapperBoxStyle.setPosition(renderer.style().position());
+            tableWrapperBoxStyle.setFloating(renderer.style().floating());
+
+            tableWrapperBoxStyle.setTop(Length { renderer.style().top() });
+            tableWrapperBoxStyle.setLeft(Length { renderer.style().left() });
+            tableWrapperBoxStyle.setBottom(Length { renderer.style().bottom() });
+            tableWrapperBoxStyle.setRight(Length { renderer.style().right() });
+
+            tableWrapperBoxStyle.setMarginTop(Length { renderer.style().marginTop() });
+            tableWrapperBoxStyle.setMarginLeft(Length { renderer.style().marginLeft() });
+            tableWrapperBoxStyle.setMarginBottom(Length { renderer.style().marginBottom() });
+            tableWrapperBoxStyle.setMarginRight(Length { renderer.style().marginRight() });
+
+            childLayoutBox = &createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(tableWrapperBoxStyle));
             childLayoutBox->setIsAnonymous();
         } else if (is<RenderReplaced>(renderer)) {
             childLayoutBox = &createReplacedBox(WTFMove(clonedStyle));
@@ -294,6 +311,7 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
     auto tableBoxStyle = RenderStyle::clone(tableRenderer.style());
     tableBoxStyle.setPosition(PositionType::Static);
     tableBoxStyle.setFloating(Float::No);
+    tableBoxStyle.resetMargin();
     auto& tableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, WTFMove(tableBoxStyle));
     appendChild(tableWrapperBox, tableBox);
     auto* sectionRenderer = tableChild;

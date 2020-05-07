@@ -308,7 +308,7 @@ bool Box::isAtomicInlineLevelBox() const
 bool Box::isBlockContainerBox() const
 {
     auto display = m_style.display();
-    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableWrapperBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
+    return display == DisplayType::Block || display == DisplayType::ListItem || isInlineBlockBox() || isTableCell() || isTableCaption(); // TODO && !replaced element
 }
 
 const Box* Box::nextInFlowSibling() const

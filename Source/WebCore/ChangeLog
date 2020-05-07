@@ -1,3 +1,24 @@
+2020-05-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC[TFC] Adjust the table wrapper box style
+        https://bugs.webkit.org/show_bug.cgi?id=211574
+
+        Reviewed by Antti Koivisto.
+
+        The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left'
+        on the table element are used on the table wrapper box and not the table box; all other values of non-inheritable
+        properties are used on the table box and not the table wrapper box.
+
+        https://www.w3.org/TR/CSS22/tables.html#model
+        
+        Test: fast/layoutformattingcontext/table-simple-with-border.html
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isBlockContainerBox const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+
 2020-05-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Make debug build run in accessibility isolated tree mode = 1.
