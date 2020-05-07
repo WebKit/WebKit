@@ -2248,7 +2248,6 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
 
-    platformPrepareToSuspend([callbackAggregator] { });
     platformSyncAllCookies([callbackAggregator] { });
 
     for (auto& connection : m_webProcessConnections.values())
@@ -2282,7 +2281,6 @@ void NetworkProcess::processDidResume()
 
 void NetworkProcess::resume()
 {
-    platformProcessDidResume();
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 

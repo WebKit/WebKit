@@ -371,9 +371,6 @@ private:
     void platformProcessDidTransitionToForeground();
     void platformProcessDidTransitionToBackground();
 
-    void platformPrepareToSuspend(CompletionHandler<void()>&&);
-    void platformProcessDidResume();
-
     // AuxiliaryProcess
     void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;

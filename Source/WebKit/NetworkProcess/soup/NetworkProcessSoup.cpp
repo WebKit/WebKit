@@ -181,17 +181,6 @@ void NetworkProcess::setNetworkProxySettings(const SoupNetworkProxySettings& set
     });
 }
 
-void NetworkProcess::platformPrepareToSuspend(CompletionHandler<void()>&& completionHandler)
-{
-    notImplemented();
-    completionHandler();
-}
-
-void NetworkProcess::platformProcessDidResume()
-{
-    notImplemented();
-}
-
 void NetworkProcess::platformProcessDidTransitionToForeground()
 {
     notImplemented();

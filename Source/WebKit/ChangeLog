@@ -1,3 +1,24 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop dead platformPrepareToSuspend / platformProcessDidResume in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=211579
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformPrepareToSuspend): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidResume): Deleted.
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformPrepareToSuspend): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidResume): Deleted.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformPrepareToSuspend): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidResume): Deleted.
+
 2020-05-07  Megan Gardner  <megan_gardner@apple.com>
 
         ContextMenu: entire webpage pops and disappears to generate preview of embedded image

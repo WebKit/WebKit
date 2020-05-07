@@ -240,15 +240,6 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void NetworkProcess::platformPrepareToSuspend(CompletionHandler<void()>&& completionHandler)
-{
-    completionHandler();
-}
-
-void NetworkProcess::platformProcessDidResume()
-{
-}
-
 void NetworkProcess::platformProcessDidTransitionToBackground()
 {
 }
