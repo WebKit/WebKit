@@ -1503,6 +1503,8 @@ webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.htm
 webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
 
+webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -3439,6 +3441,12 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persis
 
 webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
 
+webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html [ Skip ]
+webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html [ Skip ]
+webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html [ Skip ]
+
+webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -4811,7 +4819,7 @@ http/tests/inspector/network/contentextensions [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
 
-imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
+webkit.org/b/211564 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 

@@ -1,3 +1,13 @@
+2020-05-07  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update test expectations after r261251
+        https://bugs.webkit.org/show_bug.cgi?id=211570
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-05-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Test failures after Flatpak upgrade

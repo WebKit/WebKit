@@ -796,6 +796,8 @@ webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure
 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-sub-image-cube-maps.html [ Failure ]
 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-upload-cube-maps.html [ Failure ]
 
+webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
