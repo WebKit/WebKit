@@ -116,13 +116,14 @@ public:
     void visitJSEventListeners(JSC::SlotVisitor&);
     void invalidateJSEventListeners(JSC::JSObject*);
 
+    const EventTargetData* eventTargetData() const;
+
 protected:
     virtual ~EventTarget() = default;
     
     virtual EventTargetData* eventTargetData() = 0;
     virtual EventTargetData* eventTargetDataConcurrently() = 0;
     virtual EventTargetData& ensureEventTargetData() = 0;
-    const EventTargetData* eventTargetData() const;
 
     virtual void eventListenersDidChange() { }
 

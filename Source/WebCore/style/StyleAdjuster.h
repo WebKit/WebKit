@@ -48,7 +48,7 @@ public:
     static void adjustSVGElementStyle(RenderStyle&, const SVGElement&);
     static void adjustAnimatedStyle(RenderStyle&, const RenderStyle* parentBoxStyle, OptionSet<AnimationImpact>);
     
-    static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const Node&, OptionSet<EventListenerRegionType>);
+    static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const EventTarget&, OptionSet<EventListenerRegionType>);
 
 #if ENABLE(TEXT_AUTOSIZING)
     struct AdjustmentForTextAutosizing {

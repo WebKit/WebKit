@@ -1,3 +1,23 @@
+2020-05-07  Antti Koivisto  <antti@apple.com>
+
+        [Wheel event region] Include listeners on Window
+        https://bugs.webkit.org/show_bug.cgi?id=211577
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/mac/wheel-event-listener-region-window.html
+
+        * dom/EventTarget.h:
+        * dom/Node.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::computeEventListenerRegionTypes):
+
+        Take EventTarget so this can be used with DOMWindow.
+
+        * style/StyleAdjuster.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2020-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r261056): [ Mac WK1 ] inspector/console/console-api.html is flaky crashing
