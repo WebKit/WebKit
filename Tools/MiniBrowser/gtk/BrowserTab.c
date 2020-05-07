@@ -434,8 +434,12 @@ static void browserTabConstructed(GObject *gObject)
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->pointerLockMessageLabel);
 
     gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
+#if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));
+#else
+    gtk_overlay_set_child(GTK_OVERLAY(overlay), GTK_WIDGET(tab->webView));
+#endif
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
     tab->titleBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);

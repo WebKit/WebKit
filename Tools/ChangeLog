@@ -1,3 +1,14 @@
+2020-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build with current GTK
+
+        GtkWindow and GtkOverlay aren't a GtkContainer anymore.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browserTabConstructed):
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_init):
+
 2020-05-07  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Import build definitions

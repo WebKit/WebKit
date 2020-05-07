@@ -1117,12 +1117,12 @@ static void browser_window_init(BrowserWindow *window)
 #if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_box_pack_start(GTK_BOX(window->mainBox), window->notebook, TRUE, TRUE, 0);
     gtk_widget_show(window->notebook);
-#else
-    gtk_container_add(GTK_CONTAINER(window->mainBox), window->notebook);
-#endif
-
     gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_show(vbox);
+#else
+    gtk_container_add(GTK_CONTAINER(window->mainBox), window->notebook);
+    gtk_window_set_child(GTK_WINDOW(window), vbox);
+#endif
 }
 
 static void browserWindowConstructed(GObject *gObject)
