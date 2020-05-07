@@ -398,6 +398,9 @@
     },
     "imported/w3c/webdriver/tests/element_click/navigate.py": {
         "subtests": {
+            "test_link_closes_window": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/211548"}}
+            },
             "test_link_unload_event": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }

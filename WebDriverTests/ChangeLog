@@ -1,3 +1,11 @@
+2020-05-06  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] gardening flaky test.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-05-05  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Gardening more GTK failures.
