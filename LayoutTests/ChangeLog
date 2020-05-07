@@ -1,5 +1,9 @@
 2020-05-07  Alan Coon  <alancoon@apple.com>
 
+        Revert r261056. rdar://problem/62937746
+
+2020-05-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261122. rdar://problem/62995479
 
     REGRESSION (r261109): [ Mac ] inspector/css/getAllStyleSheets.html is failing

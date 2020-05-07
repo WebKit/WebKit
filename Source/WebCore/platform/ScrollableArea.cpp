@@ -438,16 +438,6 @@ bool ScrollableArea::hasLayerForScrollCorner() const
     return layerForScrollCorner();
 }
 
-String ScrollableArea::horizontalScrollbarStateForTesting() const
-{
-    return scrollAnimator().horizontalScrollbarStateForTesting();
-}
-
-String ScrollableArea::verticalScrollbarStateForTesting() const
-{
-    return scrollAnimator().verticalScrollbarStateForTesting();
-}
-
 #if ENABLE(CSS_SCROLL_SNAP)
 ScrollSnapOffsetsInfo<LayoutUnit>& ScrollableArea::ensureSnapOffsetsInfo()
 {

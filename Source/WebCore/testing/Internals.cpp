@@ -323,8 +323,6 @@
 
 #if PLATFORM(MAC)
 #include "GraphicsContextGLOpenGLManager.h"
-#include "NSScrollerImpDetails.h"
-#include "ScrollbarThemeMac.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -2749,7 +2747,7 @@ ExceptionOr<String> Internals::repaintRectsAsText() const
     return document->frame()->trackedRepaintRectsAsText();
 }
 
-ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
+ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
 {
     if (!node)
         node = contextDocument();
@@ -2757,18 +2755,17 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     if (!node)
         return Exception { InvalidAccessError };
 
-    auto nodeRef = makeRef(*node);
-    nodeRef->document().updateLayoutIgnorePendingStylesheets();
+    node->document().updateLayoutIgnorePendingStylesheets();
 
     ScrollableArea* scrollableArea = nullptr;
-    if (is<Document>(nodeRef)) {
-        auto* frameView = downcast<Document>(nodeRef.get()).view();
+    if (is<Document>(*node)) {
+        auto* frameView = downcast<Document>(node)->view();
         if (!frameView)
             return Exception { InvalidAccessError };
 
         scrollableArea = frameView;
-    } else if (is<Element>(nodeRef)) {
-        auto& element = downcast<Element>(nodeRef.get());
+    } else if (is<Element>(*node)) {
+        auto& element = *downcast<Element>(node);
         if (!element.renderBox())
             return Exception { InvalidAccessError };
 
@@ -2779,16 +2776,6 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     if (!scrollableArea)
         return Exception { InvalidNodeTypeError };
 
-    return scrollableArea;
-}
-
-ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
-{
-    auto areaOrException = scrollableAreaForNode(node);
-    if (areaOrException.hasException())
-        return areaOrException.releaseException();
-
-    auto* scrollableArea = areaOrException.releaseReturnValue();
     switch (scrollableArea->scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
         return "default"_str;
@@ -2804,32 +2791,34 @@ ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
 
 ExceptionOr<bool> Internals::scrollbarUsingDarkAppearance(Node* node) const
 {
-    auto areaOrException = scrollableAreaForNode(node);
-    if (areaOrException.hasException())
-        return areaOrException.releaseException();
+    if (!node)
+        node = contextDocument();
 
-    auto* scrollableArea = areaOrException.releaseReturnValue();
+    if (!node)
+        return Exception { InvalidAccessError };
+
+    node->document().updateLayoutIgnorePendingStylesheets();
+
+    ScrollableArea* scrollableArea = nullptr;
+    if (is<Document>(*node)) {
+        auto* frameView = downcast<Document>(node)->view();
+        if (!frameView)
+            return Exception { InvalidAccessError };
+
+        scrollableArea = frameView;
+    } else if (is<Element>(*node)) {
+        auto& element = *downcast<Element>(node);
+        if (!element.renderBox())
+            return Exception { InvalidAccessError };
+
+        scrollableArea = element.renderBox()->layer();
+    } else
+        return Exception { InvalidNodeTypeError };
+
+    if (!scrollableArea)
+        return Exception { InvalidNodeTypeError };
+
     return scrollableArea->useDarkAppearance();
-}
-
-ExceptionOr<String> Internals::horizontalScrollbarState(Node* node) const
-{
-    auto areaOrException = scrollableAreaForNode(node);
-    if (areaOrException.hasException())
-        return areaOrException.releaseException();
-
-    auto* scrollableArea = areaOrException.releaseReturnValue();
-    return scrollableArea->horizontalScrollbarStateForTesting();
-}
-
-ExceptionOr<String> Internals::verticalScrollbarState(Node* node) const
-{
-    auto areaOrException = scrollableAreaForNode(node);
-    if (areaOrException.hasException())
-        return areaOrException.releaseException();
-
-    auto* scrollableArea = areaOrException.releaseReturnValue();
-    return scrollableArea->verticalScrollbarStateForTesting();
 }
 
 ExceptionOr<String> Internals::scrollingStateTreeAsText() const
@@ -3587,14 +3576,6 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(enabled);
-#if PLATFORM(MAC)
-    ScrollerStyle::setUseOverlayScrollbars(enabled);
-    ScrollbarTheme& theme = ScrollbarTheme::theme();
-    if (theme.isMockTheme())
-        return;
-
-    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
-#endif
 }
 
 void Internals::setUsesMockScrollAnimator(bool enabled)

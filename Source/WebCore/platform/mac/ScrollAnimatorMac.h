@@ -138,9 +138,6 @@ private:
     bool isRubberBandInProgress() const override;
     bool isScrollSnapInProgress() const override;
 
-    String horizontalScrollbarStateForTesting() const final;
-    String verticalScrollbarStateForTesting() const final;
-
 #if ENABLE(RUBBER_BANDING)
     /// ScrollControllerClient member functions.
     IntSize stretchAmount() const override;

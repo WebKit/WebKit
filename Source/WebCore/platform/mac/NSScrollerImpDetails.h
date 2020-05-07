@@ -29,8 +29,6 @@
 
 #include <wtf/Optional.h>
 
-enum NSScrollerStyle : long;
-
 namespace WebCore {
 
 class WEBCORE_EXPORT ScrollerStyle {

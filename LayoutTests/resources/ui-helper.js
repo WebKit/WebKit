@@ -59,20 +59,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static async mouseWheelMayBeginAt(x, y)
-    {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "maybegin", "none");
-        await UIHelper.animationFrame();
-    }
-
-    static async mouseWheelCancelAt(x, y)
-    {
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "cancelled", "none");
-        await UIHelper.animationFrame();
-    }
-
     static async waitForScrollCompletion()
     {
         return new Promise(resolve => {
@@ -85,13 +71,6 @@ window.UIHelper = class UIHelper {
     static async animationFrame()
     {
         return new Promise(requestAnimationFrame);
-    }
-
-    static async waitForCondition(conditionFunc)
-    {
-        while (!conditionFunc()) {
-            await UIHelper.animationFrame();
-        }
     }
 
     static sendEventStream(eventStream)
