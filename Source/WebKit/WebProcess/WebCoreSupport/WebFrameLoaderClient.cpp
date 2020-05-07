@@ -1487,8 +1487,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         shouldHideScrollbars = true;
 #endif
 
-    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
-    m_frameHasCustomContentProvider = isMainFrame && webPage->shouldUseCustomContentProviderForResponse(response);
+    m_frameHasCustomContentProvider = isMainFrame
+        && m_frame->coreFrame()->loader().documentLoader()
+        && webPage->shouldUseCustomContentProviderForResponse(m_frame->coreFrame()->loader().documentLoader()->response());
     m_frameCameFromBackForwardCache = false;
 
     ScrollbarMode defaultScrollbarMode = shouldHideScrollbars ? ScrollbarAlwaysOff : ScrollbarAuto;

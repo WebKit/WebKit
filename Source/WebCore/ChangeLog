@@ -1,5 +1,24 @@
 2020-05-07  Darin Adler  <darin@apple.com>
 
+        Add some missing null checks for DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=211544
+        rdar://62843516
+
+        Reviewed by Anders Carlsson.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Use some more RefPtr,
+        and check for null before calling DocumentLoader::responseMIMEType.
+        Also removed a comment that made no sense, and an assertion that was
+        there for no reason, left over from some point in history where it
+        made sense.
+
+        * loader/HistoryController.cpp:
+        (WebCore::FrameLoader::HistoryController::updateForRedirectWithLockedBackForwardList):
+        Add checks for null before calling urlForHistory and isClientRedirect.
+
+2020-05-07  Darin Adler  <darin@apple.com>
+
         Remove USE(INSERTION_UNDO_GROUPING) checks in macOS platform code
         https://bugs.webkit.org/show_bug.cgi?id=211525
 

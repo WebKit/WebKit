@@ -2146,10 +2146,10 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     // The call to closeURL() invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
     // or the two will stomp each other.
-    DocumentLoader* pdl = m_provisionalDocumentLoader.get();
+    auto originalProvisionalDocumentLoader = m_provisionalDocumentLoader;
     if (m_documentLoader)
         closeURL();
-    if (pdl != m_provisionalDocumentLoader)
+    if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
         return;
 
     if (m_documentLoader)
@@ -2161,7 +2161,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     // Script can do anything. If the script initiates a new load, we need to abandon the
     // current load or the two will stomp each other.
     setDocumentLoader(m_provisionalDocumentLoader.get());
-    if (pdl != m_provisionalDocumentLoader)
+    if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
         return;
     FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
@@ -2170,7 +2170,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     setState(FrameStateCommittedPage);
 
     // Handle adding the URL to the back/forward list.
-    DocumentLoader* dl = m_documentLoader.get();
+    auto documentLoader = m_documentLoader;
 
     switch (m_loadType) {
     case FrameLoadType::Forward:
@@ -2191,9 +2191,8 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
             // Create a document view for this document, or used the cached view.
             if (cachedPage) {
-                DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
-                ASSERT(cachedDocumentLoader);
-                cachedDocumentLoader->attachToFrame(m_frame);
+                ASSERT(cachedPage->documentLoader());
+                cachedPage->documentLoader()->attachToFrame(m_frame);
                 m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
             } else
                 m_client->transitionToCommittedForNewPage();
@@ -2222,10 +2221,8 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
         break;
     }
 
-    m_documentLoader->writer().setMIMEType(dl->responseMIMEType());
-
-    // Tell the client we've committed this URL.
-    ASSERT(m_frame.view());
+    if (documentLoader)
+        documentLoader->writer().setMIMEType(documentLoader->responseMIMEType());
 
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;

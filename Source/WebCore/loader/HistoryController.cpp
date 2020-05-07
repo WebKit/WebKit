@@ -414,9 +414,9 @@ void FrameLoader::HistoryController::updateForRedirectWithLockedBackForwardList(
     LOG(History, "HistoryController %p updateForRedirectWithLockedBackForwardList: Updating History for redirect load in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
     
     bool usesEphemeralSession = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
-    const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
+    auto historyURL = m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->urlForHistory() : URL { };
 
-    if (m_frame.loader().documentLoader()->isClientRedirect()) {
+    if (m_frame.loader().documentLoader() && m_frame.loader().documentLoader()->isClientRedirect()) {
         if (!m_currentItem && !m_frame.tree().parent()) {
             if (!historyURL.isEmpty()) {
                 updateBackForwardListClippedAtTarget(true);
