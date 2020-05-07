@@ -1,3 +1,15 @@
+2020-05-06  Keith Miller  <keith_miller@apple.com>
+
+        DFG ByVal nodes with ArrayModes should clobberTop until Fixup phase runs.
+        https://bugs.webkit.org/show_bug.cgi?id=211531
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/for-of-get-by-val-marks-clobbers-exit-state.js: Added.
+        (foo):
+        * stress/put-by-val-correctly-clobbers-exit-state-when-misprofiling-index.js: Added.
+        (let.foo.vm.createBuiltin):
+
 2020-05-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ECMA-402] Implement Intl.Locale
