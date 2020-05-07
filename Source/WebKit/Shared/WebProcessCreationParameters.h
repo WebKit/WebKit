@@ -213,6 +213,7 @@ struct WebProcessCreationParameters {
     Optional<SandboxExtension::Handle> neSessionManagerExtensionHandle;
     Optional<SandboxExtension::Handle> mapDBExtensionHandle;
     bool systemHasBattery { false };
+    Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

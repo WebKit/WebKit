@@ -900,6 +900,8 @@ enum CompositingPolicy {
     long readPreferenceInteger(DOMString domain, DOMString key);
     DOMString encodedPreferenceValue(DOMString domain, DOMString key);
 
+    DOMString mediaMIMETypeForExtension(DOMString extension);
+
     DOMString getUTIFromTag(DOMString tagClass, DOMString tag, DOMString conformingToUTI);
 
     boolean supportsPictureInPicture();
