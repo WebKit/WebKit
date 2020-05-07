@@ -1,5 +1,50 @@
 2020-05-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261146. rdar://problem/62995486
+
+    REGRESSION (r260791?): Assert not reached in ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary() and ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
+    https://bugs.webkit.org/show_bug.cgi?id=211305
+    <rdar://problem/62737871>
+    
+    Reviewed by Alex Christensen.
+    
+    This patch adds a busy timeout for the ITP database to allow for
+    some concurrency flexibility when running many WebKitTestRunner tests, which
+    recreate the ITP database store very often to test both the memory and
+    database stores.
+    
+    With the timeout, an attempt to write to the database when another
+    thread is holding the lock will keep attempting to insert for 5
+    seconds as long as the statement execution returns SQLITE_BUSY.
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261146 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-04  Kate Cheney  <katherine_cheney@apple.com>
+
+            REGRESSION (r260791?): Assert not reached in ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary() and ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
+            https://bugs.webkit.org/show_bug.cgi?id=211305
+            <rdar://problem/62737871>
+
+            Reviewed by Alex Christensen.
+
+            This patch adds a busy timeout for the ITP database to allow for
+            some concurrency flexibility when running many WebKitTestRunner tests, which
+            recreate the ITP database store very often to test both the memory and
+            database stores.
+
+            With the timeout, an attempt to write to the database when another
+            thread is holding the lock will keep attempting to insert for 5
+            seconds as long as the statement execution returns SQLITE_BUSY.
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+            (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+
+2020-05-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261187. rdar://problem/62993016
 
     Check for app-bound domains should confirm WKAppBoundDomains key exists when checking for default app-bound protocols.
