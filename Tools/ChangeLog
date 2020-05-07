@@ -1,3 +1,12 @@
+2020-05-07  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Fix string.format invocation
+
+        Reviewed by Philippe Normand.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-07  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Doesn't generate crash logs on the bots

@@ -702,7 +702,7 @@ class WebkitFlatpak:
 
             coredumps_dir = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
             if coredumps_dir and os.path.isdir(coredumps_dir):
-                flatpak_command.append("--bind-mount={coredumps_dir}={coredumps_dir}".format(coredumps_dir))
+                flatpak_command.append("--bind-mount={coredumps_dir}={coredumps_dir}".format(coredumps_dir=coredumps_dir))
 
             sandbox_environment.update({
                 "TZ": "PST8PDT",
