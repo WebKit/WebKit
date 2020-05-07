@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,10 @@ static Optional<size_t> stackSize(ThreadType threadType)
     // Enable STACK_STATS in StackStats.h to create a build that will track the information for tuning.
 #if PLATFORM(PLAYSTATION)
     if (threadType == ThreadType::JavaScript)
-        return 512 * 1024;
+        return 512 * KB;
+#elif OS(DARWIN) && ASAN_ENABLED
+    if (threadType == ThreadType::Compiler)
+        return 1 * MB; // ASan needs more stack space (especially on Debug builds).
 #else
     UNUSED_PARAM(threadType);
 #endif

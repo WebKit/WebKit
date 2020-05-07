@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood <jhaygood@reaktix.com>
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
@@ -85,6 +85,7 @@ enum class GCThreadType : uint8_t {
 enum class ThreadType : uint8_t {
     Unknown = 0,
     JavaScript,
+    Compiler,
     GarbageCollection,
     Network,
     Graphics,

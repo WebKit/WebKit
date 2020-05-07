@@ -1,3 +1,15 @@
+2020-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Give the DFG and FTL WorkList threads more stack space on ASAN builds.
+        https://bugs.webkit.org/show_bug.cgi?id=211535
+        <rdar://problem/62947884>
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::ThreadBody::ThreadBody):
+        - Mark the AutomaticThread as ThreadType::Compiler.
+
 2020-05-07  Daniel Kolesa  <daniel@octaforge.org>
 
         REGRESSION(r251875): Crash in JSC::StructureIDTable::get on ppc64le: gcSafeMemcpy broken on JSVALUE64 platforms other than x86_64 and aarch64

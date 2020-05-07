@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 class Worklist::ThreadBody : public AutomaticThread {
 public:
     ThreadBody(const AbstractLocker& locker, Worklist& worklist, ThreadData& data, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, int relativePriority)
-        : AutomaticThread(locker, lock, WTFMove(condition))
+        : AutomaticThread(locker, lock, WTFMove(condition), ThreadType::Compiler)
         , m_worklist(worklist)
         , m_data(data)
         , m_relativePriority(relativePriority)

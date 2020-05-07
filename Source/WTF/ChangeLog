@@ -1,5 +1,29 @@
 2020-05-07  Mark Lam  <mark.lam@apple.com>
 
+        Give the DFG and FTL WorkList threads more stack space on ASAN builds.
+        https://bugs.webkit.org/show_bug.cgi?id=211535
+        <rdar://problem/62947884>
+
+        Reviewed by Geoffrey Garen.
+
+        1. Add the ability to set the ThreadType for AutomaticThreads.
+        2. Give ThreadType::Compiler (which currently only used for the DFG anf FTL
+           WorkList threads) a larger stack for OS(DARWIN) on ASAN builds.
+
+           This is needed because ASAN is a memory hungry beast, and we want the ASAN
+           builds to get to exercise the same amount of code a regular build will (instead
+           of failing out early with a stack overflow error).
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::AutomaticThread):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/Threading.cpp:
+        (WTF::stackSize):
+        * wtf/Threading.h:
+
+2020-05-07  Mark Lam  <mark.lam@apple.com>
+
         Add stack checks to the DFG and FTL bytecode parser.
         https://bugs.webkit.org/show_bug.cgi?id=211547
         <rdar://problem/62958880>
