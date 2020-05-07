@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+class ProcessThrottler;
+
 class AuxiliaryProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
@@ -48,9 +50,13 @@ public:
     void connect();
     void terminate();
 
+    virtual ProcessThrottler& throttler() = 0;
+
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
     template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, Seconds timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
-    template<typename T, typename C> void sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { });
+
+    enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+    template<typename T, typename C> void sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
     
     template<typename T, typename U>
     bool send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { })
@@ -104,7 +110,7 @@ public:
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
-    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt);
+    bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     void shutDownProcess();
 
@@ -170,7 +176,7 @@ bool AuxiliaryProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uin
 }
 
 template<typename T, typename C>
-void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
+void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -183,7 +189,7 @@ void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandle
             T::callReply(*decoder, WTFMove(completionHandler));
         else
             T::cancelReply(WTFMove(completionHandler));
-    }, listenerID }});
+    }, listenerID }}, shouldStartProcessThrottlerActivity);
 }
     
 } // namespace WebKit

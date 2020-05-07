@@ -10140,7 +10140,7 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 
 void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    m_process->connection()->sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler));
 }
 
 void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)

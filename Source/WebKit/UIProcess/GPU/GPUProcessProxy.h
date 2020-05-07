@@ -57,7 +57,7 @@ public:
 
     void getGPUProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
-    ProcessThrottler& throttler() { return m_throttler; }
+    ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
     // ProcessThrottlerClient

@@ -150,8 +150,15 @@ bool AuxiliaryProcessProxy::wasTerminated() const
 #endif
 }
 
-bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo)
+bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
+    if (asyncReplyInfo && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
+        auto completionHandler = std::exchange(asyncReplyInfo->first, nullptr);
+        asyncReplyInfo->first = [activity = throttler().backgroundActivity(ASCIILiteral::null()), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+            completionHandler(decoder);
+        };
+    }
+
     switch (state()) {
     case State::Launching:
         // If we're waiting for the child process to launch, we need to stash away the messages so we can send them once we have a connection.

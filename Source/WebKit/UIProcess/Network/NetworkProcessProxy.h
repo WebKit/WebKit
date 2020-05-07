@@ -193,7 +193,7 @@ public:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
 
-    ProcessThrottler& throttler() { return m_throttler; }
+    ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
     WebProcessPool& processPool() { return m_processPool; }

@@ -242,7 +242,7 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    ProcessThrottler& throttler() { return m_throttler; }
+    ProcessThrottler& throttler() final { return m_throttler; }
 
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();

@@ -1,3 +1,77 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] AuxiliaryProcessProxy::sendWithAsyncReply() should prevent auxiliary process suspension while processing the IPC
+        https://bugs.webkit.org/show_bug.cgi?id=209928
+
+        Reviewed by Youenn Fablet.
+
+        AuxiliaryProcessProxy::sendWithAsyncReply() should prevent auxiliary process suspension
+        on iOS while processing the IPC. If the process is suspended either before or during
+        the IPC, this could result in hangs. This is a speculative fix for the flaky timeouts
+        we see on many tests on iOS only. We know that missing activities with
+        sendWithAsyncReply has caused test timeouts in the past (Bug 211421).
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::setUseITPDatabase):
+        (WebKit::NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::NetworkProcessProxy::resetParametersToDefaultValues):
+        (WebKit::NetworkProcessProxy::scheduleClearInMemoryAndPersistent):
+        (WebKit::NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting):
+        (WebKit::NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics):
+        (WebKit::NetworkProcessProxy::setShouldDowngradeReferrerForTesting):
+        (WebKit::NetworkProcessProxy::setThirdPartyCookieBlockingMode):
+        (WebKit::NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting):
+        (WebKit::NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting):
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::Activity::Activity):
+        (WebKit::ProcessThrottler::Activity::isQuietActivity const):
+        (WebKit::ProcessThrottler::Activity::invalidate):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/WebBackForwardCacheEntry.cpp:
+        (WebKit::WebBackForwardCacheEntry::~WebBackForwardCacheEntry):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getProcessDisplayName):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setThirdPartyCookieBlockingMode):
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::sendPrepareToSuspend):
+        (WebKit::WebProcessProxy::activePagesDomainsForTesting):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::insertTextPlaceholder):
+        (WebKit::WebPageProxy::removeTextPlaceholder):
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::requestEvasionRectsAboveSelection):
+        (WebKit::WebPageProxy::updateSelectionWithDelta):
+        (WebKit::WebPageProxy::requestDocumentEditingContext):
+        (WebKit::WebPageProxy::insertDroppedImagePlaceholders):
+
 2020-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r260996): Pressing <Tab> in an HTTP authentication dialog makes the dialog lose focus

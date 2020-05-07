@@ -62,7 +62,8 @@ Ref<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginP
 }
 
 PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginProcessAttributes& pluginProcessAttributes, uint64_t pluginProcessToken)
-    : m_pluginProcessManager(PluginProcessManager)
+    : m_throttler(*this, false)
+    , m_pluginProcessManager(PluginProcessManager)
     , m_pluginProcessAttributes(pluginProcessAttributes)
     , m_pluginProcessToken(pluginProcessToken)
     , m_numPendingConnectionRequests(0)

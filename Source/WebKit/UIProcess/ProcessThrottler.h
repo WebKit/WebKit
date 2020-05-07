@@ -65,8 +65,10 @@ public:
             , m_name(name)
         {
             throttler.addActivity(*this);
-            PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("Activity: Starting %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
-                type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
+            if (!isQuietActivity()) {
+                PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("Activity: Starting %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
+                    type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
+            }
         }
 
         ~Activity()
@@ -80,11 +82,15 @@ public:
     private:
         friend class ProcessThrottler;
 
+        bool isQuietActivity() const { return !m_name.characters(); }
+
         void invalidate()
         {
             ASSERT(isValid());
-            PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
-                type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
+            if (!isQuietActivity()) {
+                PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
+                    type == ActivityType::Foreground ? "foreground" : "background", m_name.characters());
+            }
             m_throttler->removeActivity(*this);
             m_throttler = nullptr;
         }

@@ -460,9 +460,7 @@ void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* message
 
 void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebProcess::SetThirdPartyCookieBlockingMode(thirdPartyCookieBlockingMode), [activity = throttler().backgroundActivity("WebProcessProxy::setThirdPartyCookieBlockingMode"_s), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
+    sendWithAsyncReply(Messages::WebProcess::SetThirdPartyCookieBlockingMode(thirdPartyCookieBlockingMode), WTFMove(completionHandler));
 }
 #endif
 
@@ -1106,10 +1104,9 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto activity = throttler().backgroundActivity("WebProcessProxy::fetchWebsiteData"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] (auto reply) mutable {
+    sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (auto reply) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1123,10 +1120,9 @@ void WebProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Webs
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto activity = throttler().backgroundActivity("WebProcessProxy::deleteWebsiteData"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteData(dataTypes, modifiedSince), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] () mutable {
+    sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteData(dataTypes, modifiedSince), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1140,10 +1136,9 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Opti
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto activity = throttler().backgroundActivity("WebProcessProxy::deleteWebsiteDataForOrigins"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(dataTypes, origins), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] () mutable {
+    sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(dataTypes, origins), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1325,7 +1320,7 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
 
 void WebProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void WebProcessProxy::sendProcessDidResume()
@@ -1546,7 +1541,7 @@ void WebProcessProxy::didCollectPrewarmInformation(const WebCore::RegistrableDom
 
 void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    connection()->sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTFMove(completionHandler));
 }
 
 void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
@@ -1647,7 +1642,7 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 #if ENABLE(SERVICE_WORKER)
 void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, [activity = m_throttler.backgroundActivity("Establish Service Worker"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, [completionHandler = WTFMove(completionHandler)]() mutable {
         RELEASE_LOG(Loading, "WebProcessProxy::establishServiceWorkerContext finished");
         completionHandler();
     }, 0);

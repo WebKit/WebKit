@@ -128,7 +128,7 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because a web process is requesting a connection", this);
-    sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply), activity = throttler().backgroundActivity("NetworkProcessProxy::getNetworkProcessConnection"_s)](auto&& connectionIdentifier, auto cookieAcceptPolicy) mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID() }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& connectionIdentifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");
             return reply({ });
@@ -850,7 +850,7 @@ void NetworkProcessProxy::setGrandfathered(PAL::SessionID sessionID, const Regis
 
 void NetworkProcessProxy::setUseITPDatabase(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetUseITPDatabase(sessionID, value), [activity = throttler().backgroundActivity("NetworkProcessProxy::setUseITPDatabase"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::SetUseITPDatabase(sessionID, value), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -983,7 +983,7 @@ void NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionI
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCacheMaxAgeCapForPrevalentResources(sessionID), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -995,7 +995,7 @@ void NetworkProcessProxy::resetParametersToDefaultValues(PAL::SessionID sessionI
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetParametersToDefaultValues(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetParametersToDefaultValues"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::ResetParametersToDefaultValues(sessionID), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -1017,7 +1017,7 @@ void NetworkProcessProxy::scheduleClearInMemoryAndPersistent(PAL::SessionID sess
         return;
     }
 
-    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), [activity = throttler().backgroundActivity("NetworkProcessProxy::scheduleClearInMemoryAndPersistent"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::ScheduleClearInMemoryAndPersistent(sessionID, { }, shouldGrandfather), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -1097,7 +1097,7 @@ void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::S
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::ResetCrossSiteLoadsWithLinkDecorationForTesting(sessionID), [activity = throttler().backgroundActivity("NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCrossSiteLoadsWithLinkDecorationForTesting(sessionID), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -1139,7 +1139,7 @@ void NetworkProcessProxy::hasIsolatedSession(PAL::SessionID sessionID, const Reg
 
 void NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics(PAL::SessionID sessionID, const HashSet<RegistrableDomain>& appBoundDomains, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetAppBoundDomainsForResourceLoadStatistics(sessionID, appBoundDomains), [activity = throttler().backgroundActivity("NetworkProcessProxy::setAppBoundDomainsForResourceLoadStatistics"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::SetAppBoundDomainsForResourceLoadStatistics(sessionID, appBoundDomains), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
@@ -1151,23 +1151,21 @@ void NetworkProcessProxy::setShouldDowngradeReferrerForTesting(bool enabled, Com
         return;
     }
     
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldDowngradeReferrerForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldDowngradeReferrerForTesting(enabled), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
 
 void NetworkProcessProxy::setThirdPartyCookieBlockingMode(PAL::SessionID sessionID, ThirdPartyCookieBlockingMode blockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetThirdPartyCookieBlockingMode(sessionID, blockingMode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setThirdPartyCookieBlockingMode"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::SetThirdPartyCookieBlockingMode(sessionID, blockingMode), [completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 }
 
 void NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID sessionID, WebCore::SameSiteStrictEnforcementEnabled enabled, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::SetShouldEnbleSameSiteStrictEnforcementForTesting(sessionID, enabled), [activity = throttler().backgroundActivity("NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
+    sendWithAsyncReply(Messages::NetworkProcess::SetShouldEnbleSameSiteStrictEnforcementForTesting(sessionID, enabled), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, FirstPartyWebsiteDataRemovalMode mode, CompletionHandler<void()>&& completionHandler)
@@ -1177,9 +1175,7 @@ void NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting(PAL::Ses
         return;
     }
 
-    sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyWebsiteDataRemovalModeForTesting(sessionID, mode), [activity = throttler().backgroundActivity("NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler();
-    });
+    sendWithAsyncReply(Messages::NetworkProcess::SetFirstPartyWebsiteDataRemovalModeForTesting(sessionID, mode), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::setToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -1209,7 +1205,7 @@ void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
     
 void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void NetworkProcessProxy::sendProcessDidResume()
