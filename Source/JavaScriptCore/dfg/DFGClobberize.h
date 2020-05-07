@@ -155,6 +155,46 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(World);
         write(Heap);
     };
+
+    // Since Fixup can widen our ArrayModes based on profiling from other nodes we pessimistically assume
+    // all nodes with an ArrayMode can clobber top. We allow some nodes like CheckArray because they can
+    // only exit.
+    if (graph.m_planStage < PlanStage::AfterFixup && node->hasArrayMode()) {
+        switch (node->op()) {
+        case CheckArray:
+        case CheckArrayOrEmpty:
+            break;
+        case GetIndexedPropertyStorage:
+        case GetArrayLength:
+        case GetVectorLength:
+        case InByVal:
+        case PutByValDirect:
+        case PutByVal:
+        case PutByValAlias:
+        case GetByVal:
+        case StringCharAt:
+        case StringCharCodeAt:
+        case StringCodePointAt:
+        case Arrayify:
+        case ArrayifyToStructure:
+        case ArrayPush:
+        case ArrayPop:
+        case ArrayIndexOf:
+        case HasIndexedProperty:
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor:
+            return clobberTop();
+        default:
+            DFG_CRASH(graph, node, "Unhandled ArrayMode opcode.");
+        }
+    }
     
     switch (node->op()) {
     case JSConstant:

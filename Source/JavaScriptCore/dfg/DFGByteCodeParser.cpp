@@ -3750,6 +3750,10 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         });
 
         Node* lengthNode = addToGraph(GetArrayLength, OpInfo(ArrayMode(arrayType, Array::Read).asWord()), thisNode);
+        // Our ArrayMode shouldn't cause us to exit here so we should be ok to exit without effects.
+        m_exitOK = true;
+        addToGraph(ExitOK);
+
 
         if (!logSize) {
             set(result, lengthNode);
@@ -6901,6 +6905,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     Node* iterable = get(bytecode.m_iterable);
                     Node* butterfly = addToGraph(GetButterfly, iterable);
                     Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), iterable, butterfly);
+                    // GetArrayLength is pessimized prior to fixup.
+                    m_exitOK = true;
+                    addToGraph(ExitOK);
                     Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
 
                     isDone = addToGraph(ArithBitOr, isDone, isOutOfBounds);

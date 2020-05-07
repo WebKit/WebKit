@@ -1,3 +1,23 @@
+2020-05-07  Keith Miller  <keith_miller@apple.com>
+
+        Fix ArrayMode nodes after r261260
+        https://bugs.webkit.org/show_bug.cgi?id=211543
+
+        Reviewed by Yusuke Suzuki.
+
+        I accidentally ran tests with a release build rather than
+        release+assert when uploading r261260. This patch skips the
+        CheckArray node in the ArrayMode clobbersTop() logic before
+        Fixup. And also marks a GetArrayLength in the TypedArray
+        intrsinics as ExitOK.
+
+        This patch also relands r261260.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2020-05-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261260.
