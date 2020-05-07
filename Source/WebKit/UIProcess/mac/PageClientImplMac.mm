@@ -341,12 +341,10 @@ void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, Und
     m_impl->registerEditCommand(WTFMove(command), undoOrRedo);
 }
 
-#if USE(INSERTION_UNDO_GROUPING)
 void PageClientImpl::registerInsertionUndoGrouping()
 {
     registerInsertionUndoGroupingWithUndoManager([m_view undoManager]);
 }
-#endif
 
 void PageClientImpl::clearAllEditCommands()
 {

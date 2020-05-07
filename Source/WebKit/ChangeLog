@@ -1,3 +1,22 @@
+2020-05-07  Darin Adler  <darin@apple.com>
+
+        Remove USE(INSERTION_UNDO_GROUPING) checks in macOS platform code
+        https://bugs.webkit.org/show_bug.cgi?id=211525
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebViewImpl.mm: Use NSTextInputContextSPI.h.
+        (WebKit::WebViewImpl::validAttributesForMarkedText): Removed
+        USE(INSERTION_UNDO_GROUPING) from the macOS-specific code here.
+        (WebKit::WebViewImpl::insertText): Ditto.
+        * UIProcess/PageClient.h: Ditto.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::registerInsertionUndoGrouping): Deleted.
+        This function is not needed at all on iOS.
+        * UIProcess/mac/PageClientImplMac.h: Removed USE(INSERTION_UNDO_GROUPING).
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::registerInsertionUndoGrouping): Ditto.
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Drop dead platformPrepareToSuspend / platformProcessDidResume in NetworkProcess

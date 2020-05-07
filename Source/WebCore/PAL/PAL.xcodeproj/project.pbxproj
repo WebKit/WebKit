@@ -136,6 +136,8 @@
 		63C7EDC721AFAE04006A7B99 /* NSProgressSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E369F921AFA83F001C14BC /* NSProgressSPI.h */; };
 		7A36D0F9223AD9AB00B0522E /* CommonCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */; };
 		7A3A6A8020CADB4700317AAE /* NSImageSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */; };
+		93DB7D3724626BCD004BD8A3 /* NSTextInputContextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */; };
+		93DB7D3A24626F86004BD8A3 /* NSUndoManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */; };
 		A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265881F56747A00B4C844 /* HIToolboxSPI.h */; };
 		A102658E1F567E9D00B4C844 /* HIServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A102658D1F567E9D00B4C844 /* HIServicesSPI.h */; };
 		A10826F11F573BCA004772AC /* NSResponderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826F01F573BCA004772AC /* NSResponderSPI.h */; };
@@ -315,6 +317,8 @@
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
 		7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImageSPI.h; sourceTree = "<group>"; };
+		93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextInputContextSPI.h; sourceTree = "<group>"; };
+		93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSUndoManagerSPI.h; sourceTree = "<group>"; };
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
 		A10265881F56747A00B4C844 /* HIToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIToolboxSPI.h; sourceTree = "<group>"; };
 		A102658D1F567E9D00B4C844 /* HIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSPI.h; sourceTree = "<group>"; };
@@ -522,6 +526,8 @@
 				0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */,
 				0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */,
 				0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */,
+				93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */,
+				93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */,
 				0C7785831F45130F00F4EBB6 /* NSViewSPI.h */,
 				0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */,
 				0C7785851F45130F00F4EBB6 /* PIPSPI.h */,
@@ -817,7 +823,9 @@
 				0C77859A1F45130F00F4EBB6 /* NSSpellCheckerSPI.h in Headers */,
 				0C2DA1501F3BEB4900DBC317 /* NSStringSPI.h in Headers */,
 				0C77859B1F45130F00F4EBB6 /* NSTextFinderSPI.h in Headers */,
+				93DB7D3724626BCD004BD8A3 /* NSTextInputContextSPI.h in Headers */,
 				0C2DA1511F3BEB4900DBC317 /* NSTouchBarSPI.h in Headers */,
+				93DB7D3A24626F86004BD8A3 /* NSUndoManagerSPI.h in Headers */,
 				0C2DA1521F3BEB4900DBC317 /* NSURLConnectionSPI.h in Headers */,
 				0C2DA1531F3BEB4900DBC317 /* NSURLDownloadSPI.h in Headers */,
 				0C2DA1541F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h in Headers */,

@@ -336,13 +336,6 @@ void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, Und
         [undoManager setActionName:(NSString *)actionName];
 }
 
-#if USE(INSERTION_UNDO_GROUPING)
-void PageClientImpl::registerInsertionUndoGrouping()
-{
-    notImplemented();
-}
-#endif
-
 void PageClientImpl::clearAllEditCommands()
 {
     [[m_contentView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];

@@ -386,9 +386,7 @@ public:
 
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;
 
-#if USE(INSERTION_UNDO_GROUPING)
     virtual void registerInsertionUndoGrouping() = 0;
-#endif
 
     virtual void setEditableElementIsFocused(bool) = 0;
 #endif // PLATFORM(MAC)

@@ -184,9 +184,7 @@ private:
 
     void setEditableElementIsFocused(bool) override;
 
-#if USE(INSERTION_UNDO_GROUPING)
     void registerInsertionUndoGrouping() override;
-#endif
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

@@ -1,3 +1,14 @@
+2020-05-07  Darin Adler  <darin@apple.com>
+
+        Remove USE(INSERTION_UNDO_GROUPING) checks in macOS platform code
+        https://bugs.webkit.org/show_bug.cgi?id=211525
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLView.mm: Use NSTextInputContextSPI.h.
+        (-[WebHTMLView validAttributesForMarkedText]): Removed USE(INSERTION_UNDO_GROUPING).
+        (-[WebHTMLView insertText:]): Ditto.
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Eliminate checks of USE(DICTATION_ALTERNATIVES) in Cocoa-specific code

@@ -26,29 +26,24 @@
 #import "config.h"
 #import "TextUndoInsertionMarkupMac.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <Foundation/NSUndoManager_Private.h>
-#else
-@interface NSUndoManager (WebCorePrivate)
-- (void)_processEndOfEventNotification:(id)arg;
-@end
-#endif
+#if USE(INSERTION_UNDO_GROUPING)
+
+#import <pal/spi/mac/NSTextInputContextSPI.h>
+#import <pal/spi/mac/NSUndoManagerSPI.h>
 
 namespace WebCore {
     
-#if USE(INSERTION_UNDO_GROUPING)
-
-bool shouldRegisterInsertionUndoGroup(NSAttributedString* string)
+bool shouldRegisterInsertionUndoGroup(NSAttributedString *string)
 {
     return [string attribute:NSTextInsertionUndoableAttributeName atIndex:0 effectiveRange:nil];
 }
     
-void registerInsertionUndoGroupingWithUndoManager(NSUndoManager* undoManager)
+void registerInsertionUndoGroupingWithUndoManager(NSUndoManager *undoManager)
 {
     if ([undoManager groupingLevel])
         [undoManager _processEndOfEventNotification:nil];
 }
     
-#endif
-
 }
+
+#endif

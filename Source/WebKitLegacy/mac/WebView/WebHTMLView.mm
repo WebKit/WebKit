@@ -158,6 +158,7 @@
 #import <AppKit/NSAccessibility.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -717,9 +718,6 @@ static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
     if (needsCursorRectsSupportAtPoint(self, point))
         wtfCallIMP<id>(oldSetCursorForMouseLocationIMP, self, cmd, point);
 }
-
-// FIXME: Get this from <AppKit/NSTextInputContext_Private.h> using a NSTextInputContextSPI.h header instead of defining it here.
-extern "C" NSString *NSTextInputReplacementRangeAttributeName;
 
 #endif // PLATFORM(MAC)
 
@@ -6256,9 +6254,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSMarkedClauseSegmentAttributeName,
         NSTextInputReplacementRangeAttributeName,
         NSTextAlternativesAttributeName,
-#if USE(INSERTION_UNDO_GROUPING)
         NSTextInsertionUndoableAttributeName,
-#endif
         nil];
     LOG(TextInput, "validAttributesForMarkedText -> (...)");
     return validAttributes;
@@ -6636,9 +6632,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         collectDictationTextAlternatives(string, textAlternatives);
         if (!textAlternatives.isEmpty())
             [[self _webView] _getWebCoreDictationAlternatives:dictationAlternativeLocations fromTextAlternatives:textAlternatives];
-#if USE(INSERTION_UNDO_GROUPING)
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
-#endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
         text = [string string];

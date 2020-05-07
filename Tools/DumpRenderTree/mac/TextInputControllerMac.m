@@ -34,14 +34,6 @@
 #import "DumpRenderTreeMac.h"
 #import <AppKit/NSInputManager.h>
 #import <AppKit/NSTextAlternatives.h>
-
-#define SUPPORT_INSERTION_UNDO_GROUPING
-#if __has_include(<AppKit/NSTextInputContext_Private.h>)
-#import <AppKit/NSTextInputContext_Private.h>
-#else
-NSString *NSTextInsertionUndoableAttributeName;
-#endif
-
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
@@ -51,6 +43,7 @@ NSString *NSTextInsertionUndoableAttributeName;
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 
 @interface TextInputController (DumpRenderTreeInputMethodHandler)
 - (BOOL)interpretKeyEvents:(NSArray *)eventArray withSender:(WebHTMLView *)sender;
@@ -455,20 +448,16 @@ NSString *NSTextInsertionUndoableAttributeName;
     return [[[NSMutableAttributedString alloc] initWithString:@" " attributes:[webView typingAttributes]] autorelease];
 }
 
-- (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
+- (NSMutableAttributedString *)attributedStringWithString:(NSString *)string
 {
-    return [[[NSMutableAttributedString alloc] initWithString:aString] autorelease];
+    return [[[NSMutableAttributedString alloc] initWithString:string] autorelease];
 }
 
-- (NSMutableAttributedString*)stringWithUndoGroupingInsertion:(NSString*)aString
+- (NSMutableAttributedString *)stringWithUndoGroupingInsertion:(NSString *)string
 {
-#if defined(SUPPORT_INSERTION_UNDO_GROUPING)
-    NSMutableAttributedString* attributedString = [self dictatedStringWithPrimaryString:aString alternative:@"test" alternativeOffset:0 alternativeLength:1];
+    NSMutableAttributedString* attributedString = [self dictatedStringWithPrimaryString:string alternative:@"test" alternativeOffset:0 alternativeLength:1];
     [attributedString addAttribute:NSTextInsertionUndoableAttributeName value:@YES range:NSMakeRange(0, [attributedString length])];
     return attributedString;
-#else
-    return nil;
-#endif
 }
 
 - (NSMutableAttributedString*)dictatedStringWithPrimaryString:(NSString*)aString alternative:(NSString*)alternative alternativeOffset:(int)offset alternativeLength:(int)length

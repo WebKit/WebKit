@@ -116,6 +116,7 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sys/stat.h>
@@ -143,13 +144,6 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 - (BOOL)isSpeaking;
 - (void)speakString:(NSString *)string;
 - (void)stopSpeaking:(id)sender;
-@end
-
-// FIXME: Move to an SPI header.
-@interface NSTextInputContext (WKNSTextInputContextDetails)
-- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
-- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
-- (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
 @end
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -4708,9 +4702,7 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
             NSUnderlineColorAttributeName,
             NSMarkedClauseSegmentAttributeName,
             NSTextAlternativesAttributeName,
-#if USE(INSERTION_UNDO_GROUPING)
             NSTextInsertionUndoableAttributeName,
-#endif
         ];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
@@ -4847,9 +4839,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     bool registerUndoGroup = false;
     if (isAttributedString) {
         WebCore::collectDictationTextAlternatives(string, dictationAlternatives);
-#if USE(INSERTION_UNDO_GROUPING)
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
-#endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         text = [string string];
     } else

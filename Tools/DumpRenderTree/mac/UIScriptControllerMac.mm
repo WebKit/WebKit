@@ -26,6 +26,8 @@
 #import "config.h"
 #import "UIScriptControllerMac.h"
 
+#if PLATFORM(MAC)
+
 #import "DumpRenderTree.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JSContext.h>
@@ -34,11 +36,8 @@
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/BlockPtr.h>
-
-#if PLATFORM(MAC)
-
-#import "AppKitTestSPI.h"
 
 namespace WTR {
 

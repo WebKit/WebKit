@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(INSERTION_UNDO_GROUPING)
+#if PLATFORM(MAC)
 
-namespace WebCore {
-    
-WEBCORE_EXPORT bool shouldRegisterInsertionUndoGroup(NSAttributedString *);
-WEBCORE_EXPORT void registerInsertionUndoGroupingWithUndoManager(NSUndoManager *);
+#if USE(APPLE_INTERNAL_SDK)
 
-} // namespace WebCore
+#import <AppKit/NSTextInputContext_Private.h>
+
+#else
+
+@interface NSTextInputContext ()
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
+@end
 
 #endif
+
+APPKIT_EXTERN NSString *NSTextInsertionUndoableAttributeName;
+APPKIT_EXTERN NSString *NSTextInputReplacementRangeAttributeName;
+
+#endif // PLATFORM(MAC)

@@ -25,13 +25,14 @@
 
 #import "config.h"
 
+#if PLATFORM(MAC)
+
 #import "AppKitSPI.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/RetainPtr.h>
-
-#if PLATFORM(MAC)
 
 static bool webViewWasDeallocated = false;
 static bool didFinishLoad = false;
