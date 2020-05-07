@@ -40,7 +40,7 @@ class HTTPServer {
 public:
     struct HTTPResponse;
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS };
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http);
+    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>&& = nullptr);
     uint16_t port() const;
     NSURLRequest *request() const;
     
@@ -49,15 +49,23 @@ private:
     
     RetainPtr<nw_listener_t> m_listener;
     const Protocol m_protocol;
+    const Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)> m_certVerifier;
     const HashMap<String, HTTPResponse> m_requestResponseMap;
 };
 
 struct HTTPServer::HTTPResponse {
-    HTTPResponse(String&& body)
-        : body(WTFMove(body)) { }
+    enum class TerminateConnection { No, Yes };
+
+    HTTPResponse(const String& body)
+        : body(body) { }
     HTTPResponse(String&& body, HashMap<String, String>&& headerFields)
         : body(WTFMove(body))
         , headerFields(WTFMove(headerFields)) { }
+    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields)
+        : headerFields(WTFMove(headerFields))
+        , statusCode(statusCode) { }
+    HTTPResponse(TerminateConnection terminateConnection)
+        : terminateConnection(terminateConnection) { }
 
     HTTPResponse(const HTTPResponse&) = default;
     HTTPResponse(HTTPResponse&&) = default;
@@ -67,6 +75,8 @@ struct HTTPServer::HTTPResponse {
     
     String body;
     HashMap<String, String> headerFields;
+    unsigned statusCode { 200 };
+    TerminateConnection terminateConnection { TerminateConnection::No };
 };
 
 } // namespace TestWebKitAPI

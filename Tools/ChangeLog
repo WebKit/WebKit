@@ -1,3 +1,23 @@
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62977667
+
+    2020-05-07  Alex Christensen  <achristensen@webkit.org>
+
+            NetworkSessionCocoa should request client certificate only once per host/port
+            https://bugs.webkit.org/show_bug.cgi?id=210626
+            <rdar://problem/60340449>
+
+            Reviewed by Geoffrey Garen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+            (TestWebKitAPI::clientCertServerWithCertVerifier):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/cocoa/HTTPServer.h:
+            (TestWebKitAPI::HTTPServer::HTTPResponse::HTTPResponse):
+            * TestWebKitAPI/cocoa/HTTPServer.mm:
+            (TestWebKitAPI::HTTPServer::HTTPServer):
+
 2020-04-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, cherry-pick scripts from r259811. rdar://62268126
