@@ -39,6 +39,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -554,7 +555,7 @@ void ShadowBlur::drawRectShadow(const AffineTransform& transform, const IntRect&
     const FloatRect& rect = shadowedRect.rect();
 
     if (templateSize.width() > rect.width() || templateSize.height() > rect.height()
-        || (templateSize.area() > layerImageProperties->shadowedResultSize.area()))
+        || (templateSize.unclampedArea() > layerImageProperties->shadowedResultSize.area()))
         canUseTilingTechnique = false;
 
     if (canUseTilingTechnique)
@@ -684,6 +685,9 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
 {
 #if USE(CG)
     auto* layerImage = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+    auto releaseLayerImage = makeScopeExit([] {
+        ScratchBuffer::singleton().scheduleScratchBufferPurge();
+    });
 #else
     UNUSED_PARAM(layerImageProperties);
     auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
@@ -729,16 +733,15 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
     shadowBounds.inflateY(edgeSize.height());
 
     drawLayerPiecesAndFillCenter(*layerImage, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, drawImage, fillRect);
-
-#if USE(CG)
-    ScratchBuffer::singleton().scheduleScratchBufferPurge();
-#endif
 }
 
 void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole)
 {
 #if USE(CG)
     auto* layerImage = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+    auto releaseLayerImage = makeScopeExit([] {
+        ScratchBuffer::singleton().scheduleScratchBufferPurge();
+    });
 #else
     auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
     auto* layerImage = layerImageBuffer.get();
@@ -793,10 +796,6 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
     fillRectWithHole(boundingRect, destHoleBounds, m_color);
 
     drawLayerPieces(*layerImage, destHoleBounds, holeRect.radii(), edgeSize, templateSize, drawImage);
-
-#if USE(CG)
-    ScratchBuffer::singleton().scheduleScratchBufferPurge();
-#endif
 }
 
 void ShadowBlur::drawLayerPieces(ImageBuffer& layerImage, const FloatRect& shadowBounds, const FloatRoundedRect::Radii& radii, const IntSize& bufferPadding, const IntSize& templateSize, const DrawImageCallback& drawImage)
