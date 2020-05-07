@@ -1,3 +1,16 @@
+2020-05-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Simplify preprocessor guards in GCMemoryOperations.h
+        https://bugs.webkit.org/show_bug.cgi?id=211588
+
+        Reviewed by Darin Adler.
+
+        If we adjust the guards a bit, then we don't need to repeat the fallback path.
+
+        * heap/GCMemoryOperations.h:
+        (JSC::gcSafeMemmove):
+        (JSC::gcSafeZeroMemory):
+
 2020-05-07  Mark Lam  <mark.lam@apple.com>
 
         Give the DFG and FTL WorkList threads more stack space on ASAN builds.
