@@ -1,5 +1,15 @@
 2020-05-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: Breakpoints status not remembered/restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=211558
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.initializeTarget):
+
+2020-05-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Storage: double clicking on a cookie field doesn't start editing it
         https://bugs.webkit.org/show_bug.cgi?id=211598
 

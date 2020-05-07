@@ -155,6 +155,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     initializeTarget(target)
     {
         if (target.hasDomain("DOMDebugger")) {
+            this._restoringBreakpoints = true;
+
             if (target === WI.assumingMainTarget() && target.mainResource)
                 this._speculativelyResolveDOMBreakpointsForURL(target.mainResource.url);
 
@@ -182,6 +184,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                 if (!breakpoint.disabled)
                     this._updateURLBreakpoint(breakpoint, target);
             }
+
+            this._restoringBreakpoints = false;
         }
     }
 
