@@ -528,17 +528,12 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     highlightSelector(selectorText, frameId, mode)
     {
-        let target = WI.assumingMainTarget();
-
-        // COMPATIBILITY (iOS 8): DOM.highlightSelector did not exist.
-        if (!target.hasCommand("DOM.highlightSelector"))
-            return;
-
         if (this._hideDOMNodeHighlightTimeout) {
             clearTimeout(this._hideDOMNodeHighlightTimeout);
             this._hideDOMNodeHighlightTimeout = undefined;
         }
 
+        let target = WI.assumingMainTarget();
         target.DOMAgent.highlightSelector(DOMManager.buildHighlightConfig(mode), selectorText, frameId);
     }
 

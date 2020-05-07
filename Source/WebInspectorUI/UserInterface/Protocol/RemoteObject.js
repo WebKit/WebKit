@@ -101,31 +101,11 @@ WI.RemoteObject = class RemoteObject
     {
         console.assert(typeof payload === "object", "Remote object payload should only be an object");
 
-        if (payload.subtype === "array") {
-            // COMPATIBILITY (iOS 8): Runtime.RemoteObject did not have size property,
-            // instead it was tacked onto the end of the description, like "Array[#]".
-            var match = payload.description.match(/\[(\d+)\]$/);
-            if (match) {
-                payload.size = parseInt(match[1]);
-                payload.description = payload.description.replace(/\[\d+\]$/, "");
-            }
-        }
-
         if (payload.classPrototype)
             payload.classPrototype = WI.RemoteObject.fromPayload(payload.classPrototype, target);
 
-        if (payload.preview) {
-            // COMPATIBILITY (iOS 8): Did not have type/subtype/description on
-            // Runtime.ObjectPreview. Copy them over from the RemoteObject.
-            if (!payload.preview.type) {
-                payload.preview.type = payload.type;
-                payload.preview.subtype = payload.subtype;
-                payload.preview.description = payload.description;
-                payload.preview.size = payload.size;
-            }
-
+        if (payload.preview)
             payload.preview = WI.ObjectPreview.fromPayload(payload.preview);
-        }
 
         return new WI.RemoteObject(target, payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.className, payload.preview);
     }
@@ -329,31 +309,6 @@ WI.RemoteObject = class RemoteObject
     {
         if (!this._objectId || this._isSymbol() || this._isFakeObject()) {
             callback([]);
-            return;
-        }
-
-        // COMPATIBILITY (iOS 8): Runtime.getDisplayableProperties did not exist.
-        // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (!this._target.hasCommand("Runtime.getDisplayableProperties")) {
-            this._getProperties(options, (error, allProperties) => {
-                var ownOrGetterPropertiesList = [];
-                if (allProperties) {
-                    for (var property of allProperties) {
-                        if (property.isOwn || property.name === "__proto__") {
-                            // Own property or getter property in prototype chain.
-                            ownOrGetterPropertiesList.push(property);
-                        } else if (property.value && property.name !== property.name.toUpperCase()) {
-                            var type = property.value.type;
-                            if (type && type !== "function" && property.name !== "constructor") {
-                                // Possible native binding getter property converted to a value. Also, no CONSTANT name style and not "constructor".
-                                // There is no way of knowing if this is native or not, so just go with it.
-                                ownOrGetterPropertiesList.push(property);
-                            }
-                        }
-                    }
-                }
-                this._getPropertyDescriptorsResolver(callback, error, ownOrGetterPropertiesList);
-            });
             return;
         }
 

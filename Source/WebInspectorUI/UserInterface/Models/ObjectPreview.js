@@ -52,17 +52,6 @@ WI.ObjectPreview = class ObjectPreview
             payload.properties = payload.properties.map(WI.PropertyPreview.fromPayload);
         if (payload.entries)
             payload.entries = payload.entries.map(WI.CollectionEntryPreview.fromPayload);
-
-        if (payload.subtype === "array") {
-            // COMPATIBILITY (iOS 8): Runtime.ObjectPreview did not have size property,
-            // instead it was tacked onto the end of the description, like "Array[#]".
-            var match = payload.description.match(/\[(\d+)\]$/);
-            if (match) {
-                payload.size = parseInt(match[1]);
-                payload.description = payload.description.replace(/\[\d+\]$/, "");
-            }
-        }
-
         return new WI.ObjectPreview(payload.type, payload.subtype, payload.description, payload.lossless, payload.overflow, payload.properties, payload.entries, payload.size);
     }
 

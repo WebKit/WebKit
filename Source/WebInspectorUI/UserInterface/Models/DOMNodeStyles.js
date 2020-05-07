@@ -57,14 +57,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (!selectors.length)
             return [];
 
-        // COMPATIBILITY (iOS 8): The selectorList payload was an array of selector text strings.
-        // Now they are CSSSelector objects with multiple properties.
-        if (typeof selectors[0] === "string") {
-            return selectors.map(function(selectorText) {
-                return new WI.CSSSelector(selectorText);
-            });
-        }
-
         return selectors.map(function(selectorPayload) {
             return new WI.CSSSelector(selectorPayload.text, selectorPayload.specificity, selectorPayload.dynamic);
         });

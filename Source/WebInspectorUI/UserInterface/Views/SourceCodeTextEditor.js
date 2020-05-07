@@ -2195,10 +2195,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     _createTypeTokenAnnotator()
     {
-        // COMPATIBILITY (iOS 8): Runtime.getRuntimeTypesForVariablesAtOffsets did not exist yet.
-        if (!this.target || !this.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"))
-            return;
-
         var script = this._getAssociatedScript();
         if (!script)
             return;
@@ -2208,10 +2204,6 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     _createBasicBlockAnnotator()
     {
-        // COMPATIBILITY (iOS 8): Runtime.getBasicBlocks did not exist yet.
-        if (!this.target || !this.target.hasCommand("Runtime.getBasicBlocks"))
-            return;
-
         var script = this._getAssociatedScript();
         if (!script)
             return;

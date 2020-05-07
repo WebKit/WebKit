@@ -424,10 +424,6 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         var hadProto = false;
         for (var propertyDescriptor of properties) {
             if (propertyDescriptor.name === "__proto__") {
-                // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
-                // In those cases it is actually not useful to show.
-                if (!propertyDescriptor.hasValue())
-                    continue;
                 if (!this._includeProtoProperty)
                     continue;
                 hadProto = true;

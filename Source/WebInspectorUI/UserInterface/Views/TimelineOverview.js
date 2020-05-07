@@ -34,11 +34,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelinesViewModeSettings = this._createViewModeSettings(WI.TimelineOverview.ViewMode.Timelines, WI.TimelineOverview.MinimumDurationPerPixel, WI.TimelineOverview.MaximumDurationPerPixel, 0.01, 0, 15);
         this._instrumentTypes = WI.TimelineManager.availableTimelineTypes();
 
-        if (WI.FPSInstrument.supported()) {
-            let minimumDurationPerPixel = 1 / WI.TimelineRecordFrame.MaximumWidthPixels;
-            let maximumDurationPerPixel = 1 / WI.TimelineRecordFrame.MinimumWidthPixels;
-            this._renderingFramesViewModeSettings = this._createViewModeSettings(WI.TimelineOverview.ViewMode.RenderingFrames, minimumDurationPerPixel, maximumDurationPerPixel, minimumDurationPerPixel, 0, 100);
-        }
+        let minimumDurationPerPixel = 1 / WI.TimelineRecordFrame.MaximumWidthPixels;
+        let maximumDurationPerPixel = 1 / WI.TimelineRecordFrame.MinimumWidthPixels;
+        this._renderingFramesViewModeSettings = this._createViewModeSettings(WI.TimelineOverview.ViewMode.RenderingFrames, minimumDurationPerPixel, maximumDurationPerPixel, minimumDurationPerPixel, 0, 100);
 
         this._recording = timelineRecording;
         this._recording.addEventListener(WI.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);

@@ -123,13 +123,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             WI.TimelineRecord.Type.Network,
             WI.TimelineRecord.Type.Layout,
             WI.TimelineRecord.Type.Script,
+            WI.TimelineRecord.Type.RenderingFrame,
         ];
 
         if (WI.CPUInstrument.supported())
             defaultTypes.push(WI.TimelineRecord.Type.CPU);
-
-        if (WI.FPSInstrument.supported())
-            defaultTypes.push(WI.TimelineRecord.Type.RenderingFrame);
 
         return defaultTypes;
     }
@@ -1042,17 +1040,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             oldRecording.unloaded();
 
         this._activeRecording = newRecording;
-
-        // COMPATIBILITY (iOS 8): When using Legacy timestamps, a navigation will have computed
-        // the main resource's will send request timestamp in terms of the last page's base timestamp.
-        // Now that we have navigated, we should reset the legacy base timestamp and the
-        // will send request timestamp for the new main resource. This way, all new timeline
-        // records will be computed relative to the new navigation.
-        if (this._mainResourceForAutoCapturing && WI.TimelineRecording.isLegacy) {
-            console.assert(this._mainResourceForAutoCapturing.originalRequestWillBeSentTimestamp);
-            this._activeRecording.setLegacyBaseTimestamp(this._mainResourceForAutoCapturing.originalRequestWillBeSentTimestamp);
-            this._mainResourceForAutoCapturing._requestSentTimestamp = 0;
-        }
 
         this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingLoaded, {oldRecording});
     }
