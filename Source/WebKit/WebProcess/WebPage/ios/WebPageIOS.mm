@@ -2693,7 +2693,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.image = sharedBitmap;
 }
 
-static void boundsPositionInformation(RenderElement& renderer, InteractionInformationAtPosition& info)
+static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
 {
     if (renderer.isRenderImage())
         info.bounds = downcast<RenderImage>(renderer).absoluteContentQuad().enclosingBoundingBox();
@@ -2761,7 +2761,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         return;
 
     RenderObject* renderer = hitNode->renderer();
-    info.bounds = renderer->absoluteBoundingBoxRect(true);
+    boundsPositionInformation(*renderer, info);
     
     if (is<Element>(*hitNode)) {
         Element& element = downcast<Element>(*hitNode);

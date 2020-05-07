@@ -1,3 +1,21 @@
+2020-05-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Context Menus presented from the wrong location when presented from sub-frames
+        https://bugs.webkit.org/show_bug.cgi?id=211537
+        <rdar://problem/60390846>
+
+        Reviewed by Tim Horton.
+
+        The calculation for bounds for selection Information did not take frames into account,
+        so if a frame was used, the location would not be correct in the context of the whole
+        page, so the presentation location ended up being way off.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showDocumentPickerMenu]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::boundsPositionInformation):
+        (WebKit::selectionPositionInformation):
+
 2020-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r260689.

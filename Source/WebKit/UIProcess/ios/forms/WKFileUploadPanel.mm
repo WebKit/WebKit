@@ -512,7 +512,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     BOOL shouldPresentDocumentMenuViewController = allowsImageMediaType || allowsVideoMediaType;
     if (shouldPresentDocumentMenuViewController) {
         [self ensureContextMenuInteraction];
-        [_documentContextMenuInteraction _presentMenuAtLocation:CGPointMake(_interactionPoint.x, _interactionPoint.y)];
+        [_documentContextMenuInteraction _presentMenuAtLocation:_interactionPoint];
     } else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
 #endif
         [self showFilePickerMenu];
