@@ -1,3 +1,24 @@
+2020-05-06  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentObservation] Shutterstock search bar is not activated on the first tap
+        https://bugs.webkit.org/show_bug.cgi?id=211529
+        <rdar://problem/58843932>
+
+        Reviewed by Simon Fraser.
+
+        Shutterstock has a “initial click” action which converts some “actionable” elements (<a>) to some other “actionable” elements (<button>).
+        If this initial click also happens to be on an element that triggers content observation (input), we see those changes as actionable content and not proceed with the click event (stay at hover).
+        Any subsequent click works as expected.
+        It’s very difficult to eliminate such false positives since all we see is that some "actionable" content is going away while some "actionable" content is being created.
+        This quirk ensures that the first tap on the page does not trigger content observation. (It also means that any hover menu gets submitted on the first tap, but apparently
+        the Shutterstock top menu bar works fine with click events.)
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2020-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use CocoaColor in more places instead of platform defines

@@ -799,4 +799,13 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
     return m_document->url().host().endsWithIgnoringASCIICase(".wikipedia.org");
 }
 
+bool Quirks::shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->url().host();
+    return isFirstSyntheticClickOnPage && (equalLettersIgnoringASCIICase(host, "shutterstock.com") || host.endsWithIgnoringASCIICase(".shutterstock.com"));
+}
+
 }
