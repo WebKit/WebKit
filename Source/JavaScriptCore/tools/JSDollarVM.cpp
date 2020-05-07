@@ -2678,13 +2678,6 @@ static EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(JSGlobalObj
     return JSValue::encode(JSValue(executionCount));
 }
 
-static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(JSGlobalObject*, CallFrame*)
-{
-    DollarVMAssertScope assertScope;
-    Options::useExceptionFuzz() = true;
-    return JSValue::encode(jsUndefined());
-}
-
 class DoNothingDebugger final : public Debugger {
     WTF_MAKE_NONCOPYABLE(DoNothingDebugger);
     WTF_MAKE_FAST_ALLOCATED;
@@ -3094,8 +3087,6 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
     addFunction(vm, "hasBasicBlockExecuted", functionHasBasicBlockExecuted, 2);
     addFunction(vm, "basicBlockExecutionCount", functionBasicBlockExecutionCount, 2);
-
-    addFunction(vm, "enableExceptionFuzz", functionEnableExceptionFuzz, 0);
 
     addFunction(vm, "enableDebuggerModeWhenIdle", functionEnableDebuggerModeWhenIdle, 0);
     addFunction(vm, "disableDebuggerModeWhenIdle", functionDisableDebuggerModeWhenIdle, 0);

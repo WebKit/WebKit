@@ -1,5 +1,3 @@
-var enableExceptionFuzz = $vm.enableExceptionFuzz;
-
 try {
 
 /*
@@ -14,9 +12,6 @@ try {
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
  */
-
-enableExceptionFuzz();
-
 
 Date.parseFunctions = {count:0};
 Date.parseRegexes = [];

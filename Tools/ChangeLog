@@ -1,3 +1,14 @@
+2020-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken exceptionFuzz tests.
+        https://bugs.webkit.org/show_bug.cgi?id=211550
+
+        Reviewed by Yusuke Suzuki.
+
+        Pass the --useExceptionFuzz=true option from the command line for runExceptionFuzz.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-05-06  Kate Cheney  <katherine_cheney@apple.com>
 
         ResourceLoadStatistics data summary call should create a web process pool if one doesn't exist

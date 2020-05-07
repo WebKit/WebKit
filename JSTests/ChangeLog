@@ -1,3 +1,18 @@
+2020-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken exceptionFuzz tests.
+        https://bugs.webkit.org/show_bug.cgi?id=211550
+
+        Reviewed by Yusuke Suzuki.
+
+        The tests should not be relying on setting a JSC Option at runtime because the
+        options are already frozen by then.  Instead, we set the needed
+        --useExceptionFuzz=true option from the command line.
+
+        * exceptionFuzz/3d-cube.js:
+        * exceptionFuzz/date-format-xparb.js:
+        * exceptionFuzz/earley-boyer.js:
+
 2020-05-06  Keith Miller  <keith_miller@apple.com>
 
         DFG ByVal nodes with ArrayModes should clobberTop until Fixup phase runs.
