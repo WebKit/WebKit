@@ -1,5 +1,72 @@
 
 == Running test suite: MIMETypeUtilities
+-- Running test case: parseMIMEType
+
+Test null
+PASS: type should be: null
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "a"
+PASS: type should be: "a"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime"
+PASS: type should be: "mime"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime-dash"
+PASS: type should be: "mime-dash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash"
+PASS: type should be: "mime/slash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime+plus"
+PASS: type should be: "mime+plus"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash+plus"
+PASS: type should be: "mime/slash+plus"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash ;"
+PASS: type should be: "mime/slash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime ; semicolon"
+PASS: type should be: "mime"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/generic ; a = b"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/generic ; boundary = charset"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: "charset"
+PASS: encoding should be: null
+
+Test "mime/generic ; charset = boundary"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: "boundary"
+
+Test "mime/generic ; boundary = foo ; charset = bar"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: "foo"
+PASS: encoding should be: "bar"
+
 -- Running test case: fileExtensionForFilename
 PASS: File extension for null filename should be null.
 PASS: File extension for filename without a period should be null.

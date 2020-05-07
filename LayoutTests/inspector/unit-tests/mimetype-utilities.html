@@ -8,6 +8,112 @@ function test()
     let suite = InspectorTest.createSyncSuite("MIMETypeUtilities");
 
     suite.addTestCase({
+        name: "parseMIMEType",
+        test() {
+            function test(fullMimeType, expected) {
+                InspectorTest.newline();
+                InspectorTest.log(`Test ${JSON.stringify(fullMimeType)}`);
+
+                let {
+                    type: expectedType,
+                    boundary: expectedBoundary,
+                    encoding: expectedEncoding,
+                } = expected;
+
+                let {
+                    type: actualType,
+                    boundary: actualBoundary,
+                    encoding: actualEncoding,
+                } = parseMIMEType(fullMimeType);
+
+                InspectorTest.expectEqual(actualType, expectedType, `type should be: ${JSON.stringify(expectedType)}`);
+                InspectorTest.expectEqual(actualBoundary, expectedBoundary, `boundary should be: ${JSON.stringify(expectedBoundary)}`);
+                InspectorTest.expectEqual(actualEncoding, expectedEncoding, `encoding should be: ${JSON.stringify(expectedEncoding)}`);
+            }
+
+            test(null, {
+                type: null,
+                boundary: null,
+                encoding: null,
+            });
+
+            test("a", {
+                type: "a",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime", {
+                type: "mime",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime-dash", {
+                type: "mime-dash",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime/slash", {
+                type: "mime/slash",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime+plus", {
+                type: "mime+plus",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime/slash+plus", {
+                type: "mime/slash+plus",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime/slash ;", {
+                type: "mime/slash",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime ; semicolon", {
+                type: "mime",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime/generic ; a = b", {
+                type: "mime/generic",
+                boundary: null,
+                encoding: null,
+            });
+
+            test("mime/generic ; boundary = charset", {
+                type: "mime/generic",
+                boundary: "charset",
+                encoding: null,
+            });
+
+            test("mime/generic ; charset = boundary", {
+                type: "mime/generic",
+                boundary: null,
+                encoding: "boundary",
+            });
+
+            test("mime/generic ; boundary = foo ; charset = bar", {
+                type: "mime/generic",
+                boundary: "foo",
+                encoding: "bar",
+            });
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "fileExtensionForFilename",
         test() {
             InspectorTest.expectNull(WI.fileExtensionForFilename(null), `File extension for null filename should be null.`);

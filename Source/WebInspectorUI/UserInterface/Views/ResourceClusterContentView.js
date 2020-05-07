@@ -438,6 +438,9 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
     {
         mimeType = parseMIMEType(mimeType).type;
 
+        if (!mimeType)
+            return mimeType;
+
         if (mimeType.endsWith("/html") || mimeType.endsWith("+html"))
             return "text/html";
 
