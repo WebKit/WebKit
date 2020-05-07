@@ -1653,10 +1653,13 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 #if ENABLE(ASYNC_SCROLLING)
 void RenderLayerBacking::updateEventRegion()
 {
-    if (paintsIntoCompositedAncestor())
-        return;
-
     auto needsUpdate = [&] {
+        if (!m_owningLayer.page().scrollingCoordinator())
+            return false;
+
+        if (paintsIntoCompositedAncestor())
+            return false;
+
         if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
             return true;
         
@@ -1666,6 +1669,10 @@ void RenderLayerBacking::updateEventRegion()
 #endif
 #if ENABLE(EDITABLE_REGION)
         if (renderer().document().mayHaveEditableElements())
+            return true;
+#endif
+#if !PLATFORM(IOS_FAMILY)
+        if (renderer().document().wheelEventTargets())
             return true;
 #endif
         if (m_owningLayer.isRenderViewLayer())

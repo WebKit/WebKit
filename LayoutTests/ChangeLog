@@ -1,3 +1,13 @@
+2020-05-07  Antti Koivisto  <antti@apple.com>
+
+        Add basic support for generating accurate wheel event listener region
+        https://bugs.webkit.org/show_bug.cgi?id=211512
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/mac/wheel-event-listener-region-basic-expected.txt: Added.
+        * fast/scrolling/mac/wheel-event-listener-region-basic.html: Added.
+
 2020-05-07  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update test expectations after r259705

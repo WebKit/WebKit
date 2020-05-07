@@ -482,6 +482,7 @@ public:
     bool m_adoptionIsRequired { true };
 #endif
 
+    using EventTarget::eventTargetData;
     EventTargetData* eventTargetData() final;
     EventTargetData* eventTargetDataConcurrently() final;
     EventTargetData& ensureEventTargetData() final;
