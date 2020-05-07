@@ -619,7 +619,6 @@ class WebkitFlatpak:
 
         sandbox_build_path = os.path.join(self.sandbox_source_root, "WebKitBuild", self.build_type)
         sandbox_environment = {
-            "WEBKIT_TOP_LEVEL": "/app/",
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
         }
 
@@ -628,8 +627,6 @@ class WebkitFlatpak:
                 command = os.path.normpath(os.path.abspath(args[0]))
                 # Take into account the fact that the webkit source dir is remounted inside the sandbox.
                 args[0] = command.replace(self.source_root, self.sandbox_source_root)
-            if args[0].endswith("build-webkit"):
-                args.append("--prefix=/app")
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])

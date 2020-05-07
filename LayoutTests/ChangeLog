@@ -1,3 +1,13 @@
+2020-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Test failures after Flatpak upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=211497
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/gtk/TestExpectations: Unflag fixed tests. The webgl
+        failures seem more related to bug #211338 actually.
+
 2020-05-07  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update baselines after r261248

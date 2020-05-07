@@ -1,3 +1,16 @@
+2020-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Test failures after Flatpak upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=211497
+
+        Reviewed by Adrian Perez de Castro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Don't set WEBKIT_TOP_LEVEL. I'm
+        not sure why it's needed at all. If it needs to be set it should
+        be /app/webkit/ anyway. Setting it to /app triggers test failures
+        due to invalid computed paths by internals' pathToLocalResource().
+
 2020-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build with current GTK

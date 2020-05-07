@@ -1495,15 +1495,10 @@ webkit.org/b/211338 webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.h
 webkit.org/b/211338 webgl/1.0.3/conformance/textures/tex-sub-image-2d.html [ Failure ]
 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-sub-image-cube-maps.html [ Failure ]
 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-upload-cube-maps.html [ Failure ]
+webkit.org/b/211338 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
+webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure ]
 
 webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure ]
-
-webkit.org/b/211497 fast/loader/local-CSS-from-local.html [ Failure ]
-webkit.org/b/211497 fast/loader/local-JavaScript-from-local.html [ Failure ]
-webkit.org/b/211497 fast/loader/local-image-from-local.html [ Failure ]
-webkit.org/b/211497 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
-webkit.org/b/211497 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
-webkit.org/b/211497 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure ]
 
 webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
@@ -4293,8 +4288,7 @@ webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibili
 
 webkit.org/b/183611 webkit.org/b/198830 media/context-menu-actions.html [ Failure Crash ]
 
-# Started to timeout in 211497.
-webkit.org/b/183902 webkit.org/b/211497 fast/dom/frame-loading-via-document-write.html [ Failure Timeout ]
+webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
