@@ -52,6 +52,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/ComplexTextControllerDirectWrite.cpp
     platform/graphics/win/ComplexTextControllerUniscribe.cpp
     platform/graphics/win/DIBPixelData.cpp
+    platform/graphics/win/DisplayRefreshMonitorWin.cpp
     platform/graphics/win/FloatPointDirect2D.cpp
     platform/graphics/win/FloatRectDirect2D.cpp
     platform/graphics/win/FloatSizeDirect2D.cpp

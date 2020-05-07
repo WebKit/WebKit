@@ -1,3 +1,17 @@
+2020-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Implement DisplayRefreshMonitor by using RunLoop::Timer
+        https://bugs.webkit.org/show_bug.cgi?id=211431
+
+        Reviewed by Don Olmstead.
+
+        USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR is turned off only for Windows ports.
+        Turn it on, and add DisplayRefreshMonitorWin.
+
+        I'll remove USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR macro in a follow-up patch.
+
+        * wtf/PlatformUse.h:
+
 2020-05-06  Darin Adler  <darin@apple.com>
 
         Make a helper for the pattern of ICU functions that may need to be called twice to populate a buffer

@@ -1,3 +1,20 @@
+2020-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Implement DisplayRefreshMonitor by using RunLoop::Timer
+        https://bugs.webkit.org/show_bug.cgi?id=211431
+
+        Reviewed by Don Olmstead.
+
+        * PlatformWin.cmake:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor):
+        * platform/graphics/win/DisplayRefreshMonitorWin.cpp: Added.
+        (WebCore::DisplayRefreshMonitorWin::create):
+        (WebCore::DisplayRefreshMonitorWin::DisplayRefreshMonitorWin):
+        (WebCore::DisplayRefreshMonitorWin::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitorWin::displayLinkFired):
+        * platform/graphics/win/DisplayRefreshMonitorWin.h: Added.
+
 2020-05-06  Zalan Bujtas  <zalan@apple.com>
 
         [ContentObservation] Shutterstock search bar is not activated on the first tap

@@ -38,6 +38,8 @@
 #include "DisplayRefreshMonitorMac.h"
 #elif PLATFORM(GTK)
 #include "DisplayRefreshMonitorGtk.h"
+#elif PLATFORM(WIN)
+#include "DisplayRefreshMonitorWin.h"
 #endif
 
 namespace WebCore {
@@ -52,6 +54,9 @@ RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefresh
 #endif
 #if PLATFORM(GTK) && !USE(GTK4)
     return DisplayRefreshMonitorGtk::create(displayID);
+#endif
+#if PLATFORM(WIN)
+    return DisplayRefreshMonitorWin::create(displayID);
 #endif
     UNUSED_PARAM(displayID);
     return nullptr;
