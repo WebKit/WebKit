@@ -90,11 +90,6 @@ void RemoteAudioMediaStreamTrackRenderer::clear()
     m_renderer->clear();
 }
 
-void RemoteAudioMediaStreamTrackRenderer::setMuted(bool value)
-{
-    m_renderer->setMuted(value);
-}
-
 void RemoteAudioMediaStreamTrackRenderer::setVolume(float value)
 {
     m_renderer->setVolume(value);

@@ -28,7 +28,6 @@ messages -> RemoteAudioMediaStreamTrackRenderer NotRefCounted {
     Stop()
     Clear()
 
-    SetMuted(bool value)
     SetVolume(float value)
 
     AudioSamplesStorageChanged(WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)

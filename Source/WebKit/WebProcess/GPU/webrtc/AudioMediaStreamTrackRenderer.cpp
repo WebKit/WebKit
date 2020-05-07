@@ -73,12 +73,6 @@ void AudioMediaStreamTrackRenderer::clear()
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::Clear { }, m_identifier);
 }
 
-void AudioMediaStreamTrackRenderer::setMuted(bool value)
-{
-    WebCore::AudioMediaStreamTrackRenderer::setMuted(value);
-    m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::SetMuted { value }, m_identifier);
-}
-
 void AudioMediaStreamTrackRenderer::setVolume(float value)
 {
     WebCore::AudioMediaStreamTrackRenderer::setVolume(value);

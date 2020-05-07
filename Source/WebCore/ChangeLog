@@ -1,3 +1,13 @@
+2020-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Remove AudioMediaStreamTrackRenderer::muted
+        https://bugs.webkit.org/show_bug.cgi?id=211289
+
+        Reviewed by Eric Carlson.
+
+        * platform/mediastream/AudioMediaStreamTrackRenderer.h:
+        muted is unnecessary since we are using start/stop instead.
+
 2020-05-07  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Playhead in Touch Bar continues when loading stalls

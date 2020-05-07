@@ -56,7 +56,6 @@ private:
     void start() final;
     void stop() final;
     void clear() final;
-    void setMuted(bool) final;
     void setVolume(float) final;
     void pushSamples(const MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;
 

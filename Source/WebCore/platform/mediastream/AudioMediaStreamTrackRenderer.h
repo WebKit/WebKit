@@ -50,7 +50,6 @@ public:
     // May be called on a background thread. It should only be called after start/before stop is called.
     virtual void pushSamples(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
 
-    virtual void setMuted(bool);
     virtual void setVolume(float);
     float volume() const;
 
@@ -70,13 +69,10 @@ protected:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    bool isMuted() const;
-
 private:
     static RendererCreator m_rendererCreator;
 
     // Main thread writable members
-    bool m_muted { false };
     float m_volume { 1 };
 
 #if !RELEASE_LOG_DISABLED
@@ -84,11 +80,6 @@ private:
     const void* m_logIdentifier;
 #endif
 };
-
-inline void AudioMediaStreamTrackRenderer::setMuted(bool value)
-{
-    m_muted = value;
-}
 
 inline void AudioMediaStreamTrackRenderer::setVolume(float volume)
 {
@@ -98,12 +89,6 @@ inline void AudioMediaStreamTrackRenderer::setVolume(float volume)
 inline float AudioMediaStreamTrackRenderer::volume() const
 {
     return m_volume;
-}
-
-
-inline bool AudioMediaStreamTrackRenderer::isMuted() const
-{
-    return m_muted;
 }
 
 #if !RELEASE_LOG_DISABLED
