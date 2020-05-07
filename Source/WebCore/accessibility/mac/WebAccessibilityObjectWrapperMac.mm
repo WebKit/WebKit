@@ -2286,7 +2286,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attributeName
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityAttributeValue:") + String(attributeName));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject) {
         AXLOG("No backingObject!!!");
@@ -3869,7 +3869,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityAttributeValue:") + String(attribute));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attribute)));
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;
@@ -4474,7 +4474,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {
-    AXTRACE(String("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:") + String(attribute));
+    AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityArrayAttributeValue:", String(attribute)));
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return nil;

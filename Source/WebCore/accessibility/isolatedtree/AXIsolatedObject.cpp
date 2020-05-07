@@ -30,6 +30,10 @@
 
 #include "AXIsolatedTree.h"
 
+#if PLATFORM(COCOA)
+#include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+#endif
+
 namespace WebCore {
 
 AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
@@ -455,9 +459,8 @@ void AXIsolatedObject::setParent(AXID parent)
     m_parentID = parent;
 }
 
-void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
+void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
 {
-    ASSERT_UNUSED(detachmentType, isMainThread() ? detachmentType == AccessibilityDetachmentType::CacheDestroyed : detachmentType != AccessibilityDetachmentType::CacheDestroyed);
     for (const auto& childID : m_childrenIDs) {
         if (auto child = tree()->nodeForID(childID))
             child->detachFromParent();
@@ -478,13 +481,13 @@ void AXIsolatedObject::detachFromParent()
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
 {
-    if (!isMainThread()) {
-        m_children.clear();
-        m_children.reserveInitialCapacity(m_childrenIDs.size());
-        for (const auto& childID : m_childrenIDs) {
-            if (auto child = tree()->nodeForID(childID))
-                m_children.uncheckedAppend(child);
-        }
+    ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread()) || (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeMainThread && isMainThread())));
+    updateBackingStore();
+    m_children.clear();
+    m_children.reserveInitialCapacity(m_childrenIDs.size());
+    for (const auto& childID : m_childrenIDs) {
+        if (auto child = tree()->nodeForID(childID))
+            m_children.uncheckedAppend(child);
     }
     return m_children;
 }
@@ -859,12 +862,8 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
 void AXIsolatedObject::updateBackingStore()
 {
     // This method can be called on either the main or the AX threads.
-    // It can be called in the main thread from [WebAccessibilityObjectWrapper accessibilityFocusedUIElement].
-    // Update the IsolatedTree only if it is called on the AX thread.
-    if (!isMainThread()) {
-        if (auto tree = this->tree())
-            tree->applyPendingChanges();
-    }
+    if (auto tree = this->tree())
+        tree->applyPendingChanges();
 }
 
 String AXIsolatedObject::stringForRange(RefPtr<Range> range) const

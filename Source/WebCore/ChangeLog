@@ -1,3 +1,37 @@
+2020-05-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make debug build run in accessibility isolated tree mode = 1.
+        https://bugs.webkit.org/show_bug.cgi?id=211567
+
+        Reviewed by Chris Fleizach.
+
+        - Removed several unnecessary ASSERTs that prevent debug builds to run
+        in isolated tree mode = 1, i.e., isolated tree mode on main thread.
+        - AXIsolatedObject::children and updateBackingStore need to be executed
+        on both threads.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::detachRemoteParts):
+        (WebCore::AXIsolatedObject::children): Need to update the children
+        regardless of the thread in which it is invoked. Pending, must add a
+        lock to prevent thread collision.
+
+        (WebCore::AXIsolatedObject::updateBackingStore): Need to update the
+        backing store regardless of the thread in whhich it is invoked.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::setRootNodeID):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm: Enable
+        isolated tree mode = 1.
+        (-[WebAccessibilityObjectWrapperBase detach]):
+        (-[WebAccessibilityObjectWrapperBase axBackingObject]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: Use makeString
+        instead of String concatenation as pointed out by Darin Adler in bug 210914.
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2020-05-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Set section [top, left] used position.

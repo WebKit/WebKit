@@ -3094,7 +3094,6 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
 
-    AXLOG(*tree);
     return makeRef(*tree);
 }
 
@@ -3108,7 +3107,6 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
     if (!tree)
         return;
-    AXLOG(*tree);
 
     switch (notification) {
     case AXCheckedStateChanged:
@@ -3121,7 +3119,6 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     default:
         break;
     }
-    AXLOG(*tree);
 }
 
 // FIXME: should be added to WTF::Vector.
@@ -3143,7 +3140,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
     if (!tree)
         return;
-    AXLOG(*tree);
 
     // Filter out multiple notifications for the same object. This avoids
     // updating the isolated tree multiple times unnecessarily.
@@ -3178,7 +3174,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         }
     }
-    AXLOG(*tree);
 }
 #endif
 

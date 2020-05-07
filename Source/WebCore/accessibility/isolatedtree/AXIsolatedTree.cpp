@@ -163,6 +163,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXID parentID, bool
     ASSERT(isMainThread());
     Vector<NodeChange> nodeChanges;
     auto object = createSubtree(axObject, parentID, attachWrapper, nodeChanges);
+    LockHolder locker { m_changeLogLock };
     appendNodeChanges(nodeChanges);
 
     if (parentID == InvalidAXID)
@@ -286,7 +287,7 @@ void AXIsolatedTree::setRootNodeID(AXID axID)
 {
     AXTRACE("AXIsolatedTree::setRootNodeID");
     ASSERT(isMainThread());
-    LockHolder locker { m_changeLogLock };
+    ASSERT(m_changeLogLock.isLocked());
     m_rootNodeID = axID;
 }
 
