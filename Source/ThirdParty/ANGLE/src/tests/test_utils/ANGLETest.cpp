@@ -271,18 +271,6 @@ GLColor32F ReadColor32F(GLint x, GLint y)
     EXPECT_GL_NO_ERROR();
     return actual;
 }
-
-void LoadEntryPointsWithUtilLoader()
-{
-#if defined(ANGLE_USE_UTIL_LOADER)
-    PFNEGLGETPROCADDRESSPROC getProcAddress;
-    ANGLETestEnvironment::GetEGLLibrary()->getAs("eglGetProcAddress", &getProcAddress);
-    ASSERT_NE(nullptr, getProcAddress);
-
-    LoadEGL(getProcAddress);
-    LoadGLES(getProcAddress);
-#endif  // defined(ANGLE_USE_UTIL_LOADER)
-}
 }  // namespace angle
 
 using namespace angle;
@@ -383,12 +371,6 @@ ANGLETestBase::ANGLETestBase(const PlatformParameters &params)
     // Override the default platform methods with the ANGLE test methods pointer.
     PlatformParameters withMethods            = params;
     withMethods.eglParameters.platformMethods = &gDefaultPlatformMethods;
-
-    // We don't build vulkan debug layers on Mac (http://anglebug.com/4376)
-    if (IsOSX() && withMethods.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
-    {
-        withMethods.eglParameters.debugLayersEnabled = false;
-    }
 
     auto iter = gFixtures.find(withMethods);
     if (iter != gFixtures.end())
@@ -524,7 +506,14 @@ void ANGLETestBase::ANGLETestSetUp()
 
     if (mCurrentParams->noFixture)
     {
-        LoadEntryPointsWithUtilLoader();
+#if defined(ANGLE_USE_UTIL_LOADER)
+        PFNEGLGETPROCADDRESSPROC getProcAddress;
+        ANGLETestEnvironment::GetEGLLibrary()->getAs("eglGetProcAddress", &getProcAddress);
+        ASSERT_NE(nullptr, getProcAddress);
+
+        LoadEGL(getProcAddress);
+        LoadGLES(getProcAddress);
+#endif  // defined(ANGLE_USE_UTIL_LOADER)
         return;
     }
 
@@ -1309,7 +1298,7 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
     {
         if (strncmp(argv[argIndex], kUseConfig, strlen(kUseConfig)) == 0)
         {
-            SetSelectedConfig(argv[argIndex] + strlen(kUseConfig));
+            gSelectedConfig = std::string(argv[argIndex] + strlen(kUseConfig));
         }
         if (strncmp(argv[argIndex], kSeparateProcessPerConfig, strlen(kSeparateProcessPerConfig)) ==
             0)
@@ -1320,7 +1309,7 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
 
     if (gSeparateProcessPerConfig)
     {
-        if (IsConfigSelected())
+        if (!gSelectedConfig.empty())
         {
             std::cout << "Cannot use both a single test config and separate processes.\n";
             exit(1);

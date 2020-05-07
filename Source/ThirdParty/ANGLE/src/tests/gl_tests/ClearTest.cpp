@@ -15,6 +15,26 @@ using namespace angle;
 
 namespace
 {
+
+Vector4 RandomVec4(int seed, float minValue, float maxValue)
+{
+    RNG rng(seed);
+    srand(seed);
+    return Vector4(
+        rng.randomFloatBetween(minValue, maxValue), rng.randomFloatBetween(minValue, maxValue),
+        rng.randomFloatBetween(minValue, maxValue), rng.randomFloatBetween(minValue, maxValue));
+}
+
+GLColor Vec4ToColor(const Vector4 &vec)
+{
+    GLColor color;
+    color.R = static_cast<uint8_t>(vec.x() * 255.0f);
+    color.G = static_cast<uint8_t>(vec.y() * 255.0f);
+    color.B = static_cast<uint8_t>(vec.z() * 255.0f);
+    color.A = static_cast<uint8_t>(vec.w() * 255.0f);
+    return color;
+}
+
 class ClearTestBase : public ANGLETest
 {
   protected:
@@ -846,64 +866,6 @@ TEST_P(ClearTestES3, MaskedScissoredClearMultipleAttachments)
     }
 }
 
-// Test clearing multiple attachments in the presence of an indexed color mask.
-TEST_P(ClearTestES3, MaskedIndexedClearMultipleAttachments)
-{
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_draw_buffers_indexed"));
-
-    constexpr uint32_t kSize            = 16;
-    constexpr uint32_t kAttachmentCount = 2;
-    std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBOs[0]);
-
-    GLTexture textures[kAttachmentCount];
-    GLenum drawBuffers[kAttachmentCount];
-
-    for (uint32_t i = 0; i < kAttachmentCount; ++i)
-    {
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                     pixelData.data());
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i],
-                               0);
-        drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-    }
-
-    glDrawBuffers(kAttachmentCount, drawBuffers);
-
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
-
-    // Masked clear
-    GLColor clearColorMasked(31, 63, 255, 191);
-    angle::Vector4 clearColor = GLColor(31, 63, 127, 191).toNormalizedVector();
-
-    // Block blue channel for all attachements
-    glColorMask(GL_TRUE, GL_TRUE, GL_FALSE, GL_TRUE);
-
-    // Unblock blue channel for attachement 1
-    glColorMaskiOES(1, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-    glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    glClear(GL_COLOR_BUFFER_BIT);
-    ASSERT_GL_NO_ERROR();
-
-    // All attachments should be cleared, with the blue channel untouched for all attachments but 1.
-    for (uint32_t i = 0; i < kAttachmentCount; ++i)
-    {
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
-        ASSERT_GL_NO_ERROR();
-
-        const GLColor attachementColor = (i == 1) ? clearColor : clearColorMasked;
-        EXPECT_PIXEL_COLOR_EQ(0, 0, attachementColor);
-        EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, attachementColor);
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, attachementColor);
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, attachementColor);
-        EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize / 2, attachementColor);
-    }
-}
-
 // Test that clearing multiple attachments of different nature (float, int and uint) in the
 // presence of a color mask works correctly.  In the Vulkan backend, this exercises clearWithDraw
 // and the relevant internal shaders.
@@ -1252,9 +1214,9 @@ TEST_P(ClearTestES3, RepeatedClear)
     {
         for (int cellX = 0; cellX < numRowsCols; cellX++)
         {
-            int seed            = cellX + cellY * numRowsCols;
-            const Vector4 color = RandomVec4(seed, fmtValueMin, fmtValueMax);
-            GLColor expectedColor(color);
+            int seed              = cellX + cellY * numRowsCols;
+            const Vector4 color   = RandomVec4(seed, fmtValueMin, fmtValueMax);
+            GLColor expectedColor = Vec4ToColor(color);
 
             int testN = cellX * cellSize + cellY * backFBOSize * cellSize + backFBOSize + 1;
             GLColor actualColor = pixelData[testN];

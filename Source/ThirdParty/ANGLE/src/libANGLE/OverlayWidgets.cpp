@@ -205,11 +205,6 @@ class AppendWidgetDataHelper
                                              TextWidgetData *textWidget,
                                              GraphWidgetData *graphWidget,
                                              OverlayWidgetCounts *widgetCounts);
-    static void AppendVulkanRenderPassCount(const overlay::Widget *widget,
-                                            const gl::Extents &imageExtent,
-                                            TextWidgetData *textWidget,
-                                            GraphWidgetData *graphWidget,
-                                            OverlayWidgetCounts *widgetCounts);
     static void AppendVulkanSecondaryCommandBufferPoolWaste(const overlay::Widget *widget,
                                                             const gl::Extents &imageExtent,
                                                             TextWidgetData *textWidget,
@@ -340,33 +335,6 @@ void AppendWidgetDataHelper::AppendVulkanCommandGraphSize(const overlay::Widget 
     }
 }
 
-void AppendWidgetDataHelper::AppendVulkanRenderPassCount(const overlay::Widget *widget,
-                                                         const gl::Extents &imageExtent,
-                                                         TextWidgetData *textWidget,
-                                                         GraphWidgetData *graphWidget,
-                                                         OverlayWidgetCounts *widgetCounts)
-{
-    const overlay::RunningGraph *renderPassCount =
-        static_cast<const overlay::RunningGraph *>(widget);
-
-    const size_t maxValue     = *std::max_element(renderPassCount->runningValues.begin(),
-                                              renderPassCount->runningValues.end());
-    const int32_t graphHeight = std::abs(widget->coords[3] - widget->coords[1]);
-    const float graphScale    = static_cast<float>(graphHeight) / maxValue;
-
-    AppendGraphCommon(widget, imageExtent, renderPassCount->runningValues,
-                      renderPassCount->lastValueIndex + 1, graphScale, graphWidget, widgetCounts);
-
-    if ((*widgetCounts)[WidgetInternalType::Text] <
-        kWidgetInternalTypeMaxWidgets[WidgetInternalType::Text])
-    {
-        std::ostringstream text;
-        text << "RenderPass Count (Max: " << maxValue << ")";
-        AppendTextCommon(&renderPassCount->description, imageExtent, text.str(), textWidget,
-                         widgetCounts);
-    }
-}
-
 void AppendWidgetDataHelper::AppendVulkanSecondaryCommandBufferPoolWaste(
     const overlay::Widget *widget,
     const gl::Extents &imageExtent,
@@ -423,8 +391,8 @@ constexpr angle::PackedEnumMap<WidgetId, AppendWidgetDataFunc> kWidgetIdToAppend
      overlay_impl::AppendWidgetDataHelper::AppendVulkanLastValidationMessage},
     {WidgetId::VulkanValidationMessageCount,
      overlay_impl::AppendWidgetDataHelper::AppendVulkanValidationMessageCount},
-    {WidgetId::VulkanRenderPassCount,
-     overlay_impl::AppendWidgetDataHelper::AppendVulkanRenderPassCount},
+    {WidgetId::VulkanCommandGraphSize,
+     overlay_impl::AppendWidgetDataHelper::AppendVulkanCommandGraphSize},
     {WidgetId::VulkanSecondaryCommandBufferPoolWaste,
      overlay_impl::AppendWidgetDataHelper::AppendVulkanSecondaryCommandBufferPoolWaste},
 };
@@ -527,7 +495,6 @@ void OverlayState::fillWidgetData(const gl::Extents &imageExtents,
         }
 
         AppendWidgetDataFunc appendFunc = kWidgetIdToAppendDataFuncMap[id];
-        ASSERT(appendFunc);
         appendFunc(widget.get(), imageExtents,
                    &textWidgets->widgets[widgetCounts[WidgetInternalType::Text]],
                    &graphWidgets->widgets[widgetCounts[WidgetInternalType::Graph]], &widgetCounts);

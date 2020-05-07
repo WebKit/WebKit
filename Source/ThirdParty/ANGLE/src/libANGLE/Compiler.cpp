@@ -90,10 +90,8 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     mResources.OES_standard_derivatives     = extensions.standardDerivativesOES;
     mResources.EXT_draw_buffers             = extensions.drawBuffers;
     mResources.EXT_shader_texture_lod       = extensions.shaderTextureLOD;
-    mResources.EXT_shader_non_constant_global_initializers =
-        extensions.shaderNonConstGlobalInitializersEXT;
-    mResources.OES_EGL_image_external          = extensions.eglImageExternalOES;
-    mResources.OES_EGL_image_external_essl3    = extensions.eglImageExternalEssl3OES;
+    mResources.OES_EGL_image_external       = extensions.eglImageExternalOES;
+    mResources.OES_EGL_image_external_essl3 = extensions.eglImageExternalEssl3OES;
     mResources.NV_EGL_stream_consumer_external = extensions.eglStreamConsumerExternalNV;
     mResources.ARB_texture_rectangle           = extensions.textureRectangle;
     mResources.EXT_gpu_shader5                 = extensions.gpuShader5EXT;

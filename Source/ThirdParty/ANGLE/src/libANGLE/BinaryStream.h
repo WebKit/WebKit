@@ -186,10 +186,8 @@ class BinaryOutputStream : angle::NonCopyable
     template <class IntT>
     void writeInt(IntT param)
     {
-        using PromotedIntT =
-            typename std::conditional<std::is_signed<IntT>::value, int, unsigned>::type;
-        ASSERT(angle::IsValueInRangeForNumericType<PromotedIntT>(param));
-        PromotedIntT intValue = static_cast<PromotedIntT>(param);
+        ASSERT(angle::IsValueInRangeForNumericType<int>(param));
+        int intValue = static_cast<int>(param);
         write(&intValue, 1);
     }
 

@@ -72,6 +72,11 @@ class NullFactory : public GLImplFactory
         return nullptr;
     }
 
+    std::vector<PathImpl *> createPaths(GLsizei range) override
+    {
+        return std::vector<PathImpl *>();
+    }
+
     SemaphoreImpl *createSemaphore() override { return nullptr; }
 
     OverlayImpl *createOverlay(const gl::OverlayState &state) override { return nullptr; }
@@ -98,6 +103,7 @@ class MockGLFactory : public GLImplFactory
     MOCK_METHOD1(createTransformFeedback,
                  TransformFeedbackImpl *(const gl::TransformFeedbackState &));
     MOCK_METHOD1(createSampler, SamplerImpl *(const gl::SamplerState &));
+    MOCK_METHOD1(createPaths, std::vector<PathImpl *>(GLsizei));
     MOCK_METHOD0(createSemaphore, SemaphoreImpl *());
     MOCK_METHOD1(createOverlay, OverlayImpl *(const gl::OverlayState &));
 };

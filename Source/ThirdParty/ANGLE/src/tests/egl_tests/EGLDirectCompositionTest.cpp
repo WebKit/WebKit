@@ -256,9 +256,6 @@ TEST_P(EGLDirectCompositionTest, RenderSolidColor)
     // Only attempt this test when on Windows 10 1803+
     ANGLE_SKIP_TEST_IF(!mRoHelper.SupportedWindowsRelease());
 
-    // http://crbug.com/1063962
-    ANGLE_SKIP_TEST_IF(isD3D11Renderer() && IsIntel());
-
     EGLSurface s{nullptr};
     CreateSurface(mAngleHost, s);
 

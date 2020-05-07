@@ -23,19 +23,12 @@ class MemoryObjectVk : public MemoryObjectImpl
 
     void onDestroy(const gl::Context *context) override;
 
-    angle::Result setDedicatedMemory(const gl::Context *context, bool dedicatedMemory) override;
-
     angle::Result importFd(gl::Context *context,
                            GLuint64 size,
                            gl::HandleType handleType,
                            GLint fd) override;
 
-    angle::Result importZirconHandle(gl::Context *context,
-                                     GLuint64 size,
-                                     gl::HandleType handleType,
-                                     GLuint handle) override;
-
-    angle::Result createImage(ContextVk *context,
+    angle::Result createImage(const gl::Context *context,
                               gl::TextureType type,
                               size_t levels,
                               GLenum internalFormat,
@@ -44,15 +37,10 @@ class MemoryObjectVk : public MemoryObjectImpl
                               vk::ImageHelper *image);
 
   private:
-    static constexpr int kInvalidFd = -1;
-    angle::Result importOpaqueFd(ContextVk *contextVk, GLuint64 size, GLint fd);
-    angle::Result importZirconVmo(ContextVk *contextVk, GLuint64 size, GLuint handle);
+    angle::Result importOpaqueFd(gl::Context *context, GLuint64 size, GLint fd);
 
-    GLuint64 mSize             = 0;
-    gl::HandleType mHandleType = gl::HandleType::InvalidEnum;
-    int mFd                    = kInvalidFd;
-
-    zx_handle_t mZirconHandle = ZX_HANDLE_INVALID;
+    GLuint64 mSize;
+    int mFd;
 };
 
 }  // namespace rx

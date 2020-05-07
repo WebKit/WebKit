@@ -13,10 +13,10 @@
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
+#include "libANGLE/renderer/vulkan/CommandGraph.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/trace.h"
 
@@ -296,14 +296,21 @@ angle::Result VertexArrayVk::convertIndexBufferCPU(ContextVk *contextVk,
 
     mDynamicIndexData.releaseInFlightBuffers(contextVk);
 
-    size_t elementSize  = contextVk->getVkIndexTypeSize(indexType);
+    size_t elementSize = gl::GetDrawElementsTypeSize(indexType);
+    if (indexType == gl::DrawElementsType::UnsignedByte)
+    {
+        // 8-bit indices are not supported by Vulkan, so they are promoted to
+        // 16-bit indices below
+        elementSize = sizeof(GLushort);
+    }
+
     const size_t amount = elementSize * indexCount;
     GLubyte *dst        = nullptr;
 
     ANGLE_TRY(mDynamicIndexData.allocate(contextVk, amount, &dst, nullptr,
                                          &mCurrentElementArrayBufferOffset, nullptr));
     mCurrentElementArrayBuffer = mDynamicIndexData.getCurrentBuffer();
-    if (contextVk->shouldConvertUint8VkIndexType(indexType))
+    if (indexType == gl::DrawElementsType::UnsignedByte)
     {
         // Unsigned bytes don't have direct support in Vulkan so we have to expand the
         // memory to a GLushort.
@@ -583,7 +590,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             {
                 ConversionBuffer *conversion = bufferVk->getVertexConversionBuffer(
                     renderer, intendedFormat.id, binding.getStride(),
-                    binding.getOffset() + attrib.relativeOffset, !bindingIsAligned);
+                    binding.getOffset() + attrib.relativeOffset);
                 if (conversion->dirty)
                 {
                     if (bindingIsAligned)
@@ -632,13 +639,8 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
                     vk::BufferHelper &bufferHelper          = bufferVk->getBuffer();
                     mCurrentArrayBuffers[attribIndex]       = &bufferHelper;
                     mCurrentArrayBufferHandles[attribIndex] = bufferHelper.getBuffer().getHandle();
-
-                    // Vulkan requires the offset is within the buffer. We use robust access
-                    // behaviour to reset the offset if it starts outside the buffer.
-                    mCurrentArrayBufferOffsets[attribIndex] =
-                        binding.getOffset() < bufferVk->getSize() ? binding.getOffset() : 0;
-
-                    stride = binding.getStride();
+                    mCurrentArrayBufferOffsets[attribIndex] = binding.getOffset();
+                    stride                                  = binding.getStride();
                 }
             }
         }

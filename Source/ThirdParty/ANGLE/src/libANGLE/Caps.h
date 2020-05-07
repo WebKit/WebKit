@@ -118,7 +118,6 @@ struct Extensions
     // GL_EXT_color_buffer_float
     // GL_EXT_texture_norm16
     // GL_EXT_texture_compression_bptc
-    // GL_EXT_texture_compression_rgtc
     void setTextureExtensionSupport(const TextureCapsMap &textureCaps);
 
     // indicate if any depth texture extension is available
@@ -213,14 +212,8 @@ struct Extensions
     // GL_OES_texture_compression_astc
     bool textureCompressionASTCOES = false;
 
-    // GL_KHR_texture_compression_astc_sliced_3d
-    bool textureCompressionSliced3dASTCKHR = false;
-
     // GL_EXT_texture_compression_bptc
     bool textureCompressionBPTC = false;
-
-    // GL_EXT_texture_compression_rgtc
-    bool textureCompressionRGTC = false;
 
     // GL_OES_compressed_ETC1_RGB8_texture
     // Implies that TextureCaps for GL_ETC1_RGB8_OES exist
@@ -302,15 +295,6 @@ struct Extensions
 
     // GL_EXT_draw_buffers
     bool drawBuffers = false;
-
-    // GL_EXT_draw_buffers_indexed
-    bool drawBuffersIndexedEXT = false;
-
-    // GL_OES_draw_buffers_indexed
-    bool drawBuffersIndexedOES = false;
-
-    // Any version of the draw_buffers_indexed
-    bool drawBuffersIndexedAny() const { return (drawBuffersIndexedEXT || drawBuffersIndexedOES); }
 
     // GL_EXT_texture_filter_anisotropic
     bool textureFilterAnisotropic = false;
@@ -395,9 +379,6 @@ struct Extensions
     // GL_OES_EGL_image_external_essl3
     bool eglImageExternalEssl3OES = false;
 
-    // GL_EXT_EGL_image_external_wrap_modes
-    bool eglImageExternalWrapModesEXT = false;
-
     // GL_OES_EGL_sync
     bool eglSyncOES = false;
 
@@ -407,17 +388,11 @@ struct Extensions
     // GL_EXT_memory_object_fd
     bool memoryObjectFd = false;
 
-    // GL_ANGLE_memory_object_fuchsia
-    bool memoryObjectFuchsiaANGLE = false;
-
     // GL_EXT_semaphore
     bool semaphore = false;
 
     // GL_EXT_semaphore_fd
     bool semaphoreFd = false;
-
-    // GL_ANGLE_semaphore_fuchsia
-    bool semaphoreFuchsiaANGLE = false;
 
     // NV_EGL_stream_consumer_external
     bool eglStreamConsumerExternalNV = false;
@@ -508,6 +483,9 @@ struct Extensions
     // written against ES 3.1 but can apply to ES 3.0 as well.
     bool textureNorm16 = false;
 
+    // GL_CHROMIUM_path_rendering
+    bool pathRendering = false;
+
     // GL_OES_surfaceless_context
     bool surfacelessContextOES = false;
 
@@ -594,9 +572,6 @@ struct Extensions
     {
         return (drawElementsBaseVertexOES || drawElementsBaseVertexEXT);
     }
-
-    // GL_EXT_shader_non_constant_global_initializers
-    bool shaderNonConstGlobalInitializersEXT = false;
 
     // GL_EXT_gpu_shader5
     bool gpuShader5EXT = false;
@@ -1122,9 +1097,6 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_device_type_swiftshader
     bool platformANGLEDeviceTypeSwiftShader = false;
-
-    // EGL_ANGLE_platform_angle_device_type_egl_angle
-    bool platformANGLEDeviceTypeEGLANGLE = false;
 };
 
 }  // namespace egl

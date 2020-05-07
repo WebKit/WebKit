@@ -15,10 +15,7 @@ namespace gl
 {
 
 MemoryObject::MemoryObject(rx::GLImplFactory *factory, MemoryObjectID id)
-    : RefCountObject(factory->generateSerial(), id),
-      mImplementation(factory->createMemoryObject()),
-      mImmutable(false),
-      mDedicatedMemory(false)
+    : RefCountObject(factory->generateSerial(), id), mImplementation(factory->createMemoryObject())
 {}
 
 MemoryObject::~MemoryObject() {}
@@ -28,31 +25,12 @@ void MemoryObject::onDestroy(const Context *context)
     mImplementation->onDestroy(context);
 }
 
-angle::Result MemoryObject::setDedicatedMemory(const Context *context, bool dedicatedMemory)
-{
-    ANGLE_TRY(mImplementation->setDedicatedMemory(context, dedicatedMemory));
-    mDedicatedMemory = dedicatedMemory;
-    return angle::Result::Continue;
-}
-
 angle::Result MemoryObject::importFd(Context *context,
                                      GLuint64 size,
                                      HandleType handleType,
                                      GLint fd)
 {
-    ANGLE_TRY(mImplementation->importFd(context, size, handleType, fd));
-    mImmutable = true;
-    return angle::Result::Continue;
-}
-
-angle::Result MemoryObject::importZirconHandle(Context *context,
-                                               GLuint64 size,
-                                               HandleType handleType,
-                                               GLuint handle)
-{
-    ANGLE_TRY(mImplementation->importZirconHandle(context, size, handleType, handle));
-    mImmutable = true;
-    return angle::Result::Continue;
+    return mImplementation->importFd(context, size, handleType, fd);
 }
 
 }  // namespace gl

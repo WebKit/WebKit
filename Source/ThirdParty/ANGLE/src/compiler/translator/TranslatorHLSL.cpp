@@ -10,6 +10,7 @@
 #include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/tree_ops/BreakVariableAliasingInInnerLoops.h"
+#include "compiler/translator/tree_ops/EmulatePrecision.h"
 #include "compiler/translator/tree_ops/ExpandIntegerPowExpressions.h"
 #include "compiler/translator/tree_ops/PruneEmptyCases.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
@@ -139,9 +140,20 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         return false;
     }
 
-    bool precisionEmulation = false;
-    if (!emulatePrecisionIfNeeded(root, getInfoSink().obj, &precisionEmulation, getOutputType()))
-        return false;
+    bool precisionEmulation =
+        getResources().WEBGL_debug_shader_precision && getPragma().debugShaderPrecision;
+
+    if (precisionEmulation)
+    {
+        EmulatePrecision emulatePrecision(&getSymbolTable());
+        root->traverse(&emulatePrecision);
+        if (!emulatePrecision.updateTree(this, root))
+        {
+            return false;
+        }
+        emulatePrecision.writeEmulationHelpers(getInfoSink().obj, getShaderVersion(),
+                                               getOutputType());
+    }
 
     if ((compileOptions & SH_EXPAND_SELECT_HLSL_INTEGER_POW_EXPRESSIONS) != 0)
     {

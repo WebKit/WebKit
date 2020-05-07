@@ -9,8 +9,6 @@
 
 #include <functional>
 
-#include "util/frame_capture_utils.h"
-
 #define ANGLE_MACRO_STRINGIZE_AUX(a) #a
 #define ANGLE_MACRO_STRINGIZE(a) ANGLE_MACRO_STRINGIZE_AUX(a)
 #define ANGLE_MACRO_CONCAT_AUX(a, b) a##b
@@ -41,10 +39,6 @@ class CaptureReplaySample : public SampleApplication
         std::string exeDir = angle::GetExecutableDirectory();
         if (!angle::SetCWD(exeDir.c_str()))
             return false;
-        if (kIsBinaryDataCompressed)
-        {
-            SetBinaryDataDecompressCallback(angle::DecompressBinaryData);
-        }
         SetBinaryDataDir(ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR);
         SetupContextReplay();
 

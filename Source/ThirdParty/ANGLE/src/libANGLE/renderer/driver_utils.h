@@ -32,11 +32,10 @@ enum VendorID : uint32_t
 
 enum AndroidDeviceID : uint32_t
 {
-    ANDROID_DEVICE_ID_UNKNOWN     = 0x0,
-    ANDROID_DEVICE_ID_NEXUS5X     = 0x4010800,
-    ANDROID_DEVICE_ID_PIXEL1XL    = 0x5040001,
-    ANDROID_DEVICE_ID_PIXEL2      = 0x5030004,
-    ANDROID_DEVICE_ID_SWIFTSHADER = 0xC0DE,
+    ANDROID_DEVICE_ID_UNKNOWN  = 0x0,
+    ANDROID_DEVICE_ID_NEXUS5X  = 0x4010800,
+    ANDROID_DEVICE_ID_PIXEL1XL = 0x5040001,
+    ANDROID_DEVICE_ID_PIXEL2   = 0x5030004,
 };
 
 inline bool IsAMD(uint32_t vendorId)
@@ -57,11 +56,6 @@ inline bool IsBroadcom(uint32_t vendorId)
 inline bool IsIntel(uint32_t vendorId)
 {
     return vendorId == VENDOR_ID_INTEL;
-}
-
-inline bool IsGoogle(uint32_t vendorId)
-{
-    return vendorId == VENDOR_ID_GOOGLE;
 }
 
 inline bool IsNvidia(uint32_t vendorId)
@@ -87,11 +81,6 @@ inline bool IsPixel1XL(uint32_t vendorId, uint32_t deviceId)
 inline bool IsPixel2(uint32_t vendorId, uint32_t deviceId)
 {
     return IsQualcomm(vendorId) && deviceId == ANDROID_DEVICE_ID_PIXEL2;
-}
-
-inline bool IsSwiftshader(uint32_t vendorId, uint32_t deviceId)
-{
-    return IsGoogle(vendorId) && deviceId == ANDROID_DEVICE_ID_SWIFTSHADER;
 }
 
 const char *GetVendorString(uint32_t vendorId);
@@ -173,8 +162,6 @@ bool operator<(const OSVersion &a, const OSVersion &b);
 bool operator>=(const OSVersion &a, const OSVersion &b);
 
 OSVersion GetMacOSVersion();
-
-OSVersion GetLinuxOSVersion();
 
 inline bool IsAndroid()
 {

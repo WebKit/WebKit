@@ -11,8 +11,8 @@
 #define LIBANGLE_RENDERER_VULKAN_TEXTUREVK_H_
 
 #include "libANGLE/renderer/TextureImpl.h"
+#include "libANGLE/renderer/vulkan/CommandGraph.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/SamplerVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -179,12 +179,15 @@ class TextureVk : public TextureImpl
         return *mImage;
     }
 
-    void retainImageViews(vk::ResourceUseList *resourceUseList)
+    void onImageViewUse(vk::ResourceUseList *resourceUseList)
     {
-        mImageViews.retain(resourceUseList);
+        mImageViews.onResourceAccess(resourceUseList);
     }
 
-    void retainSampler(vk::ResourceUseList *resourceUseList) { mSampler.retain(resourceUseList); }
+    void onSamplerUse(vk::ResourceUseList *resourceUseList)
+    {
+        mSampler.onResourceAccess(resourceUseList);
+    }
 
     void releaseOwnershipOfImage(const gl::Context *context);
 
@@ -225,8 +228,6 @@ class TextureVk : public TextureImpl
                               GLenum format,
                               GLenum type,
                               void *pixels) override;
-
-    ANGLE_INLINE bool isBoundAsImageTexture() const { return mState.isBoundAsImageTexture(); }
 
   private:
     // Transform an image index from the frontend into one that can be used on the backing
@@ -272,7 +273,7 @@ class TextureVk : public TextureImpl
     angle::Result copyImageDataToBufferAndGetData(ContextVk *contextVk,
                                                   size_t sourceLevel,
                                                   uint32_t layerCount,
-                                                  const gl::Box &sourceArea,
+                                                  const gl::Rectangle &sourceArea,
                                                   uint8_t **outDataPtr);
 
     angle::Result copyBufferDataToImage(ContextVk *contextVk,
@@ -290,11 +291,9 @@ class TextureVk : public TextureImpl
                                               GLuint layer,
                                               GLuint firstMipLevel,
                                               GLuint maxMipLevel,
-                                              const size_t sourceWidth,
-                                              const size_t sourceHeight,
-                                              const size_t sourceDepth,
-                                              const size_t sourceRowPitch,
-                                              const size_t sourceDepthPitch,
+                                              size_t sourceWidth,
+                                              size_t sourceHeight,
+                                              size_t sourceRowPitch,
                                               uint8_t *sourceData);
 
     angle::Result copySubImageImpl(const gl::Context *context,

@@ -95,19 +95,6 @@ constexpr VkImageUsageFlags kSurfaceVKColorImageUsageFlags =
 constexpr VkImageUsageFlags kSurfaceVKDepthStencilImageUsageFlags =
     kSurfaceVKImageUsageFlags | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-// If the device is rotated with any of the following transform flags, the swapchain width and
-// height must be swapped (e.g. make a landscape window portrait).  This must also be done for all
-// attachments used with the swapchain (i.e. depth, stencil, and multisample buffers).
-constexpr VkSurfaceTransformFlagsKHR k90DegreeRotationVariants =
-    VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR | VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR |
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR |
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR;
-
-bool Is90DegreeRotation(VkSurfaceTransformFlagsKHR transform)
-{
-    return ((transform & k90DegreeRotationVariants) != 0);
-}
-
 }  // namespace
 
 SurfaceVk::SurfaceVk(const egl::SurfaceState &surfaceState) : SurfaceImpl(surfaceState) {}
@@ -168,56 +155,16 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     return angle::Result::Continue;
 }
 
-angle::Result OffscreenSurfaceVk::AttachmentImage::initializeWithExternalMemory(
-    DisplayVk *displayVk,
-    EGLint width,
-    EGLint height,
-    const vk::Format &vkFormat,
-    GLint samples,
-    void *buffer)
-{
-    RendererVk *renderer = displayVk->getRenderer();
-
-    ASSERT(renderer->getFeatures().supportsExternalMemoryHost.enabled);
-
-    const angle::Format &textureFormat = vkFormat.actualImageFormat();
-    bool isDepthOrStencilFormat   = textureFormat.depthBits > 0 || textureFormat.stencilBits > 0;
-    const VkImageUsageFlags usage = isDepthOrStencilFormat ? kSurfaceVKDepthStencilImageUsageFlags
-                                                           : kSurfaceVKColorImageUsageFlags;
-
-    VkExtent3D extents = {std::max(static_cast<uint32_t>(width), 1u),
-                          std::max(static_cast<uint32_t>(height), 1u), 1u};
-    ANGLE_TRY(
-        image.init(displayVk, gl::TextureType::_2D, extents, vkFormat, samples, usage, 0, 0, 1, 1));
-
-    VkImportMemoryHostPointerInfoEXT importMemoryHostPointerInfo = {};
-    importMemoryHostPointerInfo.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
-    importMemoryHostPointerInfo.pNext = nullptr;
-    importMemoryHostPointerInfo.handleType =
-        VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT;
-    importMemoryHostPointerInfo.pHostPointer = buffer;
-
-    VkMemoryRequirements externalMemoryRequirements;
-    image.getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);
-
-    VkMemoryPropertyFlags flags = 0;
-    ANGLE_TRY(image.initExternalMemory(displayVk, renderer->getMemoryProperties(),
-                                       externalMemoryRequirements, &importMemoryHostPointerInfo,
-                                       VK_QUEUE_FAMILY_EXTERNAL, flags));
-
-    // Clear the image if it has emulated channels.
-    image.stageClearIfEmulatedFormat(gl::ImageIndex::Make2D(0), vkFormat);
-
-    return angle::Result::Continue;
-}
-
 void OffscreenSurfaceVk::AttachmentImage::destroy(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
-    RendererVk *renderer = displayVk->getRenderer();
-    image.releaseImage(renderer);
-    image.releaseStagingBuffer(renderer);
-    imageViews.release(renderer);
+    VkDevice device      = displayVk->getDevice();
+
+    // It should be safe to immediately destroy the backing images of a surface on surface
+    // destruction. If this assumption is incorrect, we could use the last submit serial
+    // to determine when to destroy the surface.
+    image.destroy(device);
+    imageViews.destroy(device);
 }
 
 OffscreenSurfaceVk::OffscreenSurfaceVk(const egl::SurfaceState &surfaceState)
@@ -357,15 +304,15 @@ angle::Result OffscreenSurfaceVk::initializeContents(const gl::Context *context,
 
     if (mColorAttachment.image.valid())
     {
-        mColorAttachment.image.stageSubresourceRobustClear(imageIndex,
-                                                           mColorAttachment.image.getFormat());
+        mColorAttachment.image.stageSubresourceRobustClear(
+            imageIndex, mColorAttachment.image.getFormat().intendedFormat());
         ANGLE_TRY(mColorAttachment.image.flushAllStagedUpdates(contextVk));
     }
 
     if (mDepthStencilAttachment.image.valid())
     {
         mDepthStencilAttachment.image.stageSubresourceRobustClear(
-            imageIndex, mDepthStencilAttachment.image.getFormat());
+            imageIndex, mDepthStencilAttachment.image.getFormat().intendedFormat());
         ANGLE_TRY(mDepthStencilAttachment.image.flushAllStagedUpdates(contextVk));
     }
     return angle::Result::Continue;
@@ -567,27 +514,6 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
 
     gl::Extents extents(static_cast<int>(width), static_cast<int>(height), 1);
 
-    if (renderer->getFeatures().enablePreRotateSurfaces.enabled)
-    {
-        // Use the surface's transform.  For many platforms, this will always be identity (ANGLE
-        // does not need to do any pre-rotation).  However, when mSurfaceCaps.currentTransform is
-        // not identity, the device has been rotated away from its natural orientation.  In such a
-        // case, ANGLE must rotate all rendering in order to avoid the compositor
-        // (e.g. SurfaceFlinger on Android) performing an additional rotation blit.  In addition,
-        // ANGLE must create the swapchain with VkSwapchainCreateInfoKHR::preTransform set to the
-        // value of mSurfaceCaps.currentTransform.
-        mPreTransform = mSurfaceCaps.currentTransform;
-    }
-    else
-    {
-        // Default to identity transform.
-        mPreTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-        if ((mSurfaceCaps.supportedTransforms & mPreTransform) == 0)
-        {
-            mPreTransform = mSurfaceCaps.currentTransform;
-        }
-    }
-
     uint32_t presentModeCount = 0;
     ANGLE_VK_TRY(displayVk, vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, mSurface,
                                                                       &presentModeCount, nullptr));
@@ -600,6 +526,13 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
     // Select appropriate present mode based on vsync parameter.  Default to 1 (FIFO), though it
     // will get clamped to the min/max values specified at display creation time.
     setSwapInterval(renderer->getFeatures().disableFifoPresentMode.enabled ? 0 : 1);
+
+    // Default to identity transform.
+    mPreTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+    if ((mSurfaceCaps.supportedTransforms & mPreTransform) == 0)
+    {
+        mPreTransform = mSurfaceCaps.currentTransform;
+    }
 
     uint32_t surfaceFormatCount = 0;
     ANGLE_VK_TRY(displayVk, vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, mSurface,
@@ -820,19 +753,6 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
     VkFormat nativeFormat    = format.vkImageFormat;
 
-    gl::Extents rotatedExtents = extents;
-    if (Is90DegreeRotation(mPreTransform))
-    {
-        // The Surface is oriented such that its aspect ratio no longer matches that of the
-        // device.  In this case, the width and height of the swapchain images must be swapped to
-        // match the device's native orientation.  This must also be done for other attachments
-        // used with the swapchain (e.g. depth buffer).  The width and height of the viewport,
-        // scissor, and render-pass render area must also be swapped.  Then, when ANGLE rotates
-        // gl_Position in the vertex shader, the rendering will look the same as if no
-        // pre-rotation had been done.
-        std::swap(rotatedExtents.width, rotatedExtents.height);
-    }
-
     // We need transfer src for reading back from the backbuffer.
     VkImageUsageFlags imageUsageFlags = kSurfaceVKColorImageUsageFlags;
 
@@ -853,8 +773,8 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     swapchainInfo.imageColorSpace          = MapEglColorSpaceToVkColorSpace(
         static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
     // Note: Vulkan doesn't allow 0-width/height swapchains.
-    swapchainInfo.imageExtent.width     = std::max(rotatedExtents.width, 1);
-    swapchainInfo.imageExtent.height    = std::max(rotatedExtents.height, 1);
+    swapchainInfo.imageExtent.width     = std::max(extents.width, 1);
+    swapchainInfo.imageExtent.height    = std::max(extents.height, 1);
     swapchainInfo.imageArrayLayers      = 1;
     swapchainInfo.imageUsage            = imageUsageFlags;
     swapchainInfo.imageSharingMode      = VK_SHARING_MODE_EXCLUSIVE;
@@ -885,7 +805,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     ANGLE_VK_CHECK(context, samples > 0, VK_ERROR_INITIALIZATION_FAILED);
 
     VkExtent3D vkExtents;
-    gl_vk::GetExtent(rotatedExtents, &vkExtents);
+    gl_vk::GetExtent(extents, &vkExtents);
 
     if (samples > 1)
     {
@@ -966,17 +886,12 @@ angle::Result WindowSurfaceVk::checkForOutOfDateSwapchain(ContextVk *contextVk,
         // If window size has changed, check with surface capabilities.  It has been observed on
         // Android that `getCurrentWindowSize()` returns 1920x1080 for example, while surface
         // capabilities returns the size the surface was created with.
-        const VkPhysicalDevice &physicalDevice = contextVk->getRenderer()->getPhysicalDevice();
-        ANGLE_VK_TRY(contextVk, vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, mSurface,
-                                                                          &mSurfaceCaps));
-        if (contextVk->getFeatures().enablePreRotateSurfaces.enabled)
-        {
-            // Update the surface's transform, which can change even if the window size does not.
-            mPreTransform = mSurfaceCaps.currentTransform;
-        }
-
         if (currentExtents != swapchainExtents)
         {
+            const VkPhysicalDevice &physicalDevice = contextVk->getRenderer()->getPhysicalDevice();
+            ANGLE_VK_TRY(contextVk, vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+                                        physicalDevice, mSurface, &mSurfaceCaps));
+
             uint32_t width  = mSurfaceCaps.currentExtent.width;
             uint32_t height = mSurfaceCaps.currentExtent.height;
 
@@ -1117,16 +1032,24 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     SwapchainImage &image = mSwapchainImages[mCurrentSwapchainImageIndex];
 
     vk::CommandBuffer *commandBuffer = nullptr;
-    ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
+    if (!contextVk->commandGraphEnabled())
+    {
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(&commandBuffer));
+    }
 
     if (mColorImageMS.valid())
     {
         // Transition the multisampled image to TRANSFER_SRC for resolve.
-        ANGLE_TRY(contextVk->onImageRead(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::TransferSrc,
-                                         &mColorImageMS));
-        ANGLE_TRY(contextVk->onImageWrite(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::TransferDst,
-                                          &image.image));
-        ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
+        if (contextVk->commandGraphEnabled())
+        {
+            ANGLE_TRY(mColorImageMS.recordCommands(contextVk, &commandBuffer));
+        }
+
+        mColorImageMS.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::TransferSrc,
+                                   commandBuffer);
+
+        // Setup graph dependency between the swapchain image and the multisampled one.
+        image.image.addReadDependency(contextVk, &mColorImageMS);
 
         VkImageResolve resolveRegion                = {};
         resolveRegion.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -1138,11 +1061,19 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         resolveRegion.dstOffset                     = {};
         resolveRegion.extent                        = image.image.getExtents();
 
+        if (contextVk->commandGraphEnabled())
+        {
+            ANGLE_TRY(image.image.recordCommands(contextVk, &commandBuffer));
+        }
         mColorImageMS.resolve(&image.image, resolveRegion, commandBuffer);
     }
 
     ANGLE_TRY(updateAndDrawOverlay(contextVk, &image));
 
+    if (contextVk->commandGraphEnabled())
+    {
+        ANGLE_TRY(image.image.recordCommands(contextVk, &commandBuffer));
+    }
     image.image.changeLayout(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::Present, commandBuffer);
 
     // Knowing that the kSwapHistorySize'th submission ago has finished, we can know that the
@@ -1224,24 +1155,13 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     // If OUT_OF_DATE is returned, it's ok, we just need to recreate the swapchain before
     // continuing.
     // If VK_SUBOPTIMAL_KHR is returned it's because the device orientation changed and we should
-    // recreate the swapchain with a new window orientation.
-    if (contextVk->getFeatures().enablePreRotateSurfaces.enabled)
+    // recreate the swapchain with a new window orientation. We aren't quite ready for that so just
+    // ignore for now.
+    // TODO: Check for preRotation: http://anglebug.com/3502
+    *presentOutOfDate = result == VK_ERROR_OUT_OF_DATE_KHR;
+    if (!*presentOutOfDate && result != VK_SUBOPTIMAL_KHR)
     {
-        // Also check for VK_SUBOPTIMAL_KHR.
-        *presentOutOfDate = ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR));
-        if (!*presentOutOfDate)
-        {
-            ANGLE_VK_TRY(contextVk, result);
-        }
-    }
-    else
-    {
-        // We aren't quite ready for that so just ignore for now.
-        *presentOutOfDate = result == VK_ERROR_OUT_OF_DATE_KHR;
-        if (!*presentOutOfDate && result != VK_SUBOPTIMAL_KHR)
-        {
-            ANGLE_VK_TRY(contextVk, result);
-        }
+        ANGLE_VK_TRY(contextVk, result);
     }
 
     return angle::Result::Continue;
@@ -1455,11 +1375,7 @@ angle::Result WindowSurfaceVk::getCurrentFramebuffer(ContextVk *contextVk,
     framebufferInfo.pAttachments    = imageViews.data();
     framebufferInfo.width           = static_cast<uint32_t>(extents.width);
     framebufferInfo.height          = static_cast<uint32_t>(extents.height);
-    if (Is90DegreeRotation(mPreTransform))
-    {
-        std::swap(framebufferInfo.width, framebufferInfo.height);
-    }
-    framebufferInfo.layers = 1;
+    framebufferInfo.layers          = 1;
 
     if (isMultiSampled())
     {
@@ -1503,13 +1419,13 @@ angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
 
     vk::ImageHelper *image =
         isMultiSampled() ? &mColorImageMS : &mSwapchainImages[mCurrentSwapchainImageIndex].image;
-    image->stageSubresourceRobustClear(imageIndex, image->getFormat());
+    image->stageSubresourceRobustClear(imageIndex, image->getFormat().intendedFormat());
     ANGLE_TRY(image->flushAllStagedUpdates(contextVk));
 
     if (mDepthStencilImage.valid())
     {
-        mDepthStencilImage.stageSubresourceRobustClear(gl::ImageIndex::Make2D(0),
-                                                       mDepthStencilImage.getFormat());
+        mDepthStencilImage.stageSubresourceRobustClear(
+            gl::ImageIndex::Make2D(0), mDepthStencilImage.getFormat().intendedFormat());
         ANGLE_TRY(mDepthStencilImage.flushAllStagedUpdates(contextVk));
     }
 
@@ -1546,6 +1462,8 @@ angle::Result WindowSurfaceVk::updateAndDrawOverlay(ContextVk *contextVk,
     ANGLE_TRY(
         image->imageViews.getLevelLayerDrawImageView(contextVk, image->image, 0, 0, &imageView));
     ANGLE_TRY(overlayVk->onPresent(contextVk, &image->image, imageView));
+
+    overlay->getRunningGraphWidget(gl::WidgetId::VulkanCommandGraphSize)->next();
 
     return angle::Result::Continue;
 }

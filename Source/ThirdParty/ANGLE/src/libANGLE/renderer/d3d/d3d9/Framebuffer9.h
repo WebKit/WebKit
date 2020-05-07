@@ -48,7 +48,7 @@ class Framebuffer9 : public FramebufferD3D
 
     const RenderTarget9 *getCachedDepthStencilRenderTarget() const
     {
-        return mRenderTargetCache.getDepthStencil(true);
+        return mRenderTargetCache.getDepthStencil();
     }
 
   private:

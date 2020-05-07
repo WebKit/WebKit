@@ -276,7 +276,7 @@ inline bool IsIntegerSampler(TBasicType type)
         case EbtSamplerVideoWEBGL:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -311,7 +311,7 @@ inline bool IsIntegerSamplerUnsigned(TBasicType type)
         case EbtUSamplerCubeArray:
             return true;
         default:
-            ASSERT(!IsIntegerSampler(type));
+            assert(!IsIntegerSampler(type));
     }
 
     return false;
@@ -469,7 +469,7 @@ inline bool IsSampler2D(TBasicType type)
         case EbtUSamplerCubeArray:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -525,7 +525,7 @@ inline bool IsSamplerCube(TBasicType type)
         case EbtSamplerVideoWEBGL:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -581,7 +581,7 @@ inline bool IsSampler3D(TBasicType type)
         case EbtSamplerVideoWEBGL:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -637,7 +637,7 @@ inline bool IsSamplerArray(TBasicType type)
         case EbtSamplerVideoWEBGL:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -693,7 +693,7 @@ inline bool IsShadowSampler(TBasicType type)
         case EbtSamplerVideoWEBGL:
             return false;
         default:
-            ASSERT(!IsSampler(type));
+            assert(!IsSampler(type));
     }
 
     return false;
@@ -742,7 +742,7 @@ inline bool IsImage2D(TBasicType type)
         case EbtUImageBuffer:
             return false;
         default:
-            ASSERT(!IsImage(type));
+            assert(!IsImage(type));
     }
 
     return false;
@@ -791,7 +791,7 @@ inline bool IsImage3D(TBasicType type)
         case EbtUImageBuffer:
             return false;
         default:
-            ASSERT(!IsImage(type));
+            assert(!IsImage(type));
     }
 
     return false;
@@ -840,7 +840,7 @@ inline bool IsImage2DArray(TBasicType type)
         case EbtUImageBuffer:
             return false;
         default:
-            ASSERT(!IsImage(type));
+            assert(!IsImage(type));
     }
 
     return false;
@@ -889,7 +889,7 @@ inline bool IsImageCube(TBasicType type)
         case EbtUImageBuffer:
             return false;
         default:
-            ASSERT(!IsImage(type));
+            assert(!IsImage(type));
     }
 
     return false;

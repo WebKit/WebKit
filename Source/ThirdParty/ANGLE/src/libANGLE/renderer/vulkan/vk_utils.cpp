@@ -11,10 +11,29 @@
 
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
+#include "libANGLE/renderer/vulkan/CommandGraph.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
+
+namespace
+{
+VkImageUsageFlags GetStagingBufferUsageFlags(rx::vk::StagingUsage usage)
+{
+    switch (usage)
+    {
+        case rx::vk::StagingUsage::Read:
+            return VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        case rx::vk::StagingUsage::Write:
+            return VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        case rx::vk::StagingUsage::Both:
+            return (VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+}  // anonymous namespace
 
 namespace angle
 {
@@ -33,22 +52,48 @@ egl::Error ToEGL(Result result, rx::DisplayVk *displayVk, EGLint errorCode)
 
 namespace rx
 {
-namespace
+// Unified layer that includes full validation layer stack
+const char *g_VkKhronosValidationLayerName  = "VK_LAYER_KHRONOS_validation";
+const char *g_VkStandardValidationLayerName = "VK_LAYER_LUNARG_standard_validation";
+const char *g_VkValidationLayerNames[]      = {
+    "VK_LAYER_GOOGLE_threading", "VK_LAYER_LUNARG_parameter_validation",
+    "VK_LAYER_LUNARG_object_tracker", "VK_LAYER_LUNARG_core_validation",
+    "VK_LAYER_GOOGLE_unique_objects"};
+
+bool HasValidationLayer(const std::vector<VkLayerProperties> &layerProps, const char *layerName)
 {
-VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
-{
-    switch (usage)
+    for (const auto &layerProp : layerProps)
     {
-        case vk::StagingUsage::Read:
-            return VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-        case vk::StagingUsage::Write:
-            return VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-        case vk::StagingUsage::Both:
-            return (VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
-        default:
-            UNREACHABLE();
-            return 0;
+        if (std::string(layerProp.layerName) == layerName)
+        {
+            return true;
+        }
     }
+
+    return false;
+}
+
+bool HasKhronosValidationLayer(const std::vector<VkLayerProperties> &layerProps)
+{
+    return HasValidationLayer(layerProps, g_VkKhronosValidationLayerName);
+}
+
+bool HasStandardValidationLayer(const std::vector<VkLayerProperties> &layerProps)
+{
+    return HasValidationLayer(layerProps, g_VkStandardValidationLayerName);
+}
+
+bool HasValidationLayers(const std::vector<VkLayerProperties> &layerProps)
+{
+    for (const char *layerName : g_VkValidationLayerNames)
+    {
+        if (!HasValidationLayer(layerProps, layerName))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 angle::Result FindAndAllocateCompatibleMemory(vk::Context *context,
@@ -59,11 +104,6 @@ angle::Result FindAndAllocateCompatibleMemory(vk::Context *context,
                                               const void *extraAllocationInfo,
                                               vk::DeviceMemory *deviceMemoryOut)
 {
-    // Pick an arbitrary value to initialize non-zero memory for sanitization.
-    constexpr int kNonZeroInitValue = 55;
-
-    VkDevice device = context->getDevice();
-
     uint32_t memoryTypeIndex = 0;
     ANGLE_TRY(memoryProperties.findCompatibleMemoryIndex(context, memoryRequirements,
                                                          requestedMemoryPropertyFlags,
@@ -75,21 +115,7 @@ angle::Result FindAndAllocateCompatibleMemory(vk::Context *context,
     allocInfo.memoryTypeIndex      = memoryTypeIndex;
     allocInfo.allocationSize       = memoryRequirements.size;
 
-    ANGLE_VK_TRY(context, deviceMemoryOut->allocate(device, allocInfo));
-
-    // Wipe memory to an invalid value when the 'allocateNonZeroMemory' feature is enabled. The
-    // invalid values ensures our testing doesn't assume zero-initialized memory.
-    RendererVk *renderer = context->getRenderer();
-    if (renderer->getFeatures().allocateNonZeroMemory.enabled)
-    {
-        if ((*memoryPropertyFlagsOut & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0)
-        {
-            // Can map the memory.
-            ANGLE_TRY(vk::InitMappableDeviceMemory(context, deviceMemoryOut,
-                                                   memoryRequirements.size, kNonZeroInitValue));
-        }
-    }
-
+    ANGLE_VK_TRY(context, deviceMemoryOut->allocate(context->getDevice(), allocInfo));
     return angle::Result::Continue;
 }
 
@@ -117,8 +143,7 @@ angle::Result AllocateBufferOrImageMemory(vk::Context *context,
                                           VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                           const void *extraAllocationInfo,
                                           T *bufferOrImage,
-                                          vk::DeviceMemory *deviceMemoryOut,
-                                          VkDeviceSize *sizeOut)
+                                          vk::DeviceMemory *deviceMemoryOut)
 {
     // Call driver to determine memory requirements.
     VkMemoryRequirements memoryRequirements;
@@ -128,55 +153,8 @@ angle::Result AllocateBufferOrImageMemory(vk::Context *context,
         context, requestedMemoryPropertyFlags, memoryPropertyFlagsOut, memoryRequirements,
         extraAllocationInfo, bufferOrImage, deviceMemoryOut));
 
-    *sizeOut = memoryRequirements.size;
-
     return angle::Result::Continue;
 }
-
-// Unified layer that includes full validation layer stack
-constexpr char kVkKhronosValidationLayerName[]  = "VK_LAYER_KHRONOS_validation";
-constexpr char kVkStandardValidationLayerName[] = "VK_LAYER_LUNARG_standard_validation";
-const char *kVkValidationLayerNames[]           = {
-    "VK_LAYER_GOOGLE_threading", "VK_LAYER_LUNARG_parameter_validation",
-    "VK_LAYER_LUNARG_object_tracker", "VK_LAYER_LUNARG_core_validation",
-    "VK_LAYER_GOOGLE_unique_objects"};
-
-bool HasValidationLayer(const std::vector<VkLayerProperties> &layerProps, const char *layerName)
-{
-    for (const auto &layerProp : layerProps)
-    {
-        if (std::string(layerProp.layerName) == layerName)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool HasKhronosValidationLayer(const std::vector<VkLayerProperties> &layerProps)
-{
-    return HasValidationLayer(layerProps, kVkKhronosValidationLayerName);
-}
-
-bool HasStandardValidationLayer(const std::vector<VkLayerProperties> &layerProps)
-{
-    return HasValidationLayer(layerProps, kVkStandardValidationLayerName);
-}
-
-bool HasValidationLayers(const std::vector<VkLayerProperties> &layerProps)
-{
-    for (const char *layerName : kVkValidationLayerNames)
-    {
-        if (!HasValidationLayer(layerProps, layerName))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-}  // anonymous namespace
 
 const char *VulkanResultString(VkResult result)
 {
@@ -248,15 +226,15 @@ bool GetAvailableValidationLayers(const std::vector<VkLayerProperties> &layerPro
     // Favor unified Khronos layer, but fallback to standard validation
     if (HasKhronosValidationLayer(layerProps))
     {
-        enabledLayerNames->push_back(kVkKhronosValidationLayerName);
+        enabledLayerNames->push_back(g_VkKhronosValidationLayerName);
     }
     else if (HasStandardValidationLayer(layerProps))
     {
-        enabledLayerNames->push_back(kVkStandardValidationLayerName);
+        enabledLayerNames->push_back(g_VkStandardValidationLayerName);
     }
     else if (HasValidationLayers(layerProps))
     {
-        for (const char *layerName : kVkValidationLayerNames)
+        for (const char *layerName : g_VkValidationLayerNames)
         {
             enabledLayerNames->push_back(layerName);
         }
@@ -351,29 +329,6 @@ angle::Result MemoryProperties::findCompatibleMemoryIndex(
         }
     }
 
-    // We did not find a compatible memory type, the Vulkan spec says the following -
-    //     There must be at least one memory type with both the
-    //     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT and VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
-    //     bits set in its propertyFlags
-    constexpr VkMemoryPropertyFlags fallbackMemoryPropertyFlags =
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-
-    // If the caller wanted a host visible memory, just return the memory index
-    // with the fallback memory flags.
-    if (requestedMemoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
-    {
-        for (size_t memoryIndex : angle::BitSet32<32>(memoryRequirements.memoryTypeBits))
-        {
-            if ((mMemoryProperties.memoryTypes[memoryIndex].propertyFlags &
-                 fallbackMemoryPropertyFlags) == fallbackMemoryPropertyFlags)
-            {
-                *memoryPropertyFlagsOut = mMemoryProperties.memoryTypes[memoryIndex].propertyFlags;
-                *typeIndexOut           = static_cast<uint32_t>(memoryIndex);
-                return angle::Result::Continue;
-            }
-        }
-    }
-
     // TODO(jmadill): Add error message to error.
     context->handleError(VK_ERROR_INCOMPATIBLE_DRIVER, __FILE__, ANGLE_FUNCTION, __LINE__);
     return angle::Result::Stop;
@@ -389,8 +344,16 @@ void StagingBuffer::destroy(VkDevice device)
     mSize = 0;
 }
 
-angle::Result StagingBuffer::init(Context *context, VkDeviceSize size, StagingUsage usage)
+angle::Result StagingBuffer::init(ContextVk *contextVk, VkDeviceSize size, StagingUsage usage)
 {
+    // TODO: Remove with anglebug.com/2162: Vulkan: Implement device memory sub-allocation
+    // Check if we have too many resources allocated already and need to free some before allocating
+    // more and (possibly) exceeding the device's limits.
+    if (contextVk->shouldFlush())
+    {
+        ANGLE_TRY(contextVk->flushImpl(nullptr));
+    }
+
     VkBufferCreateInfo createInfo    = {};
     createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     createInfo.flags                 = 0;
@@ -403,11 +366,9 @@ angle::Result StagingBuffer::init(Context *context, VkDeviceSize size, StagingUs
     VkMemoryPropertyFlags flags =
         (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    ANGLE_VK_TRY(context, mBuffer.init(context->getDevice(), createInfo));
+    ANGLE_VK_TRY(contextVk, mBuffer.init(contextVk->getDevice(), createInfo));
     VkMemoryPropertyFlags flagsOut = 0;
-    VkDeviceSize sizeIgnored;
-    ANGLE_TRY(AllocateBufferMemory(context, flags, &flagsOut, nullptr, &mBuffer, &mDeviceMemory,
-                                   &sizeIgnored));
+    ANGLE_TRY(AllocateBufferMemory(contextVk, flags, &flagsOut, nullptr, &mBuffer, &mDeviceMemory));
     mSize = static_cast<size_t>(size);
     return angle::Result::Continue;
 }
@@ -418,63 +379,27 @@ void StagingBuffer::release(ContextVk *contextVk)
     contextVk->addGarbage(&mDeviceMemory);
 }
 
-void StagingBuffer::collectGarbage(RendererVk *renderer, Serial serial)
-{
-    vk::GarbageList garbageList;
-    garbageList.emplace_back(vk::GetGarbage(&mBuffer));
-    garbageList.emplace_back(vk::GetGarbage(&mDeviceMemory));
-
-    vk::SharedResourceUse sharedUse;
-    sharedUse.init();
-    sharedUse.updateSerialOneOff(serial);
-    renderer->collectGarbage(std::move(sharedUse), std::move(garbageList));
-}
-
-angle::Result InitMappableDeviceMemory(Context *context,
-                                       DeviceMemory *deviceMemory,
-                                       VkDeviceSize size,
-                                       int value)
-{
-    VkDevice device = context->getDevice();
-
-    uint8_t *mapPointer;
-    ANGLE_VK_TRY(context, deviceMemory->map(device, 0, VK_WHOLE_SIZE, 0, &mapPointer));
-    memset(mapPointer, value, static_cast<size_t>(size));
-
-    VkMappedMemoryRange mappedRange = {};
-    mappedRange.sType               = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-    mappedRange.memory              = deviceMemory->getHandle();
-    mappedRange.size                = VK_WHOLE_SIZE;
-    ANGLE_VK_TRY(context, vkFlushMappedMemoryRanges(device, 1, &mappedRange));
-
-    deviceMemory->unmap(device);
-
-    return angle::Result::Continue;
-}
-
 angle::Result AllocateBufferMemory(vk::Context *context,
                                    VkMemoryPropertyFlags requestedMemoryPropertyFlags,
                                    VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                    const void *extraAllocationInfo,
                                    Buffer *buffer,
-                                   DeviceMemory *deviceMemoryOut,
-                                   VkDeviceSize *sizeOut)
+                                   DeviceMemory *deviceMemoryOut)
 {
     return AllocateBufferOrImageMemory(context, requestedMemoryPropertyFlags,
                                        memoryPropertyFlagsOut, extraAllocationInfo, buffer,
-                                       deviceMemoryOut, sizeOut);
+                                       deviceMemoryOut);
 }
 
 angle::Result AllocateImageMemory(vk::Context *context,
                                   VkMemoryPropertyFlags memoryPropertyFlags,
                                   const void *extraAllocationInfo,
                                   Image *image,
-                                  DeviceMemory *deviceMemoryOut,
-                                  VkDeviceSize *sizeOut)
+                                  DeviceMemory *deviceMemoryOut)
 {
     VkMemoryPropertyFlags memoryPropertyFlagsOut = 0;
     return AllocateBufferOrImageMemory(context, memoryPropertyFlags, &memoryPropertyFlagsOut,
-                                       extraAllocationInfo, image, deviceMemoryOut, sizeOut);
+                                       extraAllocationInfo, image, deviceMemoryOut);
 }
 
 angle::Result AllocateImageMemoryWithRequirements(vk::Context *context,
@@ -621,25 +546,6 @@ void GarbageObject::destroy(VkDevice device)
     }
 }
 
-void MakeDebugUtilsLabel(GLenum source, const char *marker, VkDebugUtilsLabelEXT *label)
-{
-    static constexpr angle::ColorF kLabelColors[6] = {
-        angle::ColorF(1.0f, 0.5f, 0.5f, 1.0f),  // DEBUG_SOURCE_API
-        angle::ColorF(0.5f, 1.0f, 0.5f, 1.0f),  // DEBUG_SOURCE_WINDOW_SYSTEM
-        angle::ColorF(0.5f, 0.5f, 1.0f, 1.0f),  // DEBUG_SOURCE_SHADER_COMPILER
-        angle::ColorF(0.7f, 0.7f, 0.7f, 1.0f),  // DEBUG_SOURCE_THIRD_PARTY
-        angle::ColorF(0.5f, 0.8f, 0.9f, 1.0f),  // DEBUG_SOURCE_APPLICATION
-        angle::ColorF(0.9f, 0.8f, 0.5f, 1.0f),  // DEBUG_SOURCE_OTHER
-    };
-
-    int colorIndex = source - GL_DEBUG_SOURCE_API;
-    ASSERT(colorIndex >= 0 && static_cast<size_t>(colorIndex) < ArraySize(kLabelColors));
-
-    label->sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-    label->pNext      = nullptr;
-    label->pLabelName = marker;
-    kLabelColors[colorIndex].writeData(label->color);
-}
 }  // namespace vk
 
 namespace gl_vk

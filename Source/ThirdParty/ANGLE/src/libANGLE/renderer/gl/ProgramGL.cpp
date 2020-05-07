@@ -33,11 +33,13 @@ ProgramGL::ProgramGL(const gl::ProgramState &data,
                      const FunctionsGL *functions,
                      const angle::FeaturesGL &features,
                      StateManagerGL *stateManager,
+                     bool enablePathRendering,
                      const std::shared_ptr<RendererGL> &renderer)
     : ProgramImpl(data),
       mFunctions(functions),
       mFeatures(features),
       mStateManager(stateManager),
+      mEnablePathRendering(enablePathRendering),
       mMultiviewBaseViewLayerIndexUniformLocation(-1),
       mProgramID(0),
       mRenderer(renderer),
@@ -227,10 +229,9 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         std::vector<std::string> transformFeedbackVaryingMappedNames;
         for (const auto &tfVarying : mState.getTransformFeedbackVaryingNames())
         {
-            gl::ShaderType tfShaderType =
-                mState.getProgramExecutable().hasLinkedShaderStage(gl::ShaderType::Geometry)
-                    ? gl::ShaderType::Geometry
-                    : gl::ShaderType::Vertex;
+            gl::ShaderType tfShaderType = mState.hasLinkedShaderStage(gl::ShaderType::Geometry)
+                                              ? gl::ShaderType::Geometry
+                                              : gl::ShaderType::Vertex;
             std::string tfVaryingMappedName =
                 mState.getAttachedShader(tfShaderType)
                     ->getTransformFeedbackVaryingMappedName(tfVarying);
@@ -939,11 +940,31 @@ void ProgramGL::getAtomicCounterBufferSizeMap(std::map<int, unsigned int> *sizeM
     }
 }
 
+void ProgramGL::setPathFragmentInputGen(const std::string &inputName,
+                                        GLenum genMode,
+                                        GLint components,
+                                        const GLfloat *coeffs)
+{
+    ASSERT(mEnablePathRendering);
+
+    for (const auto &input : mPathRenderingFragmentInputs)
+    {
+        if (input.mappedName == inputName)
+        {
+            mFunctions->programPathFragmentInputGenNV(mProgramID, input.location, genMode,
+                                                      components, coeffs);
+            ASSERT(mFunctions->getError() == GL_NO_ERROR);
+            return;
+        }
+    }
+}
+
 void ProgramGL::preLink()
 {
     // Reset the program state
     mUniformRealLocationMap.clear();
     mUniformBlockRealLocationMap.clear();
+    mPathRenderingFragmentInputs.clear();
 
     mMultiviewBaseViewLayerIndexUniformLocation = -1;
 }
@@ -1024,6 +1045,71 @@ void ProgramGL::postLink()
             mFunctions->getUniformLocation(mProgramID, "multiviewBaseViewLayerIndex");
         ASSERT(mMultiviewBaseViewLayerIndexUniformLocation != -1);
     }
+
+    // Discover CHROMIUM_path_rendering fragment inputs if enabled.
+    if (!mEnablePathRendering)
+        return;
+
+    GLint numFragmentInputs = 0;
+    mFunctions->getProgramInterfaceiv(mProgramID, GL_FRAGMENT_INPUT_NV, GL_ACTIVE_RESOURCES,
+                                      &numFragmentInputs);
+    if (numFragmentInputs <= 0)
+        return;
+
+    GLint maxNameLength = 0;
+    mFunctions->getProgramInterfaceiv(mProgramID, GL_FRAGMENT_INPUT_NV, GL_MAX_NAME_LENGTH,
+                                      &maxNameLength);
+    ASSERT(maxNameLength);
+
+    for (GLint i = 0; i < numFragmentInputs; ++i)
+    {
+        std::string mappedName;
+        mappedName.resize(maxNameLength);
+
+        GLsizei nameLen = 0;
+        mFunctions->getProgramResourceName(mProgramID, GL_FRAGMENT_INPUT_NV, i, maxNameLength,
+                                           &nameLen, &mappedName[0]);
+        mappedName.resize(nameLen);
+
+        // Ignore built-ins
+        if (angle::BeginsWith(mappedName, "gl_"))
+            continue;
+
+        const GLenum kQueryProperties[] = {GL_LOCATION, GL_ARRAY_SIZE};
+        GLint queryResults[ArraySize(kQueryProperties)];
+        GLsizei queryLength = 0;
+
+        mFunctions->getProgramResourceiv(
+            mProgramID, GL_FRAGMENT_INPUT_NV, i, static_cast<GLsizei>(ArraySize(kQueryProperties)),
+            kQueryProperties, static_cast<GLsizei>(ArraySize(queryResults)), &queryLength,
+            queryResults);
+
+        ASSERT(queryLength == static_cast<GLsizei>(ArraySize(kQueryProperties)));
+
+        PathRenderingFragmentInput baseElementInput;
+        baseElementInput.mappedName = mappedName;
+        baseElementInput.location   = queryResults[0];
+        mPathRenderingFragmentInputs.push_back(std::move(baseElementInput));
+
+        // If the input is an array it's denoted by [0] suffix on the variable
+        // name. We'll then create an entry per each array index where index > 0
+        if (angle::EndsWith(mappedName, "[0]"))
+        {
+            // drop the suffix
+            mappedName.resize(mappedName.size() - 3);
+
+            const auto arraySize    = queryResults[1];
+            const auto baseLocation = queryResults[0];
+
+            for (GLint arrayIndex = 1; arrayIndex < arraySize; ++arrayIndex)
+            {
+                PathRenderingFragmentInput arrayElementInput;
+                arrayElementInput.mappedName = mappedName + "[" + ToString(arrayIndex) + "]";
+                arrayElementInput.location   = baseLocation + arrayIndex;
+                mPathRenderingFragmentInputs.push_back(std::move(arrayElementInput));
+            }
+        }
+    }
 }
 
 void ProgramGL::enableSideBySideRenderingPath() const
@@ -1080,16 +1166,7 @@ void ProgramGL::markUnusedUniformLocations(std::vector<gl::VariableLocation> *un
                 GLuint imageIndex = mState.getImageIndexFromUniformIndex(locationRef.index);
                 (*imageBindings)[imageIndex].unreferenced = true;
             }
-            // If the location has been previously bound by a glBindUniformLocation call, it should
-            // be marked as ignored. Otherwise it's unused.
-            if (mState.getUniformLocationBindings().getBindingByLocation(location) != -1)
-            {
-                locationRef.markIgnored();
-            }
-            else
-            {
-                locationRef.markUnused();
-            }
+            locationRef.markUnused();
         }
     }
 }

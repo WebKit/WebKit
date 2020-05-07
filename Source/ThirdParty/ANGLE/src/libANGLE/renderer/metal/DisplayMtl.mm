@@ -37,9 +37,7 @@ DisplayImpl *CreateMetalDisplay(const egl::DisplayState &state)
     return new DisplayMtl(state);
 }
 
-DisplayMtl::DisplayMtl(const egl::DisplayState &state)
-    : DisplayImpl(state), mUtils(this), mGlslangInitialized(false)
-{}
+DisplayMtl::DisplayMtl(const egl::DisplayState &state) : DisplayImpl(state), mUtils(this) {}
 
 DisplayMtl::~DisplayMtl() {}
 
@@ -69,11 +67,7 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
 
         mCapsInitialized = false;
 
-        if (!mGlslangInitialized)
-        {
-            GlslangInitialize();
-            mGlslangInitialized = true;
-        }
+        GlslangInitialize();
 
         if (!mState.featuresAllDisabled)
         {
@@ -97,11 +91,7 @@ void DisplayMtl::terminate()
     mMetalDevice     = nil;
     mCapsInitialized = false;
 
-    if (mGlslangInitialized)
-    {
-        GlslangRelease();
-        mGlslangInitialized = false;
-    }
+    GlslangRelease();
 }
 
 bool DisplayMtl::testDeviceLost()

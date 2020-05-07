@@ -1,3 +1,23 @@
+2020-05-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261262. rdar://problem/62998321
+
+    Update ANGLE to 2020-03-27
+    https://bugs.webkit.org/show_bug.cgi?id=209689
+    
+    Reverting r259589. It caused
+    https://bugs.webkit.org/show_bug.cgi?id=210992
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261262 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-07  Dean Jackson  <dino@apple.com>
+
+            Update ANGLE to 2020-03-27
+            https://bugs.webkit.org/show_bug.cgi?id=209689
+
+            Reverting r259589. It caused
+            https://bugs.webkit.org/show_bug.cgi?id=210992
+
 2020-04-28  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Fix build failures for ANGLE_WEBGL after r259589

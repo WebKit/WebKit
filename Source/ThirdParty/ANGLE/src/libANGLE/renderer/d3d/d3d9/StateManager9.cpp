@@ -19,7 +19,6 @@ namespace rx
 
 StateManager9::StateManager9(Renderer9 *renderer9)
     : mUsingZeroColorMaskWorkaround(false),
-      mCurSampleAlphaToCoverage(false),
       mCurBlendState(),
       mCurBlendColor(0, 0, 0, 0),
       mCurSampleMask(0),
@@ -175,7 +174,8 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 break;
             }
             case gl::State::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED:
-                if (state.isSampleAlphaToCoverageEnabled() != mCurSampleAlphaToCoverage)
+                if (state.getBlendState().sampleAlphaToCoverage !=
+                    mCurBlendState.sampleAlphaToCoverage)
                 {
                     mDirtyBits.set(DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE);
                 }
@@ -201,7 +201,7 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
                 break;
             }
             case gl::State::DIRTY_BIT_DITHER_ENABLED:
-                if (state.getRasterizerState().dither != mCurRasterState.dither)
+                if (state.getBlendState().dither != mCurBlendState.dither)
                 {
                     mDirtyBits.set(DIRTY_BIT_DITHER);
                 }
@@ -354,14 +354,14 @@ void StateManager9::setBlendDepthRasterStates(const gl::State &glState, unsigned
                 setBlendFuncsEquations(blendState);
                 break;
             case DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE:
-                setSampleAlphaToCoverage(glState.isSampleAlphaToCoverageEnabled());
+                setSampleAlphaToCoverage(blendState.sampleAlphaToCoverage);
                 break;
             case DIRTY_BIT_COLOR_MASK:
                 setColorMask(framebuffer, blendState.colorMaskRed, blendState.colorMaskBlue,
                              blendState.colorMaskGreen, blendState.colorMaskAlpha);
                 break;
             case DIRTY_BIT_DITHER:
-                setDither(rasterState.dither);
+                setDither(blendState.dither);
                 break;
             case DIRTY_BIT_CULL_MODE:
                 setCullMode(rasterState.cullFace, rasterState.cullMode, rasterState.frontFace);
@@ -692,8 +692,7 @@ void StateManager9::setSampleAlphaToCoverage(bool enabled)
 {
     if (enabled)
     {
-        // D3D9 support for alpha-to-coverage is vendor-specific.
-        UNIMPLEMENTED();
+        UNREACHABLE();
     }
 }
 
@@ -764,7 +763,7 @@ void StateManager9::setBlendEnabled(bool enabled)
 void StateManager9::setDither(bool dither)
 {
     mRenderer9->getDevice()->SetRenderState(D3DRS_DITHERENABLE, dither ? TRUE : FALSE);
-    mCurRasterState.dither = dither;
+    mCurBlendState.dither = dither;
 }
 
 // TODO(dianx) one bit for color mask

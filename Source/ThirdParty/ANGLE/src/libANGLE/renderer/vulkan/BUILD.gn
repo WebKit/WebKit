@@ -20,6 +20,8 @@ declare_args() {
 _vulkan_backend_sources = [
   "BufferVk.cpp",
   "BufferVk.h",
+  "CommandGraph.cpp",
+  "CommandGraph.h",
   "CompilerVk.cpp",
   "CompilerVk.h",
   "ContextVk.cpp",
@@ -43,22 +45,18 @@ _vulkan_backend_sources = [
   "OverlayVk.h",
   "PersistentCommandPool.cpp",
   "PersistentCommandPool.h",
-  "ProgramExecutableVk.cpp",
-  "ProgramExecutableVk.h",
-  "ProgramPipelineVk.cpp",
-  "ProgramPipelineVk.h",
   "ProgramVk.cpp",
   "ProgramVk.h",
+  "ProgramPipelineVk.cpp",
+  "ProgramPipelineVk.h",
   "QueryVk.cpp",
   "QueryVk.h",
-  "RenderTargetVk.cpp",
-  "RenderTargetVk.h",
   "RenderbufferVk.cpp",
   "RenderbufferVk.h",
   "RendererVk.cpp",
   "RendererVk.h",
-  "ResourceVk.cpp",
-  "ResourceVk.h",
+  "RenderTargetVk.cpp",
+  "RenderTargetVk.h",
   "SamplerVk.cpp",
   "SamplerVk.h",
   "SecondaryCommandBuffer.cpp",
@@ -85,12 +83,12 @@ _vulkan_backend_sources = [
   "vk_caps_utils.h",
   "vk_ext_provoking_vertex.h",
   "vk_format_table_autogen.cpp",
-  "vk_format_utils.cpp",
   "vk_format_utils.h",
+  "vk_format_utils.cpp",
   "vk_helpers.cpp",
   "vk_helpers.h",
-  "vk_internal_shaders_autogen.cpp",
   "vk_internal_shaders_autogen.h",
+  "vk_internal_shaders_autogen.cpp",
   "vk_mandatory_format_support_table_autogen.cpp",
   "vk_utils.cpp",
   "vk_utils.h",
@@ -146,12 +144,10 @@ if (is_ggp) {
 
 if (is_mac) {
   _vulkan_backend_sources += [
-    "mac/DisplayVkMac.h",
     "mac/DisplayVkMac.mm",
-    "mac/IOSurfaceSurfaceVkMac.h",
-    "mac/IOSurfaceSurfaceVkMac.mm",
-    "mac/WindowSurfaceVkMac.h",
+    "mac/DisplayVkMac.h",
     "mac/WindowSurfaceVkMac.mm",
+    "mac/WindowSurfaceVkMac.h",
   ]
 }
 
@@ -171,10 +167,12 @@ group("angle_vulkan_entry_points") {
     public_deps += [
       "$angle_root/src/common/fuchsia_egl",
       "//third_party/fuchsia-sdk:vulkan_base",
-      "//third_party/fuchsia-sdk/sdk/pkg/vulkan",
+      "//third_party/fuchsia-sdk/sdk:vulkan",
     ]
   } else if (!is_android && !is_ggp) {
-    data_deps = [ "$angle_root/third_party/vulkan-loader/src:libvulkan" ]
+    data_deps = [
+      "$angle_root/third_party/vulkan-loader/src:libvulkan",
+    ]
   }
 }
 
