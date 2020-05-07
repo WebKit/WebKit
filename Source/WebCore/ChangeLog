@@ -1,3 +1,21 @@
+2020-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Fix potential threading issue in AudioMediaStreamTrackRendererCocoa::render
+        https://bugs.webkit.org/show_bug.cgi?id=211560
+
+        Reviewed by Eric Carlson.
+
+        When the audio description is updated, the audio renderer is creating a new AudioSampleDataSource.
+        The refing of the source in the render method is not sufficient to protect agains the change.
+        For that purpose, we keep a separate reference to the source that is only used in the render method/render thread.
+        We add a boolean that tells the render method whether to update its source reference.
+        As long as the source reference is not updated, no new source will be created n the method processing the pushed samples.
+
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::render):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h:
+
 2020-05-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in AXIsolatedObject::identifierAttribute.

@@ -151,6 +151,9 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
         return;
 
     if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
+        if (m_shouldUpdateRendererDataSource)
+            return;
+
         auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, *this);
 
         if (dataSource->setInputFormat(toCAAudioStreamDescription(description))) {
@@ -167,22 +170,27 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
         dataSource->setVolume(volume());
 
         m_dataSource = WTFMove(dataSource);
+        m_shouldUpdateRendererDataSource = true;
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
 }
 
-// May get called on a background thread.
 OSStatus AudioMediaStreamTrackRendererCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
-    auto dataSource = m_dataSource;
-    if (!dataSource) {
+    ASSERT(!isMainThread());
+    if (m_shouldUpdateRendererDataSource) {
+        m_rendererDataSource = m_dataSource;
+        m_shouldUpdateRendererDataSource = false;
+    }
+
+    if (!m_rendererDataSource) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
         return 0;
     }
 
-    dataSource->pullSamples(ioData, static_cast<size_t>(sampleCount), timeStamp.mSampleTime, timeStamp.mHostTime, AudioSampleDataSource::Copy);
+    m_rendererDataSource->pullSamples(ioData, static_cast<size_t>(sampleCount), timeStamp.mSampleTime, timeStamp.mHostTime, AudioSampleDataSource::Copy);
     return 0;
 }
 

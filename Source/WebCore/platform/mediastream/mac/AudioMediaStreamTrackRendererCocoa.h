@@ -62,6 +62,8 @@ private:
 
     // Audio threads member
     RefPtr<AudioSampleDataSource> m_dataSource;
+    RefPtr<AudioSampleDataSource> m_rendererDataSource;
+    bool m_shouldUpdateRendererDataSource { false };
 };
 
 }
