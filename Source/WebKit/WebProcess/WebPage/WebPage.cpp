@@ -3311,12 +3311,12 @@ void WebPage::show()
     send(Messages::WebPageProxy::ShowPage());
 }
 
-void WebPage::setShouldFireEvents(bool shouldFireEvents)
+void WebPage::setShouldFireResizeEvents(bool shouldFireResizeEvents)
 {
-    RELEASE_LOG_IF_ALLOWED(Resize, "setShouldFireEvents(%d)", shouldFireEvents);
+    RELEASE_LOG_IF_ALLOWED(Resize, "setShouldFireResizeEvents(%d)", shouldFireResizeEvents);
 
     if (m_page)
-        m_page->setShouldFireEvents(shouldFireEvents);
+        m_page->setShouldFireResizeEvents(shouldFireResizeEvents);
 }
 
 void WebPage::setNeedsDOMWindowResizeEvent()
