@@ -83,6 +83,7 @@ IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL(const egl::SurfaceState &state,
       mWidth(0),
       mHeight(0),
       mPlane(0),
+      mRowStrideInPixels(0),
       mFormatIndex(-1),
       mAlphaInitialized(false)
 {
@@ -94,6 +95,11 @@ IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL(const egl::SurfaceState &state,
     mWidth  = static_cast<int>(attribs.get(EGL_WIDTH));
     mHeight = static_cast<int>(attribs.get(EGL_HEIGHT));
     mPlane  = static_cast<int>(attribs.get(EGL_IOSURFACE_PLANE_ANGLE));
+    // Hopefully the number of bytes per row is always an integer number of pixels.
+    // We use glReadPixels to fill the IOSurface in the simulator and it can only
+    // support strides that are an integer number of pixels.
+    ASSERT(IOSurfaceGetBytesPerRowOfPlane(mIOSurface, mPlane) % IOSurfaceGetBytesPerElementOfPlane(mIOSurface, mPlane) == 0);
+    mRowStrideInPixels = static_cast<int>(IOSurfaceGetBytesPerRowOfPlane(mIOSurface, mPlane) / IOSurfaceGetBytesPerElementOfPlane(mIOSurface, mPlane));
 
     EGLAttrib internalFormat = attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE);
     EGLAttrib type           = attribs.get(EGL_TEXTURE_TYPE_ANGLE);
@@ -227,6 +233,7 @@ egl::Error IOSurfaceSurfaceEAGL::releaseTexImage(const gl::Context *context, EGL
         functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                         mBoundTextureID, 0);
         gl::PixelPackState state;
+        state.rowLength = mRowStrideInPixels;
         state.alignment = 1;
         stateManager->setPixelPackState(state);
         // TODO(kbr): possibly more state to be set here, including setting any

@@ -75,6 +75,7 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
     int mHeight;
     int mPlane;
     int mFormatIndex;
+    int mRowStrideInPixels;
 
     bool mAlphaInitialized;
 #if defined(ANGLE_PLATFORM_IOS_SIMULATOR)

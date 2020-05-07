@@ -1,3 +1,17 @@
+2020-05-07  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix Google Maps rendering corruption in simulator with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=211398
+
+        glReadPixels call needs to respect the row stride of the IOSurface.
+
+        Reviewed by Alex Christensen.
+
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h:
+        * src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm:
+        (rx::IOSurfaceSurfaceEAGL::IOSurfaceSurfaceEAGL):
+        (rx::IOSurfaceSurfaceEAGL::releaseTexImage):
+
 2020-05-07  Dean Jackson  <dino@apple.com>
 
         Update ANGLE to 2020-03-27
