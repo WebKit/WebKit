@@ -193,16 +193,16 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
     return sharedTouchActions;
 }
 
-static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const Element& element, OptionSet<EventListenerRegionType> parentTypes)
+OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Node& node, OptionSet<EventListenerRegionType> parentTypes)
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (!element.hasEventListeners())
+    if (!node.hasEventListeners())
         return parentTypes;
 
     auto types = parentTypes;
 
     auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
-        auto* eventListenerVector = element.eventTargetData()->eventListenerMap.find(eventName);
+        auto* eventListenerVector = node.eventTargetData()->eventListenerMap.find(eventName);
         if (!eventListenerVector)
             return;
 
@@ -225,7 +225,7 @@ static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const 
 
     return types;
 #else
-    UNUSED_PARAM(element);
+    UNUSED_PARAM(node);
     UNUSED_PARAM(parentTypes);
     return { };
 #endif

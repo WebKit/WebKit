@@ -42,6 +42,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleAdjuster.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 
@@ -71,6 +72,8 @@ RenderStyle resolveForDocument(const Document& document)
     if (document.inDesignMode())
         documentStyle.setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
 #endif
+
+    documentStyle.setEventListenerRegionTypes(Adjuster::computeEventListenerRegionTypes(document, { }));
 
     Element* docElement = document.documentElement();
     RenderObject* docElementRenderer = docElement ? docElement->renderer() : nullptr;
