@@ -66,12 +66,14 @@ struct InteractionInformationAtPosition;
 - (CGPoint)contextMenuPresentationLocationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 #if USE(UICONTEXTMENU)
 - (UITargetedPreview *)createTargetedContextMenuHintForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
+- (void)removeContextMenuViewIfPossibleForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 #endif
 
 @end
 
 #if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU)
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate, DDDetectionControllerInteractionDelegate, UIContextMenuInteractionDelegate>
+- (BOOL)hasContextMenuInteraction;
 #else
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate>
 #endif

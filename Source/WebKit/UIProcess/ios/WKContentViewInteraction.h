@@ -594,6 +594,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if USE(UICONTEXTMENU)
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
+- (void)_removeContextMenuViewIfPossible;
 #endif
 
 @end

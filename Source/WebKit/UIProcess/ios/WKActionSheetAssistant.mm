@@ -641,6 +641,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_dataDetectorContextMenuInteraction) {
         [_view removeInteraction:_dataDetectorContextMenuInteraction.get()];
         _dataDetectorContextMenuInteraction = nil;
+        if ([_delegate respondsToSelector:@selector(removeContextMenuViewIfPossibleForActionSheetAssistant:)])
+            return [_delegate removeContextMenuViewIfPossibleForActionSheetAssistant:self];
     }
 }
 
@@ -650,6 +652,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _dataDetectorContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
         [_view addInteraction:_dataDetectorContextMenuInteraction.get()];
     }
+}
+
+- (BOOL)hasContextMenuInteraction
+{
+    return !!_dataDetectorContextMenuInteraction;
 }
 #endif
 

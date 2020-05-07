@@ -6966,6 +6966,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return [self _createTargetedContextMenuHintPreviewIfPossible];
 }
 
+- (void)removeContextMenuViewIfPossibleForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    [self _removeContextMenuViewIfPossible];
+}
+
 #endif // USE(UICONTEXTMENU)
 
 - (BOOL)_shouldUseContextMenus
@@ -7667,6 +7672,21 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
+}
+
+- (void)_removeContextMenuViewIfPossible
+{
+    // If a new _contextMenuElementInfo is installed, we've started another interaction,
+    // and removing the hint container view will cause the animation to break.
+    if (_contextMenuElementInfo)
+        return;
+    // We are also using this container for the file upload panel...
+    if (_fileUploadPanel)
+        return;
+    // and the action sheet assistant.
+    if ([_actionSheetAssistant hasContextMenuInteraction])
+        return;
+    [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -9363,17 +9383,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
-        // If a new _contextMenuElementInfo is installed, we've started another interaction,
-        // and removing the hint container view will cause the animation to break.
-        if (strongSelf->_contextMenuElementInfo)
-            return;
-        // We are also using this container for the file upload panel...
-        if (strongSelf->_fileUploadPanel)
-            return;
-        // and the action sheet assistant.
-        if (strongSelf->_actionSheetAssistant)
-            return;
-        [std::exchange(strongSelf->_contextMenuHintContainerView, nil) removeFromSuperview];
+        [strongSelf _removeContextMenuViewIfPossible];
     }];
 }
 

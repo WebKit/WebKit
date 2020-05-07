@@ -1,3 +1,33 @@
+2020-05-07  Megan Gardner  <megan_gardner@apple.com>
+
+        ContextMenu: entire webpage pops and disappears to generate preview of embedded image
+        https://bugs.webkit.org/show_bug.cgi?id=211272
+        <rdar://problem/62482013>
+
+        Reviewed by Tim Horton.
+
+        The ActionSheetAssistant is always around, so using the presence of one
+        to determine if we need to remove the _contextMenuHintContainerView is incorrect
+        and causes it to be around on the next invocation of the context menu, and 
+        causing the failure of the creation of a new preview, which then will default to
+        popping the whole page. We need to ask the ActionSheetAssistant if it is actively showing
+        anything, and then correctly clean up the _contextMenuHintContainerView after the 
+        end of the interactions for FileUploadMenu and ActionSheetAssistant are done with their
+        interactions. 
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant removeContextMenuInteraction]):
+        (-[WKActionSheetAssistant hasContextMenuInteraction]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView removeContextMenuViewIfPossibleForActionSheetAssistant:]):
+        (-[WKContentView _canRemoveContextMenuView]):
+        (-[WKContentView _removeContextMenuViewIfPossible]):
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel removeContextMenuInteraction]):
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Simplify several IPC sending call sites in the UIProcess
