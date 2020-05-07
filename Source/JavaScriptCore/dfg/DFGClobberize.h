@@ -39,25 +39,8 @@
 
 namespace JSC { namespace DFG {
 
-// FIXME: SUPPRESS_ASAN is needed here because ASan can mistakenly think that
-// we're accesing out of invalid bounds stack memory when we're not. For example,
-// in the CheckIsConstant case below, we compute:
-//    AdjacencyList(AdjacencyList::Fixed, node->child1())
-//
-// 1. The AdjacencyList constructor takes an Edge value.
-// 2. node->child1() returns an Edge&.
-// 3. Clang generates a call to __asan_memcpy to copy the return value of
-//    node->child1() to a temp local on the stack used for passing the Edge
-//    argument to the AdjacencyList constructor.
-// 4. Inside __asan_memcpy, it attempts to write to the temp local Edge in
-//    clobberize's frame (not __asan_memcpy's frame), and ASan will wrongly
-//    flag this as an invalid out of stack bounds write.
-//
-// This manifested with a debug ASan build.
-// See <rdar://problem/62362403>.
-
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
-SUPPRESS_ASAN void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
+void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
 {
     clobberize(graph, node, read, write, def, [] { });
 }

@@ -1926,6 +1926,12 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
     NodeType callOp, InlineCallFrame::Kind kind)
 {
     VERBOSE_LOG("Handling inlining (Varargs)...\nStack: ", currentCodeOrigin(), "\n");
+
+    StackCheck::Scope stackChecker(m_graph.m_stackChecker);
+    if (!stackChecker.isSafeToRecurse()) {
+        VERBOSE_LOG("Bailing inlining (compiler thread stack overflow eminent).\nStack: ", currentCodeOrigin(), "\n");
+        return false;
+    }
     if (callLinkStatus.maxArgumentCountIncludingThis() > Options::maximumVarargsForInlining()) {
         VERBOSE_LOG("Bailing inlining: too many arguments for varargs inlining.\n");
         return false;
@@ -2070,6 +2076,12 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
 {
     VERBOSE_LOG("Handling inlining...\nStack: ", currentCodeOrigin(), "\n");
+
+    StackCheck::Scope stackChecker(m_graph.m_stackChecker);
+    if (!stackChecker.isSafeToRecurse()) {
+        VERBOSE_LOG("Bailing inlining (compiler thread stack overflow eminent).\nStack: ", currentCodeOrigin(), "\n");
+        return CallOptimizationResult::DidNothing;
+    }
     
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
     unsigned inliningBalance = getInliningBalance(callLinkStatus, specializationKind);

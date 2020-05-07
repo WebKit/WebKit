@@ -1,3 +1,27 @@
+2020-05-07  Mark Lam  <mark.lam@apple.com>
+
+        Add stack checks to the DFG and FTL bytecode parser.
+        https://bugs.webkit.org/show_bug.cgi?id=211547
+        <rdar://problem/62958880>
+
+        Reviewed by Yusuke Suzuki.
+
+        Added a StackCheck::Scope RAII object to help verify that the default reserved
+        zone size is at least adequate for known work loads.  If this the StackCheck::Scope
+        assertions fail, then we either need more stack checks, or the reserved zone size
+        needs to be increased.
+
+        Note that the assertions are usually only on in Debug builds.  Ideally, we would
+        want to measure the reserved zone size with a Release build.  To do that, we
+        can just set VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE to 1 unconditionally in
+        StackCheck.h and rebuild.
+
+        * wtf/StackCheck.h:
+        (WTF::StackCheck::Scope::Scope):
+        (WTF::StackCheck::Scope::~Scope):
+        (WTF::StackCheck::Scope::isSafeToRecurse):
+        (WTF::StackCheck::StackCheck):
+
 2020-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Implement DisplayRefreshMonitor by using RunLoop::Timer
