@@ -1,3 +1,24 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebKit::XPCServiceMain
+        https://bugs.webkit.org/show_bug.cgi?id=211600
+        <rdar://problem/62875458>
+
+        Reviewed by Darin Adler.
+
+        Made the following changes:
+        - Crash under strcmp() could in theory happen if expectedBundleVersion.UTF8String was null, which could
+          happen if expectedBundleVersion was null. I now use higher level String types for the versions, make
+          sure they are not null and use String comparison to compare them.
+        - Call CRASH() instead of __builtin_trap(), to guarantee that we crash with a SIGTRAP (see comment next
+          to CRASH() macro).
+        - Move CRASH() call to a crashDueWebKitFrameworkVersionMismatch() never inlined function to make it
+          clear when it crashes due to a framework version mismatch and distinguish from proper crashes.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::crashDueWebKitFrameworkVersionMismatch):
+        (WebKit::XPCServiceMain):
+
 2020-05-07  Youenn Fablet  <youenn@apple.com>
 
         Remove AudioMediaStreamTrackRenderer::muted

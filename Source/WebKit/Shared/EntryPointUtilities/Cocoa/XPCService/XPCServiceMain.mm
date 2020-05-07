@@ -105,6 +105,15 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
+#if PLATFORM(MAC)
+
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
+{
+    CRASH();
+}
+
+#endif // PLATFORM(MAC)
+
 int XPCServiceMain(int argc, const char** argv)
 {
     ASSERT(argc >= 1);
@@ -130,14 +139,12 @@ int XPCServiceMain(int argc, const char** argv)
 
     if (bootstrap) {
 #if PLATFORM(MAC)
-        if (const char* webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion")) {
-            CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-            NSString *expectedBundleVersion = (NSString *)CFBundleGetValueForInfoDictionaryKey(webKitBundle, kCFBundleVersionKey);
-
-            if (strcmp(webKitBundleVersion, expectedBundleVersion.UTF8String)) {
-                _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion]);
-                __builtin_trap();
-            }
+        String webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion");
+        String expectedBundleVersion = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
+        if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
+            WTFLogAlways("WebKit framework version mismatch: %s != %s", webKitBundleVersion.utf8().data(), expectedBundleVersion.utf8().data());
+            _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion.utf8().data()]);
+            crashDueWebKitFrameworkVersionMismatch();
         }
 #endif
 
