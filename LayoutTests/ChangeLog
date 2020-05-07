@@ -1,3 +1,11 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html as flaky.
+
+        This test has been flaky since import from WPT.
+
+        * TestExpectations:
+
 2020-05-07  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update test expectations
