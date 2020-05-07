@@ -1,3 +1,16 @@
+2020-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Build warning fixes
+
+        Rubber-stamped by Žan Doberšek.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseGrabFocus):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+
 2020-05-07  Youenn Fablet  <youenn@apple.com>
 
         Sending WebRTC network packets should not go through the main thread

@@ -190,6 +190,7 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
         }
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
         reply(GPUProcessConnectionInfo { WTFMove(*connectionIdentifier) });
+        UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
         reply(GPUProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, this->connection()->getAuditToken() });

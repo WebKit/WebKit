@@ -136,6 +136,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 
 #if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
         reply(NetworkProcessConnectionInfo { WTFMove(*connectionIdentifier), cookieAcceptPolicy });
+        UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(connectionIdentifier->port()));
         reply(NetworkProcessConnectionInfo { IPC::Attachment { connectionIdentifier->port(), MACH_MSG_TYPE_MOVE_SEND }, cookieAcceptPolicy, connection()->getAuditToken() });
