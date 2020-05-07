@@ -38,8 +38,8 @@ Export Data:
     "timeline-record-type-network",
     "timeline-record-type-layout",
     "timeline-record-type-script",
-    "timeline-record-type-cpu",
-    "timeline-record-type-rendering-frame"
+    "timeline-record-type-rendering-frame",
+    "timeline-record-type-cpu"
   ],
   "records": [
     "<filtered>"
