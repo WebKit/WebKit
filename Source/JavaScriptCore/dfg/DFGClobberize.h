@@ -155,11 +155,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(World);
         write(Heap);
     };
-
-    // Since Fixup can widen our ArrayModes based on profiling from other nodes we pessimistically assume
-    // all nodes with an ArrayMode can clobber top.
-    if (graph.m_planStage < PlanStage::AfterFixup && node->hasArrayMode())
-        return clobberTop();
     
     switch (node->op()) {
     case JSConstant:

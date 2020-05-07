@@ -1,3 +1,16 @@
+2020-05-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r261260.
+
+        Caused 26 JSC test failures
+
+        Reverted changeset:
+
+        "DFG ByVal nodes with ArrayModes should clobberTop until Fixup
+        phase runs."
+        https://bugs.webkit.org/show_bug.cgi?id=211531
+        https://trac.webkit.org/changeset/261260
+
 2020-05-07  Mark Lam  <mark.lam@apple.com>
 
         Fix broken exceptionFuzz tests.

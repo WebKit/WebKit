@@ -180,10 +180,6 @@ private:
     {
         NodeType op = node->op();
 
-#if ASSERT_ENABLED
-        bool usedToClobberExitState = clobbersExitState(m_graph, node);
-#endif
-
         switch (op) {
         case SetLocal: {
             // This gets handled by fixupGetAndSetLocalsInBlock().
@@ -1285,7 +1281,7 @@ private:
                 node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
             }
-
+            
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node, base->prediction(), index->prediction()));
@@ -2724,12 +2720,6 @@ private:
             break;
 #endif // not ASSERT_ENABLED
         }
-
-#if ASSERT_ENABLED
-        // It would be invalid for Fixup to take a node that didn't clobber exit state and mark it as clobbering afterwords.
-        DFG_ASSERT(m_graph, node, usedToClobberExitState || !clobbersExitState(m_graph, node));
-#endif
-
     }
 
     void watchHavingABadTime(Node* node)
