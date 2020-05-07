@@ -15,7 +15,7 @@
 
 namespace gl
 {
-ANGLE_INLINE bool ValidateDrawArrays(const Context *context,
+ANGLE_INLINE bool ValidateDrawArrays(Context *context,
                                      PrimitiveMode mode,
                                      GLint first,
                                      GLsizei count)
@@ -23,15 +23,12 @@ ANGLE_INLINE bool ValidateDrawArrays(const Context *context,
     return ValidateDrawArraysCommon(context, mode, first, count, 1);
 }
 
-ANGLE_INLINE bool ValidateUniform2f(const Context *context,
-                                    UniformLocation location,
-                                    GLfloat x,
-                                    GLfloat y)
+ANGLE_INLINE bool ValidateUniform2f(Context *context, GLint location, GLfloat x, GLfloat y)
 {
     return ValidateUniform(context, GL_FLOAT_VEC2, location, 1);
 }
 
-ANGLE_INLINE bool ValidateBindBuffer(const Context *context, BufferBinding target, BufferID buffer)
+ANGLE_INLINE bool ValidateBindBuffer(Context *context, BufferBinding target, BufferID buffer)
 {
     if (!context->isValidBufferBinding(target))
     {
@@ -49,7 +46,7 @@ ANGLE_INLINE bool ValidateBindBuffer(const Context *context, BufferBinding targe
     return true;
 }
 
-ANGLE_INLINE bool ValidateDrawElements(const Context *context,
+ANGLE_INLINE bool ValidateDrawElements(Context *context,
                                        PrimitiveMode mode,
                                        GLsizei count,
                                        DrawElementsType type,
@@ -58,7 +55,7 @@ ANGLE_INLINE bool ValidateDrawElements(const Context *context,
     return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
 }
 
-ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
+ANGLE_INLINE bool ValidateVertexAttribPointer(Context *context,
                                               GLuint index,
                                               GLint size,
                                               VertexAttribType type,
@@ -125,9 +122,9 @@ ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
     return true;
 }
 
-void RecordBindTextureTypeError(const Context *context, TextureType target);
+void RecordBindTextureTypeError(Context *context, TextureType target);
 
-ANGLE_INLINE bool ValidateBindTexture(const Context *context, TextureType target, TextureID texture)
+ANGLE_INLINE bool ValidateBindTexture(Context *context, TextureType target, TextureID texture)
 {
     if (!context->getStateCache().isValidBindTextureType(target))
     {
@@ -158,7 +155,7 @@ ANGLE_INLINE bool ValidateBindTexture(const Context *context, TextureType target
 }
 
 // Validation of all Tex[Sub]Image2D parameters except TextureTarget.
-bool ValidateES2TexImageParametersBase(const Context *context,
+bool ValidateES2TexImageParametersBase(Context *context,
                                        TextureTarget target,
                                        GLint level,
                                        GLenum internalformat,

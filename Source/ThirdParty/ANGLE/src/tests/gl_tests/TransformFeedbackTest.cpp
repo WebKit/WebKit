@@ -547,9 +547,6 @@ TEST_P(TransformFeedbackTest, MultiContext)
 
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsOpenGL());
 
-    // Flaky on Win Intel Vulkan. http://anglebug.com/4497
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
-
     EGLint contextAttributes[] = {
         EGL_CONTEXT_MAJOR_VERSION_KHR,
         GetParam().majorVersion,
@@ -558,8 +555,6 @@ TEST_P(TransformFeedbackTest, MultiContext)
         EGL_NONE,
     };
 
-    // Keep a fixed seed RNG so we are deterministic.
-    RNG rng(0);
     EGLWindow *window = getEGLWindow();
 
     EGLDisplay display = window->getDisplay();
@@ -577,7 +572,7 @@ TEST_P(TransformFeedbackTest, MultiContext)
     };
     ContextInfo contexts[32];
 
-    const size_t maxDrawSize = 512;
+    const size_t maxDrawSize = 1024;
 
     std::vector<float> transformFeedbackData(maxDrawSize);
     for (size_t i = 0; i < maxDrawSize; i++)
@@ -645,9 +640,9 @@ void main(void)
         ASSERT_GL_NO_ERROR();
 
         // For each pass, draw between 0 and maxDrawSize primitives
-        for (size_t &primCount : context.primitiveCounts)
+        for (auto &primCount : context.primitiveCounts)
         {
-            primCount = rng.randomIntBetween(1, maxDrawSize);
+            primCount = rand() % maxDrawSize;
         }
 
         glBeginTransformFeedback(GL_POINTS);

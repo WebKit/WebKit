@@ -613,10 +613,6 @@ HandleType FromGLenum<HandleType>(GLenum from)
     {
         case GL_HANDLE_TYPE_OPAQUE_FD_EXT:
             return HandleType::OpaqueFd;
-        case GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE:
-            return HandleType::ZirconVmo;
-        case GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE:
-            return HandleType::ZirconEvent;
         default:
             return HandleType::InvalidEnum;
     }
@@ -628,10 +624,6 @@ GLenum ToGLenum(HandleType from)
     {
         case HandleType::OpaqueFd:
             return GL_HANDLE_TYPE_OPAQUE_FD_EXT;
-        case HandleType::ZirconVmo:
-            return GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE;
-        case HandleType::ZirconEvent:
-            return GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE;
         default:
             UNREACHABLE();
             return 0;
@@ -644,12 +636,6 @@ std::ostream &operator<<(std::ostream &os, HandleType value)
     {
         case HandleType::OpaqueFd:
             os << "GL_HANDLE_TYPE_OPAQUE_FD_EXT";
-            break;
-        case HandleType::ZirconVmo:
-            os << "GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE";
-            break;
-        case HandleType::ZirconEvent:
-            os << "GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE";
             break;
         default:
             os << "GL_INVALID_ENUM";

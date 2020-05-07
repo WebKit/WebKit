@@ -12,13 +12,10 @@
 #include "common/Optional.h"
 #include "common/angleutils.h"
 
-#include <string>
-
 namespace angle
 {
 std::string GetExecutablePath();
 std::string GetExecutableDirectory();
-std::string GetHelperExecutableDir();
 const char *GetSharedLibraryExtension();
 const char *GetExecutableExtension();
 char GetPathSeparator();

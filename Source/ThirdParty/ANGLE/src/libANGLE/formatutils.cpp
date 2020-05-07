@@ -955,13 +955,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES,  6,  6, 5, 128, 4, true,  RequireExt<&Extensions::textureCompressionASTCOES>,    AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
     AddCompressedFormat(&map, GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES,  6,  6, 6, 128, 4, true,  RequireExt<&Extensions::textureCompressionASTCOES>,    AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
 
-    // From EXT_texture_compression_rgtc
-    //                       | Internal format                        | W | H |D | BS |CC| SRGB | Texture supported                              | Filterable     | Texture attachment | Renderbuffer  | Blend
-    AddCompressedFormat(&map, GL_COMPRESSED_RED_RGTC1_EXT,              4,  4, 1,  64, 1, false, RequireExt<&Extensions::textureCompressionRGTC>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SIGNED_RED_RGTC1_EXT,       4,  4, 1,  64, 1, false, RequireExt<&Extensions::textureCompressionRGTC>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_RED_GREEN_RGTC2_EXT,        4,  4, 1, 128, 2, false, RequireExt<&Extensions::textureCompressionRGTC>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-    AddCompressedFormat(&map, GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT, 4,  4, 1, 128, 2, false, RequireExt<&Extensions::textureCompressionRGTC>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);
-
     // From EXT_texture_compression_bptc
     //                       | Internal format                         | W | H |D | BS |CC| SRGB | Texture supported                              | Filterable     | Texture attachment | Renderbuffer  | Blend
     AddCompressedFormat(&map, GL_COMPRESSED_RGBA_BPTC_UNORM_EXT,         4,  4, 1, 128, 4, false, RequireExt<&Extensions::textureCompressionBPTC>, AlwaysSupported, NeverSupported,      NeverSupported, NeverSupported);

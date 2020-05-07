@@ -201,18 +201,6 @@
   "BC3_RGBA_UNORM_SRGB_BLOCK": {
     "blockPixelBytes": "16"
   },
-  "BC4_RED_UNORM_BLOCK": {
-    "blockPixelBytes": "8"
-  },
-  "BC4_RED_SNORM_BLOCK": {
-    "blockPixelBytes": "8"
-  },
-  "BC5_RG_UNORM_BLOCK": {
-    "blockPixelBytes": "16"
-  },
-  "BC5_RG_SNORM_BLOCK": {
-    "blockPixelBytes": "16"
-  },
   "BPTC_SRGB_ALPHA_UNORM_BLOCK": {
     "blockPixelBytes": "16"
   },

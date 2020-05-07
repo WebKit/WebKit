@@ -14,7 +14,6 @@
 #include "common/utilities.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/formatutils.h"
-#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "vk_format_utils.h"
@@ -48,23 +47,9 @@ void RendererVk::ensureCapsInitialized() const
 
     mNativeExtensions.setTextureExtensionSupport(mNativeTextureCaps);
 
-    // To ensure that ETC2/EAC formats are enabled only on hardware that supports them natively,
-    // this flag is not set by the function above and must be set explicitly. It exposes
-    // ANGLE_compressed_texture_etc extension string.
-    mNativeExtensions.compressedTextureETC =
-        (mPhysicalDeviceFeatures.textureCompressionETC2 == VK_TRUE) &&
-        gl::DetermineCompressedTextureETCSupport(mNativeTextureCaps);
-
-    // Vulkan doesn't support ASTC 3D block textures, which are required by
-    // GL_OES_texture_compression_astc.
-    mNativeExtensions.textureCompressionASTCOES = false;
-
-    // Vulkan doesn't guarantee HDR blocks decoding without VK_EXT_texture_compression_astc_hdr.
-    mNativeExtensions.textureCompressionASTCHDRKHR = false;
-
-    // Vulkan supports sliced 3D ASTC texture uploads when ASTC is supported.
-    mNativeExtensions.textureCompressionSliced3dASTCKHR =
-        mNativeExtensions.textureCompressionASTCLDRKHR;
+    // Vulkan technically only supports the LDR profile but driver all appear to support the HDR
+    // profile as well. http://anglebug.com/1185#c8
+    mNativeExtensions.textureCompressionASTCHDRKHR = mNativeExtensions.textureCompressionASTCLDRKHR;
 
     // Enable this for simple buffer readback testing, but some functionality is missing.
     // TODO(jmadill): Support full mapBufferRange extension.
@@ -78,8 +63,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.copyTexture            = true;
     mNativeExtensions.copyCompressedTexture  = true;
     mNativeExtensions.debugMarker            = true;
-    mNativeExtensions.robustness =
-        !IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
+    mNativeExtensions.robustness             = true;
     mNativeExtensions.textureBorderClampOES  = false;  // not implemented yet
     mNativeExtensions.translatedShaderSource = true;
     mNativeExtensions.discardFramebuffer     = true;
@@ -97,20 +81,15 @@ void RendererVk::ensureCapsInitialized() const
     // Enable EXT_blend_minmax
     mNativeExtensions.blendMinMax = true;
 
-    mNativeExtensions.eglImageOES                  = true;
-    mNativeExtensions.eglImageExternalOES          = true;
-    mNativeExtensions.eglImageExternalWrapModesEXT = true;
-    mNativeExtensions.eglImageExternalEssl3OES     = true;
+    mNativeExtensions.eglImageOES              = true;
+    mNativeExtensions.eglImageExternalOES      = true;
+    mNativeExtensions.eglImageExternalEssl3OES = true;
 
     mNativeExtensions.memoryObject   = true;
     mNativeExtensions.memoryObjectFd = getFeatures().supportsExternalMemoryFd.enabled;
-    mNativeExtensions.memoryObjectFuchsiaANGLE =
-        getFeatures().supportsExternalMemoryFuchsia.enabled;
 
     mNativeExtensions.semaphore   = true;
     mNativeExtensions.semaphoreFd = getFeatures().supportsExternalSemaphoreFd.enabled;
-    mNativeExtensions.semaphoreFuchsiaANGLE =
-        getFeatures().supportsExternalSemaphoreFuchsia.enabled;
 
     mNativeExtensions.vertexHalfFloatOES = true;
 
@@ -161,9 +140,6 @@ void RendererVk::ensureCapsInitialized() const
 
     // We support getting image data for Textures and Renderbuffers.
     mNativeExtensions.getImageANGLE = true;
-
-    // Implemented in the translator
-    mNativeExtensions.shaderNonConstGlobalInitializersEXT = true;
 
     // Vulkan has no restrictions of the format of cubemaps, so if the proper formats are supported,
     // creating a cube of any of these formats should be implicitly supported.
@@ -460,27 +436,8 @@ void RendererVk::ensureCapsInitialized() const
     // vars section. It is implicit that we need to actually reserve it for Vulkan in that case.
     GLint reservedVaryingVectorCount = 1;
 
-    // reserve 1 extra for ANGLEPosition when GLLineRasterization is enabled
-    constexpr GLint kRservedVaryingForGLLineRasterization = 1;
-    // reserve 2 extra for builtin varables when feedback is enabled
-    // possible capturable out varable: gl_Position, gl_PointSize
-    // https://www.khronos.org/registry/OpenGL/specs/es/3.1/GLSL_ES_Specification_3.10.withchanges.pdf
-    // page 105
-    constexpr GLint kReservedVaryingForTransformFeedbackExtension = 2;
-
-    if (getFeatures().basicGLLineRasterization.enabled)
-    {
-        reservedVaryingVectorCount += kRservedVaryingForGLLineRasterization;
-    }
-    if (getFeatures().supportsTransformFeedbackExtension.enabled)
-    {
-        reservedVaryingVectorCount += kReservedVaryingForTransformFeedbackExtension;
-    }
-
-    const GLint maxVaryingCount =
-        std::min(limitsVk.maxVertexOutputComponents, limitsVk.maxFragmentInputComponents);
-    mNativeCaps.maxVaryingVectors =
-        LimitToInt((maxVaryingCount / kComponentsPerVector) - reservedVaryingVectorCount);
+    mNativeCaps.maxVaryingVectors = LimitToInt(
+        (limitsVk.maxVertexOutputComponents / kComponentsPerVector) - reservedVaryingVectorCount);
     mNativeCaps.maxVertexOutputComponents = LimitToInt(limitsVk.maxVertexOutputComponents);
 
     mNativeCaps.maxTransformFeedbackInterleavedComponents =
@@ -623,7 +580,7 @@ egl::Config GenerateDefaultConfig(const RendererVk *renderer,
     config.maxSwapInterval    = 1;
     config.minSwapInterval    = 0;
     config.nativeRenderable   = EGL_TRUE;
-    config.nativeVisualID     = static_cast<EGLint>(GetNativeVisualID(colorFormat));
+    config.nativeVisualID     = 0;
     config.nativeVisualType   = EGL_NONE;
     config.renderableType     = es2Support | es3Support;
     config.sampleBuffers      = (sampleCount > 0) ? 1 : 0;

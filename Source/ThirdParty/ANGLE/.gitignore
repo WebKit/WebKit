@@ -1,5 +1,4 @@
 .vs
-.vscode
 *.Makefile
 *.ncb
 *.nvuser

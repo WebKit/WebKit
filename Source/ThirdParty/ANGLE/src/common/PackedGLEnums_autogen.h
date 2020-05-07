@@ -172,12 +172,10 @@ std::ostream &operator<<(std::ostream &os, GraphicsResetStatus value);
 
 enum class HandleType : uint8_t
 {
-    OpaqueFd    = 0,
-    ZirconVmo   = 1,
-    ZirconEvent = 2,
+    OpaqueFd = 0,
 
-    InvalidEnum = 3,
-    EnumCount   = 3,
+    InvalidEnum = 1,
+    EnumCount   = 1,
 };
 
 template <>

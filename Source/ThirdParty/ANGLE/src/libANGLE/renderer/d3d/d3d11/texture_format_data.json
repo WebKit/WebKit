@@ -171,34 +171,6 @@
     "componentType": "unorm",
     "swizzleFormat": "GL_RGBA8"
   },
-  "BC4_RED_UNORM_BLOCK": {
-    "texFormat": "DXGI_FORMAT_BC4_UNORM",
-    "srvFormat": "DXGI_FORMAT_BC4_UNORM",
-    "channels": "r",
-    "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8"
-  },
-  "BC4_RED_SNORM_BLOCK": {
-    "texFormat": "DXGI_FORMAT_BC4_SNORM",
-    "srvFormat": "DXGI_FORMAT_BC4_SNORM",
-    "channels": "r",
-    "componentType": "snorm",
-    "swizzleFormat": "GL_RGBA8_SNORM"
-  },
-  "BC5_RG_UNORM_BLOCK": {
-    "texFormat": "DXGI_FORMAT_BC5_UNORM",
-    "srvFormat": "DXGI_FORMAT_BC5_UNORM",
-    "channels": "rg",
-    "componentType": "unorm",
-    "swizzleFormat": "GL_RGBA8"
-  },
-  "BC5_RG_SNORM_BLOCK": {
-    "texFormat": "DXGI_FORMAT_BC5_SNORM",
-    "srvFormat": "DXGI_FORMAT_BC5_SNORM",
-    "channels": "rg",
-    "componentType": "snorm",
-    "swizzleFormat": "GL_RGBA8_SNORM"
-  },
   "BPTC_RGBA_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC7_UNORM",
     "srvFormat": "DXGI_FORMAT_BC7_UNORM",

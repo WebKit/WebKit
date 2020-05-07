@@ -156,8 +156,7 @@ void CaptureDrawRangeElements_indices(const State &glState,
                                       const void *indices,
                                       ParamCapture *paramCapture)
 {
-    CaptureDrawElements_indices(glState, isCallValid, modePacked, count, typePacked, indices,
-                                paramCapture);
+    UNIMPLEMENTED();
 }
 
 void CaptureGenQueries_idsPacked(const State &glState,
@@ -322,33 +321,7 @@ void CaptureGetInternalformativ_params(const State &glState,
                                        GLint *params,
                                        ParamCapture *paramCapture)
 {
-    // From the OpenGL ES 3.0 spec:
-    //
-    // The information retrieved will be written to memory addressed by the pointer specified in
-    // params.
-    //
-    // No more than bufSize integers will be written to this memory.
-    //
-    // If pname is GL_NUM_SAMPLE_COUNTS, the number of sample counts that would be returned by
-    // querying GL_SAMPLES will be returned in params.
-    //
-    // If pname is GL_SAMPLES, the sample counts supported for internalformat and target are written
-    // into params in descending numeric order. Only positive values are returned.
-    //
-    // Querying GL_SAMPLES with bufSize of one will return just the maximum supported number of
-    // samples for this format.
-
-    if (bufSize == 0)
-        return;
-
-    if (params)
-    {
-        // For GL_NUM_SAMPLE_COUNTS, only one value is returned
-        // For GL_SAMPLES, two values will be returned, unless bufSize limits it to one
-        uint32_t paramCount = (pname == GL_SAMPLES && bufSize > 1) ? 2 : 1;
-
-        paramCapture->readBufferSizeBytes = sizeof(GLint) * paramCount;
-    }
+    UNIMPLEMENTED();
 }
 
 void CaptureGetProgramBinary_length(const State &glState,
@@ -360,10 +333,7 @@ void CaptureGetProgramBinary_length(const State &glState,
                                     void *binary,
                                     ParamCapture *paramCapture)
 {
-    if (length)
-    {
-        paramCapture->readBufferSizeBytes = sizeof(GLsizei);
-    }
+    UNIMPLEMENTED();
 }
 
 void CaptureGetProgramBinary_binaryFormat(const State &glState,
@@ -375,7 +345,7 @@ void CaptureGetProgramBinary_binaryFormat(const State &glState,
                                           void *binary,
                                           ParamCapture *paramCapture)
 {
-    paramCapture->readBufferSizeBytes = sizeof(GLenum);
+    UNIMPLEMENTED();
 }
 
 void CaptureGetProgramBinary_binary(const State &glState,
@@ -387,22 +357,7 @@ void CaptureGetProgramBinary_binary(const State &glState,
                                     void *binary,
                                     ParamCapture *paramCapture)
 {
-    // If we have length, then actual binarySize was written there
-    // Otherwise, we don't know how many bytes were written
-    if (!length)
-    {
-        UNIMPLEMENTED();
-        return;
-    }
-
-    GLsizei binarySize = *length;
-    if (binarySize > bufSize)
-    {
-        // This is a GL error, but clamp it anyway
-        binarySize = bufSize;
-    }
-
-    paramCapture->readBufferSizeBytes = binarySize;
+    UNIMPLEMENTED();
 }
 
 void CaptureGetQueryObjectuiv_params(const State &glState,
@@ -560,7 +515,7 @@ void CaptureGetUniformIndices_uniformIndices(const State &glState,
 void CaptureGetUniformuiv_params(const State &glState,
                                  bool isCallValid,
                                  ShaderProgramID program,
-                                 UniformLocation location,
+                                 GLint location,
                                  GLuint *params,
                                  ParamCapture *paramCapture)
 {
@@ -714,7 +669,7 @@ void CaptureTransformFeedbackVaryings_varyings(const State &glState,
 
 void CaptureUniform1uiv_value(const State &glState,
                               bool isCallValid,
-                              UniformLocation location,
+                              GLint location,
                               GLsizei count,
                               const GLuint *value,
                               ParamCapture *paramCapture)
@@ -724,7 +679,7 @@ void CaptureUniform1uiv_value(const State &glState,
 
 void CaptureUniform2uiv_value(const State &glState,
                               bool isCallValid,
-                              UniformLocation location,
+                              GLint location,
                               GLsizei count,
                               const GLuint *value,
                               ParamCapture *paramCapture)
@@ -734,7 +689,7 @@ void CaptureUniform2uiv_value(const State &glState,
 
 void CaptureUniform3uiv_value(const State &glState,
                               bool isCallValid,
-                              UniformLocation location,
+                              GLint location,
                               GLsizei count,
                               const GLuint *value,
                               ParamCapture *paramCapture)
@@ -744,7 +699,7 @@ void CaptureUniform3uiv_value(const State &glState,
 
 void CaptureUniform4uiv_value(const State &glState,
                               bool isCallValid,
-                              UniformLocation location,
+                              GLint location,
                               GLsizei count,
                               const GLuint *value,
                               ParamCapture *paramCapture)
@@ -754,7 +709,7 @@ void CaptureUniform4uiv_value(const State &glState,
 
 void CaptureUniformMatrix2x3fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,
@@ -765,7 +720,7 @@ void CaptureUniformMatrix2x3fv_value(const State &glState,
 
 void CaptureUniformMatrix2x4fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,
@@ -776,7 +731,7 @@ void CaptureUniformMatrix2x4fv_value(const State &glState,
 
 void CaptureUniformMatrix3x2fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,
@@ -787,7 +742,7 @@ void CaptureUniformMatrix3x2fv_value(const State &glState,
 
 void CaptureUniformMatrix3x4fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,
@@ -798,7 +753,7 @@ void CaptureUniformMatrix3x4fv_value(const State &glState,
 
 void CaptureUniformMatrix4x2fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,
@@ -809,7 +764,7 @@ void CaptureUniformMatrix4x2fv_value(const State &glState,
 
 void CaptureUniformMatrix4x3fv_value(const State &glState,
                                      bool isCallValid,
-                                     UniformLocation location,
+                                     GLint location,
                                      GLsizei count,
                                      GLboolean transpose,
                                      const GLfloat *value,

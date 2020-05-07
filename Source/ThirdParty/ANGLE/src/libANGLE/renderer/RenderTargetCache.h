@@ -43,7 +43,7 @@ class RenderTargetCache final : angle::NonCopyable
     using RenderTargetArray = gl::AttachmentArray<RenderTargetT *>;
 
     const RenderTargetArray &getColors() const;
-    RenderTargetT *getDepthStencil(bool allowFeedbackLoop) const;
+    RenderTargetT *getDepthStencil() const;
 
     RenderTargetT *getColorDraw(const gl::FramebufferState &state, size_t colorIndex) const;
     RenderTargetT *getColorRead(const gl::FramebufferState &state) const;
@@ -53,18 +53,20 @@ class RenderTargetCache final : angle::NonCopyable
                                            const gl::FramebufferAttachment *attachment,
                                            RenderTargetT **cachedRenderTarget);
 
-    RenderTargetT *mReadRenderTarget                         = nullptr;
-    gl::AttachmentArray<RenderTargetT *> mColorRenderTargets = {};
+    RenderTargetT *mReadRenderTarget;
+    gl::AttachmentArray<RenderTargetT *> mColorRenderTargets;
     // We only support a single Depth/Stencil RenderTarget currently.
-    bool mDepthStencilFeedbackLoop           = false;
-    RenderTargetT *mDepthStencilRenderTarget = nullptr;
+    RenderTargetT *mDepthStencilRenderTarget;
 };
 
 template <typename RenderTargetT>
-RenderTargetCache<RenderTargetT>::RenderTargetCache() = default;
+RenderTargetCache<RenderTargetT>::RenderTargetCache()
+    : mReadRenderTarget{nullptr}, mColorRenderTargets{{nullptr}}, mDepthStencilRenderTarget(nullptr)
+{}
 
 template <typename RenderTargetT>
-RenderTargetCache<RenderTargetT>::~RenderTargetCache() = default;
+RenderTargetCache<RenderTargetT>::~RenderTargetCache()
+{}
 
 template <typename RenderTargetT>
 angle::Result RenderTargetCache<RenderTargetT>::update(const gl::Context *context,
@@ -112,9 +114,9 @@ const gl::AttachmentArray<RenderTargetT *> &RenderTargetCache<RenderTargetT>::ge
 }
 
 template <typename RenderTargetT>
-RenderTargetT *RenderTargetCache<RenderTargetT>::getDepthStencil(bool allowFeedbackLoop) const
+RenderTargetT *RenderTargetCache<RenderTargetT>::getDepthStencil() const
 {
-    return (allowFeedbackLoop || !mDepthStencilFeedbackLoop) ? mDepthStencilRenderTarget : nullptr;
+    return mDepthStencilRenderTarget;
 }
 
 template <typename RenderTargetT>
@@ -147,7 +149,6 @@ angle::Result RenderTargetCache<RenderTargetT>::updateDepthStencilRenderTarget(
     const gl::Context *context,
     const gl::FramebufferState &state)
 {
-    mDepthStencilFeedbackLoop = state.hasDepthStencilFeedbackLoop();
     return updateCachedRenderTarget(context, state.getDepthOrStencilAttachment(),
                                     &mDepthStencilRenderTarget);
 }

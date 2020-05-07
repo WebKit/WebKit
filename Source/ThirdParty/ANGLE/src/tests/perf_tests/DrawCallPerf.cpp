@@ -9,7 +9,6 @@
 
 #include "ANGLEPerfTest.h"
 #include "DrawCallPerfParams.h"
-#include "common/PackedEnums.h"
 #include "test_utils/draw_call_perf_utils.h"
 #include "util/shader_utils.h"
 
@@ -23,12 +22,10 @@ enum class StateChange
     ManyVertexBuffers,
     Texture,
     Program,
-    InvalidEnum,
 };
 
 struct DrawArraysPerfParams : public DrawCallPerfParams
 {
-    DrawArraysPerfParams() = default;
     DrawArraysPerfParams(const DrawCallPerfParams &base) : DrawCallPerfParams(base) {}
 
     std::string story() const override;
@@ -380,9 +377,6 @@ void DrawCallPerfBenchmark::drawBenchmark()
                 JustDraw(params.iterationsPerStep, numElements);
             }
             break;
-        case StateChange::InvalidEnum:
-            FAIL() << "Invalid state change.";
-            break;
     }
 
     ASSERT_GL_NO_ERROR();
@@ -393,24 +387,70 @@ TEST_P(DrawCallPerfBenchmark, Run)
     run();
 }
 
-using namespace params;
-
-DrawArraysPerfParams CombineStateChange(const DrawArraysPerfParams &in, StateChange stateChange)
+DrawArraysPerfParams DrawArrays(const DrawCallPerfParams &base, StateChange stateChange)
 {
-    DrawArraysPerfParams out = in;
-    out.stateChange          = stateChange;
-    return out;
+    DrawArraysPerfParams params(base);
+    params.stateChange = stateChange;
+    return params;
 }
 
-using P = DrawArraysPerfParams;
+using namespace params;
 
-std::vector<P> gTestsWithStateChange =
-    CombineWithValues({P()}, angle::AllEnums<StateChange>(), CombineStateChange);
-std::vector<P> gTestsWithRenderer =
-    CombineWithFuncs(gTestsWithStateChange, {D3D11<P>, GL<P>, Vulkan<P>, WGL<P>});
-std::vector<P> gTestsWithDevice =
-    CombineWithFuncs(gTestsWithRenderer, {Passthrough<P>, Offscreen<P>, NullDevice<P>});
-
-ANGLE_INSTANTIATE_TEST_ARRAY(DrawCallPerfBenchmark, gTestsWithDevice);
+ANGLE_INSTANTIATE_TEST(DrawCallPerfBenchmark,
+                       DrawArrays(DrawCallD3D9(), StateChange::NoChange),
+                       DrawArrays(NullDevice(DrawCallD3D9()), StateChange::NoChange),
+                       DrawArrays(DrawCallD3D11(), StateChange::NoChange),
+                       DrawArrays(NullDevice(DrawCallD3D11()), StateChange::NoChange),
+                       DrawArrays(NullDevice(Offscreen(DrawCallD3D11())), StateChange::NoChange),
+                       DrawArrays(DrawCallD3D11(), StateChange::VertexAttrib),
+                       DrawArrays(NullDevice(DrawCallD3D11()), StateChange::VertexAttrib),
+                       DrawArrays(DrawCallD3D11(), StateChange::VertexBuffer),
+                       DrawArrays(NullDevice(DrawCallD3D11()), StateChange::VertexBuffer),
+                       DrawArrays(DrawCallD3D11(), StateChange::Texture),
+                       DrawArrays(NullDevice(DrawCallD3D11()), StateChange::Texture),
+                       DrawArrays(DrawCallD3D11(), StateChange::Program),
+                       DrawArrays(NullDevice(DrawCallD3D11()), StateChange::Program),
+                       DrawArrays(DrawCallOpenGL(), StateChange::NoChange),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::NoChange),
+                       DrawArrays(NullDevice(Offscreen(DrawCallOpenGL())), StateChange::NoChange),
+                       DrawArrays(DrawCallOpenGL(), StateChange::VertexAttrib),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::VertexAttrib),
+                       DrawArrays(DrawCallOpenGL(), StateChange::VertexBuffer),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::VertexBuffer),
+                       DrawArrays(DrawCallOpenGL(), StateChange::ManyVertexBuffers),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::ManyVertexBuffers),
+                       DrawArrays(DrawCallOpenGL(), StateChange::Texture),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::Texture),
+                       DrawArrays(DrawCallOpenGL(), StateChange::Program),
+                       DrawArrays(NullDevice(DrawCallOpenGL()), StateChange::Program),
+                       DrawArrays(DrawCallValidation(), StateChange::NoChange),
+                       DrawArrays(DrawCallVulkan(), StateChange::NoChange),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::NoChange),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::NoChange),
+                       DrawArrays(DrawCallVulkan(), StateChange::VertexAttrib),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::VertexAttrib),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::VertexAttrib),
+                       DrawArrays(DrawCallVulkan(), StateChange::VertexBuffer),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::VertexBuffer),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::VertexBuffer),
+                       DrawArrays(DrawCallVulkan(), StateChange::ManyVertexBuffers),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::ManyVertexBuffers),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::ManyVertexBuffers),
+                       DrawArrays(DrawCallVulkan(), StateChange::Texture),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::Texture),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::Texture),
+                       DrawArrays(DrawCallVulkan(), StateChange::Program),
+                       DrawArrays(Offscreen(DrawCallVulkan()), StateChange::Program),
+                       DrawArrays(NullDevice(DrawCallVulkan()), StateChange::Program),
+                       DrawArrays(DrawCallWGL(), StateChange::NoChange),
+                       DrawArrays(Offscreen(DrawCallWGL()), StateChange::NoChange),
+                       DrawArrays(DrawCallWGL(), StateChange::VertexAttrib),
+                       DrawArrays(Offscreen(DrawCallWGL()), StateChange::VertexAttrib),
+                       DrawArrays(DrawCallWGL(), StateChange::VertexBuffer),
+                       DrawArrays(Offscreen(DrawCallWGL()), StateChange::VertexBuffer),
+                       DrawArrays(DrawCallWGL(), StateChange::Texture),
+                       DrawArrays(Offscreen(DrawCallWGL()), StateChange::Texture),
+                       DrawArrays(DrawCallWGL(), StateChange::Program),
+                       DrawArrays(Offscreen(DrawCallWGL()), StateChange::Program));
 
 }  // anonymous namespace

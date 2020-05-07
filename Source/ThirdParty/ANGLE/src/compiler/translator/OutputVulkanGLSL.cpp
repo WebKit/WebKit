@@ -27,8 +27,6 @@ TOutputVulkanGLSL::TOutputVulkanGLSL(TInfoSinkBase &objSink,
                                      sh::GLenum shaderType,
                                      int shaderVersion,
                                      ShShaderOutput output,
-                                     bool forceHighp,
-                                     bool enablePrecision,
                                      ShCompileOptions compileOptions)
     : TOutputGLSL(objSink,
                   clampingStrategy,
@@ -41,9 +39,7 @@ TOutputVulkanGLSL::TOutputVulkanGLSL(TInfoSinkBase &objSink,
                   compileOptions),
       mNextUnusedBinding(0),
       mNextUnusedInputLocation(0),
-      mNextUnusedOutputLocation(0),
-      mForceHighp(forceHighp),
-      mEnablePrecision(enablePrecision)
+      mNextUnusedOutputLocation(0)
 {}
 
 void TOutputVulkanGLSL::writeLayoutQualifier(TIntermTyped *variable)
@@ -170,19 +166,6 @@ void TOutputVulkanGLSL::writeStructType(const TStructure *structure)
         declareStruct(structure);
         objSink() << ";\n";
     }
-}
-
-bool TOutputVulkanGLSL::writeVariablePrecision(TPrecision precision)
-{
-    if ((precision == EbpUndefined) || !mEnablePrecision)
-        return false;
-
-    TInfoSinkBase &out = objSink();
-    if (mForceHighp)
-        out << getPrecisionString(EbpHigh);
-    else
-        out << getPrecisionString(precision);
-    return true;
 }
 
 }  // namespace sh

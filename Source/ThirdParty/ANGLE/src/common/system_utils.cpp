@@ -6,7 +6,7 @@
 
 // system_utils.cpp: Implementation of common functions
 
-#include "common/system_utils.h"
+#include "system_utils.h"
 
 namespace angle
 {

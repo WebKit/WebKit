@@ -33,14 +33,18 @@ Build the angle_perftests:
 ```
 autoninja -C out/Release angle_perftests
 ```
-Run them like so:
+On desktop, run them like so:
 ```
 out/Release/angle_perftests --gtest_filter=TracePerfTest*
+```
+On Android, run them like so:
+```
+out/Release/bin/run_angle_perftests --gtest_filter=TracePerfTest*
 ```
 
 ## Updating traces
 
-The Manhattan and TRex traces were captured on Windows with an Intel driver (due to better compressed texture support).
+The current TRex traces were captured on Windows with an Nvidia driver.
 
 Update START and END for each range.
 
@@ -52,27 +56,15 @@ python ..\..\..\..\scripts\refresh_angle_libs.py --verbose
 set TFW_PACKAGE_DIR=../../../build/vs2017-x64/testfw/tfw-dev
 set ANGLE_DEFAULT_PLATFORM=vulkan
 
-# TRex
 set START=200
 set END=210
 set LABEL=trex
-mkdir ..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%
-set ANGLE_CAPTURE_LABEL=%LABEL%_%START%
+mkdir ..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%_%END%
+set ANGLE_CAPTURE_LABEL=%LABEL%_%START%_%END%
 set ANGLE_CAPTURE_FRAME_START=%START%
 set ANGLE_CAPTURE_FRAME_END=%END%
-set ANGLE_CAPTURE_OUT_DIR=..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%
+set ANGLE_CAPTURE_OUT_DIR=..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%_%END%
 ..\bin\testfw_app.exe -b ../../../build/vs2017-x64/testfw/tfw-dev --gfx egl -w 1920 -h 1080 -t gl_trex --ei -frame_step_time=40
-
-# Manhattan
-set START=10
-set END=20
-set LABEL=manhattan
-mkdir ..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%
-set ANGLE_CAPTURE_LABEL=%LABEL%_%START%
-set ANGLE_CAPTURE_FRAME_START=%START%
-set ANGLE_CAPTURE_FRAME_END=%END%
-set ANGLE_CAPTURE_OUT_DIR=..\..\..\..\..\angle\src\tests\perf_tests\restricted_traces\%LABEL%_%START%
-..\bin\testfw_app.exe -b ../../../build/vs2017-x64/testfw/tfw-dev --gfx egl -w 1920 -h 1080 -t gl_manhattan --ei -frame_step_time=40
 ```
 
 ### Linux
@@ -85,35 +77,25 @@ export TFW_PACKAGE_DIR=../../../build/linux/testfw_Release/tfw-dev
 export ANGLE_DEFAULT_PLATFORM=vulkan
 export LD_LIBRARY_PATH=.
 
-# TRex
 export START=200
 export END=210
 export LABEL=trex
-mkdir -p ../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}
-export ANGLE_CAPTURE_LABEL=${LABEL}_${START}
+mkdir -p ../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}_${END}
+export ANGLE_CAPTURE_LABEL=${LABEL}_${START}_${END}
 export ANGLE_CAPTURE_FRAME_START=$START
 export ANGLE_CAPTURE_FRAME_END=$END
-export ANGLE_CAPTURE_OUT_DIR=../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}
-../bin/testfw_app -b $TFW_PACKAGE_DIR --gfx egl -w 1920 -h 1080 -t gl_trex --ei -frame_step_time=40
-
-# Manhattan
-export START=10
-export END=20
-export LABEL=manhattan
-mkdir -p ../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}
-export ANGLE_CAPTURE_LABEL=${LABEL}_${START}
-export ANGLE_CAPTURE_FRAME_START=$START
-export ANGLE_CAPTURE_FRAME_END=$END
-export ANGLE_CAPTURE_OUT_DIR=../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}
-../bin/testfw_app -b $TFW_PACKAGE_DIR --gfx egl -w 1920 -h 1080 -t gl_manhattan --ei -frame_step_time=40
+export ANGLE_CAPTURE_OUT_DIR=../../../../../angle/src/tests/perf_tests/restricted_traces/${LABEL}_${START}_${END}
+../bin/testfw_app -b $TFW_PACKAGE_DIR --gfx egl -w 512 -h 512 -t gl_trex --ei -frame_step_time=40
 ```
 
 ## Upload to the cloud
 
 ```
 cd ~/chromium/src/third_party/angle/src/tests/perf_tests/restricted_traces
-upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive trex_200
-upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive manhattan_10
+upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive trex_200_210
+upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive trex_800_810
+upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive trex_900_910
+upload_to_google_storage.py --bucket chrome-angle-capture-binaries --archive trex_1300_1310
 ```
 
 ## Adding new tests

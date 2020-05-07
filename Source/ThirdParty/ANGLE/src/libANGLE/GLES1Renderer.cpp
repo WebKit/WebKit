@@ -576,9 +576,9 @@ angle::Result GLES1Renderer::linkProgram(Context *context,
 
     if (!programObject->isLinked())
     {
-        GLint infoLogLength = programObject->getExecutable().getInfoLogLength();
+        GLint infoLogLength = programObject->getInfoLogLength();
         std::vector<char> infoLog(infoLogLength, 0);
-        programObject->getExecutable().getInfoLog(infoLogLength - 1, nullptr, infoLog.data());
+        programObject->getInfoLog(infoLogLength - 1, nullptr, infoLog.data());
 
         ERR() << "Internal GLES 1 shader link failed. Info log: " << infoLog.data();
         ANGLE_CHECK(context, false, "GLES1Renderer program link failed.", GL_INVALID_OPERATION);
@@ -761,83 +761,80 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context, State *
     return angle::Result::Continue;
 }
 
-void GLES1Renderer::setUniform1i(Context *context,
-                                 Program *programObject,
-                                 UniformLocation location,
-                                 GLint value)
+void GLES1Renderer::setUniform1i(Context *context, Program *programObject, GLint loc, GLint value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform1iv(context, location, 1, &value);
+    programObject->setUniform1iv(context, loc, 1, &value);
 }
 
 void GLES1Renderer::setUniform1iv(Context *context,
                                   Program *programObject,
-                                  UniformLocation location,
+                                  GLint loc,
                                   GLint count,
                                   const GLint *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform1iv(context, location, count, value);
+    programObject->setUniform1iv(context, loc, count, value);
 }
 
 void GLES1Renderer::setUniformMatrix4fv(Program *programObject,
-                                        UniformLocation location,
+                                        GLint loc,
                                         GLint count,
                                         GLboolean transpose,
                                         const GLfloat *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniformMatrix4fv(location, count, transpose, value);
+    programObject->setUniformMatrix4fv(loc, count, transpose, value);
 }
 
 void GLES1Renderer::setUniform4fv(Program *programObject,
-                                  UniformLocation location,
+                                  GLint loc,
                                   GLint count,
                                   const GLfloat *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform4fv(location, count, value);
+    programObject->setUniform4fv(loc, count, value);
 }
 
 void GLES1Renderer::setUniform3fv(Program *programObject,
-                                  UniformLocation location,
+                                  GLint loc,
                                   GLint count,
                                   const GLfloat *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform3fv(location, count, value);
+    programObject->setUniform3fv(loc, count, value);
 }
 
 void GLES1Renderer::setUniform2fv(Program *programObject,
-                                  UniformLocation location,
+                                  GLint loc,
                                   GLint count,
                                   const GLfloat *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform2fv(location, count, value);
+    programObject->setUniform2fv(loc, count, value);
 }
 
-void GLES1Renderer::setUniform1f(Program *programObject, UniformLocation location, GLfloat value)
+void GLES1Renderer::setUniform1f(Program *programObject, GLint loc, GLfloat value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform1fv(location, 1, &value);
+    programObject->setUniform1fv(loc, 1, &value);
 }
 
 void GLES1Renderer::setUniform1fv(Program *programObject,
-                                  UniformLocation location,
+                                  GLint loc,
                                   GLint count,
                                   const GLfloat *value)
 {
-    if (location.value == -1)
+    if (loc == -1)
         return;
-    programObject->setUniform1fv(location, count, value);
+    programObject->setUniform1fv(loc, count, value);
 }
 
 void GLES1Renderer::setAttributesEnabled(Context *context, State *glState, AttributesMask mask)

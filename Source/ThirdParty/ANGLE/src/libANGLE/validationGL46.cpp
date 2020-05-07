@@ -11,7 +11,7 @@
 namespace gl
 {
 
-bool ValidateMultiDrawArraysIndirectCount(const Context *context,
+bool ValidateMultiDrawArraysIndirectCount(Context *context,
                                           GLenum mode,
                                           const void *indirect,
                                           GLintptr drawcount,
@@ -21,7 +21,7 @@ bool ValidateMultiDrawArraysIndirectCount(const Context *context,
     return true;
 }
 
-bool ValidateMultiDrawElementsIndirectCount(const Context *context,
+bool ValidateMultiDrawElementsIndirectCount(Context *context,
                                             GLenum mode,
                                             GLenum type,
                                             const void *indirect,
@@ -32,15 +32,12 @@ bool ValidateMultiDrawElementsIndirectCount(const Context *context,
     return true;
 }
 
-bool ValidatePolygonOffsetClamp(const Context *context,
-                                GLfloat factor,
-                                GLfloat units,
-                                GLfloat clamp)
+bool ValidatePolygonOffsetClamp(Context *context, GLfloat factor, GLfloat units, GLfloat clamp)
 {
     return true;
 }
 
-bool ValidateSpecializeShader(const Context *context,
+bool ValidateSpecializeShader(Context *context,
                               GLuint shader,
                               const GLchar *pEntryPoint,
                               GLuint numSpecializationConstants,

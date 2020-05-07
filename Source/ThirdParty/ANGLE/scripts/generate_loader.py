@@ -190,8 +190,6 @@ def main():
     # Handle inputs/outputs for run_code_generation.py's auto_script
     if len(sys.argv) > 1:
         inputs = [
-            'gl.xml',
-            'gl_angle_ext.xml',
             'egl.xml',
             'egl_angle_ext.xml',
             'registry_xml.py',

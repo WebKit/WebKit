@@ -16,7 +16,6 @@ class TIntermTyped;
 bool ValidateGlobalInitializer(TIntermTyped *initializer,
                                int shaderVersion,
                                bool isWebGL,
-                               bool hasExtNonConstGlobalInitializers,
                                bool *warning);
 
 }  // namespace sh

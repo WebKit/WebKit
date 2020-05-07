@@ -12,7 +12,7 @@
 
 #include "libANGLE/renderer/EGLSyncImpl.h"
 #include "libANGLE/renderer/SyncImpl.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
+#include "libANGLE/renderer/vulkan/CommandGraph.h"
 
 namespace egl
 {
@@ -39,7 +39,7 @@ class SyncHelper
                              bool flushCommands,
                              uint64_t timeout,
                              VkResult *outResult);
-    angle::Result serverWait(ContextVk *contextVk);
+    void serverWait(ContextVk *contextVk);
     angle::Result getStatus(Context *context, bool *signaled);
 
   private:

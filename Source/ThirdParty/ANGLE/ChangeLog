@@ -1,3 +1,11 @@
+2020-05-07  Dean Jackson  <dino@apple.com>
+
+        Update ANGLE to 2020-03-27
+        https://bugs.webkit.org/show_bug.cgi?id=209689
+
+        Reverting r259589. It caused
+        https://bugs.webkit.org/show_bug.cgi?id=210992
+
 2020-05-05  Saam Barati  <sbarati@apple.com>
 
         Unreviewed, reverting r261176.

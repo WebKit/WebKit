@@ -17,22 +17,22 @@ namespace gl
 {
 class Context;
 
-bool ValidateMultiDrawElementsBaseVertex(const Context *context,
+bool ValidateMultiDrawElementsBaseVertex(Context *context,
                                          PrimitiveMode modePacked,
                                          const GLsizei *count,
                                          DrawElementsType typePacked,
                                          const void *const *indices,
                                          GLsizei drawcount,
                                          const GLint *basevertex);
-bool ValidateProvokingVertex(const Context *context, ProvokingVertexConvention modePacked);
-bool ValidateTexImage2DMultisample(const Context *context,
+bool ValidateProvokingVertex(Context *context, ProvokingVertexConvention modePacked);
+bool ValidateTexImage2DMultisample(Context *context,
                                    GLenum target,
                                    GLsizei samples,
                                    GLenum internalformat,
                                    GLsizei width,
                                    GLsizei height,
                                    GLboolean fixedsamplelocations);
-bool ValidateTexImage3DMultisample(const Context *context,
+bool ValidateTexImage3DMultisample(Context *context,
                                    GLenum target,
                                    GLsizei samples,
                                    GLenum internalformat,

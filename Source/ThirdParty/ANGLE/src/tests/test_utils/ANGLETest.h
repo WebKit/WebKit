@@ -183,8 +183,6 @@ constexpr std::array<GLenum, 6> kCubeFaces = {
      GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
      GL_TEXTURE_CUBE_MAP_NEGATIVE_Z}};
 
-void LoadEntryPointsWithUtilLoader();
-
 }  // namespace angle
 
 #define EXPECT_PIXEL_EQ(x, y, r, g, b, a) \
@@ -476,7 +474,7 @@ class ANGLETestBase
     bool isVulkanSwiftshaderRenderer() const
     {
         return mCurrentParams->getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
-               mCurrentParams->isSwiftshader();
+               mCurrentParams->getDeviceType() == EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
     }
 
     bool platformSupportsMultithreading() const;

@@ -70,37 +70,22 @@ class GLES1Renderer final : angle::NonCopyable
                               ShaderProgramID *programOut);
     angle::Result initializeRendererProgram(Context *context, State *glState);
 
-    void setUniform1i(Context *context,
-                      Program *programObject,
-                      UniformLocation location,
-                      GLint value);
+    void setUniform1i(Context *context, Program *programObject, GLint loc, GLint value);
     void setUniform1iv(Context *context,
                        Program *programObject,
-                       UniformLocation location,
+                       GLint loc,
                        GLint count,
                        const GLint *value);
     void setUniformMatrix4fv(Program *programObject,
-                             UniformLocation location,
+                             GLint loc,
                              GLint count,
                              GLboolean transpose,
                              const GLfloat *value);
-    void setUniform4fv(Program *programObject,
-                       UniformLocation location,
-                       GLint count,
-                       const GLfloat *value);
-    void setUniform3fv(Program *programObject,
-                       UniformLocation location,
-                       GLint count,
-                       const GLfloat *value);
-    void setUniform2fv(Program *programObject,
-                       UniformLocation location,
-                       GLint count,
-                       const GLfloat *value);
-    void setUniform1f(Program *programObject, UniformLocation location, GLfloat value);
-    void setUniform1fv(Program *programObject,
-                       UniformLocation location,
-                       GLint count,
-                       const GLfloat *value);
+    void setUniform4fv(Program *programObject, GLint loc, GLint count, const GLfloat *value);
+    void setUniform3fv(Program *programObject, GLint loc, GLint count, const GLfloat *value);
+    void setUniform2fv(Program *programObject, GLint loc, GLint count, const GLfloat *value);
+    void setUniform1f(Program *programObject, GLint loc, GLfloat value);
+    void setUniform1fv(Program *programObject, GLint loc, GLint count, const GLfloat *value);
 
     void setAttributesEnabled(Context *context, State *glState, AttributesMask mask);
 
@@ -120,97 +105,97 @@ class GLES1Renderer final : angle::NonCopyable
     {
         ShaderProgramID program;
 
-        UniformLocation projMatrixLoc;
-        UniformLocation modelviewMatrixLoc;
-        UniformLocation textureMatrixLoc;
-        UniformLocation modelviewInvTrLoc;
+        GLint projMatrixLoc;
+        GLint modelviewMatrixLoc;
+        GLint textureMatrixLoc;
+        GLint modelviewInvTrLoc;
 
         // Texturing
-        UniformLocation enableTexture2DLoc;
-        UniformLocation enableTextureCubeMapLoc;
-        std::array<UniformLocation, kTexUnitCount> tex2DSamplerLocs;
-        std::array<UniformLocation, kTexUnitCount> texCubeSamplerLocs;
+        GLint enableTexture2DLoc;
+        GLint enableTextureCubeMapLoc;
+        std::array<GLint, kTexUnitCount> tex2DSamplerLocs;
+        std::array<GLint, kTexUnitCount> texCubeSamplerLocs;
 
-        UniformLocation textureFormatLoc;
+        GLint textureFormatLoc;
 
-        UniformLocation textureEnvModeLoc;
-        UniformLocation combineRgbLoc;
-        UniformLocation combineAlphaLoc;
-        UniformLocation src0rgbLoc;
-        UniformLocation src0alphaLoc;
-        UniformLocation src1rgbLoc;
-        UniformLocation src1alphaLoc;
-        UniformLocation src2rgbLoc;
-        UniformLocation src2alphaLoc;
-        UniformLocation op0rgbLoc;
-        UniformLocation op0alphaLoc;
-        UniformLocation op1rgbLoc;
-        UniformLocation op1alphaLoc;
-        UniformLocation op2rgbLoc;
-        UniformLocation op2alphaLoc;
-        UniformLocation textureEnvColorLoc;
-        UniformLocation rgbScaleLoc;
-        UniformLocation alphaScaleLoc;
-        UniformLocation pointSpriteCoordReplaceLoc;
+        GLint textureEnvModeLoc;
+        GLint combineRgbLoc;
+        GLint combineAlphaLoc;
+        GLint src0rgbLoc;
+        GLint src0alphaLoc;
+        GLint src1rgbLoc;
+        GLint src1alphaLoc;
+        GLint src2rgbLoc;
+        GLint src2alphaLoc;
+        GLint op0rgbLoc;
+        GLint op0alphaLoc;
+        GLint op1rgbLoc;
+        GLint op1alphaLoc;
+        GLint op2rgbLoc;
+        GLint op2alphaLoc;
+        GLint textureEnvColorLoc;
+        GLint rgbScaleLoc;
+        GLint alphaScaleLoc;
+        GLint pointSpriteCoordReplaceLoc;
 
         // Alpha test
-        UniformLocation enableAlphaTestLoc;
-        UniformLocation alphaFuncLoc;
-        UniformLocation alphaTestRefLoc;
+        GLint enableAlphaTestLoc;
+        GLint alphaFuncLoc;
+        GLint alphaTestRefLoc;
 
         // Shading, materials, and lighting
-        UniformLocation shadeModelFlatLoc;
-        UniformLocation enableLightingLoc;
-        UniformLocation enableRescaleNormalLoc;
-        UniformLocation enableNormalizeLoc;
-        UniformLocation enableColorMaterialLoc;
+        GLint shadeModelFlatLoc;
+        GLint enableLightingLoc;
+        GLint enableRescaleNormalLoc;
+        GLint enableNormalizeLoc;
+        GLint enableColorMaterialLoc;
 
-        UniformLocation materialAmbientLoc;
-        UniformLocation materialDiffuseLoc;
-        UniformLocation materialSpecularLoc;
-        UniformLocation materialEmissiveLoc;
-        UniformLocation materialSpecularExponentLoc;
+        GLint materialAmbientLoc;
+        GLint materialDiffuseLoc;
+        GLint materialSpecularLoc;
+        GLint materialEmissiveLoc;
+        GLint materialSpecularExponentLoc;
 
-        UniformLocation lightModelSceneAmbientLoc;
-        UniformLocation lightModelTwoSidedLoc;
+        GLint lightModelSceneAmbientLoc;
+        GLint lightModelTwoSidedLoc;
 
-        UniformLocation lightEnablesLoc;
-        UniformLocation lightAmbientsLoc;
-        UniformLocation lightDiffusesLoc;
-        UniformLocation lightSpecularsLoc;
-        UniformLocation lightPositionsLoc;
-        UniformLocation lightDirectionsLoc;
-        UniformLocation lightSpotlightExponentsLoc;
-        UniformLocation lightSpotlightCutoffAnglesLoc;
-        UniformLocation lightAttenuationConstsLoc;
-        UniformLocation lightAttenuationLinearsLoc;
-        UniformLocation lightAttenuationQuadraticsLoc;
+        GLint lightEnablesLoc;
+        GLint lightAmbientsLoc;
+        GLint lightDiffusesLoc;
+        GLint lightSpecularsLoc;
+        GLint lightPositionsLoc;
+        GLint lightDirectionsLoc;
+        GLint lightSpotlightExponentsLoc;
+        GLint lightSpotlightCutoffAnglesLoc;
+        GLint lightAttenuationConstsLoc;
+        GLint lightAttenuationLinearsLoc;
+        GLint lightAttenuationQuadraticsLoc;
 
         // Fog
-        UniformLocation fogEnableLoc;
-        UniformLocation fogModeLoc;
-        UniformLocation fogDensityLoc;
-        UniformLocation fogStartLoc;
-        UniformLocation fogEndLoc;
-        UniformLocation fogColorLoc;
+        GLint fogEnableLoc;
+        GLint fogModeLoc;
+        GLint fogDensityLoc;
+        GLint fogStartLoc;
+        GLint fogEndLoc;
+        GLint fogColorLoc;
 
         // Clip planes
-        UniformLocation enableClipPlanesLoc;
-        UniformLocation clipPlaneEnablesLoc;
-        UniformLocation clipPlanesLoc;
+        GLint enableClipPlanesLoc;
+        GLint clipPlaneEnablesLoc;
+        GLint clipPlanesLoc;
 
         // Point rasterization
-        UniformLocation pointRasterizationLoc;
-        UniformLocation pointSizeMinLoc;
-        UniformLocation pointSizeMaxLoc;
-        UniformLocation pointDistanceAttenuationLoc;
-        UniformLocation pointSpriteEnabledLoc;
+        GLint pointRasterizationLoc;
+        GLint pointSizeMinLoc;
+        GLint pointSizeMaxLoc;
+        GLint pointDistanceAttenuationLoc;
+        GLint pointSpriteEnabledLoc;
 
         // Draw texture
-        UniformLocation enableDrawTextureLoc;
-        UniformLocation drawTextureCoordsLoc;
-        UniformLocation drawTextureDimsLoc;
-        UniformLocation drawTextureNormalizedCropRectLoc;
+        GLint enableDrawTextureLoc;
+        GLint drawTextureCoordsLoc;
+        GLint drawTextureDimsLoc;
+        GLint drawTextureNormalizedCropRectLoc;
     };
 
     struct GLES1UniformBuffers

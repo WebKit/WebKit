@@ -5,20 +5,10 @@
 import("../gni/angle.gni")
 
 _util_sources = [
-  "EGLPlatformParameters.h",
-  "EGLWindow.cpp",
-  "EGLWindow.h",
-  "Event.h",
-  "Matrix.cpp",
-  "Matrix.h",
-  "OSPixmap.h",
-  "OSWindow.cpp",
-  "OSWindow.h",
   "com_utils.h",
-  "frame_capture_utils.h",
+  "keyboard.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
-  "keyboard.h",
   "mouse.h",
   "random_utils.cpp",
   "random_utils.h",
@@ -26,6 +16,15 @@ _util_sources = [
   "shader_utils.h",
   "util_export.h",
   "util_gl.h",
+  "Event.h",
+  "EGLPlatformParameters.h",
+  "EGLWindow.cpp",
+  "EGLWindow.h",
+  "Matrix.cpp",
+  "Matrix.h",
+  "OSPixmap.h",
+  "OSWindow.cpp",
+  "OSWindow.h",
 ]
 
 if (is_win) {
@@ -64,10 +63,10 @@ if (is_fuchsia) {
 
 if (is_mac) {
   _util_sources += [
-    "osx/OSXPixmap.h",
     "osx/OSXPixmap.mm",
-    "osx/OSXWindow.h",
+    "osx/OSXPixmap.h",
     "osx/OSXWindow.mm",
+    "osx/OSXWindow.h",
   ]
 }
 
@@ -86,7 +85,6 @@ config("angle_util_loader_config") {
 }
 
 config("angle_util_loader_headers_config") {
-  # Force users to include "util/header.h" instead of just "header.h".
   include_dirs = [ ".." ]
 }
 
@@ -102,7 +100,9 @@ angle_source_set("angle_util_loader_headers") {
     sources += [ "windows/wgl_loader_autogen.h" ]
   }
 
-  public_deps = [ "$angle_root:includes" ]
+  public_deps = [
+    "$angle_root:includes",
+  ]
 
   public_configs = [ ":angle_util_loader_headers_config" ]
 }
@@ -120,7 +120,9 @@ angle_source_set("angle_util_loader") {
     sources += [ "windows/wgl_loader_autogen.cpp" ]
   }
 
-  deps = [ ":angle_util_loader_headers" ]
+  deps = [
+    ":angle_util_loader_headers",
+  ]
 
   public_configs += [
     "$angle_root:no_gl_prototypes",
@@ -131,8 +133,7 @@ angle_source_set("angle_util_loader") {
 }
 
 config("angle_util_config") {
-  # Force users to include "util/header.h" instead of just "header.h".
-  include_dirs = [ ".." ]
+  include_dirs = [ "." ]
   if (is_linux && angle_use_x11) {
     libs = [ "X11" ]
   }
@@ -156,11 +157,12 @@ foreach(is_shared_library,
   target(library_type, library_name) {
     testonly = true
     sources = _util_sources
-    deps = [ "$angle_root:angle_common" ]
-    public_deps = [
+    deps = [
       ":angle_test_utils",
       ":angle_util_loader_headers",
+      "$angle_root:angle_common",
     ]
+    public_deps = []
     libs = []
 
     if (is_linux) {
@@ -193,14 +195,14 @@ foreach(is_shared_library,
     if (is_fuchsia) {
       public_deps += [
         "$angle_root/src/common/fuchsia_egl",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.images",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.policy",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.scenic",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.views",
-        "//third_party/fuchsia-sdk/sdk/pkg/async-loop-cpp",
-        "//third_party/fuchsia-sdk/sdk/pkg/async-loop-default",
-        "//third_party/fuchsia-sdk/sdk/pkg/fdio",
-        "//third_party/fuchsia-sdk/sdk/pkg/scenic_cpp",
+        "//third_party/fuchsia-sdk/sdk:async-loop-cpp",
+        "//third_party/fuchsia-sdk/sdk:async-loop-default",
+        "//third_party/fuchsia-sdk/sdk:fdio",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-images",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-policy",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-scenic",
+        "//third_party/fuchsia-sdk/sdk:fuchsia-ui-views",
+        "//third_party/fuchsia-sdk/sdk:scenic_cpp",
       ]
     }
 
@@ -255,7 +257,9 @@ config("angle_test_util_config") {
 
 angle_source_set("angle_test_utils") {
   public_configs = [ ":angle_test_util_config" ]
-  deps = [ "$angle_root:angle_common" ]
+  deps = [
+    "$angle_root:angle_common",
+  ]
   sources = [
     "Timer.cpp",
     "Timer.h",

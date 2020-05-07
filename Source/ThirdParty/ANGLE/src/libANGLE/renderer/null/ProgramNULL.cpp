@@ -136,4 +136,10 @@ void ProgramNULL::getUniformuiv(const gl::Context *context, GLint location, GLui
     // TODO(jmadill): Write some values.
 }
 
+void ProgramNULL::setPathFragmentInputGen(const std::string &inputName,
+                                          GLenum genMode,
+                                          GLint components,
+                                          const GLfloat *coeffs)
+{}
+
 }  // namespace rx

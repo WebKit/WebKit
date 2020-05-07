@@ -9,7 +9,6 @@
 
 #include "libANGLE/Overlay.h"
 
-#include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Overlay_font_autogen.h"
@@ -26,7 +25,7 @@ constexpr std::pair<const char *, WidgetId> kWidgetNames[] = {
     {"FPS", WidgetId::FPS},
     {"VulkanLastValidationMessage", WidgetId::VulkanLastValidationMessage},
     {"VulkanValidationMessageCount", WidgetId::VulkanValidationMessageCount},
-    {"VulkanRenderPassCount", WidgetId::VulkanRenderPassCount},
+    {"VulkanCommandGraphSize", WidgetId::VulkanCommandGraphSize},
     {"VulkanSecondaryCommandBufferPoolWaste", WidgetId::VulkanSecondaryCommandBufferPoolWaste},
 };
 }  // namespace
@@ -61,13 +60,18 @@ void Overlay::destroy(const gl::Context *context)
 
 void Overlay::enableOverlayWidgetsFromEnvironment()
 {
-    std::vector<std::string> enabledWidgets =
-        angle::GetStringsFromEnvironmentVar("ANGLE_OVERLAY", ":");
+    std::istringstream angleOverlayWidgets(angle::GetEnvironmentVar("ANGLE_OVERLAY"));
+
+    std::set<std::string> enabledWidgets;
+    std::string widget;
+    while (getline(angleOverlayWidgets, widget, ':'))
+    {
+        enabledWidgets.insert(widget);
+    }
 
     for (const std::pair<const char *, WidgetId> &widgetName : kWidgetNames)
     {
-        if (std::find(enabledWidgets.begin(), enabledWidgets.end(), widgetName.first) !=
-            enabledWidgets.end())
+        if (enabledWidgets.count(widgetName.first) > 0)
         {
             mState.mOverlayWidgets[widgetName.second]->enabled = true;
             ++mState.mEnabledWidgetCount;
