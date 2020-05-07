@@ -39,6 +39,8 @@
 #include "RenderBox.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
+#include "RenderTableCell.h"
+#include "RenderTableSection.h"
 #include "RenderView.h"
 #include <wtf/text/TextStream.h>
 
@@ -270,7 +272,9 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
-    if (!areEssentiallyEqual(renderer.contentBoxRect(), displayBox.contentBox())) {
+    // FIXME: Figure out why trunk/rendering comes back with odd values for <tbody> and <td> content box.
+    auto shouldCheckContentBox = !is<RenderTableCell>(renderer) && !is<RenderTableSection>(renderer);
+    if (shouldCheckContentBox && !areEssentiallyEqual(renderer.contentBoxRect(), displayBox.contentBox())) {
         outputRect("contentBox", renderer.contentBoxRect(), displayBox.contentBox());
         return true;
     }

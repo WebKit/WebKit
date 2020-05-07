@@ -60,7 +60,7 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState&, const Const
     // 3. Finalize rows.
     setUsedGeometryForRows(availableHorizontalSpace);
     // 4. Finalize sections.
-    setUsedGeometryForSections(availableHorizontalSpace);
+    setUsedGeometryForSections(constraints);
 }
 
 void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizontalSpace)
@@ -132,14 +132,14 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
     }
 }
 
-void TableFormattingContext::setUsedGeometryForSections(LayoutUnit availableHorizontalSpace)
+void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFlowContent& constraints)
 {
     auto& grid = formattingState().tableGrid();
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
-
+    auto logicalTop = constraints.vertical.logicalTop;
     for (auto& section : childrenOfType<ContainerBox>(root())) {
         auto& sectionDisplayBox = formattingState().displayBox(section);
-        computeBorderAndPadding(section, HorizontalConstraints { { }, availableHorizontalSpace });
+        computeBorderAndPadding(section, HorizontalConstraints { { }, constraints.horizontal.logicalWidth });
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
         sectionDisplayBox.setHorizontalComputedMargin({ });
@@ -147,8 +147,11 @@ void TableFormattingContext::setUsedGeometryForSections(LayoutUnit availableHori
 
         sectionDisplayBox.setContentBoxWidth(sectionWidth);
         sectionDisplayBox.setContentBoxHeight(grid.rows().list().last().logicalBottom() + grid.verticalSpacing());
-        // FIXME: Position table sections properly.
-        sectionDisplayBox.setTopLeft({ });
+
+        sectionDisplayBox.setLeft(constraints.horizontal.logicalLeft);
+        sectionDisplayBox.setTop(logicalTop);
+
+        logicalTop += sectionDisplayBox.height();
     }
 }
 

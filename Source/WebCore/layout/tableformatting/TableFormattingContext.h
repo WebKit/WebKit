@@ -64,7 +64,7 @@ private:
     void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight = WTF::nullopt);
     void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
-    void setUsedGeometryForSections(LayoutUnit availableHorizontalSpace);
+    void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 
     void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
