@@ -2358,11 +2358,10 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
     if (context.paintingDisabled() || !style.boxShadow())
         return;
 
-    RoundedRect border = (shadowStyle == ShadowStyle::Inset) ? style.getRoundedInnerBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge)
+    RoundedRect borderRect = (shadowStyle == ShadowStyle::Inset) ? style.getRoundedInnerBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge)
         : style.getRoundedBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool hasBorderRadius = style.hasBorderRadius();
-    bool isHorizontal = style.isHorizontalWritingMode();
     float deviceScaleFactor = document().deviceScaleFactor();
 
     bool hasOpaqueBackground = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isOpaque();
@@ -2381,15 +2380,15 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
         Color shadowColor = style.colorByApplyingColorFilter(shadow->color());
 
         if (shadow->style() == ShadowStyle::Normal) {
-            RoundedRect fillRect = border;
+            auto fillRect = borderRect;
             fillRect.inflate(shadowSpread);
             if (fillRect.isEmpty())
                 continue;
 
-            LayoutRect shadowRect = border.rect();
+            auto shadowRect = borderRect.rect();
             shadowRect.inflate(shadowPaintingExtent + shadowSpread);
             shadowRect.move(shadowOffset);
-            FloatRect pixelSnappedShadowRect = snapRectToDevicePixels(shadowRect, deviceScaleFactor);
+            auto pixelSnappedShadowRect = snapRectToDevicePixels(shadowRect, deviceScaleFactor);
 
             GraphicsContextStateSaver stateSaver(context);
             context.clip(pixelSnappedShadowRect);
@@ -2401,8 +2400,8 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             shadowOffset -= extraOffset;
             fillRect.move(extraOffset);
 
-            FloatRoundedRect pixelSnappedRectToClipOut = border.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            FloatRoundedRect pixelSnappedFillRect = fillRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            auto pixelSnappedRectToClipOut = borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            auto pixelSnappedFillRect = fillRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
             
             LayoutPoint shadowRectOrigin = fillRect.rect().location() + shadowOffset;
             FloatPoint snappedShadowOrigin = FloatPoint(roundToDevicePixel(shadowRectOrigin.x(), deviceScaleFactor), roundToDevicePixel(shadowRectOrigin.y(), deviceScaleFactor));
@@ -2423,7 +2422,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 if (!pixelSnappedRectToClipOut.isEmpty())
                     context.clipOutRoundedRect(pixelSnappedRectToClipOut);
 
-                RoundedRect influenceRect(LayoutRect(pixelSnappedShadowRect), border.radii());
+                RoundedRect influenceRect(LayoutRect(pixelSnappedShadowRect), borderRect.radii());
                 influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
 
                 if (allCornersClippedOut(influenceRect, info.rect))
@@ -2454,11 +2453,40 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             }
         } else {
             // Inset shadow.
-            LayoutRect holeRect = border.rect();
+            auto holeRect = borderRect.rect();
             holeRect.inflate(-shadowSpread);
-            FloatRect pixelSnappedHoleRect = snapRectToDevicePixels(holeRect, deviceScaleFactor);
-            FloatRoundedRect pixelSnappedBorderRect = border.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
 
+            bool isHorizontal = style.isHorizontalWritingMode();
+            if (!includeLogicalLeftEdge) {
+                if (isHorizontal)
+                    holeRect.shiftXEdgeBy(-(std::max<LayoutUnit>(shadowOffset.width(), 0) + shadowPaintingExtent + shadowSpread));
+                else
+                    holeRect.shiftYEdgeBy(-(std::max<LayoutUnit>(shadowOffset.height(), 0) + shadowPaintingExtent + shadowSpread));
+            }
+
+            if (!includeLogicalRightEdge) {
+                if (isHorizontal)
+                    holeRect.setWidth(holeRect.width() - std::min<LayoutUnit>(shadowOffset.width(), 0) + shadowPaintingExtent + shadowSpread);
+                else
+                    holeRect.setHeight(holeRect.height() - std::min<LayoutUnit>(shadowOffset.height(), 0) + shadowPaintingExtent + shadowSpread);
+            }
+
+            auto roundedHoleRect = RoundedRect { holeRect, borderRect.radii() };
+            if (shadowSpread && roundedHoleRect.isRounded()) {
+                auto rounedRectCorrectingForSpread = [&]() {
+                    bool horizontal = style.isHorizontalWritingMode();
+                    LayoutUnit leftWidth { (!horizontal || includeLogicalLeftEdge) ? style.borderLeftWidth() + shadowSpread : 0 };
+                    LayoutUnit rightWidth { (!horizontal || includeLogicalRightEdge) ? style.borderRightWidth() + shadowSpread : 0 };
+                    LayoutUnit topWidth { (horizontal || includeLogicalLeftEdge) ? style.borderTopWidth() + shadowSpread : 0 };
+                    LayoutUnit bottomWidth { (horizontal || includeLogicalRightEdge) ? style.borderBottomWidth() + shadowSpread : 0 };
+
+                    return style.getRoundedInnerBorderFor(paintRect, topWidth, bottomWidth, leftWidth, rightWidth, includeLogicalLeftEdge, includeLogicalRightEdge);
+                }();
+                roundedHoleRect.setRadii(rounedRectCorrectingForSpread.radii());
+            }
+
+            auto pixelSnappedHoleRect = roundedHoleRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            auto pixelSnappedBorderRect = borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
             if (pixelSnappedHoleRect.isEmpty()) {
                 if (hasBorderRadius)
                     context.fillRoundedRect(pixelSnappedBorderRect, shadowColor);
@@ -2467,39 +2495,14 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 continue;
             }
 
-            if (!includeLogicalLeftEdge) {
-                if (isHorizontal) {
-                    holeRect.move(-std::max<LayoutUnit>(shadowOffset.width(), 0) - shadowPaintingExtent, 0);
-                    holeRect.setWidth(holeRect.width() + std::max<LayoutUnit>(shadowOffset.width(), 0) + shadowPaintingExtent);
-                } else {
-                    holeRect.move(0, -std::max<LayoutUnit>(shadowOffset.height(), 0) - shadowPaintingExtent);
-                    holeRect.setHeight(holeRect.height() + std::max<LayoutUnit>(shadowOffset.height(), 0) + shadowPaintingExtent);
-                }
-            }
-            
-            if (!includeLogicalRightEdge) {
-                if (isHorizontal)
-                    holeRect.setWidth(holeRect.width() - std::min<LayoutUnit>(shadowOffset.width(), 0) + shadowPaintingExtent);
-                else
-                    holeRect.setHeight(holeRect.height() - std::min<LayoutUnit>(shadowOffset.height(), 0) + shadowPaintingExtent);
-            }
-
-            if (!includeLogicalLeftEdge || !includeLogicalRightEdge)
-                pixelSnappedHoleRect = snapRectToDevicePixels(holeRect, deviceScaleFactor);
-
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
-
-            LayoutRect shadowCastingRect = areaCastingShadowInHole(border.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
-            RoundedRect roundedHoleRect(holeRect, border.radii());
-
-            FloatRect pixelSnappedOuterRect = snapRectToDevicePixels(shadowCastingRect, deviceScaleFactor);
-            FloatRoundedRect pixelSnappedRoundedHole = roundedHoleRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            auto shadowCastingRect = areaCastingShadowInHole(borderRect.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
+            auto pixelSnappedOuterRect = snapRectToDevicePixels(shadowCastingRect, deviceScaleFactor);
 
             GraphicsContextStateSaver stateSaver(context);
-            if (hasBorderRadius) {
+            if (hasBorderRadius)
                 context.clipRoundedRect(pixelSnappedBorderRect);
-                pixelSnappedRoundedHole.shrinkRadii(shadowSpread);
-            } else
+            else
                 context.clip(pixelSnappedBorderRect.rect());
 
             LayoutUnit xOffset = 2 * paintRect.width() + std::max<LayoutUnit>(0, shadowOffset.width()) + shadowPaintingExtent + 2 * shadowSpread + LayoutUnit(1);
@@ -2513,7 +2516,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             else
                 context.setShadow(shadowOffset, shadowRadius, shadowColor);
 
-            context.fillRectWithRoundedHole(pixelSnappedOuterRect, pixelSnappedRoundedHole, fillColor);
+            context.fillRectWithRoundedHole(pixelSnappedOuterRect, pixelSnappedHoleRect, fillColor);
         }
     }
 }

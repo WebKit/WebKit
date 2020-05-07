@@ -129,21 +129,36 @@ public:
         setX(edge);
         setWidth(std::max<LayoutUnit>(0, width() - delta));
     }
+
     void shiftMaxXEdgeTo(LayoutUnit edge)
     {
         LayoutUnit delta = edge - maxX();
         setWidth(std::max<LayoutUnit>(0, width() + delta));
     }
+
     void shiftYEdgeTo(LayoutUnit edge)
     {
         LayoutUnit delta = edge - y();
         setY(edge);
         setHeight(std::max<LayoutUnit>(0, height() - delta));
     }
+
     void shiftMaxYEdgeTo(LayoutUnit edge)
     {
         LayoutUnit delta = edge - maxY();
         setHeight(std::max<LayoutUnit>(0, height() + delta));
+    }
+
+    void shiftXEdgeBy(LayoutUnit delta)
+    {
+        move(delta, 0);
+        setWidth(std::max<LayoutUnit>(0, width() - delta));
+    }
+
+    void shiftYEdgeBy(LayoutUnit delta)
+    {
+        move(0, delta);
+        setHeight(std::max<LayoutUnit>(0, height() - delta));
     }
 
     template<typename T> void shiftXEdgeTo(T edge) { shiftXEdgeTo(LayoutUnit(edge)); }

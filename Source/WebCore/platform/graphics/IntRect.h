@@ -123,21 +123,36 @@ public:
         setX(edge);
         setWidth(std::max(0, width() - delta));
     }
+
     void shiftMaxXEdgeTo(int edge)
     {
         int delta = edge - maxX();
         setWidth(std::max(0, width() + delta));
     }
+
     void shiftYEdgeTo(int edge)
     {
         int delta = edge - y();
         setY(edge);
         setHeight(std::max(0, height() - delta));
     }
+
     void shiftMaxYEdgeTo(int edge)
     {
         int delta = edge - maxY();
         setHeight(std::max(0, height() + delta));
+    }
+
+    void shiftXEdgeBy(int delta)
+    {
+        move(delta, 0);
+        setWidth(std::max(0, width() - delta));
+    }
+
+    void shiftYEdgeBy(int delta)
+    {
+        move(0, delta);
+        setHeight(std::max(0, height() - delta));
     }
 
     IntPoint minXMinYCorner() const { return m_location; } // typically topLeft
