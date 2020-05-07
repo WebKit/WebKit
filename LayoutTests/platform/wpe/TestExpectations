@@ -1398,15 +1398,8 @@ webkit.org/b/208753 http/tests/adClickAttribution/second-attribution-converted-w
 webkit.org/b/208753 http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html [ Crash Pass ]
 webkit.org/b/208753 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Crash Pass ]
 
-webkit.org/b/202736 http/tests/appcache/document-cookie-http-only.php [ Failure Pass ]
-webkit.org/b/202736 http/tests/appcache/history-test.html [ Failure Pass ]
-webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure Timeout Pass ]
-webkit.org/b/202736 http/tests/cache-storage/cache-clearing-all.https.html [ Failure Pass ]
-webkit.org/b/202736 http/tests/cache-storage/cache-clearing-origin.https.html [ Failure Pass ]
-webkit.org/b/202736 http/tests/cache-storage/cache-origins.https.html [ Failure Pass ]
-webkit.org/b/202736 http/tests/cache-storage/cache-persistency.https.html [ Failure Pass ]
-webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Failure Timeout Pass ]
-webkit.org/b/202736 storage/indexeddb/modern/new-database-after-user-delete.html [ Failure Pass ]
+webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
+webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]

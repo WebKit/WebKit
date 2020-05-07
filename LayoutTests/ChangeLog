@@ -1,3 +1,13 @@
+2020-05-07  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update test expectations after r259705
+        https://bugs.webkit.org/show_bug.cgi?id=211552
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, reverting r260737.
