@@ -460,7 +460,9 @@ void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* message
 
 void WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebProcess::SetShouldBlockThirdPartyCookiesForTesting(thirdPartyCookieBlockingMode), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebProcess::SetShouldBlockThirdPartyCookiesForTesting(thirdPartyCookieBlockingMode), [activity = throttler().backgroundActivity("WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting"_s), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
 }
 #endif
 

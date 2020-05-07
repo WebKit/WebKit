@@ -1,3 +1,58 @@
+2020-05-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261140. rdar://problem/62993055
+
+    [iOS] Make sure TestController::statisticsResetToConsistentState() does not hang due to process suspension
+    https://bugs.webkit.org/show_bug.cgi?id=211421
+    
+    Reviewed by Maciej Stachowiak.
+    
+    We have evidence of hangs in TestController::statisticsResetToConsistentState() on iOS and we suspect it
+    is due to process suspension. To address the issue, this patch updates the IPCs being sent as a result of
+    a call to statisticsResetToConsistentState() to take a background assertion while waiting for the IPC
+    response.
+    
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::setUseITPDatabase):
+    (WebKit::NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources):
+    (WebKit::NetworkProcessProxy::resetParametersToDefaultValues):
+    (WebKit::NetworkProcessProxy::scheduleClearInMemoryAndPersistent):
+    (WebKit::NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting):
+    (WebKit::NetworkProcessProxy::setShouldDowngradeReferrerForTesting):
+    (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+    (WebKit::NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting):
+    (WebKit::NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting):
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261140 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-04  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Make sure TestController::statisticsResetToConsistentState() does not hang due to process suspension
+            https://bugs.webkit.org/show_bug.cgi?id=211421
+
+            Reviewed by Maciej Stachowiak.
+
+            We have evidence of hangs in TestController::statisticsResetToConsistentState() on iOS and we suspect it
+            is due to process suspension. To address the issue, this patch updates the IPCs being sent as a result of
+            a call to statisticsResetToConsistentState() to take a background assertion while waiting for the IPC
+            response.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::setUseITPDatabase):
+            (WebKit::NetworkProcessProxy::resetCacheMaxAgeCapForPrevalentResources):
+            (WebKit::NetworkProcessProxy::resetParametersToDefaultValues):
+            (WebKit::NetworkProcessProxy::scheduleClearInMemoryAndPersistent):
+            (WebKit::NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            (WebKit::NetworkProcessProxy::setShouldDowngradeReferrerForTesting):
+            (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+            (WebKit::NetworkProcessProxy::setShouldEnbleSameSiteStrictEnforcementForTesting):
+            (WebKit::NetworkProcessProxy::setFirstPartyWebsiteDataRemovalModeForTesting):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+
 2020-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         handleWheelEventPhase() should include the relevant ScrollingNodeID
