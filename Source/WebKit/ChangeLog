@@ -1,3 +1,93 @@
+
+2020-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix webkitpy tests after r261254
+        https://bugs.webkit.org/show_bug.cgi?id=211112
+
+        test.messages.in was accidentally deleted instead of moved, and messages_unittest.py needed to be told of the new locations of results.
+        The rest is just running the generator to update results.
+
+        * Scripts/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/MessageNames.h:
+        * Scripts/testMessageReceiver.cpp:
+        (Messages::WebPage::GetPluginProcessConnection::send):
+        (Messages::WebPage::TestMultipleAttributes::send):
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * Scripts/testMessages.h:
+        (Messages::WebPage::messageReceiverName):
+        (Messages::WebPage::LoadURL::name):
+        (Messages::WebPage::LoadURL::LoadURL):
+        (Messages::WebPage::LoadURL::arguments const):
+        (Messages::WebPage::LoadSomething::name):
+        (Messages::WebPage::LoadSomething::LoadSomething):
+        (Messages::WebPage::LoadSomething::arguments const):
+        (Messages::WebPage::TouchEvent::name):
+        (Messages::WebPage::TouchEvent::TouchEvent):
+        (Messages::WebPage::TouchEvent::arguments const):
+        (Messages::WebPage::AddEvent::name):
+        (Messages::WebPage::AddEvent::AddEvent):
+        (Messages::WebPage::AddEvent::arguments const):
+        (Messages::WebPage::LoadSomethingElse::name):
+        (Messages::WebPage::LoadSomethingElse::LoadSomethingElse):
+        (Messages::WebPage::LoadSomethingElse::arguments const):
+        (Messages::WebPage::DidReceivePolicyDecision::name):
+        (Messages::WebPage::DidReceivePolicyDecision::DidReceivePolicyDecision):
+        (Messages::WebPage::DidReceivePolicyDecision::arguments const):
+        (Messages::WebPage::Close::name):
+        (Messages::WebPage::Close::arguments const):
+        (Messages::WebPage::PreferencesDidChange::name):
+        (Messages::WebPage::PreferencesDidChange::PreferencesDidChange):
+        (Messages::WebPage::PreferencesDidChange::arguments const):
+        (Messages::WebPage::SendDoubleAndFloat::name):
+        (Messages::WebPage::SendDoubleAndFloat::SendDoubleAndFloat):
+        (Messages::WebPage::SendDoubleAndFloat::arguments const):
+        (Messages::WebPage::SendInts::name):
+        (Messages::WebPage::SendInts::SendInts):
+        (Messages::WebPage::SendInts::arguments const):
+        (Messages::WebPage::CreatePlugin::name):
+        (Messages::WebPage::CreatePlugin::CreatePlugin):
+        (Messages::WebPage::CreatePlugin::arguments const):
+        (Messages::WebPage::RunJavaScriptAlert::name):
+        (Messages::WebPage::RunJavaScriptAlert::RunJavaScriptAlert):
+        (Messages::WebPage::RunJavaScriptAlert::arguments const):
+        (Messages::WebPage::GetPlugins::name):
+        (Messages::WebPage::GetPlugins::GetPlugins):
+        (Messages::WebPage::GetPlugins::arguments const):
+        (Messages::WebPage::GetPluginProcessConnection::name):
+        (Messages::WebPage::GetPluginProcessConnection::GetPluginProcessConnection):
+        (Messages::WebPage::GetPluginProcessConnection::arguments const):
+        (Messages::WebPage::TestMultipleAttributes::name):
+        (Messages::WebPage::TestMultipleAttributes::arguments const):
+        (Messages::WebPage::TestParameterAttributes::name):
+        (Messages::WebPage::TestParameterAttributes::TestParameterAttributes):
+        (Messages::WebPage::TestParameterAttributes::arguments const):
+        (Messages::WebPage::TemplateTest::name):
+        (Messages::WebPage::TemplateTest::TemplateTest):
+        (Messages::WebPage::TemplateTest::arguments const):
+        (Messages::WebPage::SetVideoLayerID::name):
+        (Messages::WebPage::SetVideoLayerID::SetVideoLayerID):
+        (Messages::WebPage::SetVideoLayerID::arguments const):
+        (Messages::WebPage::DidCreateWebProcessConnection::name):
+        (Messages::WebPage::DidCreateWebProcessConnection::DidCreateWebProcessConnection):
+        (Messages::WebPage::DidCreateWebProcessConnection::arguments const):
+        (Messages::WebPage::InterpretKeyEvent::name):
+        (Messages::WebPage::InterpretKeyEvent::InterpretKeyEvent):
+        (Messages::WebPage::InterpretKeyEvent::arguments const):
+        (Messages::WebPage::DeprecatedOperation::name):
+        (Messages::WebPage::DeprecatedOperation::DeprecatedOperation):
+        (Messages::WebPage::DeprecatedOperation::arguments const):
+        (Messages::WebPage::ExperimentalOperation::name):
+        (Messages::WebPage::ExperimentalOperation::ExperimentalOperation):
+        (Messages::WebPage::ExperimentalOperation::arguments const):
+        (Messages::None::messageReceiverName): Deleted.
+        * Scripts/testMessagesReplies.h:
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/test.messages.in: Added.
+
 2020-05-06  Megan Gardner  <megan_gardner@apple.com>
 
         Context Menus presented from the wrong location when presented from sub-frames

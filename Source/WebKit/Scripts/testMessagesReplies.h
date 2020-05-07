@@ -24,13 +24,21 @@
 
 #pragma once
 
+#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+
+#include "Connection.h"
 #include "MessageNames.h"
 #include <wtf/Forward.h>
 
 
 namespace Messages {
-namespace None {
+namespace WebPage {
 
+using GetPluginProcessConnectionDelayedReply = CompletionHandler<void(const IPC::Connection::Handle& connectionHandle)>;
 
-} // namespace None
+using TestMultipleAttributesDelayedReply = CompletionHandler<void()>;
+
+} // namespace WebPage
 } // namespace Messages
+
+#endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))

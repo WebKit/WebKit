@@ -38,22 +38,22 @@ script_directory = os.path.dirname(os.path.realpath(__file__))
 
 reset_results = False
 
-with open(os.path.join(script_directory, 'test-messages.in')) as in_file:
+with open(os.path.join(script_directory, 'test.messages.in')) as in_file:
     _messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-legacy-messages.in')) as in_file:
+with open(os.path.join(script_directory, 'test-legacy.messages.in')) as in_file:
     _legacy_messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-superclass-messages.in')) as in_file:
+with open(os.path.join(script_directory, 'test-superclass.messages.in')) as in_file:
     _superclass_messages_file_contents = in_file.read()
 
-_expected_receiver_header_file_name = 'Messages-expected.h'
-_expected_legacy_receiver_header_file_name = 'LegacyMessages-expected.h'
-_expected_superclass_receiver_header_file_name = 'MessagesSuperclass-expected.h'
+_expected_receiver_header_file_name = '../testMessages.h'
+_expected_legacy_receiver_header_file_name = '../test-legacyMessages.h'
+_expected_superclass_receiver_header_file_name = '../test-superclassMessages.h'
 
-_expected_receiver_implementation_file_name = 'MessageReceiver-expected.cpp'
-_expected_legacy_receiver_implementation_file_name = 'LegacyMessageReceiver-expected.cpp'
-_expected_superclass_receiver_implementation_file_name = 'MessageReceiverSuperclass-expected.cpp'
+_expected_receiver_implementation_file_name = '../testMessageReceiver.cpp'
+_expected_legacy_receiver_implementation_file_name = '../test-legacyMessageReceiver.cpp'
+_expected_superclass_receiver_implementation_file_name = '../test-superclassMessageReceiver.cpp'
 
 _expected_results = {
     'name': 'WebPage',

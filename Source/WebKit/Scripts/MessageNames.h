@@ -31,7 +31,7 @@ namespace IPC {
 enum class ReceiverName : uint8_t {
     WebPage = 1
     , WebPage = 2
-    , None = 3
+    , WebPage = 3
     , IPC = 4
     , AsyncReply = 5
     , Invalid = 6
@@ -91,10 +91,48 @@ enum class MessageName : uint16_t {
 #if ENABLE(EXPERIMENTAL_FEATURE)
     , WebPage_ExperimentalOperation = 31
 #endif
-    , WrappedAsyncMessageForTesting = 32
-    , SyncMessageReply = 33
-    , InitializeConnection = 34
-    , LegacySessionState = 35
+    , WebPage_LoadURL = 32
+#if ENABLE(TOUCH_EVENTS)
+    , WebPage_LoadSomething = 33
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+    , WebPage_TouchEvent = 34
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+    , WebPage_AddEvent = 35
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    , WebPage_LoadSomethingElse = 36
+#endif
+    , WebPage_DidReceivePolicyDecision = 37
+    , WebPage_Close = 38
+    , WebPage_PreferencesDidChange = 39
+    , WebPage_SendDoubleAndFloat = 40
+    , WebPage_SendInts = 41
+    , WebPage_CreatePlugin = 42
+    , WebPage_RunJavaScriptAlert = 43
+    , WebPage_GetPlugins = 44
+    , WebPage_GetPluginProcessConnection = 45
+    , WebPage_TestMultipleAttributes = 46
+    , WebPage_TestParameterAttributes = 47
+    , WebPage_TemplateTest = 48
+    , WebPage_SetVideoLayerID = 49
+#if PLATFORM(MAC)
+    , WebPage_DidCreateWebProcessConnection = 50
+#endif
+#if PLATFORM(MAC)
+    , WebPage_InterpretKeyEvent = 51
+#endif
+#if ENABLE(DEPRECATED_FEATURE)
+    , WebPage_DeprecatedOperation = 52
+#endif
+#if ENABLE(EXPERIMENTAL_FEATURE)
+    , WebPage_ExperimentalOperation = 53
+#endif
+    , WrappedAsyncMessageForTesting = 54
+    , SyncMessageReply = 55
+    , InitializeConnection = 56
+    , LegacySessionState = 57
 };
 
 ReceiverName receiverName(MessageName);

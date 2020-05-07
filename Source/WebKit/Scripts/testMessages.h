@@ -24,22 +24,526 @@
 
 #pragma once
 
+#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
-#include "NoneMessagesReplies.h"
+#include "Plugin.h"
+#include "WebPageMessagesReplies.h"
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/KeyboardEvent.h>
+#include <WebCore/PluginData.h>
+#include <utility>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
+namespace IPC {
+class DummyType;
+class MachPort;
+}
+
+namespace WebKit {
+class WebPreferencesStore;
+class WebTouchEvent;
+}
 
 namespace Messages {
-namespace None {
+namespace WebPage {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::None;
+    return IPC::ReceiverName::WebPage;
 }
 
+class LoadURL {
+public:
+    typedef std::tuple<const String&> Arguments;
 
-} // namespace None
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadURL; }
+    static const bool isSync = false;
+
+    explicit LoadURL(const String& url)
+        : m_arguments(url)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+#if ENABLE(TOUCH_EVENTS)
+class LoadSomething {
+public:
+    typedef std::tuple<const String&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomething; }
+    static const bool isSync = false;
+
+    explicit LoadSomething(const String& url)
+        : m_arguments(url)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+class TouchEvent {
+public:
+    typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TouchEvent; }
+    static const bool isSync = false;
+
+    explicit TouchEvent(const WebKit::WebTouchEvent& event)
+        : m_arguments(event)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+class AddEvent {
+public:
+    typedef std::tuple<const WebKit::WebTouchEvent&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_AddEvent; }
+    static const bool isSync = false;
+
+    explicit AddEvent(const WebKit::WebTouchEvent& event)
+        : m_arguments(event)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+class LoadSomethingElse {
+public:
+    typedef std::tuple<const String&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomethingElse; }
+    static const bool isSync = false;
+
+    explicit LoadSomethingElse(const String& url)
+        : m_arguments(url)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+class DidReceivePolicyDecision {
+public:
+    typedef std::tuple<uint64_t, uint64_t, uint32_t> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidReceivePolicyDecision; }
+    static const bool isSync = false;
+
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
+        : m_arguments(frameID, listenerID, policyAction)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class Close {
+public:
+    typedef std::tuple<> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_Close; }
+    static const bool isSync = false;
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class PreferencesDidChange {
+public:
+    typedef std::tuple<const WebKit::WebPreferencesStore&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_PreferencesDidChange; }
+    static const bool isSync = false;
+
+    explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
+        : m_arguments(store)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class SendDoubleAndFloat {
+public:
+    typedef std::tuple<double, float> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendDoubleAndFloat; }
+    static const bool isSync = false;
+
+    SendDoubleAndFloat(double d, float f)
+        : m_arguments(d, f)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class SendInts {
+public:
+    typedef std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendInts; }
+    static const bool isSync = false;
+
+    SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
+        : m_arguments(ints, intVectors)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class CreatePlugin {
+public:
+    typedef std::tuple<uint64_t, const WebKit::Plugin::Parameters&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_CreatePlugin; }
+    static const bool isSync = true;
+
+    using Reply = std::tuple<bool&>;
+    using ReplyArguments = std::tuple<bool>;
+    CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
+        : m_arguments(pluginInstanceID, parameters)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class RunJavaScriptAlert {
+public:
+    typedef std::tuple<uint64_t, const String&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_RunJavaScriptAlert; }
+    static const bool isSync = true;
+
+    using Reply = std::tuple<>;
+    using ReplyArguments = std::tuple<>;
+    RunJavaScriptAlert(uint64_t frameID, const String& message)
+        : m_arguments(frameID, message)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class GetPlugins {
+public:
+    typedef std::tuple<bool> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPlugins; }
+    static const bool isSync = true;
+
+    using Reply = std::tuple<Vector<WebCore::PluginInfo>&>;
+    using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
+    explicit GetPlugins(bool refresh)
+        : m_arguments(refresh)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class GetPluginProcessConnection {
+public:
+    typedef std::tuple<const String&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPluginProcessConnection; }
+    static const bool isSync = true;
+
+    using DelayedReply = GetPluginProcessConnectionDelayedReply;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
+    using Reply = std::tuple<IPC::Connection::Handle&>;
+    using ReplyArguments = std::tuple<IPC::Connection::Handle>;
+    explicit GetPluginProcessConnection(const String& pluginPath)
+        : m_arguments(pluginPath)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class TestMultipleAttributes {
+public:
+    typedef std::tuple<> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestMultipleAttributes; }
+    static const bool isSync = true;
+
+    using DelayedReply = TestMultipleAttributesDelayedReply;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
+    using Reply = std::tuple<>;
+    using ReplyArguments = std::tuple<>;
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class TestParameterAttributes {
+public:
+    typedef std::tuple<uint64_t, double, double> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestParameterAttributes; }
+    static const bool isSync = false;
+
+    TestParameterAttributes(uint64_t foo, double bar, double baz)
+        : m_arguments(foo, bar, baz)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class TemplateTest {
+public:
+    typedef std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TemplateTest; }
+    static const bool isSync = false;
+
+    explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
+        : m_arguments(a)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+class SetVideoLayerID {
+public:
+    typedef std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_SetVideoLayerID; }
+    static const bool isSync = false;
+
+    explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
+        : m_arguments(videoLayerID)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+
+#if PLATFORM(MAC)
+class DidCreateWebProcessConnection {
+public:
+    typedef std::tuple<const IPC::MachPort&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidCreateWebProcessConnection; }
+    static const bool isSync = false;
+
+    explicit DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier)
+        : m_arguments(connectionIdentifier)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if PLATFORM(MAC)
+class InterpretKeyEvent {
+public:
+    typedef std::tuple<uint32_t> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_InterpretKeyEvent; }
+    static const bool isSync = true;
+
+    using Reply = std::tuple<Vector<WebCore::KeypressCommand>&>;
+    using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
+    explicit InterpretKeyEvent(uint32_t type)
+        : m_arguments(type)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if ENABLE(DEPRECATED_FEATURE)
+class DeprecatedOperation {
+public:
+    typedef std::tuple<const IPC::DummyType&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_DeprecatedOperation; }
+    static const bool isSync = false;
+
+    explicit DeprecatedOperation(const IPC::DummyType& dummy)
+        : m_arguments(dummy)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if ENABLE(EXPERIMENTAL_FEATURE)
+class ExperimentalOperation {
+public:
+    typedef std::tuple<const IPC::DummyType&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_ExperimentalOperation; }
+    static const bool isSync = false;
+
+    explicit ExperimentalOperation(const IPC::DummyType& dummy)
+        : m_arguments(dummy)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+} // namespace WebPage
 } // namespace Messages
+
+#endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
