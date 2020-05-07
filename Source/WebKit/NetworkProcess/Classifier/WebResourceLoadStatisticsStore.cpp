@@ -150,15 +150,9 @@ void WebResourceLoadStatisticsStore::setNotifyPagesWhenTelemetryWasCaptured(bool
     completionHandler();
 }
 
-static Ref<WorkQueue> sharedStatisticsQueue()
-{
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility));
-    return queue.get().copyRef();
-}
-
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
     : m_networkSession(makeWeakPtr(networkSession))
-    , m_statisticsQueue(sharedStatisticsQueue())
+    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
     RELEASE_ASSERT(RunLoop::isMain());
@@ -188,12 +182,12 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
     RELEASE_ASSERT(!m_persistentStorage);
 }
 
-void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::didDestroyNetworkSession()
 {
     ASSERT(RunLoop::isMain());
 
     m_networkSession = nullptr;
-    flushAndDestroyPersistentStore(WTFMove(completionHandler));
+    flushAndDestroyPersistentStore();
 }
 
 inline void WebResourceLoadStatisticsStore::postTask(WTF::Function<void()>&& task)
@@ -210,17 +204,21 @@ inline void WebResourceLoadStatisticsStore::postTaskReply(WTF::Function<void()>&
     RunLoop::main().dispatch(WTFMove(reply));
 }
 
-void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore(CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-    // Make sure we destroy the persistent store on the background queue and stay alive until it
-    // is destroyed because it has a C++ reference to us.
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    // Make sure we destroy the persistent store on the background queue and wait for it to die
+    // synchronously since it has a C++ reference to us. Blocking nature of this task allows us
+    // to not maintain a WebResourceLoadStatisticsStore reference for the duration of dispatch,
+    // avoiding double-deletion issues when this is invoked from the destructor.
+    BinarySemaphore semaphore;
+    m_statisticsQueue->dispatch([&semaphore, this] {
         m_persistentStorage = nullptr;
         m_statisticsStore = nullptr;
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        semaphore.signal();
     });
+    semaphore.wait();
 }
 
 void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandler<void()>&& completionHandler)
@@ -520,6 +518,12 @@ void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<vo
     }
 
     completionHandler();
+}
+
+void WebResourceLoadStatisticsStore::applicationWillTerminate()
+{
+    ASSERT(RunLoop::isMain());
+    flushAndDestroyPersistentStore();
 }
 
 void WebResourceLoadStatisticsStore::performDailyTasks()

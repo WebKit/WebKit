@@ -194,7 +194,7 @@ struct ThirdPartyData {
     }
 };
 
-    void didDestroyNetworkSession(CompletionHandler<void()>&&);
+    void didDestroyNetworkSession();
 
     static const OptionSet<WebsiteDataType>& monitoredDataTypes();
 
@@ -207,6 +207,8 @@ struct ThirdPartyData {
     void setShouldSubmitTelemetry(bool);
 
     void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+
+    void applicationWillTerminate();
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
@@ -298,7 +300,7 @@ private:
 
     StorageAccessStatus storageAccessStatus(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain);
 
-    void flushAndDestroyPersistentStore(CompletionHandler<void()>&&);
+    void flushAndDestroyPersistentStore();
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<WTF::WorkQueue> m_statisticsQueue;

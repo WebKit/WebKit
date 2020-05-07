@@ -258,18 +258,10 @@ void NetworkProcess::didClose(IPC::Connection&)
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create([this] {
-        ASSERT(RunLoop::isMain());
+    // Make sure we flush all cookies to disk before exiting.
+    platformSyncAllCookies([this] {
         stopRunLoop();
     });
-
-    // Make sure we flush all cookies and resource load statistics to disk before exiting.
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    forEachNetworkSession([&] (auto& networkSession) {
-        networkSession.destroyResourceLoadStatistics([callbackAggregator = callbackAggregator.copyRef()] { });
-    });
-#endif
-    platformSyncAllCookies([callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 void NetworkProcess::didCreateDownload()
