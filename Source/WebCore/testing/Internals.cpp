@@ -4333,6 +4333,15 @@ ExceptionOr<Internals::MediaUsageState> Internals::mediaUsageState(HTMLMediaElem
 #endif
 }
 
+ExceptionOr<bool> Internals::elementShouldDisplayPosterImage(HTMLVideoElement& element) const
+{
+#if ENABLE(VIDEO)
+    return element.shouldDisplayPosterImage();
+#else
+    UNUSED_PARAM(element);
+    return Exception { InvalidAccessError };
+#endif
+}
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 

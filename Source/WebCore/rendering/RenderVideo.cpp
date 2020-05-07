@@ -179,6 +179,11 @@ bool RenderVideo::shouldDisplayVideo() const
     return !videoElement().shouldDisplayPosterImage();
 }
 
+bool RenderVideo::failedToLoadPosterImage() const
+{
+    return imageResource().errorOccurred();
+}
+
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     auto mediaPlayer = videoElement().player();

@@ -864,6 +864,8 @@ public:
     };
     ExceptionOr<MediaUsageState> mediaUsageState(HTMLMediaElement&) const;
 
+    ExceptionOr<bool> elementShouldDisplayPosterImage(HTMLVideoElement&) const;
+
 #if ENABLE(VIDEO)
     using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
     RefPtr<HTMLMediaElement> bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose);

@@ -1,3 +1,57 @@
+2020-05-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Poster set after playback begins should be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=211464
+
+        Reviewed by Jer Noble.
+        
+        Redo the poster frame logic to use the `show poster flag` logic from the spec.
+
+        Test: media/video-poster-set-after-playback.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_showPoster.
+        (WebCore::HTMLMediaElement::prepareForLoad): m_displayMode was removed.
+        (WebCore::HTMLMediaElement::selectMediaResource): Call setShowPosterFlag.
+        (WebCore::HTMLMediaElement::loadResource): Remove calls to setDisplayMode and updateDisplayState,
+        they have been deleted.
+        (WebCore::HTMLMediaElement::waitForSourceChange): Call setShowPosterFlag. Update spec text.
+        (WebCore::HTMLMediaElement::noneSupported): Call setShowPosterFlag.
+        (WebCore::HTMLMediaElement::mediaLoadingFailed): Remove call to updateDisplayState.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::seekWithTolerance): Call setShowPosterFlag.
+        (WebCore::HTMLMediaElement::seekTask):  Check m_showPoster, not displayMode.
+        (WebCore::HTMLMediaElement::playInternal): Call setShowPosterFlag.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Don't check displayMode.
+        (WebCore::HTMLMediaElement::updatePlayState): No more setDisplayMode.
+        (WebCore::HTMLMediaElement::userCancelledLoad):  Call setShowPosterFlag.
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::showPosterFlag const):
+        (WebCore::HTMLMediaElement::setShowPosterFlag):
+        (WebCore::HTMLMediaElement::displayMode const): Deleted.
+        (WebCore::HTMLMediaElement::setDisplayMode): Deleted.
+        (WebCore::HTMLMediaElement::updateDisplayState): Deleted.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didAttachRenderers): No more updateDisplayState.
+        (WebCore::HTMLVideoElement::parseAttribute): Ditto. Call updateFromElement when poster is removed.
+        (WebCore::HTMLVideoElement::shouldDisplayPosterImage const): New.
+        (WebCore::HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable): New, update player and 
+        renderer if the poster isn't supposed to be visible.
+        (WebCore::HTMLVideoElement::setDisplayMode): Deleted.
+        (WebCore::HTMLVideoElement::updateDisplayState): Deleted.
+        * html/HTMLVideoElement.h:
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::failedToLoadPosterImage const): New.
+        * rendering/RenderVideo.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementShouldDisplayPosterImage const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-05-07  Jack Lee  <shihchieh_lee@apple.com>
 
         In Document::willBeRemovedFromFrame, clear FrameSelection before Editor so the selection is removed.
