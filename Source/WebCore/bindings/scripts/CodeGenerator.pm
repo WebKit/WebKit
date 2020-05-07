@@ -303,7 +303,11 @@ sub ProcessSupplementalDependencies
 
                 # Add interface-wide extended attributes to each method.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    if ($operation->extendedAttributes->{$extendedAttributeName} && $extendedAttributeName eq "Conditional") {
+                        $operation->extendedAttributes->{$extendedAttributeName} = $operation->extendedAttributes->{$extendedAttributeName} . '&' . $interface->extendedAttributes->{$extendedAttributeName};
+                    } else {
+                        $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    }
                 }
                 push(@{$targetDataNode->operations}, $operation);
             }
