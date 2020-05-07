@@ -1,3 +1,25 @@
+2020-05-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement simulateUserActivation()
+        https://bugs.webkit.org/show_bug.cgi?id=211516
+
+        Reviewed by Youenn Fablet.
+
+        simulateUserActivation() is the method used by the WebXR Test API to
+        mock a user activation and thus let WebXR API think that the user is
+        behind the request that is going to be made in the function passed as
+        argument.
+
+        No new tests added as the imported WebXR web-platform-tests already make
+        use of this API.
+
+        * testing/WebXRTest.cpp:
+        (WebCore::WebXRTest::simulateUserActivation): Implemented.
+        * testing/WebXRTest.h: Added Document parameter.
+        * testing/WebXRTest.idl: Call with Document.
+        * testing/XRSimulateUserActivationFunction.h: Removed function params.
+        * testing/XRSimulateUserActivationFunction.idl: Ditto.
+
 2020-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Implement DisplayRefreshMonitor by using RunLoop::Timer

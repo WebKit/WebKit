@@ -39,7 +39,7 @@ class XRSimulateUserActivationFunction : public RefCounted<XRSimulateUserActivat
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual CallbackResult<void> handleEvent(JSC::JSValue) = 0;
+    virtual CallbackResult<void> handleEvent(void) = 0;
 };
 
 } // namespace WebCore

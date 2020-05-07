@@ -30,6 +30,7 @@
 
 #include "JSWebFakeXRDevice.h"
 #include "JSXRReferenceSpaceType.h"
+#include "UserGestureIndicator.h"
 #include "WebXRSystem.h"
 #include "XRSessionMode.h"
 
@@ -95,8 +96,12 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
     });
 }
 
-void WebXRTest::simulateUserActivation(XRSimulateUserActivationFunction&)
+void WebXRTest::simulateUserActivation(Document& document, XRSimulateUserActivationFunction& function)
 {
+    // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulateuseractivation
+    // Invoke function as if it had transient activation.
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, &document);
+    function.handleEvent();
 }
 
 void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)
