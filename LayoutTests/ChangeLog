@@ -1,3 +1,15 @@
+2020-05-07  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a test for `REGRESSION (r260753): Frequent crashes under TextIndicator's estimatedTextColorsForRange`
+        https://bugs.webkit.org/show_bug.cgi?id=211532
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/text-indicator/text-indicator-estimated-color-with-implicit-newline-expected.txt: Added.
+        * fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html: Added.
+        * platform/ios/fast/text-indicator/text-indicator-estimated-color-with-implicit-newline-expected.txt: Added.
+        This test would trigger the null deref fixed in r261245.
+
 2020-05-07  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 ] http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html is flaky failing.

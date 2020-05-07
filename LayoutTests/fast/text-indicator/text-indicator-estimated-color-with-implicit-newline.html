@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { box-sizing: border-box; font-family: ahem; }
+body { margin: 0; }
+div { position: absolute; top: 0; left: 0; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function output(s)
+{
+    window.log.innerText += s + "\n";
+}
+
+function runTest()
+{
+    if (!window.internals) {
+        output("This test cannot be run outside of WebKitTestRunner.");
+        return;
+    }
+
+    function dumpIndicatorBoundsForElement(el)
+    {
+        var indicatorOptions = {
+            "computeEstimatedBackgroundColor": true,
+        };
+        var range = internals.rangeFromLocationAndLength(el, 0, 9);
+        var indicator = window.internals.textIndicatorForRange(range, indicatorOptions);
+        var rects = indicator.textRectsInBoundingRectCoordinates;
+
+        output(`${el.id}: `);
+        for (var rect of rects)
+            output(`    ${rect.x} ${rect.y} ${rect.width} ${rect.height}`);
+    }
+
+    dumpIndicatorBoundsForElement(document.getElementById("indicator"));
+
+    // Remove the test cases so they don't show up in the dump.
+    document.getElementById("testCases").innerText = "";
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="testCases">
+    <div id="indicator"><img src="../images/resources/green-256x256.jpg"><h3>text</h3></div>
+</div>
+<pre id="log"></pre>
+</body>
+</html>
