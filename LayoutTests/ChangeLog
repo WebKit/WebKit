@@ -1,3 +1,16 @@
+2020-05-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r261251.
+
+        Test is failing on iOS
+
+        Reverted changeset:
+
+        "Add a test for `REGRESSION (r260753): Frequent crashes under
+        TextIndicator's estimatedTextColorsForRange`"
+        https://bugs.webkit.org/show_bug.cgi?id=211532
+        https://trac.webkit.org/changeset/261251
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html as flaky.
