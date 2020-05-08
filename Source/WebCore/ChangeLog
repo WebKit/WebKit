@@ -1,3 +1,20 @@
+2020-05-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crashes in LayoutTests in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=211622
+
+        Reviewed by Chris Fleizach.
+
+        Several LayoutTests.
+
+        Return the root from the isolated tree when it is really ready.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rootObject):
+
+        Some code cleanup.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::clickPoint):
+
 2020-05-08  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow scrollers in iframes don't get mouseMovedInContentArea()

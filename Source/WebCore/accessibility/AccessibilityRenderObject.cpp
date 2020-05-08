@@ -925,9 +925,8 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
 IntPoint AccessibilityRenderObject::clickPoint()
 {
     // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.
-    AccessibilityChildrenVector children = this->children();
-    if (isHeading() && children.size() == 1)
-        return children[0]->clickPoint();
+    if (isHeading() && children().size() == 1)
+        return children().first()->clickPoint();
 
     if (isLink())
         return linkClickPoint();

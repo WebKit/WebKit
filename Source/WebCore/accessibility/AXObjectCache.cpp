@@ -714,7 +714,7 @@ AXCoreObject* AXObjectCache::rootObject()
         return nullptr;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (clientSupportsIsolatedTree())
+    if (isIsolatedTreeEnabled())
         return isolatedTreeRootObject();
 #endif
 
