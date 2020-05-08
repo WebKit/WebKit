@@ -507,7 +507,7 @@ webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 
 webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
-webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure ]
+webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
 
 # Remote-playback tests.
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html [ Failure ]
@@ -1514,6 +1514,8 @@ webkit.org/b/206877 imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-st
 webkit.org/b/210413 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Crash ]
+
+webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
