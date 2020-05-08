@@ -168,8 +168,6 @@ public:
 
     ~PendingFrameLoad()
     {
-        ASSERT(m_didFinishLoad);
-        ASSERT(m_didRetrieveExistingEntry);
     }
 
     void registerSubresourceLoad(const ResourceRequest& request, const Key& subresourceKey)
@@ -267,10 +265,6 @@ SpeculativeLoadManager::SpeculativeLoadManager(Cache& cache, Storage& storage)
 
 SpeculativeLoadManager::~SpeculativeLoadManager()
 {
-    for (auto& pendingFrameLoad : copyToVector(m_pendingFrameLoads.values())) {
-        if (pendingFrameLoad)
-            pendingFrameLoad->markLoadAsCompleted();
-    }
 }
 
 bool SpeculativeLoadManager::canUsePreloadedEntry(const PreloadedEntry& entry, const ResourceRequest& actualRequest)
