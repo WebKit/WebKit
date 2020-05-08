@@ -199,9 +199,8 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
 
     auto imageData = imageBuffer->getImageData(AlphaPremultiplication::Unpremultiplied, { IntPoint(), imageRect.size() });
     
-    // Removing the Release Assert, as we could get to a value where imageData could be nullptr. A case where
-    // ImageRect.size() is huge, imageData::create can return a nullptr because data size has overflowed.
-    // Refer rdar://problem/61793884
+    // We could get to a value where imageData could be nullptr. A case where ImageRect.size() is huge, imageData::create
+    // can return a nullptr because data size has overflowed. Refer rdar://problem/61793884
     if (!imageData || !imageData->data())
         return createShape();
 
