@@ -1,3 +1,15 @@
+2020-05-08  Jer Noble  <jer.noble@apple.com>
+
+        media/video-zoom.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211631
+
+        Reviewed by Eric Carlson.
+
+        Remove the 1.5s early timeout check here; with the additional 150ms per video element timeout elsewhere
+        in the test, this is short enough to cause flaky failures on busy bots.
+
+        * media/video-zoom.html:
+
 2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] caret appears in the middle of a search field when field is focused on agoda.com
