@@ -1352,8 +1352,6 @@ webkit.org/b/190852 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/207583 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Pass Failure ]
 
-webkit.org/b/207665 http/tests/cache-storage/cache-representation.https.html [ Slow ]
-
 webkit.org/b/209514 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
