@@ -45,6 +45,10 @@ struct _WebKitScriptDialog {
     GtkWidget* nativeDialog { nullptr };
 #endif
 
+#if PLATFORM(WPE)
+    bool isUserHandled { true };
+#endif
+
     int referenceCount { 1 };
 };
 
@@ -53,3 +57,4 @@ bool webkitScriptDialogIsRunning(WebKitScriptDialog*);
 void webkitScriptDialogAccept(WebKitScriptDialog*);
 void webkitScriptDialogDismiss(WebKitScriptDialog*);
 void webkitScriptDialogSetUserInput(WebKitScriptDialog*, const String&);
+bool webkitScriptDialogIsUserHandled(WebKitScriptDialog *);

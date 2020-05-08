@@ -22,14 +22,37 @@
 
 #include "WebKitScriptDialogPrivate.h"
 
-void webkitScriptDialogAccept(WebKitScriptDialog*)
+// Callbacks invoked by WebDriver commands
+// As WPE has currently no public API to allow the browser to respond to these commands,
+// we mimic the expected behavior in these callbacks like one would do in a reference browser.
+void webkitScriptDialogAccept(WebKitScriptDialog* dialog)
 {
+    auto dialog_type = webkit_script_dialog_get_dialog_type(dialog);
+    if (dialog_type == WEBKIT_SCRIPT_DIALOG_CONFIRM || dialog_type == WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM)
+        webkit_script_dialog_confirm_set_confirmed(dialog, TRUE);
+    // W3C WebDriver tests expect an empty string instead of a null one when the prompt is accepted.
+    if (dialog_type == WEBKIT_SCRIPT_DIALOG_PROMPT && dialog->text.isNull())
+        webkit_script_dialog_prompt_set_text(dialog, dialog->defaultText.isNull() ? "" : dialog->defaultText.data());
+    webkit_script_dialog_unref(dialog);
 }
 
-void webkitScriptDialogDismiss(WebKitScriptDialog*)
+void webkitScriptDialogDismiss(WebKitScriptDialog* dialog)
 {
+    auto dialog_type = webkit_script_dialog_get_dialog_type(dialog);
+    if (dialog_type == WEBKIT_SCRIPT_DIALOG_CONFIRM || dialog_type == WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM)
+        webkit_script_dialog_confirm_set_confirmed(dialog, FALSE);
+    webkit_script_dialog_unref(dialog);
 }
 
-void webkitScriptDialogSetUserInput(WebKitScriptDialog*, const String&)
+void webkitScriptDialogSetUserInput(WebKitScriptDialog* dialog, const String& input)
 {
+    if (webkit_script_dialog_get_dialog_type(dialog) != WEBKIT_SCRIPT_DIALOG_PROMPT)
+        return;
+
+    webkit_script_dialog_prompt_set_text(dialog, input.utf8().data());
+}
+
+bool webkitScriptDialogIsUserHandled(WebKitScriptDialog* dialog)
+{
+    return dialog->isUserHandled;
 }

@@ -2438,7 +2438,11 @@ void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView* webView, const 
     if (!webView->priv->currentScriptDialog)
         return;
 
-    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsUserHandled(webView->priv->currentScriptDialog)) {
+        // FIXME: Add API to ask the user in case default implementation is not being used.
+        return;
+    }
+
     if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
         webkitScriptDialogSetUserInput(webView->priv->currentScriptDialog, userInput);
 }
@@ -2448,7 +2452,11 @@ void webkitWebViewAcceptCurrentScriptDialog(WebKitWebView* webView)
     if (!webView->priv->currentScriptDialog)
         return;
 
-    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsUserHandled(webView->priv->currentScriptDialog)) {
+        // FIXME: Add API to ask the user in case default implementation is not being used.
+        return;
+    }
+
     if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
         webkitScriptDialogAccept(webView->priv->currentScriptDialog);
 }
@@ -2458,7 +2466,11 @@ void webkitWebViewDismissCurrentScriptDialog(WebKitWebView* webView)
     if (!webView->priv->currentScriptDialog)
         return;
 
-    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsUserHandled(webView->priv->currentScriptDialog)) {
+        // FIXME: Add API to ask the user in case default implementation is not being used.
+        return;
+    }
+
     if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
         webkitScriptDialogDismiss(webView->priv->currentScriptDialog);
 }

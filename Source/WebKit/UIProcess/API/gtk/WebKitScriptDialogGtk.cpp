@@ -50,3 +50,8 @@ void webkitScriptDialogSetUserInput(WebKitScriptDialog* scriptDialog, const Stri
     webkitScriptDialogImplSetEntryText(WEBKIT_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog), userInput);
 #endif
 }
+
+bool webkitScriptDialogIsUserHandled(WebKitScriptDialog* scriptDialog)
+{
+    return !WEBKIT_IS_SCRIPT_DIALOG_IMPL(scriptDialog->nativeDialog);
+}

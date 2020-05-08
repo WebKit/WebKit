@@ -21,15 +21,22 @@
 #include "WebKitWebView.h"
 
 #include "WebKitColorPrivate.h"
+#include "WebKitScriptDialogPrivate.h"
 #include "WebKitWebViewPrivate.h"
+
 
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*)
 {
     return FALSE;
 }
 
-gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*)
+gboolean webkitWebViewScriptDialog(WebKitWebView* webview, WebKitScriptDialog* dialog)
 {
+    if (webkit_web_view_is_controlled_by_automation(webview)) {
+        webkit_script_dialog_ref(dialog);
+        dialog->isUserHandled = false;
+    }
+
     return FALSE;
 }
 

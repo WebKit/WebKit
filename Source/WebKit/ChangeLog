@@ -1,3 +1,37 @@
+2020-05-08  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][WebDriver] Implement user prompt support
+        https://bugs.webkit.org/show_bug.cgi?id=207372
+
+        Reviewed by Carlos Garcia Campos.
+
+        Provide a default implementation for WebDriver dialog commands.
+        This implementation will mimic the expected browser behavior of
+        accepting/dismissing the dialogs, while not exposing any new API.
+
+        * UIProcess/API/glib/WebKitScriptDialogPrivate.h:
+        - Expose new private function to check whether the dialog is using a
+        default implementation or is handled by the user.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        - Avoid default WebDriver behavior if the dialog is user-handled.
+        (webkitWebViewSetCurrentScriptDialogUserInput):
+        (webkitWebViewAcceptCurrentScriptDialog):
+        (webkitWebViewDismissCurrentScriptDialog):
+        * UIProcess/API/gtk/WebKitScriptDialogGtk.cpp:
+        (webkitScriptDialogIsUserHandled):
+        - Return whether the dialog is user handled.
+        * UIProcess/API/wpe/WebKitScriptDialogWPE.cpp:
+        - Added basic behavior for the WebDriver dialog callbacks for WPE.
+        (webkitScriptDialogAccept):
+        (webkitScriptDialogDismiss):
+        (webkitScriptDialogSetUserInput):
+        (webkitScriptDialogIsUserHandled):
+
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+        (webkitWebViewScriptDialog):
+        - Hold a dialog ref if the webview is controlled by automation and ends
+        up calling the default "script-dialog" event handler.
+
 2020-05-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Roll back newly created credentials if an error occurs
