@@ -1,3 +1,23 @@
+2020-05-08  Rob Buis  <rbuis@igalia.com>
+
+        Fix urlsearchparams-delete.html
+        https://bugs.webkit.org/show_bug.cgi?id=211456
+
+        Reviewed by Daniel Bates.
+
+        Step 2 of URLSearchParams.delete algorithm [1] indicates
+        we should run the update steps, even if no name-value
+        pairs were removed.
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://url.spec.whatwg.org/#dom-urlsearchparams-delete
+
+        Test: web-platform-tests/url/urlsearchparams-delete.html
+
+        * html/URLSearchParams.cpp:
+        (WebCore::URLSearchParams::remove):
+
 2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] caret appears in the middle of a search field when field is focused on agoda.com

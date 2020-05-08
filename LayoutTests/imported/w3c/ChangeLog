@@ -1,3 +1,14 @@
+2020-05-08  Rob Buis  <rbuis@igalia.com>
+
+        Fix urlsearchparams-delete.html
+        https://bugs.webkit.org/show_bug.cgi?id=211456
+
+        Reviewed by Daniel Bates.
+
+        Update improved test expectation.
+
+        * web-platform-tests/url/urlsearchparams-delete-expected.txt:
+
 2020-05-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove orphaned WPT expectations & unused harness

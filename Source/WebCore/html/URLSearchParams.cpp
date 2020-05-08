@@ -127,8 +127,10 @@ Vector<String> URLSearchParams::getAll(const String& name) const
 
 void URLSearchParams::remove(const String& name)
 {
-    if (m_pairs.removeAllMatching([&] (const auto& pair) { return pair.key == name; }))
-        updateURL();
+    m_pairs.removeAllMatching([&] (const auto& pair) {
+        return pair.key == name;
+    });
+    updateURL();
 }
 
 String URLSearchParams::toString() const
