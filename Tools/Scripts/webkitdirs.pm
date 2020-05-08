@@ -138,6 +138,7 @@ my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
 my $xcodeSDK;
+my $simulatorIdiom;
 my $configurationForVisualStudio;
 my $configurationProductDir;
 my $sourceDir;
@@ -514,7 +515,8 @@ sub argumentsForConfiguration()
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
-    push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
+    push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPhone");
+    push(@args, '--ipad-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPad");
     push(@args, '--maccatalyst') if (defined $xcodeSDK && $xcodeSDK =~ /^maccatalyst/);
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
@@ -589,6 +591,11 @@ sub determineXcodeSDK
     }
     if (checkForArgumentAndRemoveFromARGV("--simulator") || checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
         $xcodeSDK ||= 'iphonesimulator';
+        $simulatorIdiom = 'iPhone';
+    }
+    if (checkForArgumentAndRemoveFromARGV("--ipad-simulator")) {
+        $xcodeSDK ||= 'iphonesimulator';
+        $simulatorIdiom = 'iPad';
     }
     if (checkForArgumentAndRemoveFromARGV("--tvos-device")) {
         $xcodeSDK ||=  "appletvos";
@@ -2575,6 +2582,10 @@ Options specific to macOS:
   --lang=LANGUAGE                   Use a specific language instead of system language.
                                     This accepts a language name (German) or a language code (de, ar, pt_BR, etc).
   --locale=LOCALE                   Use a specific locale instead of the system region.
+
+Options specific to iOS:
+  --iphone-simulator                Run the app in an iPhone Simulator
+  --ipad-simulator                  Run the app in an iPad Simulator
 EOF
 
     exit(1);
@@ -2784,8 +2795,14 @@ sub findOrCreateSimulatorForIOSDevice($)
     my ($simulatorNameSuffix) = @_;
     my $simulatorName;
     my $simulatorDeviceType;
-    $simulatorName = "iPhone SE " . $simulatorNameSuffix;
-    $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-SE";
+
+    if ($simulatorIdiom eq "iPad") {
+        $simulatorName = "iPad Pro " . $simulatorNameSuffix;
+        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--9-7-inch-";
+    } else {
+        $simulatorName = "iPhone SE " . $simulatorNameSuffix;
+        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-SE";
+    }
 
     my $simulatedDevice = iosSimulatorDeviceByName($simulatorName);
     return $simulatedDevice if $simulatedDevice;

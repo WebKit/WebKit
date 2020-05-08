@@ -1,3 +1,19 @@
+2020-05-08  Dean Jackson  <dino@apple.com>
+
+        Allow run-safari to launch an iPad simulator
+        https://bugs.webkit.org/show_bug.cgi?id=211606
+        <rdar://problem/63002849>
+
+        Reviewed by Jon Lee.
+
+        Add an "--ipad-simulator" command line option to run-safari.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (determineXcodeSDK): Mark the device idiom depending on the command line argument.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded):
+        (findOrCreateSimulatorForIOSDevice): Create an iPad Pro simulator if requested.
+
 2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Preserve character set information when writing to the pasteboard when copying rich text
