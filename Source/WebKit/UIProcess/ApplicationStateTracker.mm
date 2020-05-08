@@ -171,14 +171,18 @@ bool isApplicationForeground(pid_t pid)
     RBSProcessIdentifier *processIdentifier = [RBSProcessIdentifier identifierWithPid:pid];
     if (!processIdentifier) {
         RELEASE_LOG_ERROR(ProcessSuspension, "isApplicationForeground: Failed to construct RBSProcessIdentifier from PID %d", pid);
-        return false;
+        // We assume foreground when unable to determine state to maintain pre-existing behavior and to avoid
+        // not rendering anything when we fail.
+        return true;
     }
 
     NSError *error = nil;
     RBSProcessHandle *processHandle = [RBSProcessHandle handleForIdentifier:processIdentifier error:&error];
     if (!processHandle) {
         RELEASE_LOG_ERROR(ProcessSuspension, "isApplicationForeground: Failed to get RBSProcessHandle for process with PID %d, error: %{public}@", pid, error);
-        return false;
+        // We assume foreground when unable to determine state to maintain pre-existing behavior and to avoid
+        // not rendering anything when we fail.
+        return true;
     }
 
     RBSProcessState *state = processHandle.currentState;
