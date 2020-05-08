@@ -2,36 +2,49 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/gc.js"></script>
 </head>
 <body>
-<iframe id="testFrame" src="resources/performance-observer-no-document-leak-frame.html"></iframe>
 <script>
 description("Tests that using PerformanceObserver does not cause the document to get leaked.");
 window.jsTestIsAsync = true;
 
-function documentShouldDie(documentIdentifier)
-{
-    return new Promise(function(resolve, reject) {
-        handle = setInterval(function() {
-            gc();
-            if (!internals.isDocumentAlive(documentIdentifier)) {
-                clearInterval(handle);
-                resolve();
+window.onload = function () {
+    testDocumentIsNotLeaked(
+        async function initAndRemove(frameCount)
+        {
+            let frames = await new Promise((resolve, reject) => {
+                let frames = [];
+                let counter = 0;
+                function onLoad() {
+                    counter++;
+                    if (counter == frameCount)
+                        resolve(frames);
+                }
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = document.createElement('iframe');
+                    frame.src = "resources/performance-observer-no-document-leak-frame.html";
+                    frame.onload = onLoad;
+                    document.body.appendChild(frame);
+                    frames.push(frame);
+                }
+            });
+            let frameIdentifiers = [];
+            for (let i = 0; i < frameCount; ++i) {
+                let frame = frames[i];
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
             }
-        }, 10);
-    });
-}
+            nukeArray(frames);
+            frames = null;
+            return frameIdentifiers;
+        }
+    ).then(
+        () => testPassed("Document did not leak"),
+        (error) => testFailed(error.message)
+    ).finally(finishJSTest);
+};
 
-onload = function() {
-    setTimeout(function() {
-        let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
-        testFrame.remove();
-        documentShouldDie(frameDocumentIdentifier).then(function() {
-            testPassed("Document did not leak");
-            finishJSTest();
-        });
-    }, 10);
-}
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

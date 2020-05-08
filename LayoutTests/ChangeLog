@@ -1,3 +1,52 @@
+2020-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Code pattern in GC tests in LayoutTests is broken
+        https://bugs.webkit.org/show_bug.cgi?id=211595
+
+        Reviewed by Saam Barati.
+
+        LayoutTests have several tests which attempt to ensure that document is not leaked. But they are broken since these tests are not correctly
+        handling conservative GC of JavaScriptCore. These tests are taking a following approach.
+
+            1. Allocate *one* iframe doing something inside it.
+            2. Remove iframe from the parent document to make it released.
+            3. Repeatedly invoke GC and test whether (1)'s document gets collected.
+
+        This is not the right approach. Since JavaScriptCore has conservative GC, it is easily possible that (1)'s pointer value remains in some of
+        conservative roots: CPU registers, stack etc. And JavaScriptCore conservative GC scans it and keeps it alive. The above approach makes the
+        test super flaky and any unrelated changes in JavaScriptCore and C compiler can make this test failed.
+
+        This is not a problem in practice. Web pages are executing various kind of code and they clobber conservative roots. However, tests in
+        LayoutTests are too simple to keep it alive accidentally.
+
+        The right approach for conservative GC is the following.
+
+            1. Allocate *many* iframes doing something inside them with loop. By creating iframes with loop, for every iteration, it is likely that
+               the same CPU registers and stack locations are overwritten by the last created iframe reference. This dramatically reduces the possibility
+               for GC to find these addresses in conservative roots.
+            2. Remove iframes from the parent document to make them released.
+            3. Repeatedly invoke GC and test whether *one of (1) iframes* gets collected at least. Theoretically this is still possible that completely
+               unrelated integer value in conservative roots can point to the reference of (1). By allocating many iframes in (1) and testing one of them,
+               we can reduce the possibility of this conflict.
+
+        This patch adds testDocumentIsNotLeaked helper function to enforce this pattern. And rewrite broken tests with this helper to make it less-flaky.
+
+        * highlight/highlight-world-leak.html:
+        * http/tests/IndexedDB/collect-IDB-objects.https.html:
+        * http/tests/media/clearkey/collect-webkit-media-session.html:
+        * http/tests/media/media-stream/collect-media-devices.https.html:
+        * http/tests/resources/gc.js: Added.
+        (window.gc.gcRec):
+        (window.gc.window.gc):
+        (nukeArray):
+        (async testDocumentIsNotLeaked):
+        * intersection-observer/no-document-leak.html:
+        * performance-api/performance-observer-no-document-leak.html:
+        * resources/gc.js:
+        (nukeArray):
+        (async testDocumentIsNotLeaked):
+        * webanimations/leak-document-with-web-animation.html:
+
 2020-05-08  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Create common glib expectation file
