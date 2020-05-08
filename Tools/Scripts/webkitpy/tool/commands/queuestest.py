@@ -65,14 +65,10 @@ class QueuesTest(unittest.TestCase):
                 expected_exception=exception,
                 expected_logs=logs)
 
-    def _default_begin_work_queue_stderr(self, name):
-        string_replacements = {"name": name}
-        return "MOCK: update_status: %(name)s Starting Queue\n" % string_replacements
-
     def _default_begin_work_queue_logs(self, name):
         checkout_dir = '/mock-checkout'
         string_replacements = {"name": name, 'checkout_dir': checkout_dir}
-        return "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\nMOCK: update_status: %(name)s Starting Queue\n" % string_replacements
+        return "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\n" % string_replacements
 
     def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, expected_exceptions=None, expected_logs=None, options=None, tool=None):
         if not tool:

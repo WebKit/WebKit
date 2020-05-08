@@ -132,34 +132,25 @@ class EarlyWarningSystemTest(QueuesTest):
         }
 
         if ews.should_build:
-            build_line = "Running: webkit-patch build --no-clean --no-update --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\nMOCK: update_status: %(name)s Built patch\n" % string_replacements
+            build_line = "Running: webkit-patch build --no-clean --no-update --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\n" % string_replacements
         else:
             build_line = ""
         string_replacements['build_line'] = build_line
 
         if ews.run_tests:
-            run_tests_line = "Running: webkit-patch build-and-test --no-clean --no-update --test --non-interactive --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\nMOCK: update_status: %(name)s Passed tests\n" % string_replacements
+            run_tests_line = "Running: webkit-patch build-and-test --no-clean --no-update --test --non-interactive --build-style=%(build_style)s --group=%(group)s --port=%(port)s%(architecture)s\n" % string_replacements
         else:
             run_tests_line = ""
         string_replacements['run_tests_line'] = run_tests_line
 
-        if conclusive:
-            result_lines = "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacements
-        else:
-            result_lines = "MOCK: release_lock: %(name)s 10000\n" % string_replacements
-        string_replacements['result_lines'] = result_lines
+        string_replacements['result_lines'] = ""
 
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs(ews.name),
-            "process_work_item": """MOCK: update_status: %(name)s Started processing patch
-Running: webkit-patch clean --port=%(port)s%(architecture)s
-MOCK: update_status: %(name)s Cleaned working directory
+            "process_work_item": """Running: webkit-patch clean --port=%(port)s%(architecture)s
 Running: webkit-patch update --port=%(port)s%(architecture)s
-MOCK: update_status: %(name)s Updated working directory
 Running: webkit-patch apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
-MOCK: update_status: %(name)s Applied patch
 Running: webkit-patch check-patch-relevance --quiet --group=%(group)s --port=%(port)s%(architecture)s
-MOCK: update_status: %(name)s Checked relevance of patch
 %(build_line)s%(run_tests_line)s%(result_lines)s""" % string_replacements,
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",

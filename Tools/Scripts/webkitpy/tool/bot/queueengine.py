@@ -127,7 +127,6 @@ class QueueEngine:
 
     def _stopping(self, message):
         _log.info(message)
-        self._delegate.stop_work_queue(message)
         logging.getLogger("webkitpy").removeHandler(self._log_handler)
         # Be careful to shut down our OutputTee or the unit tests will be unhappy.
         self._ensure_work_log_closed()

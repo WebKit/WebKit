@@ -36,7 +36,6 @@ from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool
-from webkitpy.common.net.statusserver_mock import MockStatusServer
 
 
 # Creating fake CommitInfos is a pain, so we use a mock one here.
@@ -101,7 +100,6 @@ blocked: 50856
     def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
         tool.filesystem = MockFileSystem({"/mock-results/foo/bar-diffs.txt": "mock"})
-        tool.status_server = MockStatusServer(bot_id="mock-bot-id")
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
         patch = tool.bugs.fetch_attachment(10000)
@@ -115,7 +113,7 @@ foo/bar.html was authored by abarth@webkit.org.
 https://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 The dummy-queue just saw foo/bar.html flake (text diff) while processing attachment 10000 on bug 50000.
-Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
+Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
 
@@ -126,7 +124,7 @@ If you would like to track this test fix with another bug, please close this bug
 component: Tools / Tests
 cc: abarth@webkit.org
 blocked: 50856
-MOCK add_attachment_to_bug: bug_id=60001, description=Failure diff from mock-bot-id filename=failure.diff mimetype=None
+MOCK add_attachment_to_bug: bug_id=60001, description=Failure diff from bot filename=failure.diff mimetype=None
 MOCK bug comment: bug_id=50000, cc=None, see_also=None
 --- Begin comment ---
 The dummy-queue encountered the following flaky tests while processing attachment 10000:

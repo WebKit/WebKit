@@ -84,8 +84,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         if not extra_message_text:
             return  # Don't comment on Bugzilla if we don't have failing tests.
 
-        results_link = tool.status_server.results_url_for_status(status_id)
-        message = "Attachment %s did not pass %s (%s):\nOutput: %s" % (patch.id(), self.name, self.port_name, results_link)
+        message = "Attachment %s did not pass %s (%s)" % (patch.id(), self.name, self.port_name)
         if extra_message_text:
             message += "\n\n%s" % extra_message_text
         # FIXME: We might want to add some text about rejecting from the commit-queue in
@@ -123,7 +122,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             results_archive = task.results_archive_from_patch_test_run(patch)
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)
-            self._did_fail(patch)
             raise e
 
     # EarlyWarningSystemDelegate methods
@@ -135,11 +133,10 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         self.run_webkit_patch(command + [self._deprecated_port.flag()] + (['--architecture=%s' % self._port.architecture()] if self._port.architecture() and self._port.did_override_architecture else []))
 
     def command_passed(self, message, patch):
-        self._update_status(message, patch=patch)
+        pass
 
     def command_failed(self, message, script_error, patch):
-        failure_log = self._log_from_script_error_for_upload(script_error)
-        return self._update_status(message, patch=patch, results_file=failure_log)
+        pass
 
     def test_results(self):
         return self._test_results_reader.results()

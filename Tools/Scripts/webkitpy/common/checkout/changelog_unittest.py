@@ -607,10 +607,6 @@ class ChangeLogTest(unittest.TestCase):
 
         Perform some file operations (automatically added comments).
 
-        * QueueStatusServer/config/charts.py: Copied from Tools/QueueStatusServer/model/queuelog.py.
-        (get_time_unit):
-        * QueueStatusServer/handlers/queuecharts.py: Added.
-        (QueueCharts):
         * Scripts/webkitpy/tool/bot/testdata/webkit_sheriff_0.js: Removed.
         * EWSTools/build-vm.sh: Renamed from Tools/EWSTools/cold-boot.sh.
 ''', True),

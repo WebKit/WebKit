@@ -55,7 +55,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         return None
 
     def _is_old_failure(self, revision):
-        return self._tool.status_server.svn_revision(revision)
+        return False
 
     def next_work_item(self):
         self._irc_bot.process_pending_messages()

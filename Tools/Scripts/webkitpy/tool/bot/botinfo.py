@@ -34,7 +34,4 @@ class BotInfo(object):
         self._port_name = port_name
 
     def summary_text(self):
-        # bot_id is also stored on the options dictionary on the tool.
-        bot_id = self._tool.status_server.bot_id
-        bot_id_string = "Bot: %s  " % (bot_id) if bot_id else ""
-        return "%sPort: %s  Platform: %s" % (bot_id_string, self._port_name, self._tool.platform.display_name())
+        return "Port: %s  Platform: %s" % (self._port_name, self._tool.platform.display_name())
