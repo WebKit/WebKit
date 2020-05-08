@@ -26,6 +26,7 @@
 
 #include <cmath>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WTF {

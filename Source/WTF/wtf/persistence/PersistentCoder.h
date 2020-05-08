@@ -26,6 +26,10 @@
 #pragma once
 
 namespace WTF {
+
+template <class T>
+class Optional;
+
 namespace Persistence {
 
 class Decoder;

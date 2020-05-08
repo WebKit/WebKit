@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/PrintStream.h>
+
 namespace WTF {
 
 template<typename T>

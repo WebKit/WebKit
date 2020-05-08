@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <wtf/text/StringView.h>
+
 namespace WTF {
 
 class NullTextBreakIterator {

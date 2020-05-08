@@ -29,6 +29,9 @@
 
 namespace WTF {
 
+template<typename KeyTypeArg, typename ValueTypeArg>
+struct KeyValuePair;
+
 // IndexSparseSet is an efficient set of integers that can only be valued
 // between zero and size() - 1.
 //

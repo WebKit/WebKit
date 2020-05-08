@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WTF {
 
 template<typename StringType1, typename StringType2> class StringAppend {

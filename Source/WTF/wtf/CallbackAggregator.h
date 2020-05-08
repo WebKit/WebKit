@@ -27,6 +27,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {

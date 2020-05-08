@@ -30,17 +30,20 @@
 
 #include <wtf/SchedulePair.h>
 #include <wtf/Seconds.h>
+
+#if USE(CF)
 #include <wtf/RetainPtr.h>
+#endif
 
 namespace WTF {
 
 // Time intervals are all in seconds.
 
-class WTF_EXPORT_PRIVATE RunLoopTimerBase {
+class RunLoopTimerBase {
     WTF_MAKE_NONCOPYABLE(RunLoopTimerBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RunLoopTimerBase() { }
+    WTF_EXPORT_PRIVATE RunLoopTimerBase();
     WTF_EXPORT_PRIVATE virtual ~RunLoopTimerBase();
 
     WTF_EXPORT_PRIVATE void schedule(const SchedulePair*);

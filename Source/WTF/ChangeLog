@@ -1,3 +1,37 @@
+2020-05-08  Don Olmstead  <don.olmstead@sony.com>
+
+        WTF headers should compile independently
+        https://bugs.webkit.org/show_bug.cgi?id=211608
+
+        Reviewed by Yusuke Suzuki.
+
+        When a WTF header is included on its own within a source file it should compile.
+        These issues were found when working on a tooling build for running static
+        analysis over WTF. Forward declarations were used whenever possible otherwise
+        an include was used.
+
+        Additionally fix some errors found by Clang 10.
+
+        * wtf/AggregateLogger.h:
+        * wtf/CallbackAggregator.h:
+        * wtf/Dominators.h:
+        * wtf/HashIterators.h:
+        * wtf/IndexSparseSet.h:
+        * wtf/LoggingHashMap.h:
+        * wtf/LoggingHashTraits.h:
+        * wtf/RunLoopTimer.h:
+        * wtf/Stopwatch.h:
+        * wtf/Threading.h:
+        * wtf/cf/RunLoopTimerCF.cpp:
+        * wtf/persistence/PersistentCoder.h:
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        * wtf/text/NullTextBreakIterator.h:
+        * wtf/text/StringOperators.h:
+        * wtf/text/StringToIntegerConversion.h:
+        * wtf/text/cf/TextBreakIteratorCF.h:
+        * wtf/text/icu/TextBreakIteratorICU.h:
+        * wtf/text/win/WCharStringExtras.h:
+
 2020-05-07  Don Olmstead  <don.olmstead@sony.com>
 
         Remove unused USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

@@ -36,6 +36,8 @@
 
 namespace WTF {
 
+RunLoopTimerBase::RunLoopTimerBase() = default;
+
 RunLoopTimerBase::~RunLoopTimerBase()
 {
     stop();

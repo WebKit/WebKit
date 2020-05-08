@@ -26,7 +26,10 @@
 #pragma once
 
 #include <wtf/Algorithms.h>
+#include <wtf/HashSet.h>
 #include <wtf/Logger.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 

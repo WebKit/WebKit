@@ -138,7 +138,7 @@ public:
 
     SpecificStorage& specificStorage() { return m_specificStorage; };
 
-    class ThreadHolder;
+    struct ThreadHolder;
 #endif
 
     WTF_EXPORT_PRIVATE void changePriority(int);

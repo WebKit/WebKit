@@ -22,6 +22,7 @@
 
 #include <unicode/ubrk.h>
 #include <wtf/Optional.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 
 namespace WTF {

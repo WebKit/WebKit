@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <unicode/utypes.h>
+#include <wtf/ASCIICType.h>
+
 namespace WTF {
 
 inline bool isCharacterAllowedInBase(UChar c, int base)

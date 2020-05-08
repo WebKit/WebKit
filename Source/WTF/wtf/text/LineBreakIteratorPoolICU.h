@@ -30,6 +30,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WTF {

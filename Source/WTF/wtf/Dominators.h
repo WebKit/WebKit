@@ -28,6 +28,7 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 
