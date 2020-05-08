@@ -461,7 +461,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure Pass ]
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-size.html [ Timeout Pass ]
+webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
@@ -4696,6 +4696,9 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+
+webkit.org/b/211611 compositing/video/video-poster.html [ Failure ]
+webkit.org/b/211612 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
