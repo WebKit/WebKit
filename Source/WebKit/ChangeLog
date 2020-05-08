@@ -1,3 +1,30 @@
+2020-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Make WKWebViewConfiguration._alwaysRunsAtForegroundPriority an alias for _clientNavigationsRunAtForegroundPriority
+        https://bugs.webkit.org/show_bug.cgi?id=211632
+
+        Reviewed by Darin Adler.
+
+        Make WKWebViewConfiguration._alwaysRunsAtForegroundPriority an alias for _clientNavigationsRunAtForegroundPriority.
+        _alwaysRunsAtForegroundPriority is a frequent source of process assertion leaks that get blamed on WebKit. Clients
+        are using this in order to be able to do loads in background views so _clientNavigationsRunAtForegroundPriority
+        should suffice and is not leak prone since the process assertion is released after the navigation has completed.
+
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::alwaysRunsAtForegroundPriority const): Deleted.
+        (API::PageConfiguration::setAlwaysRunsAtForegroundPriority): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _alwaysRunsAtForegroundPriority]):
+        (-[WKWebViewConfiguration _setAlwaysRunsAtForegroundPriority:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+
 2020-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Revert r260390

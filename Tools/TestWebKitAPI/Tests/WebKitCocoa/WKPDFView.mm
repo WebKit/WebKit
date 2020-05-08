@@ -96,7 +96,7 @@ TEST(WebKit, WKPDFViewLosesApplicationForegroundNotification)
     std::unique_ptr<InstanceMethodSwizzler> isInBackgroundSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKApplicationStateTrackingView"), @selector(isBackground), reinterpret_cast<IMP>(isBackground));
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration _setAlwaysRunsAtForegroundPriority:YES];
+    [configuration _setClientNavigationsRunAtForegroundPriority:YES];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 

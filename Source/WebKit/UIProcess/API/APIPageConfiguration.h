@@ -93,9 +93,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool clientNavigationsRunAtForegroundPriority() const { return m_clientNavigationsRunAtForegroundPriority; }
     void setClientNavigationsRunAtForegroundPriority(bool value) { m_clientNavigationsRunAtForegroundPriority = value; }
-    bool alwaysRunsAtForegroundPriority() const { return m_alwaysRunsAtForegroundPriority; }
-    void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; }
-    
+
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
     void setCanShowWhileLocked(bool canShowWhileLocked) { m_canShowWhileLocked = canShowWhileLocked; }
 
@@ -175,7 +173,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_clientNavigationsRunAtForegroundPriority { true };
-    bool m_alwaysRunsAtForegroundPriority { false };
     bool m_canShowWhileLocked { false };
     RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;
 #endif

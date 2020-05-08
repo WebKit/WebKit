@@ -144,7 +144,7 @@ static WKWebViewConfiguration *configuration;
         configuration._needsStorageAccessFromFileURLsQuirk = NO;
 #if PLATFORM(IOS_FAMILY)
         configuration.allowsInlineMediaPlayback = NO;
-        configuration._alwaysRunsAtForegroundPriority = YES;
+        configuration._clientNavigationsRunAtForegroundPriority = YES;
 #endif
     }
 

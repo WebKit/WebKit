@@ -91,7 +91,7 @@ typedef NS_ENUM(NSUInteger, _WKWebViewCategory) {
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setClientNavigationsRunAtForegroundPriority:) BOOL _clientNavigationsRunAtForegroundPriority WK_API_AVAILABLE(ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_AVAILABLE(ios(9_0));
+@property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_DEPRECATED_WITH_REPLACEMENT("_clientNavigationsRunAtForegroundPriority", ios(9.0, WK_IOS_TBA));
 @property (nonatomic, setter=_setInlineMediaPlaybackRequiresPlaysInlineAttribute:) BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, setter=_setAllowsInlineMediaPlaybackAfterFullscreen:) BOOL _allowsInlineMediaPlaybackAfterFullscreen  WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, setter=_setDragLiftDelay:) _WKDragLiftDelay _dragLiftDelay WK_API_AVAILABLE(ios(11.0));

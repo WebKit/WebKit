@@ -2447,11 +2447,9 @@ private:
     bool m_viewWasEverInWindow { false };
 #if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
-    bool m_alwaysRunsAtForegroundPriority { false };
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
-    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_alwaysRunsAtForegroundPriorityActivity;
     RunLoop::Timer<WebPageProxy> m_audibleActivityTimer;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_openingAppLinkActivity;
 #endif

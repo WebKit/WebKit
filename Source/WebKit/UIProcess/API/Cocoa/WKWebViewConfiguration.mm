@@ -729,12 +729,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
-    return _pageConfiguration->alwaysRunsAtForegroundPriority();
+    return _pageConfiguration->clientNavigationsRunAtForegroundPriority();
 }
 
 - (void)_setAlwaysRunsAtForegroundPriority:(BOOL)alwaysRunsAtForegroundPriority
 {
-    _pageConfiguration->setAlwaysRunsAtForegroundPriority(alwaysRunsAtForegroundPriority);
+    _pageConfiguration->setClientNavigationsRunAtForegroundPriority(alwaysRunsAtForegroundPriority);
 }
 
 - (BOOL)_inlineMediaPlaybackRequiresPlaysInlineAttribute

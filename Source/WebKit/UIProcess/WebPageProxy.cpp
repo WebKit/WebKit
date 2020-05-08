@@ -464,7 +464,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
 #if PLATFORM(IOS_FAMILY)
-    , m_alwaysRunsAtForegroundPriority(m_configuration->alwaysRunsAtForegroundPriority())
     , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
 #endif
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
@@ -1126,7 +1125,6 @@ void WebPageProxy::close()
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
     m_openingAppLinkActivity = nullptr;
-    m_alwaysRunsAtForegroundPriorityActivity = nullptr;
     m_audibleActivityTimer.stop();
 #endif
 
@@ -2081,16 +2079,6 @@ void WebPageProxy::updateThrottleState()
     } else if (m_isCapturingActivity) {
         RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because media capture is no longer active");
         m_isCapturingActivity = nullptr;
-    }
-
-    if (m_alwaysRunsAtForegroundPriority) {
-        if (!m_alwaysRunsAtForegroundPriorityActivity || !m_alwaysRunsAtForegroundPriorityActivity->isValid()) {
-            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because m_alwaysRunsAtForegroundPriority is true");
-            m_alwaysRunsAtForegroundPriorityActivity = m_process->throttler().foregroundActivity("View always runs at foreground priority"_s).moveToUniquePtr();
-        }
-    } else if (m_alwaysRunsAtForegroundPriorityActivity) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because m_alwaysRunsAtForegroundPriority is no longer true");
-        m_alwaysRunsAtForegroundPriorityActivity = nullptr;
     }
 #endif
 }
@@ -7660,7 +7648,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
     m_openingAppLinkActivity = nullptr;
-    m_alwaysRunsAtForegroundPriorityActivity = nullptr;
 #endif
 
     m_pageIsUserObservableCount = nullptr;

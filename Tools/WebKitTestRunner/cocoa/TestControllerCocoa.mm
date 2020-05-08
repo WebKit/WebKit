@@ -86,9 +86,6 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._invisibleAutoplayNotPermitted = NO;
     globalWebViewConfiguration._mediaDataLoadsAutomatically = YES;
     globalWebViewConfiguration.requiresUserActionForMediaPlayback = NO;
-
-    // Make sure the view does not get suspended and runs at foreground priority, even if not visible on screen.
-    globalWebViewConfiguration._alwaysRunsAtForegroundPriority = YES;
 #endif
     globalWebViewConfiguration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
 
