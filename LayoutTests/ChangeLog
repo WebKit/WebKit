@@ -1,5 +1,14 @@
 2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: [ iOS wk2 ] fast/forms/input-text-scroll-left-on-blur.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209812
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
+
         [ Mojave wk1 Release ] platform/mac/media/media-source/videoplaybackquality-decompressionsession.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=209866
 
