@@ -7321,7 +7321,7 @@ void WebPageProxy::frameSetLargestFrameChanged(const Optional<FrameIdentifier>& 
 
 void WebPageProxy::processDidBecomeUnresponsive()
 {
-    RELEASE_LOG_IF_ALLOWED(Process, "processDidBecomeUnresponsive:");
+    RELEASE_LOG_ERROR_IF_ALLOWED(Process, "processDidBecomeUnresponsive:");
 
     if (!hasRunningProcess())
         return;
