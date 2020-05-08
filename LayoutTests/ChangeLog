@@ -1,5 +1,14 @@
 2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
 
+        Flaky Test: media/track/track-in-band-metadata-display-order.html
+        https://bugs.webkit.org/show_bug.cgi?id=206226
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
+
         [ macOS wk2 ] http/tests/IndexedDB/collect-IDB-objects.https.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=207571
 
