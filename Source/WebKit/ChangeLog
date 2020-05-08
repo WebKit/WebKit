@@ -1,3 +1,16 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r260228): Linker warning about limitsNavigationsToAppBoundDomains property overriding instance methods from class
+        <https://webkit.org/b/211393>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration limitsNavigationsToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationsToAppBoundDomains:]):
+        - Move from WKPrivate category to main category to fix linker
+          warnings.
+
 2020-05-08  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r259209) Webview's pending URL is null after restoring session state

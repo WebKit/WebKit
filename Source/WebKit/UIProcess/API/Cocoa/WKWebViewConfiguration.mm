@@ -592,6 +592,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _pageConfiguration->copy();
 }
 
+- (BOOL)limitsNavigationsToAppBoundDomains
+{
+    return _pageConfiguration->limitsNavigationsToAppBoundDomains();
+}
+
+- (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
+{
+    _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
+}
+
 @end
 
 @implementation WKWebViewConfiguration (WKPrivate)
@@ -684,16 +694,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setAllowTopNavigationToDataURLs:(BOOL)allowTopNavigationToDataURLs
 {
     _allowTopNavigationToDataURLs = allowTopNavigationToDataURLs;
-}
-
-- (BOOL)limitsNavigationsToAppBoundDomains
-{
-    return _pageConfiguration->limitsNavigationsToAppBoundDomains();
-}
-
-- (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
-{
-    _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
 }
 
 - (BOOL)_convertsPositionStyleOnCopy
