@@ -145,6 +145,9 @@ fast/shadow-dom/dragging-element-with-shadow-tree.html [ Skip ]
 fast/shadow-dom/dragging-element-inside-shadow-tree.html [ Skip ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
+# rdar://problem/61793884 : making this test WK1 specific as, for WK2 its timing out.
+fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
+
 # Only iOS supports QuickLook
 quicklook [ Skip ]
 http/tests/quicklook [ Skip ]

@@ -1390,6 +1390,9 @@ fast/css/ancestor-of-hovered-element-removed.html [ Pass ]
 fast/images/animated-gif-no-layout.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 
+# rdar://problem/61793884 : Enabling this test for WK1 only.
+fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Pass ]
+
 # w3c tests that fail
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Failure ]

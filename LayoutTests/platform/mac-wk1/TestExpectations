@@ -30,6 +30,9 @@ http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.
 
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 
+# rdar://problem/61793884 : Enabling this test for WK1 only.
+fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
