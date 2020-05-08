@@ -102,6 +102,27 @@ TEST(CopyHTML, Sanitizes)
     EXPECT_FALSE(htmlInNativePasteboard.contains("dangerousCode"));
 }
 
+TEST(CopyHTML, SanitizationPreservesCharacterSetInSelectedText)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<meta charset='utf-8'>"
+        "<span id='copy'>我叫謝文昇</span>"
+        "<script>getSelection().selectAllChildren(copy);</script>"
+        "</body>"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *copiedMarkup = readHTMLStringFromPasteboard();
+    EXPECT_TRUE([copiedMarkup containsString:@"<span "]);
+    EXPECT_TRUE([copiedMarkup containsString:@"我叫謝文昇"]);
+    EXPECT_TRUE([copiedMarkup containsString:@"</span>"]);
+
+    auto attributedString = adoptNS([[NSAttributedString alloc] initWithData:readHTMLDataFromPasteboard() options:@{ NSDocumentTypeDocumentOption: NSHTMLTextDocumentType } documentAttributes:nil error:nil]);
+    EXPECT_WK_STREQ("我叫謝文昇", [attributedString string]);
+}
+
 TEST(CopyHTML, SanitizationPreservesCharacterSet)
 {
     Vector<std::pair<RetainPtr<NSString>, RetainPtr<NSData>>, 3> markupStringsAndData;
@@ -137,7 +158,7 @@ TEST(CopyHTML, SanitizationPreservesCharacterSet)
         EXPECT_WK_STREQ("我叫謝文昇", [attributedString string]);
 
         __block BOOL foundColorAttribute = NO;
-        [attributedString enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(CocoaColor *color, NSRange range, BOOL *) {
+        [attributedString enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(CocoaColor *color, NSRange range, BOOL*) {
             CGFloat redComponent = 0;
             CGFloat greenComponent = 0;
             CGFloat blueComponent = 0;

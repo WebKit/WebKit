@@ -1,3 +1,42 @@
+2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Preserve character set information when writing to the pasteboard when copying rich text
+        https://bugs.webkit.org/show_bug.cgi?id=211524
+
+        Reviewed by Darin Adler.
+
+        This patch is a followup to r261247, which introduced a workaround for Cocoa platforms to automatically add a
+        `meta charset` when writing HTML data to the platform pasteboard. When copying a rich text selection, we use a
+        different codepath when sanitizing DOM content - that is, `serializePreservingVisualAppearance`.
+
+        The previous change also introduced an enum, `AddMetaCharsetIfNeeded`, to limit applying this workaround to only
+        when we're writing HTML to the clipboard. However, it should be harmless to include this when reading sanitized
+        HTML as well, so we can also simplify this code by removing the `AddMetaCharsetIfNeeded` enum (and all of its
+        uses).
+
+        Test: CopyHTML.SanitizationPreservesCharacterSetInSelectedText
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded):
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::setDataFromItemList):
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::isAllASCII const):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readHTML):
+        (WebCore::WebContentMarkupReader::readHTML):
+        * editing/markup.cpp:
+        (WebCore::sanitizeMarkup):
+        (WebCore::serializePreservingVisualAppearanceInternal):
+
+        Move the `meta charset` workaround from sanitizedMarkupForFragmentInDocument to
+        serializePreservingVisualAppearanceInternal, such that HTML data written to the pasteboard when copying rich
+        text can be used to load a web view, without losing the fact that the copied content was UTF-8 encoded.
+
+        (WebCore::sanitizedMarkupForFragmentInDocument):
+        * editing/markup.h:
+
 2020-05-08  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crashes in LayoutTests in isolated tree mode.

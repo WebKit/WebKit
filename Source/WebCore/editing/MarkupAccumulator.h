@@ -69,6 +69,7 @@ public:
 protected:
     static size_t totalLength(const Vector<String>&);
     size_t length() const { return m_markup.length(); }
+    bool isAllASCII() const { return m_markup.toStringPreserveCapacity().isAllASCII(); }
 
     void concatenateMarkup(StringBuilder&);
 

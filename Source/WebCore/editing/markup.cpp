@@ -201,7 +201,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     return page;
 }
 
-String sanitizeMarkup(const String& rawHTML, AddMetaCharsetIfNeeded addMetaCharsetIfNeeded, MSOListQuirks msoListQuirks, Optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer)
+String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, Optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
@@ -212,7 +212,7 @@ String sanitizeMarkup(const String& rawHTML, AddMetaCharsetIfNeeded addMetaChars
     if (fragmentSanitizer)
         (*fragmentSanitizer)(fragment);
 
-    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, addMetaCharsetIfNeeded, msoListQuirks, rawHTML);
+    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, rawHTML);
 }
 
 enum class MSOListMode { Preserve, DoNotPreserve };
@@ -238,6 +238,14 @@ public:
         if (UNLIKELY(m_useComposedTree))
             return node.parentInComposedTree();
         return node.parentOrShadowHostNode();
+    }
+
+    void prependMetaCharsetUTF8TagIfNonASCIICharactersArePresent()
+    {
+        if (isAllASCII())
+            return;
+
+        m_reversedPrecedingMarkup.append("<meta charset=\"UTF-8\">"_s);
     }
 
 private:
@@ -917,6 +925,11 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.appendString(interchangeNewlineString);
 
+#if PLATFORM(COCOA)
+    // On Cocoa platforms, this markup is eventually persisted to the pasteboard and read back as UTF-8 data,
+    // so this meta tag is needed for clients that read this data in the future from the pasteboard and load it.
+    accumulator.prependMetaCharsetUTF8TagIfNonASCIICharactersArePresent();
+#endif
     return accumulator.takeResults();
 }
 
@@ -945,7 +958,7 @@ static bool shouldPreserveMSOLists(const String& markup)
         && htmlTag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\"");
 }
 
-String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, AddMetaCharsetIfNeeded addMetaCharsetIfNeeded, MSOListQuirks msoListQuirks, const String& originalMarkup)
+String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, MSOListQuirks msoListQuirks, const String& originalMarkup)
 {
     MSOListMode msoListMode = msoListQuirks == MSOListQuirks::CheckIfNeeded && shouldPreserveMSOLists(originalMarkup)
         ? MSOListMode::Preserve : MSOListMode::DoNotPreserve;
@@ -965,17 +978,6 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
             "xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"\n"
             "xmlns=\"http://www.w3.org/TR/REC-html40\">");
     }
-
-#if PLATFORM(COCOA)
-    if (addMetaCharsetIfNeeded == AddMetaCharsetIfNeeded::Yes && !result.isAllASCII()) {
-        // On Cocoa platforms, this markup is eventually persisted to the pasteboard and read back as UTF-8 data,
-        // so this meta tag is needed for clients that read this data in the future from the pasteboard and load it.
-        // This logic is used by both DataTransfer and Clipboard APIs to sanitize "text/html" from the page.
-        builder.appendLiteral("<meta charset=\"UTF-8\">");
-    }
-#else
-    UNUSED_PARAM(addMetaCharsetIfNeeded);
-#endif
 
     builder.append(result);
 

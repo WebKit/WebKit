@@ -1,3 +1,15 @@
+2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Preserve character set information when writing to the pasteboard when copying rich text
+        https://bugs.webkit.org/show_bug.cgi?id=211524
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to verify that the HTML data written to the pasteboard when copying a rich text selection
+        can be converted into an `NSAttributedString` that contains correctly encoded non-Latin characters.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+
 2020-05-08  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r259209) Webview's pending URL is null after restoring session state
