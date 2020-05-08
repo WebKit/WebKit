@@ -1,3 +1,17 @@
+2020-05-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Update message filtering rules in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=211188
+
+        Reviewed by Brent Fulgham.
+
+        Based on telemetry and local testing, update the message filtering rules in the WebContent process' sandbox on iOS.
+        Messages that have not been observed being in use should be denied.
+
+        No new tests, covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-05-08  Chris Dumez  <cdumez@apple.com>
 
         Turn processDidBecomeUnresponsive logging into error logging
