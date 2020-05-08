@@ -1,3 +1,36 @@
+2020-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        MayBegin wheel event in a <select> doesn't flash the scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=211605
+
+        Reviewed by Antti Koivisto.
+
+        We need to special-case scrollable <select> elements, because they are ScrollableAreas
+        which are never asynchronously scrolled, so the ScrollingTree never dispatches the handleWheelEventPhase()
+        which is necessary to flash overlay scrollbars. Scrollable <select> elements are always in the
+        non-fast scrollable region.
+        
+        Fix findEnclosingScrollableContainer() to return a ScrollableArea for the "maybegin" and "canceled" events
+        that have no delta.
+        
+        Remove some "inline" and make some things references.
+
+        Tests: fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html
+               fast/scrolling/mac/scrollbars/select-overlay-scrollbar-reveal.html
+
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventPhaseInScrollableArea):
+        (WebCore::didScrollInScrollableArea):
+        (WebCore::handleWheelEventInAppropriateEnclosingBox):
+        (WebCore::shouldGesturesTriggerActive):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::findEnclosingScrollableContainer):
+        (WebCore::EventHandler::determineWheelEventTarget):
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollableAreaForNode): Fix to find the ScrollableArea for RenderListBoxes.
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r261252.

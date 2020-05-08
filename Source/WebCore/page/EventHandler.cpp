@@ -88,6 +88,7 @@
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
+#include "ScrollAnimator.h"
 #include "ScrollLatchingState.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -290,20 +291,31 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool didScrollInScrollableArea(ScrollableArea* scrollableArea, WheelEvent& wheelEvent)
+static void handleWheelEventPhaseInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
+{
+#if PLATFORM(MAC)
+    if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+        scrollableArea.scrollAnimator().handleWheelEventPhase(wheelEvent.phase());
+#else
+    UNUSED_PARAM(scrollableArea);
+    UNUSED_PARAM(wheelEvent);
+#endif
+}
+
+static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const WheelEvent& wheelEvent)
 {
     ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
     bool didHandleWheelEvent = false;
     if (float absoluteDelta = std::abs(wheelEvent.deltaX()))
-        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
+        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaX() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
     
     if (float absoluteDelta = std::abs(wheelEvent.deltaY()))
-        didHandleWheelEvent |= scrollableArea->scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
+        didHandleWheelEvent |= scrollableArea.scroll(wheelEvent.deltaY() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
     
     return didHandleWheelEvent;
 }
 
-static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, WheelEvent& wheelEvent, RefPtr<Element>& stopElement, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
+static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, RefPtr<Element>& stopElement, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -312,12 +324,20 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
     shouldHandleEvent |= wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded;
 #endif
 #endif
-    if (!startNode->renderer() || !shouldHandleEvent)
+    if (!startNode->renderer())
         return false;
 
     RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();
-    if (initialEnclosingBox.isListBox())
-        return didScrollInScrollableArea(static_cast<RenderListBox*>(&initialEnclosingBox), wheelEvent);
+
+    // RenderListBox is special because it's a ScrollableArea that the scrolling tree doesn't know about.
+    if (is<RenderListBox>(initialEnclosingBox))
+        handleWheelEventPhaseInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
+
+    if (!shouldHandleEvent)
+        return false;
+
+    if (is<RenderListBox>(initialEnclosingBox))
+        return didScrollInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
 
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
@@ -328,7 +348,7 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
                 auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
                 scrollingWasHandled = boxLayer->handleWheelEvent(copiedEvent);
             } else
-                scrollingWasHandled = didScrollInScrollableArea(boxLayer, wheelEvent);
+                scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
 
             if (scrollingWasHandled) {
                 stopElement = currentEnclosingBox->element();
@@ -347,7 +367,7 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
 }
 
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY))
-static inline bool shouldGesturesTriggerActive()
+static bool shouldGesturesTriggerActive()
 {
     // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
     // rely on them to set the active state. Unfortunately there's no generic way to
@@ -358,13 +378,13 @@ static inline bool shouldGesturesTriggerActive()
 
 #if !PLATFORM(COCOA)
 
-inline bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
+bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {
     return false;
 }
 
 #if ENABLE(DRAG_SUPPORT)
-inline bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&)
+bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&)
 {
     return false;
 }

@@ -154,6 +154,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
@@ -2775,7 +2776,11 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
         if (!element.renderBox())
             return Exception { InvalidAccessError };
 
-        scrollableArea = element.renderBox()->layer();
+        auto& renderBox = *element.renderBox();
+        if (is<RenderListBox>(renderBox))
+            scrollableArea = &downcast<RenderListBox>(renderBox);
+        else
+            scrollableArea = renderBox.layer();
     } else
         return Exception { InvalidNodeTypeError };
 

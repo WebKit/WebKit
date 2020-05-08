@@ -785,7 +785,7 @@ static ScrollableArea* scrollableAreaForBox(RenderBox& box)
     return box.layer();
 }
     
-static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, float deltaX, float deltaY)
+static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, const PlatformWheelEvent& wheelEvent)
 {
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
@@ -797,14 +797,21 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, floa
             return nullptr;
 
         RenderBox* box = candidate->renderBox();
-        if (box && box->canBeScrolledAndHasScrollableArea()) {
-            if (ScrollableArea* scrollableArea = scrollableAreaForBox(*box)) {
-                if (((deltaY > 0) && !scrollableArea->scrolledToTop()) || ((deltaY < 0) && !scrollableArea->scrolledToBottom())
-                    || ((deltaX > 0) && !scrollableArea->scrolledToLeft()) || ((deltaX < 0) && !scrollableArea->scrolledToRight())) {
-                    return candidate;
-                }
-            }
-        }
+        if (!box || !box->canBeScrolledAndHasScrollableArea())
+            continue;
+        
+        auto* scrollableArea = scrollableAreaForBox(*box);
+        if (!scrollableArea)
+            continue;
+
+        if (wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseCancelled)
+            return candidate;
+
+        auto deltaX = wheelEvent.deltaX();
+        auto deltaY = wheelEvent.deltaY();
+        if ((deltaY > 0 && !scrollableArea->scrolledToTop()) || (deltaY < 0 && !scrollableArea->scrolledToBottom())
+            || (deltaX > 0 && !scrollableArea->scrolledToLeft()) || (deltaX < 0 && !scrollableArea->scrolledToRight()))
+            return candidate;
     }
     
     return nullptr;
@@ -963,7 +970,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
             scrollableContainer = wheelEventTarget;
             scrollableArea = scrollableAreaForEventTarget(wheelEventTarget.get());
         } else {
-            scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
+            scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent);
             if (scrollableContainer && !is<HTMLIFrameElement>(wheelEventTarget))
                 scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
             else {
