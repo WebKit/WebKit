@@ -85,6 +85,11 @@ enum LSSessionID {
 
 #endif // !USE(APPLE_INTERNAL_SDK)
 
+@interface _LSDService : NSObject <NSXPCListenerDelegate>
++ (NSArray<Class> *)allServiceClasses;
++ (NSXPCConnection *)XPCConnectionToService;
+@end
+
 #if PLATFORM(MAC)
 
 typedef const struct CF_BRIDGED_TYPE(id) __LSASN* LSASNRef;

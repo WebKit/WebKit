@@ -86,6 +86,7 @@
 #import <stdio.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -134,6 +135,10 @@
 #if USE(OS_STATE)
 #import <os/state_private.h>
 #endif
+
+SOFT_LINK_FRAMEWORK(CoreServices)
+SOFT_LINK_CLASS(CoreServices, _LSDService)
+SOFT_LINK_CLASS(CoreServices, _LSDOpenService)
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -203,6 +208,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
         ok = extension->revoke();
         ASSERT_UNUSED(ok, ok);
+
+        auto services = [get_LSDServiceClass() allServiceClasses];
+        for (Class cls in services) {
+            auto connection = [cls XPCConnectionToService];
+            [connection invalidate];
+        }
+
+        ASSERT(String(uti.get()) = String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
     }
 
 #if PLATFORM(IOS_FAMILY)
