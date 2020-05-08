@@ -1,3 +1,17 @@
+2020-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise sandbox to stop logging some commonly-used properties 
+        https://bugs.webkit.org/show_bug.cgi?id=211636
+        <rdar://problem/63014244>
+
+        Reviewed by Per Arne Vollan.
+
+        Further living on and testing has shown a handful of sysctl entries that are in regular use, and do not need
+        to be logged or considered for removal. This patch has no change in behavior, just reduces logging.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-05-08  Chris Dumez  <cdumez@apple.com>
 
         Make WKWebViewConfiguration._alwaysRunsAtForegroundPriority an alias for _clientNavigationsRunAtForegroundPriority

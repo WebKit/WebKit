@@ -471,7 +471,6 @@
     (sysctl-name "kern.clockrate")
     (sysctl-name "kern.development")
     (sysctl-name "kern.hostid")
-    (sysctl-name "kern.hostname")
     (sysctl-name "kern.maxproc")
     (sysctl-name "kern.maxvnodes")
     (sysctl-name-prefix "kern.monotonicclock")
@@ -480,7 +479,6 @@
     (sysctl-name "kern.saved_ids")
     (sysctl-name "kern.usrstack")
     (sysctl-name "kern.usrstack64")
-    (sysctl-name "kern.version")
     (sysctl-name "kern.waketime")
     (sysctl-name "security.mac.sandbox.sentinel")
     (sysctl-name "sysctl.name2oid")
@@ -502,9 +500,9 @@
 (allow file-read-metadata network-outbound
        (literal "/private/var/run/syslog"))
 
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.system.notification_center"))
-(allow ipc-posix-shm-read* (with telemetry)
+(allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
 
 (allow mach-lookup (with report) (with telemetry)
@@ -557,6 +555,7 @@
         "hw.model" ;; Needed for bundle loading
         "hw.pagesize_compat" ;; Needed by bmalloc
         "kern.bootargs"  ;; Needed for bundle loading
+        "kern.hostname"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
@@ -566,6 +565,7 @@
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.tcsm_available" ;; Needed for IndexedDB support
+        "kern.version"
         "vm.footprint_suspend"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.

@@ -123,7 +123,6 @@
        (global-name "com.apple.secinitd")
        (global-name "com.apple.system.DirectoryService.libinfo_v1")
        (global-name "com.apple.system.logger")
-       (global-name "com.apple.system.notification_center")
        (global-name "com.apple.system.opendirectoryd.libinfo")
        (global-name "com.apple.system.opendirectoryd.membership")
        (global-name "com.apple.trustd")
@@ -178,12 +177,14 @@
         "hw.availcpu"
         "hw.ncpu"
         "hw.model" ;; Needed for bundle loading
+        "kern.hostname"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.
         "kern.ostype"
+        "kern.version"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^net.routetable")
 )
@@ -305,6 +306,7 @@
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
     (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/47598758>
+    (global-name "com.apple.system.notification_center")
     (global-name "com.apple.AppSSO.service-xpc")
 )
 
@@ -371,8 +373,7 @@
     (global-name "org.h5l.kcm")
     (global-name "com.apple.GSSCred")
     (global-name "com.apple.ist.ds.appleconnect.service.kdctunnel") ;; Remove after <rdar://problem/35542803> ships
-    (global-name "com.apple.system.logger")
-    (global-name "com.apple.system.notification_center"))
+    (global-name "com.apple.system.logger"))
 (allow network-outbound
     (remote udp))
 (allow user-preference-read
