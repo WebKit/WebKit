@@ -37,7 +37,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-get-calls.html
 [ 34: PASS ] context.getParameter(context.MAX_ARRAY_TEXTURE_LAYERS) is >= 256
 [ 35: PASS ] context.getParameter(context.MAX_ARRAY_TEXTURE_LAYERS) is an instance of Number
 [ 36: PASS ] context.getParameter(context.MAX_CLIENT_WAIT_TIMEOUT_WEBGL) is >= 0
-[ 37: FAIL ] context.getParameter(context.MAX_CLIENT_WAIT_TIMEOUT_WEBGL) is not an instance of Number
+[ 37: PASS ] context.getParameter(context.MAX_CLIENT_WAIT_TIMEOUT_WEBGL) is an instance of Number
 [ 38: PASS ] context.getParameter(context.MAX_COLOR_ATTACHMENTS) is >= 4
 [ 39: PASS ] context.getParameter(context.MAX_COLOR_ATTACHMENTS) is an instance of Number
 [ 40: PASS ] context.getParameter(context.MAX_COMBINED_UNIFORM_BLOCKS) is >= 24
@@ -48,10 +48,10 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-get-calls.html
 [ 45: PASS ] context.getParameter(context.MAX_ELEMENT_INDEX) is an instance of Number
 [ 46: PASS ] context.getParameter(context.MAX_ELEMENTS_INDICES) is an instance of Number
 [ 47: PASS ] context.getParameter(context.MAX_ELEMENTS_VERTICES) is an instance of Number
-[ 48: FAIL ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) should be >= 60. Was null (of type object).
-[ 49: FAIL ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) is not an instance of Number
+[ 48: PASS ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) is >= 60
+[ 49: PASS ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) is an instance of Number
 [ 50: PASS ] context.getParameter(context.MAX_FRAGMENT_UNIFORM_BLOCKS) is >= 12
-[ 51: FAIL ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) is not an instance of Number
+[ 51: PASS ] context.getParameter(context.MAX_FRAGMENT_INPUT_COMPONENTS) is an instance of Number
 [ 52: PASS ] context.getParameter(context.MAX_FRAGMENT_UNIFORM_COMPONENTS) is >= 896
 [ 53: PASS ] context.getParameter(context.MAX_FRAGMENT_UNIFORM_COMPONENTS) is an instance of Number
 [ 54: PASS ] context.getParameter(context.MAX_PROGRAM_TEXEL_OFFSET) is >= 7
@@ -90,5 +90,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-get-calls.html
 [ 87: PASS ] context.getParameter(context.MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS) is an instance of Number
 [ 88: FAIL ] context.getError() should be 0. Was 1280.
 [ 89: PASS ] successfullyParsed is true
-[ FAIL ] 10 failures reported
+[ FAIL ] 6 failures reported
 

@@ -197,15 +197,15 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 193: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER) is gl.NEAREST
 [ 194: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S) is gl.CLAMP_TO_EDGE
 [ 195: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T) is gl.CLAMP_TO_EDGE
-[ 196: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL) should be 0 (of type number). Was null (of type object).
-[ 197: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC) should be 515 (of type number). Was null (of type object).
-[ 198: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE) should be 34894 (of type number). Was null (of type object).
-[ 199: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL) should be 10 (of type number). Was null (of type object).
-[ 200: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAX_LOD) should be 10 (of type number). Was null (of type object).
-[ 201: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_LOD) should be 0 (of type number). Was null (of type object).
-[ 202: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_R) should be 33071 (of type number). Was null (of type object).
-[ 203: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_IMMUTABLE_FORMAT) should be false (of type boolean). Was null (of type object).
-[ 204: FAIL ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_IMMUTABLE_LEVELS) should be 0 (of type number). Was null (of type object).
+[ 196: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL) is 0
+[ 197: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC) is gl.LEQUAL
+[ 198: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE) is gl.COMPARE_REF_TO_TEXTURE
+[ 199: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL) is 10
+[ 200: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAX_LOD) is 10
+[ 201: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_LOD) is 0
+[ 202: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_R) is gl.CLAMP_TO_EDGE
+[ 203: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_IMMUTABLE_FORMAT) is false
+[ 204: PASS ] gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_IMMUTABLE_LEVELS) is 0
 [ 205: PASS ] getTexParameter correctly handled invalid parameter enums
 [ 206: PASS ] getTexParameter correctly handled invalid target enums
 [ 207: PASS ] getError was expected value: NO_ERROR :
@@ -311,5 +311,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 307: PASS ] getSamplerParameter correctly handled invalid pname enums
 [ 308: FAIL ] gl.getSyncParameter(sync, gl.OBJECT_TYPE) should be 37142. Threw exception TypeError: Argument 1 ('sync') to WebGL2RenderingContext.getSyncParameter must be an instance of WebGLSync
 [ 309: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 73 failures reported
+[ FAIL ] 64 failures reported
 

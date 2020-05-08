@@ -21,16 +21,16 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 18: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should WORK
 [ 19: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 20: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.COPY_WRITE_BUFFER should WORK
-[ 21: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should FAIL
-[ 22: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_UNPACK_BUFFER should FAIL
-[ 23: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER should FAIL
+[ 21: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should FAIL
+[ 22: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_UNPACK_BUFFER should FAIL
+[ 23: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER should FAIL
 [ 24: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBufferRange to gl.TRANSFORM_FEEDBACK_BUFFER should FAIL
-[ 25: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER should FAIL
-[ 26: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.UNIFORM_BUFFER should FAIL
+[ 25: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER should FAIL
+[ 26: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBuffer to gl.UNIFORM_BUFFER should FAIL
 [ 27: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBufferRange to gl.UNIFORM_BUFFER should FAIL
 [ 28: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Binding buffer first with bindBuffer to gl.ELEMENT_ARRAY_BUFFER and then binding buffer with bindBufferBase to gl.UNIFORM_BUFFER should FAIL
 [ 29: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 30: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 30: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 31: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 32: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.COPY_WRITE_BUFFER should WORK
 [ 33: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should WORK
@@ -42,7 +42,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 39: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBufferRange to gl.UNIFORM_BUFFER should WORK
 [ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBuffer to gl.COPY_READ_BUFFER and then binding buffer with bindBufferBase to gl.UNIFORM_BUFFER should WORK
 [ 41: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 42: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 42: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 43: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 44: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.COPY_WRITE_BUFFER should WORK
 [ 45: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should WORK
@@ -54,7 +54,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 51: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBufferRange to gl.UNIFORM_BUFFER should WORK
 [ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBuffer to gl.COPY_WRITE_BUFFER and then binding buffer with bindBufferBase to gl.UNIFORM_BUFFER should WORK
 [ 53: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 54: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 54: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 55: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 56: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_WRITE_BUFFER should WORK
 [ 57: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should WORK
@@ -66,7 +66,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 63: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBufferRange to gl.UNIFORM_BUFFER should WORK
 [ 64: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBuffer to gl.PIXEL_PACK_BUFFER and then binding buffer with bindBufferBase to gl.UNIFORM_BUFFER should WORK
 [ 65: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 66: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 66: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 67: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 68: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_WRITE_BUFFER should WORK
 [ 69: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.PIXEL_UNPACK_BUFFER and then binding buffer with bindBuffer to gl.PIXEL_PACK_BUFFER should WORK
@@ -80,9 +80,9 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 77: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
 [ 78: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBufferRange to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
 [ 79: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 80: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 80: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 81: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBufferRange to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
-[ 82: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 82: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 83: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 84: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBufferRange to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
 [ 85: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBufferBase to gl.TRANSFORM_FEEDBACK_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
@@ -116,7 +116,7 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 113: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
 [ 114: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBufferRange to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
 [ 115: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBufferBase to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ARRAY_BUFFER should WORK
-[ 116: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBuffer to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
+[ 116: PASS ] getError was expected value: INVALID_OPERATION : Binding buffer first with bindBuffer to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 117: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : Binding buffer first with bindBufferRange to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 118: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : Binding buffer first with bindBufferBase to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.ELEMENT_ARRAY_BUFFER should FAIL
 [ 119: PASS ] getError was expected value: NO_ERROR : Binding buffer first with bindBuffer to gl.UNIFORM_BUFFER and then binding buffer with bindBuffer to gl.COPY_READ_BUFFER should WORK
@@ -150,5 +150,5 @@ Test: ../../resources/webgl_test_files/conformance2/buffers/buffer-type-restrict
 [ 147: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBufferBase to gl.UNIFORM_BUFFER and then binding buffer with bindBufferRange to gl.UNIFORM_BUFFER should WORK
 [ 148: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : Binding buffer first with bindBufferBase to gl.UNIFORM_BUFFER and then binding buffer with bindBufferBase to gl.UNIFORM_BUFFER should WORK
 [ 149: PASS ] successfullyParsed is true
-[ FAIL ] 40 failures reported
+[ FAIL ] 28 failures reported
 

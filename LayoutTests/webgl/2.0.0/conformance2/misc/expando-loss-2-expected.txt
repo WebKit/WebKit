@@ -17,7 +17,60 @@ Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
 [ 13: FAIL ] getParameter(VERTEX_ARRAY_BINDING): Expect subobject expando to survive despite GC.
 [ 14: PASS ] getParameter(VERTEX_ARRAY_BINDING): Expect extra expando to survive despite GC.
 [ 15: PASS ] [object WebGLVertexArrayObject] is an instance of WebGLVertexArrayObject
-[ 16: FAIL ] getParameter(TEXTURE_BINDING_3D) returns instance that was bound.
-[ 17: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 8 failures reported
+[ 16: PASS ] getParameter(TEXTURE_BINDING_3D) returns instance that was bound.
+[ 17: FAIL ] getParameter(TEXTURE_BINDING_3D): Expect basic expando to survive despite GC.
+[ 18: FAIL ] getParameter(TEXTURE_BINDING_3D): Expect subobject expando to survive despite GC.
+[ 19: PASS ] getParameter(TEXTURE_BINDING_3D): Expect extra expando to survive despite GC.
+[ 20: PASS ] [object WebGLTexture] is an instance of WebGLTexture
+[ 21: PASS ] getParameter(TEXTURE_BINDING_2D_ARRAY) returns instance that was bound.
+[ 22: FAIL ] getParameter(TEXTURE_BINDING_2D_ARRAY): Expect basic expando to survive despite GC.
+[ 23: FAIL ] getParameter(TEXTURE_BINDING_2D_ARRAY): Expect subobject expando to survive despite GC.
+[ 24: PASS ] getParameter(TEXTURE_BINDING_2D_ARRAY): Expect extra expando to survive despite GC.
+[ 25: PASS ] [object WebGLTexture] is an instance of WebGLTexture
+[ 26: PASS ] getParameter(READ_FRAMEBUFFER_BINDING) returns instance that was bound.
+[ 27: FAIL ] getParameter(READ_FRAMEBUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 28: FAIL ] getParameter(READ_FRAMEBUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 29: PASS ] getParameter(READ_FRAMEBUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 30: PASS ] [object WebGLFramebuffer] is an instance of WebGLFramebuffer
+[ 31: PASS ] getParameter(DRAW_FRAMEBUFFER_BINDING) returns instance that was bound.
+[ 32: FAIL ] getParameter(DRAW_FRAMEBUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 33: FAIL ] getParameter(DRAW_FRAMEBUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 34: PASS ] getParameter(DRAW_FRAMEBUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 35: PASS ] [object WebGLFramebuffer] is an instance of WebGLFramebuffer
+[ 36: PASS ] getParameter(COPY_READ_BUFFER_BINDING) returns instance that was bound.
+[ 37: FAIL ] getParameter(COPY_READ_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 38: FAIL ] getParameter(COPY_READ_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 39: PASS ] getParameter(COPY_READ_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 40: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 41: PASS ] getParameter(COPY_WRITE_BUFFER_BINDING) returns instance that was bound.
+[ 42: FAIL ] getParameter(COPY_WRITE_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 43: FAIL ] getParameter(COPY_WRITE_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 44: PASS ] getParameter(COPY_WRITE_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 45: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 46: PASS ] getParameter(PIXEL_PACK_BUFFER_BINDING) returns instance that was bound.
+[ 47: FAIL ] getParameter(PIXEL_PACK_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 48: FAIL ] getParameter(PIXEL_PACK_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 49: PASS ] getParameter(PIXEL_PACK_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 50: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 51: PASS ] getParameter(PIXEL_UNPACK_BUFFER_BINDING) returns instance that was bound.
+[ 52: FAIL ] getParameter(PIXEL_UNPACK_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 53: FAIL ] getParameter(PIXEL_UNPACK_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 54: PASS ] getParameter(PIXEL_UNPACK_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 55: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 56: PASS ] getParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING) returns instance that was bound.
+[ 57: FAIL ] getParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 58: FAIL ] getParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 59: PASS ] getParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 60: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 61: PASS ] getParameter(UNIFORM_BUFFER_BINDING) returns instance that was bound.
+[ 62: FAIL ] getParameter(UNIFORM_BUFFER_BINDING): Expect basic expando to survive despite GC.
+[ 63: FAIL ] getParameter(UNIFORM_BUFFER_BINDING): Expect subobject expando to survive despite GC.
+[ 64: PASS ] getParameter(UNIFORM_BUFFER_BINDING): Expect extra expando to survive despite GC.
+[ 65: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
+[ 66: FAIL ] getIndexedParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING, 0) returns instance that was bound.
+[ 67: FAIL ] getIndexedParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING, 1) returns instance that was bound.
+[ 68: FAIL ] getIndexedParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING, 2) returns instance that was bound.
+[ 69: FAIL ] getIndexedParameter(TRANSFORM_FEEDBACK_BUFFER_BINDING, 3) returns instance that was bound.
+[ 70: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 31 failures reported
 

@@ -1,3 +1,96 @@
+2020-05-08  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Complete new texture upload entry points in WebGL2RenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=208875
+
+        Reviewed by Dean Jackson.
+
+        Implement the remaining texture upload entry points - mainly for
+        3D textures - in WebGL2RenderingContext. Add support for uploading
+        from the pixel unpack buffer.
+
+        Refactor the WebGL 2.0 binding points into WebGL2RenderingContext,
+        where they had previously been in the base class. Refactor
+        validation code to override the base class where necessary.
+        Refactor getParameter into WebGLRenderingContextBase and override
+        it in WebGL2RenderingContext, eliminating duplicate code and
+        fixing bugs.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::~WebGL2RenderingContext):
+        (WebCore::WebGL2RenderingContext::getInt64Parameter):
+        (WebCore::WebGL2RenderingContext::validateBufferTarget):
+        (WebCore::WebGL2RenderingContext::validateBufferTargetCompatibility):
+        (WebCore::WebGL2RenderingContext::validateBufferDataTarget):
+        (WebCore::WebGL2RenderingContext::validateAndCacheBufferBinding):
+        (WebCore::WebGL2RenderingContext::validateTexImageBinding):
+        (WebCore::WebGL2RenderingContext::validateTexture3DBinding):
+        (WebCore::WebGL2RenderingContext::copyBufferSubData):
+        (WebCore::WebGL2RenderingContext::bindFramebuffer):
+        (WebCore::WebGL2RenderingContext::deleteFramebuffer):
+        (WebCore::WebGL2RenderingContext::getTexParameter):
+        (WebCore::WebGL2RenderingContext::texStorage2D):
+        (WebCore::WebGL2RenderingContext::texStorage3D):
+        (WebCore::WebGL2RenderingContext::texImage2D):
+        (WebCore::WebGL2RenderingContext::texImage3D):
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        (WebCore::WebGL2RenderingContext::bindBufferBase):
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGL2RenderingContext::validateFramebufferTarget):
+        (WebCore::WebGL2RenderingContext::getFramebufferBinding):
+        (WebCore::WebGL2RenderingContext::getReadFramebufferBinding):
+        (WebCore::WebGL2RenderingContext::restoreCurrentFramebuffer):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        (WebCore::WebGL2RenderingContext::uncacheDeletedBuffer):
+        (WebCore::WebGL2RenderingContext::validateFramebufferFuncParameters): Deleted.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::setTarget):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::attach):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::isBound const):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters): Deleted.
+        (WebCore::WebGLRenderingContext::getParameter): Deleted.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::~WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::validateBufferTarget):
+        (WebCore::WebGLRenderingContextBase::validateBufferDataTarget):
+        (WebCore::WebGLRenderingContextBase::validateAndCacheBufferBinding):
+        (WebCore::WebGLRenderingContextBase::bindBuffer):
+        (WebCore::WebGLRenderingContextBase::bindFramebuffer):
+        (WebCore::WebGLRenderingContextBase::bindTexture):
+        (WebCore::WebGLRenderingContextBase::checkFramebufferStatus):
+        (WebCore::WebGLRenderingContextBase::uncacheDeletedBuffer):
+        (WebCore::WebGLRenderingContextBase::deleteFramebuffer):
+        (WebCore::WebGLRenderingContextBase::deleteRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::deleteTexture):
+        (WebCore::WebGLRenderingContextBase::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+        (WebCore::WebGLRenderingContextBase::getParameter):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::copyTexImage2D):
+        (WebCore::WebGLRenderingContextBase::texParameter):
+        (WebCore::WebGLRenderingContextBase::getBoundReadFramebufferColorFormat):
+        (WebCore::WebGLRenderingContextBase::getBoundReadFramebufferWidth):
+        (WebCore::WebGLRenderingContextBase::getBoundReadFramebufferHeight):
+        (WebCore::WebGLRenderingContextBase::validateFramebufferTarget):
+        (WebCore::WebGLRenderingContextBase::getFramebufferBinding):
+        (WebCore::WebGLRenderingContextBase::getReadFramebufferBinding):
+        (WebCore::WebGLRenderingContextBase::validateFramebufferFuncParameters):
+        (WebCore::WebGLRenderingContextBase::validateBufferDataParameters):
+        (WebCore::WebGLRenderingContextBase::setFramebuffer):
+        (WebCore::WebGLRenderingContextBase::restoreCurrentFramebuffer):
+        (WebCore::WebGLRenderingContextBase::getInt64Parameter): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-05-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement web-share v2 for files

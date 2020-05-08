@@ -4,13 +4,13 @@ Test: ../../resources/webgl_test_files/conformance2/misc/object-deletion-behavio
 [ 1: PASS ] bufferBaseUniform is non-null.
 [ 2: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, bufferBaseUniform)
 [ 3: FAIL ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) should be [object WebGLBuffer]. Was null.
-[ 4: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.deleteBuffer(bufferBaseUniform)
+[ 4: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(bufferBaseUniform)
 [ 5: PASS ] gl.isBuffer(bufferBaseUniform) is false
 [ 6: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
-[ 7: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : after evaluating: gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, bufferBaseUniform)
+[ 7: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, bufferBaseUniform)
 [ 8: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
 [ 9: PASS ] bufferBaseTransformFeedback is non-null.
-[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferBaseTransformFeedback)
+[ 10: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferBaseTransformFeedback)
 [ 11: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) is bufferBaseTransformFeedback
 [ 12: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(bufferBaseTransformFeedback)
 [ 13: PASS ] gl.isBuffer(bufferBaseTransformFeedback) is false
@@ -20,13 +20,13 @@ Test: ../../resources/webgl_test_files/conformance2/misc/object-deletion-behavio
 [ 17: PASS ] bufferRangeUniform is non-null.
 [ 18: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, bufferRangeUniform, 0, gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT)
 [ 19: FAIL ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) should be [object WebGLBuffer]. Was null.
-[ 20: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.deleteBuffer(bufferRangeUniform)
+[ 20: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(bufferRangeUniform)
 [ 21: PASS ] gl.isBuffer(bufferRangeUniform) is false
 [ 22: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
-[ 23: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : after evaluating: gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, bufferRangeUniform, 0, gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT)
+[ 23: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : after evaluating: gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, bufferRangeUniform, 0, gl.UNIFORM_BUFFER_OFFSET_ALIGNMENT)
 [ 24: PASS ] gl.getParameter(gl.UNIFORM_BUFFER_BINDING) is null
 [ 25: PASS ] bufferRangeTransformFeedback is non-null.
-[ 26: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.bindBufferRange(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferRangeTransformFeedback, 0, 4)
+[ 26: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBufferRange(gl.TRANSFORM_FEEDBACK_BUFFER, 0, bufferRangeTransformFeedback, 0, 4)
 [ 27: FAIL ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING) should be [object WebGLBuffer]. Was null.
 [ 28: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.deleteBuffer(bufferRangeTransformFeedback)
 [ 29: PASS ] gl.isBuffer(bufferRangeTransformFeedback) is false
@@ -58,5 +58,5 @@ Test: ../../resources/webgl_test_files/conformance2/misc/object-deletion-behavio
 [ 55: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback)
 [ 56: PASS ] gl.getParameter(gl.TRANSFORM_FEEDBACK_BINDING) is null
 [ 57: PASS ] successfullyParsed is true
-[ FAIL ] 11 failures reported
+[ FAIL ] 6 failures reported
 

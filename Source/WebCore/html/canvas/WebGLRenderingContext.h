@@ -41,12 +41,10 @@ public:
     bool isWebGL1() const final { return true; }
 
     WebGLExtension* getExtension(const String&) final;
-    WebGLAny getParameter(GCGLenum pname) final;
     Optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
-    bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment) final;
     void hint(GCGLenum target, GCGLenum mode) final;
     void clear(GCGLbitfield mask) final;
 

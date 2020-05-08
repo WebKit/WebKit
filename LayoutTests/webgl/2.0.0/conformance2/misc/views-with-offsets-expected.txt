@@ -126,35 +126,70 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 123: PASS ] getError was expected value: NO_ERROR :
 [ 124: PASS ] getError was expected value: NO_ERROR :
 [ 125: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 255].
-[ 126: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 127: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 128: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 129: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 130: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
+[ 126: PASS ] getError was expected value: INVALID_OPERATION :
+[ 127: PASS ] getError was expected value: INVALID_OPERATION :
+[ 128: PASS ] getError was expected value: INVALID_OPERATION :
+[ 129: PASS ] getError was expected value: INVALID_OPERATION :
+[ 130: PASS ] getError was expected value: INVALID_OPERATION :
 [ 131: PASS ] getError was expected value: NO_ERROR :
 [ 132: PASS ] getError was expected value: NO_ERROR :
 [ 133: FAIL ] Should be 65504, was 0.
 [ 134: PASS ] getError was expected value: NO_ERROR :
 [ 135: PASS ] getError was expected value: NO_ERROR :
 [ 136: FAIL ] Should be 2047, was 0.
-[ 137: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 138: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR :
-[ 139: FAIL ] Does not support texSubImage3D with offsets into views.
-[ 140: FAIL ] Does not support compressedTexImage2D with offsets into views.
-[ 141: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
+[ 137: PASS ] getError was expected value: INVALID_OPERATION :
+[ 138: PASS ] getError was expected value: INVALID_OPERATION :
+[ 139: PASS ] getError was expected value: NO_ERROR :
+[ 140: PASS ] getError was expected value: NO_ERROR :
+[ 141: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 255].
 [ 142: PASS ] getError was expected value: NO_ERROR :
 [ 143: PASS ] getError was expected value: NO_ERROR :
-[ 144: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 145: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 146: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 147: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 148: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 149: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 150: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 151: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 152: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR :
-[ 153: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
-[ 154: FAIL ] Does not support doReadPixels with offsets into views.
-[ 155: PASS ] successfullyParsed is true
-[ FAIL ] 34 failures reported
+[ 144: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 255].
+[ 145: PASS ] getError was expected value: NO_ERROR :
+[ 146: PASS ] getError was expected value: NO_ERROR :
+[ 147: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 255].
+[ 148: PASS ] getError was expected value: NO_ERROR :
+[ 149: PASS ] getError was expected value: NO_ERROR :
+[ 150: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 255].
+[ 151: PASS ] getError was expected value: NO_ERROR :
+[ 152: PASS ] getError was expected value: NO_ERROR :
+[ 153: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 255].
+[ 154: PASS ] getError was expected value: NO_ERROR :
+[ 155: PASS ] getError was expected value: NO_ERROR :
+[ 156: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 255].
+[ 157: PASS ] getError was expected value: NO_ERROR :
+[ 158: PASS ] getError was expected value: NO_ERROR :
+[ 159: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 255].
+[ 160: PASS ] getError was expected value: NO_ERROR :
+[ 161: PASS ] getError was expected value: NO_ERROR :
+[ 162: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 255].
+[ 163: PASS ] getError was expected value: NO_ERROR :
+[ 164: PASS ] getError was expected value: NO_ERROR :
+[ 165: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 255].
+[ 166: PASS ] getError was expected value: NO_ERROR :
+[ 167: PASS ] getError was expected value: NO_ERROR :
+[ 168: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 255].
+[ 169: PASS ] getError was expected value: NO_ERROR :
+[ 170: PASS ] getError was expected value: NO_ERROR :
+[ 171: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 255].
+[ 172: PASS ] getError was expected value: INVALID_OPERATION :
+[ 173: PASS ] getError was expected value: INVALID_OPERATION :
+[ 174: PASS ] getError was expected value: INVALID_OPERATION :
+[ 175: PASS ] getError was expected value: INVALID_OPERATION :
+[ 176: PASS ] getError was expected value: INVALID_OPERATION :
+[ 177: PASS ] getError was expected value: NO_ERROR :
+[ 178: PASS ] getError was expected value: NO_ERROR :
+[ 179: FAIL ] Should be 65504, was 0.
+[ 180: PASS ] getError was expected value: NO_ERROR :
+[ 181: PASS ] getError was expected value: NO_ERROR :
+[ 182: FAIL ] Should be 2047, was 0.
+[ 183: PASS ] getError was expected value: INVALID_OPERATION :
+[ 184: PASS ] getError was expected value: INVALID_OPERATION :
+[ 185: FAIL ] Does not support compressedTexImage2D with offsets into views.
+[ 186: FAIL ] Does not support compressedTexSubImage2D with offsets into views.
+[ 187: FAIL ] Does not support compressedTexImage3D with offsets into views.
+[ 188: FAIL ] Does not support compressedTexSubImage3D with offsets into views.
+[ 189: FAIL ] Does not support doReadPixels with offsets into views.
+[ 190: PASS ] successfullyParsed is true
+[ FAIL ] 31 failures reported
 

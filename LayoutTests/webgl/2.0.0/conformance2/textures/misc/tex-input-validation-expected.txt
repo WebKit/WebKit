@@ -71,18 +71,18 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-input-v
 [ 68: PASS ] getError was expected value: NO_ERROR :
 [ 69: PASS ] getError was expected value: INVALID_OPERATION : colorBufferFormat: RGB internalFormat: RGBA
 [ 70: PASS ] tex = gl.createTexture() is non-null.
-[ 71: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
-[ 72: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: 0x8070 format: RGBA type: UNSIGNED_BYTE border: 0
-[ 73: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGB type: UNSIGNED_BYTE border: 0
-[ 74: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: BYTE border: 0
+[ 71: PASS ] getError was expected value: NO_ERROR :
+[ 72: PASS ] getError was expected value: INVALID_ENUM : internalFormat: RGBA target: 0x8070 format: RGBA type: UNSIGNED_BYTE border: 0
+[ 73: PASS ] getError was expected value: INVALID_OPERATION : internalFormat: RGBA target: TEXTURE_3D format: RGB type: UNSIGNED_BYTE border: 0
+[ 74: PASS ] getError was expected value: INVALID_OPERATION : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: BYTE border: 0
 [ 75: PASS ] getError was expected value: NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
-[ 76: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: UNSIGNED_BYTE border: 0
-[ 77: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : internalFormat: RG target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
-[ 78: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RG8 type: UNSIGNED_BYTE border: 0
-[ 79: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: INT border: 0
-[ 80: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : format: 0x80e0 type: UNSIGNED_BYTE
-[ 81: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : format: RGBA type: 0x8032
+[ 76: PASS ] getError was expected value: INVALID_ENUM : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 77: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : internalFormat: RG target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 78: PASS ] getError was expected value: INVALID_ENUM : internalFormat: RGBA target: TEXTURE_3D format: RG8 type: UNSIGNED_BYTE border: 0
+[ 79: PASS ] getError was expected value: INVALID_OPERATION : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: INT border: 0
+[ 80: PASS ] getError was expected value: INVALID_ENUM : format: 0x80e0 type: UNSIGNED_BYTE
+[ 81: PASS ] getError was expected value: INVALID_ENUM : format: RGBA type: 0x8032
 [ 82: PASS ] getError was expected value: NO_ERROR : format: RGBA type: UNSIGNED_BYTE
 [ 83: PASS ] successfullyParsed is true
-[ FAIL ] 11 failures reported
+[ FAIL ] 2 failures reported
 

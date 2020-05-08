@@ -122,7 +122,7 @@ public:
     void attachShader(WebGLProgram*, WebGLShader*);
     void bindAttribLocation(WebGLProgram*, GCGLuint index, const String& name);
     void bindBuffer(GCGLenum target, WebGLBuffer*);
-    void bindFramebuffer(GCGLenum target, WebGLFramebuffer*);
+    virtual void bindFramebuffer(GCGLenum target, WebGLFramebuffer*);
     void bindRenderbuffer(GCGLenum target, WebGLRenderbuffer*);
     void bindTexture(GCGLenum target, WebGLTexture*);
     void blendColor(GCGLfloat red, GCGLfloat green, GCGLfloat blue, GCGLfloat alpha);
@@ -160,7 +160,7 @@ public:
     void cullFace(GCGLenum mode);
 
     void deleteBuffer(WebGLBuffer*);
-    void deleteFramebuffer(WebGLFramebuffer*);
+    virtual void deleteFramebuffer(WebGLFramebuffer*);
     void deleteProgram(WebGLProgram*);
     void deleteRenderbuffer(WebGLRenderbuffer*);
     void deleteShader(WebGLShader*);
@@ -193,7 +193,7 @@ public:
     GCGLenum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
-    virtual WebGLAny getParameter(GCGLenum pname) = 0;
+    virtual WebGLAny getParameter(GCGLenum pname);
     WebGLAny getProgramParameter(WebGLProgram*, GCGLenum pname);
     String getProgramInfoLog(WebGLProgram*);
     WebGLAny getRenderbufferParameter(GCGLenum target, GCGLenum pname);
@@ -202,7 +202,7 @@ public:
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType);
     String getShaderSource(WebGLShader*);
     virtual Optional<Vector<String>> getSupportedExtensions() = 0;
-    WebGLAny getTexParameter(GCGLenum target, GCGLenum pname);
+    virtual WebGLAny getTexParameter(GCGLenum target, GCGLenum pname);
     WebGLAny getUniform(WebGLProgram*, const WebGLUniformLocation*);
     RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&);
     WebGLAny getVertexAttrib(GCGLuint index, GCGLenum pname);
@@ -484,12 +484,6 @@ protected:
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;
-    RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
-    RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelPackBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
-    RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
-    RefPtr<WebGLBuffer> m_boundUniformBuffer;
 
     RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
     RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
@@ -528,7 +522,6 @@ protected:
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
-    RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
     RefPtr<WebGLRenderbuffer> m_renderbufferBinding;
     struct TextureUnitState {
         RefPtr<WebGLTexture> texture2DBinding;
@@ -657,7 +650,6 @@ protected:
     float getFloatParameter(GCGLenum);
     int getIntParameter(GCGLenum);
     unsigned getUnsignedIntParameter(GCGLenum);
-    long long getInt64Parameter(GCGLenum);
     RefPtr<Float32Array> getWebGLFloatArrayParameter(GCGLenum);
     RefPtr<Int32Array> getWebGLIntArrayParameter(GCGLenum);
 
@@ -697,6 +689,8 @@ protected:
 #if ENABLE(VIDEO)
         SourceHTMLVideoElement,
 #endif
+        // WebGL 2.0.
+        SourceUnpackBuffer,
     };
 
     enum NullDisposition {
@@ -921,9 +915,18 @@ protected:
     // Helper function to print errors and warnings to console.
     void printToConsole(MessageLevel, const String&);
 
+    // Helper function to validate the target for checkFramebufferStatus and
+    // validateFramebufferFuncParameters.
+    virtual bool validateFramebufferTarget(GCGLenum target);
+
+    // Get the framebuffer bound to the given target.
+    virtual WebGLFramebuffer* getFramebufferBinding(GCGLenum target);
+
+    virtual WebGLFramebuffer* getReadFramebufferBinding();
+
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.
-    virtual bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment) = 0;
+    bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment);
 
     // Helper function to validate blend equation mode.
     virtual bool validateBlendEquation(const char* functionName, GCGLenum) = 0;
@@ -965,7 +968,15 @@ protected:
     // Return false if caller should return without further processing.
     bool checkObjectToBeBound(const char* functionName, WebGLObject*);
 
-    bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
+    // Helper function to validate the target for bufferData and
+    // getBufferParameter.
+    virtual bool validateBufferTarget(const char* functionName, GCGLenum target);
+
+    // Helper function to validate the target for bufferData.
+    // Return the current bound buffer to target, or 0 if the target is invalid.
+    virtual WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target);
+
+    virtual bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
 
 #if !USE(ANGLE)
     // Helpers for simulating vertexAttrib0.
@@ -994,8 +1005,9 @@ protected:
     virtual GCGLint getMaxColorAttachments() = 0;
 
     void setBackDrawBuffer(GCGLenum);
+    void setFramebuffer(GCGLenum, WebGLFramebuffer*);
 
-    void restoreCurrentFramebuffer();
+    virtual void restoreCurrentFramebuffer();
     void restoreCurrentTexture2D();
 
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.

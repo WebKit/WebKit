@@ -1,56 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/canvas-resizing-with-pbo-bound.html
-[ 1: PASS ] context exists
-[ 2: PASS ] lower left should be green
-[ 3: PASS ] lower right should be green
-[ 4: PASS ] upper left should be green
-[ 5: PASS ] upper right should be green
-[ 6: PASS ] getError was expected value: NO_ERROR : No GL error
-[ 7: FAIL ] Pixel unpack buffer binding was lost
-[ 8: PASS ] lower left should be green
-[ 9: PASS ] lower right should be green
-[ 10: PASS ] upper left should be green
-[ 11: PASS ] upper right should be green
-[ 12: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 13: FAIL ] Pixel unpack buffer binding was lost
-[ 14: PASS ] lower left should be green
-[ 15: PASS ] lower right should be green
-[ 16: PASS ] upper left should be green
-[ 17: PASS ] upper right should be green
-[ 18: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 19: FAIL ] Pixel unpack buffer binding was lost
-[ 20: PASS ] lower left should be green
-[ 21: PASS ] lower right should be green
-[ 22: PASS ] upper left should be green
-[ 23: PASS ] upper right should be green
-[ 24: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 25: FAIL ] Pixel unpack buffer binding was lost
-[ 26: PASS ] context exists
-[ 27: PASS ] lower left should be green
-[ 28: PASS ] lower right should be green
-[ 29: PASS ] upper left should be green
-[ 30: PASS ] upper right should be green
-[ 31: PASS ] getError was expected value: NO_ERROR : No GL error
-[ 32: FAIL ] Pixel unpack buffer binding was lost
-[ 33: PASS ] lower left should be green
-[ 34: PASS ] lower right should be green
-[ 35: PASS ] upper left should be green
-[ 36: PASS ] upper right should be green
-[ 37: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 38: FAIL ] Pixel unpack buffer binding was lost
-[ 39: PASS ] lower left should be green
-[ 40: PASS ] lower right should be green
-[ 41: PASS ] upper left should be green
-[ 42: PASS ] upper right should be green
-[ 43: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 44: FAIL ] Pixel unpack buffer binding was lost
-[ 45: PASS ] lower left should be green
-[ 46: PASS ] lower right should be green
-[ 47: PASS ] upper left should be green
-[ 48: PASS ] upper right should be green
-[ 49: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : No GL error
-[ 50: FAIL ] Pixel unpack buffer binding was lost
-[ 51: PASS ] successfullyParsed is true
-[ FAIL ] 14 failures reported
+[ PASS ] All tests passed
 

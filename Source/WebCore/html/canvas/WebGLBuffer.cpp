@@ -256,11 +256,6 @@ void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)
 void WebGLBuffer::setTarget(GCGLenum target)
 {
     m_target = target;
-
-    if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER) {
-        ASSERT(!m_arrayBufferOrElementArrayBuffer || target == m_arrayBufferOrElementArrayBuffer);
-        m_arrayBufferOrElementArrayBuffer = target;
-    }
 }
 
 void WebGLBuffer::clearCachedMaxIndices()

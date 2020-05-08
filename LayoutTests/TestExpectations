@@ -3350,6 +3350,9 @@ webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.
 # webkit.org/b/211220 svg_image WebGL 2.0 tests currently fail due to inconsistencies between browsers
 webgl/2.0.0/conformance2/textures/svg_image [ Skip ]
 
+# webkit.org/b/211484 image_bitmap_from_canvas WebGL 2.0 tests fail possibly because of incomplete ImageBitmap support
+webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas [ Skip ]
+
 # To-be-addressed WebGL 2 Timeouts
 webgl/2.0.0/conformance/context/context-creation-and-destruction.html [ Skip ]
 webgl/2.0.0/conformance/context/context-creation.html [ Skip ]
@@ -3846,26 +3849,6 @@ webgl/2.0.0/conformance2/textures/canvas/tex-2d-rgba4-rgba-unsigned_short_4_4_4_
 webgl/2.0.0/conformance2/textures/canvas/tex-2d-rgba8-rgba-unsigned_byte.html [ Skip ]
 webgl/2.0.0/conformance2/textures/canvas/tex-2d-srgb8-rgb-unsigned_byte.html [ Skip ]
 webgl/2.0.0/conformance2/textures/canvas/tex-2d-srgb8_alpha8-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r11f_g11f_b10f-rgb-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb16f-rgb-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb16f-rgb-half_float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb32f-rgb-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb565-rgb-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb5_a1-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb5_a1-rgba-unsigned_short_5_5_5_1.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb8-rgb-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb9_e5-rgb-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgb9_e5-rgb-half_float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba16f-rgba-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba16f-rgba-half_float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba32f-rgba-float.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba4-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba4-rgba-unsigned_short_4_4_4_4.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-rgba8-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-srgb8-rgb-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_canvas/tex-2d-srgb8_alpha8-rgba-unsigned_byte.html [ Skip ]
 webgl/2.0.0/conformance2/textures/image_data/tex-2d-r11f_g11f_b10f-rgb-float.html [ Skip ]
 webgl/2.0.0/conformance2/textures/image_data/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Skip ]
 webgl/2.0.0/conformance2/textures/image_data/tex-2d-rgb16f-rgb-float.html [ Skip ]

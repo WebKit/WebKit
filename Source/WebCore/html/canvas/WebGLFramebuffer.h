@@ -66,12 +66,12 @@ public:
 
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 
-    void setAttachmentForBoundFramebuffer(GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level);
-    void setAttachmentForBoundFramebuffer(GCGLenum attachment, WebGLRenderbuffer*);
+    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level);
+    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
-    void removeAttachmentFromBoundFramebuffer(WebGLSharedObject*);
+    void removeAttachmentFromBoundFramebuffer(GCGLenum target, WebGLSharedObject*);
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
-    void removeAttachmentFromBoundFramebuffer(GCGLenum);
+    void removeAttachmentFromBoundFramebuffer(GCGLenum target, GCGLenum attachment);
     WebGLSharedObject* getAttachmentObject(GCGLenum) const;
 
 #if !USE(ANGLE)
@@ -115,11 +115,11 @@ private:
     // Return false if framebuffer is incomplete.
     bool initializeAttachments(GraphicsContextGLOpenGL*, const char** reason);
 
-    // Check if the framebuffer is currently bound.
-    bool isBound() const;
+    // Check if the framebuffer is currently bound to the given target.
+    bool isBound(GCGLenum target) const;
 
     // attach 'attachment' at 'attachmentPoint'.
-    void attach(GCGLenum attachment, GCGLenum attachmentPoint);
+    void attach(GCGLenum target, GCGLenum attachment, GCGLenum attachmentPoint);
 
     // Check if a new drawBuffers call should be issued. This is called when we add or remove an attachment.
     void drawBuffersIfNecessary(bool force);

@@ -59,7 +59,9 @@ public:
     
     // Framebuffer objects
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
+    void bindFramebuffer(GCGLenum target, WebGLFramebuffer*) final;
     void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter);
+    void deleteFramebuffer(WebGLFramebuffer*) final;
     void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, WebGLTexture*, GCGLint level, GCGLint layer);
     WebGLAny getInternalformatParameter(GCGLenum target, GCGLenum internalformat, GCGLenum pname);
     void invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments);
@@ -70,6 +72,7 @@ public:
     void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height);
     
     // Texture objects
+    WebGLAny getTexParameter(GCGLenum target, GCGLenum pname) final;
     void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height);
     void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLsizei depth);
 
@@ -260,21 +263,36 @@ private:
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
     RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
 
+    long long getInt64Parameter(GCGLenum);
+
     void initializeVertexArrayObjects() final;
+    bool validateBufferTarget(const char* functionName, GCGLenum target) final;
+    bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
+    WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
+    bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint getMaxDrawBuffers() final;
     GCGLint getMaxColorAttachments() final;
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
     bool validateCapability(const char* functionName, GCGLenum cap) final;
-    bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment) final;
-    bool validateFramebufferTarget(const char* functionName, GCGLenum target);
+    bool validateFramebufferTarget(GCGLenum target) final;
+    WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
+    WebGLFramebuffer* getReadFramebufferBinding() final;
+    void restoreCurrentFramebuffer() final;
     bool validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment);
-    
+
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);
     void initializeShaderExtensions();
 
     IntRect getTextureSourceSubRectangle(GLsizei width, GLsizei height);
+
+    RefPtr<WebGLTexture> validateTexImageBinding(const char*, TexImageFunctionID, GCGLenum) final;
+
+    // Helper function to check texture 3D target and texture bound to the target.
+    // Generate GL errors and return 0 if target is invalid or texture bound is
+    // null. Otherwise, return the texture bound to the target.
+    RefPtr<WebGLTexture> validateTexture3DBinding(const char* functionName, GCGLenum target);
 
 #if !USE(ANGLE)
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
@@ -282,8 +300,16 @@ private:
 
     void uncacheDeletedBuffer(WebGLBuffer*) final;
 
+    RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
     RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
     Vector<RefPtr<WebGLBuffer>> m_boundTransformFeedbackBuffers;
+
+    RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
+    RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
+    RefPtr<WebGLBuffer> m_boundPixelPackBuffer;
+    RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
+    RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
+    RefPtr<WebGLBuffer> m_boundUniformBuffer;
 
     HashMap<GCGLenum, RefPtr<WebGLQuery>> m_activeQueries;
 
