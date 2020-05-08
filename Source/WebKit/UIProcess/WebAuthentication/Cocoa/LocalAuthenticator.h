@@ -75,6 +75,7 @@ private:
     State m_state { State::Init };
     UniqueRef<LocalConnection> m_connection;
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_existingCredentials;
+    RetainPtr<NSData> m_provisionalCredentialId;
 };
 
 } // namespace WebKit

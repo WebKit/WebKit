@@ -342,6 +342,7 @@
 		55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */ = {isa = PBXBuildFile; fileRef = 55A817FE218101DF0004A39A /* 100x100-red.tga */; };
 		55A81800218102210004A39A /* 400x400-green.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = 55A817FD218101DF0004A39A /* 400x400-green.png */; };
 		55F9D2E52205031800A9AB38 /* AdditionalSupportedImageTypes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55F9D2E42205031800A9AB38 /* AdditionalSupportedImageTypes.mm */; };
+		5703BB8D2463F88700475FB2 /* web-authentication-make-credential-la-no-attestation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5703BB8C2463F87200475FB2 /* web-authentication-make-credential-la-no-attestation.html */; };
 		570D26F423C3CA6A00D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */; };
 		570D26F623C3D33000D5CF67 /* web-authentication-make-credential-hid-pin.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F523C3D32700D5CF67 /* web-authentication-make-credential-hid-pin.html */; };
 		570D26FA23C3F25100D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */; };
@@ -1583,6 +1584,7 @@
 				5798337E236019A4008E5547 /* web-authentication-make-credential-hid.html in Copy Resources */,
 				5742178A2400AED8002B303D /* web-authentication-make-credential-la-duplicate-credential.html in Copy Resources */,
 				574217882400AC25002B303D /* web-authentication-make-credential-la-error.html in Copy Resources */,
+				5703BB8D2463F88700475FB2 /* web-authentication-make-credential-la-no-attestation.html in Copy Resources */,
 				57EDFC5C245A1A3F00959521 /* web-authentication-make-credential-la-no-mock.html in Copy Resources */,
 				5742178E2400D2DF002B303D /* web-authentication-make-credential-la.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
@@ -2007,6 +2009,7 @@
 		55A817FD218101DF0004A39A /* 400x400-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "400x400-green.png"; sourceTree = "<group>"; };
 		55A817FE218101DF0004A39A /* 100x100-red.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = "100x100-red.tga"; sourceTree = "<group>"; };
 		55F9D2E42205031800A9AB38 /* AdditionalSupportedImageTypes.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AdditionalSupportedImageTypes.mm; sourceTree = "<group>"; };
+		5703BB8C2463F87200475FB2 /* web-authentication-make-credential-la-no-attestation.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-la-no-attestation.html"; sourceTree = "<group>"; };
 		570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-key-agreement-error.html"; sourceTree = "<group>"; };
 		570D26F523C3D32700D5CF67 /* web-authentication-make-credential-hid-pin.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin.html"; sourceTree = "<group>"; };
 		570D26F923C3F24500D5CF67 /* web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-pin-blocked-error.html"; sourceTree = "<group>"; };
@@ -3718,6 +3721,7 @@
 				5798337D2360196D008E5547 /* web-authentication-make-credential-hid.html */,
 				574217892400AED0002B303D /* web-authentication-make-credential-la-duplicate-credential.html */,
 				574217872400ABFD002B303D /* web-authentication-make-credential-la-error.html */,
+				5703BB8C2463F87200475FB2 /* web-authentication-make-credential-la-no-attestation.html */,
 				57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */,
 				5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
@@ -4672,6 +4676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C83DE991D0A590C00FEBCF3 /* AtomString.cpp in Sources */,
+				FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */,
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
 				04DB2396235E43EC00328F17 /* BumpPointerAllocator.cpp in Sources */,
@@ -4717,7 +4722,6 @@
 				E38D65CB23A45FAA0063D69A /* PackedRefPtr.cpp in Sources */,
 				7C83DF591D0A590C00FEBCF3 /* ParkingLot.cpp in Sources */,
 				53EC25411E96FD87000831B9 /* PriorityQueue.cpp in Sources */,
-				FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */,
 				7C83DF131D0A590C00FEBCF3 /* RedBlackTree.cpp in Sources */,
 				7C83DF141D0A590C00FEBCF3 /* Ref.cpp in Sources */,
 				7C83DF151D0A590C00FEBCF3 /* RefCounter.cpp in Sources */,

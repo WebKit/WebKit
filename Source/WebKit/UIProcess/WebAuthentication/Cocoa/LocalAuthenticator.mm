@@ -337,13 +337,14 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
         digest->addBytes(nsPublicKeyData.bytes, nsPublicKeyData.length);
         credentialId = digest->computeHash();
+        m_provisionalCredentialId = toNSData(credentialId);
 
 #ifndef NDEBUG
         NSDictionary *credentialIdQuery = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: secAttrLabel,
-            (id)kSecAttrApplicationLabel: toNSData(credentialId).get(),
+            (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
@@ -559,11 +560,6 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         }
     }
 
-    // Step 13.
-    response->setAuthenticatorData(WTFMove(authData));
-    response->setSignature(toArrayBuffer((NSData *)signature.get()));
-    receiveRespond(WTFMove(response));
-
     // Extra step: update the Keychain item with the same value to update its modification date such that LRU can be used
     // for selectAssertionResponse
     NSDictionary *updateQuery = @{
@@ -582,13 +578,36 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     auto status = SecItemUpdate((__bridge CFDictionaryRef)updateQuery, (__bridge CFDictionaryRef)updateParams);
     if (status)
         LOG_ERROR("Couldn't update the Keychain item: %d", status);
+
+    // Step 13.
+    response->setAuthenticatorData(WTFMove(authData));
+    response->setSignature(toArrayBuffer((NSData *)signature.get()));
+    receiveRespond(WTFMove(response));
 }
 
 void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenticationStatus status) const
 {
     LOG_ERROR(exception.message.utf8().data());
+
+    // Roll back the just created credential.
+    if (m_provisionalCredentialId) {
+        NSDictionary* deleteQuery = @{
+            (id)kSecClass: (id)kSecClassKey,
+            (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
+#if HAVE(DATA_PROTECTION_KEYCHAIN)
+            (id)kSecUseDataProtectionKeychain: @YES
+#else
+            (id)kSecAttrNoLegacy: @YES
+#endif
+        };
+        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+        if (status)
+            LOG_ERROR(makeString("Couldn't delete provisional credential while handling error: "_s, status).utf8().data());
+    }
+
     if (auto* observer = this->observer())
         observer->authenticatorStatusUpdated(status);
+
     receiveRespond(WTFMove(exception));
     return;
 }

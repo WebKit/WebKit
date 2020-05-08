@@ -1,3 +1,22 @@
+2020-05-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Roll back newly created credentials if an error occurs
+        https://bugs.webkit.org/show_bug.cgi?id=183530
+        <rdar://problem/43357305>
+
+        Reviewed by Brent Fulgham.
+
+        We should clean up any newly created credentials if an error occurs before the relying party
+        registers the identity. Otherwise we are left with a dangling credential.
+
+        Covered by API tests.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserVerification):
+        (WebKit::LocalAuthenticator::receiveException const):
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r261252.
