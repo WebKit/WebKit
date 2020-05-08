@@ -1,3 +1,12 @@
+2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION [ iOS ] fast/forms/validationMessage.html is flaky and timing out
+        https://bugs.webkit.org/show_bug.cgi?id=206630
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261341 and r261392.
