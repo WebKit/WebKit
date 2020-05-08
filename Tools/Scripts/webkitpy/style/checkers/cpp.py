@@ -3725,13 +3725,15 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
         protector_name = ref_check.group('protector_name')
         protected_name = ref_check.group('protected_name')
         cap_protected_name = protected_name[0].upper() + protected_name[1:]
-        expected_protector_name = 'protected' + cap_protected_name
-        if protected_name == 'this' and protector_name != 'protectedThis':
-            error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protectedThis\'.")
-        elif protector_name == expected_protector_name or protector_name == 'protector':
-            return
-        else:
-            error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protector\' or \'" + expected_protector_name + "\'.")
+        # Ignore function declarations where cap_protected_name == protected_name indicates a type name.
+        if cap_protected_name != protected_name:
+            expected_protector_name = 'protected' + cap_protected_name
+            if protected_name == 'this' and protector_name != 'protectedThis':
+                error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protectedThis\'.")
+            elif protector_name == expected_protector_name or protector_name == 'protector':
+                return
+            else:
+                error(line_number, 'readability/naming/protected', 4, "\'" + protector_name + "\' is incorrectly named. It should be named \'protector\' or \'" + expected_protector_name + "\'.")
 
     # Basically, a declaration is a type name followed by whitespaces
     # followed by an identifier. The type name can be complicated

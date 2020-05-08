@@ -5894,6 +5894,8 @@ class WebKitStyleTest(CppStyleTestBase):
         # Lines that look like a protector variable declaration but aren't.
         self.assert_lint('static RefPtr<Widget> doSomethingWith(widget);', '')
         self.assert_lint('RefPtr<Widget> create();', '')
+        self.assert_lint('Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier);', '')
+        self.assert_lint('Ref<TypeName> createSomething(OtherTypeName);', '')
 
     def test_parameter_names(self):
         # Leave meaningless variable names out of function declarations.

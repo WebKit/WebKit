@@ -1,3 +1,19 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style false positive for [readability/naming/protected] with method declaration
+        <https://webkit.org/b/210682>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        - Don't check for invalid protector name if the capitalized
+          protected name is the same as the original protected name,
+          indicating it's a type name.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+        - Add test cases.
+
 2020-05-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix build on platforms without network framework.
