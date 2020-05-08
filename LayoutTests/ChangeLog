@@ -1,3 +1,13 @@
+2020-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r261341): imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm is failing
+        https://bugs.webkit.org/show_bug.cgi?id=211612
+        <rdar://problem/63024081>
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Mark test as Flakey. A proper fix is tracked by https://bugs.webkit.org/show_bug.cgi?id=211630.
+
 2020-05-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Code pattern in GC tests in LayoutTests is broken
