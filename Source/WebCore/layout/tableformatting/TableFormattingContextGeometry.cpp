@@ -72,7 +72,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
         if (cellBox.hasChild())
             intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
         if (auto width = fixedValue(cellBox.style().logicalWidth()))
-            return FormattingContext::IntrinsicWidthConstraints { std::max(intrinsicWidthConstraints.minimum, *width), std::max(intrinsicWidthConstraints.maximum, *width) };
+            return FormattingContext::IntrinsicWidthConstraints { std::max(intrinsicWidthConstraints.minimum, *width), *width };
         return intrinsicWidthConstraints;
     };
     // FIXME Check for box-sizing: border-box;

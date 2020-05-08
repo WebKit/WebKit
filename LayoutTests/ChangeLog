@@ -1,3 +1,13 @@
+2020-05-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] The fixed logical width should be used as the max width for a cell
+        https://bugs.webkit.org/show_bug.cgi?id=211610
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-with-fixed-widht-and-inline-content-expected.txt: Added.
+        * fast/layoutformattingcontext/table-simple-with-fixed-widht-and-inline-content.html: Added.
+
 2020-05-08  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ iOS wk2 ] fast/forms/input-text-scroll-left-on-blur.html is flaky failing.
