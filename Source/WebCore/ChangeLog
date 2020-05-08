@@ -1,3 +1,17 @@
+2020-05-08  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        TextureMapper should skip clipping a content layer if it's not needed
+        https://bugs.webkit.org/show_bug.cgi?id=210787
+
+        Reviewed by Don Olmstead.
+
+        This patch follows up r260174.
+        We don't need to clip a content layer if the clipping rect contains the content rect.
+        This patch doesn't change the behavior but saves stencil indices.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelf):
+
 2020-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Text-style fonts aren't locale-specific

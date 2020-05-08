@@ -190,10 +190,16 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 
     ASSERT(!layerRect().isEmpty());
 
-    // FIXME: TextureMapper::beginClip doesn't support FloatRoundedRect, so we need to convert m_state.contentsClippingRect to FloatRect.
-    options.textureMapper.beginClip(transform, m_state.contentsClippingRect.rect());
+    bool shouldClip = m_state.contentsClippingRect.isRounded() || !m_state.contentsClippingRect.rect().contains(m_state.contentsRect);
+    if (shouldClip) {
+        // FIXME: TextureMapper::beginClip doesn't support FloatRoundedRect, so we need to convert m_state.contentsClippingRect to FloatRect.
+        options.textureMapper.beginClip(transform, m_state.contentsClippingRect.rect());
+    }
+
     m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
-    options.textureMapper.endClip();
+
+    if (shouldClip)
+        options.textureMapper.endClip();
 
     if (m_state.showDebugBorders)
         m_contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
