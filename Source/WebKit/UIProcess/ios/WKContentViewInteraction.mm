@@ -7676,16 +7676,21 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (void)_removeContextMenuViewIfPossible
 {
+#if HAVE(LINK_PREVIEW)
     // If a new _contextMenuElementInfo is installed, we've started another interaction,
     // and removing the hint container view will cause the animation to break.
     if (_contextMenuElementInfo)
         return;
-    // We are also using this container for the file upload panel...
-    if (_fileUploadPanel)
-        return;
-    // and the action sheet assistant.
+#endif
+#if ENABLE(DATA_DETECTION)
+    // We are also using this container for the action sheet assistant...
     if ([_actionSheetAssistant hasContextMenuInteraction])
         return;
+#endif
+    // and for the file upload panel.
+    if (_fileUploadPanel)
+        return;
+    
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
 }
 

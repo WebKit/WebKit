@@ -1,3 +1,13 @@
+2020-05-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Build Fix for MacCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=211601
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _removeContextMenuViewIfPossible]):
+
 2020-05-07  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit::XPCServiceMain
