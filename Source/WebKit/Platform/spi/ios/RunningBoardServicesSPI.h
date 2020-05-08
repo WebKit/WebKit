@@ -42,7 +42,10 @@
 + (RBSTarget *)targetWithPid:(pid_t)pid;
 @end
 
-@protocol RBSAssertionObserving;
+@protocol RBSAssertionObserving <NSObject>
+- (void)assertionWillInvalidate:(RBSAssertion *)assertion;
+- (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error;
+@end
 
 @interface RBSAssertion : NSObject
 - (instancetype)initWithExplanation:(NSString *)explanation target:(RBSTarget *)target attributes:(NSArray <RBSAttribute *> *)attributes;
@@ -52,33 +55,6 @@
 - (void)removeObserver:(id <RBSAssertionObserving>)observer;
 
 @property (nonatomic, readonly, assign, getter=isValid) BOOL valid;
-@end
-
-@protocol RBSAssertionObserving <NSObject>
-- (void)assertionWillInvalidate:(RBSAssertion *)assertion;
-- (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error;
-@end
-
-@interface RBSProcessIdentifier : NSObject
-+ (RBSProcessIdentifier *)identifierWithPid:(pid_t)pid;
-@end
-
-typedef NS_ENUM(uint8_t, RBSTaskState) {
-    RBSTaskStateUnknown                 = 0,
-    RBSTaskStateNone                    = 1,
-    RBSTaskStateRunningUnknown          = 2,
-    RBSTaskStateRunningSuspended        = 3,
-    RBSTaskStateRunningScheduled        = 4,
-};
-
-@interface RBSProcessState : NSObject
-@property (nonatomic, readonly, assign) RBSTaskState taskState;
-@property (nonatomic, readonly, copy) NSSet<NSString *> *endowmentNamespaces;
-@end
-
-@interface RBSProcessHandle : NSObject
-+ (RBSProcessHandle *)handleForIdentifier:(RBSProcessIdentifier *)identifier error:(NSError **)outError;
-@property (nonatomic, readonly, strong) RBSProcessState *currentState;
 @end
 
 #endif

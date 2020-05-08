@@ -38,7 +38,6 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
-#import "RunningBoardServicesSPI.h"
 #import "StringUtilities.h"
 #import "UIKitSPI.h"
 #import "UndoOrRedo.h"
@@ -169,7 +168,10 @@ bool PageClientImpl::isApplicationVisible()
     pid_t applicationPID = serviceViewController._hostProcessIdentifier;
     ASSERT(applicationPID);
 
-    return isApplicationForeground(applicationPID);
+    auto applicationStateMonitor = adoptNS([[BKSApplicationStateMonitor alloc] init]);
+    auto applicationState = [applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID];
+    [applicationStateMonitor invalidate];
+    return applicationState != BKSApplicationStateBackgroundRunning && applicationState != BKSApplicationStateBackgroundTaskSuspended;
 }
 
 bool PageClientImpl::isViewInWindow()
