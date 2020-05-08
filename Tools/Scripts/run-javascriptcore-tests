@@ -749,6 +749,8 @@ sub runJSCStressTests
     if ($remoteHost) {
         push(@jscStressDriverCmd, "--remote");
         push(@jscStressDriverCmd, $remoteHost);
+        # We're doing this for verbosity=2 which will cause us to log "PASS: " results
+        push(@jscStressDriverCmd, "-v", "-v");
     }
 
     if ($remoteConfigFile) {
