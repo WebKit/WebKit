@@ -143,9 +143,9 @@ AudioComponentInstance AudioMediaStreamTrackRendererCocoa::createAudioUnit(CAAud
     return remoteIOUnit;
 }
 
-// May get called on a background thread.
 void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
+    ASSERT(!isMainThread());
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     if (!m_remoteIOUnit)
         return;

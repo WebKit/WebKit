@@ -208,6 +208,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/ApplePay/WebPaymentCoordinator.messages.in
 
     WebProcess/cocoa/PlaybackSessionManager.messages.in
+    WebProcess/cocoa/RemoteCaptureSampleManager.messages.in
     WebProcess/cocoa/UserMediaCaptureManager.messages.in
     WebProcess/cocoa/VideoFullscreenManager.messages.in
 

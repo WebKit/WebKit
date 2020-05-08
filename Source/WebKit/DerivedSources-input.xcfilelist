@@ -163,7 +163,9 @@ $(PROJECT_DIR)/WebProcess/WebPage/VisitedLinkTableController.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/WebPage.messages.in
 $(PROJECT_DIR)/WebProcess/WebProcess.messages.in
 $(PROJECT_DIR)/WebProcess/WebStorage/StorageAreaMap.messages.in
+$(PROJECT_DIR)/WebProcess/cocoa/AudioCaptureSampleManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/PlaybackSessionManager.messages.in
+$(PROJECT_DIR)/WebProcess/cocoa/RemoteCaptureSampleManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/UserMediaCaptureManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/VideoFullscreenManager.messages.in
 $(PROJECT_DIR)/WebProcess/com.apple.WebProcess.sb.in

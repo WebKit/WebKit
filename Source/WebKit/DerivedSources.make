@@ -199,6 +199,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/Storage/WebSWClientConnection \
 	WebProcess/WebProcess \
 	WebProcess/cocoa/PlaybackSessionManager \
+	WebProcess/cocoa/RemoteCaptureSampleManager \
 	WebProcess/cocoa/UserMediaCaptureManager \
 	WebProcess/cocoa/VideoFullscreenManager \
 	WebProcess/Geolocation/WebGeolocationManager \

@@ -142,6 +142,7 @@
 		0FCB4E6C18BBF26A000FCFC9 /* WKContentViewInteraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */; };
 		0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDCD7F61D47E92A009F08BC /* LogInitialization.h */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
+		0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
 		0FF264A01A1FF9CC001FE759 /* RemoteLayerTreeScrollingPerformanceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */; };
 		0FFED98E23A3200A00EEF459 /* WKWebViewIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFED98C23A3200400EEF459 /* WKWebViewIOS.h */; };
@@ -2258,6 +2259,7 @@
 		0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContentViewInteraction.mm; path = ios/WKContentViewInteraction.mm; sourceTree = "<group>"; };
 		0FDCD7F61D47E92A009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteCaptureSampleManagerMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteCaptureSampleManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteLayerTreeDrawingAreaProxyMessages.h; path = DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerTreeDrawingAreaProxy.messages.in; sourceTree = "<group>"; };
 		0FFED98C23A3200400EEF459 /* WKWebViewIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewIOS.h; sourceTree = "<group>"; };
@@ -3429,6 +3431,11 @@
 		4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-webcontent-resources-to-private-headers.sh"; sourceTree = "<group>"; };
 		4157E4AF20E2EC9800A6C0D7 /* com.google.o1dbrowserplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.google.o1dbrowserplugin.sb; sourceTree = "<group>"; };
 		4158649A23BE092400A0A61E /* RTCEncoderIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCEncoderIdentifier.h; sourceTree = "<group>"; };
+		41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteCaptureSampleManager.messages.in; sourceTree = "<group>"; };
+		41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCaptureSampleManager.h; sourceTree = "<group>"; };
+		41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCaptureSampleManager.cpp; sourceTree = "<group>"; };
+		41684C50246450FD001CE8ED /* RemoteRealtimeMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeMediaSource.cpp; sourceTree = "<group>"; };
+		41684C51246450FD001CE8ED /* RemoteRealtimeMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeMediaSource.h; sourceTree = "<group>"; };
 		416CD74523FB178B00661D99 /* MDNSRegisterIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MDNSRegisterIdentifier.h; path = Network/webrtc/MDNSRegisterIdentifier.h; sourceTree = "<group>"; };
 		416F8086245B397400B68F02 /* LibWebRTCNetwork.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LibWebRTCNetwork.messages.in; path = Network/webrtc/LibWebRTCNetwork.messages.in; sourceTree = "<group>"; };
 		416F8089245C7FF500B68F02 /* LibWebRTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCNetwork.cpp; path = Network/webrtc/LibWebRTCNetwork.cpp; sourceTree = "<group>"; };
@@ -8366,11 +8373,16 @@
 		7C6E70F818B2D47E00F24E2E /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */,
+				41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */,
+				41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */,
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
+				41684C50246450FD001CE8ED /* RemoteRealtimeMediaSource.cpp */,
+				41684C51246450FD001CE8ED /* RemoteRealtimeMediaSource.h */,
 				CD491B051E70D05F00009066 /* UserMediaCaptureManager.cpp */,
 				CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */,
 				CD491B0A1E732D1200009066 /* UserMediaCaptureManager.messages.in */,
@@ -9960,6 +9972,7 @@
 			isa = PBXGroup;
 			children = (
 				2D7DEBE221269E4B00B9F73C /* unified-sources */,
+				0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */,
 				CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */,
 				CD4570D12441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessages.h */,
 				CD4570D22441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessagesReplies.h */,
@@ -12672,6 +12685,7 @@
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
+				0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */,
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
 				CD7CF3612444CCA6003BC4D5 /* AudioSessionRoutingArbitratorProxyCocoa.mm in Sources */,
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,

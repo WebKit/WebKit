@@ -1,5 +1,74 @@
 2020-05-08  Youenn Fablet  <youenn@apple.com>
 
+        Handle remote audio capture IPC messages in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=211583
+
+        Reviewed by Eric Carlson.
+
+        We introduce RemoteCaptureSampleManager which is responsible to get remote capture sample IPC messages and treat them from a background thread.
+        It is currently used to handle audio capture IPC messages.
+        We move UserMediaCaptureManager::Source in its own file and rename it to RemoteRealtimeMediaSource.
+
+        Covered by existing tests.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp: Added.
+        (WebKit::RemoteCaptureSampleManager::RemoteCaptureSampleManager):
+        (WebKit::RemoteCaptureSampleManager::~RemoteCaptureSampleManager):
+        (WebKit::RemoteCaptureSampleManager::setConnection):
+        (WebKit::RemoteCaptureSampleManager::addSource):
+        (WebKit::RemoteCaptureSampleManager::removeSource):
+        (WebKit::RemoteCaptureSampleManager::dispatchToThread):
+        (WebKit::RemoteCaptureSampleManager::storageChanged):
+        (WebKit::RemoteCaptureSampleManager::audioSamplesAvailable):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h: Added.
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in: Added.
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp: Added.
+        (WebKit::RemoteRealtimeMediaSource::RemoteRealtimeMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::whenReady):
+        (WebKit::RemoteRealtimeMediaSource::didFail):
+        (WebKit::RemoteRealtimeMediaSource::setAsReady):
+        (WebKit::RemoteRealtimeMediaSource::clone):
+        (WebKit::RemoteRealtimeMediaSource::setCapabilities):
+        (WebKit::RemoteRealtimeMediaSource::setSettings):
+        (WebKit::RemoteRealtimeMediaSource::remoteAudioSamplesAvailable):
+        (WebKit::RemoteRealtimeMediaSource::remoteVideoSampleAvailable):
+        (WebKit::RemoteRealtimeMediaSource::connection):
+        (WebKit::RemoteRealtimeMediaSource::startProducingData):
+        (WebKit::RemoteRealtimeMediaSource::stopProducingData):
+        (WebKit::RemoteRealtimeMediaSource::setShouldApplyRotation):
+        (WebKit::RemoteRealtimeMediaSource::capabilities):
+        (WebKit::RemoteRealtimeMediaSource::applyConstraints):
+        (WebKit::RemoteRealtimeMediaSource::applyConstraintsSucceeded):
+        (WebKit::RemoteRealtimeMediaSource::applyConstraintsFailed):
+        (WebKit::RemoteRealtimeMediaSource::hasEnded):
+        (WebKit::RemoteRealtimeMediaSource::stopBeingObserved):
+        (WebKit::RemoteRealtimeMediaSource::requestToEnd):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h: Added.
+        (WebKit::RemoteRealtimeMediaSource::identifier const):
+        (WebKit::RemoteRealtimeMediaSource::settings const):
+        (WebKit::RemoteRealtimeMediaSource::setShouldCaptureInGPUProcess):
+        (WebKit::RemoteRealtimeMediaSource::shouldCaptureInGPUProcess const):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        (WebKit::UserMediaCaptureManager::cloneSource):
+        (WebKit::UserMediaCaptureManager::cloneVideoSource):
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        (WebKit::UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess):
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
+2020-05-08  Youenn Fablet  <youenn@apple.com>
+
         Video capture does not get unmuted in case of tab switch on iOS
         https://bugs.webkit.org/show_bug.cgi?id=211509
 

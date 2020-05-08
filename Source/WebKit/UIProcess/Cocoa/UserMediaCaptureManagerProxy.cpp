@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "Connection.h"
+#include "RemoteCaptureSampleManagerMessages.h"
 #include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -138,7 +139,7 @@ private:
         uint64_t startFrame;
         uint64_t endFrame;
         m_ringBuffer.getCurrentFrameBounds(startFrame, endFrame);
-        m_connection->send(Messages::UserMediaCaptureManager::AudioSamplesAvailable(m_id, time, numberOfFrames, startFrame, endFrame), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::AudioSamplesAvailable(m_id, time, numberOfFrames, startFrame, endFrame), 0);
     }
 
     void videoSampleAvailable(MediaSample& sample) final
@@ -181,7 +182,7 @@ private:
         SharedMemory::Handle handle;
         if (storage)
             storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        m_connection->send(Messages::UserMediaCaptureManager::StorageChanged(m_id, handle, m_description, m_numberOfFrames), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, handle, m_description, m_numberOfFrames), 0);
     }
 
     bool preventSourceFromStopping()
