@@ -22,15 +22,17 @@
 #include "DOMWindowProperty.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
+#include "ShareData.h"
 #include "Supplementable.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
+class Blob;
 class DeferredPromise;
 class DOMMimeTypeArray;
 class DOMPluginArray;
-struct ShareData;
+class ShareDataReader;
 
 class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
     WTF_MAKE_ISO_ALLOCATED(Navigator);
@@ -63,12 +65,14 @@ public:
 #endif
 
 private:
+    void showShareData(ExceptionOr<ShareDataWithParsedURL&>, Ref<DeferredPromise>&&);
     explicit Navigator(ScriptExecutionContext*, DOMWindow&);
 
+    mutable RefPtr<ShareDataReader> m_loader;
+    mutable bool m_hasPendingShare { false };
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable String m_userAgent;
     mutable String m_platform;
 };
-
 }

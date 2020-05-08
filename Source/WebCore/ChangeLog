@@ -1,3 +1,34 @@
+2020-05-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement web-share v2 for files
+        https://bugs.webkit.org/show_bug.cgi?id=209265
+
+        Reviewed by Andy Estes.
+
+        Modified existing tests for new behavior.
+
+        Added support for handling of files in share/canShare,
+        and implemented asynchronous reading of data from blobs on
+        disk into memory.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::canShare):
+        (WebCore::Navigator::share):
+        (WebCore::Navigator::finishedLoad):
+        * page/Navigator.h:
+        * page/ReadShareDataAsync.cpp: Added.
+        (WebCore::ReadShareDataAsync::readInternal):
+        (WebCore::ReadShareDataAsync::ReadShareDataAsync):
+        (WebCore::ReadShareDataAsync::~ReadShareDataAsync):
+        (WebCore::ReadShareDataAsync::start):
+        (WebCore::ReadShareDataAsync::didFinishLoading):
+        (WebCore::ReadShareDataAsync::didReceiveData):
+        (WebCore::ReadShareDataAsync::didStartLoading):
+        (WebCore::ReadShareDataAsync::didFail):
+        * page/ReadShareDataAsync.hpp: Added.
+        * page/ShareData.h:
+
 2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261341 and r261392.

@@ -6175,6 +6175,8 @@
 		1A2A68220B5BEDE70002A480 /* ProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProgressTracker.h; sourceTree = "<group>"; };
 		1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheStorage.cpp; sourceTree = "<group>"; };
 		1A2AAC570DC2A3B100A20D9A /* ApplicationCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheStorage.h; sourceTree = "<group>"; };
+		1A2C6671242AFEF7003055EC /* ShareDataReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShareDataReader.cpp; sourceTree = "<group>"; };
+		1A2C6673242AFEF8003055EC /* ShareDataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareDataReader.h; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLValue.h; sourceTree = "<group>"; };
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
 		1A3586DD15264C450022A659 /* RenderMultiColumnFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnFlow.cpp; sourceTree = "<group>"; };
@@ -21167,6 +21169,8 @@
 				7C6EFEEA1F946A2E00FFAD41 /* SettingsDefaultValues.h */,
 				1DC55400211BA8C8004B780E /* ShareData.h */,
 				1DC553FF211BA841004B780E /* ShareData.idl */,
+				1A2C6671242AFEF7003055EC /* ShareDataReader.cpp */,
+				1A2C6673242AFEF8003055EC /* ShareDataReader.h */,
 				5C688AA21D38126F000B54FA /* SocketProvider.cpp */,
 				5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,

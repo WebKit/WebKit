@@ -1,8 +1,8 @@
 
 PASS canShare with single file 
 PASS canShare with empty file list 
-FAIL canShare with single file list assert_equals: expected true but got false
-FAIL canShare with file list assert_equals: expected true but got false
-FAIL canShare with repeated file assert_equals: expected true but got false
+PASS canShare with single file list 
+PASS canShare with file list 
+PASS canShare with repeated file 
 PASS canShare with file list and url 
 

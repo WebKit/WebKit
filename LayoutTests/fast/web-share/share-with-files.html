@@ -2,6 +2,7 @@
 
 <html>
 <meta name="viewport" content="initial-scale=5, width=device-width">
+
 <head>
 
     <script src="../../resources/ui-helper.js"></script>
@@ -16,10 +17,12 @@
 
         function runTest()
         {
-            const textFile = new File(['hello'], 'hello.txt', {type:'text/plain'});
+
+            var blob = this.response;
+            const textFile = new File(['This is a text file'], 'TextFile.txt', {type:'text/html'});
             document.getElementById("target").addEventListener("click", () => {
-                navigator.share({text: "sadf", files: [textFile]}).then((result) => {
-                    write("PASS: Share sheet invoked.");
+            navigator.share({text: "This is a text file", files: [textFile]}).then((result) => {
+                write("PASS: Share sheet invoked.");
                     testRunner.notifyDone();
                 });    
             });

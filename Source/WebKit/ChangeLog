@@ -1,3 +1,33 @@
+2020-05-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement web-share v2 for files
+        https://bugs.webkit.org/show_bug.cgi?id=209265
+
+        Reviewed by Andy Estes.
+
+        Added support for passing file objects over IPC and
+        sharing of files to share sheet.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Vector<RawFile>>::encode):
+        (IPC::ArgumentCoder<Vector<RawFile>>::decode):
+        (IPC::ArgumentCoder<ShareDataWithParsedURL>::encode):
+        (IPC::ArgumentCoder<ShareDataWithParsedURL>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/ShareableFileWrite.h: Added.
+        * UIProcess/Cocoa/ShareableFileWrite.mm: Added.
+        (+[WKShareableFileWrite getSharingDirectoryPath]):
+        (+[WKShareableFileWrite getFileDirectoryForSharing]):
+        (+[WKShareableFileWrite removeFileDirectoryForSharing]):
+        (+[WKShareableFileWrite setQuarantineInformationForFilePath:]):
+        (+[WKShareableFileWrite applyQuarantineSandboxAndDownloadFlagsToFileAtPath:]):
+        (+[WKShareableFileWrite createFilename:]):
+        (+[WKShareableFileWrite writeFileToShareableURL:data:]):
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithParameters:inRect:completionHandler:]):
+        (-[WKShareSheet _didCompleteWithSuccess:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-08  Brent Fulgham  <bfulgham@apple.com>
 
         Revise sandbox to stop logging some commonly-used properties 

@@ -46,6 +46,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/File.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
@@ -2019,6 +2020,21 @@ bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSet
 
     return true;
 }
+
+void ArgumentCoder<RawFile>::encode(Encoder& encoder, const RawFile& file)
+{
+    encoder << file.fileName;
+    encodeSharedBuffer(encoder, file.fileData.get());
+}
+
+bool ArgumentCoder<RawFile>::decode(Decoder& decoder, RawFile& file)
+{
+    if (!decoder.decode(file.fileName))
+        return false;
+    if (!decodeSharedBuffer(decoder, file.fileData))
+        return false;
+    return true;
+}
     
 void ArgumentCoder<ShareData>::encode(Encoder& encoder, const ShareData& settings)
 {
@@ -2042,6 +2058,7 @@ void ArgumentCoder<ShareDataWithParsedURL>::encode(Encoder& encoder, const Share
 {
     encoder << settings.shareData;
     encoder << settings.url;
+    encoder << settings.files;
 }
 
 bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWithParsedURL& settings)
@@ -2049,6 +2066,8 @@ bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWi
     if (!decoder.decode(settings.shareData))
         return false;
     if (!decoder.decode(settings.url))
+        return false;
+    if (!decoder.decode(settings.files))
         return false;
     return true;
 }

@@ -547,6 +547,10 @@
 #define ENABLE_DATA_DETECTION 0
 #endif
 
+#if !defined(ENABLE_FILE_SHARE)
+#define ENABLE_FILE_SHARE 1
+#endif
+
 /*
  * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.

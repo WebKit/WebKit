@@ -43,6 +43,8 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShareData.h"
+#include "ShareDataReader.h"
+#include "SharedBuffer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
@@ -112,8 +114,13 @@ bool Navigator::canShare(ScriptExecutionContext& context, const ShareData& data)
     if (!frame || !frame->page())
         return false;
     if (data.title.isNull() && data.url.isNull() && data.text.isNull()) {
-        if (!data.files.isEmpty())
+        if (!data.files.isEmpty()) {
+#if ENABLE(FILE_SHARE)
+            return true;
+#else
             return false;
+#endif
+        }
         return false;
     }
 
@@ -139,7 +146,7 @@ void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Re
     
     auto* window = this->window();
     // Note that the specification does not indicate we should consume user activation. We are intentionally stricter here.
-    if (!window || !window->consumeTransientActivation()) {
+    if (!window || !window->consumeTransientActivation() || m_hasPendingShare) {
         promise->reject(NotAllowedError);
         return;
     }
@@ -147,10 +154,39 @@ void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Re
     ShareDataWithParsedURL shareData = {
         data,
         url,
+        { },
     };
+#if ENABLE(FILE_SHARE)
+    if (!data.files.isEmpty()) {
+        if (m_loader)
+            m_loader->cancel();
+        
+        m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
+            showShareData(readData, WTFMove(promise));
+        });
+        m_loader->start(frame()->document(), WTFMove(shareData));
+        return;
+    }
+#endif
+    this->showShareData(shareData, WTFMove(promise));
+}
+
+void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref<DeferredPromise>&& promise)
+{
+    if (readData.hasException()) {
+        promise->reject(readData.releaseException());
+        return;
+    }
     
     auto* frame = this->frame();
-    frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise)] (bool completed) {
+    if (!frame || !frame->page())
+        return;
+    
+    m_hasPendingShare = true;
+    auto shareData = readData.returnValue();
+    
+    frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise), this] (bool completed) {
+        m_hasPendingShare = false;
         if (completed) {
             promise->resolve();
             return;

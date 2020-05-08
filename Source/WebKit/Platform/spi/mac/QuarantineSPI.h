@@ -34,6 +34,7 @@
 #else
 
 enum qtn_flags {
+    QTN_FLAG_DOWNLOAD = 0x0001,
     QTN_FLAG_SANDBOX = 0x0002,
 };
 
@@ -43,10 +44,15 @@ enum qtn_flags {
 #define qtn_proc_init _qtn_proc_init
 #define qtn_proc_init_with_self _qtn_proc_init_with_self
 #define qtn_proc_set_flags _qtn_proc_set_flags
-
+#define qtn_file_alloc _qtn_file_alloc
+#define qtn_file_init_with_path _qtn_file_init_with_path
+#define qtn_file_free _qtn_file_free
+#define qtn_file_apply_to_path _qtn_file_apply_to_path
+#define qtn_file_set_flags _qtn_file_set_flags
 #endif
 
 typedef struct _qtn_proc *qtn_proc_t;
+typedef struct _qtn_file *qtn_file_t;
 
 WTF_EXTERN_C_BEGIN
 
@@ -56,6 +62,11 @@ int qtn_proc_init_with_self(qtn_proc_t);
 int qtn_proc_set_flags(qtn_proc_t, uint32_t flags);
 qtn_proc_t qtn_proc_alloc();
 void qtn_proc_free(qtn_proc_t);
+qtn_file_t qtn_file_alloc(void);
+void qtn_file_free(qtn_file_t qf);
+int qtn_file_set_flags(qtn_file_t qf, uint32_t flags);
+int qtn_file_apply_to_path(qtn_file_t qf, const char *path);
+int qtn_file_init_with_path(qtn_file_t qf, const char *path);
 
 WTF_EXTERN_C_END
 

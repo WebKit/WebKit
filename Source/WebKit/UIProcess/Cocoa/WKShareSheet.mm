@@ -28,10 +28,14 @@
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
+#import "QuarantineSPI.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ShareData.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
+#import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -47,6 +51,7 @@
 #endif
 
 @implementation WKShareSheet {
+    RetainPtr<NSURL> _temporaryFileShareDirectory;
     WeakObjCPtr<WKWebView> _webView;
     WeakObjCPtr<id <WKShareSheetDelegate> > _delegate;
     WTF::CompletionHandler<void(bool)> _completionHandler;
@@ -106,10 +111,49 @@
         return;
     }
     
+    if (data.files.size()) {
+        _temporaryFileShareDirectory = [WKShareSheet createTemporarySharingDirectory];
+        
+        auto fileWriteGroup = adoptOSObject(dispatch_group_create());
+        auto queue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKShareSheet.ShareableFileWriter", DISPATCH_QUEUE_SERIAL));
+        
+        __block bool successful = true;
+        
+        int index = 0;
+        for (auto file : data.files) {
+            dispatch_group_async(fileWriteGroup.get(), queue.get(), ^{
+                if (!successful)
+                    return;
+                NSURL *fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(file.fileName) data:file.fileData->createNSData().get() temporaryDirectory:_temporaryFileShareDirectory.get()];
+                if (!fileURL) {
+                    successful = false;
+                    return;
+                }
+                [shareDataArray addObject:fileURL];
+            });
+            index++;
+        }
+        
+        dispatch_group_notify(fileWriteGroup.get(), dispatch_get_main_queue(), ^{
+            if (!successful) {
+                [self _didCompleteWithSuccess:NO];
+                [self dismiss];
+                return;
+            }
+            [self presentWithShareDataArray:shareDataArray.get() inRect:rect];
+        });
+        return;
+    }
+    
+    [self presentWithShareDataArray:shareDataArray.get() inRect:rect];
+}
+
+- (void)presentWithShareDataArray:(NSArray *)sharingItems inRect:(WTF::Optional<WebCore::FloatRect>)rect
+{
     WKWebView *webView = _webView.getAutoreleased();
     
 #if PLATFORM(MAC)
-    _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:shareDataArray.get()]);
+    _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:sharingItems]);
     _sharingServicePicker.get().delegate = self;
     
     // WKShareSheet can be released under NSSharingServicePicker delegate callbacks.
@@ -126,7 +170,7 @@
     }
     [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
 #else
-    _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:shareDataArray.get() applicationActivities:nil]);
+    _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
         [self _didCompleteWithSuccess:completed];
         [self dispatchDidDismiss];
@@ -183,6 +227,18 @@
     auto completionHandler = WTFMove(_completionHandler);
     if (completionHandler)
         completionHandler(success);
+    
+    if (success) {
+        // <rdar://problem/63030288>: didShareItems callback for NSSharingServiceDelegate currently is called
+        // before the temporary files are copied, so we can't delete them here. UIActivityViewController doesn't
+        // have this problem, so we can delete immediately for iOS.
+#if PLATFORM(IOS_FAMILY)
+        [[NSFileManager defaultManager] removeItemAtURL:_temporaryFileShareDirectory.get() error:nil];
+#endif
+    } else
+        [[NSFileManager defaultManager] removeItemAtURL:_temporaryFileShareDirectory.get() error:nil];
+
+    _temporaryFileShareDirectory = nullptr;
 }
 
 - (void)dismiss
@@ -213,6 +269,86 @@
 {
     if ([_delegate respondsToSelector:@selector(shareSheetDidDismiss:)])
         [_delegate shareSheetDidDismiss:self];
+}
+
+#if PLATFORM(MAC)
++ (BOOL)setQuarantineInformationForFilePath:(NSURL *)fileURL
+{
+    auto quarantineProperties = @{
+        (__bridge NSString *)kLSQuarantineTypeKey: (__bridge NSString *)kLSQuarantineTypeWebDownload,
+        (__bridge NSString *)kLSQuarantineAgentBundleIdentifierKey: WebCore::applicationBundleIdentifier()
+    };
+
+    if (![fileURL setResourceValue:quarantineProperties forKey:NSURLQuarantinePropertiesKey error:nil])
+        return NO;
+
+    // Whether the file was downloaded by sandboxed WebProcess or not, LSSetItemAttribute resets the flags to 0 (advisory QTN_FLAG_DOWNLOAD,
+    // which can be then removed by WebProcess). Replace the flags with sandbox quarantine ones, which cannot be removed by sandboxed processes.
+    return [WKShareSheet applyQuarantineSandboxAndDownloadFlagsToFileAtPath:fileURL];
+}
+
++ (BOOL)applyQuarantineSandboxAndDownloadFlagsToFileAtPath:(NSURL *)fileURL
+{
+    qtn_file_t fq = qtn_file_alloc();
+    auto scopeExit = WTF::makeScopeExit([&] {
+        qtn_file_free(fq);
+    });
+    
+    int quarantineError = qtn_file_init_with_path(fq, fileURL.fileSystemRepresentation);
+    if (quarantineError)
+        return NO;
+
+    quarantineError = qtn_file_set_flags(fq, QTN_FLAG_SANDBOX | QTN_FLAG_DOWNLOAD);
+    if (quarantineError)
+        return NO;
+
+    quarantineError = qtn_file_apply_to_path(fq, fileURL.fileSystemRepresentation);
+    
+    return YES;
+}
+#endif
+
++ (NSURL *)createTemporarySharingDirectory
+{
+    NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WKFileShare");
+    
+    if (![temporaryDirectory length])
+        return nil;
+
+    return [NSURL fileURLWithPath:temporaryDirectory isDirectory:YES];
+}
+
++ (NSURL *)createRandomSharingDirectoryForFile:(NSURL *)temporaryDirectory
+{
+    NSString *randomDirectory = createCanonicalUUIDString();
+    if (![randomDirectory length] || !temporaryDirectory)
+        return nil;
+    NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory];
+    
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:dataPath withIntermediateDirectories:NO attributes:nil error:nil])
+        return nil;
+    return dataPath;
+}
+
++ (NSURL *)writeFileToShareableURL:(NSString *)fileName data:(NSData *)fileData temporaryDirectory:(NSURL *)temporaryDirectory
+{
+    ASSERT(!RunLoop::isMain());
+    if (!temporaryDirectory || ![fileName length] || !fileData)
+        return nil;
+    
+    NSURL *temporaryDirectoryForFile = [WKShareSheet createRandomSharingDirectoryForFile:temporaryDirectory];
+    if (!temporaryDirectoryForFile)
+        return nil;
+    
+    NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName];
+
+    if (![fileData writeToURL:fileURL options:NSDataWritingAtomic error:nil])
+        return nil;
+#if PLATFORM(MAC)
+    if (![WKShareSheet setQuarantineInformationForFilePath:fileURL])
+        return nil;
+#endif
+    return fileURL;
 }
 
 @end

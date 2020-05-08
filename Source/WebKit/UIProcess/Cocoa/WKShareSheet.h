@@ -42,7 +42,6 @@ struct ShareDataWithParsedURL;
 - (void)dismiss;
 
 @property (nonatomic, weak) id <WKShareSheetDelegate> delegate;
-
 @end
 
 @protocol WKShareSheetDelegate <NSObject>

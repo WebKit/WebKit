@@ -81,6 +81,7 @@ class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
 class DragData;
+class File;
 class FilterOperation;
 class FilterOperations;
 class FloatPoint;
@@ -126,6 +127,7 @@ struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FontAttributes;
 struct FileChooserSettings;
+struct RawFile;
 struct ShareData;
 struct ShareDataWithParsedURL;
 struct Length;
@@ -555,6 +557,11 @@ template<> struct ArgumentCoder<WebCore::FileChooserSettings> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FileChooserSettings&);
 };
     
+template<> struct ArgumentCoder<WebCore::RawFile> {
+    static void encode(Encoder&, const WebCore::RawFile&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RawFile&);
+};
+
 template<> struct ArgumentCoder<WebCore::ShareData> {
     static void encode(Encoder&, const WebCore::ShareData&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ShareData&);
