@@ -60,11 +60,6 @@ public:
     virtual ~AudioCaptureFactory() = default;
     virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
-    virtual void setAudioCapturePageState(bool interrupted, bool pageMuted)
-    {
-        UNUSED_PARAM(interrupted);
-        UNUSED_PARAM(pageMuted);
-    }
 
 protected:
     AudioCaptureFactory() = default;
@@ -79,11 +74,6 @@ public:
     virtual ~VideoCaptureFactory() = default;
     virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
-    virtual void setVideoCapturePageState(bool interrupted, bool pageMuted)
-    {
-        UNUSED_PARAM(interrupted);
-        UNUSED_PARAM(pageMuted);
-    }
 
 protected:
     VideoCaptureFactory() = default;

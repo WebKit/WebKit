@@ -102,13 +102,6 @@ public:
     }
 
 private:
-#if PLATFORM(IOS_FAMILY)
-    void setVideoCapturePageState(bool interrupted, bool pageMuted) final
-    {
-        if (activeSource())
-            activeSource()->setInterrupted(interrupted, pageMuted);
-    }
-#endif
     CaptureDeviceManager& videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
 };
 
@@ -191,7 +184,6 @@ public:
     }
 private:
 #if PLATFORM(IOS_FAMILY)
-    void setAudioCapturePageState(bool interrupted, bool pageMuted) final { CoreAudioCaptureSourceFactory::singleton().setAudioCapturePageState(interrupted, pageMuted); }
     void setActiveSource(RealtimeMediaSource& source) final { CoreAudioCaptureSourceFactory::singleton().setActiveSource(source); }
     void unsetActiveSource(RealtimeMediaSource& source) final { CoreAudioCaptureSourceFactory::singleton().unsetActiveSource(source); }
     RealtimeMediaSource* activeSource() final { return CoreAudioCaptureSourceFactory::singleton().activeSource(); }

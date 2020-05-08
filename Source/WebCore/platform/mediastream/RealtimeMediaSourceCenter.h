@@ -86,8 +86,6 @@ public:
 
     WEBCORE_EXPORT void setDevicesChangedObserver(std::function<void()>&&);
 
-    void setCapturePageState(bool interrupted, bool pageMuted);
-
     void captureDevicesChanged();
 
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();

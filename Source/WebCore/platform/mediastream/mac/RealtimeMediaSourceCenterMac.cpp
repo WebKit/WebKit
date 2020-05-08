@@ -53,14 +53,6 @@ public:
     }
 
 private:
-#if PLATFORM(IOS_FAMILY)
-    void setVideoCapturePageState(bool interrupted, bool pageMuted)
-    {
-        if (activeSource())
-            activeSource()->setInterrupted(interrupted, pageMuted);
-    }
-#endif
-
     CaptureDeviceManager& videoCaptureDeviceManager() { return AVCaptureDeviceManager::singleton(); }
 };
 

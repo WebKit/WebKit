@@ -127,7 +127,6 @@ public:
     bool captureDidFail() const { return m_captureDidFailed; }
 
     virtual bool interrupted() const { return m_interrupted; }
-    virtual void setInterrupted(bool, bool);
 
     const String& name() const { return m_name; }
     void setName(String&& name) { m_name = WTFMove(name); }
@@ -193,6 +192,7 @@ public:
 
     virtual void captureFailed();
 
+    virtual bool isSameAs(RealtimeMediaSource& source) const { return this == &source; }
     virtual bool isIncomingAudioSource() const { return false; }
     virtual bool isIncomingVideoSource() const { return false; }
 

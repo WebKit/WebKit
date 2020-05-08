@@ -1,3 +1,16 @@
+2020-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Video capture does not get unmuted in case of tab switch on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211509
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/TestExpectations:
+        Disable GPU process test since we are not able yet to mute/unmute handle multiple video tracks
+        with different sources as can be done if capture is done out of process.
+        * platform/ios/mediastream/video-muted-in-background-tab.html:
+        Update test to ensure the track is producing content.
+
 2020-05-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update expectations and baselines after r261341

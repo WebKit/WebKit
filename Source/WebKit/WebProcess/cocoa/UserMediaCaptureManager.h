@@ -67,9 +67,6 @@ private:
     private:
         WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
-#if PLATFORM(IOS_FAMILY)
-        void setAudioCapturePageState(bool interrupted, bool pageMuted) final;
-#endif
 
         UserMediaCaptureManager& m_manager;
         bool m_shouldCaptureInGPUProcess { false };
@@ -84,7 +81,6 @@ private:
         WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 #if PLATFORM(IOS_FAMILY)
         void setActiveSource(WebCore::RealtimeMediaSource&) final;
-        void setVideoCapturePageState(bool interrupted, bool pageMuted) final;
 #endif
 
         UserMediaCaptureManager& m_manager;

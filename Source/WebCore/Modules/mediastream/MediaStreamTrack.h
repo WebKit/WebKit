@@ -87,7 +87,6 @@ public:
     void setEnabled(bool);
 
     bool muted() const;
-    void setMuted(MediaProducer::MutedStateFlags);
 
     enum class State { Live, Ended };
     State readyState() const;
@@ -169,6 +168,7 @@ private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
     void configureTrackRendering();
+    void updateToPageMutedState();
 
     // ActiveDOMObject API.
     void stop() final { stopTrack(); }

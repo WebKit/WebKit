@@ -1,3 +1,36 @@
+2020-05-08  Youenn Fablet  <youenn@apple.com>
+
+        Video capture does not get unmuted in case of tab switch on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211509
+
+        Reviewed by Eric Carlson.
+
+        Remove setInterrupted and related code.
+        Instead, directly use setMuted(true/false) of the source of capture tracks.
+        To ensure we validate that the active source is tied to a track of the document,
+        we add RealtimeSource::isSameAs which handles the case of a RealtimeVideoSource wrapping an AVVideoCaptureSource.
+        There might be multiple video tracks with each one its RealtimeVideoSource using the same AVVideoCaptureSource.
+        We mute the AVVideoCaptureSource directly to make sure all linked tracks will get muted/unmuted at the same time.
+        Tests to be fixed.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::isSourceCapturingForDocument):
+        (WebCore::MediaStreamTrack::updateCaptureAccordingToMutedState):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+
 2020-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         MayBegin wheel event in a <select> doesn't flash the scrollers

@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
@@ -68,6 +69,10 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 {
     auto track = adoptRef(*new MediaStreamTrack(context, WTFMove(privateTrack)));
     track->suspendIfNeeded();
+
+    if (track->isCaptureTrack())
+        track->updateToPageMutedState();
+
     return track;
 }
 
@@ -87,11 +92,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     if (m_private->type() == RealtimeMediaSource::Type::Audio)
         PlatformMediaSessionManager::sharedManager().addAudioCaptureSource(*this);
-
-    if (auto document = this->document()) {
-        if (document->page() && document->page()->mutedState())
-            setMuted(true);
-    }
 }
 
 MediaStreamTrack::~MediaStreamTrack()
@@ -193,26 +193,6 @@ void MediaStreamTrack::setEnabled(bool enabled)
 bool MediaStreamTrack::muted() const
 {
     return m_private->muted();
-}
-
-void MediaStreamTrack::setMuted(MediaProducer::MutedStateFlags state)
-{
-    bool trackMuted = false;
-    switch (source().deviceType()) {
-    case CaptureDevice::DeviceType::Microphone:
-    case CaptureDevice::DeviceType::Camera:
-        trackMuted = state & MediaProducer::AudioAndVideoCaptureIsMuted;
-        break;
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
-        trackMuted = state & MediaProducer::ScreenCaptureIsMuted;
-        break;
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    m_private->setMuted(trackMuted);
 }
 
 auto MediaStreamTrack::readyState() const -> State
@@ -468,42 +448,65 @@ MediaProducer::MediaStateFlags MediaStreamTrack::captureState(Document& document
 }
 
 #if PLATFORM(IOS_FAMILY)
-static MediaStreamTrack* findActiveCaptureTrackForDocument(Document& document, RealtimeMediaSource* activeSource, RealtimeMediaSource::Type type)
+static bool isSourceCapturingForTrackInDocument(RealtimeMediaSource& source, Document& document)
 {
-    MediaStreamTrack* selectedTrack = nullptr;
-    for (auto* captureTrack : allCaptureTracks()) {
-        if (captureTrack->document() != &document || captureTrack->ended())
+    for (auto* track : allCaptureTracks()) {
+        if (track->document() != &document || track->ended())
             continue;
 
-        if (&captureTrack->source() == activeSource)
-            return captureTrack;
-
-        // If the document has a live capture track, which is not the active one, we pick the first one.
-        // FIXME: We should probably store per page active audio/video capture tracks.
-        if (!selectedTrack && captureTrack->privateTrack().type() == type)
-            selectedTrack = captureTrack;
+        if (track->source().isSameAs(source))
+            return true;
     }
-    return selectedTrack;
+    return false;
 }
 #endif
 
 void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
 #if PLATFORM(IOS_FAMILY)
+    auto* page = document.page();
+    if (!page)
+        return;
+
     auto* activeAudioSource = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource();
-    if (auto* audioCaptureTrack = findActiveCaptureTrackForDocument(document, activeAudioSource, RealtimeMediaSource::Type::Audio))
-        audioCaptureTrack->setMuted(document.page()->mutedState());
+    if (activeAudioSource && isSourceCapturingForTrackInDocument(*activeAudioSource, document)) {
+        bool pageMuted = page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted;
+        activeAudioSource->setMuted(pageMuted || (document.hidden() && RuntimeEnabledFeatures::sharedFeatures().interruptAudioOnPageVisibilityChangeEnabled()));
+    }
 
     auto* activeVideoSource = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource();
-    if (auto* videoCaptureTrack = findActiveCaptureTrackForDocument(document, activeVideoSource, RealtimeMediaSource::Type::Video))
-        videoCaptureTrack->setMuted(document.page()->mutedState());
+    if (activeVideoSource && isSourceCapturingForTrackInDocument(*activeVideoSource, document)) {
+        bool pageMuted = page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted;
+        activeVideoSource->setMuted(pageMuted || document.hidden());
+    }
 #else
     for (auto* captureTrack : allCaptureTracks()) {
-        if (captureTrack->document() != &document || captureTrack->ended())
-            continue;
-        captureTrack->setMuted(document.page()->mutedState());
+        if (captureTrack->document() == &document && !captureTrack->ended())
+            captureTrack->updateToPageMutedState();
     }
 #endif
+}
+
+void MediaStreamTrack::updateToPageMutedState()
+{
+    ASSERT(isCaptureTrack());
+    auto* page = document()->page();
+    if (!page)
+        return;
+
+    switch (source().deviceType()) {
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Camera:
+        m_private->setMuted(page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted);
+        break;
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        m_private->setMuted(page->mutedState() & MediaProducer::ScreenCaptureIsMuted);
+        break;
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 void MediaStreamTrack::endCapture(Document& document)

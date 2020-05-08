@@ -530,26 +530,10 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
 }
 
 #if PLATFORM(IOS_FAMILY)
-void UserMediaCaptureManager::AudioFactory::setAudioCapturePageState(bool interrupted, bool pageMuted)
-{
-    if (auto* activeSource = this->activeSource())
-        activeSource->setInterrupted(interrupted, pageMuted);
-}
-
-void UserMediaCaptureManager::VideoFactory::setVideoCapturePageState(bool interrupted, bool pageMuted)
-{
-    // In case of cloning, we might have more than a single source.
-    for (auto& source : m_manager.m_sources.values()) {
-        if (source->deviceType() == CaptureDevice::DeviceType::Camera)
-            source->setInterrupted(interrupted, pageMuted);
-    }
-}
-
 void UserMediaCaptureManager::VideoFactory::setActiveSource(RealtimeMediaSource&)
 {
     // Muting is done by GPUProcess factory. We do not want to handle it here in case of track cloning.
 }
-
 #endif
 
 }

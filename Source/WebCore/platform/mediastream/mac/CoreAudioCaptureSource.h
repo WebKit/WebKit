@@ -115,10 +115,6 @@ public:
 
     void devicesChanged(const Vector<CaptureDevice>&);
 
-#if PLATFORM(IOS_FAMILY)
-    void setAudioCapturePageState(bool interrupted, bool pageMuted) final;
-#endif
-
 private:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
