@@ -1,6 +1,0 @@
-
-EVENT(playing)
-EVENT(pause)
-EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'false') OK
-END OF TEST
-

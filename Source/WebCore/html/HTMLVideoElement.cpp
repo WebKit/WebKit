@@ -102,6 +102,7 @@ void HTMLVideoElement::didAttachRenderers()
 {
     HTMLMediaElement::didAttachRenderers();
 
+    updateDisplayState();
     if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
             m_imageLoader = makeUnique<HTMLImageLoader>(*this);
@@ -131,15 +132,17 @@ bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == posterAttr) {
+        // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
+        HTMLMediaElement::setDisplayMode(Unknown);
+        updateDisplayState();
+
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
                 m_imageLoader = makeUnique<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
-            if (auto* renderer = this->renderer()) {
+            if (auto* renderer = this->renderer())
                 renderer->imageResource().setCachedImage(nullptr);
-                renderer->updateFromElement();
-            }
         }
     }
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -158,6 +161,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
         }
 #endif
     }
+
 }
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
@@ -247,35 +251,37 @@ const AtomString& HTMLVideoElement::imageSourceURL() const
     return m_defaultPosterURL;
 }
 
-bool HTMLVideoElement::shouldDisplayPosterImage() const
+void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 {
-    if (!showPosterFlag())
-        return false;
+    DisplayMode oldMode = displayMode();
+    URL poster = posterImageURL();
 
-    if (posterImageURL().isEmpty())
-        return false;
+    if (!poster.isEmpty()) {
+        // We have a poster path, but only show it until the user triggers display by playing or seeking and the
+        // media engine has something to display.
+        if (mode == Video) {
+            if (oldMode != Video && player())
+                player()->prepareForRendering();
+            if (!hasAvailableVideoFrame())
+                mode = PosterWaitingForVideo;
+        }
+    } else if (oldMode != Video && player())
+        player()->prepareForRendering();
 
-    auto* renderer = this->renderer();
-    if (renderer && renderer->failedToLoadPosterImage())
-        return false;
+    HTMLMediaElement::setDisplayMode(mode);
 
-    return true;
+    if (auto* renderer = this->renderer()) {
+        if (displayMode() != oldMode)
+            renderer->updateFromElement();
+    }
 }
 
-void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
+void HTMLVideoElement::updateDisplayState()
 {
-    INFO_LOG(LOGIDENTIFIER, "m_showPoster = ", showPosterFlag());
-
-    if (showPosterFlag())
-        return;
-
-    invalidateStyleAndLayerComposition();
-
-    if (auto player = this->player())
-        player->prepareForRendering();
-
-    if (auto* renderer = this->renderer())
-        renderer->updateFromElement();
+    if (posterImageURL().isEmpty())
+        setDisplayMode(Video);
+    else if (displayMode() < Poster)
+        setDisplayMode(Poster);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)

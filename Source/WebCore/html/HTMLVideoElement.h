@@ -76,7 +76,7 @@ public:
     // See more details at MediaPlayer::copyVideoTextureToPlatformTexture() defined in Source/WebCore/platform/graphics/MediaPlayer.h.
     bool copyVideoTextureToPlatformTexture(GraphicsContextGLOpenGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 
-    WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
+    bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
     URL posterImageURL() const;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
@@ -122,10 +122,10 @@ private:
     bool isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
-    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-
     bool hasAvailableVideoFrame() const;
-    void mediaPlayerFirstVideoFrameAvailable() final;
+    void updateDisplayState() final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+    void setDisplayMode(DisplayMode) final;
 
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::Video; }
 

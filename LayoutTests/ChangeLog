@@ -1,3 +1,21 @@
+2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r261341 and r261392.
+
+        Caused multiple regression test failures
+
+        Reverted changesets:
+
+        "Poster set after playback begins should be ignored"
+        https://bugs.webkit.org/show_bug.cgi?id=211464
+        https://trac.webkit.org/changeset/261341
+
+        "REGRESSION(r261341): imported/w3c/web-platform-
+        tests/html/semantics/embedded-content/the-video-
+        element/intrinsic_sizes.htm is failing"
+        https://bugs.webkit.org/show_bug.cgi?id=211612
+        https://trac.webkit.org/changeset/261392
+
 2020-05-08  Darin Adler  <darin@apple.com>
 
         Add a regression test for bug 211541

@@ -840,7 +840,6 @@ enum CompositingPolicy {
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
 
     [Conditional=VIDEO, MayThrowException] MediaUsageState mediaUsageState(HTMLMediaElement element);
-    [Conditional=VIDEO, MayThrowException] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
 
     DOMString ongoingLoadsDescriptions();
     void setCaptureExtraNetworkLoadMetricsEnabled(boolean value);

@@ -278,8 +278,6 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_acti
 
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
-webkit.org/b/211630 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
-
 # Requires BroadcastChannel.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.html [ Skip ]
