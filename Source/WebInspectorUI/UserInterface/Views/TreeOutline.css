@@ -52,6 +52,7 @@
     border-top: 1px solid transparent;
 
     white-space: nowrap;
+    outline: none;
 }
 
 .tree-outline.compact .item {
@@ -178,7 +179,6 @@ body[dir=rtl] .tree-outline .item .status {
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected {
     color: var(--selected-foreground-color);
     background-color: var(--selected-background-color);
-    outline: none;
 }
 
 .tree-outline .item .titles {
