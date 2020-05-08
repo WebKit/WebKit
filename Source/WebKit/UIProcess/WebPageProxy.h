@@ -1947,7 +1947,6 @@ private:
     void finishAttachingToWebProcess(ProcessLaunchReason);
 
     RefPtr<API::Navigation> launchProcessForReload();
-    RefPtr<API::Navigation> launchProcessWithItem(WebBackForwardListItem&);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);

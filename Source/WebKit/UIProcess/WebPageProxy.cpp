@@ -1024,29 +1024,6 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     return navigation;
 }
 
-RefPtr<API::Navigation> WebPageProxy::launchProcessWithItem(WebBackForwardListItem& item)
-{
-    RELEASE_LOG_IF_ALLOWED(Loading, "launchProcessWithItem:");
-
-    if (m_isClosed) {
-        RELEASE_LOG_IF_ALLOWED(Loading, "launchProcessWithItem: page is closed");
-        return nullptr;
-    }
-
-    ASSERT(!hasRunningProcess());
-    launchProcess(RegistrableDomain { URL(URL(), item.url()) }, ProcessLaunchReason::InitialProcess);
-
-    if (&item != m_backForwardList->currentItem())
-        m_backForwardList->goToItem(item);
-
-    auto navigation = m_navigationState->createBackForwardNavigation(item, m_backForwardList->currentItem(), FrameLoadType::IndexedBackForward);
-
-    send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item.itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
-    m_process->startResponsivenessTimer();
-
-    return navigation;
-}
-
 void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingArea)
 {
     m_drawingArea = WTFMove(drawingArea);
@@ -1654,8 +1631,17 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     RELEASE_LOG_IF_ALLOWED(Loading, "goToBackForwardItem:");
     LOG(Loading, "WebPageProxy %p goToBackForwardItem to item URL %s", this, item.url().utf8().data());
 
-    if (!hasRunningProcess())
-        return launchProcessWithItem(item);
+    if (m_isClosed) {
+        RELEASE_LOG_IF_ALLOWED(Loading, "goToBackForwardItem: page is closed");
+        return nullptr;
+    }
+
+    if (!hasRunningProcess()) {
+        launchProcess(RegistrableDomain { URL(URL(), item.url()) }, ProcessLaunchReason::InitialProcess);
+
+        if (&item != m_backForwardList->currentItem())
+            m_backForwardList->goToItem(item);
+    }
 
     RefPtr<API::Navigation> navigation;
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(item))

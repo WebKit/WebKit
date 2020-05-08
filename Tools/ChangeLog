@@ -1,3 +1,16 @@
+2020-05-08  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r259209) Webview's pending URL is null after restoring session state
+        https://bugs.webkit.org/show_bug.cgi?id=211626
+        <rdar://problem/62992262>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionState.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-05-08  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView.title should be safe browsing warning's title during a safe browsing warning
