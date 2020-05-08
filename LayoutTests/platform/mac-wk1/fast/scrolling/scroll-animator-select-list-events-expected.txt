@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: RenderListBox: mouseEnteredContentArea
-CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseEnteredVerticalScrollbar
 CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseIsDownInVerticalScrollbar

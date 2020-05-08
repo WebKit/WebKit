@@ -35,6 +35,7 @@
 #import "ContentChangeObserver.h"
 #import "DataTransfer.h"
 #import "DragState.h"
+#import "EventNames.h"
 #import "FocusController.h"
 #import "Frame.h"
 #import "FrameView.h"
@@ -525,7 +526,7 @@ static bool frameHasPlatformWidget(const Frame& frame)
 
 void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent)
 {
-    updateMouseEventTargetNode(nullptr, platformMouseEvent, FireMouseOverOut::Yes);
+    updateMouseEventTargetNode(eventNames().mouseoutEvent, nullptr, platformMouseEvent, FireMouseOverOut::Yes);
 }
 
 void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platformMouseEvent)

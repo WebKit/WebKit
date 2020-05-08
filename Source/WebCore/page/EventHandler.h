@@ -404,9 +404,10 @@ private:
     Node* nodeUnderMouse() const;
     
     enum class FireMouseOverOut { No, Yes };
-    void updateMouseEventTargetNode(Node*, const PlatformMouseEvent&, FireMouseOverOut);
+    void updateMouseEventTargetNode(const AtomString& eventType, Node*, const PlatformMouseEvent&, FireMouseOverOut);
 
-    void notifyScrollableAreasOfMouseEnterExit(Element* lastElementUnderMouse, Element* elementUnderMouse);
+    ScrollableArea* enclosingScrollableArea(Node*);
+    void notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse);
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 

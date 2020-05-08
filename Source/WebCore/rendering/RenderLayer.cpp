@@ -3639,7 +3639,7 @@ String RenderLayer::debugDescription() const
     if (isComposited()) {
         // Oh for better StringBuilder/TextStream integration.
         TextStream stream;
-        stream << *backing();
+        stream << " " << *backing();
         builder.append(stream.release());
     }
 

@@ -1900,11 +1900,14 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
 
-static ScrollableArea* enclosingScrollableArea(Node* node)
+ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
 {
     for (auto ancestor = node; ancestor; ancestor = ancestor->parentOrShadowHostNode()) {
-        if (is<HTMLIFrameElement>(*ancestor) || is<HTMLHtmlElement>(*ancestor) || is<HTMLDocument>(*ancestor))
+        if (is<HTMLIFrameElement>(*ancestor))
             return nullptr;
+
+        if (is<HTMLHtmlElement>(*ancestor) || is<HTMLDocument>(*ancestor))
+            break;
 
         auto renderer = ancestor->renderer();
         if (!renderer)
@@ -1920,10 +1923,13 @@ static ScrollableArea* enclosingScrollableArea(Node* node)
         if (!layer)
             return nullptr;
 
-        return layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
+        if (auto* scrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No)) {
+            if (!scrollableLayer->isRenderViewLayer())
+                return scrollableLayer;
+        }
     }
 
-    return nullptr;
+    return m_frame.view();
 }
 
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
@@ -1941,16 +1947,6 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     Page* page = m_frame.page();
     if (!page)
         return result;
-
-    if (auto scrolledArea = enclosingScrollableArea(hitTestResult.innerNode())) {
-        if (FrameView* frameView = m_frame.view()) {
-            if (frameView->containsScrollableArea(scrolledArea))
-                scrolledArea->mouseMovedInContentArea();
-        }
-    }
-
-    if (FrameView* frameView = m_frame.view())
-        frameView->mouseMovedInContentArea();  
 
     hitTestResult.setToNonUserAgentShadowAncestor();
     page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifierFlags());
@@ -2043,7 +2039,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 #endif
         if (onlyUpdateScrollbars) {
             if (shouldSendMouseEventsToInactiveWindows())
-                updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
+                updateMouseEventTargetNode(eventNames().mousemoveEvent, mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
 
             return true;
         }
@@ -2058,7 +2054,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 
     if (newSubframe) {
         // Update over/out state before passing the event to the subframe.
-        updateMouseEventTargetNode(mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
+        updateMouseEventTargetNode(eventNames().mousemoveEvent, mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
         
         // Event dispatch in updateMouseEventTargetNode may have caused the subframe of the target
         // node to be detached from its FrameView, in which case the event should not be passed.
@@ -2545,7 +2541,7 @@ void EventHandler::pointerCaptureElementDidChange(Element* element)
     setCapturingMouseEventsElement(element);
 
     // Now that we have a new capture element, we need to dispatch boundary mouse events.
-    updateMouseEventTargetNode(element, m_lastPlatformMouseEvent, FireMouseOverOut::Yes);
+    updateMouseEventTargetNode(eventNames().gotpointercaptureEvent, element, m_lastPlatformMouseEvent, FireMouseOverOut::Yes);
 }
 
 MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestRequest& request, const PlatformMouseEvent& mouseEvent)
@@ -2565,7 +2561,7 @@ static bool hierarchyHasCapturingEventListeners(Element* element, const AtomStri
     return false;
 }
 
-void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
+void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {
     Ref<Frame> protectedFrame(m_frame);
     Element* targetElement = nullptr;
@@ -2587,7 +2583,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut == FireMouseOverOut::Yes) {
-        notifyScrollableAreasOfMouseEnterExit(m_lastElementUnderMouse.get(), m_elementUnderMouse.get());
+        notifyScrollableAreasOfMouseEvents(eventType, m_lastElementUnderMouse.get(), m_elementUnderMouse.get());
 
         if (m_lastElementUnderMouse && &m_lastElementUnderMouse->document() != m_frame.document()) {
             m_lastElementUnderMouse = nullptr;
@@ -2644,7 +2640,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     }
 }
 
-void EventHandler::notifyScrollableAreasOfMouseEnterExit(Element* lastElementUnderMouse, Element* elementUnderMouse)
+void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse)
 {
     auto* frameView = m_frame.view();
     if (!frameView)
@@ -2655,24 +2651,41 @@ void EventHandler::notifyScrollableAreasOfMouseEnterExit(Element* lastElementUnd
 
     if (!!lastElementUnderMouse != !!elementUnderMouse) {
         if (elementUnderMouse) {
-            frameView->mouseEnteredContentArea();
+            if (scrollableAreaForNodeUnderMouse != frameView)
+                frameView->mouseEnteredContentArea();
+
             if (scrollableAreaForNodeUnderMouse)
                 scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
         } else {
             if (scrollableAreaForLastNode)
                 scrollableAreaForLastNode->mouseExitedContentArea();
-            frameView->mouseExitedContentArea();
+
+            if (scrollableAreaForLastNode != frameView)
+                frameView->mouseExitedContentArea();
         }
         return;
     }
-    
-    if ((!scrollableAreaForLastNode && !scrollableAreaForNodeUnderMouse) || scrollableAreaForLastNode == scrollableAreaForNodeUnderMouse)
+
+    if (!scrollableAreaForLastNode && !scrollableAreaForNodeUnderMouse)
         return;
 
-    if (scrollableAreaForLastNode)
+    // FIXME: This does doesn't handle nested ScrollableAreas well. It really needs to know
+    // the hierarchical relationship between scrollableAreaForLastNode and scrollableAreaForNodeUnderMouse.
+    bool movedBetweenScrollableaAreas = scrollableAreaForLastNode && scrollableAreaForNodeUnderMouse && (scrollableAreaForLastNode != scrollableAreaForNodeUnderMouse);
+    if (eventType == eventNames().mousemoveEvent) {
+        frameView->mouseMovedInContentArea();
+
+        if (!movedBetweenScrollableaAreas && scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView)
+            scrollableAreaForNodeUnderMouse->mouseMovedInContentArea();
+    }
+
+    if (!movedBetweenScrollableaAreas)
+        return;
+
+    if (scrollableAreaForLastNode && scrollableAreaForLastNode != frameView)
         scrollableAreaForLastNode->mouseExitedContentArea();
 
-    if (scrollableAreaForNodeUnderMouse)
+    if (scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView)
         scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
 }
 
@@ -2693,7 +2706,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 {
     Ref<Frame> protectedFrame(m_frame);
 
-    updateMouseEventTargetNode(targetNode, platformMouseEvent, fireMouseOverOut);
+    updateMouseEventTargetNode(eventType, targetNode, platformMouseEvent, fireMouseOverOut);
 
     if (m_elementUnderMouse && !m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventType, clickCount))
         return false;

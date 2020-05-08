@@ -2,7 +2,6 @@ CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
 CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: FrameView: mouseEnteredHorizontalScrollbar
 CONSOLE MESSAGE: FrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: FrameView: mouseExitedHorizontalScrollbar
 CONSOLE MESSAGE: FrameView: mouseExitedContentArea
 CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea

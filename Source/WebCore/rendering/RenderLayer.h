@@ -462,6 +462,7 @@ public:
     void applyPostLayoutScrollPositionIfNeeded();
 
     // Returns the nearest enclosing layer that is scrollable.
+    // FIXME: This can return the RenderView's layer when callers probably want the FrameView as a ScrollableArea.
     RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
 
     void availableContentSizeChanged(AvailableSizeChangeReason) final;

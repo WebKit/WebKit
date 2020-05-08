@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: RenderLayer: mouseEnteredContentArea
-CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseEnteredVerticalScrollbar
 CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseIsDownInVerticalScrollbar

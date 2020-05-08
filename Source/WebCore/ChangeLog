@@ -1,3 +1,44 @@
+2020-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow scrollers in iframes don't get mouseMovedInContentArea()
+        https://bugs.webkit.org/show_bug.cgi?id=211347
+        <rdar://problem/62784560>
+
+        Reviewed by Tim Horton.
+
+        We never dispatched mouseMovedInContentArea() on ScrollableAreas in subframes, so overlay scrollbar
+        interactions there were broken. This is because the code ran from EventHandler::mouseMoved(), which
+        only runs for the main frame.
+
+        Instead, move the mouseMovedInContentArea() dispatch down into updateMouseEventTargetNode() which
+        is run for each subframe. notifyScrollableAreasOfMouseEvents() takes an event name so we only dispatch
+        for mouseMove events. There's some complexity here related to whether the old and new ScrollableArea
+        targets are nested; this code doesn't try to do the right thing with nesting, but does handle the mouse
+        moving between the scrollable main frame and an overflow region.
+        
+        enclosingScrollableArea() is fixed to return the FrameView. enclosingScrollableLayer() is flawed, as noted
+        in the RenderLayer.h comment.
+
+        Tests: fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-hovered.html
+               fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::enclosingScrollableArea):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::pointerCaptureElementDidChange):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::notifyScrollableAreasOfMouseEvents):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::enclosingScrollableArea): Deleted.
+        (WebCore::EventHandler::notifyScrollableAreasOfMouseEnterExit): Deleted.
+        * page/EventHandler.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::dispatchSyntheticMouseOut):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::debugDescription const):
+        * rendering/RenderLayer.h:
+
 2020-05-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] The fixed logical width should be used as the max width for a cell
