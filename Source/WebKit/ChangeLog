@@ -1,3 +1,41 @@
+2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] caret appears in the middle of a search field when field is focused on agoda.com
+        https://bugs.webkit.org/show_bug.cgi?id=211591
+        <rdar://problem/60605873>
+
+        Reviewed by Antoine Quint.
+
+        The main search field on the mobile version of this website begins offscreen, with a CSS transform that moves it
+        to the far right; tapping the button element that (visually) has a search-field-like appearance on the front
+        page programmatically focuses the real offscreen search field, and animates it onscreen by changing the CSS
+        transform attribute to remove the x-axis translation.
+
+        On iOS, the caret rect is computed and sent to the UI process via editor state updates; however, the editor
+        state is computed immediately after focusing the input field. As such, the caret rect at this moment is computed
+        in the middle of the animation, leaving it stuck in an unpredictable location.
+
+        To fix this, add plumbing to call into the WebKit client layer when an animation has ended. On iOS, if the
+        selection is visible (i.e. a ranged selection, or editable caret), then check to see whether the element that
+        has finished animating contains either endpoint of the selection. If so, then schedule a followup editor state
+        update to push updated selection information to the UI process.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::animationDidFinishForElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        Add a new client hook for when animations end.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::animationDidFinishForElement):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Add logic to schedule a new editor state update if needed, after an animation ends that might affect either
+        the start or end of the selection.
+
+        (WebKit::WebPage::animationDidFinishForElement):
+
 2020-05-08  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r260228): Linker warning about limitsNavigationsToAppBoundDomains property overriding instance methods from class

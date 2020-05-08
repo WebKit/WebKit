@@ -528,6 +528,8 @@ public:
     virtual void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&) { }
 #endif
 
+    virtual void animationDidFinishForElement(const Element&) { }
+
 protected:
     virtual ~ChromeClient() = default;
 };

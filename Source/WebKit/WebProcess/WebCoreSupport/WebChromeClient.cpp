@@ -1395,4 +1395,9 @@ void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthent
 }
 #endif
 
+void WebChromeClient::animationDidFinishForElement(const Element& element)
+{
+    m_page.animationDidFinishForElement(element);
+}
+
 } // namespace WebKit

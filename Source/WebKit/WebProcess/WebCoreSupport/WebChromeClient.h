@@ -230,6 +230,8 @@ private:
     void AXFinishFrameLoad() final { }
 #endif
 
+    void animationDidFinishForElement(const WebCore::Element&) final;
+
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) const final;
 
 #if ENABLE(GPU_PROCESS)

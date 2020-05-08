@@ -375,7 +375,7 @@ public:
 
     bool isDescendantOrShadowDescendantOf(const Node*) const;
     WEBCORE_EXPORT bool contains(const Node*) const;
-    bool containsIncludingShadowDOM(const Node*) const;
+    WEBCORE_EXPORT bool containsIncludingShadowDOM(const Node*) const;
 
     // Whether or not a selection can be started in this object
     virtual bool canStartSelection() const;

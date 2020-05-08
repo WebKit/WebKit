@@ -7094,6 +7094,14 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 }
 #endif // ENABLE(MEDIA_USAGE)
 
+#if !PLATFORM(IOS_FAMILY)
+
+void WebPage::animationDidFinishForElement(const WebCore::Element&)
+{
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

@@ -30,10 +30,13 @@
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMPromiseProxy.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
+#include "Element.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "InspectorInstrumentation.h"
@@ -904,6 +907,13 @@ void WebAnimation::finishNotificationSteps()
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
     enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), m_timeline ? m_timeline->currentTime() : WTF::nullopt);
+
+    if (is<KeyframeEffect>(m_effect)) {
+        if (auto target = makeRefPtr(downcast<KeyframeEffect>(*m_effect).target())) {
+            if (auto* page = target->document().page())
+                page->chrome().client().animationDidFinishForElement(*target);
+        }
+    }
 }
 
 ExceptionOr<void> WebAnimation::play()

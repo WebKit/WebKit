@@ -1,5 +1,19 @@
 2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] caret appears in the middle of a search field when field is focused on agoda.com
+        https://bugs.webkit.org/show_bug.cgi?id=211591
+        <rdar://problem/60605873>
+
+        Reviewed by Antoine Quint.
+
+        Add a new layout test to verify that the caret view eventually becomes visible when after a focused text field
+        containing the caret is animated.
+
+        * editing/selection/ios/caret-rect-after-animating-focused-text-field-expected.txt: Added.
+        * editing/selection/ios/caret-rect-after-animating-focused-text-field.html: Added.
+
+2020-05-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Preserve character set information when writing to the pasteboard when copying rich text
         https://bugs.webkit.org/show_bug.cgi?id=211524
 

@@ -404,6 +404,8 @@ public:
     void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
     void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
 
+    void animationDidFinishForElement(const WebCore::Element&);
+
     const String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
 
     WebUndoStep* webUndoStep(WebUndoStepID);

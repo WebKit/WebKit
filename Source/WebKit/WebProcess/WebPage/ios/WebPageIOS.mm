@@ -4391,6 +4391,34 @@ void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileN
 
 #endif
 
+void WebPage::animationDidFinishForElement(const WebCore::Element& animatedElement)
+{
+    auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
+    auto& selection = frame->selection().selection();
+    if (selection.isNoneOrOrphaned())
+        return;
+
+    if (selection.isCaret() && !selection.hasEditableStyle())
+        return;
+
+    auto scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded = [&](const Node* container) {
+        if (!animatedElement.containsIncludingShadowDOM(container))
+            return false;
+
+        frame->selection().setCaretRectNeedsUpdate();
+        scheduleFullEditorStateUpdate();
+        return true;
+    };
+
+    auto startContainer = makeRefPtr(selection.start().containerNode());
+    if (scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(startContainer.get()))
+        return;
+
+    auto endContainer = makeRefPtr(selection.end().containerNode());
+    if (startContainer != endContainer)
+        scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED
