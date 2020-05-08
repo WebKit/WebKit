@@ -1,3 +1,25 @@
+2020-05-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Create common glib expectation file
+        https://bugs.webkit.org/show_bug.cgi?id=211183
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._search_paths): Add glib to expectations search path
+        (GtkPort.test_expectations_file_position): Update test
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_default_baseline_search_path): Update test
+        (GtkPortTest.test_port_specific_expectations_files): Update test and
+        make check-webkit-style happier
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._search_paths): Add glib to expectations search path
+        (WPEPort.test_expectations_file_position): Update test
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        (WPEPortTest.test_default_baseline_search_path): Update test
+        (WPEPortTest.test_port_specific_expectations_files): Update test and
+        make check-webkit-style happier
+
 2020-05-08  Paulo Matos  <pmatos@igalia.com>
 
         Add myself as committer to contributors.json

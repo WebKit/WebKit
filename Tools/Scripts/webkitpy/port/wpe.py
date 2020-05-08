@@ -111,7 +111,7 @@ class WPEPort(Port):
         return self._path_to_image_diff()
 
     def _search_paths(self):
-        return [self.port_name, 'wk2'] + self.get_option("additional_platform_directory", [])
+        return [self.port_name, 'glib', 'wk2'] + self.get_option("additional_platform_directory", [])
 
     def default_baseline_search_path(self, **kwargs):
         return list(map(self._webkit_baseline_path, self._search_paths()))
@@ -120,8 +120,8 @@ class WPEPort(Port):
         return list(map(lambda x: self._filesystem.join(self._webkit_baseline_path(x), 'TestExpectations'), reversed(self._search_paths())))
 
     def test_expectations_file_position(self):
-        # WPE port baseline search path is wpe -> wk2 -> generic, so port test expectations file is at third to last position.
-        return 2
+        # WPE port baseline search path is wpe -> glib -> wk2 -> generic, so port test expectations file is at third to last position.
+        return 3
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than,

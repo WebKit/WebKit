@@ -209,6 +209,7 @@ class GtkPort(Port):
         if self._driver_class() in [WaylandDriver, WestonDriver]:
             search_paths.append(self.port_name + "-wayland")
         search_paths.append(self.port_name)
+        search_paths.append('glib')
         search_paths.append('wk2')
         search_paths.extend(self.get_option("additional_platform_directory", []))
         return search_paths
@@ -240,8 +241,8 @@ class GtkPort(Port):
                                     self._filesystem, self._path_to_driver, self.port_name, self.get_option('configuration')).generate_crash_log(stdout, stderr)
 
     def test_expectations_file_position(self):
-        # GTK port baseline search path is gtk -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
-        return 2
+        # GTK port baseline search path is gtk -> glib -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
+        return 3
 
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)
