@@ -25,8 +25,11 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "TestWKWebView.h"
+#import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WebKit, NetworkProcessEntitlements)
@@ -41,4 +44,38 @@ TEST(WebKit, NetworkProcessEntitlements)
     EXPECT_FALSE(hasEntitlement);
 #endif
     EXPECT_FALSE([pool _networkProcessHasEntitlementForTesting:@"test failure case"]);
+}
+
+TEST(WebKit, HTTPReferer)
+{
+    auto checkReferer = [] (NSURL *baseURL, const char* expectedReferer) {
+        using namespace TestWebKitAPI;
+        bool done = false;
+        HTTPServer server([done = &done, expectedReferer] (nw_connection_t connection) {
+            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection), done, expectedReferer](dispatch_data_t content, nw_content_context_t, bool, nw_error_t) {
+                EXPECT_TRUE(content);
+                auto request = nullTerminatedRequest(content);
+                if (expectedReferer) {
+                    auto expectedHeaderField = makeString("Referer: ", expectedReferer, "\r\n");
+                    EXPECT_TRUE(strstr(request.data(), expectedHeaderField.utf8().data()));
+                } else
+                    EXPECT_FALSE(strstr(request.data(), "Referer:"));
+                *done = true;
+            }).get());
+        });
+        auto webView = adoptNS([WKWebView new]);
+        [webView loadHTMLString:[NSString stringWithFormat:@"<body onload='document.getElementById(\"formID\").submit()'><form id='formID' method='post' action='http://127.0.0.1:%d/'></form></body>", server.port()] baseURL:baseURL];
+        Util::run(&done);
+    };
+    
+    Vector<char> a5k(5000, 'a');
+    Vector<char> a3k(3000, 'a');
+    NSString *longPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a5k.data()];
+    NSString *shorterPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a3k.data()];
+    NSString *longHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a5k.data()];
+    NSString *shorterHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a3k.data()];
+    checkReferer([NSURL URLWithString:longPath], "http://webkit.org");
+    checkReferer([NSURL URLWithString:shorterPath], shorterPath.UTF8String);
+    checkReferer([NSURL URLWithString:longHost], nullptr);
+    checkReferer([NSURL URLWithString:shorterHost], shorterHost.UTF8String);
 }

@@ -27,9 +27,11 @@
 #include "ResourceRequestBase.h"
 
 #include "HTTPHeaderNames.h"
+#include "Logging.h"
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <wtf/PointerComparison.h>
 
@@ -376,7 +378,14 @@ bool ResourceRequestBase::hasHTTPReferrer() const
 
 void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
 {
-    setHTTPHeaderField(HTTPHeaderName::Referer, httpReferrer);
+    const size_t maxLength = 4096;
+    if (httpReferrer.length() > maxLength) {
+        RELEASE_LOG(Loading, "Truncating HTTP referer");
+        String origin = SecurityOrigin::create(URL(URL(), httpReferrer))->toString();
+        if (origin.length() <= maxLength)
+            setHTTPHeaderField(HTTPHeaderName::Referer, origin);
+    } else
+        setHTTPHeaderField(HTTPHeaderName::Referer, httpReferrer);
 }
 
 void ResourceRequestBase::setExistingHTTPReferrerToOriginString()
