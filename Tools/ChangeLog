@@ -1,3 +1,11 @@
+2020-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build on platforms without network framework.
+        https://bugs.webkit.org/show_bug.cgi?id=211603
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        Add HAVE(NETWORK_FRAMEWORK) around test that uses network framework.
+
 2020-05-08  Aakash Jain  <aakash_jain@apple.com>
 
         Delete old ews client side code

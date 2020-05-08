@@ -31,6 +31,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 TEST(WebKit, NetworkProcessEntitlements)
 {
@@ -45,6 +46,8 @@ TEST(WebKit, NetworkProcessEntitlements)
 #endif
     EXPECT_FALSE([pool _networkProcessHasEntitlementForTesting:@"test failure case"]);
 }
+
+#if HAVE(NETWORK_FRAMEWORK)
 
 TEST(WebKit, HTTPReferer)
 {
@@ -79,3 +82,5 @@ TEST(WebKit, HTTPReferer)
     checkReferer([NSURL URLWithString:longHost], nullptr);
     checkReferer([NSURL URLWithString:shorterHost], shorterHost.UTF8String);
 }
+
+#endif
