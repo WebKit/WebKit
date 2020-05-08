@@ -3376,11 +3376,6 @@ void FrameView::sendResizeEventIfNeeded()
     }
 #endif
 
-    if (page && !page->shouldFireResizeEvents()) {
-        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "sendResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
-        return;
-    }
-
     LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << frame().document() << ", size " << currentSize);
     frame().document()->setNeedsDOMWindowResizeEvent();
 

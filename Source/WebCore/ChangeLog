@@ -1,3 +1,16 @@
+2020-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r261252.
+
+        Reland r260684 now that a proper fix has landed in Reader
+
+        Reverted changeset:
+
+        "REGRESSION (r260684): Reader background is lost after
+        multitasking"
+        https://bugs.webkit.org/show_bug.cgi?id=211533
+        https://trac.webkit.org/changeset/261252
+
 2020-05-07  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         SIGILL @ WebCore::Shape::createRasterShape -- DOS ASAN

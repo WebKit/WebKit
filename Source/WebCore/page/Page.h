@@ -750,8 +750,8 @@ public:
     WEBCORE_EXPORT void injectUserStyleSheet(UserStyleSheet&);
     WEBCORE_EXPORT void removeInjectedUserStyleSheet(UserStyleSheet&);
 
-    bool shouldFireResizeEvents() const { return m_shouldFireResizeEvents; }
-    void setShouldFireResizeEvents(bool shouldFireResizeEvents) { m_shouldFireResizeEvents = shouldFireResizeEvents; }
+    bool shouldFireEvents() const { return m_shouldFireEvents; }
+    void setShouldFireEvents(bool shouldFireEvents) { m_shouldFireEvents = shouldFireEvents; }
 
     bool hasBeenNotifiedToInjectUserScripts() const { return m_hasBeenNotifiedToInjectUserScripts; }
     WEBCORE_EXPORT void notifyToInjectUserScripts();
@@ -1042,7 +1042,7 @@ private:
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
-    bool m_shouldFireResizeEvents { true };
+    bool m_shouldFireEvents { true };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
     bool m_hasBeenNotifiedToInjectUserScripts { false };

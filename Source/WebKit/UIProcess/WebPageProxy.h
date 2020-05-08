@@ -1738,7 +1738,7 @@ public:
     void grantAccessToPreferenceService();
 #endif
 
-    void setShouldFireResizeEvents(bool);
+    void setShouldFireEvents(bool);
     void setNeedsDOMWindowResizeEvent();
 
     void isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&&);
