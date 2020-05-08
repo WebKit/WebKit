@@ -1,3 +1,25 @@
+2020-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Text-style fonts aren't locale-specific
+        https://bugs.webkit.org/show_bug.cgi?id=211438
+        <rdar://problem/51654163>
+
+        Reviewed by Sam Weinig.
+
+        Simply hook up the locale to the Core Text function.
+
+        It turns out that this patch actually has no behavior change,
+        because this locale is only used for font fallback, but WebKit
+        does its own font fallback and we already pass the locale into
+        CTFontCopyDefaultCascadeListForLanguages(). However, for
+        symmetry with CTFontCreateUIFontWithLanguage() it's a good idea
+        to just supply it anyway. Just in case.
+
+        Test: platform/ios/fast/text/lang-text-style.html
+
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::createTextStyleFont):
+
 2020-05-08  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Complete new texture upload entry points in WebGL2RenderingContext
