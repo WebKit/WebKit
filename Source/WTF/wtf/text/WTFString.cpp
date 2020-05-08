@@ -1073,13 +1073,13 @@ float charactersToFloat(const UChar* data, size_t length, bool* ok)
 float charactersToFloat(const LChar* data, size_t length, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<LChar, AllowTrailingJunk>(data, length, 0, parsedLength));
+    return static_cast<float>(toDoubleType<LChar, AllowTrailingJunk>(data, length, nullptr, parsedLength));
 }
 
 float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<UChar, AllowTrailingJunk>(data, length, 0, parsedLength));
+    return static_cast<float>(toDoubleType<UChar, AllowTrailingJunk>(data, length, nullptr, parsedLength));
 }
 
 const String& emptyString()

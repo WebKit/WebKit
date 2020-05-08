@@ -40,7 +40,7 @@ static inline DWORD protection(bool writable, bool executable)
 
 void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool)
 {
-    void* result = VirtualAlloc(0, bytes, MEM_RESERVE, protection(writable, executable));
+    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
     if (!result)
         CRASH();
     return result;
@@ -48,7 +48,7 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool e
 
 void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool)
 {
-    void* result = VirtualAlloc(0, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
+    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
     if (!result)
         CRASH();
     return result;

@@ -694,10 +694,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
                     return entry;
                 
                 if (isEmptyBucket(*entry))
-                    return 0;
+                    return nullptr;
             } else {
                 if (isEmptyBucket(*entry))
-                    return 0;
+                    return nullptr;
                 
                 if (!isDeletedBucket(*entry) && HashTranslator::equal(Extractor::extract(*entry), key))
                     return entry;
@@ -739,7 +739,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numAccesses;
 #endif
 
-        ValueType* deletedEntry = 0;
+        ValueType* deletedEntry = nullptr;
 
         while (1) {
             ValueType* entry = table + i;
@@ -800,7 +800,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numAccesses;
 #endif
 
-        ValueType* deletedEntry = 0;
+        ValueType* deletedEntry = nullptr;
 
         while (1) {
             ValueType* entry = table + i;
@@ -947,7 +947,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numAccesses;
 #endif
 
-        ValueType* deletedEntry = 0;
+        ValueType* deletedEntry = nullptr;
         ValueType* entry;
         while (1) {
             entry = table + i;

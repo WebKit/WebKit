@@ -182,7 +182,7 @@ Ref<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsign
 template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(unsigned length, CharacterType*& data)
 {
     if (!length) {
-        data = 0;
+        data = nullptr;
         return *empty();
     }
     return createUninitializedInternalNonEmpty(length, data);
@@ -218,7 +218,7 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
     ASSERT(originalString->bufferOwnership() == BufferInternal);
 
     if (!length) {
-        data = 0;
+        data = nullptr;
         return Ref<StringImpl>(*empty());
     }
 

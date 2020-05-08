@@ -156,7 +156,7 @@ void setDataFile(const char* path)
         file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
     }
 
-    setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
+    setvbuf(file->file(), nullptr, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
 
     if (s_file)
         s_file->flush();

@@ -62,8 +62,8 @@ void initializeMainThreadPlatform()
     wcex.lpszClassName  = kThreadingWindowClassName;
     RegisterClassW(&wcex);
 
-    threadingWindowHandle = CreateWindowW(kThreadingWindowClassName, 0, 0,
-        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, 0);
+    threadingWindowHandle = CreateWindowW(kThreadingWindowClassName, nullptr, 0,
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, nullptr, nullptr);
     threadingFiredMessage = RegisterWindowMessageW(L"com.apple.WebKit.MainThreadFired");
 
     mainThread = Thread::currentID();

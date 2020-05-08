@@ -49,7 +49,7 @@ void WTFGetBacktrace(void** stack, int* size)
 #if HAVE(BACKTRACE)
     *size = backtrace(stack, *size);
 #elif OS(WINDOWS)
-    *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
+    *size = RtlCaptureStackBackTrace(0, *size, stack, nullptr);
 #else
     UNUSED_PARAM(stack);
     *size = 0;
@@ -131,7 +131,7 @@ void StackTrace::dump(PrintStream& out, const char* indentString) const
 #if HAVE(BACKTRACE_SYMBOLS)
         mangledName = symbols[i];
 #elif OS(WINDOWS)
-        if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(stack[i]), 0, symbolInfo))
+        if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(stack[i]), nullptr, symbolInfo))
             mangledName = symbolInfo->Name;
 #endif
         auto demangled = demangle(stack[i]);

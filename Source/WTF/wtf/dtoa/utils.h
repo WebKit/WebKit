@@ -192,7 +192,7 @@ inline int StrLength(const char* string) {
 template <typename T>
 class BufferReference {
  public:
-  BufferReference() : start_(NULL), length_(0) {}
+  BufferReference() : start_(nullptr), length_(0) {}
   BufferReference(T* data, int len) : start_(data), length_(len) {
     ASSERT(len == 0 || (len > 0 && data != NULL));
   }

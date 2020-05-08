@@ -67,7 +67,7 @@ public:
 
     const char* data() const
     {
-        return m_buffer ? m_buffer->data() : 0;
+        return m_buffer ? m_buffer->data() : nullptr;
     }
     WTF_EXPORT_PRIVATE char* mutableData();
     size_t length() const

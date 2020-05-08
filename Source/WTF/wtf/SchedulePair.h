@@ -58,7 +58,7 @@ private:
         : m_runLoop(runLoop)
     {
         if (mode)
-            m_mode = adoptCF(CFStringCreateCopy(0, mode));
+            m_mode = adoptCF(CFStringCreateCopy(nullptr, mode));
     }
 
 #if PLATFORM(COCOA)

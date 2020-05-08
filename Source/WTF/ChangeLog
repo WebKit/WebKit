@@ -1,3 +1,188 @@
+2020-05-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [clang-tidy] Run modernize-use-nullptr over WTF
+        https://bugs.webkit.org/show_bug.cgi?id=211628
+
+        Reviewed by Yusuke Suzuki.
+
+        Use the fix option in clang-tidy to ensure nullptr is being used across WTF.
+
+        * wtf/Assertions.cpp:
+        * wtf/BumpPointerAllocator.h:
+        (WTF::BumpPointerPool::BumpPointerPool):
+        (WTF::BumpPointerPool::create):
+        (WTF::BumpPointerAllocator::BumpPointerAllocator):
+        * wtf/DataLog.cpp:
+        (WTF::setDataFile):
+        * wtf/DateMath.cpp:
+        (WTF::parseES5DatePortion):
+        (WTF::parseES5TimePortion):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastZeroedMalloc):
+        (WTF::fastStrDup):
+        (WTF::tryFastZeroedMalloc):
+        (WTF::isFastMallocEnabled):
+        (WTF::fastMallocGoodSize):
+        (WTF::fastAlignedMalloc):
+        (WTF::tryFastAlignedMalloc):
+        (WTF::fastAlignedFree):
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::fastRealloc):
+        (WTF::tryFastRealloc):
+        (WTF::releaseFastMallocFreeMemory):
+        (WTF::releaseFastMallocFreeMemoryForThisThread):
+        (WTF::fastMallocStatistics):
+        (WTF::fastMallocSize):
+        (WTF::fastCommitAlignedMemory):
+        (WTF::fastDecommitAlignedMemory):
+        (WTF::fastEnableMiniMode):
+        (WTF::fastDisableScavenger):
+        (WTF::fastMallocDumpMallocStats):
+        (WTF::AvoidRecordingScope::avoidRecordingCount):
+        (WTF::AvoidRecordingScope::AvoidRecordingScope):
+        (WTF::AvoidRecordingScope::~AvoidRecordingScope):
+        (WTF::MallocCallTracker::MallocSiteData::MallocSiteData):
+        (WTF::MallocCallTracker::singleton):
+        (WTF::MallocCallTracker::MallocCallTracker):
+        (WTF::MallocCallTracker::recordMalloc):
+        (WTF::MallocCallTracker::recordRealloc):
+        (WTF::MallocCallTracker::recordFree):
+        (WTF::MallocCallTracker::dumpStats):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::add):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::findAndRemoveFreeSpace):
+        * wtf/ParallelJobsGeneric.cpp:
+        * wtf/RandomDevice.cpp:
+        (WTF::RandomDevice::cryptographicallyRandomValues):
+        * wtf/RawPointer.h:
+        (WTF::RawPointer::RawPointer):
+        * wtf/RedBlackTree.h:
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::hexDigest):
+        * wtf/SchedulePair.h:
+        (WTF::SchedulePair::SchedulePair):
+        * wtf/StackTrace.cpp:
+        (WTFGetBacktrace):
+        (WTF::StackTrace::dump const):
+        * wtf/StringExtras.h:
+        (strnstr):
+        * wtf/Variant.h:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::VectorBufferBase::releaseBuffer):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        * wtf/cf/CFURLExtras.cpp:
+        (WTF::createCFURLFromBuffer):
+        (WTF::getURLBytes):
+        * wtf/cf/CFURLExtras.h:
+        * wtf/cf/FileSystemCF.cpp:
+        (WTF::FileSystem::pathAsURL):
+        * wtf/dtoa/double-conversion.cc:
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::BufferReference::BufferReference):
+        * wtf/text/CString.cpp:
+        (WTF::CString::mutableData):
+        * wtf/text/CString.h:
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::release):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createUninitializedInternal):
+        (WTF::StringImpl::reallocateInternal):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::constructInternal<LChar>):
+        (WTF::StringImpl::constructInternal<UChar>):
+        (WTF::StringImpl::characters<LChar> const):
+        (WTF::StringImpl::characters<UChar> const):
+        (WTF::find):
+        (WTF::reverseFindLineTerminator):
+        (WTF::reverseFind):
+        (WTF::equalIgnoringNullity):
+        (WTF::codePointCompare):
+        (WTF::isSpaceOrNewline):
+        (WTF::lengthOfNullTerminatedString):
+        (WTF::StringImplShape::StringImplShape):
+        (WTF::StringImpl::isolatedCopy const):
+        (WTF::StringImpl::isAllASCII const):
+        (WTF::StringImpl::isAllLatin1 const):
+        (WTF::isAllSpecialCharacters):
+        (WTF::isSpecialCharacter const):
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::create8BitIfPossible):
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::cost const):
+        (WTF::StringImpl::costDuringGC):
+        (WTF::StringImpl::setIsAtom):
+        (WTF::StringImpl::setHash const):
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+        (WTF::StringImpl::copyCharacters):
+        (WTF::StringImpl::at const):
+        (WTF::StringImpl::allocationSize):
+        (WTF::StringImpl::maxInternalLength):
+        (WTF::StringImpl::tailOffset):
+        (WTF::StringImpl::requiresCopy const):
+        (WTF::StringImpl::tailPointer const):
+        (WTF::StringImpl::tailPointer):
+        (WTF::StringImpl::substringBuffer const):
+        (WTF::StringImpl::substringBuffer):
+        (WTF::StringImpl::assertHashIsCorrect const):
+        (WTF::StringImpl::StaticStringImpl::StaticStringImpl):
+        (WTF::StringImpl::StaticStringImpl::operator StringImpl&):
+        (WTF::equalIgnoringASCIICase):
+        (WTF::startsWithLettersIgnoringASCIICase):
+        (WTF::equalLettersIgnoringASCIICase):
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::initializeIterator):
+        (WTF::setContextAwareTextForIterator):
+        (WTF::openLineBreakIterator):
+        * wtf/text/TextBreakIterator.h:
+        (WTF::LazyLineBreakIterator::get):
+        * wtf/text/WTFString.cpp:
+        (WTF::charactersToFloat):
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringWrapperCFAllocator::allocate):
+        (WTF::StringWrapperCFAllocator::create):
+        (WTF::StringImpl::createCFString):
+        * wtf/text/icu/UTextProviderLatin1.cpp:
+        (WTF::uTextLatin1Clone):
+        (WTF::openLatin1ContextAwareUTextProvider):
+        * wtf/text/icu/UTextProviderUTF16.cpp:
+        (WTF::openUTF16ContextAwareUTextProvider):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::storageDirectory):
+        (WTF::FileSystemImpl::openTemporaryFile):
+        (WTF::FileSystemImpl::openFile):
+        (WTF::FileSystemImpl::writeToFile):
+        (WTF::FileSystemImpl::readFromFile):
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::localeInfo):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/win/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::iterate):
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::cycle):
+        (WTF::RunLoop::TimerBase::start):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::establishHandle):
+
 2020-05-08  Darin Adler  <darin@apple.com>
 
         Make callBufferProducingFunction safer to use by adding a compile-time assertion

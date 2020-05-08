@@ -109,7 +109,7 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 {
     void* result;
     if (!tryFastMalloc(n).getValue(result))
-        return 0;
+        return nullptr;
     memset(result, 0, n);
     return result;
 }

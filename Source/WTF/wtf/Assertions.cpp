@@ -311,7 +311,7 @@ void WTFCrash()
 #if COMPILER(GCC_COMPATIBLE)
     __builtin_trap();
 #else
-    ((void(*)())0)();
+    ((void(*)())nullptr)();
 #endif // COMPILER(GCC_COMPATIBLE)
 #endif // ASAN_ENABLED
 }
@@ -516,7 +516,7 @@ WTFLogChannel* WTFLogChannelByName(WTFLogChannel* channels[], size_t count, cons
             return channel;
     }
 
-    return 0;
+    return nullptr;
 }
 
 static void setStateOfAllChannels(WTFLogChannel* channels[], size_t channelCount, WTFLogChannelState state)

@@ -294,7 +294,7 @@ CString fileSystemRepresentation(const String& path)
 bool makeAllDirectories(const String& path)
 {
     String fullPath = path;
-    if (SHCreateDirectoryEx(0, fullPath.wideCharacters().data(), 0) != ERROR_SUCCESS) {
+    if (SHCreateDirectoryEx(nullptr, fullPath.wideCharacters().data(), nullptr) != ERROR_SUCCESS) {
         DWORD error = GetLastError();
         if (error != ERROR_FILE_EXISTS && error != ERROR_ALREADY_EXISTS) {
             LOG_ERROR("Failed to create path %s", path.ascii().data());
@@ -348,7 +348,7 @@ static String bundleName()
 static String storageDirectory(DWORD pathIdentifier)
 {
     Vector<UChar> buffer(MAX_PATH);
-    if (FAILED(SHGetFolderPathW(0, pathIdentifier | CSIDL_FLAG_CREATE, 0, 0, wcharFrom(buffer.data()))))
+    if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.data()))))
         return String();
 
     buffer.shrink(wcslen(wcharFrom(buffer.data())));
@@ -410,7 +410,7 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
 
     String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
-        handle = ::CreateFileW(proposedPath.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+        handle = ::CreateFileW(proposedPath.wideCharacters().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
 
         return isHandleValid(handle) || GetLastError() == ERROR_ALREADY_EXISTS;
     });
@@ -446,7 +446,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
         creationDisposition = CREATE_NEW;
 
     String destination = path;
-    return CreateFile(destination.wideCharacters().data(), desiredAccess, shareMode, 0, creationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
+    return CreateFile(destination.wideCharacters().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr);
 }
 
 void closeFile(PlatformFileHandle& handle)
@@ -491,7 +491,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
         return -1;
 
     DWORD bytesWritten;
-    bool success = WriteFile(handle, data, length, &bytesWritten, 0);
+    bool success = WriteFile(handle, data, length, &bytesWritten, nullptr);
 
     if (!success)
         return -1;
@@ -504,7 +504,7 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
         return -1;
 
     DWORD bytesRead;
-    bool success = ::ReadFile(handle, data, length, &bytesRead, 0);
+    bool success = ::ReadFile(handle, data, length, &bytesRead, nullptr);
 
     if (!success)
         return -1;
@@ -602,7 +602,7 @@ bool deleteNonEmptyDirectory(const String& directoryPath)
         L"",
         FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT,
         false,
-        0,
+        nullptr,
         L""
     };
     return !SHFileOperation(&deleteOperation);

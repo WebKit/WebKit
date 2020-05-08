@@ -1309,7 +1309,7 @@ __test(_Other *);
 
 template <typename _Type> struct __is_swappable {
     static constexpr bool value =
-        sizeof(__swap_test_detail::__test<_Type>(0)) != 1;
+        sizeof(__swap_test_detail::__test<_Type>(nullptr)) != 1;
 };
 
 template<typename ... _Types>

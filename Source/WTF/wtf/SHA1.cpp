@@ -204,7 +204,7 @@ void SHA1::reset()
 
 CString SHA1::hexDigest(const Digest& digest)
 {
-    char* start = 0;
+    char* start = nullptr;
     CString result = CString::newUninitialized(40, start);
     char* buffer = start;
     for (size_t i = 0; i < hashSize; ++i) {

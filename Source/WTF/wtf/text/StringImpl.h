@@ -390,23 +390,23 @@ public:
     UChar operator[](unsigned i) const { return at(i); }
     WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned);
 
-    int toIntStrict(bool* ok = 0, int base = 10);
-    unsigned toUIntStrict(bool* ok = 0, int base = 10);
-    int64_t toInt64Strict(bool* ok = 0, int base = 10);
-    uint64_t toUInt64Strict(bool* ok = 0, int base = 10);
-    intptr_t toIntPtrStrict(bool* ok = 0, int base = 10);
+    int toIntStrict(bool* ok = nullptr, int base = 10);
+    unsigned toUIntStrict(bool* ok = nullptr, int base = 10);
+    int64_t toInt64Strict(bool* ok = nullptr, int base = 10);
+    uint64_t toUInt64Strict(bool* ok = nullptr, int base = 10);
+    intptr_t toIntPtrStrict(bool* ok = nullptr, int base = 10);
 
-    WTF_EXPORT_PRIVATE int toInt(bool* ok = 0); // ignores trailing garbage
-    unsigned toUInt(bool* ok = 0); // ignores trailing garbage
-    int64_t toInt64(bool* ok = 0); // ignores trailing garbage
-    uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage
-    intptr_t toIntPtr(bool* ok = 0); // ignores trailing garbage
+    WTF_EXPORT_PRIVATE int toInt(bool* ok = nullptr); // ignores trailing garbage
+    unsigned toUInt(bool* ok = nullptr); // ignores trailing garbage
+    int64_t toInt64(bool* ok = nullptr); // ignores trailing garbage
+    uint64_t toUInt64(bool* ok = nullptr); // ignores trailing garbage
+    intptr_t toIntPtr(bool* ok = nullptr); // ignores trailing garbage
 
     // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
     // Like the non-strict functions above, these return the value when there is trailing garbage.
     // It would be better if these were more consistent with the above functions instead.
-    double toDouble(bool* ok = 0);
-    float toFloat(bool* ok = 0);
+    double toDouble(bool* ok = nullptr);
+    float toFloat(bool* ok = nullptr);
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToASCIILowercase();
     WTF_EXPORT_PRIVATE Ref<StringImpl> convertToASCIIUppercase();

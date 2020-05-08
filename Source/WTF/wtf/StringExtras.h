@@ -39,7 +39,7 @@ inline char* strnstr(const char* buffer, const char* target, size_t bufferLength
         if (*start == *target && strncmp(start + 1, target + 1, targetLength - 1) == 0)
             return const_cast<char*>(start);
     }
-    return 0;
+    return nullptr;
 }
 
 #endif

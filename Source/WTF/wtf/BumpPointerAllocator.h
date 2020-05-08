@@ -99,8 +99,8 @@ private:
     BumpPointerPool(const PageAllocation& allocation)
         : m_current(allocation.base())
         , m_start(allocation.base())
-        , m_next(0)
-        , m_previous(0)
+        , m_next(nullptr)
+        , m_previous(nullptr)
         , m_allocation(allocation)
     {
     }
@@ -110,7 +110,7 @@ private:
         // Add size of BumpPointerPool object, check for overflow.
         minimumCapacity += sizeof(BumpPointerPool);
         if (minimumCapacity < sizeof(BumpPointerPool))
-            return 0;
+            return nullptr;
 
         size_t poolSize = std::max(static_cast<size_t>(MINIMUM_BUMP_POOL_SIZE), WTF::pageSize());
         while (poolSize < minimumCapacity) {
@@ -118,13 +118,13 @@ private:
             // The following if check relies on MINIMUM_BUMP_POOL_SIZE being a power of 2!
             ASSERT(!(MINIMUM_BUMP_POOL_SIZE & (MINIMUM_BUMP_POOL_SIZE - 1)));
             if (!poolSize)
-                return 0;
+                return nullptr;
         }
 
         PageAllocation allocation = PageAllocation::allocate(poolSize);
         if (!!allocation)
             return new (allocation) BumpPointerPool(allocation);
-        return 0;
+        return nullptr;
     }
 
     void shrink()
@@ -222,7 +222,7 @@ class BumpPointerAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BumpPointerAllocator()
-        : m_head(0)
+        : m_head(nullptr)
     {
     }
 

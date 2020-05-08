@@ -68,7 +68,7 @@ RetainPtr<CFURLRef> FileSystem::pathAsURL(const String& path)
 #else
     pathStyle = kCFURLPOSIXPathStyle;
 #endif
-    return adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), pathStyle, FALSE));
+    return adoptCF(CFURLCreateWithFileSystemPath(nullptr, path.createCFString().get(), pathStyle, FALSE));
 }
 
 } // namespace WTF

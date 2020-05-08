@@ -285,7 +285,7 @@ public:
     UBreakIterator* get(unsigned priorContextLength)
     {
         ASSERT(priorContextLength <= priorContextCapacity);
-        const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : 0;
+        const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : nullptr;
         if (!m_iterator) {
             m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, priorContextLength, m_mode);
             m_cachedPriorContext = priorContext;

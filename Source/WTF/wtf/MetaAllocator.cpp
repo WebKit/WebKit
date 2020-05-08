@@ -213,7 +213,7 @@ MetaAllocator::FreeSpacePtr MetaAllocator::findAndRemoveFreeSpace(size_t sizeInB
     FreeSpaceNode* node = m_freeSpaceSizeMap.findLeastGreaterThanOrEqual(sizeInBytes);
     
     if (!node)
-        return 0;
+        return nullptr;
     
     size_t nodeSizeInBytes = node->sizeInBytes();
     ASSERT(nodeSizeInBytes >= sizeInBytes);

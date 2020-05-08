@@ -66,7 +66,7 @@ LRESULT RunLoop::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void RunLoop::run()
 {
     MSG message;
-    while (BOOL result = ::GetMessage(&message, 0, 0, 0)) {
+    while (BOOL result = ::GetMessage(&message, nullptr, 0, 0)) {
         if (result == -1)
             break;
         ::TranslateMessage(&message);
@@ -77,7 +77,7 @@ void RunLoop::run()
 void RunLoop::iterate()
 {
     MSG message;
-    while (::PeekMessage(&message, 0, 0, 0, PM_REMOVE)) {
+    while (::PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
         ::TranslateMessage(&message);
         ::DispatchMessage(&message);
     }
@@ -109,8 +109,8 @@ void RunLoop::registerRunLoopMessageWindowClass()
 
 RunLoop::RunLoop()
 {
-    m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, 0, 0,
-        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, this);
+    m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, nullptr, 0,
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, nullptr, this);
     ASSERT(::IsWindow(m_runLoopMessageWindow));
 }
 
@@ -131,7 +131,7 @@ void RunLoop::wakeUp()
 RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
     MSG message;
-    if (!::GetMessage(&message, 0, 0, 0))
+    if (!::GetMessage(&message, nullptr, 0, 0))
         return CycleResult::Stop;
 
     ::TranslateMessage(&message);
@@ -187,7 +187,7 @@ void RunLoop::TimerBase::start(Seconds nextFireInterval, bool repeat)
     m_isActive = true;
     m_interval = nextFireInterval;
     m_nextFireDate = MonotonicTime::now() + m_interval;
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), nextFireInterval.millisecondsAs<UINT>(), 0);
+    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), nextFireInterval.millisecondsAs<UINT>(), nullptr);
 }
 
 void RunLoop::TimerBase::stop()

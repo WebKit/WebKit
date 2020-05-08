@@ -76,7 +76,7 @@ char* CString::mutableData()
 {
     copyBufferIfNeeded();
     if (!m_buffer)
-        return 0;
+        return nullptr;
     return m_buffer->mutableData();
 }
 

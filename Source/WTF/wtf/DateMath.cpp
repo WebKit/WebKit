@@ -490,7 +490,7 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
     // instead of restricting to 4 digits (or 6 digits with mandatory +/-),
     // it accepts any integer value. Consider this an implementation fallback.
     if (!parseInt(currentPosition, &postParsePosition, 10, &year))
-        return 0;
+        return nullptr;
 
     // Check for presence of -MM portion.
     if (*postParsePosition != '-')
@@ -498,11 +498,11 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
     currentPosition = postParsePosition + 1;
     
     if (!isASCIIDigit(*currentPosition))
-        return 0;
+        return nullptr;
     if (!parseLong(currentPosition, &postParsePosition, 10, &month))
-        return 0;
+        return nullptr;
     if ((postParsePosition - currentPosition) != 2)
-        return 0;
+        return nullptr;
 
     // Check for presence of -DD portion.
     if (*postParsePosition != '-')
@@ -510,11 +510,11 @@ static char* parseES5DatePortion(const char* currentPosition, int& year, long& m
     currentPosition = postParsePosition + 1;
     
     if (!isASCIIDigit(*currentPosition))
-        return 0;
+        return nullptr;
     if (!parseLong(currentPosition, &postParsePosition, 10, &day))
-        return 0;
+        return nullptr;
     if ((postParsePosition - currentPosition) != 2)
-        return 0;
+        return nullptr;
     return postParsePosition;
 }
 
@@ -527,19 +527,19 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
 
     char* postParsePosition;
     if (!isASCIIDigit(*currentPosition))
-        return 0;
+        return nullptr;
     if (!parseLong(currentPosition, &postParsePosition, 10, &hours))
-        return 0;
+        return nullptr;
     if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-        return 0;
+        return nullptr;
     currentPosition = postParsePosition + 1;
     
     if (!isASCIIDigit(*currentPosition))
-        return 0;
+        return nullptr;
     if (!parseLong(currentPosition, &postParsePosition, 10, &minutes))
-        return 0;
+        return nullptr;
     if ((postParsePosition - currentPosition) != 2)
-        return 0;
+        return nullptr;
     currentPosition = postParsePosition;
 
     // Seconds are optional.
@@ -548,11 +548,11 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
     
         long intSeconds;
         if (!isASCIIDigit(*currentPosition))
-            return 0;
+            return nullptr;
         if (!parseLong(currentPosition, &postParsePosition, 10, &intSeconds))
-            return 0;
+            return nullptr;
         if ((postParsePosition - currentPosition) != 2)
-            return 0;
+            return nullptr;
         seconds = intSeconds;
         if (*postParsePosition == '.') {
             currentPosition = postParsePosition + 1;
@@ -561,12 +561,12 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
             // a reasonable interpretation guided by the given examples and RFC 3339 says "no".
             // We check the next character to avoid reading +/- timezone hours after an invalid decimal.
             if (!isASCIIDigit(*currentPosition))
-                return 0;
+                return nullptr;
             
             // We are more lenient than ES5 by accepting more or less than 3 fraction digits.
             long fracSeconds;
             if (!parseLong(currentPosition, &postParsePosition, 10, &fracSeconds))
-                return 0;
+                return nullptr;
             
             long numFracDigits = postParsePosition - currentPosition;
             seconds += fracSeconds * pow(10.0, static_cast<double>(-numFracDigits));
@@ -594,9 +594,9 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
     long tzMinutes = 0;
     
     if (!isASCIIDigit(*currentPosition))
-        return 0;
+        return nullptr;
     if (!parseLong(currentPosition, &postParsePosition, 10, &tzHours))
-        return 0;
+        return nullptr;
     if (*postParsePosition != ':') {
         if ((postParsePosition - currentPosition) == 2) {
             // "00" case.
@@ -607,27 +607,27 @@ static char* parseES5TimePortion(char* currentPosition, long& hours, long& minut
             tzMinutes = tzHoursAbs % 100;
             tzHoursAbs = tzHoursAbs / 100;
         } else
-            return 0;
+            return nullptr;
     } else {
         // "00:00" case.
         if ((postParsePosition - currentPosition) != 2)
-            return 0;
+            return nullptr;
         tzHoursAbs = labs(tzHours);
         currentPosition = postParsePosition + 1; // Skip ":".
     
         if (!isASCIIDigit(*currentPosition))
-            return 0;
+            return nullptr;
         if (!parseLong(currentPosition, &postParsePosition, 10, &tzMinutes))
-            return 0;
+            return nullptr;
         if ((postParsePosition - currentPosition) != 2)
-            return 0;
+            return nullptr;
     }
     currentPosition = postParsePosition;
     
     if (tzHoursAbs > 24)
-        return 0;
+        return nullptr;
     if (tzMinutes < 0 || tzMinutes > 59)
-        return 0;
+        return nullptr;
     
     timeZoneSeconds = 60 * (tzMinutes + (60 * tzHoursAbs));
     if (tzNegative)

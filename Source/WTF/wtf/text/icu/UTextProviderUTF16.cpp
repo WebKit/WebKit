@@ -166,15 +166,15 @@ static void uTextUTF16ContextAwareClose(UText* text)
 UText* openUTF16ContextAwareUTextProvider(UText* text, const UChar* string, unsigned length, const UChar* priorContext, int priorContextLength, UErrorCode* status)
 {
     if (U_FAILURE(*status))
-        return 0;
+        return nullptr;
     if (!string || length > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
-        return 0;
+        return nullptr;
     }
     text = utext_setup(text, 0, status);
     if (U_FAILURE(*status)) {
         ASSERT(!text);
-        return 0;
+        return nullptr;
     }
 
     initializeContextAwareUTextProvider(text, &textUTF16ContextAwareFuncs, string, length, priorContext, priorContextLength);

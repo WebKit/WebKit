@@ -328,7 +328,7 @@ public:
             return;
         
         if (m_buffer == bufferToDeallocate) {
-            m_buffer = 0;
+            m_buffer = nullptr;
             m_capacity = 0;
         }
 
@@ -343,14 +343,14 @@ public:
     MallocPtr<T, Malloc> releaseBuffer()
     {
         T* buffer = m_buffer;
-        m_buffer = 0;
+        m_buffer = nullptr;
         m_capacity = 0;
         return adoptMallocPtr<T, Malloc>(buffer);
     }
 
 protected:
     VectorBufferBase()
-        : m_buffer(0)
+        : m_buffer(nullptr)
         , m_capacity(0)
         , m_size(0)
     {
