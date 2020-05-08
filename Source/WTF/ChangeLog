@@ -1,3 +1,15 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Make callBufferProducingFunction safer to use by adding a compile-time assertion
+        https://bugs.webkit.org/show_bug.cgi?id=211599
+
+        Reviewed by Ross Kirsling.
+
+        * wtf/unicode/icu/ICUHelpers.h:
+        (WTF::CallBufferProducingFunction::argumentTuple): Add a static_assert that
+        checks these are just simple types, aside from the Vector for the buffer.
+        This would have caught the UpconvertedCharacters problem fixed earlier today.
+
 2020-05-08  Don Olmstead  <don.olmstead@sony.com>
 
         WTF headers should compile independently

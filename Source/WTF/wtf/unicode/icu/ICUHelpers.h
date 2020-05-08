@@ -83,7 +83,9 @@ template<typename CharacterType, size_t inlineCapacity, typename ...OtherArgumen
 
 template<typename FirstArgumentType, typename ...OtherArgumentTypes> auto argumentTuple(FirstArgumentType&& firstArgument, OtherArgumentTypes&&... otherArguments)
 {
-    return tuple_cat(std::make_tuple(std::forward<FirstArgumentType>(firstArgument)), argumentTuple(std::forward<OtherArgumentTypes>(otherArguments)...));
+    // This technique of building a tuple and passing it twice does not work well for complex types, so assert this is a relatively simple one.
+    static_assert(std::is_trivial_v<std::remove_reference_t<FirstArgumentType>>);
+    return tuple_cat(std::make_tuple(firstArgument), argumentTuple(std::forward<OtherArgumentTypes>(otherArguments)...));
 }
 
 }
