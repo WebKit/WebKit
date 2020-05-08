@@ -1,3 +1,12 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Remove now-unneeded HAVE(AVFOUNDATION_LOADER_DELEGATE)
+        https://bugs.webkit.org/show_bug.cgi?id=211646
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h: Don't set HAVE_AVFOUNDATION_LOADER_DELEGATE.
+
 2020-05-08  Don Olmstead  <don.olmstead@sony.com>
 
         [clang-tidy] Run modernize-use-nullptr over WTF

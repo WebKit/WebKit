@@ -80,11 +80,9 @@ public:
     void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
 
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest *);
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest *);
     void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
-#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
@@ -351,13 +349,11 @@ private:
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 #endif
 
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     friend class WebCoreAVFResourceLoader;
     HashMap<RetainPtr<CFTypeRef>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
-#endif
 
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 

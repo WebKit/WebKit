@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>

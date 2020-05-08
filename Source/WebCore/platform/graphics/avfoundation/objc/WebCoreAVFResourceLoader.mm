@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCoreAVFResourceLoader.h"
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "CachedRawResource.h"
 #import "CachedResourceLoader.h"
