@@ -1,9 +1,0 @@
-.PHONY: all clean check
-
-all:
-	@echo Regressions are currently unsupported for out-of-source builds
-
-clean: all
-
-check: all
-

@@ -1,3 +1,17 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Remove no-longer-used PerformanceTests/StitchMarker
+        https://bugs.webkit.org/show_bug.cgi?id=211639
+
+        Reviewed by Ryosuke Niwa.
+
+        Having this test around can be confusing since it contains old versions
+        of many WebKit source files, which will show up when searching the source
+        tree. And since we're not using it, we don't need to keep a copy of it
+        in the tip of tree in the repository.
+
+        * StitchMarker: Removed.
+
 2020-04-24  Jon Lee  <jonlee@apple.com>
 
         MotionMark: add link to bug in about page
