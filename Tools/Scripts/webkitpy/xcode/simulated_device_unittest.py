@@ -67,7 +67,7 @@ simctl_json_output = """{
      "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus"
    },
    {
-     "name" : "iPhone SE",
+     "name" : "iPhone SE (1st generation)",
      "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-SE"
    },
    {
@@ -373,7 +373,7 @@ simctl_json_output = """{
      {
        "state" : "Shutdown",
        "availability" : "(available)",
-       "name" : "iPhone SE",
+       "name" : "iPhone SE (1st generation)",
        "udid" : "DB46D0DB-510E-4928-BDB4-1A0192ED4A38"
      },
      {

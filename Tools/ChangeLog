@@ -1,3 +1,25 @@
+2020-05-08  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: 'iPhone SE' should match 'iPhone SE 1st generation'
+        https://bugs.webkit.org/show_bug.cgi?id=211642
+        <rdar://problems/62986242>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/device_type.py:
+        (DeviceType):
+        (DeviceType.standardized_hardware_type): Strip '1st generation' from models.
+        (DeviceType.__eq__): Use standardized hardware type.
+        (DeviceType.__contains__): Ditto.
+        (DeviceType.__hash__): Ditto.
+        * Scripts/webkitpy/xcode/device_type_unittest.py:
+        (DeviceTypeTest):
+        (DeviceTypeTest.test_generation_matching):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._get_device_identifier_for_type): Handle case where the requests model does not
+        end with '(1st generation)', but the simctl model does.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+
 2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         TestWebKitAPI.WebKit.AllowsContentJavaScript fails on iPad simulator

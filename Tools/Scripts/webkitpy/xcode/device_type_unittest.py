@@ -158,3 +158,8 @@ class DeviceTypeTest(unittest.TestCase):
 
     def test_unmapped_version(self):
         self.assertEqual('iPhone running iOS', str(DeviceType.from_string('iPhone', Version(9))))
+
+    def test_generation_matching(self):
+        self.assertEqual(DeviceType.from_string('iPhone SE (1st generation)').standardized_hardware_type, 'SE')
+        self.assertTrue(DeviceType.from_string('iPhone SE') == DeviceType.from_string('iPhone SE (1st generation)'))
+        self.assertTrue(DeviceType.from_string('iPhone SE') != DeviceType.from_string('iPhone SE (2nd generation)'))

@@ -249,8 +249,11 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _get_device_identifier_for_type(device_type):
+        type_name_for_request = u'{} {}'.format(device_type.hardware_family.lower(), device_type.standardized_hardware_type.lower())
         for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.items():
-            if type_name.lower() == u'{} {}'.format(device_type.hardware_family.lower(), device_type.hardware_type.lower()):
+            if type_name.lower() == type_name_for_request:
+                return type_id
+            if type_name.lower().endswith(DeviceType.FIRST_GENERATION) and type_name.lower()[:-len(DeviceType.FIRST_GENERATION)] == type_name_for_request:
                 return type_id
         return None
 

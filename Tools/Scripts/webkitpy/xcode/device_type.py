@@ -26,6 +26,7 @@ from webkitpy.port.config import apple_additions
 
 # This class is designed to match device types. Because it is used for matching, 'None' is treated as a wild-card.
 class DeviceType(object):
+    FIRST_GENERATION = ' (1st generation)'
 
     @classmethod
     def from_string(cls, device_string, version=None):
@@ -108,6 +109,15 @@ class DeviceType(object):
         self._define_software_variant_from_hardware_family()
         self.check_consistency()
 
+    @property
+    def standardized_hardware_type(self):
+        if not self.hardware_type:
+            return None
+
+        if self.hardware_type.lower().endswith(self.FIRST_GENERATION):
+            return self.hardware_type[:-len(self.FIRST_GENERATION)]
+        return self.hardware_type
+
     def __str__(self):
         version = None
         if self.software_version and apple_additions():
@@ -126,7 +136,7 @@ class DeviceType(object):
         assert isinstance(other, DeviceType)
         if self.hardware_family is not None and other.hardware_family is not None and self.hardware_family.lower() != other.hardware_family.lower():
             return False
-        if self.hardware_type is not None and other.hardware_type is not None and self.hardware_type.lower() != other.hardware_type.lower():
+        if self.standardized_hardware_type is not None and other.standardized_hardware_type is not None and self.standardized_hardware_type.lower() != other.standardized_hardware_type.lower():
             return False
         if self.software_variant is not None and other.software_variant is not None and self.software_variant.lower() != other.software_variant.lower():
             return False
@@ -138,7 +148,7 @@ class DeviceType(object):
         assert isinstance(other, DeviceType)
         if self.hardware_family is not None and (not other.hardware_family or self.hardware_family.lower() != other.hardware_family.lower()):
             return False
-        if self.hardware_type is not None and (not other.hardware_type or self.hardware_type.lower() != other.hardware_type.lower()):
+        if self.standardized_hardware_type is not None and (not other.standardized_hardware_type or self.standardized_hardware_type.lower() != other.standardized_hardware_type.lower()):
             return False
         if self.software_variant is not None and (not other.software_variant or self.software_variant.lower() != other.software_variant.lower()):
             return False
@@ -147,4 +157,4 @@ class DeviceType(object):
         return True
 
     def __hash__(self):
-        return hash((self.hardware_family, self.hardware_type, self.software_variant, self.software_version))
+        return hash((self.hardware_family, self.standardized_hardware_type, self.software_variant, self.software_version))
