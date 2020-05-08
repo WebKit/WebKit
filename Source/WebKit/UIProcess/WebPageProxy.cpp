@@ -5218,7 +5218,14 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 m_pageLoadState.commitChanges();
             }
 
+            auto transaction = m_pageLoadState.transaction();
+            m_pageLoadState.setTitleFromSafeBrowsingWarning(transaction, safeBrowsingWarning->title());
+
             m_pageClient->showSafeBrowsingWarning(*safeBrowsingWarning, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), policyAction] (auto&& result) mutable {
+
+                auto transaction = m_pageLoadState.transaction();
+                m_pageLoadState.setTitleFromSafeBrowsingWarning(transaction, { });
+
                 switchOn(result, [&] (const URL& url) {
                     completionHandler(PolicyAction::Ignore);
                     loadRequest({ url });

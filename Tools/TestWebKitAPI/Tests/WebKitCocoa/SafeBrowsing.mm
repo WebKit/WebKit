@@ -283,10 +283,12 @@ TEST(SafeBrowsing, VisitUnsafeWebsite)
 #if PLATFORM(MAC)
     EXPECT_GT(warning.subviews.firstObject.subviews[2].frame.size.height, 0);
 #endif
+    EXPECT_WK_STREQ([webView title], "Deceptive Website Warning");
     checkTitleAndClick(warning.subviews.firstObject.subviews[4], "Show Details");
     EXPECT_EQ(warning.subviews.count, 2ull);
     EXPECT_FALSE(committedNavigation);
     visitUnsafeSite(warning);
+    EXPECT_WK_STREQ([webView title], "");
     TestWebKitAPI::Util::run(&committedNavigation);
 }
 

@@ -1,3 +1,26 @@
+2020-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView.title should be safe browsing warning's title during a safe browsing warning
+        https://bugs.webkit.org/show_bug.cgi?id=211403
+
+        Reviewed by Tim Horton.
+
+        Add a new property to PageLoadState, which allows the title to be set underneath it.
+        That way, once the safe browsing warning is closed, we can update the title to what it would've been,
+        including any changes that happened while the warning was open.
+
+        Covered by an API test.  I also manually verified this fixes rdar://problem/56201982
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges):
+        (WebKit::PageLoadState::reset):
+        (WebKit::PageLoadState::didCommitLoad):
+        (WebKit::PageLoadState::title const):
+        (WebKit::PageLoadState::setTitleFromSafeBrowsingWarning):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2020-05-08  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Update message filtering rules in the WebContent process' sandbox

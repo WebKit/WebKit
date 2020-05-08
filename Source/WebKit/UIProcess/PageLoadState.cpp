@@ -95,7 +95,8 @@ void PageLoadState::commitChanges()
 
     bool canGoBackChanged = m_committedState.canGoBack != m_uncommittedState.canGoBack;
     bool canGoForwardChanged = m_committedState.canGoForward != m_uncommittedState.canGoForward;
-    bool titleChanged = m_committedState.title != m_uncommittedState.title;
+    bool titleChanged = m_committedState.title != m_uncommittedState.title
+        || m_committedState.titleFromSafeBrowsingWarning != m_uncommittedState.titleFromSafeBrowsingWarning;
     bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
@@ -167,6 +168,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_lastUnreachableURL = String();
 
     m_uncommittedState.title = String();
+    m_uncommittedState.titleFromSafeBrowsingWarning = { };
 
     m_uncommittedState.estimatedProgress = 0;
     m_uncommittedState.networkRequestsInProgress = false;
@@ -331,6 +333,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, WebCertificat
     m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
 
     m_uncommittedState.title = String();
+    m_uncommittedState.titleFromSafeBrowsingWarning = { };
 }
 
 void PageLoadState::didFinishLoad(const Transaction::Token& token)
@@ -375,6 +378,9 @@ void PageLoadState::setUnreachableURL(const Transaction::Token& token, const Str
 
 const String& PageLoadState::title() const
 {
+    if (!m_committedState.titleFromSafeBrowsingWarning.isNull())
+        return m_committedState.titleFromSafeBrowsingWarning;
+
     return m_committedState.title;
 }
 
@@ -382,6 +388,12 @@ void PageLoadState::setTitle(const Transaction::Token& token, const String& titl
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.title = title;
+}
+
+void PageLoadState::setTitleFromSafeBrowsingWarning(const Transaction::Token& token, const String& title)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.titleFromSafeBrowsingWarning = title;
 }
 
 bool PageLoadState::canGoBack() const

@@ -175,6 +175,7 @@ public:
 
     const String& title() const;
     void setTitle(const Transaction::Token&, const String&);
+    void setTitleFromSafeBrowsingWarning(const Transaction::Token&, const String&);
 
     bool canGoBack() const;
     void setCanGoBack(const Transaction::Token&, bool);
@@ -217,6 +218,7 @@ private:
         String unreachableURL;
 
         String title;
+        String titleFromSafeBrowsingWarning;
 
         URL resourceDirectoryURL;
 
