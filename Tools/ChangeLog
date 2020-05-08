@@ -1,3 +1,9 @@
+2020-05-08  Paulo Matos  <pmatos@igalia.com>
+
+        Add myself as committer to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-05-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Roll back newly created credentials if an error occurs

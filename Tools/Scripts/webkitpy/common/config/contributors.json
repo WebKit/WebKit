@@ -4432,6 +4432,17 @@
          "TingPing"
       ]
    },
+   "Paulo Matos" : {
+      "emails" : [
+         "pmatos@igalia.com",
+         "pmatos@linki.tools"
+      ],
+      "expertise" : "JavaScriptCore",
+      "nicks" : [
+         "pmatos"
+      ],
+      "status" : "committer"
+   },
    "Pavel Feldman" : {
       "emails" : [
          "pfeldman@chromium.org",
