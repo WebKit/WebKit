@@ -41,7 +41,6 @@
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "ProtoCallFrameInlines.h"
-#include "VM.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"

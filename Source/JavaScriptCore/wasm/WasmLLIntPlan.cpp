@@ -40,10 +40,6 @@
 
 namespace JSC { namespace Wasm {
 
-namespace WasmLLIntPlanInternal {
-static const bool verbose = false;
-}
-
 LLIntPlan::LLIntPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
     : Base(context, WTFMove(source), work, WTFMove(task))
 {

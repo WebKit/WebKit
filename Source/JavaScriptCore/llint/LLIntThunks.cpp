@@ -38,7 +38,6 @@
 #include "LowLevelInterpreter.h"
 #include "ProtoCallFrame.h"
 #include "StackAlignment.h"
-#include "VM.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include <wtf/NeverDestroyed.h>

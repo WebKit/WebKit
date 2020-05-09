@@ -38,12 +38,6 @@
 
 namespace JSC { namespace Wasm {
 
-namespace {
-namespace WasmSignatureInternal {
-static constexpr bool verbose = false;
-}
-}
-
 SignatureInformation* SignatureInformation::theOne { nullptr };
 std::once_flag SignatureInformation::signatureInformationFlag;
 

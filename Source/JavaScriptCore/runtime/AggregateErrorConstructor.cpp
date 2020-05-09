@@ -31,8 +31,9 @@
 #include "ExceptionScope.h"
 #include "GCAssertions.h"
 #include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "RuntimeType.h"
+#include "StructureInlines.h"
 #include "VMInlines.h"
 
 namespace JSC {

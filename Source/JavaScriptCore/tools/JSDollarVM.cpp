@@ -324,7 +324,6 @@ public:
     }
 
     typedef JSNonFinalObject Base;
-    static constexpr bool needsDestruction = false;
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
@@ -535,6 +534,10 @@ public:
     typedef JSArray Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
 
+IGNORE_WARNINGS_BEGIN("unused-const-variable")
+    static constexpr bool needsDestruction = false;
+IGNORE_WARNINGS_END
+
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
@@ -559,8 +562,6 @@ public:
         DollarVMAssertScope assertScope;
         static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
     }
-
-    static constexpr bool needsDestruction = false;
 
     static bool getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
     {

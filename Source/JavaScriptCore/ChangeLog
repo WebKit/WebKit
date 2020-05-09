@@ -1,3 +1,29 @@
+2020-05-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Fix build errors and warnings for non-unified JSCOnly
+        https://bugs.webkit.org/show_bug.cgi?id=211655
+
+        Reviewed by Darin Adler and Yusuke Suzuki.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::isConstantRegisterIndex): Deleted.
+        Remove unused function.
+
+        * llint/LLIntEntrypoint.cpp:
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * runtime/AggregateErrorConstructor.cpp:
+        * runtime/AggregateErrorPrototype.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        Fix includes.
+
+        * tools/JSDollarVM.cpp:
+        Deal with "unused constant" warnings for needsDestruction.
+
+        * wasm/WasmLLIntPlan.cpp:
+        * wasm/WasmSignature.cpp:
+        Remove unused constants.
+
 2020-05-08  Darin Adler  <darin@apple.com>
 
         Streamline MarkupAccumulator to improve efficiency a bit

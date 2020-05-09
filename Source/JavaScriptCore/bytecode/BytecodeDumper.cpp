@@ -49,11 +49,6 @@
 
 namespace JSC {
 
-static ALWAYS_INLINE bool isConstantRegisterIndex(int index)
-{
-    return index >= FirstConstantRegisterIndex;
-}
-
 void BytecodeDumperBase::printLocationAndOp(InstructionStream::Offset location, const char* op)
 {
     m_currentLocation = location;

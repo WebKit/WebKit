@@ -26,11 +26,11 @@
 #pragma once
 
 #include "MacroAssemblerCodeRef.h"
+#include "VM.h"
 #include <wtf/Scope.h>
 
 namespace JSC {
 
-class VM;
 struct ProtoCallFrame;
 typedef int64_t EncodedJSValue;
 

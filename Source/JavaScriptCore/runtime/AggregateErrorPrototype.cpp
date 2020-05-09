@@ -28,13 +28,11 @@
 
 #include "AggregateError.h"
 #include "CallFrame.h"
-#include "Error.h"
 #include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCell.h"
-#include "JSCellInlines.h"
 #include "JSGlobalObjectInlines.h"
-#include "JSObject.h"
+#include "JSObjectInlines.h"
 #include "ThrowScope.h"
 #include "VMInlines.h"
 #include <wtf/Locker.h>
