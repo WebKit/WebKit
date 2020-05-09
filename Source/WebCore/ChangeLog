@@ -1,3 +1,18 @@
+2020-05-09  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in LegacyWebArchive::createPropertyListRepresentation when copying selected range that contains surrogate characters
+        https://bugs.webkit.org/show_bug.cgi?id=211658
+        <rdar://problem/62844424>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added check for null LegacyWebArchive in LegacyWebArchive::createFromSelection. Return nullptr when creation fails.
+
+        Test: webarchive/copy-surrogate-char-crash.html
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+
 2020-05-09  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Fix wpt shadow-dom/slots-fallback-in-document.html

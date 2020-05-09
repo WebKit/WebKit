@@ -605,7 +605,9 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, serializeComposedTree, &nodeList));
 
     auto archive = create(builder.toString(), *frame, nodeList, nullptr);
-    
+    if (!archive)
+        return nullptr;
+
     if (!document->isFrameSet())
         return archive;
         

@@ -1,3 +1,16 @@
+2020-05-09  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in LegacyWebArchive::createPropertyListRepresentation when copying selected range that contains surrogate characters
+        https://bugs.webkit.org/show_bug.cgi?id=211658
+        <rdar://problem/62844424>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a regression test for the crash.
+
+        * webarchive/copy-surrogate-char-crash-expected.txt: Added.
+        * webarchive/copy-surrogate-char-crash.html: Added.
+
 2020-05-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update expectations after revert of r261341 and r261392
