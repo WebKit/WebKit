@@ -461,7 +461,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure Pass ]
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Timeout Pass ]
+webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
@@ -578,12 +578,14 @@ webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-elemen
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/160996 webkit.org/b/176801 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
+webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Pass Failure ]
 webkit.org/b/207675 fast/mediastream/delayed-permission-allowed.html [ Pass Crash ]
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass Timeout ]
 webkit.org/b/210385 fast/mediastream/audio-track-enabled.html [ Crash Pass ]
 webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Pass ]
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Pass ]
+
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 
 # Canvas captureStream support is not implemented
@@ -1601,7 +1603,7 @@ webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Cr
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Crash ]
-webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Pass Crash ]
+webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/203078 media/media-source/media-source-seek-complete.html [ Pass Crash ]
 webkit.org/b/203078 media/media-source/media-source-seek-detach-crash.html [ Pass Crash ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
@@ -2707,7 +2709,7 @@ webkit.org/b/202749 http/tests/dom/document-attributes-null-handling.html [ Pass
 webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass ]
 
 webkit.org/b/191886 webkit.org/b/210800 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure Crash ]
-
+webkit.org/b/191886 fast/mediastream/apply-constraints-advanced.html [ Pass Crash ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
@@ -2795,6 +2797,8 @@ webkit.org/b/207991 imported/w3c/web-platform-tests/css/css-multicol/animation/c
 
 webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animations/text-shadow-interpolation.html [ Failure Pass ]
 webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animations/z-index-interpolation.html [ Failure Pass ]
+
+webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ] 
 
@@ -3366,7 +3370,7 @@ webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
-webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
+webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Timeout ]
 
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
@@ -3429,6 +3433,9 @@ webkit.org/b/208630 compositing/fixed-with-main-thread-scrolling.html [ Timeout 
 webkit.org/b/208630 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeout ]
 
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html [ Timeout Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html [ Timeout Pass ]
 
 webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
 
@@ -3888,6 +3895,8 @@ webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 webkit.org/b/206589 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/206589 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
+webkit.org/b/206589 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 
