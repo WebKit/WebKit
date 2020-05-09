@@ -1,3 +1,14 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Streamline MarkupAccumulator to improve efficiency a bit
+        https://bugs.webkit.org/show_bug.cgi?id=211656
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::isAllASCII const): Added.
+        * wtf/text/StringBuilder.h: Added isAllASCII.
+
 2020-05-09  David Quesada  <david_quesada@apple.com>
 
         Remove HAVE_UI_SCROLL_VIEW_INDICATOR_FLASHING_SPI

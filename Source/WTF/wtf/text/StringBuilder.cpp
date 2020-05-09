@@ -456,4 +456,14 @@ void StringBuilder::shrinkToFit()
     }
 }
 
+bool StringBuilder::isAllASCII() const
+{
+    auto length = this->length();
+    if (!length)
+        return true;
+    if (m_is8Bit)
+        return charactersAreAllASCII(characters8(), length);
+    return charactersAreAllASCII(characters16(), length);
+}
+
 } // namespace WTF

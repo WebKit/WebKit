@@ -325,6 +325,7 @@ public:
     }
     
     bool is8Bit() const { return m_is8Bit; }
+    WTF_EXPORT_PRIVATE bool isAllASCII() const;
 
     void clear()
     {

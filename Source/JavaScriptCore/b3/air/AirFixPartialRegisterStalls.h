@@ -35,7 +35,7 @@ class Code;
 //
 // Some instructions update only part of a register, they can only be scheduled after
 // the previous definition is computed. This problem can be avoided by the compiler
-// by explicitely resetting the entire register before executing the instruction with
+// by explicitly resetting the entire register before executing the instruction with
 // partial update.
 //
 // See "Partial XMM Register Stalls" and "Dependency Breaking Idioms" in the manual.

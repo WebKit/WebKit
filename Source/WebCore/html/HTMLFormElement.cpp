@@ -714,7 +714,7 @@ void HTMLFormElement::resetDefaultButton()
     if (!m_defaultButton) {
         // Computing the default button is not cheap, we don't want to do it unless needed.
         // If there was no default button set, the only style to invalidate is the element
-        // being added to the form. This is done explicitely in registerFormElement().
+        // being added to the form. This is done explicitly in registerFormElement().
         return;
     }
 

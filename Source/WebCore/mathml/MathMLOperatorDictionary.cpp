@@ -1138,7 +1138,7 @@ Optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form
     if (explicitForm)
         return WTF::nullopt;
 
-    // If we did not find the desired operator form and if it was not set explicitely, we use the first one in the following order: Infix, Prefix, Postfix.
+    // If we did not find the desired operator form and if it was not set explicitly, we use the first one in the following order: Infix, Prefix, Postfix.
     // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where innerfences should not be considered infix.
     if (auto* entry = tryBinarySearch<const Entry, UChar32>(dictionary, dictionarySize, character, ExtractChar)) {
         // There are at most two other entries before the one found.

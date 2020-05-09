@@ -240,7 +240,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (renderer().style().visibility() != Visibility::Visible)
         return;
 
-    // Note: We're explicitely not supporting composition & custom underlines and custom highlighters - unlike InlineTextBox.
+    // Note: We're explicitly not supporting composition & custom underlines and custom highlighters - unlike InlineTextBox.
     // If we ever need that for SVG, it's very easy to refactor and reuse the code.
 
     auto& parentRenderer = parent()->renderer();

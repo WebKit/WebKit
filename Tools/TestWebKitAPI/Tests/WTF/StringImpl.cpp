@@ -41,7 +41,7 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"));
     ASSERT_TRUE(stringWithTemplate->is8Bit());
 
-    // Constructor taking the size explicitely.
+    // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
     auto programmaticString = StringImpl::createFromLiteral(programmaticStringData, strlen(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());

@@ -113,9 +113,9 @@ PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSer
     , m_serializer(serializer)
     , m_document(document)
 {
-    // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitely to ensure the right encoding is specified.
+    // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitly to ensure the right encoding is specified.
     if (m_document.isXMLDocument() || m_document.xmlStandalone())
-        appendString("<?xml version=\"" + m_document.xmlVersion() + "\" encoding=\"" + m_document.charset() + "\"?>");
+        append("<?xml version=\"", m_document.xmlVersion(), "\" encoding=\"", m_document.charset(), "\"?>");
 }
 
 void PageSerializer::SerializerMarkupAccumulator::appendText(StringBuilder& out, const Text& text)

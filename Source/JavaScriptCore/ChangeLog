@@ -1,3 +1,12 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Streamline MarkupAccumulator to improve efficiency a bit
+        https://bugs.webkit.org/show_bug.cgi?id=211656
+
+        Reviewed by Anders Carlsson.
+
+        * b3/air/AirFixPartialRegisterStalls.h: Fix spelling of "explicitly".
+
 2020-05-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.concat fast path checks should not be observable

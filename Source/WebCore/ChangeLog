@@ -1,3 +1,95 @@
+2020-05-08  Darin Adler  <darin@apple.com>
+
+        Streamline MarkupAccumulator to improve efficiency a bit
+        https://bugs.webkit.org/show_bug.cgi?id=211656
+
+        Reviewed by Anders Carlsson.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendCharactersReplacingEntities): Corrected early
+        exit so it returns any time the length is 0. For some reason the code before
+        wouldn't do the early return when offset is non-zero, which is unnecessary.
+        (WebCore::MarkupAccumulator::appendString): Deleted.
+        (WebCore::MarkupAccumulator::appendStringView): Deleted.
+        (WebCore::MarkupAccumulator::appendEndTag): Use variadic append to cut down
+        on memory allocations.
+        (WebCore::MarkupAccumulator::totalLength): Deleted.
+        (WebCore::MarkupAccumulator::concatenateMarkup): Deleted.
+        (WebCore::MarkupAccumulator::takeMarkup): Added.
+        (WebCore::MarkupAccumulator::appendQuotedURLAttributeValue): Use variadic
+        append to cut down on memory allocations. Also use char instead of UChar so
+        the string building code doesn't have to do an 8/16 bit check.
+        (WebCore::shouldAddNamespaceElement): Prepend a literal, don't bother to
+        make a String just to append to another String. Also made this a
+        non-member function.
+        (WebCore::shouldAddNamespaceAttribute): Made this a non-member function.
+        (WebCore::MarkupAccumulator::appendNamespace): Fix hash table usage
+        to use add instead of get followed by set to avoid double hashing.
+        Use variadic append to cut down on memory allocation.
+        (WebCore::MarkupAccumulator::appendText): Tweaked style to make this a
+        one-line function.
+        (WebCore::appendComment): Deleted.
+        (WebCore::appendXMLDeclaration): Made this a non-member function.
+        Use variadic append to cut down on memory allocation.
+        (WebCore::appendDocumentType): Made this a non-member function.
+        Use variadic append to cut down on memory allocation.
+        (WebCore::MarkupAccumulator::appendCDATASection): Deleted.
+        (WebCore::MarkupAccumulator::appendNonElementNode): Moved the bodies of
+        appendComment, appendProcessingInstruction, and appendCDATASection in
+        here since they can all be one-line variadic append calls.
+
+        * editing/MarkupAccumulator.h:
+        (WebCore::MarkupAccumulator::length const): Changed the return type
+        of length to be unsigned since that's what StringBuilder returns.
+        Made isAllASCII call StringBuilder::isAllASCII. Replaced appendString
+        and appendStringView with variadic append. Removed many functions
+        that no longer need to be member functions. Made appendAttributeValue
+        a static member function. Made appendNamespace private. Made
+        m_serializationSyntax const.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::wrapWithStyleNode): Use append
+        instead of appenString.
+        (WebCore::StyledMarkupAccumulator::isAllASCII const): Added. Before
+        the code would only check the StringBuilder, but we also need to
+        check m_reversedPrecedingMarkup.
+        (WebCore::StyledMarkupAccumulator::takeResults): Use CheckedUint32
+        since StringBuilder's reserveCapacity function takes unsigned, not
+        size_t. The old code, using totalLength, would just pass a size_t
+        and let it get chopped off, which didn't do any harm, but it seems
+        strange to compute a 64-bit value just to chop off the lower 32
+        bits. An alternative is to compute the 32-bit value and just let
+        it overflow. Use a modern for loop by defining a ReverseView
+        template rather than writing a confusing backwards loop. Use the
+        new takeMarkup instead of concatenateMarkup.
+        (WebCore::StyledMarkupAccumulator::appendText): Tweak coding
+        style a little bit.
+        (WebCore::StyledMarkupAccumulator::appendStartTag): Ditto.
+        (WebCore::StyledMarkupAccumulator::appendNodeToPreserveMSOList):
+        Use variadic append to cut down on memory allocations.
+        (WebCore::propertyMissingOrEqualToNone): Tweak coding style a bit.
+        (WebCore::serializePreservingVisualAppearanceInternal): Use
+        append instead of appendString.
+        (WebCore::shouldPreserveMSOLists): Take a StringView instead of a
+        String to eliminate unnecessary memory allocation in call to substring.
+        (WebCore::sanitizedMarkupForFragmentInDocument): Use makeString
+        instead of StringBuilder to cut down on memory allocation.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::resetDefaultButton): Fix spelling error
+        in the word "explicitly".
+        * mathml/MathMLOperatorDictionary.cpp:
+        (WebCore::MathMLOperatorDictionary::search): Ditto.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+        Use variadic append instead of appendString to cut down on
+        memory allocations.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint): Fix spelling error in the word
+        "explicitly".
+
 2020-05-09  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in LegacyWebArchive::createPropertyListRepresentation when copying selected range that contains surrogate characters
