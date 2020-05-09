@@ -1,3 +1,18 @@
+2020-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow scrollers in iframes don't get mouseMovedInContentArea()
+        https://bugs.webkit.org/show_bug.cgi?id=211347
+        <rdar://problem/62784560>
+
+        Reviewed by Tim Horton.
+
+        Land some tests that were missing from r261382.
+
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-hovered-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-hovered.html: Added.
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal-expected.txt: Added.
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html: Added.
+
 2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         [LFC][TFC] The fixed logical width should be used as the max width for a cell
