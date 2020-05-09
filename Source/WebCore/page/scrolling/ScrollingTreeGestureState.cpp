@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "PlatformWheelEvent.h"
+#include "ScrollingTree.h"
 
 namespace WebCore {
 
