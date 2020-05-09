@@ -639,9 +639,6 @@ test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
 test/built-ins/Array/prototype/concat/arg-length-near-integer-limit.js:
   default: 'Test262Error: Expected a Test262Error but got a RangeError'
   strict mode: 'Test262Error: Expected a Test262Error but got a RangeError'
-test/built-ins/Array/prototype/concat/is-concat-spreadable-get-order.js:
-  default: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
-  strict mode: 'Test262Error: Expected [isConcatSpreadable, constructor, isConcatSpreadable] and [constructor, isConcatSpreadable] to have the same contents. '
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
   default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
   strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '

@@ -1,3 +1,16 @@
+2020-05-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array.prototype.concat fast path checks should not be observable
+        https://bugs.webkit.org/show_bug.cgi?id=211643
+
+        Reviewed by Ross Kirsling.
+
+        While test262 has complete coverage for @@isConcatSpreadable getters in prototype
+        chain, Proxy cases are covered by stress/array-concat-fast-spread-proxy.js and
+        stress/array-concat-spread-proxy.js.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-05-08  Pablo Saavedra  <psaavedra@igalia.com>
 
         Unreviewed, reverting r261010.

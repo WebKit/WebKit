@@ -588,8 +588,8 @@ function concat(first)
 
     if (@argumentCount() === 1
         && @isJSArray(this)
-        && this.@@isConcatSpreadable === @undefined
-        && (!@isObject(first) || (!@isProxyObject(first) && first.@@isConcatSpreadable === @undefined))) {
+        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined
+        && (!@isObject(first) || @tryGetByIdWithWellKnownSymbol(first, "isConcatSpreadable") === @undefined)) {
 
         var result = @concatMemcpy(this, first);
         if (result !== null)
