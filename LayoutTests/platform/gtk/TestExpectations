@@ -1421,6 +1421,7 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 
 webkit.org/b/210848 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Failure ]
 
@@ -4694,9 +4695,6 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
-
-webkit.org/b/211611 compositing/video/video-poster.html [ Failure ]
-webkit.org/b/211612 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
