@@ -1,3 +1,14 @@
+2020-05-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [LFC][TFC] The fixed logical width should be used as the max width for a cell
+        https://bugs.webkit.org/show_bug.cgi?id=211610
+
+        Unreviewed test gardening.
+
+        Add a baseline for Windows.
+
+        * platform/win/fast/layoutformattingcontext/table-simple-with-fixed-widht-and-inline-content-expected.txt: Added.
+
 2020-05-08  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         TextureMapper should skip clipping a content layer if it's not needed
