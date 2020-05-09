@@ -1,3 +1,12 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/211644>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/win: Removed.
+
 2020-05-08  Chris Dumez  <cdumez@apple.com>
 
         Regression(r210945): No attachment when sharing to mail

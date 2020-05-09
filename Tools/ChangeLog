@@ -1,3 +1,14 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/211644>
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/gtk: Removed.
+        * flatpak/files: Removed.
+        * flatpak/patches: Removed.
+
 2020-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WTF] Share Linux's MemoryPressureHandler among other Unix ports

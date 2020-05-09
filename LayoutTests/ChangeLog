@@ -1,3 +1,32 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/211644>
+
+        Reviewed by Darin Adler.
+
+        * fast/events/touch/ios/iphone7: Removed.
+        * fast/text-autosizing/ios/ipad: Removed.
+        * fast/viewport/ios/ipad: Removed.
+        * legacy-animation-engine: Removed.
+        * media/controls/ipad: Removed.
+        * media/modern-media-controls/media-documents/ipad: Removed.
+        * media/modern-media-controls/pip-support/ipad: Removed.
+        * platform/gtk/legacy-animation-engine: Removed.
+        * platform/ios-wk1/legacy-animation-engine: Removed.
+        * platform/ios-wk2/legacy-animation-engine: Removed.
+        * platform/ios/compositing/filters: Removed.
+        * platform/ios/legacy-animation-engine: Removed.
+        * platform/ios/media/modern-media-controls: Removed.
+        * platform/iphone-7/tiled-drawing: Removed.
+        * platform/mac-wk1/compositing/plugins: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/content-type: Removed.
+        * platform/mac/legacy-animation-engine: Removed.
+        * platform/win/legacy-animation-engine: Removed.
+        * platform/wincairo/legacy-animation-engine: Removed.
+        * platform/wpe/legacy-animation-engine: Removed.
+        * tiled-drawing/ios: Removed.
+
 2020-05-08  Simon Fraser  <simon.fraser@apple.com>
 
         Async overflow scroll: sometimes a <select> becomes non-scrollable

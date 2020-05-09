@@ -1,3 +1,15 @@
+2020-05-08  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/211644>
+
+        Reviewed by Darin Adler.
+
+        * include/vulkan: Removed.
+        * src/android_system_settings: Removed.
+        * third_party/glmark2: Removed.
+        * tools/flex-bison: Removed.
+
 2020-05-07  James Darpinian  <jdarpinian@chromium.org>
 
         Fix Google Maps rendering corruption in simulator with ANGLE
