@@ -5423,7 +5423,7 @@
 		066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFileUploadControl.cpp; sourceTree = "<group>"; };
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
-		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
+		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContextMac.mm; sourceTree = "<group>"; };
 		070334D01459FFAC008D8D45 /* TrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackEvent.cpp; sourceTree = "<group>"; };
 		070334D11459FFAC008D8D45 /* TrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackEvent.h; sourceTree = "<group>"; };
 		070334D21459FFAC008D8D45 /* TrackEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrackEvent.idl; sourceTree = "<group>"; };
@@ -7766,6 +7766,7 @@
 		44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeIOS.h; sourceTree = "<group>"; };
 		44C9919D0F3D210E00586670 /* ThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeIOS.h; sourceTree = "<group>"; };
 		44C9919E0F3D210E00586670 /* ThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThemeIOS.mm; sourceTree = "<group>"; };
+		44CA2843245FCA5000C94C7F /* LocalCurrentGraphicsContextIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContextIOS.mm; sourceTree = "<group>"; };
 		44D8DA98139545BE00337B75 /* SVGMPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGMPathElement.idl; sourceTree = "<group>"; };
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		44DAB5AF15A623580097C1E4 /* ExtensionsGLOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionsGLOpenGLCommon.cpp; sourceTree = "<group>"; };
@@ -20821,8 +20822,7 @@
 				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				F44A5F571FED3830007F5944 /* LegacyNSPasteboardTypes.h */,
-				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
-				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
+				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContextMac.mm */,
 				445775E420472F73008DCE5D /* LocalDefaultSystemAppearance.h */,
 				445775E92047303B008DCE5D /* LocalDefaultSystemAppearance.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
@@ -23283,6 +23283,7 @@
 				E4B65A5D132FADB60070E7BE /* LegacyTileLayer.mm */,
 				E4E39AFA1330EFA8003AB274 /* LegacyTileLayerPool.h */,
 				E4E39AFC1330EFC5003AB274 /* LegacyTileLayerPool.mm */,
+				44CA2843245FCA5000C94C7F /* LocalCurrentGraphicsContextIOS.mm */,
 				1C43DE6822AB4B8A001527D9 /* LocalCurrentTraitCollection.h */,
 				1C43DE6A22AB4B8A001527D9 /* LocalCurrentTraitCollection.mm */,
 				E35B907C23F60677000011FF /* LocalizedDeviceModel.h */,
@@ -23444,6 +23445,7 @@
 				7A09CEF01F01D1F700E93BDB /* FileMonitorCocoa.mm */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
+				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				1A4832B21A953BA6008B4DFE /* LocalizedStringsCocoa.mm */,
 				C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */,
 				A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */,

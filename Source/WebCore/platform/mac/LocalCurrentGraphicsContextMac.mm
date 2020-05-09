@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2020 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,23 +28,19 @@ namespace WebCore {
 
 LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext)
     : m_savedGraphicsContext(graphicsContext)
-    , m_didSetGraphicsContext(false)
 {
-    graphicsContext.save();
+    m_savedGraphicsContext.save();
 
-    if (!graphicsContext.hasPlatformContext()) {
+    if (!m_savedGraphicsContext.hasPlatformContext()) {
         WTFLogAlways("LocalCurrentGraphicsContext is not setting the global context because the provided GraphicsContext does not have a platform context (likely display list recording)");
-        m_savedNSGraphicsContext = nil;
         return;
     }
 
     CGContextRef cgContext = this->cgContext();
-    if (cgContext == [[NSGraphicsContext currentContext] CGContext]) {
-        m_savedNSGraphicsContext = nil;
+    if (cgContext == [[NSGraphicsContext currentContext] CGContext])
         return;
-    }
 
-    m_savedNSGraphicsContext = [[NSGraphicsContext currentContext] retain];
+    m_savedNSGraphicsContext = [NSGraphicsContext currentContext];
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:YES];
     [NSGraphicsContext setCurrentContext:newContext];
     m_didSetGraphicsContext = true;
@@ -52,18 +48,10 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphi
 
 LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext()
 {
-    if (m_didSetGraphicsContext) {
-        [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext];
-        [m_savedNSGraphicsContext release];
-    }
+    if (m_didSetGraphicsContext)
+        [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext.get()];
 
     m_savedGraphicsContext.restore();
-}
-
-CGContextRef LocalCurrentGraphicsContext::cgContext()
-{
-    CGContextRef cgContext = m_savedGraphicsContext.platformContext();
-    return cgContext;
 }
 
 }

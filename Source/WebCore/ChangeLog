@@ -1,3 +1,47 @@
+2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
+        Adapt LocalCurrentGraphicsContext for iOS
+        <https://webkit.org/b/211660>
+
+        Reviewed by Darin Adler.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Update build files for:
+          - Rename of LocalCurrentGraphicsContext.mm to
+            LocalCurrentGraphicsContextMac.mm.
+          - Move of LocalCurrentGraphicsContext.h from platform/mac to
+            platform/cocoa.
+          - Addition of LocalCurrentGraphicsContextIOS.mm.
+
+        * platform/cocoa/LocalCurrentGraphicsContext.h: Renamed from Source/WebCore/platform/mac/LocalCurrentGraphicsContext.h.
+        - Make this work for iOS by using PLATFORM(COCOA) for the outer
+          guard and USE(APPKIT) for the Mac-specific bits.
+        - Use RetainPtr<> for NSGraphicsContext to clean up code in
+          LocalCurrentGraphicsContextMac.mm.
+        (WebCore::LocalCurrentGraphicsContext::cgContext):
+        - Inline from LocalCurrentGraphicsContextMac.mm.
+
+        * platform/ios/LocalCurrentGraphicsContextIOS.mm: Copied from Source/WebCore/platform/mac/LocalCurrentGraphicsContext.mm.
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+        - Implement based on LocalCurrentGraphicsContextMac.mm.  Use
+          UIGraphics{GetCurrent,Pop,Push}Context() functions added to
+          UIKitSoftLink.h.
+
+        * platform/mac/LocalCurrentGraphicsContextMac.mm: Renamed from Source/WebCore/platform/mac/LocalCurrentGraphicsContext.mm.
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        - Use m_savedGraphicsContext instead of graphicsContext in the
+          body of the constructor.
+        - Remove set-to-nil/retain of m_savedNSGraphicsContext since
+          that is handled by RetainPtr<> now.
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+        - Remove release of m_savedNSGraphicsContext since that is
+          handled by RetainPtr<> now.
+        (WebCore::LocalCurrentGraphicsContext::cgContext): Delete.
+        - Inline into header to share implementation with iOS.
+
 2020-05-09  Darin Adler  <darin@apple.com>
 
         Fix null-dereference in DocumentTimelinesController::updateAnimationsAndSendEvents

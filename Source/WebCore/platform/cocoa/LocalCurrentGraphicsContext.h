@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2020 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +22,11 @@
 #include "GraphicsContext.h"
 #include <wtf/Noncopyable.h>
 
-#if USE(APPKIT)
+#if PLATFORM(COCOA)
 
+#if USE(APPKIT)
 OBJC_CLASS NSGraphicsContext;
+#endif
 
 namespace WebCore {
 
@@ -35,11 +37,13 @@ class LocalCurrentGraphicsContext {
 public:
     WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&);
     WEBCORE_EXPORT ~LocalCurrentGraphicsContext();
-    CGContextRef cgContext();
+    CGContextRef cgContext() { return m_savedGraphicsContext.platformContext(); }
 private:
     GraphicsContext& m_savedGraphicsContext;
-    NSGraphicsContext* m_savedNSGraphicsContext;
-    bool m_didSetGraphicsContext;
+#if USE(APPKIT)
+    RetainPtr<NSGraphicsContext> m_savedNSGraphicsContext;
+#endif
+    bool m_didSetGraphicsContext { false };
 };
 
 class ContextContainer {
@@ -52,9 +56,9 @@ public:
 
     CGContextRef context() { return m_graphicsContext; }
 private:
-    PlatformGraphicsContext* m_graphicsContext;
+    CGContextRef m_graphicsContext;
 };
 
 }
 
-#endif // USE(APPKIT)
+#endif // PLATFORM(COCOA)

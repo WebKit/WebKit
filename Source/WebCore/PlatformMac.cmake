@@ -362,7 +362,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/DragDataMac.mm
     platform/mac/DragImageMac.mm
     platform/mac/KeyEventMac.mm
-    platform/mac/LocalCurrentGraphicsContext.mm
+    platform/mac/LocalCurrentGraphicsContextMac.mm
     platform/mac/LoggingMac.mm
     platform/mac/MediaRemoteSoftLink.cpp
     platform/mac/NSScrollerImpDetails.mm
@@ -516,6 +516,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/cf/RunLoopObserver.h
 
+    platform/cocoa/LocalCurrentGraphicsContext.h
     platform/cocoa/NetworkExtensionContentFilter.h
     platform/cocoa/PlatformView.h
     platform/cocoa/PlaybackSessionInterface.h
@@ -575,7 +576,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/mac/DynamicLinkerInterposing.h
     platform/mac/LegacyNSPasteboardTypes.h
-    platform/mac/LocalCurrentGraphicsContext.h
     platform/mac/LocalDefaultSystemAppearance.h
     platform/mac/NSScrollerImpDetails.h
     platform/mac/PasteboardWriter.h

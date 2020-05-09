@@ -1,3 +1,28 @@
+2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
+        Adapt LocalCurrentGraphicsContext for iOS
+        <https://webkit.org/b/211660>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        - Use LocalCurrentGraphicsContext for both iOS and Mac code
+          paths.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        - Switch from PLATFORM(MAC) and PLATFORM(IOS_FAMIY) to
+          USE(APPKIT) to separate platform code.
+        (WebKit::convertDragImageToBitmap):
+        (WebKit::convertImageToBitmap): Delete.
+        (WebKit::convertCGImageToBitmap): Delete.
+        - Combine Mac-specific convertImageToBitmap() and iOS-specific
+          convertCGImageToBitmap() into a single method using DragImage
+          type and special-casing one line of code.
+        (WebKit::WebDragClient::startDrag):
+        (WebKit::WebDragClient::didConcludeEditDrag):
+        - Combine iOS and Mac methods into a singe method.
+
 2020-05-09  David Quesada  <david_quesada@apple.com>
 
         Remove HAVE_UI_SCROLL_VIEW_INDICATOR_FLASHING_SPI

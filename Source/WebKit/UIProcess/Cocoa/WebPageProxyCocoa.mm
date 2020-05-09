@@ -385,14 +385,13 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     if (!graphicsContext)
         return nullptr;
 
-#if PLATFORM(IOS_FAMILY)
-    UIGraphicsPushContext(graphicsContext->platformContext());
-    [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
-    UIGraphicsPopContext();
-#elif USE(APPKIT)
     LocalCurrentGraphicsContext savedContext(*graphicsContext);
+#if PLATFORM(IOS_FAMILY)
+    [image drawInRect:CGRectMake(0, 0, bitmap->size().width(), bitmap->size().height())];
+#elif USE(APPKIT)
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
 #endif
+
     return bitmap;
 }
 

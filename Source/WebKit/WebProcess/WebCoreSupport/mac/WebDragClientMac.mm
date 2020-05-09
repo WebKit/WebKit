@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
@@ -58,9 +59,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
+using DragImage = NSImage *;
+#else
+using DragImage = CGImageRef;
+#endif
 
-static RefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
+static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
     ShareableBitmap::Configuration bitmapConfiguration;
     bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(frame.mainFrame().view());
@@ -72,27 +77,26 @@ static RefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSiz
     if (!graphicsContext)
         return nullptr;
 
-    RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES]];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    LocalCurrentGraphicsContext savedContext(*graphicsContext);
+#if USE(APPKIT)
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-
-    [NSGraphicsContext setCurrentContext:savedContext.get()];
+#else
+    CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, size.width(), size.height()), image);
+#endif
 
     return bitmap;
-}
-
-void WebDragClient::didConcludeEditDrag()
-{
 }
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
 {
     auto& image = dragItem.image;
+
+#if USE(APPKIT)
     IntSize bitmapSize([image.get() size]);
-    RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get().get(), bitmapSize, frame);
+#else
+    IntSize bitmapSize(CGImageGetWidth(image.get().get()), CGImageGetHeight(image.get().get()));
+#endif
+    auto bitmap = convertDragImageToBitmap(image.get().get(), bitmapSize, frame);
     ShareableBitmap::Handle handle;
     if (!bitmap || !bitmap->createHandle(handle))
         return;
@@ -100,6 +104,15 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
     m_page->willStartDrag();
     m_page->send(Messages::WebPageProxy::StartDrag(dragItem, handle));
 }
+
+void WebDragClient::didConcludeEditDrag()
+{
+#if PLATFORM(IOS_FAMILY)
+    m_page->didConcludeEditDrag();
+#endif
+}
+
+#if USE(APPKIT)
 
 static WebCore::CachedImage* cachedImage(Element& element)
 {
@@ -171,41 +184,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, imageHandle, imageSize, filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), archiveHandle, archiveSize));
 }
 
-#endif // PLATFORM(MAC)
-
-#if PLATFORM(IOS_FAMILY)
-
-static RefPtr<ShareableBitmap> convertCGImageToBitmap(CGImageRef image, const IntSize& size, Frame& frame)
-{
-    ShareableBitmap::Configuration bitmapConfiguration;
-    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(frame.mainFrame().view());
-    auto bitmap = ShareableBitmap::createShareable(size, bitmapConfiguration);
-    if (!bitmap)
-        return nullptr;
-
-    auto graphicsContext = bitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    UIGraphicsPushContext(graphicsContext->platformContext());
-    CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, size.width(), size.height()), image);
-    UIGraphicsPopContext();
-    return bitmap;
-}
-
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
-{
-    auto& image = dragItem.image;
-
-    IntSize bitmapSize(CGImageGetWidth(image.get().get()), CGImageGetHeight(image.get().get()));
-    auto bitmap = convertCGImageToBitmap(image.get().get(), bitmapSize, frame);
-    ShareableBitmap::Handle handle;
-    if (!bitmap || !bitmap->createHandle(handle))
-        return;
-
-    m_page->willStartDrag();
-    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, handle));
-}
+#else
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
@@ -213,12 +192,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(), element, url, label);
 }
 
-void WebDragClient::didConcludeEditDrag()
-{
-    m_page->didConcludeEditDrag();
-}
-
-#endif // PLATFORM(IOS_FAMILY)
+#endif // USE(APPKIT)
 
 } // namespace WebKit
 
