@@ -1306,7 +1306,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (BOOL)_canScrollWithoutBouncingY;
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
 - (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
-- (void)_flashScrollIndicatorsPersistingPreviousFlashes:(BOOL)persisting;
 
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
 @property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;

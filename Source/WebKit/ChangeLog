@@ -1,3 +1,22 @@
+2020-05-09  David Quesada  <david_quesada@apple.com>
+
+        Remove HAVE_UI_SCROLL_VIEW_INDICATOR_FLASHING_SPI
+        https://bugs.webkit.org/show_bug.cgi?id=211662
+        rdar://problem/63048713
+
+        Reviewed by Darin Adler.
+
+        Remove this platform conditional and unconditionally use -[UIScrolView _flashScrollIndicatorsForAxes:
+        persistingPreviousFlashes:]. All supported platforms with UIScrollView have this SPI, and the conditional
+        was excluding Mac Catalyst, making WKKeyboardScrollViewAnimator send a message to its scroll view that
+        is no longer implemented.
+
+        * Platform/spi/ios/UIKitSPI.h:
+            Remove the declaration of the now unused -_flashScrollIndicatorsPersistingPreviousFlashes:.
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (axesForDelta):
+        (-[WKKeyboardScrollViewAnimator scrollToContentOffset:animated:]):
+
 2020-05-08  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository
