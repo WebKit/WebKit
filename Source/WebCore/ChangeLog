@@ -1,5 +1,17 @@
 2020-05-09  Darin Adler  <darin@apple.com>
 
+        Fix null-dereference in DocumentTimelinesController::updateAnimationsAndSendEvents
+        https://bugs.webkit.org/show_bug.cgi?id=211667
+
+        Reviewed by Antoine Quint.
+
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents): Add null
+        check before removing animationsToRemove, which may already have been removed
+        since any arbitrary change could occur while animations are firing.
+
+2020-05-09  Darin Adler  <darin@apple.com>
+
         Add missing null-check of page in ResourceLoader::loadDataURL
         https://bugs.webkit.org/show_bug.cgi?id=211589
         rdar://57213601

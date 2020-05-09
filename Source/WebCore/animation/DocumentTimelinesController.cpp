@@ -152,8 +152,10 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     for (auto& animation : animationsToRemove) {
         // An animation that was initially marked as irrelevant may have changed while we were sending events, so we run the same
         // check that we ran to add it to animationsToRemove in the first place.
-        if (!animation->isRelevant() && !animation->needsTick())
-            animation->timeline()->removeAnimation(*animation);
+        if (auto timeline = animation->timeline()) {
+            if (!animation->isRelevant() && !animation->needsTick())
+                timeline->removeAnimation(*animation);
+        }
     }
 
     // Now that animations that needed removal have been removed, let's update the list of completed transitions.
