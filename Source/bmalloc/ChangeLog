@@ -1,3 +1,14 @@
+2020-05-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use WEBKIT_EXECUTABLE in MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=211665
+
+        Reviewed by Yusuke Suzuki.
+
+        Only build mbmalloc if its possible to run MallocBench.
+
+        * CMakeLists.txt:
+
 2020-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WTF] Share Linux's MemoryPressureHandler among other Unix ports

@@ -191,11 +191,7 @@ if (ENABLE_TOOLS)
     add_subdirectory(Tools)
 endif ()
 
-if ("${PORT}" STREQUAL "GTK" OR "${PORT}" STREQUAL "WPE")
-    if (DEVELOPER_MODE)
-        add_subdirectory(PerformanceTests)
-    endif ()
-else ()
+if (DEVELOPER_MODE)
     add_subdirectory(PerformanceTests)
 endif ()
 

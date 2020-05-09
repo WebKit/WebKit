@@ -1,8 +1,4 @@
-add_library(sysmalloc SHARED mbmalloc.cpp)
-set_target_properties(sysmalloc PROPERTIES OUTPUT_NAME "mbmalloc")
-set_target_properties(sysmalloc PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib/system/)
-
-set(MALLOC_BENCH_SOURCES
+set(MallocBench_SOURCES
     Benchmark.cpp
     CPUCount.cpp
     CommandLine.cpp
@@ -28,32 +24,20 @@ set(MALLOC_BENCH_SOURCES
     tree.cpp
 )
 
-set(MALLOC_BENCH_INCLUDE_DIRECTORIES
-    "${BMALLOC_DIR}"
-    "${CMAKE_BINARY_DIR}"
-    "${DERIVED_SOURCES_DIR}"
-    "${THIRDPARTY_DIR}"
+set(MallocBench_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${bmalloc_FRAMEWORK_HEADERS_DIR}
 )
 
-set(MALLOC_BENCH_LIBRARIES
+set(MallocBench_PRIVATE_LIBRARIES
     ${CMAKE_DL_LIBS}
+    Threads::Threads
+    mbmalloc
 )
 
-WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+set(MallocBench_DEPENDENCIES sysmalloc)
 
-WEBKIT_WRAP_SOURCELIST(${MALLOC_BENCH_SOURCES})
-
-
-include_directories(${MALLOC_BENCH_INCLUDE_DIRECTORIES})
-
-SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
-if (DEVELOPER_MODE)
-    add_executable(MallocBench ${MALLOC_BENCH_SOURCES})
-    target_link_libraries(MallocBench ${MALLOC_BENCH_LIBRARIES} Threads::Threads mbmalloc)
-    add_dependencies(MallocBench sysmalloc mbmalloc)
-endif ()
-
-set(MALLOC_BENCH_OPS
+set(MallocBench_OPS
     facebook.ops
     flickr.ops
     flickr_memory_warning.ops
@@ -64,8 +48,19 @@ set(MALLOC_BENCH_OPS
     theverge_memory_warning.ops
 )
 
+WEBKIT_EXECUTABLE_DECLARE(MallocBench)
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+set(CMAKE_SKIP_BUILD_RPATH ON)
+add_library(sysmalloc SHARED mbmalloc.cpp)
+set_target_properties(sysmalloc PROPERTIES OUTPUT_NAME "mbmalloc")
+set_target_properties(sysmalloc PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib/system/)
+
 file(COPY
-    ${MALLOC_BENCH_OPS}
+    ${MallocBench_OPS}
     DESTINATION
     ${PROJECT_BINARY_DIR}
 )
+
+WEBKIT_WRAP_SOURCELIST(${MallocBench_SOURCES})
+WEBKIT_EXECUTABLE(MallocBench)

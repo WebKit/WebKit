@@ -157,7 +157,8 @@ WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
 WEBKIT_FRAMEWORK(bmalloc)
 WEBKIT_FRAMEWORK_TARGET(bmalloc)
 
-if (DEVELOPER_MODE)
+# Only build mbmalloc on platforms that MallocBench supports
+if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))
     add_library(mbmalloc SHARED bmalloc/mbmalloc.cpp)
     target_include_directories(mbmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(mbmalloc Threads::Threads bmalloc)
