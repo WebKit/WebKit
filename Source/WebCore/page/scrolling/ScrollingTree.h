@@ -235,6 +235,9 @@ private:
     Lock m_swipeStateMutex;
     SwipeState m_swipeState;
 
+protected:
+    bool m_allowLatching { true };
+
 private:
     unsigned m_fixedOrStickyNodeCount { 0 };
     bool m_isHandlingProgrammaticScroll { false };

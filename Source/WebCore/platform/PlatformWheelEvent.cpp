@@ -53,7 +53,7 @@ TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
     ts << "PlatformWheelEvent " << &event << " at " << event.position() << " deltaX " << event.deltaX() << " deltaY " << event.deltaY();
 
 #if ENABLE(KINETIC_SCROLLING)
-    ts << " phase \"" << event.phase() << "\" momentumum phase \"" << event.momentumPhase() << "\"";
+    ts << " phase \"" << event.phase() << "\" momentum phase \"" << event.momentumPhase() << "\"";
 #endif
 
     return ts;

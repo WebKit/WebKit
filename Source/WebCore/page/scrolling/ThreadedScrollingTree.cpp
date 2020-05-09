@@ -36,6 +36,7 @@
 #include "ScrollingTreeOverflowScrollProxyNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/RunLoop.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -69,6 +70,12 @@ ScrollingEventResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheel
 {
     ASSERT(ScrollingThread::isCurrentThread());
     return ScrollingTree::handleWheelEvent(wheelEvent);
+}
+
+ScrollingEventResult ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent)
+{
+    SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
+    return handleWheelEvent(wheelEvent);
 }
 
 void ThreadedScrollingTree::invalidate()

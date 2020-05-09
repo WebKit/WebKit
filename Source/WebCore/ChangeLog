@@ -1,3 +1,37 @@
+2020-05-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Async overflow scroll: sometimes a <select> becomes non-scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=211433
+        <rdar://problem/62338474>
+
+        Reviewed by Dean Jackson.
+
+        Scrollable <select>s (RenderListBox) contribute to the non-fast scrollable region, so
+        wheel events inside them are propagated to the main thread. If the select is scrolled
+        to the end, the event will propagate to the enclosing scroller, then then FrameView::wheelEvent()
+        may send it back to the scrolling thread. If the scrolling thread is processing such an event
+        after the main thread, it should not perform any latching on the main thread.
+
+        Test: scrollingcoordinator/mac/latching/scrolling-select-should-not-latch-mainframe.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::receivedWheelEvent):
+        (WebCore::ScrollingTreeLatchingController::latchedNodeForEvent const):
+        (WebCore::ScrollingTreeLatchingController::nodeDidHandleEvent):
+        (WebCore::ScrollingTreeLatchingController::clearLatchedNode):
+        * page/scrolling/ScrollingTreeLatchingController.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * platform/PlatformWheelEvent.cpp:
+        (WebCore::operator<<):
+
 2020-05-08  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded HAVE(AVFOUNDATION_LOADER_DELEGATE)

@@ -41,8 +41,11 @@ static const Seconds resetLatchedStateTimeout { 100_ms };
 
 ScrollingTreeLatchingController::ScrollingTreeLatchingController() = default;
 
-void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent)
+void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching)
 {
+    if (!allowLatching)
+        return;
+
     LockHolder locker(m_latchedNodeMutex);
     if (wheelEvent.shouldConsiderLatching()) {
         if (m_latchedNodeID) {
@@ -55,8 +58,11 @@ void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEven
     }
 }
 
-Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeForEvent(const PlatformWheelEvent& wheelEvent) const
+Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeForEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching) const
 {
+    if (!allowLatching)
+        return WTF::nullopt;
+
     LockHolder locker(m_latchedNodeMutex);
 
     // If we have a latched node, use it.
@@ -74,8 +80,11 @@ Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
     return m_latchedNodeID;
 }
 
-void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrollingNodeID, const PlatformWheelEvent& wheelEvent)
+void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrollingNodeID, const PlatformWheelEvent& wheelEvent, bool allowLatching)
 {
+    if (!allowLatching)
+        return;
+
     LockHolder locker(m_latchedNodeMutex);
 
     if (wheelEvent.useLatchedEventElement() && m_latchedNodeID == scrollingNodeID) {
@@ -101,6 +110,7 @@ void ScrollingTreeLatchingController::nodeWasRemoved(ScrollingNodeID nodeID)
 void ScrollingTreeLatchingController::clearLatchedNode()
 {
     LockHolder locker(m_latchedNodeMutex);
+    LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTreeLatchingController " << this << " clearLatchedNode (was " << m_latchedNodeID << ")");
     m_latchedNodeID.reset();
 }
 

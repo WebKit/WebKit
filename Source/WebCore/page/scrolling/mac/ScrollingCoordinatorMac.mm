@@ -83,7 +83,7 @@ ScrollingEventResult ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent] {
-        threadedScrollingTree->handleWheelEvent(wheelEvent);
+        threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent);
     });
     return ScrollingEventResult::DidHandleEvent;
 }

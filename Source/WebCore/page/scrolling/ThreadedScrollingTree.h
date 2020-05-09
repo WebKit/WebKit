@@ -46,6 +46,8 @@ public:
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
+    ScrollingEventResult handleWheelEventAfterMainThread(const PlatformWheelEvent&);
+
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
     // Returns true if the wheel event can be handled on the scrolling thread and false if the
     // event must be sent again to the WebCore event handler.
