@@ -89,6 +89,7 @@ URL HTMLBaseElement::href() const
     if (attributeValue.isNull())
         return document().url();
 
+    // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
     auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
     URL url(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), encoding);
 

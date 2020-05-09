@@ -852,6 +852,7 @@ String XMLHttpRequest::responseMIMEType() const
 {
     String mimeType = extractMIMETypeFromMediaType(m_mimeTypeOverride);
     if (mimeType.isEmpty()) {
+        // Same logic as externalEntityMimeTypeAllowed() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
         String contentType;
         if (m_response.isHTTP())
             contentType = m_response.httpHeaderField(HTTPHeaderName::ContentType);

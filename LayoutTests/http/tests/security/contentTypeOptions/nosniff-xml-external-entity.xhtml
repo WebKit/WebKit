@@ -9,6 +9,13 @@
 <!ENTITY entE SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/pdf">
 <!ENTITY entF SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html">
 <!ENTITY entG SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/javascript">
+<!ENTITY entNA SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=application/xml">
+<!ENTITY entNB SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/xml">
+<!ENTITY entNC SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=application/xml-external-parsed-entity">
+<!ENTITY entND SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/xml-external-parsed-entity">
+<!ENTITY entNE SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=application/pdf">
+<!ENTITY entNF SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/html">
+<!ENTITY entNG SYSTEM "http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/javascript">
 ]>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -19,7 +26,7 @@
         window.scriptsSuccessfullyLoaded = 0;
 
         window.onload = function () {
-            shouldBe('window.scriptsSuccessfullyLoaded', '4');
+            shouldBe('window.scriptsSuccessfullyLoaded', '8');
             finishJSTest();
         };
     </script>
@@ -30,10 +37,17 @@
     <script type="text/javascript">&entE;</script>
     <script type="text/javascript">&entF;</script>
     <script type="text/javascript">&entG;</script>
+    <script type="text/javascript">&entNA;</script>
+    <script type="text/javascript">&entNB;</script>
+    <script type="text/javascript">&entNC;</script>
+    <script type="text/javascript">&entND;</script>
+    <script type="text/javascript">&entNE;</script>
+    <script type="text/javascript">&entNF;</script>
+    <script type="text/javascript">&entNG;</script>
 </head>
 <body>
     <script type="text/javascript">
-        description('Check that xml external entity resources loaded with an \'X-Content-Type-Options: nosniff\' header are correctly accepted or blocked based on the MIME type.');
+        description('Check that xml external entity resources loaded are correctly accepted or blocked based on the MIME type.');
     </script>
     <script src="/js-test-resources/js-test-post.js"></script>
 </body>

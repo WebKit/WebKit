@@ -1,5 +1,71 @@
 2020-05-09  David Kilzer  <ddkilzer@apple.com>
 
+        XML external entity resources should only be loaded from XML MIME types
+        <https://webkit.org/b/211488>
+        <rdar://problem/62869515>
+
+        Reviewed by Darin Adler.
+
+        Tests: dom/xhtml/level3/core/entitygetinputencoding03.xhtml
+               dom/xhtml/level3/core/entitygetinputencoding04.xhtml
+               dom/xhtml/level3/core/entitygetxmlencoding02.xhtml
+               dom/xhtml/level3/core/entitygetxmlencoding03.xhtml
+               dom/xhtml/level3/core/entitygetxmlencoding04.xhtml
+               dom/xhtml/level3/core/entitygetxmlversion03.xhtml
+               dom/xhtml/level3/core/entitygetxmlversion04.xhtml
+               dom/xhtml/level3/core/nodegetbaseuri16.xhtml
+               dom/xhtml/level3/core/nodegetbaseuri19.xhtml
+               dom/xhtml/level3/core/nodegetbaseuri20.xhtml
+               fast/parser/external-entities-in-xslt.xml
+               fast/xsl/dtd-in-source-document.xml
+               fast/xsl/xslt-second-level-import.xml
+               http/tests/security/contentTypeOptions/nosniff-xml-external-entity.xhtml
+               http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
+
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::href const):
+        - Add comment about keeping code in sync with openFunc() in
+          XMLDocumentParserLibxml2.cpp.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseMIMEType const):
+        - Add comment about keeping code in sync with
+          externalEntityMimeTypeAllowed() in
+          XMLDocumentParserLibxml2.cpp.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::externalEntityMimeTypeAllowed):
+        - Rename from externalEntityMimeTypeAllowedByNosniff().
+        - Change to only allow XML MIME types regardless of nosniff
+          option.
+        - Add fallback path to determine MIME type for file:/// URLs to
+          make layout tests work properly.  Logic taken from
+          XMLHttpRequest::responseMIMEType().  Not sure if there was a
+          good place to share it.
+        (WebCore::openFunc):
+        - Fix relative URLs by providing the document's URL as a base.
+          Also provide an encoding if needed.  Logic taken from
+          HTMLBaseElement::href().  (Not sure if there was a good place
+          to share it.)  This was required to fix loading of external
+          entity resources in the dom/xhtml/level3/core tests, which
+          hadn't been loading these resources for a while.  Ultimately
+          this didn't matter--except for new error messages being
+          printed in test results--because the tests fail due to missing
+          DOM features for XHTML documents).
+        - Change the fix for Bug 21963 into an empty URL check since
+          setting FetchOptions.mode to Mode::SameOrigin prevents a
+          redirect from loading a resource outside the document's
+          origin.  The previous check worked, but the relaxed check in
+          externalEntityMimeTypeAllowed() caused the XML MIME type
+          warning to be output on redirects to non-same-origin URLs.  I
+          didn't see a way to check for a cross-origin loading error.
+        - Add a console message for a cross-origin load failing.
+        - Update for function rename.
+        - Remove double negative from console message for an invalid
+          MIME type.
+        (WebCore::externalEntityMimeTypeAllowedByNosniff):
+        - Rename to externalEntityMimeTypeAllowed().
+
+2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
         Adapt LocalCurrentGraphicsContext for iOS
         <https://webkit.org/b/211660>
 
