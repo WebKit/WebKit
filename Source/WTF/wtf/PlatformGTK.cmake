@@ -45,7 +45,14 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     list(APPEND WTF_SOURCES
         linux/CurrentProcessMemoryStatus.cpp
         linux/MemoryFootprintLinux.cpp
-        linux/MemoryPressureHandlerLinux.cpp
+
+        unix/MemoryPressureHandlerUnix.cpp
+    )
+elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    list(APPEND WTF_SOURCES
+        generic/MemoryFootprintGeneric.cpp
+
+        unix/MemoryPressureHandlerUnix.cpp
     )
 else ()
     list(APPEND WTF_SOURCES

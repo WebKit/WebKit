@@ -53,7 +53,7 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
 }
 
 MemoryPressureHandler::MemoryPressureHandler()
-#if OS(LINUX)
+#if OS(LINUX) || OS(FREEBSD)
     : m_holdOffTimer(RunLoop::main(), this, &MemoryPressureHandler::holdOffTimerFired)
 #elif OS(WINDOWS)
     : m_windowsMeasurementTimer(RunLoop::main(), this, &MemoryPressureHandler::windowsMeasurementTimerFired)

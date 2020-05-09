@@ -27,7 +27,6 @@ list(APPEND WTF_SOURCES
     glib/URLGLib.cpp
 
     linux/CurrentProcessMemoryStatus.cpp
-    linux/MemoryPressureHandlerLinux.cpp
 
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
@@ -36,6 +35,7 @@ list(APPEND WTF_SOURCES
 
     unix/CPUTimeUnix.cpp
     unix/LanguageUnix.cpp
+    unix/MemoryPressureHandlerUnix.cpp
     unix/UniStdExtrasUnix.cpp
 )
 

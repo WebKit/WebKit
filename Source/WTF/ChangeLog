@@ -1,3 +1,25 @@
+2020-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WTF] Share Linux's MemoryPressureHandler among other Unix ports
+        https://bugs.webkit.org/show_bug.cgi?id=208955
+
+        Reviewed by Yusuke Suzuki.
+
+        Renamed MemoryPressureHandlerLinux to MemoryPressureHandlerUnix and added FreeBSD implementation
+        of memory status functions. Change PlayStation port to use it from generic implementation.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::MemoryPressureHandler):
+        * wtf/MemoryPressureHandler.h:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/generic/MemoryFootprintGeneric.cpp:
+        (WTF::memoryFootprint):
+        * wtf/unix/MemoryPressureHandlerUnix.cpp: Renamed from Source\WTF\wtf\linux\MemoryPressureHandlerLinux.cpp.
+        (WTF::processMemoryUsage):
+
 2020-05-08  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded HAVE(AVFOUNDATION_LOADER_DELEGATE)
