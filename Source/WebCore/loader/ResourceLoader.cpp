@@ -268,8 +268,10 @@ void ResourceLoader::loadDataURL()
 
     DataURLDecoder::ScheduleContext scheduleContext;
 #if HAVE(RUNLOOP_TIMER)
-    if (auto* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
-        scheduleContext.scheduledPairs = *scheduledPairs;
+    if (auto page = m_frame->page()) {
+        if (auto scheduledPairs = page->scheduledRunLoopPairs())
+            scheduleContext.scheduledPairs = *scheduledPairs;
+    }
 #endif
     DataURLDecoder::decode(url, scheduleContext, [this, protectedThis = makeRef(*this), url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
