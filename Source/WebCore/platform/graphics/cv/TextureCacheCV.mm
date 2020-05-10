@@ -26,8 +26,6 @@
 #import "config.h"
 #import "TextureCacheCV.h"
 
-#if HAVE(CORE_VIDEO)
-
 #import "GraphicsContextGLOpenGL.h"
 
 #import "CoreVideoSoftLink.h"
@@ -108,5 +106,3 @@ RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelB
 }
 
 }
-
-#endif // HAVE(CORE_VIDEO)

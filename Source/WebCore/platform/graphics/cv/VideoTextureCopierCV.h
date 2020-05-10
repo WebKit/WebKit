@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(CORE_VIDEO)
-
 #import "GraphicsContextGLOpenGL.h"
 #import <wtf/UnsafePointer.h>
 
@@ -107,5 +105,3 @@ private:
 };
 
 }
-
-#endif // HAVE(CORE_VIDEO)

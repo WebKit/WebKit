@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PixelBufferConformerCV.h"
 
-#if HAVE(CORE_VIDEO)
-
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "Logging.h"
@@ -178,5 +176,3 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
 }
 
 }
-
-#endif // HAVE(CORE_VIDEO)

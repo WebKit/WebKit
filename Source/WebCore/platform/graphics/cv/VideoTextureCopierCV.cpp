@@ -26,8 +26,6 @@
 #include "config.h"
 #include "VideoTextureCopierCV.h"
 
-#if HAVE(CORE_VIDEO)
-
 #include "FourCC.h"
 #include "Logging.h"
 #include "TextureCacheCV.h"
@@ -1066,5 +1064,3 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(PlatformGLObject vi
 }
 
 }
-
-#endif // HAVE(CORE_VIDEO)

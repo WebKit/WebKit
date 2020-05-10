@@ -289,7 +289,6 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
 
 RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
 {
-#if HAVE(CORE_VIDEO)
     const OSType imageFormat = kCVPixelFormatType_32RGBA;
     RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
 
@@ -310,9 +309,6 @@ RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
     ASSERT(status == noErr);
 
     return result;
-#else
-    return nullptr;
-#endif
 }
 
 void MediaSampleAVFObjC::setAsDisplayImmediately(MediaSample& sample)

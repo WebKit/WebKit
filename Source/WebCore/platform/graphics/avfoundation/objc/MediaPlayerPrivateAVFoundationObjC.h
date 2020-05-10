@@ -344,10 +344,7 @@ private:
     RetainPtr<CGImageRef> m_lastImage;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
-
-#if HAVE(CORE_VIDEO)
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
-#endif
 
     friend class WebCoreAVFResourceLoader;
     HashMap<RetainPtr<CFTypeRef>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;

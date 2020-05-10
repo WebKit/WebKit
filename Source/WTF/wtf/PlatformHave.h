@@ -270,10 +270,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#define HAVE_CORE_VIDEO 1
-#endif
-
-#if PLATFORM(COCOA)
 #define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK 1
 #endif
 

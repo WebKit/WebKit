@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(CORE_VIDEO)
-
 #include <wtf/RetainPtr.h>
 
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
@@ -47,5 +45,3 @@ private:
 };
 
 }
-
-#endif // HAVE(CORE_VIDEO)

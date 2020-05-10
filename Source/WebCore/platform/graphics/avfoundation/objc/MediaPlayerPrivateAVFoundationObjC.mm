@@ -2195,7 +2195,6 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
 
 void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 {
-#if HAVE(CORE_VIDEO)
     if (!m_avPlayerItem)
         return;
 
@@ -2218,7 +2217,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
 
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
-#endif // HAVE(CORE_VIDEO)
 }
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
