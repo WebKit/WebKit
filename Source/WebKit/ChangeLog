@@ -1,3 +1,16 @@
+2020-05-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r261270): Broke build with python3
+        https://bugs.webkit.org/show_bug.cgi?id=211699
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove the problematic print statement. It causes the script to fail. If fixed, it spams the
+        build output. We only print messages during the build when there are problems to be fixed.
+
+        * Scripts/generate-message-receiver.py:
+        (main):
+
 2020-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Clicking a tel:// link on iPad with a trackpad presents different UI than tapping on it

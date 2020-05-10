@@ -45,7 +45,6 @@ def main(argv):
             continue
 
         receiver_name = parameter.rsplit('/', 1).pop()
-        print 'Generating message receiver for %s' % receiver_name
 
         with open('%s/%s.messages.in' % (base_dir, parameter)) as source_file:
             receiver = webkit.parser.parse(source_file)
