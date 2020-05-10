@@ -1,3 +1,24 @@
+2020-05-09  Darin Adler  <darin@apple.com>
+
+        Tighten up logic in DocumentTimelinesController::updateAnimationsAndSendEvents
+        https://bugs.webkit.org/show_bug.cgi?id=211668
+
+        Reviewed by Antoine Quint.
+
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        Use Ref instead of RefPtr. Use Ref even in timelinesToUpdate; no harm in doing
+        a little bit of extra ref'ing. Use copyToVector when iterating relevantAnimations
+        since it could be a problem if the current animation was removed from the
+        ListHashSet while we are iterating it and there is no obvious reason that can't
+        happen. Use makeRef instead of makeRefPtr. Take advantage of the behavior of
+        the Optional operator<, which already treats nullopt as less than any non-nullopt
+        value, and remove unnecessary checks that weere doing the same thing explicitly.
+        This fixes a mistake where we were returning true when both are nullopt, which
+        could harm the stability of the sort, in theory. Add a null check of the timeline
+        when iterating completedTransitions, since there is no obvious guarantee they
+        could not have been removed as a side effect earlier.
+
 2020-05-10  Darin Adler  <darin@apple.com>
 
         Use makeReversedRange and get rid of one-off ReverseView

@@ -70,9 +70,9 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     ASSERT(!m_timelines.hasNullReferences());
 
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
-    Vector<RefPtr<DocumentTimeline>> protectedTimelines;
+    Vector<Ref<DocumentTimeline>> protectedTimelines;
     for (auto& timeline : m_timelines)
-        protectedTimelines.append(&timeline);
+        protectedTimelines.append(timeline);
 
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
@@ -80,21 +80,20 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     if (!m_isSuspended)
         cacheCurrentTime(timestamp);
 
-    // 1. Update the current time of all timelines associated with doc passing now as the timestamp.
-    Vector<DocumentTimeline*> timelinesToUpdate;
-    Vector<RefPtr<WebAnimation>> animationsToRemove;
-    Vector<RefPtr<CSSTransition>> completedTransitions;
+    // 1. Update the current time of all timelines associated with document passing now as the timestamp.
+    Vector<Ref<DocumentTimeline>> timelinesToUpdate;
+    Vector<Ref<WebAnimation>> animationsToRemove;
+    Vector<Ref<CSSTransition>> completedTransitions;
     for (auto& timeline : protectedTimelines) {
         auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents();
         if (shouldUpdateAnimationsAndSendEvents == DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No)
             continue;
 
-        timelinesToUpdate.append(timeline.get());
+        timelinesToUpdate.append(timeline.copyRef());
 
-        for (auto& animation : timeline->relevantAnimations()) {
-            if (animation->timeline() != timeline.get()) {
+        for (auto& animation : copyToVector(timeline->relevantAnimations())) {
+            if (animation->timeline() != timeline.ptr()) {
                 ASSERT(!animation->timeline());
-                animationsToRemove.append(animation);
                 continue;
             }
 
@@ -103,11 +102,11 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
             animation->tick();
 
             if (!animation->isRelevant() && !animation->needsTick())
-                animationsToRemove.append(animation);
+                animationsToRemove.append(*animation);
 
-            if (!animation->needsTick() && is<CSSTransition>(animation) && animation->playState() == WebAnimation::PlayState::Finished) {
-                auto* transition = downcast<CSSTransition>(animation.get());
-                if (transition->owningElement())
+            if (is<CSSTransition>(*animation)) {
+                auto& transition = downcast<CSSTransition>(*animation);
+                if (!transition.needsTick() && transition.playState() == WebAnimation::PlayState::Finished && transition.owningElement())
                     completedTransitions.append(transition);
             }
         }
@@ -116,13 +115,12 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     if (timelinesToUpdate.isEmpty())
         return;
 
-    // 2. Remove replaced animations for doc.
-    for (auto& timeline : m_timelines)
-        timeline.removeReplacedAnimations();
+    // 2. Remove replaced animations for document.
+    for (auto& timeline : protectedTimelines)
+        timeline->removeReplacedAnimations();
 
     // 3. Perform a microtask checkpoint.
-    auto document = makeRefPtr(m_document);
-    document->eventLoop().performMicrotaskCheckpoint();
+    makeRef(m_document)->eventLoop().performMicrotaskCheckpoint();
 
     // 4. Let events to dispatch be a copy of doc's pending animation event queue.
     // 5. Clear doc's pending animation event queue.
@@ -134,14 +132,8 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     std::stable_sort(events.begin(), events.end(), [] (const Ref<AnimationEventBase>& lhs, const Ref<AnimationEventBase>& rhs) {
         // 1. Sort the events by their scheduled event time such that events that were scheduled to occur earlier, sort before events scheduled to occur later
         // and events whose scheduled event time is unresolved sort before events with a resolved scheduled event time.
-        // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: We don't do this.
-        if (lhs->timelineTime() && !rhs->timelineTime())
-            return false;
-        if (!lhs->timelineTime() && rhs->timelineTime())
-            return true;
-        if (!lhs->timelineTime() && !rhs->timelineTime())
-            return true;
-        return lhs->timelineTime().value() < rhs->timelineTime().value();
+        // 2. Within events with equal scheduled event times, sort by their composite order. FIXME: Need to do this.
+        return lhs->timelineTime() < rhs->timelineTime();
     });
 
     // 7. Dispatch each of the events in events to dispatch at their corresponding target using the order established in the previous step.
@@ -150,19 +142,21 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
     // This will cancel any scheduled invalidation if we end up removing all animations.
     for (auto& animation : animationsToRemove) {
-        // An animation that was initially marked as irrelevant may have changed while we were sending events, so we run the same
-        // check that we ran to add it to animationsToRemove in the first place.
+        // An animation that was initially marked as irrelevant may have changed while
+        // we were sending events, so redo the the check for whether it should be removed.
         if (auto timeline = animation->timeline()) {
             if (!animation->isRelevant() && !animation->needsTick())
-                timeline->removeAnimation(*animation);
+                timeline->removeAnimation(animation);
         }
     }
 
-    // Now that animations that needed removal have been removed, let's update the list of completed transitions.
+    // Now that animations that needed removal have been removed, update the list of completed transitions.
     // This needs to happen after dealing with the list of animations to remove as the animation may have been
     // removed from the list of completed transitions otherwise.
-    for (auto& completedTransition : completedTransitions)
-        downcast<DocumentTimeline>(*completedTransition->timeline()).transitionDidComplete(completedTransition);
+    for (auto& completedTransition : completedTransitions) {
+        if (auto timeline = completedTransition->timeline())
+            downcast<DocumentTimeline>(*timeline).transitionDidComplete(WTFMove(completedTransition));
+    }
 
     for (auto& timeline : timelinesToUpdate)
         timeline->documentDidUpdateAnimationsAndSendEvents();
