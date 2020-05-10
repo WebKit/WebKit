@@ -460,7 +460,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-vertex-array-object.h
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure Pass ]
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
+webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
@@ -568,6 +568,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failu
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Pass Crash Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Failure Pass ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Timeout Pass ]
@@ -1308,7 +1309,7 @@ webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
 
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
 
@@ -1504,6 +1505,9 @@ webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ Im
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
 
 webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
+
+webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
+webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -3370,7 +3374,7 @@ webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
-webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Timeout ]
+webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Timeout Pass ]
 
 webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
@@ -3435,6 +3439,7 @@ webkit.org/b/208630 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeo
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
+webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html [ Timeout Pass ]
 
 webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
@@ -3914,7 +3919,8 @@ webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
 webkit.org/b/133803 editing/deleting/delete-by-word-001.html [ Failure ]
 webkit.org/b/133803 editing/deleting/delete-by-word-002.html [ Failure ]
-webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure ]
+webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure Pass ]
+webkit.org/b/133803 editing/input/page-up-down-scrolls.html [ Timeout Pass ]
 webkit.org/b/133803 editing/input/scroll-viewport-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
