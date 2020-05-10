@@ -1217,7 +1217,7 @@
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (deny mach-message-send (with telemetry))
+            (allow mach-message-send (with report) (with telemetry))
             (allow mach-message-send (kernel-mig-routine
                 host_get_clock_service
                 host_get_io_master
