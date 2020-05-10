@@ -426,6 +426,8 @@ messages -> WebPageProxy {
 
     UpdateStringForFind(String findString)
     HandleAutocorrectionContext(struct WebKit::WebAutocorrectionContext context)
+
+    ShowDataDetectorsUIForPositionInformation(struct WebKit::InteractionInformationAtPosition information)
 #endif
 
     DidChangeInspectorFrontendCount(uint64_t count)

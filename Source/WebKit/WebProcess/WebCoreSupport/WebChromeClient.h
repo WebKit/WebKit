@@ -185,6 +185,8 @@ private:
     void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
 
     bool shouldUseMouseEventForSelection(const WebCore::PlatformMouseEvent&) final;
+
+    bool showDataDetectorsUIForElement(const WebCore::Element&, const WebCore::Event&) final;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

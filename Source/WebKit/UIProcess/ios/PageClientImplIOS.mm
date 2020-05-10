@@ -947,6 +947,11 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect&, uint6
     notImplemented();
 }
 
+void PageClientImpl::showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition& positionInformation)
+{
+    [m_contentView _showDataDetectorsUIForPositionInformation:positionInformation];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

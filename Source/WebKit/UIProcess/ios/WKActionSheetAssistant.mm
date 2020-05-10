@@ -660,14 +660,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 
-- (void)showDataDetectorsSheet
+- (void)showDataDetectorsUIForPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
 #if ENABLE(DATA_DETECTION)
     if (!_delegate)
         return;
 
-    if (![self synchronouslyRetrievePositionInformation])
-        return;
+    _positionInformation = positionInformation;
 
     if (!WebCore::DataDetection::canBePresentedByDataDetectors(_positionInformation->url))
         return;
@@ -680,8 +679,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSDictionary *context = nil;
     NSString *textAtSelection = nil;
 
-    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
-        context = [_delegate dataDetectionContextForActionSheetAssistant:self];
+    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:positionInformation:)])
+        context = [_delegate dataDetectionContextForActionSheetAssistant:self positionInformation:*_positionInformation];
     if ([_delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
         textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
 
@@ -696,15 +695,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([dataDetectorsActions count] == 0)
         return;
     
-#if ENABLE(DATA_DETECTION) && USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
-    auto delegate = _delegate.get();
-    if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)]) {
-        [self ensureContextMenuInteraction];
-        [_dataDetectorContextMenuInteraction _presentMenuAtLocation:[delegate contextMenuPresentationLocationForActionSheetAssistant:self]];
-        return;
-    }
-#endif
-
+#if USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
+    [self ensureContextMenuInteraction];
+    [_dataDetectorContextMenuInteraction _presentMenuAtLocation:_positionInformation->request.point];
+#else
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
         DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
@@ -723,6 +717,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![_interactionSheet presentSheet:WKActionSheetPresentAtTouchLocation])
         [self cleanupSheet];
 #endif
+#endif // ENABLE(DATA_DETECTION)
 }
 
 #if USE(UICONTEXTMENU) && ENABLE(DATA_DETECTION)
@@ -732,14 +727,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSDictionary *context = nil;
     NSString *textAtSelection = nil;
 
-    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
-        context = [_delegate dataDetectionContextForActionSheetAssistant:self];
+    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:positionInformation:)])
+        context = [_delegate dataDetectionContextForActionSheetAssistant:self positionInformation:*_positionInformation];
     if ([_delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
         textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
 
     NSDictionary *newContext = nil;
     DDResultRef ddResult = [controller resultForURL:_positionInformation->url identifier:_positionInformation->dataDetectorIdentifier selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context extendedContext:&newContext];
-
 
     CGRect sourceRect;
     if (_positionInformation->isLink)
@@ -758,13 +752,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
     auto delegate = _delegate.get();
-    CGPoint center = CGPointZero;
+    CGPoint center = _positionInformation->request.point;
     
     if ([delegate respondsToSelector:@selector(createTargetedContextMenuHintForActionSheetAssistant:)])
         return [delegate createTargetedContextMenuHintForActionSheetAssistant:self];
     
-    if ([delegate respondsToSelector:@selector(contextMenuPresentationLocationForActionSheetAssistant:)])
-        center = [delegate contextMenuPresentationLocationForActionSheetAssistant:self];
     RetainPtr<UIPreviewParameters> unusedPreviewParameters = adoptNS([[UIPreviewParameters alloc] init]);
     RetainPtr<UIPreviewTarget> previewTarget = adoptNS([[UIPreviewTarget alloc] initWithContainer:_view.getAutoreleased() center:center]);
     RetainPtr<UITargetedPreview> preview = adoptNS([[UITargetedPreview alloc] initWithView:_view.getAutoreleased() parameters:unusedPreviewParameters.get() target:previewTarget.get()]);
@@ -784,6 +776,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self removeContextMenuInteraction];
     }];
 }
+
+static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+{
+    if (![defaultElementActions count])
+        return nil;
+
+    auto actions = [NSMutableArray arrayWithCapacity:[defaultElementActions count]];
+    for (_WKElementAction *elementAction in defaultElementActions.get())
+        [actions addObject:[elementAction uiActionForElementInfo:elementInfo.get()]];
+
+    return actions;
+}
+
+- (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
+{
+    if (!_positionInformation)
+        return nil;
+    return [self suggestedActionsForContextMenuWithPositionInformation:*_positionInformation];
+}
+
+- (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
+{
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation userInfo:nil]);
+    RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = positionInformation.isLink ? [self defaultActionsForLinkSheet:elementInfo.get()] : [self defaultActionsForImageSheet:elementInfo.get()];
+    return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+
+}
+
 #endif
 
 - (void)cleanupSheet

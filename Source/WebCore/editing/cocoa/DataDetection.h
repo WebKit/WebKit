@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT static bool canBePresentedByDataDetectors(const URL&);
     WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
     WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
-    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element&);
+    WEBCORE_EXPORT static bool canPresentDataDetectorsUIForElement(Element&);
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
 

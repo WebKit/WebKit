@@ -25,6 +25,8 @@
 #include "HTMLAnchorElement.h"
 
 #include "AdClickAttribution.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "ElementIterator.h"
 #include "EventHandler.h"
@@ -56,6 +58,10 @@
 #include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+
+#if PLATFORM(COCOA)
+#include "DataDetection.h"
+#endif
 
 namespace WebCore {
 
@@ -465,6 +471,15 @@ void HTMLAnchorElement::handleClick(Event& event)
     url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
     appendServerMapMousePosition(url, event);
     URL completedURL = document().completeURL(url.toString());
+
+#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
+    if (DataDetection::isDataDetectorLink(*this) && DataDetection::canPresentDataDetectorsUIForElement(*this)) {
+        if (auto* page = document().page()) {
+            if (page->chrome().client().showDataDetectorsUIForElement(*this, event))
+                return;
+        }
+    }
+#endif
 
     String downloadAttribute;
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

@@ -178,8 +178,10 @@ class EmptyChromeClient : public ChromeClient {
     void addOrUpdateScrollingLayer(Node*, PlatformLayer*, PlatformLayer*, const IntSize&, bool, bool) final { }
     void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) final { }
 
-    void webAppOrientationsUpdated() final { };
-    void showPlaybackTargetPicker(bool, RouteSharingPolicy, const String&) final { };
+    void webAppOrientationsUpdated() final { }
+    void showPlaybackTargetPicker(bool, RouteSharingPolicy, const String&) final { }
+
+    bool showDataDetectorsUIForElement(const Element&, const Event&) final { return false; }
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ORIENTATION_EVENTS)

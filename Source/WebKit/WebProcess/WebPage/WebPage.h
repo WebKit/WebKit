@@ -1292,6 +1292,9 @@ public:
     // These include layout overflow for overflow:visible elements, but exclude borders.
     static WebCore::IntRect absoluteInteractionBoundsForElement(const WebCore::Element&);
     static WebCore::IntRect rootViewInteractionBoundsForElement(const WebCore::Element&);
+
+    InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
+    
 #endif // PLATFORM(IOS_FAMILY)
 
 #if USE(QUICK_LOOK)
@@ -1368,7 +1371,6 @@ private:
     void dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch, const WebCore::IntPoint&);
 
     void sendPositionInformation(InteractionInformationAtPosition&&);
-    InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
     RefPtr<ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Element&);
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText);

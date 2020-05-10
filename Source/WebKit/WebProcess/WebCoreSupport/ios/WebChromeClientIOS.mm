@@ -30,6 +30,8 @@
 
 #import "DrawingArea.h"
 #import "EditableImageControllerMessages.h"
+#import "InteractionInformationAtPosition.h"
+#import "InteractionInformationRequest.h"
 #import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -39,6 +41,7 @@
 #import <WebCore/AudioSession.h>
 #import <WebCore/ContentChangeObserver.h>
 #import <WebCore/Icon.h>
+#import <WebCore/MouseEvent.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <wtf/RefPtr.h>
@@ -191,6 +194,18 @@ bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMou
 #else
     return true;
 #endif
+}
+
+bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, const Event& event)
+{
+    if (!event.isMouseEvent())
+        return false;
+
+    // FIXME: Ideally, we would be able to generate InteractionInformationAtPosition without re-hit-testing the element.
+    auto& mouseEvent = downcast<MouseEvent>(event);
+    auto positionInformation = m_page.positionInformation(InteractionInformationRequest { roundedIntPoint(mouseEvent.locationInRootViewCoordinates()) });
+    m_page.send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(positionInformation));
+    return true;
 }
 
 } // namespace WebKit

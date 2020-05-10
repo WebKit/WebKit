@@ -869,13 +869,6 @@ void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> mod
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-#if ENABLE(DATA_DETECTION)
-    else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-        InteractionInformationRequest request(adjustedIntPoint);
-        requestPositionInformation(request);
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    }
-#endif
     else
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
 }
@@ -1077,14 +1070,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
-#if ENABLE(DATA_DETECTION)
-    if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-        InteractionInformationRequest request(roundedIntPoint(adjustedPoint));
-        requestPositionInformation(request);
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
-    } else
-#endif
-        completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::TwoFingerTap);
+    completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::TwoFingerTap);
 }
 
 void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
@@ -1168,16 +1154,9 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, Transa
         return;
     }
 
-    if (m_potentialTapNode == nodeRespondingToClick) {
-#if ENABLE(DATA_DETECTION)
-        if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-            InteractionInformationRequest request(roundedIntPoint(m_potentialTapLocation));
-            requestPositionInformation(request);
-            commitPotentialTapFailed();
-        } else
-#endif
-            handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, pointerId);
-    } else
+    if (m_potentialTapNode == nodeRespondingToClick)
+        handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, pointerId);
+    else
         commitPotentialTapFailed();
 
     m_potentialTapNode = nullptr;

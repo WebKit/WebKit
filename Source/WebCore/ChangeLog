@@ -1,3 +1,29 @@
+2020-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Clicking a tel:// link on iPad with a trackpad presents different UI than tapping on it
+        https://bugs.webkit.org/show_bug.cgi?id=211686
+        <rdar://problem/57941589>
+
+        Reviewed by Wenson Hsieh.
+
+        * dom/MouseRelatedEvent.h:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::canPresentDataDetectorsUIForElement):
+        (WebCore::DataDetection::shouldCancelDefaultAction): Deleted.
+        Rename shouldCancelDefaultAction to canPresentDataDetectorsUIForElement.
+        This bit indicates whether a given element should invoke DD UI instead of
+        doing its default action, so either name is OK, but it feels better to
+        have it in the affirmative direction.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        Determine if tapping on an anchor should invoke DataDetectors UI instead
+        of performing the default action, and short-circuit if that is possible.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+
 2020-05-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Search field on mayoclinic.org/forms/us-resident-appointment clips the submit button

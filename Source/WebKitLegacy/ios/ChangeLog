@@ -1,3 +1,13 @@
+2020-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Clicking a tel:// link on iPad with a trackpad presents different UI than tapping on it
+        https://bugs.webkit.org/show_bug.cgi?id=211686
+        <rdar://problem/57941589>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+
 2020-04-11  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in functions that return range of the selection

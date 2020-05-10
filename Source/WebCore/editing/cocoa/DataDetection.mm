@@ -183,7 +183,7 @@ String DataDetection::dataDetectorIdentifier(Element& element)
     return element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
 }
 
-bool DataDetection::shouldCancelDefaultAction(Element& element)
+bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
 {
     if (!isDataDetectorLink(element))
         return false;

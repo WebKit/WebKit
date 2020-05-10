@@ -1621,6 +1621,12 @@ void WebPageProxy::setDeviceHasAGXCompilerServiceForTesting() const
     WebCore::setDeviceHasAGXCompilerServiceForTesting();
 }
 
+void WebPageProxy::showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition& positionInfo)
+{
+    pageClient().showDataDetectorsUIForPositionInformation(positionInfo);
+}
+
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

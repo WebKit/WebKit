@@ -485,12 +485,15 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     positionInformation.url = url;
 
     _positionInformation = WTFMove(positionInformation);
+
 #if ENABLE(DATA_DETECTION)
-    if (WebCore::DataDetection::canBePresentedByDataDetectors(_positionInformation.url))
-        [_actionSheetAssistant showDataDetectorsSheet];
-    else
+    if (WebCore::DataDetection::canBePresentedByDataDetectors(_positionInformation.url)) {
+        [_actionSheetAssistant showDataDetectorsUIForPositionInformation:positionInformation];
+        return;
+    }
 #endif
-        [_actionSheetAssistant showLinkSheet];
+
+    [_actionSheetAssistant showLinkSheet];
 }
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller didLongPressURL:(NSURL *)url atLocation:(CGPoint)location withAnnotationRect:(CGRect)annotationRect
@@ -582,7 +585,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     return page->uiClient().actionsForElement(element, WTFMove(defaultActions));
 }
 
-- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant positionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
     auto webView = _webView.getAutoreleased();
     if (!webView)

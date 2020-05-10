@@ -1,3 +1,101 @@
+2020-05-10  Tim Horton  <timothy_horton@apple.com>
+
+        Clicking a tel:// link on iPad with a trackpad presents different UI than tapping on it
+        https://bugs.webkit.org/show_bug.cgi?id=211686
+        <rdar://problem/57941589>
+
+        Reviewed by Wenson Hsieh.
+
+        Previously, iOS WebKit had code in handleTap, handleTwoFingerTapAtPoint, and commitPotentialTap,
+        which introspected the hit element /before/ dispatching the tap (or synthetic click) to the DOM,
+        short circuiting all normal event handling machinery in order to prevent the default action
+        and present the Data Detectors UI for the given link.
+
+        There's one immediate problem with this, which is that there is no similar code in the direct
+        click event handler path, which we now use for trackpad/mouse input on iPad. There's also a
+        secondary problem (which we have not seen in practice), which is that pages cannot preventDefault
+        to avoid launching the Data Detectors UI on a link, like they could to prevent an ordinary
+        link from being followed.
+
+        In order to resolve both issues and reduce duplication of logic, move the code that introspects
+        the element and invokes Data Detectors UI from high-level WebKit event dispatch code (where it
+        doesn't really belong) down to WebCore's default click event handler for anchors, right next to
+        the code that would ordinarily cause a navigation. This way, no matter how we get here, whether
+        by synthetic click or real click, we'll invoke the Data Detectors UI.
+
+        One alternative considered at length: we could actually let the navigation happen, and instead
+        handle the switch in navigation policy code, but there are a few reasons that did not seem ideal:
+        1) We'd need to plumb platform-specific data structures through a ton of FrameLoader code.
+        2) Clients often block non-HTTP(S) navigations, so in order to keep the feature functional,
+           we'd have to disregard the client's policy decision, defeating much of the purpose of making
+           use of the navigation mechanism in the first place.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showDataDetectorsUIForPositionInformation):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::showDataDetectorsUIForPositionInformation):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::showDataDetectorsUIForElement):
+        Plumb showDataDetectorsUIForPositionInformation from iOS WebKit's ChromeClient
+        implementation all the way to WKContentView.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showDataDetectorsUIForPositionInformation:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]): Deleted.
+        Make it possible to push InteractionInformationAtPosition into WKActionSheetAssistant,
+        instead of having it always pull a fresh one upon invocation, so that we can use the
+        position information passed along with the showDataDetectorsUIForPositionInformation message.
+
+        (-[WKActionSheetAssistant _contextMenuInteraction:overrideSuggestedActionsForConfiguration:]):
+        (-[WKActionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:]):
+        Fix an existing bug where Data Detectors context menus would show extra default actions,
+        by moving our implementation of the -_contextMenuInteraction:overrideSuggestedActionsForConfiguration:
+        delegate here, sharing it with WKContentViewInteraction.
+
+        In a future patch, we should reconsider having three separate UIContextMenuInteractions.
+
+        Also, remove the contextMenuPresentationLocationForActionSheetAssistant: delegate,
+        since it will be wrong in the case of pushed-in position information, and instead
+        use the position information's original hit test point.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showDataDetectorsUI]):
+        (-[WKContentView _showDataDetectorsUIForPositionInformation:]):
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+        (-[WKContentView dataDetectionContextForActionSheetAssistant:positionInformation:]):
+        (-[WKContentView _showDataDetectorsSheet]): Deleted.
+        (-[WKContentView currentPositionInformation]): Deleted.
+        (-[WKContentView dataDetectionContextForActionSheetAssistant:]): Deleted.
+        Instead of exposing an unnecessary -currentPositionInformation getter on WKActionSheetAssistant,
+        provide it as an argument to the WKActionSheetAssistantDelegate methods that actually need it.
+
+        (-[WKContentView contextMenuPresentationLocationForActionSheetAssistant:]): Deleted.
+        (-[WKContentView _contextMenuInteraction:overrideSuggestedActionsForConfiguration:]):
+        Adopt WKActionSheetAssistant's suggestedActions mechanism so we can share code.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _showActionSheetForURL:atLocation:withAnnotationRect:]):
+        (-[WKPDFView dataDetectionContextForActionSheetAssistant:positionInformation:]):
+        (-[WKPDFView dataDetectionContextForActionSheetAssistant:]): Deleted.
+        Adapt to some WKActionSheetAssistantDelegate changes.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+        Remove the aforementioned short-circuiting paths for Data Detectors links.
 2020-05-09  David Kilzer  <ddkilzer@apple.com>
 
         Attempt #2 to fix internal iOS build

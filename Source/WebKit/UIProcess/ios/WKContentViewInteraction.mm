@@ -2148,9 +2148,14 @@ static Class tapAndAHalfRecognizerClass()
     [_actionSheetAssistant showLinkSheet];
 }
 
-- (void)_showDataDetectorsSheet
+- (void)_showDataDetectorsUI
 {
-    [_actionSheetAssistant showDataDetectorsSheet];
+    [self _showDataDetectorsUIForPositionInformation:_positionInformation];
+}
+
+- (void)_showDataDetectorsUIForPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
+{
+    [_actionSheetAssistant showDataDetectorsUIForPositionInformation:positionInformation];
 }
 
 - (SEL)_actionForLongPressFromPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
@@ -2167,7 +2172,7 @@ static Class tapAndAHalfRecognizerClass()
     if (positionInformation.isLink) {
 #if ENABLE(DATA_DETECTION)
         if (WebCore::DataDetection::canBePresentedByDataDetectors(positionInformation.url))
-            return @selector(_showDataDetectorsSheet);
+            return @selector(_showDataDetectorsUI);
 #endif
         return @selector(_showLinkSheet);
     }
@@ -2180,11 +2185,6 @@ static Class tapAndAHalfRecognizerClass()
 - (SEL)_actionForLongPress
 {
     return [self _actionForLongPressFromPositionInformation:_positionInformation];
-}
-
-- (WebKit::InteractionInformationAtPosition)currentPositionInformation
-{
-    return _positionInformation;
 }
 
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request
@@ -2722,15 +2722,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
     [self _resetInputViewDeferral];
-
-    // FIXME: we should also take into account whether or not the UI delegate
-    // has handled this notification.
-#if ENABLE(DATA_DETECTION)
-    if (_hasValidPositionInformation && point == _positionInformation.request.point && _positionInformation.isDataDetectorLink) {
-        [self _showDataDetectorsSheet];
-        return;
-    }
-#endif
 
     if (!_isDoubleTapPending)
         return;
@@ -6904,7 +6895,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _page->stopInteraction();
 }
 
-- (NSDictionary *)dataDetectionContextForPositionInformation:(WebKit::InteractionInformationAtPosition)positionInformation
+- (NSDictionary *)dataDetectionContextForPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
     RetainPtr<NSMutableDictionary> context;
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
@@ -6933,9 +6924,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #endif
 }
 
-- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant positionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
-    return [self dataDetectionContextForPositionInformation:assistant.currentPositionInformation.valueOr(_positionInformation)];
+    return [self dataDetectionContextForPositionInformation:positionInformation];
 }
 
 - (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
@@ -6952,11 +6943,6 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         }];
     } else
         completion(nil, nil);
-}
-
-- (CGPoint)contextMenuPresentationLocationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
-{
-    return [self lastInteractionLocation];
 }
 
 #if USE(UICONTEXTMENU)
@@ -9211,13 +9197,11 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    if (_contextMenuActionProviderDelegateNeedsOverride) {
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
-        RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = _positionInformation.isLink ? [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()] : [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
-        return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-    }
     // If we're here we're in the legacy path, which ignores the suggested actions anyway.
-    return nil;
+    if (!_contextMenuActionProviderDelegateNeedsOverride)
+        return nil;
+
+    return [_actionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:_positionInformation];
 }
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration

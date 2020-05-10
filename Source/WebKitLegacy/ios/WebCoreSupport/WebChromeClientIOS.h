@@ -97,6 +97,8 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) final;
 
+    bool showDataDetectorsUIForElement(const WebCore::Element&, const WebCore::Event&) final { return false; }
+
 #if ENABLE(ORIENTATION_EVENTS)
     int deviceOrientation() const final;
 #endif
