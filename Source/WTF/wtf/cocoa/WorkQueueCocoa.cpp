@@ -45,7 +45,6 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
     }).get());
 }
 
-#if HAVE(QOS_CLASSES)
 static dispatch_qos_class_t dispatchQOSClass(WorkQueue::QOS qos)
 {
     switch (qos) {
@@ -61,24 +60,6 @@ static dispatch_qos_class_t dispatchQOSClass(WorkQueue::QOS qos)
         return Thread::adjustedQOSClass(QOS_CLASS_BACKGROUND);
     }
 }
-#else
-static dispatch_queue_t targetQueueForQOSClass(WorkQueue::QOS qos)
-{
-    switch (qos) {
-    case WorkQueue::QOS::UserInteractive:
-    case WorkQueue::QOS::UserInitiated:
-        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    case WorkQueue::QOS::Utility:
-        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-    case WorkQueue::QOS::Background:
-        return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-    case WorkQueue::QOS::Default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-    ASSERT_NOT_REACHED();
-}
-#endif
 
 void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
 {
