@@ -80,7 +80,11 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
     if (view.window) {
         UIHoverEvent *hoverEvent = [UIApp _hoverEventForWindow:view.window];
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 140000 || PLATFORM(MACCATALYST)
         [hoverEvent setNeedsHitTestReset];
+#else
+        [hoverEvent setNeedsHitTestResetForWindow:view.window];
+#endif
     }
 }
 

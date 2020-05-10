@@ -133,6 +133,13 @@
 #import <UIKit/_UICursorStyle_Private.h>
 #endif
 
+#if __has_include(<UIKit/UIHoverEvent_Private.h>)
+#import <UIKit/UIHoverEvent_Private.h>
+#else
+@interface UIHoverEvent : UIEvent
+@end
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1208,6 +1215,9 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (BOOL)_isPointerTouch;
 @end
 
+@interface UIHoverEvent : UIEvent
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
@@ -1289,8 +1299,12 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
 @end
 
-@interface UIHoverEvent : UIEvent
+@interface UIHoverEvent (IPI)
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 140000 || PLATFORM(MACCATALYST)
 - (void)setNeedsHitTestReset;
+#else
+- (void)setNeedsHitTestResetForWindow:(UIWindow *)window;
+#endif
 @end
 
 @interface UIApplication (IPI)
