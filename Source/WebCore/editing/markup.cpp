@@ -394,18 +394,6 @@ bool StyledMarkupAccumulator::isAllASCII() const
     return MarkupAccumulator::isAllASCII();
 }
 
-// Stopgap until C++20 adds std::ranges::reverse_view.
-template<typename Collection> struct ReverseView {
-    Collection& collection;
-    decltype(collection.rbegin()) begin() const { return collection.rbegin(); }
-    decltype(collection.rend()) end() const { return collection.rend(); }
-    decltype(collection.size()) size() const { return collection.size(); }
-    ReverseView(Collection& collection)
-        : collection(collection)
-    {
-    }
-};
-
 String StyledMarkupAccumulator::takeResults()
 {
     CheckedUint32 length = this->length();
@@ -413,7 +401,7 @@ String StyledMarkupAccumulator::takeResults()
         length += string.length();
     StringBuilder result;
     result.reserveCapacity(length.unsafeGet());
-    for (auto& string : ReverseView { m_reversedPrecedingMarkup })
+    for (auto& string : makeReversedRange(m_reversedPrecedingMarkup))
         result.append(string);
     result.append(takeMarkup());
     // Remove '\0' characters because they are not visibly rendered to the user.
