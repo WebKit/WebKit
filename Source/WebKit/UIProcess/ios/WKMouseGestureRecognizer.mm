@@ -31,6 +31,7 @@
 #import "NativeWebMouseEvent.h"
 #import "UIKitSPI.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <wtf/Compiler.h>
 #import <wtf/Optional.h>
 
 static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFlags(UIKeyModifierFlags flags)
@@ -103,10 +104,12 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return _currentTouch.get();
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (BOOL)_wantsHoverEvents
 {
     return YES;
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)reset
 {

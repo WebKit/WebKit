@@ -1,5 +1,12 @@
 2020-05-09  David Kilzer  <ddkilzer@apple.com>
 
+        Attempt #2 to fix internal iOS build
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        - Use ALLOW_DEPRECATED_IMPLEMENTATIONS_{BEGIN,END}.
+
+2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
         Attemp to fix internal iOS build
 
         * Platform/spi/ios/UIKitSPI.h:
