@@ -1,3 +1,19 @@
+2020-05-10  Rob Buis  <rbuis@igalia.com>
+
+        [ iOS wk2 and Mac wk2 ] imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209281
+
+        Reviewed by Darin Adler.
+
+        Since it is difficult to estimate when the revalidations are received
+        in relation to the frame loads, add two polling loops to make sure
+        revalidations have been received before proceding with the next
+        test step. This is similar to what fetch.html does.
+
+        * web-platform-tests/fetch/stale-while-revalidate/frame-removal.html:
+        * web-platform-tests/fetch/stale-while-revalidate/resources/stale-frame.py:
+        (main):
+
 2020-05-09  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Fix wpt shadow-dom/slots-fallback-in-document.html

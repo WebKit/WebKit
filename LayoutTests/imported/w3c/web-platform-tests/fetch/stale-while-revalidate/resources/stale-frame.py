@@ -21,9 +21,6 @@ def main(request, response):
           count = count + 1
         request.server.stash.put(token, count)
 
-    if is_revalidation is not None:
-      time.sleep(5);
-
     if is_query:
       headers = [("Count", count), ("Test", str(request.raw_headers))]
       content = ""
