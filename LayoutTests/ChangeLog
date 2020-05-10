@@ -1,3 +1,16 @@
+2020-05-09  Kenneth Russell  <kbr@chromium.org>
+
+        [ Mojave wk1 Release ] fast/canvas/webgl/texImage2D-mse-flipY-true.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=209837
+
+        Reviewed by Darin Adler.
+
+        Remove flaky timeout suppression for
+        texImage2D-mse-flipY-true.html, which has been passing reliably
+        for over a month.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-05-09  David Kilzer  <ddkilzer@apple.com>
 
         XML external entity resources should only be loaded from XML MIME types
