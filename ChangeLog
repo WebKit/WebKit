@@ -1,3 +1,19 @@
+2020-05-10  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Add ENABLE_PERIODIC_MEMORY_MONITOR flag.
+        https://bugs.webkit.org/show_bug.cgi?id=211704
+
+        Reviewed by Yusuke Suzuki.
+
+        Define ENABLE_PERIODIC_MEMORY_MONITOR flags in specific platform's options.
+        Enable it for PlayStation port.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2020-05-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in MallocBench
