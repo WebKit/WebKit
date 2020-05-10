@@ -866,14 +866,15 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    if (style.appearance() == TextFieldPart || style.appearance() == TextAreaPart || style.appearance() == ListboxPart)
+    auto appearance = style.appearance();
+    if (appearance == TextFieldPart || appearance == TextAreaPart || appearance == SearchFieldPart || appearance == ListboxPart)
         return style.border() != userAgentStyle.border();
 
     // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
     // scaled.  They can't really draw properly when transformed either.  We can't detect the transform case at style
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
     // is in effect we treat it like the control is styled.
-    if (style.appearance() == MenulistPart && style.effectiveZoom() != 1.0f)
+    if (appearance == MenulistPart && style.effectiveZoom() != 1.0f)
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);

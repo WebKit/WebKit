@@ -1,3 +1,33 @@
+2020-05-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Search field on mayoclinic.org/forms/us-resident-appointment clips the submit button
+        https://bugs.webkit.org/show_bug.cgi?id=211673
+        <rdar://problem/62572501>
+
+        Reviewed by Tim Horton.
+
+        Allow search fields to be style-able, but only if the CSS `border` value is non-default.
+
+        Note that there was a previous attempt to achieve something similar in r157443 by adding search fields to the
+        base class implementation of `RenderTheme::isControlStyled`; however, this patch wasn't actually accompanied by
+        support for rendering native search fields with a non-default background, which meant that  customizing just the
+        background of a search field would cause the entire search field to opt out of the native search field
+        appearance (a pill with rounded corners on macOS).
+
+        However, in the case where the border is customized on macOS, it is incorrect to use the default search field
+        appearance, since the search field cell just consists of a border; as such, there should be little compatibility
+        risk of a web page unexpectedly getting the fallback (non-native) appearance for a search field, due to having
+        custom border styles.
+
+        This also makes the behavior of search fields match that of text fields, textareas, and list boxes (multi-option
+        selects) on macOS, in terms of what is needed in order to bail out of native appearance rendering.
+
+        Rebaselined existing tests: fast/css/text-input-with-webkit-border-radius.html
+                                    fast/forms/search-styled.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled const): Add SearchFieldPart.
+
 2020-05-09  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r258493): CRASH running fast/mediastream/RTCPeerConnection tests
