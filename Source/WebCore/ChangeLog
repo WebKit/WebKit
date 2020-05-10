@@ -1,3 +1,20 @@
+2020-05-09  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r258493): CRASH running fast/mediastream/RTCPeerConnection tests
+        https://bugs.webkit.org/show_bug.cgi?id=211666
+        <rdar://problem/63055644>
+
+        Reviewed by Eric Carlson.
+
+        MockMediaStreamTrack advertises that it's a webrtc::VideoTrackInterface, but doesn't inherit from
+        that interface, leading to a crash when its pointer is cast to webrtc::VideoTrackInterface and a
+        virtual method called on the resulting pointer. Since it's only used in one place, and since there's
+        an existing mock webrtc::VideoTrackInterface object in that same file, remove MockMediaStreamTrack
+        and replace the one place it's used with MockLibWebRTCVideoTrack.
+
+        * testing/MockLibWebRTCPeerConnection.h:
+        (WebCore::MockMediaStreamTrack::state const): Deleted.
+
 2020-05-09  David Kilzer  <ddkilzer@apple.com>
 
         XML external entity resources should only be loaded from XML MIME types
