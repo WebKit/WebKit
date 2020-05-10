@@ -1,3 +1,50 @@
+2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
+        XML external entity resources should only be loaded from XML MIME types
+        <https://webkit.org/b/211488>
+        <rdar://problem/62869515>
+
+        Reviewed by Darin Adler.
+
+        To fix these layout tests, the following changes were made:
+        - Rename *.ent files to *.ent.xml so that an XML MIME type would
+          be given to the resources when loading from a file:/// URL.
+        - Similarly, rename *.dtd files to *.dtd.xml.
+        - Update tests to refer to new entity/dtd file names.
+        - There are more *.dtd and *.ent files that weren't renamed.  I
+          will fix those in a follow-up patch.  They weren't needed to
+          fix any tests, so may be unused.
+
+        * dom/xhtml/level3/core/entitygetinputencoding03.xhtml:
+        * dom/xhtml/level3/core/entitygetinputencoding04.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlencoding02.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlencoding03.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlencoding04.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlversion03.xhtml:
+        * dom/xhtml/level3/core/entitygetxmlversion04.xhtml:
+        * dom/xhtml/level3/core/resources/external_foo.ent.xml: Rename from LayoutTests/dom/xhtml/level3/core/external_foo.ent.xml.
+        * dom/xhtml/level3/core/resources/external_foobr.ent.xml: Rename from LayoutTests/dom/xhtml/level3/core/external_foobr.ent.xml.
+        * dom/xhtml/level3/core/resources/external_widget.ent.xml: Rename from LayoutTests/dom/xhtml/level3/core/external_widget.ent.xml.
+        * dom/xhtml/level3/core/nodegetbaseuri16.xhtml:
+        * dom/xhtml/level3/core/nodegetbaseuri19.xhtml:
+        * dom/xhtml/level3/core/nodegetbaseuri20.xhtml:
+        * fast/parser/external-entities.xml:
+        * fast/parser/resources/external-entities.dtd.xml: Rename from LayoutTests/fast/parser/resources/external-entities.dtd.
+        * fast/parser/resources/external-entities.xsl:
+        * fast/xsl/dtd-in-source-document.xml:
+        * fast/xsl/resources/dtd-in-source-document.dtd.xml: Rename from LayoutTests/fast/xsl/resources/dtd-in-source-document.dtd.
+        * fast/xsl/resources/xslt-second-level-import.xsl:
+        * fast/xsl/resources/xslt-second-level-import.xsl.dtd.xml: Rename from LayoutTests/fast/xsl/resources/xslt-second-level-import.xsl.dtd.
+
+        * http/tests/security/contentTypeOptions/nosniff-xml-external-entity-expected.txt:
+        * http/tests/security/contentTypeOptions/nosniff-xml-external-entity.xhtml:
+        - Add test cases without "X-Content-Type-Options: nosniff"
+          header.
+
+        * http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt:
+        - Add newly expected console error messages about cross-origin
+          resource load failures.
+
 2020-05-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Search field on mayoclinic.org/forms/us-resident-appointment clips the submit button
