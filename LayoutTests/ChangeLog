@@ -1,5 +1,17 @@
 2020-05-09  Kenneth Russell  <kbr@chromium.org>
 
+        [ macOS ] REGRESSION (r259139): webgl/2.0.0/conformance2/rendering/framebuffer-completeness-unaffected.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=209740
+
+        Reviewed by Darin Adler.
+
+        Reenable framebuffer-completeness-unaffected.html, which is now
+        passing after several other bug fixes.
+
+        * platform/mac/TestExpectations:
+
+2020-05-09  Kenneth Russell  <kbr@chromium.org>
+
         [ Mojave wk1 Release ] fast/canvas/webgl/texImage2D-mse-flipY-true.html is timing out.
         https://bugs.webkit.org/show_bug.cgi?id=209837
 
