@@ -89,6 +89,7 @@ TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
 {
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     const char *filePath = [url fileSystemRepresentation];
+    WTFLogAlways("Creating partition...");
     createPartition(filePath);
         
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -99,7 +100,9 @@ TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
     
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [webView loadRequest:request];
+    WTFLogAlways("Navigating...");
     Util::run(&navigationComplete);
+    WTFLogAlways("Cleaning up...");
     cleanUp();
 }
 }
