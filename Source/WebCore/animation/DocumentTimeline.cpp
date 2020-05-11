@@ -27,7 +27,6 @@
 #include "DocumentTimeline.h"
 
 #include "AnimationEventBase.h"
-#include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
@@ -38,7 +37,6 @@
 #include "KeyframeEffectStack.h"
 #include "Node.h"
 #include "Page.h"
-#include "PseudoElement.h"
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -98,114 +96,6 @@ void DocumentTimeline::detachFromDocument()
 
     clearTickScheduleTimer();
     m_document = nullptr;
-}
-
-static inline bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(Element* lhsOwningElement, Element* rhsOwningElement)
-{
-    // With regard to pseudo-elements, the sort order is as follows:
-    //     - element
-    //     - ::before
-    //     - ::after
-    //     - element children
-    
-    // We could be comparing two pseudo-elements that are hosted on the same element.
-    if (is<PseudoElement>(lhsOwningElement) && is<PseudoElement>(rhsOwningElement)) {
-        auto* lhsPseudoElement = downcast<PseudoElement>(lhsOwningElement);
-        auto* rhsPseudoElement = downcast<PseudoElement>(rhsOwningElement);
-        if (lhsPseudoElement->hostElement() == rhsPseudoElement->hostElement())
-            return lhsPseudoElement->isBeforePseudoElement();
-    }
-
-    // Or comparing a pseudo-element that is compared to another non-pseudo element, in which case
-    // we want to see if it's hosted on that other element, and if not use its host element to compare.
-    if (is<PseudoElement>(lhsOwningElement)) {
-        auto* lhsHostElement = downcast<PseudoElement>(lhsOwningElement)->hostElement();
-        if (rhsOwningElement == lhsHostElement)
-            return false;
-        lhsOwningElement = lhsHostElement;
-    }
-
-    if (is<PseudoElement>(rhsOwningElement)) {
-        auto* rhsHostElement = downcast<PseudoElement>(rhsOwningElement)->hostElement();
-        if (lhsOwningElement == rhsHostElement)
-            return true;
-        rhsOwningElement = rhsHostElement;
-    }
-
-    return lhsOwningElement->compareDocumentPosition(*rhsOwningElement) & Node::DOCUMENT_POSITION_FOLLOWING;
-}
-
-Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
-{
-    ASSERT(m_document);
-
-    Vector<RefPtr<WebAnimation>> cssTransitions;
-    Vector<RefPtr<WebAnimation>> cssAnimations;
-    Vector<RefPtr<WebAnimation>> webAnimations;
-
-    // First, let's get all qualifying animations in their right group.
-    for (const auto& animation : m_animations) {
-        if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
-            continue;
-
-        auto* target = downcast<KeyframeEffect>(animation->effect())->target();
-        if (!target || !target->isDescendantOf(*m_document))
-            continue;
-
-        if (is<CSSTransition>(animation.get()) && downcast<CSSTransition>(animation.get())->owningElement())
-            cssTransitions.append(animation);
-        else if (is<CSSAnimation>(animation.get()) && downcast<CSSAnimation>(animation.get())->owningElement())
-            cssAnimations.append(animation);
-        else
-            webAnimations.append(animation);
-    }
-
-    // Now sort CSS Transitions by their composite order.
-    std::stable_sort(cssTransitions.begin(), cssTransitions.end(), [](auto& lhs, auto& rhs) {
-        // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
-        auto* lhsTransition = downcast<CSSTransition>(lhs.get());
-        auto* rhsTransition = downcast<CSSTransition>(rhs.get());
-
-        auto* lhsOwningElement = lhsTransition->owningElement();
-        auto* rhsOwningElement = rhsTransition->owningElement();
-
-        // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
-        if (lhsOwningElement != rhsOwningElement)
-            return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(lhsOwningElement, rhsOwningElement);
-
-        // Otherwise, if A and B have different transition generation values, sort by their corresponding transition generation in ascending order.
-        if (lhsTransition->generationTime() != rhsTransition->generationTime())
-            return lhsTransition->generationTime() < rhsTransition->generationTime();
-
-        // Otherwise, sort A and B in ascending order by the Unicode codepoints that make up the expanded transition property name of each transition
-        // (i.e. without attempting case conversion and such that ‘-moz-column-width’ sorts before ‘column-width’).
-        return lhsTransition->transitionProperty().utf8() < rhsTransition->transitionProperty().utf8();
-    });
-
-    // Now sort CSS Animations by their composite order.
-    std::stable_sort(cssAnimations.begin(), cssAnimations.end(), [](auto& lhs, auto& rhs) {
-        // https://drafts.csswg.org/css-animations-2/#animation-composite-order
-        auto* lhsOwningElement = downcast<CSSAnimation>(lhs.get())->owningElement();
-        auto* rhsOwningElement = downcast<CSSAnimation>(rhs.get())->owningElement();
-
-        // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
-        if (lhsOwningElement != rhsOwningElement)
-            return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(lhsOwningElement, rhsOwningElement);
-
-        // Otherwise, sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-        return compareAnimationsByCompositeOrder(*lhs, *rhs, lhsOwningElement->ensureKeyframeEffectStack().cssAnimationList());
-    });
-
-    std::stable_sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {
-        return lhs->globalPosition() < rhs->globalPosition();
-    });
-
-    // Finally, we can concatenate the sorted CSS Transitions, CSS Animations and Web Animations in their relative composite order.
-    Vector<RefPtr<WebAnimation>> animations;
-    animations.appendRange(cssTransitions.begin(), cssTransitions.end());
-    animations.appendRange(cssAnimations.begin(), cssAnimations.end());
-    animations.appendRange(webAnimations.begin(), webAnimations.end());
-    return animations;
 }
 
 Seconds DocumentTimeline::animationInterval() const

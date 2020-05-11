@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class AnimationList;
+class Element;
 class WebAnimation;
 
 inline double secondsToWebAnimationsAPITime(const Seconds time)
@@ -50,7 +50,7 @@ inline double secondsToWebAnimationsAPITime(const Seconds time)
 
 const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 
-bool compareAnimationsByCompositeOrder(WebAnimation&, WebAnimation&, const AnimationList*);
+bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&);
 
 } // namespace WebCore
 

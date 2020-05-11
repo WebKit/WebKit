@@ -46,8 +46,6 @@ public:
 
     bool isDocumentTimeline() const final { return true; }
 
-    Vector<RefPtr<WebAnimation>> getAnimations() const;
-
     Document* document() const { return m_document.get(); }
 
     Optional<Seconds> currentTime() override;

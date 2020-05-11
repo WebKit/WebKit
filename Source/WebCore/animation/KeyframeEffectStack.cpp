@@ -98,7 +98,7 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
         RELEASE_ASSERT(lhsAnimation);
         RELEASE_ASSERT(rhsAnimation);
 
-        return compareAnimationsByCompositeOrder(*lhsAnimation, *rhsAnimation, m_cssAnimationList.get());
+        return compareAnimationsByCompositeOrder(*lhsAnimation, *rhsAnimation);
     });
 
     m_isSorted = true;

@@ -233,6 +233,7 @@
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
 #include "WebAnimation.h"
+#include "WebAnimationUtilities.h"
 #include "WheelEvent.h"
 #include "WindowEventLoop.h"
 #include "WindowFeatures.h"
@@ -8132,14 +8133,19 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
         return { };
 
     Vector<RefPtr<WebAnimation>> animations;
-    for (auto& animation : m_timeline->getAnimations()) {
-        auto* effect = animation->effect();
-        ASSERT(is<KeyframeEffect>(animation->effect()));
-        auto* target = downcast<KeyframeEffect>(*effect).targetElementOrPseudoElement();
-        ASSERT(target);
-        if (function(*target))
+    for (auto& animation : m_timeline->relevantAnimations()) {
+        if (!animation || !animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
+            continue;
+
+        auto* target = downcast<KeyframeEffect>(*animation->effect()).targetElementOrPseudoElement();
+        if (target && target->isDescendantOf(this) && function(*target))
             animations.append(animation);
     }
+
+    std::stable_sort(animations.begin(), animations.end(), [](auto& lhs, auto& rhs) {
+        return compareAnimationsByCompositeOrder(*lhs, *rhs);
+    });
+
     return animations;
 }
 

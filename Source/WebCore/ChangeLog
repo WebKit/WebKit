@@ -1,3 +1,44 @@
+2020-05-10  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Refactor animation comparison by composite order in a single utility function
+        https://bugs.webkit.org/show_bug.cgi?id=211695
+
+        Reviewed by Darin Adler.
+
+        We used to split sorting of animations by composite order across several functions and files. Specifically,
+        DocumentTimeline::getAnimations() would first collect animations by class (CSS Transitions, then CSS
+        Animations, then JS-originated animations), and then sort each class, calling into the static function
+        compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder() in some cases and into the
+        WebAnimationUtilities compareAnimationsByCompositeOrder() function in other.
+
+        Since we need to be able to sort animations by composite order in other situations, for instance when sorting
+        events when updating animations and sending events (which we will do in a future patch), we refactor all
+        of the comparison logic into compareAnimationsByCompositeOrder(), removing the need to provide an AnimationList,
+        which is specific to the case where we know we are comparing CSSAnimation objects targeting a shared element.
+
+        This effectively empties DocumentTimeline::getAnimations() so we remove this function and filter relevant
+        animations in Document::matchingAnimations() and call compareAnimationsByCompositeOrder() before returning
+        the compiled animations.
+
+        No new tests since there is no change of behavior.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder): Deleted.
+        (WebCore::DocumentTimeline::getAnimations const): Deleted.
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::ensureEffectsAreSorted):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::commitStyles):
+        * animation/WebAnimationUtilities.cpp:
+        (WebCore::compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder):
+        (WebCore::compareCSSTransitions):
+        (WebCore::compareCSSAnimations):
+        (WebCore::compareAnimationsByCompositeOrder):
+        * animation/WebAnimationUtilities.h:
+        * dom/Document.cpp:
+        (WebCore::Document::matchingAnimations):
+
 2020-05-11  Charlie Turner  <cturner@igalia.com>
 
         [WPE] Layout test media/encrypted-media/mock-MediaKeySystemAccess.html is crashing

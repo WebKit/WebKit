@@ -31,71 +31,134 @@
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DeclarativeAnimation.h"
+#include "Element.h"
+#include "KeyframeEffectStack.h"
+#include "PseudoElement.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
 
-bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation& rhsAnimation, const AnimationList* cssAnimationList)
+static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(Element& a, Element& b)
+{
+    // We should not ever be calling this function with two Elements that are the same. If that were the case,
+    // then comparing objects of this kind would yield inconsistent results when comparing A == B and B == A.
+    // As such, this function should be called with std::stable_sort().
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&a != &b);
+
+    // With regard to pseudo-elements, the sort order is as follows:
+    //     - element
+    //     - ::before
+    //     - ::after
+    //     - element children
+
+    enum SortingIndex : uint8_t { NotPseudo, Before, After };
+
+    int aSortingIndex = NotPseudo;
+    Element* aReferenceElement = &a;
+    if (is<PseudoElement>(a)) {
+        auto& aPseudo = downcast<PseudoElement>(a);
+        aSortingIndex = aPseudo.isBeforePseudoElement() ? Before : After;
+        aReferenceElement = aPseudo.hostElement();
+        ASSERT(aReferenceElement);
+    }
+
+    int bSortingIndex = NotPseudo;
+    Element* bReferenceElement = &b;
+    if (is<PseudoElement>(b)) {
+        auto& bPseudo = downcast<PseudoElement>(b);
+        bSortingIndex = bPseudo.isBeforePseudoElement() ? Before : After;
+        bReferenceElement = bPseudo.hostElement();
+        ASSERT(bReferenceElement);
+    }
+
+    if (aReferenceElement == bReferenceElement)
+        return aSortingIndex < bSortingIndex;
+    return aReferenceElement->compareDocumentPosition(*bReferenceElement) & Node::DOCUMENT_POSITION_FOLLOWING;
+}
+
+static bool compareCSSTransitions(const CSSTransition& a, const CSSTransition& b)
+{
+    ASSERT(a.owningElement());
+    ASSERT(b.owningElement());
+    auto& aOwningElement = *a.owningElement();
+    auto& bOwningElement = *b.owningElement();
+
+    // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
+    if (&aOwningElement != &bOwningElement)
+        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aOwningElement, bOwningElement);
+
+    // Otherwise, if A and B have different transition generation values, sort by their corresponding transition generation in ascending order.
+    if (a.generationTime() != b.generationTime())
+        return a.generationTime() < b.generationTime();
+
+    // Otherwise, sort A and B in ascending order by the Unicode codepoints that make up the expanded transition property name of each transition
+    // (i.e. without attempting case conversion and such that ‘-moz-column-width’ sorts before ‘column-width’).
+    return a.transitionProperty().utf8() < b.transitionProperty().utf8();
+}
+
+static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
+{
+    // https://drafts.csswg.org/css-animations-2/#animation-composite-order
+    ASSERT(a.owningElement());
+    ASSERT(b.owningElement());
+    auto& aOwningElement = *a.owningElement();
+    auto& bOwningElement = *b.owningElement();
+
+    // If the owning element of A and B differs, sort A and B by tree order of their corresponding owning elements.
+    if (&aOwningElement != &bOwningElement)
+        return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aOwningElement, bOwningElement);
+
+    // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
+    auto* cssAnimationList = aOwningElement.ensureKeyframeEffectStack().cssAnimationList();
+    ASSERT(cssAnimationList);
+    ASSERT(!cssAnimationList->isEmpty());
+
+    auto& aBackingAnimation = a.backingAnimation();
+    auto& bBackingAnimation = b.backingAnimation();
+    for (size_t i = 0; i < cssAnimationList->size(); ++i) {
+        auto& animation = cssAnimationList->animation(i);
+        if (animation == aBackingAnimation)
+            return true;
+        if (animation == bBackingAnimation)
+            return false;
+    }
+
+    // We should have found either of those CSS animations in the CSS animations list.
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation& b)
 {
     // We should not ever be calling this function with two WebAnimation objects that are the same. If that were the case,
     // then comparing objects of this kind would yield inconsistent results when comparing A == B and B == A. As such,
     // this function should be called with std::stable_sort().
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&lhsAnimation != &rhsAnimation);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&a != &b);
 
-    bool lhsHasOwningElement = is<DeclarativeAnimation>(lhsAnimation) && downcast<DeclarativeAnimation>(lhsAnimation).owningElement();
-    bool rhsHasOwningElement = is<DeclarativeAnimation>(rhsAnimation) && downcast<DeclarativeAnimation>(rhsAnimation).owningElement();
+    bool aHasOwningElement = is<DeclarativeAnimation>(a) && downcast<DeclarativeAnimation>(a).owningElement();
+    bool bHasOwningElement = is<DeclarativeAnimation>(b) && downcast<DeclarativeAnimation>(b).owningElement();
 
     // CSS Transitions sort first.
-    bool lhsIsCSSTransition = lhsHasOwningElement && is<CSSTransition>(lhsAnimation);
-    bool rhsIsCSSTransition = rhsHasOwningElement && is<CSSTransition>(rhsAnimation);
-    if (lhsIsCSSTransition || rhsIsCSSTransition) {
-        if (lhsIsCSSTransition != rhsIsCSSTransition)
-            return !rhsIsCSSTransition;
-
-        // Sort transitions first by their generation time, and then by transition-property.
-        // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
-        auto& lhsCSSTransition = downcast<CSSTransition>(lhsAnimation);
-        auto& rhsCSSTransition = downcast<CSSTransition>(rhsAnimation);
-        if (lhsCSSTransition.generationTime() != rhsCSSTransition.generationTime())
-            return lhsCSSTransition.generationTime() < rhsCSSTransition.generationTime();
-        auto lhsCSSTransitionProperty = lhsCSSTransition.transitionProperty().utf8();
-        auto rhsCSSTransitionProperty = rhsCSSTransition.transitionProperty().utf8();
-        if (lhsCSSTransitionProperty != rhsCSSTransitionProperty)
-            return lhsCSSTransitionProperty < rhsCSSTransitionProperty;
+    bool aIsCSSTransition = aHasOwningElement && is<CSSTransition>(a);
+    bool bIsCSSTransition = bHasOwningElement && is<CSSTransition>(b);
+    if (aIsCSSTransition || bIsCSSTransition) {
+        if (aIsCSSTransition == bIsCSSTransition)
+            return compareCSSTransitions(downcast<CSSTransition>(a), downcast<CSSTransition>(b));
+        return !bIsCSSTransition;
     }
 
     // CSS Animations sort next.
-    bool lhsIsCSSAnimation = lhsHasOwningElement && is<CSSAnimation>(lhsAnimation);
-    bool rhsIsCSSAnimation = rhsHasOwningElement && is<CSSAnimation>(rhsAnimation);
-    if (lhsIsCSSAnimation || rhsIsCSSAnimation) {
-        if (lhsIsCSSAnimation != rhsIsCSSAnimation)
-            return !rhsIsCSSAnimation;
-
-        // We must have a list of CSS Animations if we have CSS Animations to sort through.
-        ASSERT(cssAnimationList);
-        ASSERT(!cssAnimationList->isEmpty());
-
-        // https://drafts.csswg.org/css-animations-2/#animation-composite-order
-        // Sort A and B based on their position in the computed value of the animation-name property of the (common) owning element.
-        auto& lhsBackingAnimation = downcast<CSSAnimation>(lhsAnimation).backingAnimation();
-        auto& rhsBackingAnimation = downcast<CSSAnimation>(rhsAnimation).backingAnimation();
-
-        for (size_t i = 0; i < cssAnimationList->size(); ++i) {
-            auto& animation = cssAnimationList->animation(i);
-            if (animation == lhsBackingAnimation)
-                return true;
-            if (animation == rhsBackingAnimation)
-                return false;
-        }
-
-        // We should have found either of those CSS animations in the CSS animations list.
-        RELEASE_ASSERT_NOT_REACHED();
+    bool aIsCSSAnimation = aHasOwningElement && is<CSSAnimation>(a);
+    bool bIsCSSAnimation = bHasOwningElement && is<CSSAnimation>(b);
+    if (aIsCSSAnimation || bIsCSSAnimation) {
+        if (aIsCSSAnimation == bIsCSSAnimation)
+            return compareCSSAnimations(downcast<CSSAnimation>(a), downcast<CSSAnimation>(b));
+        return !bIsCSSAnimation;
     }
 
     // JS-originated animations sort last based on their position in the global animation list.
     // https://drafts.csswg.org/web-animations-1/#animation-composite-order
-    RELEASE_ASSERT(lhsAnimation.globalPosition() != rhsAnimation.globalPosition() || &lhsAnimation == &rhsAnimation);
-    return lhsAnimation.globalPosition() < rhsAnimation.globalPosition();
+    RELEASE_ASSERT(a.globalPosition() != b.globalPosition());
+    return a.globalPosition() < b.globalPosition();
 }
 
 } // namespace WebCore
