@@ -618,6 +618,10 @@ void ViewGestureController::resetState()
         m_currentSwipeSnapshot->setVolatile(true);
     m_currentSwipeSnapshot = nullptr;
 
+    if (m_swipeCancellationTracker)
+        [m_swipeCancellationTracker setIsCancelled:YES];
+    m_swipeCancellationTracker = nil;
+
     for (const auto& layer : m_currentSwipeLiveLayers)
         [layer setTransform:CATransform3DIdentity];
 
@@ -646,7 +650,6 @@ void ViewGestureController::reset()
 {
     removeSwipeSnapshot();
     resetState();
-    m_swipeCancellationTracker = nil; // FIXME: Move to reset state()?
 }
 
 double ViewGestureController::magnification() const

@@ -1,3 +1,18 @@
+2020-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix possible crash in ViewGestureController on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=211745
+
+        Reviewed by Tim Horton.
+
+        When ViewGestureController::resetState() clears m_swipeCancellationTracker, it should set it to canceled so that
+        any pending -trackSwipeEventWithOptions:... which is holding a reference to the WKSwipeCancellationTracker knows
+        to stop.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::resetState):
+        (WebKit::ViewGestureController::reset):
+
 2020-05-11  Peng Liu  <peng.liu6@apple.com>
 
         Enable the mock video presentation mode in related layout tests and fix test failures
