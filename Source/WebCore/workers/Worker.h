@@ -64,6 +64,7 @@ public:
     bool wasTerminated() const { return m_wasTerminated; }
 
     String identifier() const { return m_identifier; }
+    const String& name() const { return m_name; }
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 

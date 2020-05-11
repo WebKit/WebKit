@@ -168,6 +168,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     if (auto* worker = JSWorker::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
+        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "name"_s, jsString(vm, worker->name())));
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_s, jsBoolean(worker->wasTerminated())));
         RETURN_IF_EXCEPTION(scope, { });
         return array;

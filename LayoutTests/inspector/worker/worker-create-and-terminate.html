@@ -3,12 +3,12 @@
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
-let worker1 = new Worker("resources/worker-1.js");
-let worker2 = new Worker("resources/worker-2.js");
+let worker1 = new Worker("resources/worker-1.js", {name: "Worker 1"});
+let worker2 = new Worker("resources/worker-2.js", {name: "Worker 2"});
 let worker3 = null;
 
 function createWorker3() {
-    worker3 = new Worker("resources/worker-3.js");
+    worker3 = new Worker("resources/worker-3.js", {name: "Worker 3"});
 }
 
 function terminateWorker2FromPage() {
@@ -43,7 +43,7 @@ function test()
             ProtocolTest.log("No Workers");
     }
 
-    async function checkInternalProperties(expression, {terminated} = {}) {
+    async function checkInternalProperties(expression, internalPropertiesToCheck) {
         let evaluateResult = await InspectorProtocol.awaitCommand({
             method: "Runtime.evaluate",
             params: {
@@ -55,19 +55,25 @@ function test()
         ProtocolTest.assert(evaluateResult.result.type === "object", `Evaluate result of '${expression}' should have type 'object'.`);
         ProtocolTest.assert(evaluateResult.result.className === "Worker", `Evaluate result of '${expression}' should have className 'Worker'.`);
 
-        let getPropertiesResult = await InspectorProtocol.awaitCommand({
+        let {internalProperties} = await InspectorProtocol.awaitCommand({
             method: "Runtime.getProperties",
             params: {
                 objectId: evaluateResult.result.objectId,
             },
         });
+        ProtocolTest.assert(internalProperties.length === 2, `Worker '${expression}' should only have one internal property.`);
 
-        let internalProperties = getPropertiesResult.internalProperties;
-        ProtocolTest.assert(internalProperties.length === 1, `Worker '${expression}' should only have one internal property.`);
+        function checkInternalProperty(propertyName, type) {
+            let internalProperty = internalProperties.find((item) => item.name === propertyName);
 
-        ProtocolTest.assert(internalProperties[0].name === "terminated", `Worker '${expression}' should have 'terminated' internal property.`);
-        ProtocolTest.assert(internalProperties[0].value.type === "boolean", `Internal 'terminated' property of '${expression}' should be a boolean.`);
-        ProtocolTest.assert(internalProperties[0].value.value === terminated, `Internal 'terminated' property of '${expression}' should have value '${terminated}'.`);
+            ProtocolTest.assert(internalProperty, `Worker '${expression}' should have '${propertyName}' internal property.`);
+            ProtocolTest.assert(internalProperty.value.type === type, `Internal '${propertyName}' property of '${expression}' should be a boolean.`);
+            ProtocolTest.assert(internalProperty.value.value === internalPropertiesToCheck[propertyName], `Internal '${propertyName}' property of '${expression}' should have value '${internalPropertiesToCheck[propertyName]}'.`);
+        }
+        if ("name" in internalPropertiesToCheck)
+            checkInternalProperty("name", "string");
+        if ("terminated" in internalPropertiesToCheck)
+            checkInternalProperty("terminated", "boolean");
     }
 
 
@@ -112,8 +118,8 @@ function test()
             dumpWorkers();
 
             await Promise.all([
-                checkInternalProperties(`worker1`, {terminated: false}),
-                checkInternalProperties(`worker2`, {terminated: false}),
+                checkInternalProperties(`worker1`, {name: "Worker 1", terminated: false}),
+                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: false}),
             ]);
         }
     });
@@ -131,9 +137,9 @@ function test()
             dumpWorkers();
 
             await Promise.all([
-                checkInternalProperties(`worker1`, {terminated: false}),
-                checkInternalProperties(`worker2`, {terminated: false}),
-                checkInternalProperties(`worker3`, {terminated: false}),
+                checkInternalProperties(`worker1`, {name: "Worker 1", terminated: false}),
+                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: false}),
+                checkInternalProperties(`worker3`, {name: "Worker 3", terminated: false}),
             ]);
         }
     });
@@ -151,9 +157,9 @@ function test()
             dumpWorkers();
 
             await Promise.all([
-                checkInternalProperties(`worker1`, {terminated: false}),
-                checkInternalProperties(`worker2`, {terminated: true}),
-                checkInternalProperties(`worker3`, {terminated: false}),
+                checkInternalProperties(`worker1`, {name: "Worker 1", terminated: false}),
+                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: true}),
+                checkInternalProperties(`worker3`, {name: "Worker 3", terminated: false}),
             ]);
         }
     });
@@ -171,8 +177,8 @@ function test()
             dumpWorkers();
 
             await Promise.all([
-                checkInternalProperties(`worker1`, {terminated: false}),
-                checkInternalProperties(`worker2`, {terminated: true}),
+                checkInternalProperties(`worker1`, {name: "Worker 1", terminated: false}),
+                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: true}),
             ]);
         }
     });
@@ -190,7 +196,9 @@ function test()
             ProtocolTest.pass("Worker.workerTerminated");
             dumpWorkers();
 
-            await checkInternalProperties(`worker2`, {terminated: true});
+            await Promise.all([
+                checkInternalProperties(`worker2`, {name: "Worker 2", terminated: true}),
+            ]);
         }
     });
 
