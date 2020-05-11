@@ -8129,16 +8129,13 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
     // such as updates to CSS Animations and CSS Transitions.
     updateStyleIfNeeded();
 
-    if (!m_timeline)
-        return { };
-
     Vector<RefPtr<WebAnimation>> animations;
-    for (auto& animation : m_timeline->relevantAnimations()) {
+    for (auto* animation : WebAnimation::instances()) {
         if (!animation || !animation->isRelevant() || !is<KeyframeEffect>(animation->effect()))
             continue;
 
         auto* target = downcast<KeyframeEffect>(*animation->effect()).targetElementOrPseudoElement();
-        if (target && target->isDescendantOf(this) && function(*target))
+        if (target && target->isConnected() && &target->document() == this && function(*target))
             animations.append(animation);
     }
 

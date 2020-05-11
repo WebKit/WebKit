@@ -1,3 +1,17 @@
+2020-05-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Document.getAnimations() should only consider document connection and not timeline association
+        https://bugs.webkit.org/show_bug.cgi?id=211697
+
+        Reviewed by Dean Jackson.
+
+        The Document.getAnimations() function should return any animation running for an element that is a child of the
+        target Document. We now consider all current animations, regardless of which timeline they might be associated
+        with. This lets us pass the final two WPT Document.getAnimations() tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::matchingAnimations):
+
 2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Add implementation  for AXIsolatedObject::elementPath, hasHighlighting, isBlockquote, isKeyboardFocusable.

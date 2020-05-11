@@ -4,8 +4,8 @@ PASS Document.getAnimations() returns script-generated animations
 PASS Document.getAnimations() returns script-generated animations in the order they were created 
 PASS Document.getAnimations() does not return a disconnected node 
 PASS Document.getAnimations() does not return an animation with a null target 
-FAIL Document.getAnimations() returns animations on elements inside same-origin iframes assert_equals: expected 1 but got 0
-FAIL iframe.contentDocument.getAnimations() returns animations on elements inside same-origin Document assert_equals: expected 1 but got 0
+PASS Document.getAnimations() returns animations on elements inside same-origin iframes 
+PASS iframe.contentDocument.getAnimations() returns animations on elements inside same-origin Document 
 PASS ShadowRoot.getAnimations() return all animations in the shadow tree 
 PASS Document.getAnimations() does NOT return animations in shadow trees 
 PASS ShadowRoot.getAnimations() does NOT return animations in parent document 
