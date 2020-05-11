@@ -75,6 +75,12 @@ static bool urlRequiresChromeBrowser(const URL& url)
     if (domain == "auth.mayohr.com")
         return true;
 
+    // Bank of America shows an unsupported browser warning with WebKitGTK's
+    // standard user agent.
+    if (baseDomain == "bankofamerica.com")
+        return true;
+
+
     return false;
 }
 
@@ -139,11 +145,6 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     if (domain == "outlook.live.com"
         || domain == "mail.ntu.edu.tw"
         || domain == "exchange.tu-berlin.de")
-        return true;
-
-    // Bank of America shows an unsupported browser warning with WebKitGTK's
-    // standard user agent.
-    if (baseDomain == "bankofamerica.com")
         return true;
 
     return false;
