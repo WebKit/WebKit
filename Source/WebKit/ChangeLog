@@ -1,3 +1,31 @@
+2020-05-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r261452. rdar://problem/63055916
+
+    Attemp to fix internal iOS build
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    - Define @class UIHoverEvent using header if available, else
+      fall back to local class definition.
+    - Define methods separately from class definition.
+    * UIProcess/ios/WKMouseGestureRecognizer.mm:
+    (-[WKMouseGestureRecognizer setView:]):
+    - Use new method if it is available.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261452 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-09  David Kilzer  <ddkilzer@apple.com>
+
+            Attemp to fix internal iOS build
+
+            * Platform/spi/ios/UIKitSPI.h:
+            - Define @class UIHoverEvent using header if available, else
+              fall back to local class definition.
+            - Define methods separately from class definition.
+            * UIProcess/ios/WKMouseGestureRecognizer.mm:
+            (-[WKMouseGestureRecognizer setView:]):
+            - Use new method if it is available.
+
 2020-05-08  Alan Coon  <alancoon@apple.com>
 
         Revert r260642. rdar://problem/63037576
