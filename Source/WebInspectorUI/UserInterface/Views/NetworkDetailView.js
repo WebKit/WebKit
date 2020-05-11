@@ -97,7 +97,6 @@ WI.NetworkDetailView = class NetworkDetailView extends WI.View
         // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
         let index = 0;
         this._contentBrowser.navigationBar.insertNavigationItem(closeNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.FlexibleSpaceNavigationItem, index++);
         for (let detailNavigationItem of this._detailNavigationItemMap.values())
             this._contentBrowser.navigationBar.insertNavigationItem(detailNavigationItem, index++);
 

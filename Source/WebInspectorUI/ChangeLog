@@ -1,3 +1,16 @@
+2020-05-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: Preview: default detached window size not wide enough for navigation items to be visible
+        https://bugs.webkit.org/show_bug.cgi?id=211649
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkDetailView.js:
+        (WI.NetworkDetailView.prototype.initialLayout):
+        Don't center the panel switcher radio buttons as when they are centered, there's not always
+        enough room for `WI.NavigationItem`s for the currently showing `WI.ContentView`. Aligning
+        the panel switcher radio buttons to the start allows for as much room as possible.
+
 2020-05-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Timelines: visible outline after clicking the close X button
