@@ -1,3 +1,24 @@
+2020-05-10  Darin Adler  <darin@apple.com>
+
+        Add copy constructor and assignment operator to Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=211705
+
+        Reviewed by Sam Weinig.
+
+        As recently discussed in some WebKit bug patch review, we think that Ref and RefPtr
+        should have the same design, except for whether the value can be null. Ref had a
+        more ambitious approach to avoiding reference count churn, requiring a
+        call to copyRef to make any copying explicit, partly by analogy with raw C
+        references, which also can't be copied (but they can't be moved either). We choose
+        to change Ref to match RefPtr and to take the risk of additional churn. This makes
+        it easier to use Ref in contexts like collection classes and structures. An
+        alternative would be to go the other direction, and make RefPtr require a call to
+        copyRef: seems like an obviously worse option.
+
+        * wtf/Ref.h: Add the copy constructor and assignment operator.
+        These follow a similar pattern to the move constructor and assignment operator.
+        Also add a deprecation comment before copyRef, which we will eventually remove.
+
 2020-05-10  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Use alias template to define `match_constness_t` in Wtf/wtp/TypeCasts.h

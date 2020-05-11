@@ -1,3 +1,14 @@
+2020-05-10  Darin Adler  <darin@apple.com>
+
+        Add copy constructor and assignment operator to Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=211705
+
+        Reviewed by Sam Weinig.
+
+        * dom/BoundaryPoint.h: As a test of the change to Ref, remove the explicit
+        copy and move constructors and assignment operators, relying on the defaults
+        instead, which are now exactly what we want.
+
 2020-05-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Update user agent quirk for bankofamerica.com

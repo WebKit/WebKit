@@ -35,12 +35,6 @@ struct BoundaryPoint {
 
     BoundaryPoint(Ref<Node>&&, unsigned);
 
-    // Unlike Ref, we allow copying a BoundaryPoint without an explicit copyRef().
-    BoundaryPoint(const BoundaryPoint&);
-    BoundaryPoint(BoundaryPoint&&) = default;
-    BoundaryPoint& operator=(const BoundaryPoint&);
-    BoundaryPoint& operator=(BoundaryPoint&&) = default;
-
     Document& document() const;
 };
 
@@ -53,19 +47,6 @@ inline BoundaryPoint::BoundaryPoint(Ref<Node>&& container, unsigned offset)
     : container(WTFMove(container))
     , offset(offset)
 {
-}
-
-inline BoundaryPoint::BoundaryPoint(const BoundaryPoint& other)
-    : container(other.container.copyRef())
-    , offset(other.offset)
-{
-}
-
-inline BoundaryPoint& BoundaryPoint::operator=(const BoundaryPoint& other)
-{
-    container = other.container.copyRef();
-    offset = other.offset;
-    return *this;
 }
 
 inline Document& BoundaryPoint::document() const
