@@ -1213,12 +1213,12 @@
     )
 )
 
-(when (defined? 'mach_make_memory_entry)
 (when (defined? 'mach-kernel-endpoint)
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (allow mach-message-send (with report) (with telemetry))
+            (deny mach-message-send (with telemetry))
             (allow mach-message-send (kernel-mig-routine
+                (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
                 host_get_clock_service
                 host_get_io_master
                 host_get_special_port
@@ -1238,7 +1238,8 @@
                 io_service_get_matching_service_bin
                 io_service_get_matching_services_bin
                 io_service_open_extended
-                mach_make_memory_entry
+                mach_exception_raise
+                (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 mach_port_get_context_from_user
                 mach_port_request_notification
                 mach_port_set_attributes
@@ -1264,5 +1265,4 @@
             )
         )
     )
-)
 )
