@@ -156,14 +156,14 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
 }
 
-void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
+void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
-    m_page.loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, hasNavigatedAwayFromAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy);
+    m_page.loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy);
 }
 
-void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
+void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, Optional<WebsitePoliciesData>&& websitePolicies)
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
@@ -173,7 +173,7 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
     if (navigation.fromItem() && navigation.lockBackForwardList() == WebCore::LockBackForwardList::Yes)
         navigation.fromItem()->setLastProcessIdentifier(m_process->coreProcessIdentifier());
 
-    m_page.loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, WTFMove(request), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, hasNavigatedAwayFromAppBoundDomain, WTFMove(websitePolicies));
+    m_page.loadRequestWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, WTFMove(request), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, isNavigatingToAppBoundDomain, WTFMove(websitePolicies));
 }
 
 void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -357,7 +357,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     if (!isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameID) || navigationID != m_navigationID) {
-        reply(PolicyDecision { identifier, NavigatingToAppBoundDomain::No, NavigatedAwayFromAppBoundDomain::No, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt });
+        reply(PolicyDecision { identifier, WTF::nullopt, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt });
         return;
     }
 

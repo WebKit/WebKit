@@ -1315,11 +1315,10 @@ public:
 
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
-    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; }
+    void notifyPageOfAppBoundBehavior();
+    bool shouldEnableInAppBrowserPrivacyProtections();
+    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain>);
     Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
-    NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain() const { return m_hasNavigatedAwayFromAppBoundDomain; }
-    void setHasNavigatedAwayFromAppBoundDomain(NavigatedAwayFromAppBoundDomain navigatedAwayFromAppBoundDomain) { m_hasNavigatedAwayFromAppBoundDomain = navigatedAwayFromAppBoundDomain; }
-    bool needsInAppBrowserPrivacyQuirks() const { return m_needsInAppBrowserPrivacyQuirks; }
     
     bool shouldUseRemoteRenderingFor(WebCore::RenderingPurpose);
 
@@ -1419,7 +1418,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, Optional<NavigatingToAppBoundDomain>, NavigatedAwayFromAppBoundDomain, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, Optional<NavigatingToAppBoundDomain>, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
@@ -2104,8 +2103,9 @@ private:
     String m_themeName;
 #endif
     
-    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
-    NavigatedAwayFromAppBoundDomain m_hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
+    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+    bool m_limitsNavigationsToAppBoundDomains { false };
+    bool m_navigationHasOccured { false };
 };
 
 #if !PLATFORM(IOS_FAMILY)

@@ -599,4 +599,5 @@ messages -> WebPageProxy {
     RemoveMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier);
 #endif
 
+    SetHasExecutedAppBoundBehaviorBeforeNavigation()
 }

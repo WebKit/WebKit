@@ -70,8 +70,7 @@ struct LoadParameters {
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     String clientRedirectSourceForHistory;
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
-    NavigatedAwayFromAppBoundDomain hasNavigatedAwayFromAppBoundDomain { NavigatedAwayFromAppBoundDomain::No };
+    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;

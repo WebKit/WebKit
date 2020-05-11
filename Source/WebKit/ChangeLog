@@ -1,3 +1,100 @@
+2020-05-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Fail navigations to non app-bound domains after use of app-bound APIs
+        https://bugs.webkit.org/show_bug.cgi?id=211647
+        <rdar://problem/62978159>
+
+        Reviewed by Brent Fulgham.
+
+        A lot of this patch is deleting the unnecessary variable/function
+        hasNavigatedAwayFromAppBoundDomain now that navigating away from an
+        app-bound domain is not possible.
+        
+        To address the bug, this sets the default isNavigatingToAppBoundDomain
+        value to be WTF::nullopt. This will allow app-bound behaviors until
+        a navigation has been attempted, in which case it will fail or will
+        update isNavigatingToAppBoundDomain to the correct value.
+
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * Shared/PolicyDecision.h:
+        (WebKit::PolicyDecision::encode const):
+        (WebKit::PolicyDecision::decode):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadData):
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSyncShared):
+        (WebKit::WebPageProxy::hasNavigatedAwayFromAppBoundDomain const): Deleted.
+        Remove hasNavigatedAwayFromAppBoundDomain.
+
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        Check for new m_hasExecutedAppBoundBehaviorBeforeNavigation parameter
+        and fail the navigation if a WebView has used app-bound behavior then
+        tries to navigate to a non app-bound domain.
+
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        Update error message to be more general now that more than one error
+        can occur.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setHasExecutedAppBoundBehaviorBeforeNavigation):
+        * UIProcess/WebPageProxy.messages.in:
+        New parameter to indicate a WebView has used app-bound APIs before
+        navigating.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections):
+        (WebKit::WebFrameLoaderClient::hasNavigatedAwayFromAppBoundDomain): Deleted.
+        (WebKit::WebFrameLoaderClient::needsInAppBrowserPrivacyQuirks const): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        Combined two functions into a simpler function:
+        shouldEnableInAppBrowserPrivacyProtections().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::updatePreferences):
+        Store the special app-bound domain flag to gate the service worker
+        API. This should be stored separately from
+        m_isNavigatingToAppBoundDomain, because in the WebPage constructor we
+        don't yet know whether the WKAppBoundDomains key exists.
+
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        Remove hasNavigatedAwayFromAppBoundDomain.
+
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain):
+        (WebKit::WebPage::shouldEnableInAppBrowserPrivacyProtections):
+        If m_needsInAppBrowserPrivacyQuirks are on for testing, don't enable
+        protections. Only notify the WebPageProxy of app-bound behavior if
+        a navigation has not occured and we know the webView is not app-bound
+        (in order to limit IPC).
+
+        (WebKit::m_isNavigatingToAppBoundDomain): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isNavigatingToAppBoundDomain const):
+        (WebKit::WebPage::setIsNavigatingToAppBoundDomain): Deleted.
+        (WebKit::WebPage::hasNavigatedAwayFromAppBoundDomain const): Deleted.
+        (WebKit::WebPage::setHasNavigatedAwayFromAppBoundDomain): Deleted.
+        (WebKit::WebPage::needsInAppBrowserPrivacyQuirks const): Deleted.
+
 2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove some unnecessary indirection when getting Document’s Editor

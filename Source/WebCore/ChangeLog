@@ -1,3 +1,28 @@
+2020-05-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Fail navigations to non app-bound domains after use of app-bound APIs
+        https://bugs.webkit.org/show_bug.cgi?id=211647
+        <rdar://problem/62978159>
+
+        Reviewed by Brent Fulgham.
+
+        Simplified in-app browser privacy protections check into one, better
+        named function.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        * loader/FrameLoaderClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/Page.cpp:
+        (WebCore::Page::injectUserStyleSheet):
+        * page/WebKitNamespace.cpp:
+        (WebCore::WebKitNamespace::messageHandlers):
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ScopeRuleSets::initializeUserStyle):
+        Rearranged ordering so the message to WebPageProxy only gets sent to
+        indicate app-bound behavior if user style sheets actually exist.
+
 2020-05-11  Peng Liu  <peng.liu6@apple.com>
 
         Enable the mock video presentation mode in related layout tests and fix test failures

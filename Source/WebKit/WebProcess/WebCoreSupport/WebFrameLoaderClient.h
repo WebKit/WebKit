@@ -288,8 +288,8 @@ private:
     Optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
 #endif
 
-    bool hasNavigatedAwayFromAppBoundDomain() final;
-    bool needsInAppBrowserPrivacyQuirks() const final;
+    bool shouldEnableInAppBrowserPrivacyProtections() const final;
+    void notifyPageOfAppBoundBehavior() final;
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.

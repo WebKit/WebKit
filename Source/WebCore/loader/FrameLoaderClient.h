@@ -379,8 +379,8 @@ public:
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
 
-    virtual bool hasNavigatedAwayFromAppBoundDomain() { return false; }
-    virtual bool needsInAppBrowserPrivacyQuirks() const { return false; }
+    virtual bool shouldEnableInAppBrowserPrivacyProtections() const { return false; }
+    virtual void notifyPageOfAppBoundBehavior() { }
 };
 
 } // namespace WebCore

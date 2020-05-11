@@ -50,9 +50,12 @@ WebKitNamespace::~WebKitNamespace() = default;
 
 UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 {
-    if (frame() && frame()->loader().client().hasNavigatedAwayFromAppBoundDomain()) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Ignoring messageHandlers() request for non app-bound domain");
-        return nullptr;
+    if (frame()) {
+        if (frame()->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "Ignoring messageHandlers() request for non app-bound domain");
+            return nullptr;
+        }
+        frame()->loader().client().notifyPageOfAppBoundBehavior();
     }
 
     return &m_messageHandlerNamespace.get();

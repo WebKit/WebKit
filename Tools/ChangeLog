@@ -1,3 +1,29 @@
+2020-05-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Fail navigations to non app-bound domains after use of app-bound APIs
+        https://bugs.webkit.org/show_bug.cgi?id=211647
+        <rdar://problem/62978159>
+
+        Reviewed by Brent Fulgham.
+
+        Added a new test to confirm a non-app bound navigation fails after
+        using script injection.
+
+        This fix also required changing any test which uses a restricted API
+        to confirm behavior of another restricted API. Tests can set
+        _setNeedsInAppBrowserPrivacyQuirks in the configuration to indicate
+        APIs should not be blocked, then toggle it to test actual behavior.
+
+        Also, we can remove any calls to _setInAppBrowserPrivacyEnabled
+        now that this is just an internal test flag. 
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[AppBoundDomainDelegate webView:didFinishNavigation:]):
+        (-[AppBoundDomainDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[AppBoundDomainDelegate waitForDidFinishNavigation]):
+        (-[AppBoundDomainDelegate waitForDidFailProvisionalNavigationError]):
+        (TEST):
+
 2020-05-11  Alex Christensen  <achristensen@webkit.org>
 
         Add some logs to diagnose why WebKitLegacy.CrossPartitionFileSchemeAccess API test times out in EWS
