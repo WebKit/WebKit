@@ -1,3 +1,16 @@
+2020-05-11  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the mock video presentation mode in related layout tests and fix test failures
+        https://bugs.webkit.org/show_bug.cgi?id=211645
+
+        Reviewed by Eric Carlson.
+
+        Revert the unnecessary change in r261493 to fix the build failures when
+        the Picture-in-Picture API is disabled.
+
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+
 2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove some unnecessary indirection when getting Document’s Editor
