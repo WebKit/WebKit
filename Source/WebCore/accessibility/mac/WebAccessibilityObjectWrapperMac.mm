@@ -1078,7 +1078,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
 
     if (unifiedTextCheckerEnabled(node->document().frame())) {
         // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-        TextCheckerClient* checker = node->document().frame()->editor().textChecker();
+        TextCheckerClient* checker = node->document().editor().textChecker();
         
         // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
         Vector<TextCheckingResult> results;
@@ -1098,7 +1098,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     for (unsigned currentPosition = 0; currentPosition < text.length(); ) {
         int misspellingLocation = -1;
         int misspellingLength = 0;
-        node->document().frame()->editor().textChecker()->checkSpellingOfString(text.substring(currentPosition), &misspellingLocation, &misspellingLength);
+        node->document().editor().textChecker()->checkSpellingOfString(text.substring(currentPosition), &misspellingLocation, &misspellingLength);
         if (misspellingLocation == -1 || !misspellingLength)
             break;
         

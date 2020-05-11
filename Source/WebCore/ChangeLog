@@ -1,3 +1,41 @@
+2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some unnecessary indirection when getting Document’s Editor
+        https://bugs.webkit.org/show_bug.cgi?id=211744
+
+        Reviewed by Geoffrey Garen.
+
+        After r261018, there's no longer a need to reach into Document's Frame to get the Editor instance, since
+        Document itself owns the Editor (and Frame's implementation of editor() just calls back into the document
+        anyways). No change in behavior.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetSpelling):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::registerAttachmentIdentifier):
+        (WebCore::Document::didInsertAttachmentElement):
+        (WebCore::Document::didRemoveAttachmentElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerCountForNode):
+        (WebCore::Internals::setMarkedTextMatchesAreHighlighted):
+        (WebCore::Internals::lastSpellCheckRequestSequence):
+        (WebCore::Internals::lastSpellCheckProcessedSequence):
+        (WebCore::Internals::hasSpellingMarker):
+        (WebCore::Internals::hasAutocorrectedMarker):
+        (WebCore::Internals::setContinuousSpellCheckingEnabled):
+        (WebCore::Internals::setAutomaticQuoteSubstitutionEnabled):
+        (WebCore::Internals::setAutomaticLinkDetectionEnabled):
+        (WebCore::Internals::setAutomaticDashSubstitutionEnabled):
+        (WebCore::Internals::setAutomaticTextReplacementEnabled):
+        (WebCore::Internals::setAutomaticSpellingCorrectionEnabled):
+        (WebCore::Internals::handleAcceptedCandidate):
+        (WebCore::Internals::isOverwriteModeEnabled):
+        (WebCore::Internals::toggleOverwriteModeEnabled):
+        (WebCore::Internals::rangeOfString):
+        (WebCore::Internals::countMatchesForText):
+        (WebCore::Internals::hasGrammarMarker):
+
 2020-05-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show JavaScript Worker name as an internal property

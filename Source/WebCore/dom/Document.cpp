@@ -4347,7 +4347,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         }
 
         if (oldFocusedElement->isRootEditableElement())
-            frame()->editor().didEndEditing();
+            editor().didEndEditing();
 
         if (view()) {
             if (Widget* oldWidget = widgetForElement(oldFocusedElement.get()))
@@ -4412,7 +4412,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         }
 
         if (m_focusedElement->isRootEditableElement())
-            frame()->editor().didBeginEditing();
+            editor().didBeginEditing();
 
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
@@ -8150,8 +8150,9 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
 
 void Document::registerAttachmentIdentifier(const String& identifier)
 {
-    if (auto* frame = this->frame())
-        frame->editor().registerAttachmentIdentifier(identifier);
+    // FIXME: Can this null check for Frame be removed?
+    if (frame())
+        editor().registerAttachmentIdentifier(identifier);
 }
 
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
@@ -8167,10 +8168,11 @@ void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 
     m_attachmentIdentifierToElementMap.set(identifier, attachment);
 
-    if (auto* frame = this->frame()) {
+    // FIXME: Can this null check for Frame be removed?
+    if (frame()) {
         if (previousIdentifierIsNotUnique)
-            frame->editor().cloneAttachmentData(previousIdentifier, identifier);
-        frame->editor().didInsertAttachmentElement(attachment);
+            editor().cloneAttachmentData(previousIdentifier, identifier);
+        editor().didInsertAttachmentElement(attachment);
     }
 }
 
@@ -8182,8 +8184,9 @@ void Document::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
 
     m_attachmentIdentifierToElementMap.remove(identifier);
 
+    // FIXME: Can this null check for Frame be removed?
     if (frame())
-        frame()->editor().didRemoveAttachmentElement(attachment);
+        editor().didRemoveAttachmentElement(attachment);
 }
 
 RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(const String& identifier) const
