@@ -1,3 +1,15 @@
+2020-05-11  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Use alias template for <type_traits> in WTF/wtf/TypeCast.h
+        https://bugs.webkit.org/show_bug.cgi?id=211714
+
+        Reviewed by Darin Adler.
+
+        * wtf/TypeCasts.h:
+        (WTF::TypeCastTraits::isOfType):
+        (WTF::is):
+        (WTF::downcast):
+
 2020-05-10  Darin Adler  <darin@apple.com>
 
         Add copy constructor and assignment operator to Ref<>
