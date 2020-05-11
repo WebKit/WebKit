@@ -378,35 +378,75 @@ struct RowSpan {
     static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.rowSpan() - 1) * grid.verticalSpacing(); }
 };
 
+struct GridSpace {
+    bool isEmpty() const { return !value; }
+
+    // Initial width/height for column/row we start the distribution width (usually a minumum width).
+    float value { 0 };
+    // The base to compute the distribution ratio. It normally matches the [value] but in some cases we use the maximum value to distribute the extra space. 
+    float distributionBase { 0 };
+};
+
+inline static GridSpace max(const GridSpace& a, const GridSpace& b)
+{
+    return { std::max(a.value, b.value), std::max(a.distributionBase, b.distributionBase) };
+}
+
+inline static GridSpace& operator-(GridSpace& a, const GridSpace& b)
+{
+    a.value = std::max(0.0f, a.value - b.value);
+    a.distributionBase = std::max(0.0f, a.distributionBase - b.distributionBase);
+    return a;
+}
+
+inline static GridSpace& operator+=(GridSpace& a, const GridSpace& b)
+{
+    a.value += b.value;
+    a.distributionBase += b.distributionBase;
+    return a;
+}
+
+inline static GridSpace& operator-=(GridSpace& a, const GridSpace& b)
+{
+    return a - b;
+}
+
+inline static GridSpace& operator/(GridSpace& a, unsigned value)
+{
+    a.value /= value;
+    a.distributionBase /= value;
+    return a;
+}
+
 using DistributedSpaces = Vector<float>;
 template <typename SpanType>
-static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float spaceToDistribute, const WTF::Function<LayoutUnit(const TableGrid::Slot&, size_t)>& slotSpace)
+static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float spaceToDistribute, const WTF::Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
 {
-    struct ResolvedSpace {
-        float value { 0 };
+    struct ResolvedItem {
+        GridSpace slotSpace;
         bool isFixed { false };
     };
 
     auto& columns = grid.columns();
     auto& rows = grid.rows();
     // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
-    Vector<Optional<ResolvedSpace>> resolvedSpaces(SpanType::size(grid));
+    Vector<Optional<ResolvedItem>> resolvedItems(SpanType::size(grid));
     for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
         for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
             if (SpanType::hasSpan(slot) || SpanType::isSpanned(slot))
                 continue;
             auto index = SpanType::index(columnIndex, rowIndex);
-            if (!resolvedSpaces[index])
-                resolvedSpaces[index] = ResolvedSpace { };
-            resolvedSpaces[index]->value = std::max<float>(resolvedSpaces[index]->value, slotSpace(slot, index));
+            if (!resolvedItems[index])
+                resolvedItems[index] = ResolvedItem { };
+            resolvedItems[index]->slotSpace = max(resolvedItems[index]->slotSpace, slotSpace(slot, index));
         }
     }
 
     // 2. Collect the spanning cells.
     struct SpanningCell {
         SlotPosition position;
-        LayoutUnit unresolvedSpace;
+        GridSpace unresolvedSpace;
     };
     Vector<SpanningCell> spanningCells;
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
@@ -430,8 +470,8 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
     // The initial widths are: [ 2 ][ 7 ][ 1 ]
     for (auto spanningCell : spanningCells) {
         auto& cell = grid.slot(spanningCell.position)->cell();
-        float unresolvedSpanningSpace = spanningCell.unresolvedSpace;
-        if (!resolvedSpaces[SpanType::startSpan(cell)] || !resolvedSpaces[SpanType::endSpan(cell) - 1]) {
+        auto unresolvedSpanningSpace = spanningCell.unresolvedSpace;
+        if (!resolvedItems[SpanType::startSpan(cell)] || !resolvedItems[SpanType::endSpan(cell) - 1]) {
             // <td colspan=4>#a</td><td>#b</td>
             // <td colspan=2>#c</td><td colspan=3>#d</td>
             // Unresolved columns are: 1 2 3 4
@@ -440,58 +480,64 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
             // 3. colspan=4 needs no resolving because all the spanned columns (1 2 3 4) have already been resolved.
             auto unresolvedColumnCount = cell.columnSpan();
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
-                if (!resolvedSpaces[spanIndex])
+                if (!resolvedItems[spanIndex])
                     continue;
                 ASSERT(unresolvedColumnCount);
                 --unresolvedColumnCount;
-                unresolvedSpanningSpace = std::max(0.0f, unresolvedSpanningSpace - resolvedSpaces[spanIndex]->value);
+                unresolvedSpanningSpace -= resolvedItems[spanIndex]->slotSpace;
             }
             ASSERT(unresolvedColumnCount);
+            auto equalSpaceForSpannedColumns = unresolvedSpanningSpace / unresolvedColumnCount;
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex) {
-                if (resolvedSpaces[spanIndex])
+                if (resolvedItems[spanIndex])
                     continue;
-                resolvedSpaces[spanIndex] = ResolvedSpace { unresolvedSpanningSpace / unresolvedColumnCount, false };
+                resolvedItems[spanIndex] = ResolvedItem { equalSpaceForSpannedColumns, false };
             }
         } else {
             // 1. Collect the non-spaning resolved spaces.
             // 2. Distribute the extra space among the spanned columns/rows based on the resolved space values.
             // e.g. spanning width: [   9   ]. Resolved widths for the spanned columns: [ 1 ] [ 2 ]
             // New resolved widths: [ 3 ] [ 6 ].
-            float resolvedSpace = 0;
+            auto resolvedSpanningSpace = GridSpace { };
             for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                resolvedSpace += resolvedSpaces[spanIndex]->value;
-            if (resolvedSpace >= unresolvedSpanningSpace) {
+                resolvedSpanningSpace += resolvedItems[spanIndex]->slotSpace;
+            if (resolvedSpanningSpace.value >= unresolvedSpanningSpace.value) {
                 // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
                 continue;
             }
-            auto spanningSpaceToDistribute = std::max(0.0f, unresolvedSpanningSpace - SpanType::spacing(grid, cell) - resolvedSpace);
-            if (spanningSpaceToDistribute) {
+            auto spacing = SpanType::spacing(grid, cell);
+            auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { spacing, spacing } - resolvedSpanningSpace; 
+            if (!spaceToDistribute.isEmpty()) {
+                auto distributionRatio = spaceToDistribute.distributionBase / resolvedSpanningSpace.distributionBase;
                 for (auto spanIndex = SpanType::startSpan(cell); spanIndex < SpanType::endSpan(cell); ++spanIndex)
-                    resolvedSpaces[spanIndex]->value += spanningSpaceToDistribute / resolvedSpace * resolvedSpaces[spanIndex]->value;
+                    resolvedItems[spanIndex]->slotSpace += GridSpace { resolvedItems[spanIndex]->slotSpace.value * distributionRatio, resolvedItems[spanIndex]->slotSpace.distributionBase * distributionRatio};
             }
         }
     }
     // 4. Distribute the extra space using the final resolved widths.
 #if ASSERT_ENABLED
     // We have to have all the spaces resolved at this point.
-    for (auto& resolvedSpace : resolvedSpaces)
-        ASSERT(resolvedSpace);
+    for (auto& resolvedItem : resolvedItems)
+        ASSERT(resolvedItem);
 #endif
     // Fixed size cells don't participate in available space distribution.
-    float adjustabledSpace = 0;
-    for (auto& resolvedSpace : resolvedSpaces) {
-        if (resolvedSpace->isFixed)
+    auto adjustabledSpace = GridSpace { };
+    for (auto& resolvedItem : resolvedItems) {
+        if (resolvedItem->isFixed)
             continue;
-        adjustabledSpace += resolvedSpace->value;
+        adjustabledSpace += resolvedItem->slotSpace;
     }
 
-    DistributedSpaces distributedSpaces(resolvedSpaces.size());
+    DistributedSpaces distributedSpaces(resolvedItems.size());
     // Distribute the extra space based on the resolved spaces.
-    for (size_t index = 0; index < resolvedSpaces.size(); ++index) {
-        auto& resolvedSpace = resolvedSpaces[index];
-        auto hasExtraSpaceToDistribute = spaceToDistribute && !resolvedSpace->isFixed;
-        auto resolvedValue = resolvedSpace->value;
-        distributedSpaces[index] = hasExtraSpaceToDistribute ? resolvedValue + (spaceToDistribute / adjustabledSpace * resolvedValue) : resolvedValue;
+    auto distributionRatio = spaceToDistribute / adjustabledSpace.distributionBase;
+    for (size_t index = 0; index < resolvedItems.size(); ++index) {
+        auto slotSpace = resolvedItems[index]->slotSpace.value;
+        auto needsSpaceDistribution = spaceToDistribute && !resolvedItems[index]->isFixed;
+        distributedSpaces[index] = slotSpace;
+        if (!needsSpaceDistribution)
+            continue;
+        distributedSpaces[index] += slotSpace * distributionRatio;
     }
     return distributedSpaces;
 }
@@ -507,8 +553,8 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
         auto distributedSpaces = distributeAvailableSpace<ColumnSpan>(grid, extraHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
             auto& column = columns.list()[columnIndex];
             auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt;
-            auto slotWidth = columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth ? slot.widthConstraints().minimum : slot.widthConstraints().maximum;
-            return std::max(slotWidth, columnFixedWidth.valueOr(0_lu));
+            auto slotWidth = std::max<float>(columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth ? slot.widthConstraints().minimum : slot.widthConstraints().maximum, columnFixedWidth.valueOr(0_lu));
+            return GridSpace { slotWidth, slotWidth };
         });
         // Set finial horizontal position and width.
         auto columnLogicalLeft = grid.horizontalSpacing();
@@ -579,9 +625,10 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
         spaceToDistribute = std::max(0.0f, *availableVerticalSpace - ((rows.size() + 1) * grid.verticalSpacing()) - tableUsedHeight);
     auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, spaceToDistribute, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
-            return geometryForBox(slot.cell().box()).height();
+            return GridSpace { geometryForBox(slot.cell().box()).height(), geometryForBox(slot.cell().box()).height() };
         auto computedRowHeight = geometry().computedHeight(rows.list()[rowIndex].box(), { });
-        return std::max(LayoutUnit { rowHeight[rowIndex].height() }, computedRowHeight.valueOr(0_lu));
+        auto height = std::max<float>(rowHeight[rowIndex].height(), computedRowHeight.valueOr(0_lu));
+        return GridSpace { height, height };
     });
 
     auto rowLogicalTop = grid.verticalSpacing();

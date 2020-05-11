@@ -1,3 +1,27 @@
+2020-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Introduce GridSpace
+        https://bugs.webkit.org/show_bug.cgi?id=211712
+
+        Reviewed by Antti Koivisto.
+
+        Normally we use the initial width/height (minimum width/height) value to compute the
+        distribution ratio for the extra space (e.g minimum widths are [ 1 ] [ 2 ] extra space: 6; final widths [ 1 + 2 ] [ 2 + 4 ]).
+        However is some rare case, while we use the minimum widths as the initial widths, the distribution ratio
+        is computed using the maximum widths.
+        This patch introduces GridSpace to be able to differentiate initial and distribution widths/heights (no functional change yet).
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::GridSpace::isEmpty const):
+        (WebCore::Layout::max):
+        (WebCore::Layout::operator-):
+        (WebCore::Layout::operator+=):
+        (WebCore::Layout::operator-=):
+        (WebCore::Layout::operator/):
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+
 2020-05-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Refactor animation comparison by composite order in a single utility function
