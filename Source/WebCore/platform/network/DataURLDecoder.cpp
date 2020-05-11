@@ -152,15 +152,21 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     );
 }
 
-static void decodeBase64(DecodeTask& task)
+static void decodeBase64(DecodeTask& task, Mode mode)
 {
     Vector<char> buffer;
-    // First try base64url.
-    if (!base64URLDecode(task.encodedData.toStringWithoutCopying(), buffer)) {
-        // Didn't work, try unescaping and decoding as base64.
+    if (mode == Mode::ForgivingBase64) {
         auto unescapedString = decodeURLEscapeSequences(task.encodedData.toStringWithoutCopying());
-        if (!base64Decode(unescapedString, buffer, Base64IgnoreSpacesAndNewLines | Base64DiscardVerticalTab))
+        if (!base64Decode(unescapedString, buffer, Base64ValidatePadding | Base64IgnoreSpacesAndNewLines | Base64DiscardVerticalTab))
             return;
+    } else {
+        // First try base64url.
+        if (!base64URLDecode(task.encodedData.toStringWithoutCopying(), buffer)) {
+            // Didn't work, try unescaping and decoding as base64.
+            auto unescapedString = decodeURLEscapeSequences(task.encodedData.toStringWithoutCopying());
+            if (!base64Decode(unescapedString, buffer, Base64IgnoreSpacesAndNewLines | Base64DiscardVerticalTab))
+                return;
+        }
     }
     buffer.shrinkToFit();
     task.result.data = SharedBuffer::create(WTFMove(buffer));
@@ -176,14 +182,14 @@ static void decodeEscaped(DecodeTask& task)
     task.result.data = SharedBuffer::create(WTFMove(buffer));
 }
 
-void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
+void decode(const URL& url, const ScheduleContext& scheduleContext, Mode mode, DecodeCompletionHandler&& completionHandler)
 {
     ASSERT(url.protocolIsData());
 
-    decodeQueue().dispatch([decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler))]() mutable {
+    decodeQueue().dispatch([decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler)), mode]() mutable {
         if (decodeTask->process()) {
             if (decodeTask->isBase64)
-                decodeBase64(*decodeTask);
+                decodeBase64(*decodeTask, mode);
             else
                 decodeEscaped(*decodeTask);
         }

@@ -273,7 +273,10 @@ void ResourceLoader::loadDataURL()
             scheduleContext.scheduledPairs = *scheduledPairs;
     }
 #endif
-    DataURLDecoder::decode(url, scheduleContext, [this, protectedThis = makeRef(*this), url](auto decodeResult) mutable {
+    auto mode = DataURLDecoder::Mode::Legacy;
+    if (m_request.requester() == ResourceRequest::Requester::Fetch)
+        mode = DataURLDecoder::Mode::ForgivingBase64;
+    DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = makeRef(*this), url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
             return;
         if (!decodeResult) {

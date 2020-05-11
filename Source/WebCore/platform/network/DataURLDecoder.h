@@ -51,7 +51,8 @@ struct ScheduleContext {
 #endif
 };
 
-void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
+enum class Mode { Legacy, ForgivingBase64 };
+void decode(const URL&, const ScheduleContext&, Mode, DecodeCompletionHandler&&);
 
 }
 
