@@ -1,3 +1,14 @@
+2020-05-11  Kenneth Russell  <kbr@chromium.org>
+
+        Enable conformance2/textures/canvas/ and image_data/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=211602
+
+        Reviewed by Dean Jackson.
+
+        Enable all of these layout tests, which are now passing.
+
+        * TestExpectations:
+
 2020-05-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show JavaScript Worker name as an internal property
