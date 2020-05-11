@@ -1,3 +1,12 @@
+2020-05-11  Paulo Matos  <pmatos@igalia.com>
+
+        Fix typo 'Detacted' -> 'Detected'
+        https://bugs.webkit.org/show_bug.cgi?id=211715
+
+        Unreviewed.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-05-10  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Update user agent quirk for bankofamerica.com

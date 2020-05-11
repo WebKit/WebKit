@@ -2171,7 +2171,7 @@ def detectFailures
             end
         }
     }
-    puts "Detacted failures in #{Time.now - start_time}"
+    puts "Detected failures in #{Time.now - start_time}"
 end
 
 def compressBundle
