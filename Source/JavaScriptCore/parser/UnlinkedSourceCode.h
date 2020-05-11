@@ -40,7 +40,7 @@ namespace JSC {
 
     public:
         UnlinkedSourceCode()
-            : m_provider(0)
+            : m_provider(nullptr)
             , m_startOffset(0)
             , m_endOffset(0)
         {

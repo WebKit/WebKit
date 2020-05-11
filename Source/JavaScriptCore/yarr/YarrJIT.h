@@ -121,13 +121,13 @@ public:
     MatchResult execute(const LChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
     {
         ASSERT(has8BitCodeMatchOnly());
-        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().executableAddress())(input, start, length, 0, matchingContext));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().executableAddress())(input, start, length, nullptr, matchingContext));
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, MatchingContextHolder& matchingContext)
     {
         ASSERT(has16BitCodeMatchOnly());
-        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, 0, matchingContext));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, nullptr, matchingContext));
     }
 
 #if ENABLE(REGEXP_TRACING)

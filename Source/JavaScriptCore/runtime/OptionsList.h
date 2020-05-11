@@ -574,7 +574,7 @@ public:
         RELEASE_ASSERT(!value);
 
         m_state = Uninitialized;
-        m_rangeString = 0;
+        m_rangeString = nullptr;
         m_lowLimit = 0;
         m_highLimit = 0;
         return *this;

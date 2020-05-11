@@ -1017,7 +1017,7 @@ public:
         ByteDisjunction* disjunctionBody = term.atom.parenthesesDisjunction;
 
         backTrack->matchAmount = 0;
-        backTrack->lastContext = 0;
+        backTrack->lastContext = nullptr;
 
         ASSERT(term.atom.quantityType != QuantifierFixedCount || term.atom.quantityMinCount == term.atom.quantityMaxCount);
 
@@ -1109,7 +1109,7 @@ public:
         case QuantifierFixedCount: {
             ASSERT(backTrack->matchAmount == term.atom.quantityMaxCount);
 
-            ParenthesesDisjunctionContext* context = 0;
+            ParenthesesDisjunctionContext* context = nullptr;
             JSRegExpResult result = parenthesesDoBacktrack(term, backTrack);
 
             if (result != JSRegExpMatch)

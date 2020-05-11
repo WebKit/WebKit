@@ -175,7 +175,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
             } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
                 if (!propertyNameRef)
                     propertyNameRef = OpaqueJSString::tryCreate(name);
-                JSValueRef exception = 0;
+                JSValueRef exception = nullptr;
                 JSValueRef value;
                 {
                     JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -234,7 +234,7 @@ JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, JSGlobalO
 
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
-            JSValueRef exception = 0;
+            JSValueRef exception = nullptr;
             JSValueRef result = convertToType(ctx, thisRef, jsHint, &exception);
             if (exception) {
                 throwException(globalObject, scope, toJS(globalObject, exception));
@@ -265,7 +265,7 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
             if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
                 if (!propertyNameRef)
                     propertyNameRef = OpaqueJSString::tryCreate(name);
-                JSValueRef exception = 0;
+                JSValueRef exception = nullptr;
                 bool result;
                 {
                     JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -282,7 +282,7 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
                     if (entry->attributes & kJSPropertyAttributeReadOnly)
                         return false;
                     if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
-                        JSValueRef exception = 0;
+                        JSValueRef exception = nullptr;
                         bool result;
                         {
                             JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -329,7 +329,7 @@ bool JSCallbackObject<Parent>::putByIndex(JSCell* cell, JSGlobalObject* globalOb
         if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::tryCreate(propertyName.impl());
-            JSValueRef exception = 0;
+            JSValueRef exception = nullptr;
             bool result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -346,7 +346,7 @@ bool JSCallbackObject<Parent>::putByIndex(JSCell* cell, JSGlobalObject* globalOb
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return false;
                 if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
-                    JSValueRef exception = 0;
+                    JSValueRef exception = nullptr;
                     bool result;
                     {
                         JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -388,7 +388,7 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, JSGlobalObject* glob
             if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {
                 if (!propertyNameRef)
                     propertyNameRef = OpaqueJSString::tryCreate(name);
-                JSValueRef exception = 0;
+                JSValueRef exception = nullptr;
                 bool result;
                 {
                     JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -461,7 +461,7 @@ EncodedJSValue JSCallbackObject<Parent>::construct(JSGlobalObject* globalObject,
             arguments.reserveInitialCapacity(argumentCount);
             for (size_t i = 0; i < argumentCount; ++i)
                 arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
-            JSValueRef exception = 0;
+            JSValueRef exception = nullptr;
             JSObject* result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -492,7 +492,7 @@ bool JSCallbackObject<Parent>::customHasInstance(JSObject* object, JSGlobalObjec
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectHasInstanceCallback hasInstance = jsClass->hasInstance) {
             JSValueRef valueRef = toRef(globalObject, value);
-            JSValueRef exception = 0;
+            JSValueRef exception = nullptr;
             bool result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -538,7 +538,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(JSGlobalObject* globalObject, Call
             arguments.reserveInitialCapacity(argumentCount);
             for (size_t i = 0; i < argumentCount; ++i)
                 arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
-            JSValueRef exception = 0;
+            JSValueRef exception = nullptr;
             JSValue result;
             {
                 JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -635,7 +635,7 @@ JSValue JSCallbackObject<Parent>::getStaticValue(JSGlobalObject* globalObject, P
             if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(globalObject)) {
                 if (StaticValueEntry* entry = staticValues->get(name)) {
                     if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
-                        JSValueRef exception = 0;
+                        JSValueRef exception = nullptr;
                         JSValueRef value;
                         {
                             JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -702,7 +702,7 @@ EncodedJSValue JSCallbackObject<Parent>::callbackGetter(JSGlobalObject* globalOb
             if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
                 if (!propertyNameRef)
                     propertyNameRef = OpaqueJSString::tryCreate(name);
-                JSValueRef exception = 0;
+                JSValueRef exception = nullptr;
                 JSValueRef value;
                 {
                     JSLock::DropAllLocks dropAllLocks(globalObject);

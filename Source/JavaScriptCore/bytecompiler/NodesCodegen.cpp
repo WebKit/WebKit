@@ -120,7 +120,7 @@ void ConstantNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, 
 RegisterID* ConstantNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult())
-        return 0;
+        return nullptr;
     JSValue constant = jsValue(generator);
     if (UNLIKELY(!constant)) {
         // This can happen if we try to parse a string or BigInt so enormous that we OOM.
@@ -173,7 +173,7 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
 {
     generator.ensureThis();
     if (dst == generator.ignoredResult())
-        return 0;
+        return nullptr;
 
     RegisterID* result = generator.move(dst, generator.thisRegister());
     static const unsigned thisLength = strlen("this");
@@ -464,7 +464,7 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     }
 
     if (m_elision) {
-        RegisterID* value = generator.emitLoad(0, jsNumber(m_elision + length));
+        RegisterID* value = generator.emitLoad(nullptr, jsNumber(m_elision + length));
         generator.emitPutById(array.get(), generator.propertyNames().length, value);
     }
 
@@ -479,7 +479,7 @@ handleSpread:
     });
     for (; n; n = n->next()) {
         if (n->elision())
-            generator.emitBinaryOp<OpAdd>(index.get(), index.get(), generator.emitLoad(0, jsNumber(n->elision())), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+            generator.emitBinaryOp<OpAdd>(index.get(), index.get(), generator.emitLoad(nullptr, jsNumber(n->elision())), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
         if (n->value()->isSpreadExpression()) {
             SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(n->value());
             generator.emitEnumeration(spread, spread->expression(), spreader);
@@ -490,7 +490,7 @@ handleSpread:
     }
     
     if (m_elision) {
-        generator.emitBinaryOp<OpAdd>(index.get(), index.get(), generator.emitLoad(0, jsNumber(m_elision)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+        generator.emitBinaryOp<OpAdd>(index.get(), index.get(), generator.emitLoad(nullptr, jsNumber(m_elision)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
         generator.emitPutById(array.get(), generator.propertyNames().length, index.get());
     }
     return generator.move(dst, array.get());
@@ -514,7 +514,7 @@ ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int lineNu
     ASSERT(!m_elision && !m_optional);
     ElementNode* ptr = m_element;
     if (!ptr)
-        return 0;
+        return nullptr;
     JSTokenLocation location;
     location.line = lineNumber;
     location.startOffset = startPosition;
@@ -534,7 +534,7 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
 {
     if (!m_list) {
         if (dst == generator.ignoredResult())
-            return 0;
+            return nullptr;
         return generator.emitNewObject(generator.finalDestination(dst));
     }
     RefPtr<RegisterID> newObj = generator.emitNewObject(generator.tempDestination(dst));
@@ -1800,7 +1800,7 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
             RefPtr<RegisterID> argumentsRegister;
             argumentsRegister = generator.emitNode(subject);
             generator.emitExpressionInfo(spread->divot(), spread->divotStart(), spread->divotEnd());
-            RefPtr<RegisterID> thisRegister = generator.emitGetByVal(generator.newTemporary(), argumentsRegister.get(), generator.emitLoad(0, jsNumber(0)));
+            RefPtr<RegisterID> thisRegister = generator.emitGetByVal(generator.newTemporary(), argumentsRegister.get(), generator.emitLoad(nullptr, jsNumber(0)));
             generator.emitCallVarargsInTailPosition(returnValue.get(), base.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 1, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
         } else if (m_args->m_listNode && m_args->m_listNode->m_expr) {
             ArgumentListNode* oldList = m_args->m_listNode;
@@ -1896,13 +1896,13 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                     Ref<Label> haveThis = generator.newLabel();
                     Ref<Label> end = generator.newLabel();
                     RefPtr<RegisterID> compareResult = generator.newTemporary();
-                    RefPtr<RegisterID> indexZeroCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(0, jsNumber(0)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+                    RefPtr<RegisterID> indexZeroCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(nullptr, jsNumber(0)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
                     generator.emitJumpIfFalse(indexZeroCompareResult.get(), haveThis.get());
                     generator.move(thisRegister.get(), value);
                     generator.emitLoad(index.get(), jsNumber(1));
                     generator.emitJump(end.get());
                     generator.emitLabel(haveThis.get());
-                    RefPtr<RegisterID> indexOneCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(0, jsNumber(1)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
+                    RefPtr<RegisterID> indexOneCompareResult = generator.emitBinaryOp<OpEq>(compareResult.get(), index.get(), generator.emitLoad(nullptr, jsNumber(1)), OperandTypes(ResultType::numberTypeIsInt32(), ResultType::numberTypeIsInt32()));
                     generator.emitJumpIfFalse(indexOneCompareResult.get(), end.get());
                     generator.move(argumentsRegister.get(), value);
                     generator.emitLoad(index.get(), jsNumber(2));
@@ -2162,7 +2162,7 @@ RegisterID* VoidNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
 {
     if (dst == generator.ignoredResult()) {
         generator.emitNode(generator.ignoredResult(), m_expr);
-        return 0;
+        return nullptr;
     }
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
     return generator.emitLoad(dst, jsUndefined());
@@ -2176,7 +2176,7 @@ RegisterID* TypeOfResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     if (RegisterID* local = var.local()) {
         generator.emitTDZCheckIfNecessary(var, local, nullptr);
         if (dst == generator.ignoredResult())
-            return 0;
+            return nullptr;
         return generator.emitTypeOf(generator.finalDestination(dst), local);
     }
 
@@ -2184,7 +2184,7 @@ RegisterID* TypeOfResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, DoNotThrowIfNotFound);
     generator.emitTDZCheckIfNecessary(var, value.get(), nullptr);
     if (dst == generator.ignoredResult())
-        return 0;
+        return nullptr;
     return generator.emitTypeOf(generator.finalDestination(dst, scope.get()), value.get());
 }
 
@@ -2194,7 +2194,7 @@ RegisterID* TypeOfValueNode::emitBytecode(BytecodeGenerator& generator, Register
 {
     if (dst == generator.ignoredResult()) {
         generator.emitNode(generator.ignoredResult(), m_expr);
-        return 0;
+        return nullptr;
     }
     RefPtr<RegisterID> src = generator.emitNode(m_expr);
     return generator.emitTypeOf(generator.finalDestination(dst), src.get());
@@ -2435,7 +2435,7 @@ RegisterID* BinaryOpNode::emitStrcat(BytecodeGenerator& generator, RegisterID* d
     // immediate we can trivially determine that no conversion will be required.
     // If this is the case
     if (leftMostAddChild->isString())
-        leftMostAddChildTempRegister = 0;
+        leftMostAddChildTempRegister = nullptr;
 
     while (reverseExpressionList.size()) {
         ExpressionNode* node = reverseExpressionList.last();
@@ -2449,7 +2449,7 @@ RegisterID* BinaryOpNode::emitStrcat(BytecodeGenerator& generator, RegisterID* d
         // generated the second node, which means it is time to convert the leftmost operand.
         if (leftMostAddChildTempRegister) {
             generator.emitToPrimitive(leftMostAddChildTempRegister, leftMostAddChildTempRegister);
-            leftMostAddChildTempRegister = 0; // Only do this once.
+            leftMostAddChildTempRegister = nullptr; // Only do this once.
         }
         // Plant a conversion for this node, if necessary.
         if (!node->isString())
@@ -2505,9 +2505,9 @@ static inline bool canFoldToBranch(OpcodeID opcodeID, ExpressionNode* branchExpr
 void BinaryOpNode::tryFoldToBranch(BytecodeGenerator& generator, TriState& branchCondition, ExpressionNode*& branchExpression)
 {
     branchCondition = TriState::Indeterminate;
-    branchExpression = 0;
+    branchExpression = nullptr;
 
-    ConstantNode* constant = 0;
+    ConstantNode* constant = nullptr;
     if (m_expr1->isConstant()) {
         constant = static_cast<ConstantNode*>(m_expr1);
         branchExpression = m_expr2;
@@ -3100,7 +3100,7 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     if (m_assignmentContext == AssignmentContext::AssignmentExpression)
         generator.emitTDZCheckIfNecessary(var, nullptr, scope.get());
     if (dst == generator.ignoredResult())
-        dst = 0;
+        dst = nullptr;
     RefPtr<RegisterID> result = generator.emitNode(dst, m_right); // Execute side effects first.
     if (isReadOnly) {
         bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
@@ -3980,7 +3980,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     ASSERT(generator.codeType() == FunctionCode);
 
     if (dst == generator.ignoredResult())
-        dst = 0;
+        dst = nullptr;
 
     RefPtr<RegisterID> returnRegister = m_value ? generator.emitNodeInTailPosition(dst, m_value) : generator.emitLoad(dst, jsUndefined());
 
@@ -4213,7 +4213,7 @@ void LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 void ThrowNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult())
-        dst = 0;
+        dst = nullptr;
     RefPtr<RegisterID> expr = generator.emitNode(m_expr);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitThrow(expr.get());
@@ -4508,7 +4508,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         emitStatementsBytecode(generator, generator.ignoredResult());
 
         StatementNode* singleStatement = this->singleStatement();
-        ReturnNode* returnNode = 0;
+        ReturnNode* returnNode = nullptr;
 
         // Check for a return statement at the end of a function composed of a single block.
         if (singleStatement && singleStatement->isBlock()) {
@@ -4526,7 +4526,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             if (generator.isConstructor() && generator.constructorKind() != ConstructorKind::Naked)
                 r0 = generator.thisRegister();
             else
-                r0 = generator.emitLoad(0, jsUndefined());
+                r0 = generator.emitLoad(nullptr, jsUndefined());
             generator.emitProfileType(r0, ProfileTypeBytecodeFunctionReturnStatement); // Do not emit expression info for this profile because it's not in the user's source code.
             ASSERT(startOffset() >= lineStartOffset());
             generator.emitWillLeaveCallFrameDebugHook();
@@ -5210,7 +5210,7 @@ void RestParameterNode::emit(BytecodeGenerator& generator)
 RegisterID* SpreadExpressionNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

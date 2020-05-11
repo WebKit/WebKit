@@ -38,7 +38,7 @@ class WeakSet : public BasicRawSentinelNode<WeakSet> {
     friend class LLIntOffsetsExtractor;
 
 public:
-    static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
+    static WeakImpl* allocate(JSValue, WeakHandleOwner* = nullptr, void* context = nullptr);
     static void deallocate(WeakImpl*);
 
     WeakSet(VM&);

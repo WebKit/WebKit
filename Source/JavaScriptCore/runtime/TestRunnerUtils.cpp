@@ -52,7 +52,7 @@ CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue)
 {
     FunctionExecutable* executable = getExecutableForFunction(theFunctionValue);
     if (!executable)
-        return 0;
+        return nullptr;
     
     CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
     

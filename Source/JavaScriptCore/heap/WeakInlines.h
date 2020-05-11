@@ -32,7 +32,7 @@
 namespace JSC {
 
 template<typename T> inline Weak<T>::Weak(T* cell, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(cell ? WeakSet::allocate(cell, weakOwner, context) : 0)
+    : m_impl(cell ? WeakSet::allocate(cell, weakOwner, context) : nullptr)
 {
 }
 

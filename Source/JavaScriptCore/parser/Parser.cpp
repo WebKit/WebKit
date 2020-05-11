@@ -357,7 +357,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
 {
     const unsigned lengthOfUseStrictLiteral = 12; // "use strict".length
     TreeSourceElements sourceElements = context.createSourceElements();
-    const Identifier* directive = 0;
+    const Identifier* directive = nullptr;
     unsigned directiveLiteralLength = 0;
     auto savePoint = createSavePoint(context);
     bool shouldCheckForUseStrict = mode == CheckForStrictMode;
@@ -438,7 +438,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
         }
 
         default: {
-            const Identifier* directive = 0;
+            const Identifier* directive = nullptr;
             unsigned directiveLiteralLength = 0;
             if (parseMode == SourceParseMode::ModuleAnalyzeMode) {
                 if (!parseStatementListItem(syntaxChecker, directive, &directiveLiteralLength))
@@ -761,7 +761,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDoWhileStatem
     ASSERT(match(DO));
     int startLine = tokenLine();
     next();
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
@@ -796,7 +796,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
     int endLine = tokenLine();
     handleProductionOrFail(CLOSEPAREN, ")", "end", "while loop condition");
 
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
@@ -815,8 +815,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
     JSToken lastIdentToken; 
     AssignmentContext assignmentContext = assignmentContextFromDeclarationType(declarationType);
     do {
-        lastIdent = 0;
         lastPattern = TreeDestructuringPattern(0);
+        lastIdent = nullptr;
         JSTokenLocation location(tokenLocation());
         next();
         if (head) {
@@ -876,7 +876,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                     node = context.createEmptyLetExpression(varStartLocation, *name);
             }
         } else {
-            lastIdent = 0;
+            lastIdent = nullptr;
             auto pattern = parseDestructuringPattern(context, destructuringKindFromDeclarationType(declarationType), exportType, nullptr, nullptr, assignmentContext);
             failIfFalse(pattern, "Cannot parse this destructuring pattern");
             hasInitializer = match(EQUAL);
@@ -1423,7 +1423,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         
         handleProductionOrFail(CLOSEPAREN, ")", "end", (isOfEnumeration ? "for-of header" : "for-in header"));
         
-        const Identifier* unused = 0;
+        const Identifier* unused = nullptr;
         startLoop();
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
@@ -1488,7 +1488,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         }
         int endLine = tokenLine();
         handleProductionOrFail(CLOSEPAREN, ")", "end", "for-loop header");
-        const Identifier* unused = 0;
+        const Identifier* unused = nullptr;
         startLoop();
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
@@ -1519,7 +1519,7 @@ enumerationLoop:
     int endLine = tokenLine();
     
     handleProductionOrFail(CLOSEPAREN, ")", "end", (isOfEnumeration ? "for-of header" : "for-in header"));
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
@@ -1657,7 +1657,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
     JSTextPosition end = lastTokenEndPosition();
     int endLine = tokenLine();
     handleProductionOrFail(CLOSEPAREN, ")", "start", "subject of a 'with' statement");
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     TreeStatement statement = parseStatement(context, unused);
     failIfFalse(statement, "A 'with' statement must have a body");
     
@@ -2356,7 +2356,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         ASSERT(startColumn != -1);
 
         // If we know about this function already, we can use the cached info and skip the parser to the end of the function.
-        if (const SourceProviderCacheItem* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(parametersStart) : 0) {
+        if (const SourceProviderCacheItem* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(parametersStart) : nullptr) {
             // If we're in a strict context, the cached function info must say it was strict too.
             ASSERT(!strictMode() || cachedInfo->strictMode);
             JSTokenLocation endLocation;
@@ -3167,7 +3167,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
     default:
         break;
     }
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     ScopeRef labelScope = currentScope();
     for (size_t i = 0; i < labels.size(); i++)
         pushLabel(labels[i].m_ident, isLoop);
@@ -3222,7 +3222,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     int end = tokenLine();
     handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
 
-    const Identifier* unused = 0;
+    const Identifier* unused = nullptr;
     m_immediateParentAllowsFunctionDeclarationInStatement = true;
     TreeStatement trueBlock = parseStatement(context, unused);
     failIfFalse(trueBlock, "Expected a statement as the body of an if block");
@@ -3239,7 +3239,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         JSTokenLocation tempLocation = tokenLocation();
         next();
         if (!match(IF)) {
-            const Identifier* unused = 0;
+            const Identifier* unused = nullptr;
             m_immediateParentAllowsFunctionDeclarationInStatement = true;
             TreeStatement block = parseStatement(context, unused);
             failIfFalse(block, "Expected a statement as the body of an else block");
@@ -3257,7 +3257,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         recordPauseLocation(context.breakpointLocation(innerCondition));
         int innerEnd = tokenLine();
         handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
-        const Identifier* unused = 0;
+        const Identifier* unused = nullptr;
         m_immediateParentAllowsFunctionDeclarationInStatement = true;
         TreeStatement innerTrueBlock = parseStatement(context, unused);
         failIfFalse(innerTrueBlock, "Expected a statement as the body of an if block");
@@ -3891,7 +3891,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         if (strictMode() && m_parserState.lastIdentifier && context.isResolve(lhs)) {
             failIfTrueIfStrict(m_vm.propertyNames->eval == *m_parserState.lastIdentifier, "Cannot modify 'eval' in strict mode");
             failIfTrueIfStrict(m_vm.propertyNames->arguments == *m_parserState.lastIdentifier, "Cannot modify 'arguments' in strict mode");
-            m_parserState.lastIdentifier = 0;
+            m_parserState.lastIdentifier = nullptr;
         }
         lhs = parseAssignmentExpression(context);
         failIfFalse(lhs, "Cannot parse the right hand side of an assignment expression");
@@ -4254,7 +4254,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset,
     ConstructorKind constructorKind, ClassElementTag tag)
 {
-    const Identifier* stringPropertyName = 0;
+    const Identifier* stringPropertyName = nullptr;
     double numericPropertyName = 0;
     TreeExpression computedPropertyName = 0;
 

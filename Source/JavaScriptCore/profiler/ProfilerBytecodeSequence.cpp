@@ -80,7 +80,7 @@ void BytecodeSequence::addSequenceProperties(JSGlobalObject* globalObject, JSObj
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* header = constructEmptyArray(globalObject, 0);
+    JSArray* header = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     for (unsigned i = 0; i < m_header.size(); ++i) {
         header->putDirectIndex(globalObject, i, jsString(vm, String::fromUTF8(m_header[i])));
@@ -88,7 +88,7 @@ void BytecodeSequence::addSequenceProperties(JSGlobalObject* globalObject, JSObj
     }
     result->putDirect(vm, vm.propertyNames->header, header);
     
-    JSArray* sequence = constructEmptyArray(globalObject, 0);
+    JSArray* sequence = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     for (unsigned i = 0; i < m_sequence.size(); ++i) {
         sequence->putDirectIndex(globalObject, i, m_sequence[i].toJS(globalObject));

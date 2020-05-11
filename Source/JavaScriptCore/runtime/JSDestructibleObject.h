@@ -40,7 +40,7 @@ public:
     const ClassInfo* classInfo() const { return m_classInfo; }
 
 protected:
-    JSDestructibleObject(VM& vm, Structure* structure, Butterfly* butterfly = 0)
+    JSDestructibleObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSNonFinalObject(vm, structure, butterfly)
         , m_classInfo(structure->classInfo())
     {

@@ -118,7 +118,7 @@ inline DebuggerScope::iterator DebuggerScope::begin()
 
 inline DebuggerScope::iterator DebuggerScope::end()
 { 
-    return iterator(0); 
+    return iterator(nullptr); 
 }
 
 } // namespace JSC

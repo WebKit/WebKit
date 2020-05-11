@@ -557,7 +557,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     if (!sourceString.isNull())
         setCodeStart(sourceString);
     else
-        m_codeStart = 0;
+        m_codeStart = nullptr;
 
     m_source = &source;
     m_sourceOffset = source.startOffset();
@@ -1227,7 +1227,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
         tokenData->ident = makeIdentifier(m_buffer8.data(), m_buffer8.size());
         m_buffer8.shrink(0);
     } else
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
 
     return StringParsedSuccessfully;
 }
@@ -1382,7 +1382,7 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
     if (shouldBuildStrings)
         tokenData->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
     else
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
 
     m_buffer16.shrink(0);
     return StringParsedSuccessfully;
@@ -2681,7 +2681,7 @@ JSTokenType Lexer<T>::scanTemplateString(JSToken* tokenRecord, RawStringsBuildMo
 template <typename T>
 void Lexer<T>::clear()
 {
-    m_arena = 0;
+    m_arena = nullptr;
 
     Vector<LChar> newBuffer8;
     m_buffer8.swap(newBuffer8);

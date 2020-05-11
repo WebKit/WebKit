@@ -46,7 +46,7 @@ namespace JSC { namespace DFG {
 class GenerationInfo {
 public:
     GenerationInfo()
-        : m_node(0)
+        : m_node(nullptr)
         , m_useCount(0)
         , m_registerFormat(DataFormatNone)
         , m_spillFormat(DataFormatNone)

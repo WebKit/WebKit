@@ -282,7 +282,7 @@ JSValueRef JSValueMakeUndefined(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -294,7 +294,7 @@ JSValueRef JSValueMakeNull(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -306,7 +306,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef ctx, bool value)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -318,7 +318,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -345,7 +345,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -358,7 +358,7 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -376,7 +376,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -386,9 +386,9 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
     JSValue value = toJS(globalObject, apiValue);
     String result = JSONStringify(globalObject, value, indent);
     if (exception)
-        *exception = 0;
+        *exception = nullptr;
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
-        return 0;
+        return nullptr;
     return OpaqueJSString::tryCreate(result).leakRef();
 }
 
@@ -428,7 +428,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -447,7 +447,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -458,7 +458,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
     
     JSObjectRef objectRef = toRef(jsValue.toObject(globalObject));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
-        objectRef = 0;
+        objectRef = nullptr;
     return objectRef;
 }
 

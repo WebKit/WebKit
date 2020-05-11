@@ -123,7 +123,7 @@ public:
     ExternalType get() const { return HandleTypes<T>::getFromSlot(this->slot()); }
 
 protected:
-    Handle(HandleSlot slot = 0)
+    Handle(HandleSlot slot = nullptr)
         : HandleBase(slot)
     {
     }

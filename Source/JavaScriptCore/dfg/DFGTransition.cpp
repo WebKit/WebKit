@@ -39,7 +39,7 @@ void Transition::dumpInContext(PrintStream& out, DumpContext* context) const
 
 void Transition::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 } } // namespace JSC::DFG

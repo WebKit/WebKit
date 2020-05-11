@@ -220,12 +220,12 @@ public:
     ScopeLabelInfo* getLabel(const Identifier* label)
     {
         if (!m_labels)
-            return 0;
+            return nullptr;
         for (int i = m_labels->size(); i > 0; i--) {
             if (m_labels->at(i - 1).uid == label->impl())
                 return &m_labels->at(i - 1);
         }
-        return 0;
+        return nullptr;
     }
 
     void setSourceParseMode(SourceParseMode mode)
@@ -977,7 +977,7 @@ private:
         
         void setPopped()
         {
-            m_parser = 0;
+            m_parser = nullptr;
         }
         
     private:
@@ -1377,7 +1377,7 @@ private:
     
     const SourceProviderCacheItem* findCachedFunctionInfo(int openBracePos) 
     {
-        return m_functionCache ? m_functionCache->get(openBracePos) : 0;
+        return m_functionCache ? m_functionCache->get(openBracePos) : nullptr;
     }
 
     Parser();
@@ -1582,10 +1582,10 @@ private:
     ScopeLabelInfo* getLabel(const Identifier* label)
     {
         ScopeRef current = currentScope();
-        ScopeLabelInfo* result = 0;
+        ScopeLabelInfo* result = nullptr;
         while (!(result = current->getLabel(label))) {
             if (!current.hasContainingScope())
-                return 0;
+                return nullptr;
             current = current.containingScope();
         }
         return result;
@@ -1621,7 +1621,7 @@ private:
     template <class TreeBuilder> TreeSourceElements parseSingleFunction(TreeBuilder&, Optional<int> functionConstructorParametersEndPosition);
     template <class TreeBuilder> TreeSourceElements parseInstanceFieldInitializerSourceElements(TreeBuilder&, const Vector<JSTextPosition>&);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
-    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
+    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = nullptr);
     enum class ExportType { Exported, NotExported };
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
@@ -2024,7 +2024,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
         // we ran out of stack while parsing. If we see an error while parsing eval or program
         // code we assume that it was a syntax error since running out of stack is much less
         // likely, and we are currently unable to distinguish between the two cases.
-        if (isFunctionMetadataNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
+        if (isFunctionMetadataNode(static_cast<ParsedNode*>(nullptr)) || m_hasStackOverflow)
             error = ParserError(ParserError::StackOverflow, ParserError::SyntaxErrorNone, m_token);
         else {
             ParserError::SyntaxErrorType errorType = ParserError::SyntaxErrorIrrecoverable;

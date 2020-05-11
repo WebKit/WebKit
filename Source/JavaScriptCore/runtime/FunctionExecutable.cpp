@@ -71,7 +71,7 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
         edge = m_codeBlockForConstruct.get();
     }
     if (!edge)
-        return 0;
+        return nullptr;
     return static_cast<FunctionCodeBlock*>(edge->codeBlock()->baselineAlternative());
 }
 

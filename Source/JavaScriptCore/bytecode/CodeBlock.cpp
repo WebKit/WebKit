@@ -973,7 +973,7 @@ CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 {
 #if ENABLE(FTL_JIT)
     if (jitType() != JITType::DFGJIT)
-        return 0;
+        return nullptr;
     DFG::JITCode* jitCode = m_jitCode->dfg();
     return jitCode->osrEntryBlock();
 #else // ENABLE(FTL_JIT)
@@ -1870,7 +1870,7 @@ HandlerInfo* CodeBlock::handlerForBytecodeIndex(BytecodeIndex bytecodeIndex, Req
 HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler requiredHandler)
 {
     if (!m_rareData)
-        return 0;
+        return nullptr;
     return HandlerInfo::handlerForIndex<HandlerInfo>(m_rareData->m_exceptionHandlers, index, requiredHandler);
 }
 

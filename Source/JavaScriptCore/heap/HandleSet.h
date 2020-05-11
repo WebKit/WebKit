@@ -139,14 +139,14 @@ inline void HandleSet::deallocate(HandleSlot handle)
 }
 
 inline HandleNode::HandleNode()
-    : m_prev(0)
-    , m_next(0)
+    : m_prev(nullptr)
+    , m_next(nullptr)
 {
 }
 
 inline HandleNode::HandleNode(WTF::SentinelTag)
-    : m_prev(0)
-    , m_next(0)
+    : m_prev(nullptr)
+    , m_next(nullptr)
 {
 }
 

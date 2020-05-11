@@ -981,7 +981,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        Structure* result = Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
+        Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
         result->setTransitionWatchpointIsLikelyToBeFired(true);
         return result;
     }

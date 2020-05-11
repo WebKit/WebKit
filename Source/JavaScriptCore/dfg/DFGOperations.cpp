@@ -204,7 +204,7 @@ char* newTypedArrayWithSize(JSGlobalObject* globalObject, VM& vm, Structure* str
 
     if (size < 0) {
         throwException(globalObject, scope, createRangeError(globalObject, "Requested length is negative"_s));
-        return 0;
+        return nullptr;
     }
     
     if (vector)
@@ -2185,7 +2185,7 @@ char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
-        Butterfly::createUninitialized(vm, 0, 0, initialOutOfLineCapacity, false, 0));
+        Butterfly::createUninitialized(vm, nullptr, 0, initialOutOfLineCapacity, false, 0));
 }
 
 char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM* vmPointer, size_t newSize)
@@ -2195,7 +2195,7 @@ char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM* vmPointer, size_t
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
-        Butterfly::createUninitialized(vm, 0, 0, newSize, false, 0));
+        Butterfly::createUninitialized(vm, nullptr, 0, newSize, false, 0));
 }
 
 char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(VM* vmPointer, JSObject* object)
@@ -2226,7 +2226,7 @@ char* JIT_OPERATION operationEnsureInt32(VM* vmPointer, JSCell* cell)
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
-        return 0;
+        return nullptr;
 
     auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableInt32(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasInt32(cell->indexingMode())) || !result);
@@ -2240,7 +2240,7 @@ char* JIT_OPERATION operationEnsureDouble(VM* vmPointer, JSCell* cell)
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
-        return 0;
+        return nullptr;
 
     auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableDouble(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasDouble(cell->indexingMode())) || !result);
@@ -2254,7 +2254,7 @@ char* JIT_OPERATION operationEnsureContiguous(VM* vmPointer, JSCell* cell)
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
-        return 0;
+        return nullptr;
     
     auto* result = reinterpret_cast<char*>(asObject(cell)->tryMakeWritableContiguous(vm).data());
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasContiguous(cell->indexingMode())) || !result);
@@ -2268,7 +2268,7 @@ char* JIT_OPERATION operationEnsureArrayStorage(VM* vmPointer, JSCell* cell)
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
-        return 0;
+        return nullptr;
 
     auto* result = reinterpret_cast<char*>(asObject(cell)->ensureArrayStorage(vm));
     ASSERT((!isCopyOnWrite(asObject(cell)->indexingMode()) && hasAnyArrayStorage(cell->indexingMode())) || !result);

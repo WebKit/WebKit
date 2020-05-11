@@ -1039,7 +1039,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(JSGlobalObject* globalObject, Cal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    calleeFrame->setCodeBlock(0);
+    calleeFrame->setCodeBlock(nullptr);
     
     if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
         return JSValue::encode(JSValue());
@@ -1055,7 +1055,7 @@ static SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    calleeFrame->setCodeBlock(0);
+    calleeFrame->setCodeBlock(nullptr);
 
     if (callLinkInfo->specializationKind() == CodeForCall) {
         auto callData = getCallData(vm, callee);
@@ -1578,21 +1578,21 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("counter = ", codeBlock->jitExecuteCounter()));
         codeBlock->updateAllPredictions();
         dataLogLnIf(Options::verboseOSR(), "Choosing not to optimize ", *codeBlock, " yet, because the threshold hasn't been reached.");
-        return encodeResult(0, 0);
+        return encodeResult(nullptr, nullptr);
     }
     
     Debugger* debugger = codeBlock->globalObject()->debugger();
     if (UNLIKELY(debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests()))) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("debugger is stepping or has requests"));
         updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
-        return encodeResult(0, 0);
+        return encodeResult(nullptr, nullptr);
     }
 
     if (codeBlock->m_shouldAlwaysBeInlined) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("should always be inlined"));
         updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
         dataLogLnIf(Options::verboseOSR(), "Choosing not to optimize ", *codeBlock, " yet, because m_shouldAlwaysBeInlined == true.");
-        return encodeResult(0, 0);
+        return encodeResult(nullptr, nullptr);
     }
 
     // We cannot be in the process of asynchronous compilation and also have an optimized
@@ -1634,7 +1634,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
         // replacement.
         RELEASE_ASSERT(!codeBlock->hasOptimizedReplacement());
         codeBlock->setOptimizationThresholdBasedOnCompilationResult(CompilationDeferred);
-        return encodeResult(0, 0);
+        return encodeResult(nullptr, nullptr);
     }
 
     if (worklistState == DFG::Worklist::Compiled) {
@@ -1647,7 +1647,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
             CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compiled and failed"));
             codeBlock->updateAllPredictions();
             dataLogLnIf(Options::verboseOSR(), "Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.");
-            return encodeResult(0, 0);
+            return encodeResult(nullptr, nullptr);
         }
     } else if (codeBlock->hasOptimizedReplacement()) {
         CodeBlock* replacement = codeBlock->replacement();
@@ -1671,7 +1671,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
                 "Triggering reoptimization of ", codeBlock,
                 "(", replacement, ") (in loop).");
             replacement->jettison(Profiler::JettisonDueToBaselineLoopReoptimizationTrigger, CountReoptimization);
-            return encodeResult(0, 0);
+            return encodeResult(nullptr, nullptr);
         }
     } else {
         if (!codeBlock->shouldOptimizeNow()) {
@@ -1679,7 +1679,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
             dataLogLnIf(Options::verboseOSR(),
                 "Delaying optimization for ", *codeBlock,
                 " because of insufficient profiling.");
-            return encodeResult(0, 0);
+            return encodeResult(nullptr, nullptr);
         }
 
         dataLogLnIf(Options::verboseOSR(), "Triggering optimized compilation of ", *codeBlock);
@@ -1705,7 +1705,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
         
         if (result != CompilationSuccessful) {
             CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compilation failed"));
-            return encodeResult(0, 0);
+            return encodeResult(nullptr, nullptr);
         }
     }
     
@@ -1746,7 +1746,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
             "Triggering reoptimization of ", codeBlock, " -> ",
             codeBlock->replacement(), " (after OSR fail).");
         optimizedCodeBlock->jettison(Profiler::JettisonDueToBaselineLoopReoptimizationTriggerOnOSREntryFail, CountReoptimization);
-        return encodeResult(0, 0);
+        return encodeResult(nullptr, nullptr);
     }
 
     // OSR failed this time, but it might succeed next time! Let the code run a bit
@@ -1754,7 +1754,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
     codeBlock->optimizeAfterWarmUp();
     
     CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("OSR failed"));
-    return encodeResult(0, 0);
+    return encodeResult(nullptr, nullptr);
 }
 
 char* JIT_OPERATION operationTryOSREnterAtCatch(VM* vmPointer, uint32_t bytecodeIndexBits)

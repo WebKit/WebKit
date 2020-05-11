@@ -3510,7 +3510,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         YarrOp& lastOp = m_ops.last();
         ASSERT(lastOp.m_op == alternativeNextOpCode);
         lastOp.m_op = alternativeEndOpCode;
-        lastOp.m_alternative = 0;
+        lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
 
         size_t parenEnd = m_ops.size();
@@ -3566,7 +3566,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         YarrOp& lastOp = m_ops.last();
         ASSERT(lastOp.m_op == OpSimpleNestedAlternativeNext);
         lastOp.m_op = OpSimpleNestedAlternativeEnd;
-        lastOp.m_alternative = 0;
+        lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
 
         size_t parenEnd = m_ops.size();
@@ -3654,7 +3654,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
             ASSERT(lastOp.m_op == OpBodyAlternativeNext);
             lastOp.m_op = OpBodyAlternativeEnd;
-            lastOp.m_alternative = 0;
+            lastOp.m_alternative = nullptr;
             lastOp.m_nextOp = notFound;
         }
 
@@ -3688,7 +3688,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         YarrOp& lastOp = m_ops.last();
         ASSERT(lastOp.m_op == OpBodyAlternativeNext);
         lastOp.m_op = OpBodyAlternativeEnd;
-        lastOp.m_alternative = 0;
+        lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = repeatLoop;
     }
 

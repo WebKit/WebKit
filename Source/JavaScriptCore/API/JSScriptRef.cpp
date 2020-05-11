@@ -88,7 +88,7 @@ JSScriptRef JSScriptCreateReferencingImmortalASCIIText(JSContextGroupRef context
     JSLockHolder locker(&vm);
     for (size_t i = 0; i < length; i++) {
         if (!isASCII(source[i]))
-            return 0;
+            return nullptr;
     }
 
     startingLineNumber = std::max(1, startingLineNumber);
@@ -149,7 +149,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
     JSLockHolder locker(vm);
     if (&script->vm() != &vm) {
         RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     NakedPtr<Exception> internalException;
     JSValue thisValue = thisValueRef ? toJS(globalObject, thisValueRef) : jsUndefined();
@@ -157,7 +157,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
     if (internalException) {
         if (exception)
             *exception = toRef(globalObject, internalException->value());
-        return 0;
+        return nullptr;
     }
     ASSERT(result);
     return toRef(globalObject, result);

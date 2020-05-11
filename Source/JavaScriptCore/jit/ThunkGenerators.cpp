@@ -272,7 +272,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
         break;
     }
 
-    jit.emitPutToCallFrameHeader(0, CallFrameSlot::codeBlock);
+    jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
     jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
     // Host function signature: f(JSGlobalObject*, CallFrame*);

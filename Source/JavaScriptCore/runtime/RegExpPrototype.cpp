@@ -618,7 +618,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(JSGlobalObject* globalObje
 
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
-    JSArray* result = constructEmptyArray(globalObject, 0);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned resultLength = 0;
 

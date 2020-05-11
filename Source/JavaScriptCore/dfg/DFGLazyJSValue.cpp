@@ -286,7 +286,7 @@ void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 
 void LazyJSValue::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 } } // namespace JSC::DFG

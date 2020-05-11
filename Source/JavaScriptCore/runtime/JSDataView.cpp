@@ -71,13 +71,13 @@ JSDataView* JSDataView::create(
 JSDataView* JSDataView::createUninitialized(JSGlobalObject*, Structure*, unsigned)
 {
     UNREACHABLE_FOR_PLATFORM();
-    return 0;
+    return nullptr;
 }
 
 JSDataView* JSDataView::create(JSGlobalObject*, Structure*, unsigned)
 {
     UNREACHABLE_FOR_PLATFORM();
-    return 0;
+    return nullptr;
 }
 
 bool JSDataView::set(JSGlobalObject*, unsigned, JSObject*, unsigned, unsigned)

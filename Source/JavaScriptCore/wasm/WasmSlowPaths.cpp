@@ -168,7 +168,7 @@ WASM_SLOW_PATH_DECL(prologue_osr)
     if (!jitCompileAndSetHeuristics(callee, codeBlock, instance))
         WASM_RETURN_TWO(nullptr, nullptr);
 
-    WASM_RETURN_TWO(callee->replacement()->entrypoint().executableAddress(), 0);
+    WASM_RETURN_TWO(callee->replacement()->entrypoint().executableAddress(), nullptr);
 }
 
 WASM_SLOW_PATH_DECL(loop_osr)
@@ -179,7 +179,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
     if (!Options::useWebAssemblyOSR() || !Options::useWasmLLIntLoopOSR() || !shouldJIT(codeBlock, RequiredWasmJIT::OMG)) {
         slow_path_wasm_prologue_osr(callFrame, pc, instance);
-        WASM_RETURN_TWO(0, 0);
+        WASM_RETURN_TWO(nullptr, nullptr);
     }
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered loop_osr with tierUpCounter = ", codeBlock->tierUpCounter());
@@ -189,19 +189,19 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
-        WASM_RETURN_TWO(0, 0);
+        WASM_RETURN_TWO(nullptr, nullptr);
     }
 
     const auto doOSREntry = [&] {
         Wasm::OMGForOSREntryCallee* osrEntryCallee = callee->osrEntryCallee();
         if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
-            WASM_RETURN_TWO(0, 0);
+            WASM_RETURN_TWO(nullptr, nullptr);
 
         size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
         RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
         uint64_t* buffer = instance->context()->scratchBufferForSize(osrEntryScratchBufferSize);
         if (!buffer)
-            WASM_RETURN_TWO(0, 0);
+            WASM_RETURN_TWO(nullptr, nullptr);
 
         uint32_t index = 0;
         for (VirtualRegister reg : osrEntryData.values)
@@ -241,7 +241,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     if (callee->osrEntryCallee())
         return doOSREntry();
 
-    WASM_RETURN_TWO(0, 0);
+    WASM_RETURN_TWO(nullptr, nullptr);
 }
 
 WASM_SLOW_PATH_DECL(epilogue_osr)
@@ -448,7 +448,7 @@ WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
-    WASM_RETURN_TWO(operationWasmToJSException(callFrame, exceptionType, instance), 0);
+    WASM_RETURN_TWO(operationWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }
 
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t x)

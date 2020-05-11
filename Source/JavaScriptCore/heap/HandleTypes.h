@@ -33,7 +33,7 @@ typedef JSValue* HandleSlot;
 
 template<typename T> struct HandleTypes {
     typedef T* ExternalType;
-    static ExternalType getFromSlot(HandleSlot slot) { return (slot && *slot) ? reinterpret_cast<ExternalType>(static_cast<void*>(slot->asCell())) : 0; }
+    static ExternalType getFromSlot(HandleSlot slot) { return (slot && *slot) ? reinterpret_cast<ExternalType>(static_cast<void*>(slot->asCell())) : nullptr; }
     static JSValue toJSValue(T* cell) { return reinterpret_cast<JSCell*>(cell); }
     template<typename U> static void validateUpcast() { T* temp; temp = (U*)0; }
 };

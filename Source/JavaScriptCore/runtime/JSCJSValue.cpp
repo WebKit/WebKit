@@ -258,7 +258,7 @@ bool JSValue::putToPrimitiveByIndex(JSGlobalObject* globalObject, unsigned prope
 
 void JSValue::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const

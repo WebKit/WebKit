@@ -183,7 +183,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
         throwArityCheckStackOverflowError(globalObject, throwScope);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
     }
-    RETURN_TWO(0, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
+    RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
 }
 
 SLOW_PATH_DECL(slow_path_construct_arityCheck)
@@ -198,7 +198,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
         throwArityCheckStackOverflowError(globalObject, throwScope);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);
     }
-    RETURN_TWO(0, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
+    RETURN_TWO(nullptr, bitwise_cast<void*>(static_cast<uintptr_t>(slotsToAdd)));
 }
 
 SLOW_PATH_DECL(slow_path_create_direct_arguments)

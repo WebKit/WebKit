@@ -46,7 +46,7 @@ public:
     void willDestroyVM(VM*);
 
     typedef bool (*ShouldTerminateCallback)(JSGlobalObject*, void* data1, void* data2);
-    void setTimeLimit(Seconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    void setTimeLimit(Seconds limit, ShouldTerminateCallback = nullptr, void* data1 = nullptr, void* data2 = nullptr);
 
     bool shouldTerminate(JSGlobalObject*);
 

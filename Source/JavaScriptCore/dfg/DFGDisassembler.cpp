@@ -101,7 +101,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     const char* prefix = "    ";
     const char* disassemblyPrefix = "        ";
     
-    Node* lastNode = 0;
+    Node* lastNode = nullptr;
     MacroAssembler::Label previousLabel = m_startOfCode;
     for (size_t blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
         BasicBlock* block = m_graph.block(blockIndex);
@@ -143,7 +143,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     append(result, out, previousOrigin);
     out.print(prefix, "(End Of Main Path)\n");
     append(result, out, previousOrigin);
-    dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, 0);
+    dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, nullptr);
     append(result, out, previousOrigin);
     m_dumpContext.dump(out, prefix);
     append(result, out, previousOrigin);

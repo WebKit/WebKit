@@ -83,7 +83,7 @@ bool InByIdVariant::finalize(VM& vm)
 
 void InByIdVariant::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void InByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const

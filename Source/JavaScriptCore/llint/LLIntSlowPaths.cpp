@@ -478,11 +478,11 @@ LLINT_SLOW_PATH_DECL(loop_osr)
 
     if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
-        LLINT_RETURN_TWO(0, 0);
+        LLINT_RETURN_TWO(nullptr, nullptr);
     }
     
     if (!jitCompileAndSetHeuristics(vm, codeBlock, loopOSREntryBytecodeIndex))
-        LLINT_RETURN_TWO(0, 0);
+        LLINT_RETURN_TWO(nullptr, nullptr);
     
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at ", loopOSREntryBytecodeIndex));
 
@@ -2198,7 +2198,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame
         break;
     }
     if (UNLIKELY(scope.exception()))
-        return encodeResult(returnToThrow(vm), 0);
+        return encodeResult(returnToThrow(vm), nullptr);
 
     return dispatchToNextInstruction(codeBlock, pc);
 }
@@ -2213,7 +2213,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
     else
         globalObject = protoFrame->callee()->globalObject(*vm);
     throwStackOverflowError(globalObject, scope);
-    return encodeResult(0, 0);
+    return encodeResult(nullptr, nullptr);
 }
 
 #if ENABLE(C_LOOP)

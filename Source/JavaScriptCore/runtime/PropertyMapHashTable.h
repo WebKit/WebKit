@@ -299,7 +299,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
     while (true) {
         unsigned entryIndex = m_index[hash & m_indexMask];
         if (entryIndex == EmptyEntryIndex)
-            return std::make_pair((ValueType*)0, hash & m_indexMask);
+            return std::make_pair((ValueType*)nullptr, hash & m_indexMask);
         if (key == table()[entryIndex - 1].key)
             return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 

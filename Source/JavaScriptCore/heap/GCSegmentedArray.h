@@ -118,7 +118,7 @@ class GCSegmentedArrayIterator {
     friend class GCSegmentedArray<T>;
 public:
     GCSegmentedArrayIterator()
-        : m_currentSegment(0)
+        : m_currentSegment(nullptr)
         , m_currentOffset(0)
     {
     }

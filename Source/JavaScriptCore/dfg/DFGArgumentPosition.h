@@ -53,7 +53,7 @@ public:
     VariableAccessData* someVariable() const
     {
         if (m_variables.isEmpty())
-            return 0;
+            return nullptr;
         return m_variables[0]->find();
     }
     

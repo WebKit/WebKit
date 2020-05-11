@@ -59,7 +59,7 @@ public:
         
         CodeBlock* baseline = m_graph.m_profiledBlock;
         
-        BasicBlock* target = 0;
+        BasicBlock* target = nullptr;
         for (unsigned blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)

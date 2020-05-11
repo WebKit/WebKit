@@ -41,7 +41,7 @@ class VM;
 class JSInternalPromise;
 
 JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
-JS_EXPORT_PRIVATE bool checkSyntax(JSGlobalObject*, const SourceCode&, JSValue* exception = 0);
+JS_EXPORT_PRIVATE bool checkSyntax(JSGlobalObject*, const SourceCode&, JSValue* exception = nullptr);
 JS_EXPORT_PRIVATE bool checkModuleSyntax(JSGlobalObject*, const SourceCode&, ParserError&);
 
 JS_EXPORT_PRIVATE RefPtr<CachedBytecode> generateProgramBytecode(VM&, const SourceCode&, FileSystem::PlatformFileHandle fd, BytecodeCacheError&);

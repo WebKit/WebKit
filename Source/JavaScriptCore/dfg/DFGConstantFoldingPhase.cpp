@@ -1281,7 +1281,7 @@ private:
         node->child1().setUseKind(KnownCellUse);
         childEdge.setUseKind(KnownCellUse);
 
-        Transition* transition = 0;
+        Transition* transition = nullptr;
         if (variant.kind() == PutByIdVariant::Transition) {
             transition = m_graph.m_transitions.add(
                 m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));

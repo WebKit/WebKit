@@ -700,7 +700,7 @@ template <typename Base> String HandleConverter<Base, Unknown>::getString(JSGlob
 
 inline JSObject* JSValue::getObject() const
 {
-    return isCell() ? asCell()->getObject() : 0;
+    return isCell() ? asCell()->getObject() : nullptr;
 }
 
 ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const

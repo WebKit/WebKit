@@ -634,7 +634,7 @@ Worklist* existingWorklistForIndexOrNull(unsigned index)
         return existingGlobalFTLWorklistOrNull();
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 }
 

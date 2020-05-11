@@ -46,7 +46,7 @@ ClonedArguments* ClonedArguments::createEmpty(
 {
     unsigned vectorLength = length;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
-        return 0;
+        return nullptr;
 
     Butterfly* butterfly;
     if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing(vm))) {
@@ -56,9 +56,9 @@ ClonedArguments* ClonedArguments::createEmpty(
         IndexingHeader indexingHeader;
         indexingHeader.setVectorLength(vectorLength);
         indexingHeader.setPublicLength(length);
-        butterfly = Butterfly::tryCreate(vm, 0, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
+        butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
         if (!butterfly)
-            return 0;
+            return nullptr;
 
         for (unsigned i = length; i < vectorLength; ++i)
             butterfly->contiguous().atUnsafe(i).clear();

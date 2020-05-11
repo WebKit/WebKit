@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObj
     for (int i = 0; i < argumentCount; i++)
         arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
 
-    JSValueRef exception = 0;
+    JSValueRef exception = nullptr;
     JSValueRef result;
     {
         JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -91,7 +91,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
         for (size_t i = 0; i < argumentCount; ++i)
             arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
 
-        JSValueRef exception = 0;
+        JSValueRef exception = nullptr;
         JSObjectRef result;
         {
             JSLock::DropAllLocks dropAllLocks(globalObject);
@@ -107,7 +107,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
         return JSValue::encode(toJS(result));
     }
     
-    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(constructor)->classRef(), 0)));
+    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(constructor)->classRef(), nullptr)));
 }
 
 } // namespace JSC

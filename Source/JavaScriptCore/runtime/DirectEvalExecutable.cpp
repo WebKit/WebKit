@@ -42,7 +42,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
 
     if (!globalObject->evalEnabled()) {
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
-        return 0;
+        return nullptr;
     }
 
     auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, ecmaMode.isStrict(), derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, isInsideOrdinaryFunction, evalContextType);

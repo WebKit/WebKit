@@ -174,7 +174,7 @@ void JIT_OPERATION operationCompileOSRExit(CallFrame* callFrame)
     Operands<ValueRecovery> operands;
     codeBlock->jitCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->jitCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);
 
-    SpeculationRecovery* recovery = 0;
+    SpeculationRecovery* recovery = nullptr;
     if (exit.m_recoveryIndex != UINT_MAX)
         recovery = &codeBlock->jitCode()->dfg()->speculationRecovery[exit.m_recoveryIndex];
 
@@ -457,7 +457,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // Save all state from GPRs into the scratch buffer.
 
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(sizeof(EncodedJSValue) * operands.size());
-    EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
+    EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
 
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];

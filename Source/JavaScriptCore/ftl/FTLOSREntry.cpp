@@ -50,7 +50,7 @@ void* prepareOSREntry(
 
     if (!entryCode->dfgCommon()->isStillValid) {
         dfgCode->clearOSREntryBlockAndResetThresholds(dfgCodeBlock);
-        return 0;
+        return nullptr;
     }
 
     dataLogLnIf(Options::verboseOSR(),
@@ -62,7 +62,7 @@ void* prepareOSREntry(
 
     if (bytecodeIndex != entryCode->bytecodeIndex()) {
         dataLogLnIf(Options::verboseOSR(), "    OSR failed because we don't have an entrypoint for ", bytecodeIndex, "; ours is for ", entryCode->bytecodeIndex());
-        return 0;
+        return nullptr;
     }
     
     Operands<Optional<JSValue>> values;
@@ -98,7 +98,7 @@ void* prepareOSREntry(
     int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
     if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()]))) {
         dataLogLnIf(Options::verboseOSR(), "    OSR failed because stack growth failed.");
-        return 0;
+        return nullptr;
     }
     
     callFrame->setCodeBlock(entryCodeBlock);

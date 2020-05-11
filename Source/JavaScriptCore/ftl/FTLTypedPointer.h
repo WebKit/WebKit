@@ -35,8 +35,8 @@ namespace JSC { namespace FTL {
 class TypedPointer {
 public:
     TypedPointer()
-        : m_heap(0)
-        , m_value(0)
+        : m_heap(nullptr)
+        , m_value(nullptr)
     {
     }
     

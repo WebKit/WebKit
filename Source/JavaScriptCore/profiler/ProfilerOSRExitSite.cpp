@@ -38,7 +38,7 @@ JSValue OSRExitSite::toJS(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* result = constructEmptyArray(globalObject, 0);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_codeAddresses.size(); ++i) {
         result->putDirectIndex(globalObject, i, jsString(vm, toString(RawPointer(m_codeAddresses[i].dataLocation()))));

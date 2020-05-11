@@ -483,7 +483,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
+        return Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
     }
 
     static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags::createAllEnabled(); }
@@ -592,7 +592,7 @@ private:
 #endif
 
         if (!arguments.isEmpty()) {
-            JSArray* array = constructEmptyArray(this, 0);
+            JSArray* array = constructEmptyArray(this, nullptr);
             for (size_t i = 0; i < arguments.size(); ++i)
                 array->putDirectIndex(this, i, jsString(vm, arguments[i]));
             putDirect(vm, Identifier::fromString(vm, "arguments"), array);
@@ -1476,7 +1476,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(JSGlobalObject* globalObject, CallFrame
 
     GlobalObject* realm = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
-    JSArray* array = constructEmptyArray(realm, 0);
+    JSArray* array = constructEmptyArray(realm, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     for (unsigned i = 1; i < callFrame->argumentCount(); ++i) {
         array->putDirectIndex(realm, i - 1, callFrame->uncheckedArgument(i));
@@ -1508,7 +1508,7 @@ EncodedJSValue JSC_HOST_CALL functionRunString(JSGlobalObject* globalObject, Cal
 
     GlobalObject* realm = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
 
-    JSArray* array = constructEmptyArray(realm, 0);
+    JSArray* array = constructEmptyArray(realm, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     for (unsigned i = 1; i < callFrame->argumentCount(); ++i) {
         array->putDirectIndex(realm, i - 1, callFrame->uncheckedArgument(i));

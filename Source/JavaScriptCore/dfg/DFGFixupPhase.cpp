@@ -3857,7 +3857,7 @@ private:
         fixEdge<KnownCellUse>(node->child1());
         node->setArrayMode(arrayMode);
             
-        Node* storage = checkArray(arrayMode, node->origin, node->child1().node(), 0, lengthNeedsStorage);
+        Node* storage = checkArray(arrayMode, node->origin, node->child1().node(), nullptr, lengthNeedsStorage);
         if (!storage)
             return;
             
@@ -3866,7 +3866,7 @@ private:
     
     Node* prependGetArrayLength(NodeOrigin origin, Node* child, ArrayMode arrayMode)
     {
-        Node* storage = checkArray(arrayMode, origin, child, 0, lengthNeedsStorage);
+        Node* storage = checkArray(arrayMode, origin, child, nullptr, lengthNeedsStorage);
         return m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32Only, GetArrayLength, origin,
             OpInfo(arrayMode.asWord()), Edge(child, KnownCellUse), Edge(storage));

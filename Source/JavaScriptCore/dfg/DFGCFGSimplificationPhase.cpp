@@ -171,7 +171,7 @@ public:
                     if (terminal->child1()->hasConstant()) {
                         FrozenValue* value = terminal->child1()->constant();
                         TriState found = TriState::False;
-                        BasicBlock* targetBlock = 0;
+                        BasicBlock* targetBlock = nullptr;
                         for (unsigned i = data->cases.size(); found == TriState::False && i--;) {
                             found = data->cases[i].value.strictEqual(value);
                             if (found == TriState::True)

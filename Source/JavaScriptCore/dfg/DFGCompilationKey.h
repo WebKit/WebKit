@@ -38,13 +38,13 @@ namespace DFG {
 class CompilationKey {
 public:
     CompilationKey()
-        : m_profiledBlock(0)
+        : m_profiledBlock(nullptr)
         , m_mode(InvalidCompilationMode)
     {
     }
     
     CompilationKey(WTF::HashTableDeletedValueType)
-        : m_profiledBlock(0)
+        : m_profiledBlock(nullptr)
         , m_mode(DFGMode)
     {
     }

@@ -80,7 +80,7 @@ void link(State& state)
         
         DumpContext dumpContext;
         StringPrintStream out;
-        Node* lastNode = 0;
+        Node* lastNode = nullptr;
         for (size_t blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = graph.block(blockIndex);
             if (!block)

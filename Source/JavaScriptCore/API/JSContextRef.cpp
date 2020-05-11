@@ -128,7 +128,7 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     }
 #endif // OS(DARWIN)
 
-    return JSGlobalContextCreateInGroup(0, globalObjectClass);
+    return JSGlobalContextCreateInGroup(nullptr, globalObjectClass);
 }
 
 JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClassRef globalObjectClass)
@@ -148,7 +148,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
         return JSGlobalContextRetain(toGlobalRef(globalObject));
     }
 
-    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(vm.get(), globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(vm.get(), 0, jsNull()));
+    JSGlobalObject* globalObject = JSCallbackObject<JSGlobalObject>::create(vm.get(), globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(vm.get(), nullptr, jsNull()));
     JSValue prototype = globalObjectClass->prototype(globalObject);
     if (!prototype)
         prototype = jsNull();
@@ -187,7 +187,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
@@ -200,7 +200,7 @@ JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     return toRef(&globalObject->vm());
@@ -210,7 +210,7 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     JSLockHolder locker(globalObject);
@@ -222,7 +222,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     JSGlobalObject* globalObject = toJS(ctx);
@@ -231,7 +231,7 @@ JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
 
     String name = globalObject->name();
     if (name.isNull())
-        return 0;
+        return nullptr;
 
     return OpaqueJSString::tryCreate(name).leakRef();
 }
@@ -324,7 +324,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();

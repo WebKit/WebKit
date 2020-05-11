@@ -193,7 +193,7 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
 {
     if (!ctx) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     JSGlobalObject* globalObject = toJS(ctx);

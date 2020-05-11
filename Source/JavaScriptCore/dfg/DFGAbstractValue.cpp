@@ -486,7 +486,7 @@ ResultType AbstractValue::resultType() const
 
 void AbstractValue::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void AbstractValue::dumpInContext(PrintStream& out, DumpContext* context) const

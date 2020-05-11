@@ -58,8 +58,8 @@ StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm)
         }
 
     } else {
-        m_frame.m_entryFrame = 0;
-        topFrame = 0;
+        m_frame.m_entryFrame = nullptr;
+        topFrame = nullptr;
     }
     m_frame.m_callerIsEntryFrame = false;
     readFrame(topFrame);
@@ -184,7 +184,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     }
 
 #if ENABLE(DFG_JIT)
-    m_frame.m_inlineCallFrame = 0;
+    m_frame.m_inlineCallFrame = nullptr;
 #endif
 }
 
@@ -429,9 +429,9 @@ void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, i
 
 void StackVisitor::Frame::setToEnd()
 {
-    m_callFrame = 0;
+    m_callFrame = nullptr;
 #if ENABLE(DFG_JIT)
-    m_inlineCallFrame = 0;
+    m_inlineCallFrame = nullptr;
 #endif
     m_isWasmFrame = false;
 }

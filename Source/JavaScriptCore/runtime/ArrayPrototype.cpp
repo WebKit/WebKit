@@ -76,7 +76,7 @@ ArrayPrototype* ArrayPrototype::create(VM& vm, JSGlobalObject* globalObject, Str
 
 // ECMA 15.4.4
 ArrayPrototype::ArrayPrototype(VM& vm, Structure* structure)
-    : JSArray(vm, structure, 0)
+    : JSArray(vm, structure, nullptr)
 {
 }
 

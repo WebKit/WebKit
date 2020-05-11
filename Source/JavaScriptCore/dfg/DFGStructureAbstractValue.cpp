@@ -372,7 +372,7 @@ void StructureAbstractValue::dumpInContext(PrintStream& out, DumpContext* contex
 
 void StructureAbstractValue::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void StructureAbstractValue::validateReferences(const TrackedReferences& trackedReferences) const

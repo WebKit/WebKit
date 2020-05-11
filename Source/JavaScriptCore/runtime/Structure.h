@@ -530,7 +530,7 @@ public:
     JSString* objectToStringValue()
     {
         if (!hasRareData())
-            return 0;
+            return nullptr;
         return rareData()->objectToStringValue();
     }
 

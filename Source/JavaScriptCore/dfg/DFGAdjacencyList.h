@@ -107,7 +107,7 @@ public:
         child(2) = child3;
     }
     
-    void initialize(Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    void initialize(Node* child1 = nullptr, Node* child2 = nullptr, Node* child3 = nullptr)
     {
         initialize(Edge(child1), Edge(child2), Edge(child3));
     }

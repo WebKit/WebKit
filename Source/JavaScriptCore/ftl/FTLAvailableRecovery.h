@@ -37,11 +37,11 @@ namespace JSC { namespace FTL {
 class AvailableRecovery {
 public:
     AvailableRecovery()
-        : m_node(0)
+        : m_node(nullptr)
         , m_format(DataFormatNone)
         , m_opcode(AddRecovery)
-        , m_left(0)
-        , m_right(0)
+        , m_left(nullptr)
+        , m_right(nullptr)
     {
     }
     

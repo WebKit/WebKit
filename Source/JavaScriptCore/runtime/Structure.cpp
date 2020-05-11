@@ -100,7 +100,7 @@ inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
-        return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->isPropertyDeletionTransition() == !isAddition) ? transition : 0;
+        return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->isPropertyDeletionTransition() == !isAddition) ? transition : nullptr;
     }
     return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, isAddition));
 }
@@ -332,7 +332,7 @@ bool Structure::isValidPrototype(JSValue prototype)
 void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
 {
     ASSERT(structures.isEmpty());
-    table = 0;
+    table = nullptr;
 
     for (structure = this; structure; structure = structure->previousID()) {
         structure->m_lock.lock();
@@ -425,7 +425,7 @@ Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* st
         return existingTransition;
     }
 
-    return 0;
+    return nullptr;
 }
 
 Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
@@ -737,7 +737,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, No
     
     Structure* existingTransition;
     constexpr bool isAddition = true;
-    if (!structure->isDictionary() && (existingTransition = structure->m_transitionTable.get(0, attributes, isAddition))) {
+    if (!structure->isDictionary() && (existingTransition = structure->m_transitionTable.get(nullptr, attributes, isAddition))) {
         ASSERT(existingTransition->transitionPropertyAttributes() == attributes);
         ASSERT(existingTransition->indexingModeIncludingHistory() == indexingModeIncludingHistory);
         return existingTransition;

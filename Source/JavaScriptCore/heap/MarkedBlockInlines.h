@@ -306,7 +306,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
-    FreeCell* head = 0;
+    FreeCell* head = nullptr;
     size_t count = 0;
     uintptr_t secret;
     cryptographicallyRandomValues(&secret, sizeof(uintptr_t));

@@ -37,8 +37,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);
 
 ParserArena::ParserArena()
-    : m_freeableMemory(0)
-    , m_freeablePoolEnd(0)
+    : m_freeableMemory(nullptr)
+    , m_freeablePoolEnd(nullptr)
 {
 }
 

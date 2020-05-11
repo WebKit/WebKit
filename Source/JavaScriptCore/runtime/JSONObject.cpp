@@ -196,7 +196,7 @@ inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(const Identifier
 }
 
 inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
-    : m_identifier(0)
+    : m_identifier(nullptr)
     , m_number(number)
 {
 }

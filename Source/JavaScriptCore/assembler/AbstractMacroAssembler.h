@@ -295,7 +295,7 @@ public:
             return const_cast<void*>(m_value);
         }
 
-        const void* m_value { 0 };
+        const void* m_value { nullptr };
     };
 
     struct ImmPtr : private TrustedImmPtr

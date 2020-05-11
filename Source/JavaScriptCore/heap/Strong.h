@@ -126,10 +126,10 @@ public:
         if (shouldStrongDestructorGrabLock == ShouldStrongDestructorGrabLock::Yes) {
             JSLockHolder holder(heap->vm());
             heap->deallocate(slot());
-            setSlot(0);
+            setSlot(nullptr);
         } else {
             heap->deallocate(slot());
-            setSlot(0);
+            setSlot(nullptr);
         }
     }
 

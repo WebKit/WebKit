@@ -34,8 +34,8 @@ namespace JSC { namespace FTL {
 class ValueRange {
 public:
     ValueRange()
-        : m_begin(0)
-        , m_end(0)
+        : m_begin(nullptr)
+        , m_end(nullptr)
     {
     }
     

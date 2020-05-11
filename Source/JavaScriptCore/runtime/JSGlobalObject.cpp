@@ -428,7 +428,7 @@ static EncodedJSValue JSC_HOST_CALL enqueueJob(JSGlobalObject* globalObject, Cal
 }
 
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
-    : Base(vm, structure, 0)
+    : Base(vm, structure, nullptr)
     , m_vm(&vm)
     , m_linkTimeConstants(numberOfLinkTimeConstants)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
@@ -523,7 +523,7 @@ void JSGlobalObject::init(VM& vm)
 
     Base::setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
 
-    m_debugger = 0;
+    m_debugger = nullptr;
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorController = makeUnique<Inspector::JSGlobalObjectInspectorController>(*this);

@@ -1704,7 +1704,7 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
         
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 }
 
@@ -1737,7 +1737,7 @@ ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(V
         
     default:
         CRASH();
-        return 0;
+        return nullptr;
     }
 }
 

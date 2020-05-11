@@ -87,12 +87,12 @@ String JSCell::getString(JSGlobalObject* globalObject) const
 
 JSObject* JSCell::getObject()
 {
-    return isObject() ? asObject(this) : 0;
+    return isObject() ? asObject(this) : nullptr;
 }
 
 const JSObject* JSCell::getObject() const
 {
-    return isObject() ? static_cast<const JSObject*>(this) : 0;
+    return isObject() ? static_cast<const JSObject*>(this) : nullptr;
 }
 
 CallData JSCell::getCallData(JSCell*)

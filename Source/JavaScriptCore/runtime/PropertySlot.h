@@ -238,7 +238,7 @@ public:
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
 
-        m_slotBase = 0;
+        m_slotBase = nullptr;
         m_propertyType = TypeValue;
 
         ASSERT(m_cacheability == CachingDisallowed);
@@ -361,7 +361,7 @@ public:
         m_data.value = JSValue::encode(jsUndefined());
         m_attributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::DontEnum;
 
-        m_slotBase = 0;
+        m_slotBase = nullptr;
         m_propertyType = TypeValue;
     }
 
@@ -401,7 +401,7 @@ private:
     union {
         DOMAttributeAnnotation domAttribute;
         ModuleNamespaceSlot moduleNamespaceSlot;
-    } m_additionalData { { 0, 0 } };
+    } m_additionalData { { nullptr, nullptr } };
 };
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, PropertyName propertyName) const

@@ -102,7 +102,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
             return sweepResult.freeList;
     }
 
-    return 0;
+    return nullptr;
 }
 
 WeakBlock::FreeCell* WeakSet::addAllocator(CellContainer container)

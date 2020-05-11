@@ -53,7 +53,7 @@ class AssemblyHelpers : public MacroAssembler {
 public:
     AssemblyHelpers(CodeBlock* codeBlock)
         : m_codeBlock(codeBlock)
-        , m_baselineCodeBlock(codeBlock ? codeBlock->baselineAlternative() : 0)
+        , m_baselineCodeBlock(codeBlock ? codeBlock->baselineAlternative() : nullptr)
     {
         if (m_codeBlock) {
             ASSERT(m_baselineCodeBlock);

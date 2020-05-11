@@ -78,7 +78,7 @@ static bool extendTerminateCallback(JSContextRef ctx, void*)
     extendTerminateCallbackCalled++;
     if (extendTerminateCallbackCalled == 1) {
         JSContextGroupRef contextGroup = JSContextGetGroup(ctx);
-        JSContextGroupSetExecutionTimeLimit(contextGroup, .200f, extendTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, .200f, extendTerminateCallback, nullptr);
         return false;
     }
     return true;
@@ -156,7 +156,7 @@ int testExecutionTimeLimit()
 
         /* Test script on another thread: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, nullptr);
         {
 #if OS(LINUX) && (CPU(MIPS) || CPU(ARM_THUMB2))
             Seconds timeAfterWatchdogShouldHaveFired = 500_ms + tierAdjustment;
@@ -194,7 +194,7 @@ int testExecutionTimeLimit()
 
         /* Test script timeout: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
@@ -237,7 +237,7 @@ int testExecutionTimeLimit()
 
         /* Test script timeout with tail calls: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
@@ -280,7 +280,7 @@ int testExecutionTimeLimit()
 
         /* Test the script timeout's TerminatedExecutionException should NOT be catchable: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), shouldTerminateCallback, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
@@ -327,7 +327,7 @@ int testExecutionTimeLimit()
         
         /* Test script timeout with no callback: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), 0, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), nullptr, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
@@ -372,7 +372,7 @@ int testExecutionTimeLimit()
         
         /* Test script timeout cancellation: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), cancelTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), cancelTerminateCallback, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
@@ -415,7 +415,7 @@ int testExecutionTimeLimit()
         
         /* Test script timeout extension: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), extendTerminateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), extendTerminateCallback, nullptr);
         {
             Seconds timeBeforeExtendedDeadline = 250_ms + tierAdjustment;
             Seconds timeAfterExtendedDeadline = 600_ms + tierAdjustment;
@@ -466,7 +466,7 @@ int testExecutionTimeLimit()
 #if HAVE(MACH_EXCEPTIONS)
         /* Test script timeout from dispatch queue: */
         timeLimit = 100_ms + tierAdjustment;
-        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), dispatchTermitateCallback, 0);
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit.seconds(), dispatchTermitateCallback, nullptr);
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 

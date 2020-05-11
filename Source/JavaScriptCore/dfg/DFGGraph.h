@@ -267,14 +267,14 @@ public:
     void assertIsRegistered(Structure* structure);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
-    void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
+    void dump(PrintStream& = WTF::dataFile(), DumpContext* = nullptr);
 
     bool terminalsAreValid();
     
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);
-    void dump(PrintStream&, const char* prefix, Node*, DumpContext* = 0);
+    void dump(PrintStream&, const char* prefix, Node*, DumpContext* = nullptr);
     static int amountOfNodeWhiteSpace(Node*);
     static void printNodeWhiteSpace(PrintStream&, Node*);
 

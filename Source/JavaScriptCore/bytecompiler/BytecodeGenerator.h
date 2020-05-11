@@ -471,7 +471,7 @@ namespace JSC {
         }
 
         // Returns the place to write the final output of an operation.
-        RegisterID* finalDestination(RegisterID* originalDst, RegisterID* tempDst = 0)
+        RegisterID* finalDestination(RegisterID* originalDst, RegisterID* tempDst = nullptr)
         {
             if (originalDst && originalDst != ignoredResult())
                 return originalDst;
@@ -485,7 +485,7 @@ namespace JSC {
         {
             if (dst && dst != ignoredResult())
                 return dst->isTemporary() ? dst : newTemporary();
-            return 0;
+            return nullptr;
         }
 
         // Moves src to dst if dst is not null and is different from src, otherwise just returns src.
@@ -494,7 +494,7 @@ namespace JSC {
             return dst == ignoredResult() ? nullptr : (dst && dst != src) ? emitMove(dst, src) : src;
         }
 
-        Ref<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = 0);
+        Ref<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = nullptr);
 
         void emitNode(RegisterID* dst, StatementNode* n)
         {

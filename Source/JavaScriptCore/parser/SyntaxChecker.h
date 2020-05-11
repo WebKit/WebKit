@@ -98,7 +98,7 @@ public:
     typedef int Arguments;
     typedef ExpressionType Comma;
     struct Property {
-        ALWAYS_INLINE Property(void* = 0)
+        ALWAYS_INLINE Property(void* = nullptr)
             : type((PropertyNode::Type)0)
         {
         }
@@ -108,7 +108,7 @@ public:
         {
         }
         ALWAYS_INLINE Property(PropertyNode::Type ty)
-            : name(0)
+            : name(nullptr)
             , type(ty)
         {
         }

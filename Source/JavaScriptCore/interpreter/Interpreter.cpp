@@ -490,7 +490,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 class GetCatchHandlerFunctor {
 public:
     GetCatchHandlerFunctor()
-        : m_handler(0)
+        : m_handler(nullptr)
     {
     }
 
@@ -1021,7 +1021,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         }
     }
 
-    RETURN_IF_EXCEPTION(throwScope, 0);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
     ASSERT(result.isObject());
     return checkedReturn(asObject(result));
 }

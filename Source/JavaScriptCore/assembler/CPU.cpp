@@ -41,7 +41,7 @@ bool isKernTCSMAvailable()
 
     uint32_t val = 0;
     size_t valSize = sizeof(val);
-    int rc = sysctlbyname("kern.tcsm_available", &val, &valSize, NULL, 0);
+    int rc = sysctlbyname("kern.tcsm_available", &val, &valSize, nullptr, 0);
     if (rc < 0)
         return false;
     return !!val;
@@ -50,7 +50,7 @@ bool isKernTCSMAvailable()
 bool enableKernTCSM()
 {
     uint32_t val = 1;
-    int rc = sysctlbyname("kern.tcsm_enable", NULL, 0, &val, sizeof(val));
+    int rc = sysctlbyname("kern.tcsm_enable", nullptr, nullptr, &val, sizeof(val));
     if (rc < 0)
         return false;
     return true;

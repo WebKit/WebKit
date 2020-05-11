@@ -46,7 +46,7 @@ public:
     JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) override;
     
     template<typename T>
-    T get(unsigned offset, bool littleEndian, bool* status = 0)
+    T get(unsigned offset, bool littleEndian, bool* status = nullptr)
     {
         if (status) {
             if (offset + sizeof(T) > byteLength()) {
@@ -62,7 +62,7 @@ public:
     }
     
     template<typename T>
-    T read(unsigned& offset, bool littleEndian, bool* status = 0)
+    T read(unsigned& offset, bool littleEndian, bool* status = nullptr)
     {
         T result = this->template get<T>(offset, littleEndian, status);
         if (!status || *status)
@@ -71,7 +71,7 @@ public:
     }
     
     template<typename T>
-    void set(unsigned offset, T value, bool littleEndian, bool* status = 0)
+    void set(unsigned offset, T value, bool littleEndian, bool* status = nullptr)
     {
         if (status) {
             if (offset + sizeof(T) > byteLength()) {

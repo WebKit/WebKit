@@ -182,7 +182,7 @@ bool GetByIdVariant::finalize(VM& vm)
 
 void GetByIdVariant::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const

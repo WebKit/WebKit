@@ -152,7 +152,7 @@ namespace JSC  {
 
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().returnPC); }
         bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
-        void clearReturnPC() { callerFrameAndPC().returnPC = 0; }
+        void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }
         static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
         AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 

@@ -1252,7 +1252,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(JSGlobalObject* globalObje
 
     // 4. Let A be a new array created as if by the expression new Array()
     //    where Array is the standard built-in constructor with that name.
-    JSArray* result = constructEmptyArray(globalObject, 0);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 5. Let lengthA be 0.
@@ -1382,7 +1382,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(JSGlobalObject* globalObject,
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(globalObject, scope);
     unsigned len;
-    JSString* jsString = 0;
+    JSString* jsString = nullptr;
     String uString;
     if (thisValue.isString()) {
         jsString = asString(thisValue);

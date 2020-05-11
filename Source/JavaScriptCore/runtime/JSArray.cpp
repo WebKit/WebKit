@@ -1177,7 +1177,7 @@ void JSArray::fillArgList(JSGlobalObject* globalObject, MarkedArgumentBuffer& ar
         return;
         
     case ArrayWithUndecided: {
-        vector = 0;
+        vector = nullptr;
         vectorEnd = 0;
         break;
     }
@@ -1190,7 +1190,7 @@ void JSArray::fillArgList(JSGlobalObject* globalObject, MarkedArgumentBuffer& ar
     }
         
     case ArrayWithDouble: {
-        vector = 0;
+        vector = nullptr;
         vectorEnd = 0;
         for (; i < butterfly->publicLength(); ++i) {
             double v = butterfly->contiguousDouble().at(this, i);
@@ -1249,7 +1249,7 @@ void JSArray::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElemen
         return;
         
     case ArrayWithUndecided: {
-        vector = 0;
+        vector = nullptr;
         vectorEnd = 0;
         break;
     }
@@ -1262,7 +1262,7 @@ void JSArray::copyToArguments(JSGlobalObject* globalObject, JSValue* firstElemen
     }
         
     case ArrayWithDouble: {
-        vector = 0;
+        vector = nullptr;
         vectorEnd = 0;
         for (; i < butterfly->publicLength(); ++i) {
             ASSERT(i < butterfly->vectorLength());

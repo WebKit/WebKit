@@ -61,7 +61,7 @@ public:
             RangeKey result;
             result.m_kind = Addition;
             result.m_source = edge.sanitized();
-            result.m_key = 0;
+            result.m_key = nullptr;
             return result;
         }
         

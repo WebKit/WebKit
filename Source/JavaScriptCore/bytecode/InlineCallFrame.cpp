@@ -82,7 +82,7 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
 
 void InlineCallFrame::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 } // namespace JSC

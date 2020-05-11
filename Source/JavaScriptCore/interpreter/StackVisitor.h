@@ -168,7 +168,7 @@ private:
     JS_EXPORT_PRIVATE void gotoNextFrame();
 
     void readFrame(CallFrame*);
-    void readNonInlinedFrame(CallFrame*, CodeOrigin* = 0);
+    void readNonInlinedFrame(CallFrame*, CodeOrigin* = nullptr);
 #if ENABLE(DFG_JIT)
     void readInlinedFrame(CallFrame*, CodeOrigin*);
 #endif
@@ -181,7 +181,7 @@ class CallerFunctor {
 public:
     CallerFunctor()
         : m_hasSkippedFirstFrame(false)
-        , m_callerFrame(0)
+        , m_callerFrame(nullptr)
     {
     }
 

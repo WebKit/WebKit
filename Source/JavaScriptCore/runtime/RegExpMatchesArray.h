@@ -39,7 +39,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
     VM& vm = scope.vm();
     unsigned vectorLength = initialLength;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
-        return 0;
+        return nullptr;
 
     const bool hasIndexingHeader = true;
     Butterfly* butterfly = Butterfly::tryCreateUninitialized(vm, nullptr, 0, structure->outOfLineCapacity(), hasIndexingHeader, vectorLength * sizeof(EncodedJSValue), deferralContext);

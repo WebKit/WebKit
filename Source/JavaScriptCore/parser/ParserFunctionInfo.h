@@ -29,7 +29,7 @@ namespace JSC {
 
 template <class TreeBuilder>
 struct ParserFunctionInfo {
-    const Identifier* name = 0;
+    const Identifier* name = nullptr;
     typename TreeBuilder::FunctionBody body = 0;
     unsigned parameterCount = 0;
     unsigned functionLength = 0;

@@ -49,7 +49,7 @@ class RegisteredStructure;
 
 class CCallHelpers : public AssemblyHelpers {
 public:
-    CCallHelpers(CodeBlock* codeBlock = 0)
+    CCallHelpers(CodeBlock* codeBlock = nullptr)
         : AssemblyHelpers(codeBlock)
     {
     }

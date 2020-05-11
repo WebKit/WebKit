@@ -44,7 +44,7 @@ void CallFrame::initDeprecatedCallFrameForDebugger(CallFrame* globalExec, JSCall
 {
     globalExec->setCodeBlock(nullptr);
     globalExec->setCallerFrame(noCaller());
-    globalExec->setReturnPC(0);
+    globalExec->setReturnPC(nullptr);
     globalExec->setArgumentCountIncludingThis(0);
     globalExec->setCallee(globalCallee);
     ASSERT(globalExec->isDeprecatedCallFrameForDebugger());

@@ -127,7 +127,7 @@ inline ScopeChainIterator JSScope::begin()
 
 inline ScopeChainIterator JSScope::end()
 { 
-    return ScopeChainIterator(0); 
+    return ScopeChainIterator(nullptr); 
 }
 
 inline JSScope* JSScope::next()

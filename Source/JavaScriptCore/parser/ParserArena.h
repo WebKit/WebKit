@@ -60,9 +60,9 @@ namespace JSC {
         {
             m_identifiers.clear();
             for (int i = 0; i < MaximumCachableCharacter; i++)
-                m_shortIdentifiers[i] = 0;
+                m_shortIdentifiers[i] = nullptr;
             for (int i = 0; i < MaximumCachableCharacter; i++)
-                m_recentIdentifiers[i] = 0;
+                m_recentIdentifiers[i] = nullptr;
         }
 
     private:

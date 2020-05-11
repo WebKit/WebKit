@@ -50,7 +50,7 @@ struct CheckData {
     bool m_arrayModeHoistingOkay;
     
     CheckData()
-        : m_structure(0)
+        : m_structure(nullptr)
         , m_arrayModeIsValid(false)
         , m_arrayModeHoistingOkay(false)
     {
@@ -64,7 +64,7 @@ struct CheckData {
     }
 
     CheckData(ArrayMode arrayMode)
-        : m_structure(0)
+        : m_structure(nullptr)
         , m_arrayMode(arrayMode)
         , m_arrayModeIsValid(true)
         , m_arrayModeHoistingOkay(true)
@@ -503,7 +503,7 @@ private:
             return;
         if (result.iterator->value.m_structure == structure.get())
             return;
-        result.iterator->value.m_structure = 0;
+        result.iterator->value.m_structure = nullptr;
     }
     
     void noticeStructureCheck(VariableAccessData* variable, RegisteredStructureSet set)
@@ -594,7 +594,7 @@ struct StructureTypeCheck {
 
     static void disableHoisting(CheckData& checkData)
     {
-        checkData.m_structure = 0;
+        checkData.m_structure = nullptr;
     }
 
     static bool isContravenedByValue(CheckData& checkData, JSValue value)

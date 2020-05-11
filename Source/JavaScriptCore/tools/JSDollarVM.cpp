@@ -634,7 +634,7 @@ protected:
 
 private:
     RuntimeArray(JSGlobalObject* globalObject, Structure* structure)
-        : JSArray(globalObject->vm(), structure, 0)
+        : JSArray(globalObject->vm(), structure, nullptr)
     {
         DollarVMAssertScope assertScope;
     }
@@ -1430,7 +1430,7 @@ const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "Ob
 ElementHandleOwner* Element::handleOwner()
 {
     DollarVMAssertScope assertScope;
-    static ElementHandleOwner* owner = 0;
+    static ElementHandleOwner* owner = nullptr;
     if (!owner)
         owner = new ElementHandleOwner();
     return owner;
@@ -2560,7 +2560,7 @@ static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(JSGlob
         return JSValue::encode(shadowChicken->functionsOnStack(globalObject, callFrame));
     }
 
-    JSArray* result = constructEmptyArray(globalObject, 0);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
         DollarVMAssertScope assertScope;

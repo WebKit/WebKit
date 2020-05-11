@@ -221,7 +221,7 @@ public:
         switch (indexingType) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
-            return 0;
+            return nullptr;
             
         case ALL_INT32_INDEXING_TYPES:
             return &indexedInt32Properties;
@@ -237,7 +237,7 @@ public:
             
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return 0;
+            return nullptr;
         }
     }
     

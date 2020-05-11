@@ -88,7 +88,7 @@ inline const char* doubleFormatStateToString(DoubleFormatState state)
         return "ForceValue";
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 } } // namespace JSC::DFG

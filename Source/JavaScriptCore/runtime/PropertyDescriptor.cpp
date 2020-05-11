@@ -95,13 +95,13 @@ JSValue PropertyDescriptor::setter() const
 JSObject* PropertyDescriptor::getterObject() const
 {
     ASSERT(isAccessorDescriptor() && getterPresent());
-    return m_getter.isObject() ? asObject(m_getter) : 0;
+    return m_getter.isObject() ? asObject(m_getter) : nullptr;
 }
 
 JSObject* PropertyDescriptor::setterObject() const
 {
     ASSERT(isAccessorDescriptor() && setterPresent());
-    return m_setter.isObject() ? asObject(m_setter) : 0;
+    return m_setter.isObject() ? asObject(m_setter) : nullptr;
 }
 
 void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)

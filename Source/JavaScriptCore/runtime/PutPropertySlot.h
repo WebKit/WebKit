@@ -41,7 +41,7 @@ public:
     typedef bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
-        : m_base(0)
+        : m_base(nullptr)
         , m_thisValue(thisValue)
         , m_offset(invalidOffset)
         , m_isStrictMode(isStrictMode)

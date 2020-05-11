@@ -36,7 +36,7 @@ class AdjacencyList;
 
 class Edge {
 public:
-    explicit Edge(Node* node = 0, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck, KillStatus killStatus = DoesNotKill)
+    explicit Edge(Node* node = nullptr, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck, KillStatus killStatus = DoesNotKill)
 #if USE(JSVALUE64)
         : m_encodedWord(makeWord(node, useKind, proofStatus, killStatus))
 #else

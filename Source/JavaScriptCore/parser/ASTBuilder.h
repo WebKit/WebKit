@@ -340,7 +340,7 @@ public:
     ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, const JSTextPosition& start)
     {
         if (Yarr::hasError(Yarr::checkSyntax(pattern.string(), flags.string())))
-            return 0;
+            return nullptr;
         RegExpNode* node = new (m_parserArena) RegExpNode(location, pattern, flags);
         int size = pattern.length() + 2; // + 2 for the two /'s
         JSTextPosition end = start + size;
@@ -971,7 +971,7 @@ public:
     
     void appendArrayPatternSkipEntry(ArrayPattern node, const JSTokenLocation& location)
     {
-        node->appendIndex(ArrayPatternNode::BindingType::Elision, location, 0, nullptr);
+        node->appendIndex(ArrayPatternNode::BindingType::Elision, location, nullptr, nullptr);
     }
 
     void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DestructuringPattern pattern, ExpressionNode* defaultValue)
@@ -1536,7 +1536,7 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
         return makePowNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
     }
     CRASH();
-    return 0;
+    return nullptr;
 }
 
 ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)

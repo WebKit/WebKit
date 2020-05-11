@@ -110,7 +110,7 @@ public:
         , m_codeBlock(graph.m_codeBlock)
         , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
-        , m_currentBlock(0)
+        , m_currentBlock(nullptr)
         , m_currentIndex(0)
         , m_constantUndefined(graph.freeze(jsUndefined()))
         , m_constantNull(graph.freeze(jsNull()))
@@ -121,8 +121,8 @@ public:
         , m_numTmps(m_codeBlock->numTmps())
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
-        , m_inlineStackTop(0)
-        , m_currentInstruction(0)
+        , m_inlineStackTop(nullptr)
+        , m_currentInstruction(nullptr)
         , m_hasDebuggerEnabled(graph.hasDebuggerEnabled())
     {
         ASSERT(m_profiledBlock);
@@ -774,7 +774,7 @@ private:
         return node;
     }
     
-    Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node* addToGraph(NodeType op, Node* child1 = nullptr, Node* child2 = nullptr, Node* child3 = nullptr)
     {
         Node* result = m_graph.addNode(
             op, currentNodeOrigin(), Edge(child1), Edge(child2),
@@ -787,7 +787,7 @@ private:
             op, currentNodeOrigin(), child1, child2, child3);
         return addToGraph(result);
     }
-    Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node* addToGraph(NodeType op, OpInfo info, Node* child1 = nullptr, Node* child2 = nullptr, Node* child3 = nullptr)
     {
         Node* result = m_graph.addNode(
             op, currentNodeOrigin(), info, Edge(child1), Edge(child2),
@@ -799,7 +799,7 @@ private:
         Node* result = m_graph.addNode(op, currentNodeOrigin(), info, child1, child2, child3);
         return addToGraph(result);
     }
-    Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = nullptr, Node* child2 = nullptr, Node* child3 = nullptr)
     {
         Node* result = m_graph.addNode(
             op, currentNodeOrigin(), info1, info2,
@@ -1811,7 +1811,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     InlineVariableData inlineVariableData;
     inlineVariableData.inlineCallFrame = m_inlineStackTop->m_inlineCallFrame;
     inlineVariableData.argumentPositionStart = argumentPositionStart;
-    inlineVariableData.calleeVariable = 0;
+    inlineVariableData.calleeVariable = nullptr;
     
     RELEASE_ASSERT(
         m_inlineStackTop->m_inlineCallFrame->isClosureCall
@@ -5818,12 +5818,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* operands[AdjacencyList::Size];
             unsigned indexInOperands = 0;
             for (unsigned i = 0; i < AdjacencyList::Size; ++i)
-                operands[i] = 0;
+                operands[i] = nullptr;
             for (int operandIdx = 0; operandIdx < numOperands; ++operandIdx) {
                 if (indexInOperands == maxArguments) {
                     operands[0] = addToGraph(StrCat, operands[0], operands[1], operands[2]);
                     for (unsigned i = 1; i < AdjacencyList::Size; ++i)
-                        operands[i] = 0;
+                        operands[i] = nullptr;
                     indexInOperands = 1;
                 }
                 
@@ -5978,7 +5978,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
                 addVarArgChild(base);
                 addVarArgChild(property);
-                addVarArgChild(0); // Leave room for property storage.
+                addVarArgChild(nullptr); // Leave room for property storage.
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
@@ -6947,7 +6947,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     // https://bugs.webkit.org/show_bug.cgi?id=184192
                     addVarArgChild(get(bytecode.m_iterable));
                     addVarArgChild(index);
-                    addVarArgChild(0); // Leave room for property storage.
+                    addVarArgChild(nullptr); // Leave room for property storage.
                     Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                     set(bytecode.m_value, getByVal);
                     set(bytecode.m_done, falseNode);
@@ -7244,8 +7244,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             ResolveType resolveType;
             GetPutInfo getPutInfo(0);
-            Structure* structure = 0;
-            WatchpointSet* watchpoints = 0;
+            Structure* structure = nullptr;
+            WatchpointSet* watchpoints = nullptr;
             uintptr_t operand;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -8048,7 +8048,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(!returnValue.isValid());
         ASSERT(!inlineCallFrameStart.isValid());
 
-        m_inlineCallFrame = 0;
+        m_inlineCallFrame = nullptr;
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
         m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
@@ -8219,8 +8219,8 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         addVarArgChild(base);
         addVarArgChild(property);
         addVarArgChild(value);
-        addVarArgChild(0); // Leave room for property storage.
-        addVarArgChild(0); // Leave room for length.
+        addVarArgChild(nullptr); // Leave room for property storage.
+        addVarArgChild(nullptr); // Leave room for length.
         addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
     }
@@ -8331,7 +8331,7 @@ void ByteCodeParser::parse()
     VERBOSE_LOG("Parsing ", *m_codeBlock, "\n");
     
     InlineStackEntry inlineStackEntry(
-        this, m_codeBlock, m_profiledBlock, 0, VirtualRegister(), VirtualRegister(),
+        this, m_codeBlock, m_profiledBlock, nullptr, VirtualRegister(), VirtualRegister(),
         m_codeBlock->numParameters(), InlineCallFrame::Call, nullptr);
     
     parseCodeBlock();

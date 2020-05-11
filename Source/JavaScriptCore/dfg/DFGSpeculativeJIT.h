@@ -170,7 +170,7 @@ public:
     {
         for (BlockIndex resultIndex = m_block->index + 1; ; resultIndex++) {
             if (resultIndex >= m_jit.graph().numBlocks())
-                return 0;
+                return nullptr;
             if (BasicBlock* result = m_jit.graph().block(resultIndex))
                 return result;
         }
@@ -1135,7 +1135,7 @@ public:
 
     void linkBranches();
 
-    void dump(const char* label = 0);
+    void dump(const char* label = nullptr);
 
     bool betterUseStrictInt52(Node* node)
     {

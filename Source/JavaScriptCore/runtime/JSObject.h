@@ -995,7 +995,7 @@ protected:
             return m_butterfly->arrayStorage();
                 
         default:
-            return 0;
+            return nullptr;
         }
     }
         
@@ -1151,7 +1151,7 @@ public:
     }
 
 protected:
-    explicit JSNonFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = 0)
+    explicit JSNonFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSObject(vm, structure, butterfly)
     {
     }

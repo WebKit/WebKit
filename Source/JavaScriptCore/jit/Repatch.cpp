@@ -1113,7 +1113,7 @@ static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
         if (!callLinkInfo.clearedByJettison()) {
             MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
                 MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
-                callLinkInfo.calleeGPR(), 0);
+                callLinkInfo.calleeGPR(), nullptr);
             linkSlowFor(vm, callLinkInfo, codeRef);
             MacroAssembler::repatchPointer(callLinkInfo.hotPathBegin(), nullptr);
         }

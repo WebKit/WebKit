@@ -82,7 +82,7 @@ public:
     // they may have an optional m_table for faster lookups (which must match the
     // specified matches and ranges)
     CharacterClass()
-        : m_table(0)
+        : m_table(nullptr)
         , m_characterWidths(CharacterClassWidths::Unknown)
         , m_anyCharacter(false)
     {
@@ -99,7 +99,7 @@ public:
         , m_ranges(ranges)
         , m_matchesUnicode(matchesUnicode)
         , m_rangesUnicode(rangesUnicode)
-        , m_table(0)
+        , m_table(nullptr)
         , m_characterWidths(widths)
         , m_tableInverted(false)
         , m_anyCharacter(false)
@@ -338,7 +338,7 @@ public:
 struct PatternDisjunction {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PatternDisjunction(PatternAlternative* parent = 0)
+    PatternDisjunction(PatternAlternative* parent = nullptr)
         : m_parent(parent)
         , m_hasFixedSize(false)
     {

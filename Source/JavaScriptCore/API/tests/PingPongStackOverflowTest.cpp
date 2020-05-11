@@ -50,7 +50,7 @@ static bool PingPongStackOverflowObject_hasInstance(JSContextRef context, JSObje
 
     int countAtEntry = nativeRecursionCount++;
 
-    JSValueRef result = 0;
+    JSValueRef result = nullptr;
     if (nativeRecursionCount < 100) {
         JSObjectRef function = JSValueToObject(context, hasInstance, exception);
         result = JSObjectCallAsFunction(context, function, constructor, 1, &possibleValue, exception);
@@ -65,7 +65,7 @@ static bool PingPongStackOverflowObject_hasInstance(JSContextRef context, JSObje
         builder.appendLiteral(");");
 
         JSStringRef script = JSStringCreateWithUTF8CString(builder.toString().utf8().data());
-        result = JSEvaluateScript(context, script, NULL, NULL, 1, exception);
+        result = JSEvaluateScript(context, script, nullptr, nullptr, 1, exception);
         JSStringRelease(script);
     }
 
@@ -81,22 +81,22 @@ JSClassDefinition PingPongStackOverflowObject_definition = {
     kJSClassAttributeNone,
     
     "PingPongStackOverflowObject",
-    NULL,
+    nullptr,
     
-    NULL,
-    NULL,
+    nullptr,
+    nullptr,
     
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
     PingPongStackOverflowObject_hasInstance,
-    NULL,
+    nullptr,
 };
 
 static JSClassRef PingPongStackOverflowObject_class(JSContextRef context)
@@ -151,9 +151,9 @@ int testPingPongStackOverflow()
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     ASSERT(JSValueIsObject(context, globalObject));
 
-    JSObjectRef PingPongStackOverflowObject = JSObjectMake(context, PingPongStackOverflowObject_class(context), NULL);
+    JSObjectRef PingPongStackOverflowObject = JSObjectMake(context, PingPongStackOverflowObject_class(context), nullptr);
     JSStringRef PingPongStackOverflowObjectString = JSStringCreateWithUTF8CString("PingPongStackOverflowObject");
-    JSObjectSetProperty(context, globalObject, PingPongStackOverflowObjectString, PingPongStackOverflowObject, kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, globalObject, PingPongStackOverflowObjectString, PingPongStackOverflowObject, kJSPropertyAttributeNone, nullptr);
     JSStringRelease(PingPongStackOverflowObjectString);
 
     unsigned stackSize = 32 * KB;

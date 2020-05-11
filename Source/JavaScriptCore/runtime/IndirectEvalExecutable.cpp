@@ -42,7 +42,7 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(JSGlobalObject* globalObj
 
     if (!globalObject->evalEnabled()) {
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
-        return 0;
+        return nullptr;
     }
 
     auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(vm.heap)) IndirectEvalExecutable(globalObject, source, derivedContextType, isArrowFunctionContext, evalContextType);

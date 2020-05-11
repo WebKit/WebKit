@@ -326,7 +326,7 @@ bool InPlaceAbstractState::endBasicBlock()
 
 void InPlaceAbstractState::reset()
 {
-    m_block = 0;
+    m_block = nullptr;
     m_isValid = false;
     m_branchDirection = InvalidBranchDirection;
     m_structureClobberState = StructuresAreWatched;

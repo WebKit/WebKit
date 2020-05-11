@@ -105,7 +105,7 @@ void DeleteByIdVariant::markIfCheap(SlotVisitor& visitor)
 
 void DeleteByIdVariant::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 bool DeleteByIdVariant::finalize(VM& vm)

@@ -181,7 +181,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             exit.m_descriptor->m_values.size() + numMaterializations + maxMaterializationNumArguments) +
         requiredScratchMemorySizeInBytes() +
         codeBlock->calleeSaveRegisters()->size() * sizeof(uint64_t));
-    EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
+    EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
     EncodedJSValue* materializationPointers = scratch + exit.m_descriptor->m_values.size();
     EncodedJSValue* materializationArguments = materializationPointers + numMaterializations;
     char* registerScratch = bitwise_cast<char*>(materializationArguments + maxMaterializationNumArguments);

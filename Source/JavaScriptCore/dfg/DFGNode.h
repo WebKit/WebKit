@@ -136,7 +136,7 @@ static_assert(sizeof(DataViewData) == sizeof(uint64_t), "");
 
 struct BranchTarget {
     BranchTarget()
-        : block(0)
+        : block(nullptr)
         , count(PNaN)
     {
     }
@@ -994,7 +994,7 @@ public:
     {
         VariableAccessData* result = m_opInfo.as<VariableAccessData*>();
         if (!result)
-            return 0;
+            return nullptr;
         return result->find();
     }
     
@@ -3306,7 +3306,7 @@ CString nodeListDump(const T& nodeList)
 }
 
 template<typename T>
-CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
+CString nodeMapDump(const T& nodeMap, DumpContext* context = nullptr)
 {
     Vector<typename T::KeyType> keys;
     for (
@@ -3322,7 +3322,7 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
 }
 
 template<typename T>
-CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context = 0)
+CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context = nullptr)
 {
     using V = typename T::ValueType;
     T sortedList = nodeValuePairList;

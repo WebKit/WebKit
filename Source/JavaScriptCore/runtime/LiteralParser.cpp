@@ -832,7 +832,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         switch(state) {
             startParseArray:
             case StartParseArray: {
-                JSArray* array = constructEmptyArray(m_globalObject, 0);
+                JSArray* array = constructEmptyArray(m_globalObject, nullptr);
                 RETURN_IF_EXCEPTION(scope, JSValue());
                 objectStack.appendWithCrashOnOverflow(array);
             }

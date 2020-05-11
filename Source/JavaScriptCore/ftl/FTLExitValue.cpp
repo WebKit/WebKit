@@ -119,7 +119,7 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
 
 void ExitValue::dump(PrintStream& out) const
 {
-    dumpInContext(out, 0);
+    dumpInContext(out, nullptr);
 }
 
 void ExitValue::validateReferences(const TrackedReferences& trackedReferences) const

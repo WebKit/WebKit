@@ -101,7 +101,7 @@ void* JITCode::dataAddressAtOffset(size_t)
     // We can't patch FTL code, yet. Even if we did, it's not clear that we would do so
     // through this API.
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 unsigned JITCode::offsetOf(void*)

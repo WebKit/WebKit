@@ -261,7 +261,7 @@ const String JSFunction::calculatedDisplayName(VM& vm)
 const SourceCode* JSFunction::sourceCode() const
 {
     if (isHostOrBuiltinFunction())
-        return 0;
+        return nullptr;
     return &jsExecutable()->source();
 }
     

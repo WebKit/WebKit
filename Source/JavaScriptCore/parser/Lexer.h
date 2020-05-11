@@ -378,7 +378,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, Op
         && !m_parsingBuiltinFunction
 #endif
         )
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
     else
         tokenData->ident = makeLCharIdentifier(start, ptr - start);
 

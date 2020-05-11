@@ -54,7 +54,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        auto* result = Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
+        auto* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
         result->setTransitionWatchpointIsLikelyToBeFired(true);
         return result;
     }
