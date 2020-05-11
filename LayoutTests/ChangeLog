@@ -1,3 +1,18 @@
+2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r253267): issues on touchstart/touchend/touchmove (pointerdown/pointerup/pointermove) events
+        https://bugs.webkit.org/show_bug.cgi?id=211521
+        <rdar://problem/62942374>
+
+        Reviewed by Darin Adler.
+
+        Add a layout test that synthesizes a tap-and-half gesture over an element with active touch event listeners, and
+        verifies that the second half of the gesture (i.e. the pan gesture) dispatches touchstart, touchmove, and
+        touchend events.
+
+        * fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive-expected.txt: Added.
+        * fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive.html: Added.
+
 2020-05-11  Jason Lawrence  <lawrence.j@apple.com>
 
         [ Mac wk1 ] http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html is flaky failing.
