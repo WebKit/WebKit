@@ -3802,3 +3802,9 @@ void webkit_settings_set_enable_media(WebKitSettings* settings, gboolean enabled
     priv->preferences->setMediaEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-media");
 }
+
+void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings* settings, bool required)
+{
+    WebKitSettingsPrivate* priv = settings->priv;
+    priv->preferences->setMediaCaptureRequiresSecureConnection(required);
+}

@@ -1,3 +1,17 @@
+2020-05-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Media and audio permission request unit tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=158257
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add new private API to disable secure capture device contexts.
+        This is needed for the API tests.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewSetMediaCaptureRequiresSecureConnection):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+
 2020-05-10  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Add ENABLE_PERIODIC_MEMORY_MONITOR flag.

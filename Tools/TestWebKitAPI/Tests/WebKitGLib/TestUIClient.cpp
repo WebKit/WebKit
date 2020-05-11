@@ -18,6 +18,12 @@
  */
 
 #include "config.h"
+
+// Include WebKitSettingsPrivate.h for webkitSettingsSetMediaCaptureRequiresSecureConnection().
+#define WEBKIT2_COMPILATION
+#include "WebKitSettingsPrivate.h"
+#undef WEBKIT2_COMPILATION
+
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
@@ -889,6 +895,8 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
+    webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
 
 #if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
@@ -923,6 +931,8 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     test->waitUntilTitleChangedTo("OK");
 
     webkit_settings_set_enable_media_stream(settings, enabled);
+    webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
 }
 
 static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
@@ -930,18 +940,19 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
+    webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
 
 #if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
 #endif
-    static const char* userMediaRequestHTML =
-        "<html>"
+    static const char* userMediaRequestHTML = "<html>"
         "  <script>"
         "  function runTest()"
         "  {"
-        "    navigator.webkitGetUserMedia({audio: true, video: true},"
-        "                                 function(s) { document.title = \"OK\" },"
-        "                                 function(e) { document.title = e.name });"
+        "    navigator.mediaDevices.getUserMedia({audio: true, video: true})"
+        "    .then((stream) => { document.title = \"OK\"; })"
+        "    .catch((e) => { document.title = e.name; });"
         "  }"
         "  </script>"
         "  <body onload='runTest();'></body>"
@@ -954,7 +965,7 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     // Test denying a permission request.
     test->m_allowPermissionRequests = false;
     test->loadHtml(userMediaRequestHTML, nullptr);
-    test->waitUntilTitleChangedTo("PermissionDeniedError");
+    test->waitUntilTitleChangedTo("NotAllowedError");
 
     // Test allowing a permission request.
     test->m_allowPermissionRequests = true;
@@ -962,6 +973,8 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     test->waitUntilTitleChangedTo("OK");
 
     webkit_settings_set_enable_media_stream(settings, enabled);
+    webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
 }
 
 static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
@@ -969,18 +982,19 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
+    webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
 
 #if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
 #endif
-    static const char* userMediaRequestHTML =
-        "<html>"
+    static const char* userMediaRequestHTML = "<html>"
         "  <script>"
         "  function runTest()"
         "  {"
-        "    navigator.webkitGetUserMedia({audio: true, video: false},"
-        "                                 function(s) { document.title = \"OK\" },"
-        "                                 function(e) { document.title = e.name });"
+        "    navigator.mediaDevices.getUserMedia({audio: true, video: false})"
+        "    .then((stream) => { document.title = \"OK\"; })"
+        "    .catch((e) => { document.title = e.name; });"
         "  }"
         "  </script>"
         "  <body onload='runTest();'></body>"
@@ -993,9 +1007,11 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     // Test denying a permission request.
     test->m_allowPermissionRequests = false;
     test->loadHtml(userMediaRequestHTML, nullptr);
-    test->waitUntilTitleChangedTo("PermissionDeniedError");
+    test->waitUntilTitleChangedTo("NotAllowedError");
 
     webkit_settings_set_enable_media_stream(settings, enabled);
+    webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
 }
 #endif // ENABLE(MEDIA_STREAM)
 

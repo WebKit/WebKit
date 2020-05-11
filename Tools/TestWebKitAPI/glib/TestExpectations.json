@@ -4,15 +4,6 @@
             "/webkit/WebKitWebView/mouse-target": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": "webkit.org/b/117689"}}
             },
-            "/webkit/WebKitWebView/usermedia-enumeratedevices-permission-check" : {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
-            },
-            "/webkit/WebKitWebView/usermedia-permission-requests": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
-            },
-            "/webkit/WebKitWebView/audio-usermedia-permission-request": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
-            },
             "/webkit/WebKitWebView/pointer-lock-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205266"}}
             }

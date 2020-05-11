@@ -31,4 +31,6 @@
 
 WebKit::WebPreferences* webkitSettingsGetPreferences(WebKitSettings*);
 
+void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings*, bool required);
+
 #endif // WebKitSettingsPrivate_h

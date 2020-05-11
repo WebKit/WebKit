@@ -1,3 +1,18 @@
+2020-05-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Media and audio permission request unit tests are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=158257
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix getUserMedia glib tests. They require unsecure capture device context.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewUserMediaEnumerateDevicesPermissionCheck):
+        (testWebViewUserMediaPermissionRequests):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2020-05-11  Paulo Matos  <pmatos@igalia.com>
 
         Fix typo 'Detacted' -> 'Detected'
