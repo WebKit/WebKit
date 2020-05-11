@@ -83,6 +83,7 @@
 #include "PluginInformation.h"
 #include "PluginProcessManager.h"
 #include "PrintInfo.h"
+#include "ProcessThrottler.h"
 #include "ProvisionalPageProxy.h"
 #include "SafeBrowsingWarning.h"
 #include "SharedBufferDataReference.h"
@@ -4073,7 +4074,15 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s));
+    ProcessThrottler::ActivityVariant activity;
+#if PLATFORM(IOS_FAMILY)
+    if (pageClient().isApplicationVisible())
+        activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
+    else
+#endif
+        activity = m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
+
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), WTFMove(activity));
     send(Messages::WebPage::RunJavaScriptInFrameInScriptWorld(parameters, frameID, world.worldData(), callbackID));
 }
 
