@@ -1,3 +1,13 @@
+2020-05-10  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Use alias template to define `match_constness_t` in Wtf/wtp/TypeCasts.h
+        https://bugs.webkit.org/show_bug.cgi?id=211698
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/TypeCasts.h:
+        (WTF::downcast):
+
 2020-05-10  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Add ENABLE_PERIODIC_MEMORY_MONITOR flag.
