@@ -621,8 +621,8 @@ public:
     bool isSplitter() const { return roleValue() == AccessibilityRole::Splitter; }
     bool isToolbar() const { return roleValue() == AccessibilityRole::Toolbar; }
     bool isSummary() const { return roleValue() == AccessibilityRole::Summary; }
+    bool isBlockquote() const { return roleValue() == AccessibilityRole::Blockquote; }
 
-    virtual bool isBlockquote() const = 0;
     virtual bool isLandmark() const = 0;
     virtual bool isRangeControl() const = 0;
     virtual bool isMeter() const = 0;

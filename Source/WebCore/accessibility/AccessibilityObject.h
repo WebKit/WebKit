@@ -195,7 +195,6 @@ public:
     bool isARIATextControl() const override;
     bool isNonNativeTextControl() const override;
     bool isButton() const override;
-    bool isBlockquote() const override;
     bool isLandmark() const override;
     bool isRangeControl() const override;
     bool isMeter() const override;

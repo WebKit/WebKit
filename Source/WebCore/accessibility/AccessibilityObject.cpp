@@ -200,11 +200,6 @@ String AccessibilityObject::computedLabel()
     return String();
 }
 
-bool AccessibilityObject::isBlockquote() const
-{
-    return roleValue() == AccessibilityRole::Blockquote;
-}
-
 bool AccessibilityObject::isTextControl() const
 {
     switch (roleValue()) {

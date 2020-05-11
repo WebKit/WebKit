@@ -1,3 +1,26 @@
+2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add implementation  for AXIsolatedObject::elementPath, hasHighlighting, isBlockquote, isKeyboardFocusable.
+        https://bugs.webkit.org/show_bug.cgi?id=211732
+
+        Reviewed by Chris Fleizach.
+
+        Covered by several tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isBlockquote const): Moved to base class.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AXCoreObject::isBlockquote const):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): Cache the above mentioned properties.
+        (WebCore::AXIsolatedObject::pathAttributeValue const):
+        (WebCore::AXIsolatedObject::isBlockquote const): Moved to base class.
+        (WebCore::AXIsolatedObject::isKeyboardFocusable const): Implemented inline in header.
+        (WebCore::AXIsolatedObject::hasHighlighting const): Implemented inline in header.
+        (WebCore::AXIsolatedObject::elementPath const): Implemented inline in header.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-05-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion after r261414

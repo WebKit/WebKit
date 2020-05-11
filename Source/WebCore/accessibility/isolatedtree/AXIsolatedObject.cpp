@@ -216,7 +216,10 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus());
     setProperty(AXPropertyName::LiveRegionRelevant, object.liveRegionRelevant());
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
-
+    setProperty(AXPropertyName::Path, object.elementPath());
+    setProperty(AXPropertyName::HasHighlighting, object.hasHighlighting());
+    setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
+    
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);
         setProperty(AXPropertyName::IsExposable, object.isExposable());
@@ -786,6 +789,15 @@ URL AXIsolatedObject::urlAttributeValue(AXPropertyName propertyName) const
     );
 }
 
+Path AXIsolatedObject::pathAttributeValue(AXPropertyName propertyName) const
+{
+    auto value = m_attributeMap.get(propertyName);
+    return WTF::switchOn(value,
+        [] (Path& typedValue) { return typedValue; },
+        [] (auto&) { return Path(); }
+    );
+}
+
 Color AXIsolatedObject::colorAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
@@ -1106,19 +1118,7 @@ bool AXIsolatedObject::isNonNativeTextControl() const
     return false;
 }
 
-bool AXIsolatedObject::isBlockquote() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isFigureElement() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isKeyboardFocusable() const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1227,12 +1227,6 @@ bool AXIsolatedObject::hasSameStyle(RenderObject*) const
 }
 
 bool AXIsolatedObject::hasUnderline() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::hasHighlighting() const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1542,12 +1536,6 @@ Element* AXIsolatedObject::actionElement() const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-Path AXIsolatedObject::elementPath() const
-{
-    ASSERT_NOT_REACHED();
-    return Path();
 }
 
 TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
