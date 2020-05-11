@@ -720,7 +720,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // ENABLE(DATA_DETECTION)
 }
 
-#if USE(UICONTEXTMENU) && ENABLE(DATA_DETECTION)
+#if USE(UICONTEXTMENU)
+
+static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+{
+    if (![defaultElementActions count])
+        return nil;
+
+    auto actions = [NSMutableArray arrayWithCapacity:[defaultElementActions count]];
+    for (_WKElementAction *elementAction in defaultElementActions.get())
+        [actions addObject:[elementAction uiActionForElementInfo:elementInfo.get()]];
+
+    return actions;
+}
+
+- (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
+{
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation userInfo:nil]);
+    RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = positionInformation.isLink ? [self defaultActionsForLinkSheet:elementInfo.get()] : [self defaultActionsForImageSheet:elementInfo.get()];
+    return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+}
+
+#if ENABLE(DATA_DETECTION)
+
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
 {
     DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
@@ -777,18 +799,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 }
 
-static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
-{
-    if (![defaultElementActions count])
-        return nil;
-
-    auto actions = [NSMutableArray arrayWithCapacity:[defaultElementActions count]];
-    for (_WKElementAction *elementAction in defaultElementActions.get())
-        [actions addObject:[elementAction uiActionForElementInfo:elementInfo.get()]];
-
-    return actions;
-}
-
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
     if (!_positionInformation)
@@ -796,15 +806,9 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     return [self suggestedActionsForContextMenuWithPositionInformation:*_positionInformation];
 }
 
-- (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
-{
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation userInfo:nil]);
-    RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = positionInformation.isLink ? [self defaultActionsForLinkSheet:elementInfo.get()] : [self defaultActionsForImageSheet:elementInfo.get()];
-    return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+#endif // ENABLE(DATA_DETECTION)
 
-}
-
-#endif
+#endif // USE(UICONTEXTMENU)
 
 - (void)cleanupSheet
 {
