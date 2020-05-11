@@ -229,8 +229,10 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::updateChildren");
     ASSERT(isMainThread());
-    AXID axObjectID = axObject.objectID();
+    if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
+        return;
 
+    AXID axObjectID = axObject.objectID();
     LockHolder locker { m_changeLogLock };
     auto object = nodeForID(axObjectID);
     if (!object)

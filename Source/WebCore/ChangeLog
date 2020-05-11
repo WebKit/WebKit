@@ -1,5 +1,25 @@
 2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
 
+        Check the validity of the underlying Document before updating the isolated tree.
+        https://bugs.webkit.org/show_bug.cgi?id=211728
+
+        Reviewed by Chris Fleizach.
+
+        Solves crashes in isolated tree mode for several LayoutTests.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedUIElementForPage): Update the focused
+        document styles before returning the isolated tree focused object.
+
+        (WebCore::AXObjectCache::notificationPostTimerFired): Ignored
+        notification if underlying Document doesn't have a living render tree.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildren): Don't update isolated object
+        if associated AXObject doesn't have a Document or the Document doesn't have a live render tree.
+
+2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
+
         Add mechanism to turn on accessibility isolated tree mode from WebKitTestRunner.
         https://bugs.webkit.org/show_bug.cgi?id=211725
 

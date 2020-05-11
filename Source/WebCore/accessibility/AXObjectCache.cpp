@@ -405,17 +405,18 @@ AXCoreObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     if (!gAccessibilityEnabled)
         return nullptr;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (isIsolatedTreeEnabled())
-        return isolatedTreeFocusedObject();
-#endif
-
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
     if (!focusedDocument)
         return nullptr;
 
+    // Call this before isolated or non-isolated cases so the document is up to do.
     focusedDocument->updateStyleIfNeeded();
+    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (isIsolatedTreeEnabled())
+        return isolatedTreeFocusedObject();
+#endif
 
     return focusedObject(*focusedDocument);
 }
@@ -1010,6 +1011,8 @@ void AXObjectCache::notificationPostTimerFired()
 {
     Ref<Document> protectorForCacheOwner(m_document);
     m_notificationPostTimer.stop();
+    if (!m_document.hasLivingRenderTree())
+        return;
     
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
