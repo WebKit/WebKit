@@ -703,6 +703,9 @@ bool AXObjectCache::clientSupportsIsolatedTree()
 
 bool AXObjectCache::isIsolatedTreeEnabled()
 {
+    if (UNLIKELY(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting))
+        return true;
+
     return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff && clientSupportsIsolatedTree();
 }
 

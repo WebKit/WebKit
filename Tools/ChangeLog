@@ -1,3 +1,16 @@
+2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add mechanism to turn on accessibility isolated tree mode from WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=211725
+
+        Reviewed by Chris Fleizach.
+
+        Turn on isolated tree mode when appropriate.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::updateIsolatedTreeMode):
+
 2020-05-11  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, reverting r261296.

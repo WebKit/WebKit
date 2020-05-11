@@ -131,7 +131,7 @@ AXError _AXUIElementUseSecondaryAXThread(bool enabled);
 #if HAVE(AX_CLIENT_TYPE)
 typedef CF_ENUM(int32_t, AXClientType)
 {
-    kAXClientTypeNoActiveRequestFound  = 0,
+    kAXClientTypeNoActiveRequestFound = 0,
     kAXClientTypeUnknown,
     kAXClientTypeRaft,
     kAXClientTypeXCUITest,
@@ -149,3 +149,5 @@ AXClientType _AXGetClientForCurrentRequestUntrusted(void);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#define kAXClientTypeWebKitTesting 999999

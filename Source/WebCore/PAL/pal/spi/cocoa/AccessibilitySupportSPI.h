@@ -42,6 +42,7 @@ typedef CF_ENUM(int32_t, AXSIsolatedTreeMode)
 };
 
 AXSIsolatedTreeMode _AXSIsolatedTreeMode(void);
+void _AXSSetIsolatedTreeMode(AXSIsolatedTreeMode);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 WTF_EXTERN_C_END

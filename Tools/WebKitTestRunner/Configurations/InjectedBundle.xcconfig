@@ -33,7 +33,7 @@ SKIP_INSTALL = NO;
 OTHER_LDFLAGS_BASE = -framework CoreText -framework QuartzCore;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_cocoatouch = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
-OTHER_LDFLAGS_ = -framework Carbon -framework Cocoa;
+OTHER_LDFLAGS_ = -framework Carbon -framework Cocoa -lAccessibility;
 
 STRIP_STYLE = debugging;
 
