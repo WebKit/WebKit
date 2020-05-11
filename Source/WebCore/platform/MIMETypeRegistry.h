@@ -31,9 +31,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>& overriddenMimeTypesMap();
-WEBCORE_EXPORT const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap();
-
 struct TypeExtensionPair {
     ASCIILiteral type;
     ASCIILiteral extension;

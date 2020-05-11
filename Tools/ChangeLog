@@ -1,3 +1,16 @@
+2020-05-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, reverting r261296.
+
+        Rolling r260769 back in, since this was not causing a
+        regression.
+
+        Reverted changeset:
+
+        "Unreviewed, reverting r260769."
+        https://bugs.webkit.org/show_bug.cgi?id=211578
+        https://trac.webkit.org/changeset/261296
+
 2020-05-11  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Media and audio permission request unit tests are timing out

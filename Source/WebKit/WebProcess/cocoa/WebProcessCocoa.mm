@@ -61,7 +61,6 @@
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
-#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
@@ -348,9 +347,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
 
     setSystemHasBattery(parameters.systemHasBattery);
-
-    if (parameters.mimeTypesMap)
-        overriddenMimeTypesMap() = WTFMove(parameters.mimeTypesMap);
 
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));

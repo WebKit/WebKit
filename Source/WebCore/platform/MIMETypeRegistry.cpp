@@ -270,12 +270,6 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::unsupportedTe
     return unsupportedTextMIMETypes;
 }
 
-Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>& overriddenMimeTypesMap()
-{
-    static NeverDestroyed<Optional<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>>> map;
-    return map;
-}
-
 const std::initializer_list<TypeExtensionPair>& commonMediaTypes()
 {
     // A table of common media MIME types and file extensions used when a platform's
@@ -362,7 +356,7 @@ const std::initializer_list<TypeExtensionPair>& commonMediaTypes()
     return commonMediaTypes;
 }
 
-const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap()
+static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
@@ -387,12 +381,6 @@ const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypes
 
 static const Vector<String>* typesForCommonExtension(const String& extension)
 {
-    if (overriddenMimeTypesMap().hasValue()) {
-        auto mapEntry = overriddenMimeTypesMap()->find(extension);
-        if (mapEntry == overriddenMimeTypesMap()->end())
-            return nullptr;
-        return &mapEntry->value;
-    }
     auto mapEntry = commonMimeTypesMap().find(extension);
     if (mapEntry == commonMimeTypesMap().end())
         return nullptr;
