@@ -6503,7 +6503,6 @@
 		1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinator.h; sourceTree = "<group>"; };
 		1AF62F2014DAFE790041556C /* ScrollingThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingThread.cpp; sourceTree = "<group>"; };
 		1AF62F2114DAFE790041556C /* ScrollingThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingThread.h; sourceTree = "<group>"; };
-		1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingThreadMac.mm; sourceTree = "<group>"; };
 		1AF7AFC51A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOriginPolicy.cpp; sourceTree = "<group>"; };
 		1AF7AFC61A48A8BC00C8E4E7 /* SecurityOriginPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginPolicy.h; sourceTree = "<group>"; };
 		1AF89A411518FDEA00E547B5 /* TiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledBacking.h; sourceTree = "<group>"; };
@@ -17674,7 +17673,6 @@
 				517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */,
 				517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */,
 				0F73B765222B327F00805316 /* ScrollingStateScrollingNodeMac.mm */,
-				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				93C4A4131629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.h */,
 				93C4A4141629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.mm */,
 				0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */,

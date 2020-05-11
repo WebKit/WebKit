@@ -26,16 +26,37 @@
 #include "config.h"
 #include "ScrollingThread.h"
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(SCROLLING_THREAD)
 
 #include <mutex>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
+ScrollingThread& ScrollingThread::singleton()
+{
+    static LazyNeverDestroyed<ScrollingThread> scrollingThread;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        scrollingThread.construct();
+    });
+
+    return scrollingThread;
+}
+
 ScrollingThread::ScrollingThread()
 {
+    BinarySemaphore semaphore;
+    m_thread = Thread::create("WebCore: Scrolling", [this, &semaphore] {
+        WTF::Thread::setCurrentThreadIsUserInteractive();
+        m_runLoop = &RunLoop::current();
+        semaphore.signal();
+        m_runLoop->run();
+    });
+
+    semaphore.wait();
 }
 
 bool ScrollingThread::isCurrentThread()
@@ -45,15 +66,7 @@ bool ScrollingThread::isCurrentThread()
 
 void ScrollingThread::dispatch(Function<void ()>&& function)
 {
-    auto& scrollingThread = ScrollingThread::singleton();
-    scrollingThread.createThreadIfNeeded();
-
-    {
-        auto locker = holdLock(scrollingThread.m_functionsMutex);
-        scrollingThread.m_functions.append(WTFMove(function));
-    }
-
-    scrollingThread.wakeUpRunLoop();
+    ScrollingThread::singleton().runLoop().dispatch(WTFMove(function));
 }
 
 void ScrollingThread::dispatchBarrier(Function<void ()>&& function)
@@ -63,66 +76,6 @@ void ScrollingThread::dispatchBarrier(Function<void ()>&& function)
     });
 }
 
-ScrollingThread& ScrollingThread::singleton()
-{
-    static NeverDestroyed<ScrollingThread> scrollingThread;
-
-    return scrollingThread;
-}
-
-void ScrollingThread::createThreadIfNeeded()
-{
-    // Wait for the thread to initialize the run loop.
-    std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
-
-    if (!m_thread) {
-        m_thread = Thread::create("WebCore: Scrolling", [this] {
-            WTF::Thread::setCurrentThreadIsUserInteractive();
-            initializeRunLoop();
-        });
-    }
-
-#if PLATFORM(COCOA)
-    m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
-#else
-    m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_runLoop; });
-#endif
-}
-
-void ScrollingThread::dispatchFunctionsFromScrollingThread()
-{
-    ASSERT(isCurrentThread());
-
-    Vector<Function<void ()>> functions;
-    
-    {
-        auto locker = holdLock(m_functionsMutex);
-        functions = WTFMove(m_functions);
-    }
-
-    for (auto& function : functions)
-        function();
-}
-
-#if PLATFORM(IOS_FAMILY)
-NO_RETURN_DUE_TO_ASSERT void ScrollingThread::initializeRunLoop()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void ScrollingThread::wakeUpRunLoop()
-{
-}
-
-void ScrollingThread::threadRunLoopSourceCallback(void*)
-{
-}
-
-void ScrollingThread::threadRunLoopSourceCallback()
-{
-}
-#endif // PLATFORM(IOS_FAMILY)
-
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(SCROLLING_THREAD)
