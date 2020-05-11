@@ -3,6 +3,7 @@ Testing that we do not show the seeking controls in fullscreen with a live broad
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS media.webkitDisplayingFullscreen became true
 PASS media.duration became Number.POSITIVE_INFINITY
 PASS mediaController.controls.rewindButton.enabled is false
 PASS mediaController.controls.forwardButton.enabled is false

@@ -223,7 +223,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
     UNUSED_PARAM(mode);
     return DeprecatedGlobalSettings::avKitEnabled();
 #else
-    return mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture();
+    return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture());
 #endif
 }
 

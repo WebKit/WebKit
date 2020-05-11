@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS internals.shadowRoot(media).querySelector("button.fullscreen") became different from null
 PASS internals.shadowRoot(media).querySelector("button.fullscreen").getBoundingClientRect().width became different from 0
+PASS media.webkitDisplayingFullscreen became true
 PASS internals.shadowRoot(media).querySelector("button.tracks") became different from null
 PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width became different from 0
 PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right became 582

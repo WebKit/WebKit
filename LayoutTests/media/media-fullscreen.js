@@ -38,9 +38,9 @@ function fullscreenchange()
         endfullscreen();
 }
 
-function beginfullscreen()
+async function beginfullscreen()
 {
-    testExpected("mediaElement.webkitDisplayingFullscreen", true);
+    await testExpectedEventually("mediaElement.webkitDisplayingFullscreen", true);
     run("mediaElement.webkitExitFullScreen()");
 }
 
@@ -49,13 +49,13 @@ function endfullscreen()
     setTimeout(openNextMovie, 10);
 }
 
-function fullscreenerror()
+async function fullscreenerror()
 {
     var movie = movieInfo.movies[movieInfo.current];
     if (movie.inline) {
         failTest("Unexpected fullscreenerror event");
     } else {
-        testExpected("mediaElement.webkitDisplayingFullscreen", false);
+        await testExpectedEventually("mediaElement.webkitDisplayingFullscreen", false);
         openNextMovie();
     }
 }
@@ -138,4 +138,3 @@ function addEventListeners(elem)
     waitForEvent('webkitfullscreenchange', fullscreenchange);
     waitForEvent('webkitfullscreenerror', fullscreenerror);
 }
-

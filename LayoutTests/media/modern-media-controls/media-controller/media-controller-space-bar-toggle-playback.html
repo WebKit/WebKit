@@ -16,11 +16,12 @@ button.textContent = "Enter Fullscreen";
 media.addEventListener("webkitfullscreenchange", () => {
     debug("");
     debug("Obtained a 'webkitfullscreenchange' event.");
-    debug(`media.webkitDisplayingFullscreen = ${media.webkitDisplayingFullscreen}.`);
 
-    if (media.webkitDisplayingFullscreen) {
-        shouldBeFalse("media.paused");
-        pressSpace();
+    if (playCount == 1) {
+        shouldBecomeEqual('media.webkitDisplayingFullscreen', 'true', () => {
+            shouldBeFalse("media.paused");
+            pressSpace();
+        });
     } else
         endTest();
 });
@@ -45,7 +46,6 @@ media.addEventListener("pause", () => {
     // Test pressing the space bar while the media is paused.
     pressSpace();
 });
-
 
 function enterFullscreen() {
     debug("");

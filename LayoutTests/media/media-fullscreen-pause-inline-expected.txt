@@ -1,13 +1,13 @@
 
-RUN(internals.settings.setAllowsInlineMediaPlayback(false))
-RUN(internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true))
-RUN(internals.settings.setFullScreenEnabled(false))
-RUN(internals.setMediaElementRestrictions(video, "NoRestrictions"))
+Test that a <video> keeps playing after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is true.
+
 RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
 RUN(video.play().then(playing);)
 EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 RUN(video.webkitExitFullscreen())
-EVENT(webkitendfullscreen)
+EVENT(webkitpresentationmodechanged)
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 EXPECTED (video.paused == 'false') OK
 RUN(video.pause())
 EVENT(pause)

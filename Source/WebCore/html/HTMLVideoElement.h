@@ -88,9 +88,9 @@ public:
     VideoPresentationMode webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
     void fullscreenModeChanged(VideoFullscreenMode) final;
+    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
     void setPictureInPictureObserver(PictureInPictureObserver*);
     WEBCORE_EXPORT void setPictureInPictureAPITestEnabled(bool);
 #endif

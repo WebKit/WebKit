@@ -15,19 +15,18 @@ const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
 media.addEventListener("webkitfullscreenchange", () => {
-    if (!media.webkitDisplayingFullscreen)
-        return;
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+        shouldBecomeEqual("media.duration", "Number.POSITIVE_INFINITY", () => {
+            shouldBeFalse("mediaController.controls.rewindButton.enabled");
+            shouldBeFalse("mediaController.controls.forwardButton.enabled");
+            shouldBe("mediaController.controls.timeControl.parent", "null");
+            shouldBe("mediaController.controls.statusLabel.parent", "mediaController.controls.bottomControlsBar");
 
-    shouldBecomeEqual("media.duration", "Number.POSITIVE_INFINITY", () => {
-        shouldBeFalse("mediaController.controls.rewindButton.enabled");
-        shouldBeFalse("mediaController.controls.forwardButton.enabled");
-        shouldBe("mediaController.controls.timeControl.parent", "null");
-        shouldBe("mediaController.controls.statusLabel.parent", "mediaController.controls.bottomControlsBar");
-
-        debug("");
-        media.remove();
-        shadowRoot.host.remove();
-        finishJSTest();
+            debug("");
+            media.remove();
+            shadowRoot.host.remove();
+            finishJSTest();
+        });
     });
 });
 

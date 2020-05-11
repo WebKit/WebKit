@@ -614,6 +614,7 @@ protected:
     void updateMediaControlsAfterPresentationModeChange();
 
     void scheduleEvent(const AtomString&);
+    bool waitingToEnterFullscreen() { return m_waitingToEnterFullscreen; }
 
 private:
     void createMediaPlayer();

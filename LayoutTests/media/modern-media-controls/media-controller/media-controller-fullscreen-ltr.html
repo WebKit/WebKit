@@ -15,7 +15,7 @@ let shadowRoot = window.internals.shadowRoot(media);
 let mediaControlsElement, volumeSliderElement;
 
 media.addEventListener("webkitfullscreenchange", function() {
-    if (media.webkitDisplayingFullscreen) {
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
         window.requestAnimationFrame(() => {
             window.requestAnimationFrame(() => {
                 debug("Media entered fullscreen");
@@ -44,7 +44,7 @@ media.addEventListener("webkitfullscreenchange", function() {
                 finishJSTest();
             });
         });
-    }
+    });
 });
 
 media.addEventListener("loadedmetadata", () => {

@@ -9,7 +9,7 @@ Obtained a 'play' event.
 Entering fullscreen.
 
 Obtained a 'webkitfullscreenchange' event.
-media.webkitDisplayingFullscreen = true.
+PASS media.webkitDisplayingFullscreen became true
 PASS media.paused is false
 
 Pressing the space bar.
@@ -21,7 +21,6 @@ Pressing the space bar.
 Obtained a 'play' event.
 
 Obtained a 'webkitfullscreenchange' event.
-media.webkitDisplayingFullscreen = false.
 
 PASS successfullyParsed is true
 

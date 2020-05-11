@@ -9269,8 +9269,10 @@ bool LayerFlushController::flushLayers()
 
 - (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode
 {
-    if (_private->mockVideoPresentationModeEnabled)
+    if (_private->mockVideoPresentationModeEnabled) {
+        videoElement->didBecomeFullscreenElement();
         return;
+    }
 
     if (_private->fullscreenController) {
         if ([_private->fullscreenController videoElement] == videoElement) {

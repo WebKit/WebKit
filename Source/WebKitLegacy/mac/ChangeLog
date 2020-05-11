@@ -1,3 +1,18 @@
+2020-05-11  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the mock video presentation mode in related layout tests and fix test failures
+        https://bugs.webkit.org/show_bug.cgi?id=211645
+
+        Reviewed by Darin Adler.
+
+        Call HTMLVideoElement::didBecomeFullscreenElement() after a video element enters
+        fullscreen (to be consistent with WK2).
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidEnterFullScreen:]):
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+
 2020-05-07  Darin Adler  <darin@apple.com>
 
         Remove USE(INSERTION_UNDO_GROUPING) checks in macOS platform code

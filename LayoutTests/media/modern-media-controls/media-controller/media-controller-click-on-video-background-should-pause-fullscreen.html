@@ -22,21 +22,22 @@ media.addEventListener("play", () => {
 
 
 media.addEventListener("webkitfullscreenchange", () => {
-    shouldBeTrue("media.webkitDisplayingFullscreen");
-    shouldBeFalse("media.paused");
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+        shouldBeFalse("media.paused");
 
-    const bounds = media.getBoundingClientRect();
-    debug("");
-    debug("Clicking on video background");
-    eventSender.mouseMoveTo(bounds.left + 5, bounds.top + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+        const bounds = media.getBoundingClientRect();
+        debug("");
+        debug("Clicking on video background");
+        eventSender.mouseMoveTo(bounds.left + 5, bounds.top + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
 
-    shouldBeTrue("media.paused");
+        shouldBeTrue("media.paused");
 
-    debug("");
-    media.remove();
-    finishJSTest();
+        debug("");
+        media.remove();
+        finishJSTest();
+    });
 });
 
 </script>

@@ -346,7 +346,7 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
-    return isFullscreen();
+    return isFullscreen() && !waitingToEnterFullscreen();
 }
 
 void HTMLVideoElement::ancestorWillEnterFullscreen()
@@ -523,7 +523,6 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
     HTMLMediaElement::fullscreenModeChanged(mode);
 }
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
 void HTMLVideoElement::didBecomeFullscreenElement()
 {
     m_isFullscreen = true;
@@ -531,6 +530,7 @@ void HTMLVideoElement::didBecomeFullscreenElement()
     HTMLMediaElement::didBecomeFullscreenElement();
 }
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
 void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* observer)
 {
     m_pictureInPictureObserver = observer;

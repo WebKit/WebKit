@@ -1,3 +1,32 @@
+2020-05-11  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the mock video presentation mode in related layout tests and fix test failures
+        https://bugs.webkit.org/show_bug.cgi?id=211645
+
+        Reviewed by Darin Adler.
+
+        Clean up the internal states of video element regarding video presentation mode
+        to simplify the task to write reliable layout tests for video fullscreen and
+        Picture-in-Picture.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        Update the states after we are sure the video element will enter fullscreen.
+
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        Remove the unnecessary "fullscreenModeChanged(VideoFullscreenModeNone)".
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::waitingToEnterFullscreen):
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitDisplayingFullscreen):
+        The function webkitDisplayingFullscreen() will return true after the process
+        to enter fullscreen is completed.
+
+        * html/HTMLVideoElement.h:
+        Expose didBecomeFullscreenElement() when VIDEO_PRESENTATION_MODE is enabled.
+
 2020-05-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Document.getAnimations() should only consider document connection and not timeline association

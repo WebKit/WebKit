@@ -2430,7 +2430,6 @@ media/media-fullscreen-inline.html
 webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
 media/media-controls-accessibility.html [ Timeout ]
-media/media-fullscreen-return-to-inline.html
 media/no-autoplay-with-user-gesture-requirement.html
 media/video-controls-drag.html
 media/video-controls-fullscreen-volume.html
@@ -2567,7 +2566,6 @@ webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pa
 webkit.org/b/163291 media/require-user-gesture-to-load-video.html
 webkit.org/b/163291 media/video-controls-transformed.html [ Failure ]
 webkit.org/b/163291 media/video-controls-visible-audio-only.html [ Failure ]
-webkit.org/b/163291 media/video-fullscreen-only-playback.html [ Failure ]
 webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
@@ -3155,11 +3153,6 @@ fast/gradients/conic-two-hints.html [ Pass ]
 
 # <rdar://problem/36455339> LayoutTest compositing/ios/overflow-scroll-touch-tiles.html is a flaky failure
 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
-
-# <rdar://problem/41546970> REGRESSION: LayoutTest media/media-fullscreen-loop-inline.html is a flaky timeout
-media/media-fullscreen-loop-inline.html [ Pass Timeout ]
-
-webkit.org/b/187618 [ Release ] media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
 # Disabled globally.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]

@@ -5989,11 +5989,10 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (m_videoFullscreenMode == mode)
         return;
 
-    m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
-    m_waitingToEnterFullscreen = true;
-
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
     if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
+        m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
+        m_waitingToEnterFullscreen = true;
         document().fullscreenManager().requestFullscreenForElement(this, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
         return;
     }
@@ -6005,12 +6004,16 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
             return;
         }
 
-        fullscreenModeChanged(mode);
-        configureMediaControls();
         if (is<HTMLVideoElement>(*this)) {
             HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
-            if (document().page()->chrome().client().supportsVideoFullscreen(m_videoFullscreenMode)) {
-                INFO_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", m_videoFullscreenMode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
+            if (document().page()->chrome().client().supportsVideoFullscreen(mode)) {
+                INFO_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
+
+                m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
+                m_waitingToEnterFullscreen = true;
+                fullscreenModeChanged(mode);
+                configureMediaControls();
+
                 document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
                 scheduleEvent(eventNames().webkitbeginfullscreenEvent);
             }
@@ -6041,7 +6044,6 @@ void HTMLMediaElement::exitFullscreen()
 
     ASSERT(m_videoFullscreenMode != VideoFullscreenModeNone);
     VideoFullscreenMode oldVideoFullscreenMode = m_videoFullscreenMode;
-    fullscreenModeChanged(VideoFullscreenModeNone);
     Ref<HTMLMediaElement> protectedThis(*this); // updateMediaControlsAfterPresentationModeChange calls methods that can trigger arbitrary DOM mutations.
     updateMediaControlsAfterPresentationModeChange();
 

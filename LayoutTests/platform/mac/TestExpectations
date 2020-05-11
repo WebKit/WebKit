@@ -759,7 +759,6 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Fa
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
 webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Failure ]
-webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Pass Timeout Crash ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/141084 http/tests/media/video-preload.html [ Pass Timeout ]
@@ -1641,8 +1640,6 @@ webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
 
-webkit.org/b/193399 media/media-fullscreen-return-to-inline.html [ Pass Timeout ]
-
 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
@@ -1947,8 +1944,6 @@ webkit.org/b/209740 webgl/2.0.0/conformance2/rendering/framebuffer-completeness-
 webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
 
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
-
-webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 

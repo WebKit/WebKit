@@ -3,6 +3,7 @@ This test pauses the video, presses the fullscreen button, and drags the control
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS media.webkitDisplayingFullscreen became true
 PASS !!mediaControls.querySelector('.buttons-container.left') became true
 PASS mediaControls.querySelector('.buttons-container.left').style.width became "118px"
 PASS mediaControls.querySelector('.controls-bar').style.transform is ""

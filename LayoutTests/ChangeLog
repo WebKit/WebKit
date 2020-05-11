@@ -1,3 +1,46 @@
+2020-05-11  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the mock video presentation mode in related layout tests and fix test failures
+        https://bugs.webkit.org/show_bug.cgi?id=211645
+
+        Reviewed by Darin Adler.
+
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast-expected.txt:
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html:
+        * media/media-fullscreen-inline.html:
+        * media/media-fullscreen-loop-inline-expected.txt:
+        * media/media-fullscreen-loop-inline.html:
+        * media/media-fullscreen-pause-inline-expected.txt:
+        * media/media-fullscreen-pause-inline.html:
+        * media/media-fullscreen-return-to-inline-expected.txt:
+        * media/media-fullscreen-return-to-inline.html:
+        * media/media-fullscreen.js:
+        (async beginfullscreen):
+        (async fullscreenerror):
+        (addEventListeners):
+        (beginfullscreen): Deleted.
+        (fullscreenerror): Deleted.
+        * media/modern-media-controls/css/webkit-cursor-visibility-auto-hide-expected.txt:
+        * media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html:
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html:
+        * media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html:
+        * media/video-fullscreen-only-playback-expected.txt:
+        * media/video-fullscreen-only-playback.html:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-05-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261446.

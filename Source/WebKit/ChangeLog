@@ -1,3 +1,15 @@
+2020-05-11  Peng Liu  <peng.liu6@apple.com>
+
+        Enable the mock video presentation mode in related layout tests and fix test failures
+        https://bugs.webkit.org/show_bug.cgi?id=211645
+
+        Reviewed by Darin Adler.
+
+        Fix the mistake in VideoFullscreenManager::supportsVideoFullscreen() introduced in r202274.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreen const):
+
 2020-05-11  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Update message filtering rules in the WebContent process' sandbox

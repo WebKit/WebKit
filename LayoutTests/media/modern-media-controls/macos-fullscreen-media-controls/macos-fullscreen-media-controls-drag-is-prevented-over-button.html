@@ -17,7 +17,7 @@ media.addEventListener("webkitbeginfullscreen", () => {
 });
 
 media.addEventListener("webkitfullscreenchange", () => {
-    if (media.webkitDisplayingFullscreen) {
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
         mediaControls = shadowRoot.lastChild;
         shouldBecomeEqual("!!mediaControls.querySelector('.buttons-container.left')", "true", () => {
             shouldBecomeEqualToString("mediaControls.querySelector('.buttons-container.left').style.width", "118px", () => {
@@ -33,7 +33,7 @@ media.addEventListener("webkitfullscreenchange", () => {
                 });
             });
         });
-    }
+    });
 });
 
 media.addEventListener("play", () => {

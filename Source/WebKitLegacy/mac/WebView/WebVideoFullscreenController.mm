@@ -312,6 +312,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     [_playerView willChangeValueForKey:@"isFullScreen"];
     _isFullScreen = YES;
     [_playerView didChangeValueForKey:@"isFullScreen"];
+    if (_videoElement)
+        _videoElement->didBecomeFullscreenElement();
 }
 
 - (void)windowWillExitFullScreen:(NSNotification *)notification
