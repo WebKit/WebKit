@@ -1,5 +1,14 @@
 2020-05-11  Jason Lawrence  <lawrence.j@apple.com>
 
+        [ Mac wk1 ] http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209067
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-05-11  Jason Lawrence  <lawrence.j@apple.com>
+
         REGRESSION (r259463): [ Mojave Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html is flaky failing and timing out
         https://bugs.webkit.org/show_bug.cgi?id=210219
 
