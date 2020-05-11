@@ -1,3 +1,23 @@
+2020-05-11  Youenn Fablet  <youenn@apple.com>
+
+        [ iOS wk2 ] http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207583
+        <rdar://problem/59362947>
+
+        Reviewed by Geoffrey Garen.
+
+        Use in-test DumpJSConsoleLogInStdErr instead of TestExpectations to make sure this option is set for iOS.
+
+        * TestExpectations:
+        * http/wpt/beacon/cors/cors-preflight-blob-failure.html:
+        * http/wpt/beacon/cors/cors-preflight-blob-success.html:
+        * http/wpt/beacon/cors/cors-preflight-cookie.html:
+        * http/wpt/beacon/cors/cors-preflight-redirect-failure.html:
+        * http/wpt/beacon/cors/cors-preflight-redirect-from-crossorigin-to-sameorigin.html:
+        * http/wpt/beacon/cors/cors-preflight-redirect-success.html:
+        * http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html:
+        Update test to make sure that stderr console log lines will print whether the first load is failing or the second.
+
 2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r253267): issues on touchstart/touchend/touchmove (pointerdown/pointerup/pointermove) events

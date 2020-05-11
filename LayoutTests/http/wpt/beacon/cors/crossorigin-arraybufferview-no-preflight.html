@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
   <head>
     <meta charset="utf-8">
@@ -31,7 +31,7 @@ function testCORSPreflight(what) {
 
   promise_test(async function(test) {
     var id = "ca33c073-1cf0-41e5-bbd4-55969fb1a6c7";
-    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    var testUrl = testBase + "beacon-preflight.py?test1&allowCors=1&cmd=put&id=" + id;
     if (window.testRunner) {
       window.testRunner.setAllowsAnySSLCertificate(false);
       window.testRunner.terminateNetworkProcess();
@@ -46,7 +46,7 @@ function testCORSPreflight(what) {
 
   promise_test(async function(test) {
     var id = self.token();
-    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    var testUrl = testBase + "beacon-preflight.py?test2&allowCors=1&cmd=put&id=" + id;
     if (window.testRunner) {
       window.testRunner.setAllowsAnySSLCertificate(true);
       window.testRunner.terminateNetworkProcess();

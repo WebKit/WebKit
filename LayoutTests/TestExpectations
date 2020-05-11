@@ -2267,14 +2267,6 @@ webkit.org/b/168238 imported/w3c/web-platform-tests/dom/events/EventListener-inv
 # Ignore MIME type refused console messages when comparing nosniff tests results as their ordering is non-deterministic.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-ascii-case-insensitive.html [ DumpJSConsoleLogInStdErr ]
 
-http/wpt/beacon/cors/cors-preflight-blob-failure.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/cors-preflight-blob-success.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/cors-preflight-cookie.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/cors-preflight-redirect-failure.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/cors-preflight-redirect-from-crossorigin-to-sameorigin.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/cors-preflight-redirect-success.html [ DumpJSConsoleLogInStdErr ]
-http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ DumpJSConsoleLogInStdErr ]
-
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html [ Pass Failure ]
 
 # Imported css-text test suite from WPT
