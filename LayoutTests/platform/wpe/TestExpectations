@@ -1101,8 +1101,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/181225 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
-
 webkit.org/b/185591 [ Debug ] imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash ]
 
 webkit.org/b/188161 [ Debug ] fast/canvas/webgl/context-lost-restored.html [ Crash ]

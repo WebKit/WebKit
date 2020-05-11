@@ -1,3 +1,13 @@
+2020-05-11  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Layout test media/encrypted-media/mock-MediaKeySystemAccess.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=181225
+
+        Reviewed by Darin Adler.
+
+        * platform/gtk/TestExpectations: The test is no longer crashing.
+        * platform/wpe/TestExpectations: Ditto.
+
 2020-05-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update test expectations

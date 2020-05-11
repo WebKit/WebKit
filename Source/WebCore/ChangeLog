@@ -1,3 +1,20 @@
+2020-05-11  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Layout test media/encrypted-media/mock-MediaKeySystemAccess.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=181225
+
+        Reviewed by Darin Adler.
+
+        WebCore::CDM::createInstance assumes its private instance always
+        produces a valid pointer. This is not the case in the testing
+        mocks. Guard against it.
+
+        Test: media/encrypted-media/mock-MediaKeySystemAccess.html
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::createInstance): Guard against null pointers in
+        mock scenarios.
+
 2020-05-10  Rob Buis  <rbuis@igalia.com>
 
         Fix base64.any.html test
