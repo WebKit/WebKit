@@ -3,6 +3,18 @@
         Add some logs to diagnose why WebKitLegacy.CrossPartitionFileSchemeAccess API test times out in EWS
         https://bugs.webkit.org/show_bug.cgi?id=211738
 
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm:
+        (TestWebKitAPI::TEST):
+        I saw an instance of failing to make a partition because the "file" already existed.
+        Try cleaning up anything left from last time this test timed out to prevent it from timing out again.
+
+2020-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add some logs to diagnose why WebKitLegacy.CrossPartitionFileSchemeAccess API test times out in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=211738
+
         Reviewed by Mark Lam.
 
         * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm:

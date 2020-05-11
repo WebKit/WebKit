@@ -89,6 +89,8 @@ TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
 {
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     const char *filePath = [url fileSystemRepresentation];
+    WTFLogAlways("Cleaning up from previous run...");
+    cleanUp();
     WTFLogAlways("Creating partition...");
     createPartition(filePath);
         
