@@ -1,3 +1,13 @@
+2020-05-11  Paulo Matos  <pmatos@igalia.com>
+
+        Skip on armv7/linux stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js
+        https://bugs.webkit.org/show_bug.cgi?id=211721
+
+        Unreviewed Gardening.
+        This test is failing on our linux armv7 bots on a flaky basis and requires investigation.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-05-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.concat fast path checks should not be observable
