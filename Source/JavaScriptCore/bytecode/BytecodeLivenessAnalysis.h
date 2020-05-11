@@ -86,7 +86,6 @@ public:
     FastBitVector getLivenessInfoAtBytecodeIndex(CodeBlock*, BytecodeIndex);
     
     void computeFullLiveness(CodeBlock*, FullBytecodeLiveness& result);
-    void computeKills(CodeBlock*, BytecodeKills& result);
 
     BytecodeGraph& graph() { return m_graph; }
 

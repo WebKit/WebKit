@@ -26,7 +26,6 @@
 #include "config.h"
 #include "BytecodeLivenessAnalysis.h"
 
-#include "BytecodeKills.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeUseDef.h"
 #include "CodeBlock.h"
@@ -97,41 +96,6 @@ void BytecodeLivenessAnalysis::computeFullLiveness(CodeBlock* codeBlock, FullByt
             result.m_afterUseVector[bytecodeIndex.offset()] = out; // AfterUse point.
             stepOverInstructionUse(codeBlock, instructions, m_graph, bytecodeIndex, use);
             result.m_beforeUseVector[bytecodeIndex.offset()] = out; // BeforeUse point.
-        }
-    }
-}
-
-void BytecodeLivenessAnalysis::computeKills(CodeBlock* codeBlock, BytecodeKills& result)
-{
-    UNUSED_PARAM(result);
-    FastBitVector out;
-
-    result.m_codeBlock = codeBlock;
-    result.m_killSets = makeUniqueArray<BytecodeKills::KillSet>(codeBlock->instructions().size());
-    
-    for (BytecodeBasicBlock& block : m_graph.basicBlocksInReverseOrder()) {
-        if (block.isEntryBlock() || block.isExitBlock())
-            continue;
-        
-        out = block.out();
-        
-        unsigned cursor = block.totalLength();
-        for (unsigned i = block.delta().size(); i--;) {
-            cursor -= block.delta()[i];
-            BytecodeIndex bytecodeIndex = BytecodeIndex(block.leaderOffset() + cursor);
-            stepOverInstruction(
-                codeBlock, codeBlock->instructions(), m_graph, bytecodeIndex,
-                [&] (unsigned index) {
-                    // This is for uses.
-                    if (out[index])
-                        return;
-                    result.m_killSets[bytecodeIndex.offset()].add(index);
-                    out[index] = true;
-                },
-                [&] (unsigned index) {
-                    // This is for defs.
-                    out[index] = false;
-                });
         }
     }
 }

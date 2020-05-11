@@ -269,8 +269,7 @@
 		0F2D4DEA19832DAC007D4B19 /* TypeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE719832DAC007D4B19 /* TypeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DEC19832DC4007D4B19 /* TypeProfilerLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DF019832DD6007D4B19 /* TypeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE419832D91007D4B19 /* TypeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F2DD80B1AB3D85800BBB8E8 /* BytecodeKills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80A1AB3D85800BBB8E8 /* BytecodeKills.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */; };
+                0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */; };
 		0F2DD8141AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80F1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h */; };
 		0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD8101AB3D8BE00BBB8E8 /* DFGForAllKills.h */; };
 		0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65987F2F16828A7E003C2F8D /* UnusedPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2456,8 +2455,7 @@
 		0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToThisStatus.cpp; sourceTree = "<group>"; };
 		0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToThisStatus.h; sourceTree = "<group>"; };
 		0F2D4DE719832DAC007D4B19 /* TypeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeLocation.h; sourceTree = "<group>"; };
-		0F2DD80A1AB3D85800BBB8E8 /* BytecodeKills.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeKills.h; sourceTree = "<group>"; };
-		0F2DD80C1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsEliminationPhase.cpp; path = dfg/DFGArgumentsEliminationPhase.cpp; sourceTree = "<group>"; };
+                0F2DD80C1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsEliminationPhase.cpp; path = dfg/DFGArgumentsEliminationPhase.cpp; sourceTree = "<group>"; };
 		0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsEliminationPhase.h; path = dfg/DFGArgumentsEliminationPhase.h; sourceTree = "<group>"; };
 		0F2DD80E1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsUtilities.cpp; path = dfg/DFGArgumentsUtilities.cpp; sourceTree = "<group>"; };
 		0F2DD80F1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsUtilities.h; path = dfg/DFGArgumentsUtilities.h; sourceTree = "<group>"; };
@@ -8260,8 +8258,7 @@
 				53663FD923562F90005EA68C /* BytecodeIndex.h */,
 				7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */,
 				7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */,
-				0F2DD80A1AB3D85800BBB8E8 /* BytecodeKills.h */,
-				14BA7751211086A0008D0B05 /* BytecodeList.rb */,
+                                14BA7751211086A0008D0B05 /* BytecodeList.rb */,
 				C2FCAE0E17A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp */,
 				C2FCAE0F17A9C24E0034C735 /* BytecodeLivenessAnalysis.h */,
 				0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */,
@@ -9175,8 +9172,7 @@
 				E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */,
 				53663FDA23562F96005EA68C /* BytecodeIndex.h in Headers */,
 				7094C4DF1AE439530041A2EE /* BytecodeIntrinsicRegistry.h in Headers */,
-				0F2DD80B1AB3D85800BBB8E8 /* BytecodeKills.h in Headers */,
-				C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */,
+                                C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */,
 				0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */,
 				53D35499240D88BD008950DD /* BytecodeOperandsForCheckpoint.h in Headers */,
 				E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */,

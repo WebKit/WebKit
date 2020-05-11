@@ -977,10 +977,7 @@ public:
         for (unsigned argument = block(0)->variablesAtHead.numberOfArguments(); argument--;)
             functor(virtualRegisterForArgumentIncludingThis(argument));
     }
-    
-    BytecodeKills& killsFor(CodeBlock*);
-    BytecodeKills& killsFor(InlineCallFrame*);
-    
+
     static unsigned parameterSlotsForArgCount(unsigned);
     
     unsigned frameRegisterCount();
@@ -1132,7 +1129,6 @@ public:
     Bag<BitVector> m_bitVectors;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
-    HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
     HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
     Vector<Ref<Snippet>> m_domJITSnippets;
     std::unique_ptr<CPSDominators> m_cpsDominators;

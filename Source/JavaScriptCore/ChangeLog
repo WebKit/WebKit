@@ -1,3 +1,21 @@
+2020-05-11  Keith Miller  <keith_miller@apple.com>
+
+        Remove unused BytecodeKills.h
+        https://bugs.webkit.org/show_bug.cgi?id=211753
+
+        Reviewed by Yusuke Suzuki.
+
+        No one uses this class anymore, we should get rid of it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeKills.h: Removed.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeKills): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::killsFor): Deleted.
+        * dfg/DFGGraph.h:
+
 2020-05-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         [clang-tidy] Run modernize-use-nullptr over JSC

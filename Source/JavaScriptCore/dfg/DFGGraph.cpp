@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "BytecodeKills.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -1124,24 +1123,6 @@ FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 FullBytecodeLiveness& Graph::livenessFor(InlineCallFrame* inlineCallFrame)
 {
     return livenessFor(baselineCodeBlockFor(inlineCallFrame));
-}
-
-BytecodeKills& Graph::killsFor(CodeBlock* codeBlock)
-{
-    HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>>::iterator iter = m_bytecodeKills.find(codeBlock);
-    if (iter != m_bytecodeKills.end())
-        return *iter->value;
-    
-    std::unique_ptr<BytecodeKills> kills = makeUnique<BytecodeKills>();
-    codeBlock->livenessAnalysis().computeKills(codeBlock, *kills);
-    BytecodeKills& result = *kills;
-    m_bytecodeKills.add(codeBlock, WTFMove(kills));
-    return result;
-}
-
-BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
-{
-    return killsFor(baselineCodeBlockFor(inlineCallFrame));
 }
 
 bool Graph::isLiveInBytecode(Operand operand, CodeOrigin codeOrigin)
