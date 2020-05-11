@@ -1,3 +1,20 @@
+2020-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] requestAnimationFrame doesn't work since r261113
+        https://bugs.webkit.org/show_bug.cgi?id=211702
+
+        Reviewed by Darin Adler.
+
+        Since r261113 (Bug 204713), WinCairo WK1 is failing some rAF tests
+        even though AppleWin isn't.
+
+        WinCairo also should do m_page->updateRendering() in
+        WebView::flushPendingGraphicsLayerChangesSoon as well as AppleWin.
+
+        * WebView.cpp:
+        (WebView::flushPendingGraphicsLayerChangesSoon): Call
+        updateRendering.
+
 2020-04-27  Antoine Quint  <graouts@apple.com>
 
         Rename CSSAnimationController accessors from animation() to legacyAnimation()

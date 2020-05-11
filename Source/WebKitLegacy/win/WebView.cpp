@@ -7242,8 +7242,10 @@ void WebView::flushPendingGraphicsLayerChangesSoon()
     }
     m_layerTreeHost->flushPendingGraphicsLayerChangesSoon();
 #elif USE(TEXTURE_MAPPER_GL)
-    if (!m_acceleratedCompositingContext)
+    if (!m_acceleratedCompositingContext) {
+        m_page->updateRendering();
         return;
+    }
     m_acceleratedCompositingContext->flushPendingLayerChangesSoon();
 #endif
 }
