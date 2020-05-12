@@ -1,3 +1,157 @@
+2020-05-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261480. rdar://problem/63151931
+
+    REGRESSION (r253267): issues on touchstart/touchend/touchmove (pointerdown/pointerup/pointermove) events
+    https://bugs.webkit.org/show_bug.cgi?id=211521
+    <rdar://problem/62942374>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    As a brief refresher, deferring gesture recognizers allow us to handle otherwise blocking touch events
+    asynchronously by having all preventable native gesture recognizers require the deferring gesture recognizer to
+    fail; we only fail the deferring gesture recognizer once the web process has handled the touch event, and did
+    not call `preventDefault()`.
+    
+    These additional failure requirements can cause preventable gestures to be linked together in the same gesture
+    dependency subgraph; since each subgraph is reset only once all gestures in the subgraph have failed or ended,
+    this might cause some gestures to be reset after a delay (rather than being reset immediately). To mitigate
+    this, we divide the set of preventable gestures into multiple (currently, 2) subgraphs: one for gestures that
+    are reset after a delay, and another for gestures that are immediately resettable. This way, immediately
+    resettable gestures are able to reset and recognize again, without having to wait for other slower preventable
+    gesture recognizers to reset.
+    
+    When fast-clicking is disabled (e.g. when loading a desktop web page on a mobile form factor, or when the
+    viewport has been zoomed in), the blocking synthetic double tap gesture recognizer (that is, `WKContentView`'s
+    `_doubleTapGestureRecognizer`) is enabled, and adds itself as a dynamic failure requirement to the content
+    view's synthetic single tap gesture recognizer (`_singleTapGestureRecognizer`). In terms of the gesture
+    dependency graph, this causes the single tap gesture to form an edge with the double tap gesture, which ends up
+    uniting both deferring gesture recognizers under the same subgraph. This means UIWebTouchEventsGestureRecognizer,
+    which should be one of the gestures in the immediately resettable subgraph, is now connected to the rest of the
+    delayed resettable gestures, meaning that it cannot recognize until "slowly resettable" gestures such as the
+    tap-and-half text selection gesture have also been reset. This delay causes touch events to be dropped, as is
+    the case in this bug.
+    
+    To fix this, simply quarantine the single tap and double tap gestures inside their own subgraph by introducing a
+    separate deferring gesture recognizer for them. When fast-clicking is enabled, this does not hinder the ability
+    for the single tap gesture to fire in rapid succession, since the double tap gesture is disabled (and thus, not
+    a part of the graph at all). when fast-clicking is disabled, then the double tap gesture will prevent the single
+    tap gesture from being immediately reset anyways, due to the direct failure requirement between the double and
+    single tap gesture.
+    
+    Doing this ensures that no other immediately resettable gesture (`UIWebTouchEventsGestureRecognizer` included)
+    is accidentally blocked from immediately resetting due to being linked to the delayed resettable gestures by way
+    of the synthetic single and double tap gestures.
+    
+    Test: fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive.html
+    
+    * UIProcess/ios/WKContentViewInteraction.h:
+    
+    Add a dedicated deferring gesture recognizer for the synthetic single tap and double tap gesture recognizers.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setUpInteraction]):
+    (-[WKContentView cleanUpInteraction]):
+    
+    Use -_deferringGestureRecognizers instead of hard-coding logic for each deferring gesture.
+    
+    (-[WKContentView _removeDefaultGestureRecognizers]): Ditto.
+    (-[WKContentView _addDefaultGestureRecognizers]): Ditto.
+    (-[WKContentView _deferringGestureRecognizers]):
+    
+    We now have 3 distinct deferring gestures; instead of handling the three deferring gestures individually in
+    various places in this file, group them all behind a getter that returns an array of deferring gestures, and use
+    this instead.
+    
+    (-[WKContentView _doneDeferringNativeGestures:]): Ditto.
+    (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]): Ditto.
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    
+    Partition the synthetic single tap and double tap gestures into their own subgraph.
+    
+    LayoutTests:
+    
+    Add a layout test that synthesizes a tap-and-half gesture over an element with active touch event listeners, and
+    verifies that the second half of the gesture (i.e. the pan gesture) dispatches touchstart, touchmove, and
+    touchend events.
+    
+    * fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive-expected.txt: Added.
+    * fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261480 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r253267): issues on touchstart/touchend/touchmove (pointerdown/pointerup/pointermove) events
+            https://bugs.webkit.org/show_bug.cgi?id=211521
+            <rdar://problem/62942374>
+
+            Reviewed by Darin Adler.
+
+            As a brief refresher, deferring gesture recognizers allow us to handle otherwise blocking touch events
+            asynchronously by having all preventable native gesture recognizers require the deferring gesture recognizer to
+            fail; we only fail the deferring gesture recognizer once the web process has handled the touch event, and did
+            not call `preventDefault()`.
+
+            These additional failure requirements can cause preventable gestures to be linked together in the same gesture
+            dependency subgraph; since each subgraph is reset only once all gestures in the subgraph have failed or ended,
+            this might cause some gestures to be reset after a delay (rather than being reset immediately). To mitigate
+            this, we divide the set of preventable gestures into multiple (currently, 2) subgraphs: one for gestures that
+            are reset after a delay, and another for gestures that are immediately resettable. This way, immediately
+            resettable gestures are able to reset and recognize again, without having to wait for other slower preventable
+            gesture recognizers to reset.
+
+            When fast-clicking is disabled (e.g. when loading a desktop web page on a mobile form factor, or when the
+            viewport has been zoomed in), the blocking synthetic double tap gesture recognizer (that is, `WKContentView`'s
+            `_doubleTapGestureRecognizer`) is enabled, and adds itself as a dynamic failure requirement to the content
+            view's synthetic single tap gesture recognizer (`_singleTapGestureRecognizer`). In terms of the gesture
+            dependency graph, this causes the single tap gesture to form an edge with the double tap gesture, which ends up
+            uniting both deferring gesture recognizers under the same subgraph. This means UIWebTouchEventsGestureRecognizer,
+            which should be one of the gestures in the immediately resettable subgraph, is now connected to the rest of the
+            delayed resettable gestures, meaning that it cannot recognize until "slowly resettable" gestures such as the
+            tap-and-half text selection gesture have also been reset. This delay causes touch events to be dropped, as is
+            the case in this bug.
+
+            To fix this, simply quarantine the single tap and double tap gestures inside their own subgraph by introducing a
+            separate deferring gesture recognizer for them. When fast-clicking is enabled, this does not hinder the ability
+            for the single tap gesture to fire in rapid succession, since the double tap gesture is disabled (and thus, not
+            a part of the graph at all). when fast-clicking is disabled, then the double tap gesture will prevent the single
+            tap gesture from being immediately reset anyways, due to the direct failure requirement between the double and
+            single tap gesture.
+
+            Doing this ensures that no other immediately resettable gesture (`UIWebTouchEventsGestureRecognizer` included)
+            is accidentally blocked from immediately resetting due to being linked to the delayed resettable gestures by way
+            of the synthetic single and double tap gestures.
+
+            Test: fast/events/touch/ios/tap-and-half-when-viewport-is-not-responsive.html
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+
+            Add a dedicated deferring gesture recognizer for the synthetic single tap and double tap gesture recognizers.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setUpInteraction]):
+            (-[WKContentView cleanUpInteraction]):
+
+            Use -_deferringGestureRecognizers instead of hard-coding logic for each deferring gesture.
+
+            (-[WKContentView _removeDefaultGestureRecognizers]): Ditto.
+            (-[WKContentView _addDefaultGestureRecognizers]): Ditto.
+            (-[WKContentView _deferringGestureRecognizers]):
+
+            We now have 3 distinct deferring gestures; instead of handling the three deferring gestures individually in
+            various places in this file, group them all behind a getter that returns an array of deferring gestures, and use
+            this instead.
+
+            (-[WKContentView _doneDeferringNativeGestures:]): Ditto.
+            (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]): Ditto.
+            (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
+            Partition the synthetic single tap and double tap gestures into their own subgraph.
+
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/62978118

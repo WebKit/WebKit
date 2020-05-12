@@ -208,6 +208,7 @@ struct WKAutoCorrectionData {
 #if ENABLE(IOS_TOUCH_EVENTS)
     RetainPtr<WKDeferringGestureRecognizer> _deferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _deferringGestureRecognizerForDelayedResettableGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _deferringGestureRecognizerForSyntheticTapGestures;
 #endif
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
