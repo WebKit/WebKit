@@ -45,7 +45,6 @@ messages -> WebPageProxy {
     SetFocus(bool focused)
     TakeFocus(uint32_t direction)
     FocusedFrameChanged(Optional<WebCore::FrameIdentifier> frameID)
-    FrameSetLargestFrameChanged(Optional<WebCore::FrameIdentifier> frameID)
     SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)
     GetToolbarsAreVisible() -> (bool toolbarsAreVisible) Synchronous
@@ -143,8 +142,6 @@ messages -> WebPageProxy {
     DidDestroyNavigation(uint64_t navigationID)
 
     MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
-
-    FrameDidBecomeFrameSet(WebCore::FrameIdentifier frameID, bool value)
 
     # History client messages.
     DidNavigateWithNavigationData(struct WebKit::WebNavigationDataStore store, WebCore::FrameIdentifier frameID)

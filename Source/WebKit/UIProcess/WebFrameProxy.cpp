@@ -168,7 +168,6 @@ void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo&
 
     m_title = String();
     m_MIMEType = contentType;
-    m_isFrameSet = false;
     m_certificateInfo = &certificateInfo;
     m_containsPluginDocument = containsPluginDocument;
 }

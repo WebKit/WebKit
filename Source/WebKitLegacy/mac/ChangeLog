@@ -1,3 +1,14 @@
+2020-05-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API
+        https://bugs.webkit.org/show_bug.cgi?id=211808
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidBecomeFrameset): Deleted.
+
 2020-05-11  Peng Liu  <peng.liu6@apple.com>
 
         Enable the mock video presentation mode in related layout tests and fix test failures

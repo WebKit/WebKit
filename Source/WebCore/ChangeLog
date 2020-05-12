@@ -1,3 +1,23 @@
+2020-05-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API
+        https://bugs.webkit.org/show_bug.cgi?id=211808
+
+        Reviewed by Darin Adler.
+
+        Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API. This is only SPI and is only used for slightly
+        different printing behavior in Safari. Framesets are no longer supported in HTML5 and are now super rare. Support
+        for this C API adds quite a bit of code complexity and crashes such as <rdar://problem/60322282>, it just does not
+        seem worth it anymore.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resume):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::insertedIntoAncestor):
+        (WebCore::HTMLFrameSetElement::removedFromAncestor):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+
 2020-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some transformOrigin and perspectiveOrigin code

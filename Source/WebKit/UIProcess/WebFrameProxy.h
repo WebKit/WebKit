@@ -75,9 +75,6 @@ public:
 
     bool isMainFrame() const;
 
-    void setIsFrameSet(bool value) { m_isFrameSet = value; }
-    bool isFrameSet() const { return m_isFrameSet; }
-
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
     void loadURL(const URL&, const String& referrer = String());
@@ -140,7 +137,6 @@ private:
 
     String m_MIMEType;
     String m_title;
-    bool m_isFrameSet { false };
     bool m_containsPluginDocument { false };
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFramePolicyListenerProxy> m_activeListener;

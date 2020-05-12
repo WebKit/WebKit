@@ -971,10 +971,6 @@ void WebFrameLoaderClient::didRestoreFromBackForwardCache()
 {
 }
 
-void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
-{
-}
-
 String WebFrameLoaderClient::userAgent(const URL& url) const
 {
     return m_webFrame->webView()->userAgentForKURL(url);

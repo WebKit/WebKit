@@ -5046,18 +5046,6 @@ void WebPageProxy::mainFramePluginHandlesPageScaleGestureDidChange(bool mainFram
     m_mainFramePluginHandlesPageScaleGesture = mainFramePluginHandlesPageScaleGesture;
 }
 
-void WebPageProxy::frameDidBecomeFrameSet(FrameIdentifier frameID, bool value)
-{
-    PageClientProtector protector(pageClient());
-
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(m_process, frame);
-
-    frame->setIsFrameSet(value);
-    if (frame->isMainFrame())
-        m_frameSetLargestFrame = value ? m_mainFrame : 0;
-}
-
 #if !PLATFORM(COCOA)
 void WebPageProxy::beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy& listener)
 {
@@ -7296,19 +7284,6 @@ void WebPageProxy::focusedFrameChanged(const Optional<FrameIdentifier>& frameID)
     m_focusedFrame = frame;
 }
 
-void WebPageProxy::frameSetLargestFrameChanged(const Optional<FrameIdentifier>& frameID)
-{
-    if (!frameID) {
-        m_frameSetLargestFrame = nullptr;
-        return;
-    }
-
-    WebFrameProxy* frame = m_process->webFrame(*frameID);
-    MESSAGE_CHECK(m_process, frame);
-
-    m_frameSetLargestFrame = frame;
-}
-
 void WebPageProxy::processDidBecomeUnresponsive()
 {
     RELEASE_LOG_ERROR_IF_ALLOWED(Process, "processDidBecomeUnresponsive:");
@@ -7491,7 +7466,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
-    m_frameSetLargestFrame = nullptr;
     m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 

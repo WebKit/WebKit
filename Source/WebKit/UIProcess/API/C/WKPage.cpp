@@ -390,7 +390,7 @@ WKFrameRef WKPageGetFocusedFrame(WKPageRef pageRef)
 
 WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->frameSetLargestFrame());
+    return nullptr;
 }
 
 uint64_t WKPageGetRenderTreeSize(WKPageRef page)

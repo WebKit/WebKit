@@ -214,21 +214,12 @@ void HTMLFrameSetElement::willRecalcStyle(Style::Change)
 Node::InsertedIntoAncestorResult HTMLFrameSetElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    if (insertionType.connectedToDocument) {
-        if (RefPtr<Frame> frame = document().frame())
-            frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
-    }
-
     return InsertedIntoAncestorResult::Done;
 }
 
 void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    if (removalType.disconnectedFromDocument) {
-        if (RefPtr<Frame> frame = document().frame())
-            frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
-    }
 }
 
 WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)

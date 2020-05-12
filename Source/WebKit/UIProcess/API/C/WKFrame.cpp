@@ -124,7 +124,7 @@ bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frameRef)
 
 bool WKFrameIsFrameSet(WKFrameRef frameRef)
 {
-    return toImpl(frameRef)->isFrameSet();
+    return false;
 }
 
 WKFrameHandleRef WKFrameCreateFrameHandle(WKFrameRef frameRef)

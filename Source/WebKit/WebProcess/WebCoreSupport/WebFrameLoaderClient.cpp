@@ -1551,15 +1551,6 @@ void WebFrameLoaderClient::didRestoreFromBackForwardCache()
     m_frameCameFromBackForwardCache = true;
 }
 
-void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->send(Messages::WebPageProxy::FrameDidBecomeFrameSet(m_frame->frameID(), value));
-}
-
 bool WebFrameLoaderClient::canCachePage() const
 {
     // We cannot cache frames that have custom representations because they are

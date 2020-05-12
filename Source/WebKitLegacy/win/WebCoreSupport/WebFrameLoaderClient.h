@@ -173,8 +173,6 @@ public:
 
     void didRestoreFromBackForwardCache() override;
 
-    void dispatchDidBecomeFrameset(bool) override;
-
     bool canCachePage() const override;
 
     RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) override;

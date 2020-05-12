@@ -165,8 +165,6 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 
     void didRestoreFromBackForwardCache() final { }
 
-    void dispatchDidBecomeFrameset(bool) final { }
-
     void updateGlobalHistory() final { }
     void updateGlobalHistoryRedirectLinks() final { }
     bool shouldGoToHistoryItem(HistoryItem&) const final { return false; }

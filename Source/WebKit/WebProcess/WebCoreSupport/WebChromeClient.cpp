@@ -108,33 +108,6 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-static double area(WebFrame* frame)
-{
-    IntSize size = frame->visibleContentBoundsExcludingScrollbars().size();
-    return static_cast<double>(size.height()) * size.width();
-}
-
-static WebFrame* findLargestFrameInFrameSet(WebPage& page)
-{
-    // Approximate what a user could consider a default target frame for application menu operations.
-
-    auto& mainFrame = page.mainWebFrame();
-    if (!mainFrame.isFrameSet())
-        return nullptr;
-
-    WebFrame* largestSoFar = nullptr;
-
-    Ref<API::Array> frameChildren = mainFrame.childFrames();
-    size_t count = frameChildren->size();
-    for (size_t i = 0; i < count; ++i) {
-        auto* childFrame = frameChildren->at<WebFrame>(i);
-        if (!largestSoFar || area(childFrame) > area(largestSoFar))
-            largestSoFar = childFrame;
-    }
-
-    return largestSoFar;
-}
-
 WebChromeClient::WebChromeClient(WebPage& page)
     : m_page(page)
 {
@@ -625,14 +598,6 @@ void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
 void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const
 {
     FrameView* frameView = frame.view();
-
-    if (frameView && frameView->effectiveFrameFlattening() == FrameFlattening::Disabled) {
-        WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
-        if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
-            m_cachedFrameSetLargestFrame = largestFrame;
-            m_page.send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? makeOptional(largestFrame->frameID()) : WTF::nullopt));
-        }
-    }
 
     if (&frame.page()->mainFrame() != &frame)
         return;

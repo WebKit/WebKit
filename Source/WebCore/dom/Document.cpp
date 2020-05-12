@@ -5390,7 +5390,6 @@ void Document::resume(ReasonForSuspension reason)
     page()->lockAllOverlayScrollbarsToHidden(false);
 
     ASSERT(m_frame);
-    m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         if (m_timelinesController)

@@ -1,3 +1,40 @@
+2020-05-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API
+        https://bugs.webkit.org/show_bug.cgi?id=211808
+
+        Reviewed by Darin Adler.
+
+        Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API. This is only SPI and is only used for slightly
+        different printing behavior in Safari. Framesets are no longer supported in HTML5 and are now super rare. Support
+        for this C API adds quite a bit of code complexity and crashes such as <rdar://problem/60322282>, it just does not
+        seem worth it anymore.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameIsFrameSet):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetFrameSetLargestFrame):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::setIsFrameSet): Deleted.
+        (WebKit::WebFrameProxy::isFrameSet const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet): Deleted.
+        (WebKit::WebPageProxy::frameSetLargestFrameChanged): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::focusedFrame const):
+        (WebKit::WebPageProxy::frameSetLargestFrame const): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged const):
+        (WebKit::findLargestFrameInFrameSet): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidBecomeFrameset): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2020-05-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Rebuild MobileGestalt cache if needed

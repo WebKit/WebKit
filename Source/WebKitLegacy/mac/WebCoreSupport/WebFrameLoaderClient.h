@@ -186,8 +186,6 @@ private:
 
     void didRestoreFromBackForwardCache() final;
 
-    void dispatchDidBecomeFrameset(bool) final;
-
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const WTF::String& MIMEType) const final;
     bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const final;

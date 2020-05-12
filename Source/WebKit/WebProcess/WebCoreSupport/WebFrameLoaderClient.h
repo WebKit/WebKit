@@ -209,8 +209,6 @@ private:
 
     void didRestoreFromBackForwardCache() final;
 
-    void dispatchDidBecomeFrameset(bool) final;
-
     bool canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 

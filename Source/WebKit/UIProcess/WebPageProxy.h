@@ -448,7 +448,6 @@ public:
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
-    WebFrameProxy* frameSetLargestFrame() const { return m_frameSetLargestFrame.get(); }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     DrawingAreaProxy* provisionalDrawingArea() const;
@@ -1834,7 +1833,6 @@ private:
     void didRunInsecureContentForFrame(WebCore::FrameIdentifier, const UserData&);
     void didDetectXSSForFrame(WebCore::FrameIdentifier, const UserData&);
     void mainFramePluginHandlesPageScaleGestureDidChange(bool);
-    void frameDidBecomeFrameSet(WebCore::FrameIdentifier, bool);
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
@@ -2106,7 +2104,6 @@ private:
 #endif
 
     void focusedFrameChanged(const Optional<WebCore::FrameIdentifier>&);
-    void frameSetLargestFrameChanged(const Optional<WebCore::FrameIdentifier>&);
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&);
 
@@ -2365,7 +2362,6 @@ private:
     RefPtr<WebFrameProxy> m_mainFrame;
 
     RefPtr<WebFrameProxy> m_focusedFrame;
-    RefPtr<WebFrameProxy> m_frameSetLargestFrame;
 
     String m_userAgent;
     String m_applicationNameForUserAgent;

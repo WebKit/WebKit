@@ -140,36 +140,6 @@ TEST(WebKit, FocusedFrameAfterCrash)
     Util::run(&calledCrashHandler);
 }
 
-TEST(WebKit, FrameSetLargestFrameAfterCrash)
-{
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    PlatformWebView webView(context.get());
-
-    WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-
-    loaderClient.base.version = 0;
-    loaderClient.didFinishNavigation = didFinishLoad;
-    loaderClient.webProcessDidCrash = didCrashCheckFrames;
-
-    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
-
-    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
-    WKRetainPtr<WKStringRef> htmlString = Util::toWK("<frameset cols='25%,*,25%'><frame src='about:blank'><frame src='about:blank'><frame src='about:blank'></frameset>");
-
-    WKPageLoadHTMLString(webView.page(), htmlString.get(), baseURL.get());
-    Util::run(&loadBeforeCrash);
-
-    EXPECT_FALSE(!WKPageGetMainFrame(webView.page()));
-
-    while (!WKPageGetFrameSetLargestFrame(webView.page()))
-        Util::spinRunLoop(10);
-
-    kill(WKPageGetProcessIdentifier(webView.page()), 9);
-
-    Util::run(&calledCrashHandler);
-}
-
 #endif // !PLATFORM(WIN)
 
 } // namespace TestWebKitAPI

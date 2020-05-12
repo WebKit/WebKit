@@ -1511,10 +1511,6 @@ void WebFrameLoaderClient::didRestoreFromBackForwardCache()
 #endif
 }
 
-void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
-{
-}
-
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier, WebCore::FramePolicyFunction&& function, WebCore::PolicyAction defaultPolicy, NSURL *appLinkURL)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
