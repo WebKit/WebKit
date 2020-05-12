@@ -46,11 +46,13 @@ public:
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
 
     void reset();
+    WEBCORE_EXPORT void setSampleCount(uint32_t);
 
     AudioBufferList* list() const { return m_list.get(); }
     operator AudioBufferList&() const { return *m_list; }
 
     uint32_t bufferCount() const;
+    uint32_t channelCount() const { return m_channelCount; }
     AudioBuffer* buffer(uint32_t index) const;
     WTF::IteratorRange<AudioBuffer*> buffers() const;
 
@@ -58,6 +60,9 @@ private:
     Kind kind() const { return Kind::WebAudioBufferList; }
 
     size_t m_listBufferSize { 0 };
+    uint32_t m_bytesPerFrame { 0 };
+    uint32_t m_channelCount { 0 };
+    uint32_t m_sampleCount { 0 };
     std::unique_ptr<AudioBufferList> m_canonicalList;
     std::unique_ptr<AudioBufferList> m_list;
     RetainPtr<CMBlockBufferRef> m_blockBuffer;

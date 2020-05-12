@@ -1,3 +1,15 @@
+2020-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Allow WebAudioBufferList to dynamically change its number of frames
+        https://bugs.webkit.org/show_bug.cgi?id=211720
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+
 2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for clipboard operations
