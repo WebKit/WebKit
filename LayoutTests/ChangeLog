@@ -1,3 +1,13 @@
+2020-05-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Need to advertise support for WebP in the Accept header
+        https://bugs.webkit.org/show_bug.cgi?id=211735
+
+        Reviewed by Darin Adler.
+
+        * http/tests/misc/resources/image-checks-for-accept.php:
+        Make sure the Accept header accepts all images mime types.
+
 2020-05-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update test expectations

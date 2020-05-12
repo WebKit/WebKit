@@ -1954,7 +1954,8 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             if (children.isEmpty())
                 return nullptr;
             return CSSCalcOperationNode::createSum(WTFMove(children));
-        } case CalcOperator::Subtract: {
+        }
+        case CalcOperator::Subtract: {
             ASSERT(operationChildren.size() == 2);
 
             Vector<Ref<CSSCalcExpressionNode>> values;

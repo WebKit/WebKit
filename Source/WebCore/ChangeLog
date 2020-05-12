@@ -1,3 +1,21 @@
+2020-05-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Need to advertise support for WebP in the Accept header
+        https://bugs.webkit.org/show_bug.cgi?id=211735
+
+        Reviewed by Darin Adler.
+
+        On Mac and iOS, the system has to support WebP: HAVE(WEBP).
+        On other platforms, WebKit has to be able to decode WebP images: USE(WEBP).
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::createCSS):
+        Fix unrealted coding style issue.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::acceptHeaderValueForImageResource):
+        (WebCore::acceptHeaderValueFromType):
+
 2020-05-11  Darin Adler  <darin@apple.com>
 
         Fix problems caught by replacing WTF::Optional with std::optional

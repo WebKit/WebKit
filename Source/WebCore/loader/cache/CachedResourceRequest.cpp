@@ -122,15 +122,26 @@ void CachedResourceRequest::setDomainForCachePartition(const String& domain)
     m_resourceRequest.setDomainForCachePartition(domain);
 }
 
+static inline constexpr ASCIILiteral acceptHeaderValueForImageResource(bool supportsVideoImage)
+{
+#if HAVE(WEBP) || USE(WEBP)
+    #define WEBP_HEADER_PART "image/webp,"
+#else
+    #define WEBP_HEADER_PART ""
+#endif
+    if (supportsVideoImage)
+        return WEBP_HEADER_PART "image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5"_s;
+    return WEBP_HEADER_PART "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
+    #undef WEBP_HEADER_PART
+}
+
 static inline String acceptHeaderValueFromType(CachedResource::Type type)
 {
     switch (type) {
     case CachedResource::Type::MainResource:
         return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"_s;
     case CachedResource::Type::ImageResource:
-        if (ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
-            return "image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5"_s;
-        return "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
+        return acceptHeaderValueForImageResource(ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video));
     case CachedResource::Type::CSSStyleSheet:
         return "text/css,*/*;q=0.1"_s;
     case CachedResource::Type::SVGDocumentResource:
