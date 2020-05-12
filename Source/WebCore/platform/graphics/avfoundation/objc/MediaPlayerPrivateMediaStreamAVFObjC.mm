@@ -914,7 +914,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
     }
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate& privateStream)
+void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate&)
 {
     ASSERT(m_mediaStreamPrivate);
     scheduleDeferredTask([this] {

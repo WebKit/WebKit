@@ -52,16 +52,11 @@ AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 
 void AudioTrackPrivateMediaStreamCocoa::clear()
 {
-    if (m_isCleared)
+    ASSERT(isMainThread());
+    if (!m_isPlaying)
         return;
 
-    m_isCleared = true;
     streamTrack().source().removeObserver(*this);
-
-    if (m_dataSource)
-        m_dataSource->setPaused(true);
-
-    m_isAudioUnitStarted = false;
     m_isPlaying = false;
 
     if (m_remoteIOUnit) {
@@ -71,48 +66,40 @@ void AudioTrackPrivateMediaStreamCocoa::clear()
     }
 
     m_dataSource = nullptr;
-    m_inputDescription = nullptr;
     m_outputDescription = nullptr;
-}
-
-void AudioTrackPrivateMediaStreamCocoa::playInternal()
-{
-    ASSERT(isMainThread());
-
-    if (m_isPlaying)
-        return;
-
-    m_isPlaying = true;
-    m_autoPlay = false;
-
-    if (m_dataSource)
-        m_dataSource->setPaused(false);
-
-    if (m_isCleared) {
-        streamTrack().source().addObserver(*this);
-        m_isCleared = false;
-    }
 }
 
 void AudioTrackPrivateMediaStreamCocoa::play()
 {
-    playInternal();
+    ASSERT(isMainThread());
+    if (m_isPlaying)
+        return;
+
+    if (streamTrack().ended()) {
+        ERROR_LOG(LOGIDENTIFIER, "Trying to play an ended track");
+        return;
+    }
+
+    CAAudioStreamDescription outputDescription;
+    auto remoteIOUnit = createAudioUnit(outputDescription);
+    if (!remoteIOUnit)
+        return;
+
+    if (auto error = AudioOutputUnitStart(remoteIOUnit)) {
+        ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
+        AudioComponentInstanceDispose(remoteIOUnit);
+        return;
+    }
+    m_outputDescription = makeUnique<CAAudioStreamDescription>(outputDescription);
+    m_remoteIOUnit = remoteIOUnit;
+
+    streamTrack().source().addObserver(*this);
+    m_isPlaying = true;
 }
 
 void AudioTrackPrivateMediaStreamCocoa::pause()
 {
-    ASSERT(isMainThread());
-
-    if (!m_isPlaying)
-        return;
-
     clear();
-
-    m_isPlaying = false;
-    m_autoPlay = false;
-
-    if (m_dataSource)
-        m_dataSource->setPaused(true);
 }
 
 void AudioTrackPrivateMediaStreamCocoa::setVolume(float volume)
@@ -191,74 +178,33 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 {
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
-    if (!m_isPlaying) {
-        if (m_isAudioUnitStarted) {
-            if (m_remoteIOUnit)
-                AudioOutputUnitStop(m_remoteIOUnit);
-            m_isAudioUnitStarted = false;
-        }
+    if (!m_remoteIOUnit)
         return;
-    }
 
-    if (!m_inputDescription || *m_inputDescription != description) {
-        m_isAudioUnitStarted = false;
-
-        if (m_remoteIOUnit) {
-            AudioOutputUnitStop(m_remoteIOUnit);
-            AudioComponentInstanceDispose(m_remoteIOUnit);
-            m_remoteIOUnit = nullptr;
-        }
-
-        m_inputDescription = nullptr;
-        m_outputDescription = nullptr;
-
-        CAAudioStreamDescription inputDescription = toCAAudioStreamDescription(description);
-        CAAudioStreamDescription outputDescription;
-
-        auto remoteIOUnit = createAudioUnit(outputDescription);
-        if (!remoteIOUnit)
+    if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
+        if (m_shouldUpdateRendererDataSource)
             return;
 
-        m_inputDescription = makeUnique<CAAudioStreamDescription>(inputDescription);
-        m_outputDescription = makeUnique<CAAudioStreamDescription>(outputDescription);
+        auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, streamTrack());
 
-        m_dataSource = AudioSampleDataSource::create(description.sampleRate() * 2, streamTrack());
-
-        if (m_dataSource->setInputFormat(inputDescription) || m_dataSource->setOutputFormat(outputDescription)) {
-            AudioComponentInstanceDispose(remoteIOUnit);
+        if (dataSource->setInputFormat(toCAAudioStreamDescription(description))) {
+            ERROR_LOG(LOGIDENTIFIER, "Unable to set the input format of data source");
             return;
         }
 
-        if (auto error = AudioOutputUnitStart(remoteIOUnit)) {
-            ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
-            AudioComponentInstanceDispose(remoteIOUnit);
-            m_inputDescription = nullptr;
+        if (dataSource->setOutputFormat(*m_outputDescription)) {
+            ERROR_LOG(LOGIDENTIFIER, "Unable to set the output format of data source");
             return;
         }
 
-        m_isAudioUnitStarted = true;
+        dataSource->setPaused(false);
+        dataSource->setVolume(volume());
 
-        m_dataSource->setVolume(m_volume);
-        m_remoteIOUnit = remoteIOUnit;
+        m_dataSource = WTFMove(dataSource);
+        m_shouldUpdateRendererDataSource = true;
     }
 
     m_dataSource->pushSamples(sampleTime, audioData, sampleCount);
-
-    if (m_autoPlay && !m_hasStartedAutoplay) {
-        m_hasStartedAutoplay = true;
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
-            if (m_autoPlay)
-                playInternal();
-        });
-    }
-
-    if (!m_isAudioUnitStarted) {
-        if (auto error = AudioOutputUnitStart(m_remoteIOUnit)) {
-            ERROR_LOG(LOGIDENTIFIER, "AudioOutputUnitStart failed, error = ", error, " (", (const char*)&error, ")");
-            return;
-        }
-        m_isAudioUnitStarted = true;
-    }
 }
 
 void AudioTrackPrivateMediaStreamCocoa::sourceStopped()
@@ -281,17 +227,19 @@ void AudioTrackPrivateMediaStreamCocoa::sourceMutedChanged()
 
 OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
-    // This function is called on a high-priority background thread. The following protectedThis object ensures the object is not
-    // destroyed on the main thread before this function exits.
-    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
+    ASSERT(!isMainThread());
+    if (m_shouldUpdateRendererDataSource) {
+        m_rendererDataSource = m_dataSource;
+        m_shouldUpdateRendererDataSource = false;
+    }
 
-    if (!m_isPlaying || m_muted || !m_dataSource || streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
+    if (!m_rendererDataSource || m_muted || streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
         return 0;
     }
 
-    m_dataSource->pullSamples(ioData, static_cast<size_t>(sampleCount), timeStamp.mSampleTime, timeStamp.mHostTime, AudioSampleDataSource::Copy);
+    m_rendererDataSource->pullSamples(ioData, static_cast<size_t>(sampleCount), timeStamp.mSampleTime, timeStamp.mHostTime, AudioSampleDataSource::Copy);
 
     return 0;
 }
