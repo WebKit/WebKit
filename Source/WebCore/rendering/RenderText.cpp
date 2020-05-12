@@ -290,7 +290,7 @@ void RenderText::removeAndDestroyTextBoxes()
     else
         m_lineBoxes.invalidateParentChildLists();
 #endif
-    m_lineBoxes.deleteAll();
+    deleteLineBoxes();
 }
 
 void RenderText::willBeDestroyed()
@@ -1297,10 +1297,15 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 void RenderText::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
-        m_lineBoxes.deleteAll();
+        deleteLineBoxes();
     else if (!m_linesDirty)
         m_lineBoxes.dirtyAll();
     m_linesDirty = false;
+}
+
+void RenderText::deleteLineBoxes()
+{
+    m_lineBoxes.deleteAll();
 }
 
 std::unique_ptr<InlineTextBox> RenderText::createTextBox()
