@@ -41,7 +41,7 @@ public:
         return isMemoryAccess(kind.opcode());
     }
 
-    ~MemoryValue();
+    ~MemoryValue() override;
 
     OffsetType offset() const { return m_offset; }
     template<typename Int, typename = IsLegalOffset<Int>>

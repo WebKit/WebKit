@@ -42,7 +42,7 @@ namespace FTL {
 class JITCode : public JSC::JITCode {
 public:
     JITCode();
-    ~JITCode();
+    ~JITCode() override;
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
     void* executableAddressAtOffset(size_t offset) override;

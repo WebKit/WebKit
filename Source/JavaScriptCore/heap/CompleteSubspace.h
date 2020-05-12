@@ -29,20 +29,20 @@
 
 namespace JSC {
 
-class CompleteSubspace : public Subspace {
+class CompleteSubspace final : public Subspace {
 public:
     JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, HeapCellType*, AlignedMemoryAllocator*);
-    JS_EXPORT_PRIVATE ~CompleteSubspace();
+    JS_EXPORT_PRIVATE ~CompleteSubspace() final;
 
     // In some code paths, we need it to be a compile error to call the virtual version of one of
     // these functions. That's why we do final methods the old school way.
     
     // FIXME: Currently subspaces speak of BlockDirectories as "allocators", but that's temporary.
     // https://bugs.webkit.org/show_bug.cgi?id=181559
-    Allocator allocatorFor(size_t, AllocatorForMode) override;
+    Allocator allocatorFor(size_t, AllocatorForMode) final;
     Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
     
-    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
+    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) final;
     void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
     void* reallocatePreciseAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode);
     

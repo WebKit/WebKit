@@ -84,7 +84,7 @@ public:
     {
     }
 
-    virtual ~BytecodeDumper() { }
+    ~BytecodeDumper() override { }
 
 protected:
     Block* block() const { return m_block; }
@@ -101,7 +101,7 @@ private:
 };
 
 template<class Block>
-class CodeBlockBytecodeDumper : public BytecodeDumper<Block> {
+class CodeBlockBytecodeDumper final : public BytecodeDumper<Block> {
 public:
     static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
 
@@ -127,7 +127,7 @@ class FunctionCodeBlock;
 struct ModuleInformation;
 enum Type : int8_t;
 
-class BytecodeDumper : public JSC::BytecodeDumper<FunctionCodeBlock> {
+class BytecodeDumper final : public JSC::BytecodeDumper<FunctionCodeBlock> {
 public:
     static void dumpBlock(FunctionCodeBlock*, const ModuleInformation&, PrintStream& out);
 
@@ -135,7 +135,7 @@ private:
     using JSC::BytecodeDumper<FunctionCodeBlock>::BytecodeDumper;
 
     void dumpConstants();
-    CString constantName(VirtualRegister index) const override;
+    CString constantName(VirtualRegister index) const final;
     CString formatConstant(Type, uint64_t) const;
 };
 

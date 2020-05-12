@@ -33,19 +33,19 @@
 
 namespace JSC {
 
-class FastMallocAlignedMemoryAllocator : public AlignedMemoryAllocator {
+class FastMallocAlignedMemoryAllocator final : public AlignedMemoryAllocator {
 public:
     FastMallocAlignedMemoryAllocator();
-    ~FastMallocAlignedMemoryAllocator();
+    ~FastMallocAlignedMemoryAllocator() final;
     
-    void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
-    void freeAlignedMemory(void*) override;
+    void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void freeAlignedMemory(void*) final;
     
-    void dump(PrintStream&) const override;
+    void dump(PrintStream&) const final;
 
-    void* tryAllocateMemory(size_t) override;
-    void freeMemory(void*) override;
-    void* tryReallocateMemory(void*, size_t) override;
+    void* tryAllocateMemory(size_t) final;
+    void freeMemory(void*) final;
+    void* tryReallocateMemory(void*, size_t) final;
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 private:

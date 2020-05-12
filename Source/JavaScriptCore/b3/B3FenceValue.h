@@ -32,11 +32,11 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE FenceValue : public Value {
+class JS_EXPORT_PRIVATE FenceValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Fence; }
     
-    ~FenceValue();
+    ~FenceValue() final;
     
     // The read/write heaps are reflected in the effects() of this value. The compiler may change
     // the lowering of a Fence based on the heaps. For example, if a fence does not write anything

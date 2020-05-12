@@ -37,19 +37,18 @@ class ScriptExecutable;
 
 namespace DFG {
 
-class ToFTLForOSREntryDeferredCompilationCallback : public DeferredCompilationCallback {
-protected:
-    ToFTLForOSREntryDeferredCompilationCallback(JITCode::TriggerReason* forcedOSREntryTrigger);
-
+class ToFTLForOSREntryDeferredCompilationCallback final : public DeferredCompilationCallback {
 public:
-    virtual ~ToFTLForOSREntryDeferredCompilationCallback();
+    ~ToFTLForOSREntryDeferredCompilationCallback() final;
 
     static Ref<ToFTLForOSREntryDeferredCompilationCallback> create(JITCode::TriggerReason* forcedOSREntryTrigger);
-    
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock);
-    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
+
+    void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) final;
+    void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) final;
 
 private:
+    ToFTLForOSREntryDeferredCompilationCallback(JITCode::TriggerReason* forcedOSREntryTrigger);
+
     JITCode::TriggerReason* m_forcedOSREntryTrigger;
 };
 

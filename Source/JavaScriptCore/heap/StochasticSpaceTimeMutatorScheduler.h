@@ -39,27 +39,27 @@ class Heap;
 // that the world is paused for to the amount of space that the world allocated since the GC cycle
 // began.
 
-class StochasticSpaceTimeMutatorScheduler : public MutatorScheduler {
+class StochasticSpaceTimeMutatorScheduler final : public MutatorScheduler {
 public:
     StochasticSpaceTimeMutatorScheduler(Heap&);
-    ~StochasticSpaceTimeMutatorScheduler();
+    ~StochasticSpaceTimeMutatorScheduler() final;
     
-    State state() const override;
+    State state() const final;
     
-    void beginCollection() override;
+    void beginCollection() final;
     
-    void didStop() override;
-    void willResume() override;
-    void didReachTermination() override;
-    void didExecuteConstraints() override;
-    void synchronousDrainingDidStall() override;
+    void didStop() final;
+    void willResume() final;
+    void didReachTermination() final;
+    void didExecuteConstraints() final;
+    void synchronousDrainingDidStall() final;
     
-    MonotonicTime timeToStop() override;
-    MonotonicTime timeToResume() override;
+    MonotonicTime timeToStop() final;
+    MonotonicTime timeToResume() final;
     
-    void log() override;
+    void log() final;
     
-    void endCollection() override;
+    void endCollection() final;
     
 private:
     class Snapshot;

@@ -33,21 +33,20 @@ namespace JSC { namespace B3 {
 
 class Variable;
 
-class JS_EXPORT_PRIVATE VariableValue : public Value {
+class JS_EXPORT_PRIVATE VariableValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Get || kind == Set; }
 
-    ~VariableValue();
+    ~VariableValue() final;
 
     Variable* variable() const { return m_variable; }
 
     B3_SPECIALIZE_VALUE_FOR_NON_VARARGS_CHILDREN
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
 private:
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+
     friend class Procedure;
     friend class Value;
 

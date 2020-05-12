@@ -35,7 +35,7 @@ class JS_EXPORT_PRIVATE ExtractValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Extract; }
 
-    ~ExtractValue();
+    ~ExtractValue() final;
 
     int32_t index() const { return m_index; }
 
@@ -43,7 +43,7 @@ public:
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
 private:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
 
     static Opcode opcodeFromConstructor(Origin, Type, Value*, int32_t) { return Extract; }
 

@@ -32,20 +32,19 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE ArgumentRegValue : public Value {
+class JS_EXPORT_PRIVATE ArgumentRegValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == ArgumentReg; }
     
-    ~ArgumentRegValue();
+    ~ArgumentRegValue() final;
 
     Reg argumentReg() const { return m_reg; }
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
 private:
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+
     friend class Procedure;
     friend class Value;
     

@@ -40,7 +40,7 @@ public:
 
 template<typename KeyArg, typename ValueArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
     typename KeyTraitsArg = HashTraits<KeyArg>>
-class WeakGCMap : public WeakGCMapBase {
+class WeakGCMap final : public WeakGCMapBase {
     WTF_MAKE_FAST_ALLOCATED;
     typedef Weak<ValueArg> ValueType;
     typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
@@ -52,7 +52,7 @@ public:
     typedef typename HashMapType::const_iterator const_iterator;
 
     explicit WeakGCMap(VM&);
-    ~WeakGCMap();
+    ~WeakGCMap() final;
 
     ValueArg* get(const KeyType& key) const
     {
@@ -91,7 +91,7 @@ public:
 
     inline bool contains(const KeyType& key) const;
 
-    void pruneStaleEntries() override;
+    void pruneStaleEntries() final;
 
 private:
     HashMapType m_map;

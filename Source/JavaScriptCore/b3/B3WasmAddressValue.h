@@ -32,21 +32,20 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE WasmAddressValue : public Value {
+class JS_EXPORT_PRIVATE WasmAddressValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == WasmAddress; }
 
-    ~WasmAddressValue();
+    ~WasmAddressValue() final;
 
     GPRReg pinnedGPR() const { return m_pinnedGPR; }
 
     B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
 private:
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+
     friend class Procedure;
     friend class Value;
 

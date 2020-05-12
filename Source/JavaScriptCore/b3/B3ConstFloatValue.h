@@ -31,37 +31,37 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE ConstFloatValue : public Value {
+class JS_EXPORT_PRIVATE ConstFloatValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == ConstFloat; }
 
-    ~ConstFloatValue();
+    ~ConstFloatValue() final;
 
     float value() const { return m_value; }
 
-    Value* negConstant(Procedure&) const override;
-    Value* addConstant(Procedure&, int32_t other) const override;
-    Value* addConstant(Procedure&, const Value* other) const override;
-    Value* subConstant(Procedure&, const Value* other) const override;
-    Value* divConstant(Procedure&, const Value* other) const override;
-    Value* mulConstant(Procedure&, const Value* other) const override;
-    Value* bitAndConstant(Procedure&, const Value* other) const override;
-    Value* bitOrConstant(Procedure&, const Value* other) const override;
-    Value* bitXorConstant(Procedure&, const Value* other) const override;
-    Value* bitwiseCastConstant(Procedure&) const override;
-    Value* floatToDoubleConstant(Procedure&) const override;
-    Value* absConstant(Procedure&) const override;
-    Value* ceilConstant(Procedure&) const override;
-    Value* floorConstant(Procedure&) const override;
-    Value* sqrtConstant(Procedure&) const override;
+    Value* negConstant(Procedure&) const final;
+    Value* addConstant(Procedure&, int32_t other) const final;
+    Value* addConstant(Procedure&, const Value* other) const final;
+    Value* subConstant(Procedure&, const Value* other) const final;
+    Value* divConstant(Procedure&, const Value* other) const final;
+    Value* mulConstant(Procedure&, const Value* other) const final;
+    Value* bitAndConstant(Procedure&, const Value* other) const final;
+    Value* bitOrConstant(Procedure&, const Value* other) const final;
+    Value* bitXorConstant(Procedure&, const Value* other) const final;
+    Value* bitwiseCastConstant(Procedure&) const final;
+    Value* floatToDoubleConstant(Procedure&) const final;
+    Value* absConstant(Procedure&) const final;
+    Value* ceilConstant(Procedure&) const final;
+    Value* floorConstant(Procedure&) const final;
+    Value* sqrtConstant(Procedure&) const final;
 
-    TriState equalConstant(const Value* other) const override;
-    TriState notEqualConstant(const Value* other) const override;
-    TriState lessThanConstant(const Value* other) const override;
-    TriState greaterThanConstant(const Value* other) const override;
-    TriState lessEqualConstant(const Value* other) const override;
-    TriState greaterEqualConstant(const Value* other) const override;
-    TriState equalOrUnorderedConstant(const Value* other) const override;
+    TriState equalConstant(const Value* other) const final;
+    TriState notEqualConstant(const Value* other) const final;
+    TriState lessThanConstant(const Value* other) const final;
+    TriState greaterThanConstant(const Value* other) const final;
+    TriState lessEqualConstant(const Value* other) const final;
+    TriState greaterEqualConstant(const Value* other) const final;
+    TriState equalOrUnorderedConstant(const Value* other) const final;
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
@@ -69,7 +69,7 @@ private:
     friend class Procedure;
     friend class Value;
 
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
 
     static Opcode opcodeFromConstructor(Origin, float) { return ConstFloat; }
 

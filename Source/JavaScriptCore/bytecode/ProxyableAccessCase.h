@@ -43,7 +43,7 @@ public:
     void dumpImpl(PrintStream&, CommaPrinter&) const override;
     std::unique_ptr<AccessCase> clone() const override;
 
-    ~ProxyableAccessCase();
+    ~ProxyableAccessCase() override;
 
 protected:
     ProxyableAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain>);

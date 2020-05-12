@@ -35,7 +35,7 @@ class JS_EXPORT_PRIVATE Const64Value : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Const64; }
     
-    ~Const64Value();
+    ~Const64Value() override;
     
     int64_t value() const { return m_value; }
 

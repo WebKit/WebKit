@@ -32,18 +32,17 @@ namespace JSC {
 class Heap;
 class SlotVisitor;
 
-class MarkStackMergingConstraint : public MarkingConstraint {
+class MarkStackMergingConstraint final : public MarkingConstraint {
 public:
     MarkStackMergingConstraint(Heap&);
-    ~MarkStackMergingConstraint();
+    ~MarkStackMergingConstraint() final;
     
-    double quickWorkEstimate(SlotVisitor&) override;
-    
-protected:
-    void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, SlotVisitor&) override;
-    void executeImpl(SlotVisitor&) override;
+    double quickWorkEstimate(SlotVisitor&) final;
     
 private:
+    void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, SlotVisitor&) final;
+    void executeImpl(SlotVisitor&) final;
+    
     Heap& m_heap;
 };
 

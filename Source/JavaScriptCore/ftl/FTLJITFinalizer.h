@@ -47,14 +47,14 @@ public:
     const char* m_codeDescription;
 };
 
-class JITFinalizer : public DFG::Finalizer {
+class JITFinalizer final : public DFG::Finalizer {
 public:
     JITFinalizer(DFG::Plan&);
-    virtual ~JITFinalizer();
+    ~JITFinalizer() final;
 
-    size_t codeSize() override;
-    bool finalize() override;
-    bool finalizeFunction() override;
+    size_t codeSize() final;
+    bool finalize() final;
+    bool finalizeFunction() final;
     
     bool finalizeCommon();
 
