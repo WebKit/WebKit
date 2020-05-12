@@ -1,5 +1,52 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r260666. rdar://problem/62978264
+
+    IPC::Decoder should use create() pattern
+    <https://webkit.org/b/210949>
+    <rdar://problem/62144409>
+    
+    Reviewed by Geoffrey Garen.
+    
+    * Platform/IPC/Decoder.cpp:
+    (IPC::Decoder::create): Add implementation. Returns nullptr if
+    Decoder constructor returns an invalid object.
+    (IPC::Decoder::Decoder): Mark invalid if m_buffer is not 64-bit
+    aligned.
+    (IPC::Decoder::unwrapForTesting): Switch to Decoder::create().
+    * Platform/IPC/Decoder.h:
+    (IPC::Decoder::create): Add declaration.
+    (IPC::Decoder::Decoder): Make explicit.  (Can't be made private
+    since we use std::unique_ptr<Decoder>.)
+    * Platform/IPC/cocoa/ConnectionCocoa.mm:
+    (IPC::createMessageDecoder): Switch to Decoder::create().
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260666 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-24  David Kilzer  <ddkilzer@apple.com>
+
+            IPC::Decoder should use create() pattern
+            <https://webkit.org/b/210949>
+            <rdar://problem/62144409>
+
+            Reviewed by Geoffrey Garen.
+
+            * Platform/IPC/Decoder.cpp:
+            (IPC::Decoder::create): Add implementation. Returns nullptr if
+            Decoder constructor returns an invalid object.
+            (IPC::Decoder::Decoder): Mark invalid if m_buffer is not 64-bit
+            aligned.
+            (IPC::Decoder::unwrapForTesting): Switch to Decoder::create().
+            * Platform/IPC/Decoder.h:
+            (IPC::Decoder::create): Add declaration.
+            (IPC::Decoder::Decoder): Make explicit.  (Can't be made private
+            since we use std::unique_ptr<Decoder>.)
+            * Platform/IPC/cocoa/ConnectionCocoa.mm:
+            (IPC::createMessageDecoder): Switch to Decoder::create().
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r260229. rdar://problem/62978244
 
     Re-land: [IPC Hardening] MachMessage::create() should use checked arithmetic
