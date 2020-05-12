@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -409,7 +409,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
 
-        return makeUnique<Decoder>(body, bodySize, nullptr, Vector<Attachment> { });
+        return Decoder::create(body, bodySize, nullptr, Vector<Attachment> { });
     }
 
     bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
@@ -447,7 +447,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
 
-        return makeUnique<Decoder>(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
+        return Decoder::create(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer), length);
         }, WTFMove(attachments));
     }
@@ -455,7 +455,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return makeUnique<Decoder>(messageBody, messageBodySize, nullptr, WTFMove(attachments));
+    return Decoder::create(messageBody, messageBodySize, nullptr, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.
