@@ -895,12 +895,14 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
 
 - (CharacterOffset)characterOffsetForTextMarker:(id)textMarker
 {
-    return characterOffsetForTextMarker(self.axBackingObject->axObjectCache(), (__bridge CFTypeRef)textMarker);
+    auto *backingObject = self.axBackingObject;
+    return backingObject ? characterOffsetForTextMarker(backingObject->axObjectCache(), (__bridge CFTypeRef)textMarker) : nil;
 }
 
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
 {
-    return textMarkerForVisiblePosition(self.axBackingObject->axObjectCache(), visiblePos);
+    auto *backingObject = self.axBackingObject;
+    return backingObject ? textMarkerForVisiblePosition(backingObject->axObjectCache(), visiblePos) : nil;
 }
 
 - (id)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
@@ -2429,7 +2431,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (backingObject->isPasswordField() || backingObject->selectionEnd() > 0)
                 return nil;
 
-            auto focusedObject = downcast<AccessibilityObject>(backingObject->focusedUIElement());
+            auto *focusedObject = backingObject->focusedUIElement();
             if (focusedObject != backingObject)
                 return nil;
 
@@ -3489,8 +3491,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if PLATFORM(MAC)
     // In case anything we do by changing values causes an alert or other modal
     // behaviors, we need to return now, so that VoiceOver doesn't hang indefinitely.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self _accessibilitySetValue:value forAttribute:attributeName];
+    callOnMainThread([value = retainPtr(value), attributeName = retainPtr(attributeName), protectedSelf = retainPtr(self)] {
+        [protectedSelf _accessibilitySetValue:value.get() forAttribute:attributeName.get()];
     });
 #else
     // dispatch_async on earlier versions can cause focus not to track.
@@ -3540,7 +3542,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     } else if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
         if (!array)
             return;
-        if (backingObject->roleValue() != AccessibilityRole::ListBox)
+        if (!backingObject->isNativeListBox())
             return;
         AccessibilityObject::AccessibilityChildrenVector selectedChildren;
         convertToVector(array, selectedChildren);
