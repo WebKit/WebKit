@@ -29,18 +29,23 @@
 namespace WebCore {
 
 class FloatSize;
+class FloatPoint;
 class LayoutSize;
-class RenderView;
 
 struct Length;
 struct LengthSize;
+struct LengthPoint;
 
 int intValueForLength(const Length&, LayoutUnit maximumValue);
-WEBCORE_EXPORT LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue);
-LayoutSize sizeForLengthSize(const LengthSize&, const LayoutSize& maximumValue);
 float floatValueForLength(const Length&, LayoutUnit maximumValue);
 WEBCORE_EXPORT float floatValueForLength(const Length&, float maximumValue);
-FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize&);
+WEBCORE_EXPORT LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue);
+
+LayoutSize sizeForLengthSize(const LengthSize&, const LayoutSize& maximumValue);
+FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize& maximumValue);
+
+LayoutPoint pointForLengthPoint(const LengthPoint&, const LayoutSize& maximumValue);
+FloatPoint floatPointForLengthPoint(const LengthPoint&, const FloatSize& maximumValue);
 
 inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue)
 {

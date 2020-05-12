@@ -85,6 +85,8 @@ public:
     bool operator==(const StyleRareNonInheritedData&) const;
     bool operator!=(const StyleRareNonInheritedData& other) const { return !(*this == other); }
 
+    LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
+
     bool contentDataEquivalent(const StyleRareNonInheritedData&) const;
 
     bool hasFilters() const;

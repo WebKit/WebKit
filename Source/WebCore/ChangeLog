@@ -1,3 +1,44 @@
+2020-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some transformOrigin and perspectiveOrigin code
+        https://bugs.webkit.org/show_bug.cgi?id=211807
+
+        Reviewed by Zalan Bujtas.
+
+        Add LengthPoint and LengthSize-based "value for length" functions so we can do
+        point and size math as we do for LayoutPoint/FloatPoint etc.
+
+        Use them in code that computes transform and perspective origins.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::computeTransformedExtentViaTransformList const):
+        * css/LengthFunctions.cpp:
+        (WebCore::sizeForLengthSize):
+        (WebCore::pointForLengthPoint):
+        (WebCore::floatPointForLengthPoint):
+        * css/LengthFunctions.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::computeTransformedExtentViaTransformList const):
+        * platform/Length.h:
+        * platform/LengthPoint.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::perspectiveTransform const):
+        (WebCore::RenderLayer::perspectiveOrigin const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::computeTransformOriginForPainting const):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInset::path):
+        (WebCore::floatSizeForLengthSize): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::applyTransform const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::transformOriginXY const): Explicitly "xy" because it excludes the z component.
+        (WebCore::RenderStyle::perspectiveOrigin const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::perspectiveOrigin const):
+        * rendering/style/StyleTransformData.h:
+        (WebCore::StyleTransformData::originXY const):
+
 2020-05-12  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wattribute warning in BreakLines.cpp

@@ -1745,21 +1745,21 @@ TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRe
     if (!style.hasPerspective())
         return { };
 
+    auto deviceScaleFactor = renderBox.document().deviceScaleFactor();
     auto referenceBox = renderBox.referenceBox(transformBoxToCSSBoxType(style.transformBox()));
-    auto pixelSnappedReferenceBox = snapRectToDevicePixels(referenceBox, renderBox.document().deviceScaleFactor());
+    auto pixelSnappedReferenceBox = snapRectToDevicePixels(referenceBox, deviceScaleFactor);
+    auto snappedLayerRect = snapRectToDevicePixels(layerRect, deviceScaleFactor);
 
-    float perspectiveOriginX = pixelSnappedReferenceBox.x() + floatValueForLength(style.perspectiveOriginX(), pixelSnappedReferenceBox.width());
-    float perspectiveOriginY = pixelSnappedReferenceBox.y() + floatValueForLength(style.perspectiveOriginY(), pixelSnappedReferenceBox.height());
+    auto perspectiveOrigin = pixelSnappedReferenceBox.location() + floatPointForLengthPoint(style.perspectiveOrigin(), pixelSnappedReferenceBox.size());
 
     // A perspective origin of 0,0 makes the vanishing point in the center of the element.
     // We want it to be in the top-left, so subtract half the height and width.
-    perspectiveOriginX -= layerRect.width() / 2.0f;
-    perspectiveOriginY -= layerRect.height() / 2.0f;
+    perspectiveOrigin -= snappedLayerRect.size() / 2.0f;
 
     TransformationMatrix t;
-    t.translate(perspectiveOriginX, perspectiveOriginY);
+    t.translate(perspectiveOrigin.x(), perspectiveOrigin.y());
     t.applyPerspective(style.perspective());
-    t.translate(-perspectiveOriginX, -perspectiveOriginY);
+    t.translate(-perspectiveOrigin.x(), -perspectiveOrigin.y());
 
     return t;
 }
@@ -1767,13 +1767,10 @@ TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRe
 FloatPoint RenderLayer::perspectiveOrigin() const
 {
     if (!renderer().hasTransformRelatedProperty())
-        return FloatPoint();
+        return { };
 
-    const LayoutRect borderBox = downcast<RenderBox>(renderer()).borderBoxRect();
-    const RenderStyle& style = renderer().style();
-
-    return FloatPoint(floatValueForLength(style.perspectiveOriginX(), borderBox.width()),
-                      floatValueForLength(style.perspectiveOriginY(), borderBox.height()));
+    auto borderBox = downcast<RenderBox>(renderer()).borderBoxRect();
+    return floatPointForLengthPoint(renderer().style().perspectiveOrigin(), borderBox.size());
 }
 
 static inline bool isContainerForPositioned(RenderLayer& layer, PositionType position)

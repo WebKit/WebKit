@@ -1385,8 +1385,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     
     FloatPoint3D originTranslate;
     if (applyTransformOrigin) {
-        originTranslate.setX(boundingBox.x() + floatValueForLength(transformOriginX(), boundingBox.width()));
-        originTranslate.setY(boundingBox.y() + floatValueForLength(transformOriginY(), boundingBox.height()));
+        originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(transformOriginXY(), boundingBox.size()));
         originTranslate.setZ(transformOriginZ());
         transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
     }

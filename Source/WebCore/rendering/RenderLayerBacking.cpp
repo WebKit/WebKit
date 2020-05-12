@@ -2724,11 +2724,9 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
 FloatPoint3D RenderLayerBacking::computeTransformOriginForPainting(const LayoutRect& borderBox) const
 {
     const RenderStyle& style = renderer().style();
-    float deviceScaleFactor = this->deviceScaleFactor();
 
     FloatPoint3D origin;
-    origin.setX(roundToDevicePixel(floatValueForLength(style.transformOriginX(), borderBox.width()), deviceScaleFactor));
-    origin.setY(roundToDevicePixel(floatValueForLength(style.transformOriginY(), borderBox.height()), deviceScaleFactor));
+    origin.setXY(roundPointToDevicePixels(pointForLengthPoint(style.transformOriginXY(), borderBox.size()), deviceScaleFactor()));
     origin.setZ(style.transformOriginZ());
 
     return origin;

@@ -614,6 +614,8 @@ public:
     const Length& transformOriginX() const { return m_rareNonInheritedData->transform->x; }
     const Length& transformOriginY() const { return m_rareNonInheritedData->transform->y; }
     float transformOriginZ() const { return m_rareNonInheritedData->transform->z; }
+    LengthPoint transformOriginXY() const { return m_rareNonInheritedData->transform->originXY(); }
+
     TransformBox transformBox() const { return m_rareNonInheritedData->transform->transformBox; }
 
     TextEmphasisFill textEmphasisFill() const { return static_cast<TextEmphasisFill>(m_rareInheritedData->textEmphasisFill); }
@@ -682,6 +684,8 @@ public:
     bool hasPerspective() const { return m_rareNonInheritedData->perspective > 0; }
     const Length& perspectiveOriginX() const { return m_rareNonInheritedData->perspectiveOriginX; }
     const Length& perspectiveOriginY() const { return m_rareNonInheritedData->perspectiveOriginY; }
+    LengthPoint perspectiveOrigin() const { return m_rareNonInheritedData->perspectiveOrigin(); }
+
     const LengthSize& pageSize() const { return m_rareNonInheritedData->pageSize; }
     PageSizeType pageSizeType() const { return static_cast<PageSizeType>(m_rareNonInheritedData->pageSizeType); }
 

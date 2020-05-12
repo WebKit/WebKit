@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Length.h"
+#include "LengthPoint.h"
 #include "RenderStyleConstants.h"
 #include "TransformOperations.h"
 #include <wtf/Ref.h>
@@ -46,6 +46,8 @@ public:
     }
     
     bool hasTransform() const { return operations.size(); }
+
+    LengthPoint originXY() const { return { x, y }; }
 
     TransformOperations operations;
     Length x;
