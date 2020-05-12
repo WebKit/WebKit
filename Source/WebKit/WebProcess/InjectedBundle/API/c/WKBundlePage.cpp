@@ -694,7 +694,7 @@ void WKBundlePageSetUseTestingViewportConfiguration(WKBundlePageRef pageRef, boo
 }
 #endif
 
-void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
+void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef, bool clearLatchingState)
 {
     WebKit::WebPage* webPage = WebKit::toImpl(pageRef);
     WebCore::Page* page = webPage ? webPage->corePage() : nullptr;
@@ -702,7 +702,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     if (!page)
         return;
 
-    page->startMonitoringWheelEvents();
+    page->startMonitoringWheelEvents(clearLatchingState);
 }
 
 bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, bool expectWheelEndOrCancel, bool expectMomentumEnd, void* context)

@@ -129,9 +129,10 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
 
-void ScrollingCoordinatorMac::startMonitoringWheelEvents()
+void ScrollingCoordinatorMac::startMonitoringWheelEvents(bool clearLatchingState)
 {
-    scrollingTree()->clearLatchedNode();
+    if (clearLatchingState)
+        scrollingTree()->clearLatchedNode();
     auto monitor = m_page->wheelEventTestMonitor();
     scrollingTree()->setWheelEventTestMonitor(WTFMove(monitor));
 }

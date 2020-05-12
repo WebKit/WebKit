@@ -610,13 +610,30 @@ void EventSendingController::scalePageBy(double scale, double x, double y)
     WKBundlePageSetScaleAtOrigin(InjectedBundle::singleton().page()->page(), scale, origin);
 }
 
-void EventSendingController::monitorWheelEvents()
+MonitorWheelEventsOptions* toMonitorWheelEventsOptions(JSContextRef context, JSValueRef argument)
+{
+    if (!JSValueIsObject(context, argument))
+        return nullptr;
+
+    auto resetLatchingString = adopt(JSStringCreateWithUTF8CString("resetLatching"));
+    auto resetLatchingValue = JSObjectGetProperty(context, JSValueToObject(context, argument, nullptr), resetLatchingString.get(), nullptr);
+
+    bool resetLatching = true;
+    if (resetLatchingValue && JSValueIsBoolean(context, resetLatchingValue))
+        resetLatching = JSValueToBoolean(context, resetLatchingValue);
+
+    static MonitorWheelEventsOptions options;
+    options.resetLatching = resetLatching;
+    return &options;
+}
+
+void EventSendingController::monitorWheelEvents(MonitorWheelEventsOptions* options)
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     
     m_sentWheelPhaseEndOrCancel = false;
     m_sentWheelMomentumPhaseEnd = false;
-    WKBundlePageStartMonitoringScrollOperations(page);
+    WKBundlePageStartMonitoringScrollOperations(page, options ? options->resetLatching : true);
 }
 
 struct ScrollCompletionCallbackData {

@@ -32,6 +32,16 @@
 
 namespace WTR {
 
+struct MonitorWheelEventsOptions {
+    MonitorWheelEventsOptions(bool resetLatching = true)
+        : resetLatching(resetLatching)
+    { }
+
+    bool resetLatching { true };
+};
+
+MonitorWheelEventsOptions* toMonitorWheelEventsOptions(JSContextRef, JSValueRef);
+
 class EventSendingController : public JSWrappable {
 public:
     static Ref<EventSendingController> create();
@@ -56,7 +66,8 @@ public:
     JSValueRef contextClick();
     void leapForward(int milliseconds);
     void scheduleAsynchronousClick();
-    void monitorWheelEvents();
+
+    void monitorWheelEvents(MonitorWheelEventsOptions*);
     void callAfterScrollingCompletes(JSValueRef functionCallback);
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);

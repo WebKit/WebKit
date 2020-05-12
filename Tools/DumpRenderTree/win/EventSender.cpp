@@ -36,6 +36,7 @@
 #include "DumpRenderTree.h"
 #include "WebCoreTestSupport.h"
 
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -903,7 +904,17 @@ static JSValueRef monitorWheelEvents(JSContextRef context, JSObjectRef function,
         return JSValueMakeUndefined(context);
 
     WebCore::Frame* coreFrame = core(static_cast<WebFrame*>(frame2.get()));
-    WebCoreTestSupport::monitorWheelEvents(*coreFrame);
+
+    bool resetLatching = true;
+    if (argumentCount > 0) {
+        auto resetLatchingString = adopt(JSStringCreateWithUTF8CString("resetLatching"));
+        auto resetLatchingValue = JSObjectGetProperty(context, JSValueToObject(context, arguments[0], nullptr), resetLatchingString.get(), nullptr);
+
+        if (resetLatchingValue && JSValueIsBoolean(context, resetLatchingValue))
+            resetLatching = JSValueToBoolean(context, resetLatchingValue);
+    }
+
+    WebCoreTestSupport::monitorWheelEvents(*coreFrame, resetLatching);
     
     return JSValueMakeUndefined(context);
 }

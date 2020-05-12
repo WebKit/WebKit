@@ -1,3 +1,16 @@
+2020-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [ macOS ] scrollingcoordinator/mac/latching/scrolling-select-should-not-latch-mainframe.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211747
+
+        Reviewed by Tim Horton.
+
+        Add an option to monitorWheelEvents to reset latching.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageStartMonitoringScrollOperations):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2020-05-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Fail navigations to non app-bound domains after use of app-bound APIs

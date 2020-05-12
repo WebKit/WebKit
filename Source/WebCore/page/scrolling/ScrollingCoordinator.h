@@ -185,7 +185,7 @@ public:
     EventTrackingRegions absoluteEventTrackingRegions() const;
     virtual void updateIsMonitoringWheelEventsForFrameView(const FrameView&) { }
 
-    virtual void startMonitoringWheelEvents() { }
+    virtual void startMonitoringWheelEvents(bool /* clearLatchingState */) { }
     virtual void stopMonitoringWheelEvents() { }
 
 protected:

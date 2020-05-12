@@ -46,7 +46,7 @@ namespace WebCoreTestSupport {
 
 void injectInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
-void monitorWheelEvents(WebCore::Frame&) TEST_SUPPORT_EXPORT;
+void monitorWheelEvents(WebCore::Frame&, bool clearLatchingState) TEST_SUPPORT_EXPORT;
 void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::Frame&, JSContextRef, JSObjectRef) TEST_SUPPORT_EXPORT;
 void clearWheelEventTestMonitor(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 

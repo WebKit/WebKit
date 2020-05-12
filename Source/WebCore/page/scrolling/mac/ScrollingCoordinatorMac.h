@@ -48,7 +48,7 @@ private:
 
     void updateTiledScrollingIndicator();
 
-    void startMonitoringWheelEvents() final;
+    void startMonitoringWheelEvents(bool clearLatchingState) final;
     void stopMonitoringWheelEvents() final;
 };
 

@@ -668,7 +668,7 @@ public:
 
     WEBCORE_EXPORT RefPtr<WheelEventTestMonitor> wheelEventTestMonitor() const;
     WEBCORE_EXPORT void clearWheelEventTestMonitor();
-    WEBCORE_EXPORT void startMonitoringWheelEvents();
+    WEBCORE_EXPORT void startMonitoringWheelEvents(bool clearLatchingState);
     WEBCORE_EXPORT bool isMonitoringWheelEvents() const;
 
 #if ENABLE(VIDEO)

@@ -115,7 +115,7 @@ WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsControlledByAutomation(WKBundlePageRef page);
 
-WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef page, bool clearLatchingState);
 
 WK_EXPORT WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef page);
 

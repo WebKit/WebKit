@@ -253,7 +253,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(mouseScrollByX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:)
             || aSelector == @selector(continuousMouseScrollByX:andY:)
-            || aSelector == @selector(monitorWheelEvents)
+            || aSelector == @selector(monitorWheelEventsWithOptions:)
             || aSelector == @selector(callAfterScrollingCompletes:)
 #if PLATFORM(MAC)
             || aSelector == @selector(beginDragWithFiles:)
@@ -318,7 +318,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
         return @"continuousMouseScrollBy";
     if (aSelector == @selector(scalePageBy:atX:andY:))
         return @"scalePageBy";
-    if (aSelector == @selector(monitorWheelEvents))
+    if (aSelector == @selector(monitorWheelEventsWithOptions:))
         return @"monitorWheelEvents";
     if (aSelector == @selector(callAfterScrollingCompletes:))
         return @"callAfterScrollingCompletes";
@@ -1387,7 +1387,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
     
 }
 
-- (void)monitorWheelEvents
+- (void)monitorWheelEventsWithOptions:(WebScriptObject*)options
 {
 #if PLATFORM(MAC)
     WebCore::Frame* frame = [[mainFrame webView] _mainCoreFrame];
@@ -1396,7 +1396,17 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
     _sentWheelPhaseEndOrCancel = NO;
     _sentMomentumPhaseEnd = NO;
-    WebCoreTestSupport::monitorWheelEvents(*frame);
+
+    bool resetLatching = true;
+
+    if (![options isKindOfClass:[WebUndefined self]]) {
+        if (id resetLatchingValue = [options valueForKey:@"resetLatching"]) {
+            if ([resetLatchingValue isKindOfClass:[NSNumber self]])
+                resetLatching = [resetLatchingValue boolValue];
+        }
+    }
+
+    WebCoreTestSupport::monitorWheelEvents(*frame, resetLatching);
 #endif
 }
 

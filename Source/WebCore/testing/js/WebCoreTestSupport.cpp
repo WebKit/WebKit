@@ -79,13 +79,13 @@ void resetInternalsObject(JSContextRef context)
     InternalSettings::from(page)->resetToConsistentState();
 }
 
-void monitorWheelEvents(WebCore::Frame& frame)
+void monitorWheelEvents(WebCore::Frame& frame, bool clearLatchingState)
 {
     Page* page = frame.page();
     if (!page)
         return;
 
-    page->startMonitoringWheelEvents();
+    page->startMonitoringWheelEvents(clearLatchingState);
 }
 
 void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)

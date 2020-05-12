@@ -1,3 +1,14 @@
+2020-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [ macOS ] scrollingcoordinator/mac/latching/scrolling-select-should-not-latch-mainframe.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211747
+
+        Reviewed by Tim Horton.
+
+        Change the test to use monitorWheelEvents() for each phase.
+
+        * scrollingcoordinator/mac/latching/scrolling-select-should-not-latch-mainframe.html:
+
 2020-05-11  Ben Nham  <nham@apple.com>
 
         Improve accuracy of IndexedDB estimated write size computation
