@@ -50,7 +50,7 @@ class JITThunks final : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JITThunks();
-    virtual ~JITThunks();
+    ~JITThunks() final;
 
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
@@ -67,7 +67,7 @@ public:
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, Intrinsic, const String& name);
 
 private:
-    void finalize(Handle<Unknown>, void* context) override;
+    void finalize(Handle<Unknown>, void* context) final;
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> CTIStubMap;
     CTIStubMap m_ctiStubMap;

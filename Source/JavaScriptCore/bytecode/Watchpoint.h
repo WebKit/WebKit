@@ -533,7 +533,7 @@ class DeferredWatchpointFire : public FireDetail {
     WTF_MAKE_NONCOPYABLE(DeferredWatchpointFire);
 public:
     JS_EXPORT_PRIVATE DeferredWatchpointFire(VM&);
-    JS_EXPORT_PRIVATE ~DeferredWatchpointFire();
+    JS_EXPORT_PRIVATE ~DeferredWatchpointFire() override;
 
     JS_EXPORT_PRIVATE void takeWatchpointsToFire(WatchpointSet*);
     JS_EXPORT_PRIVATE void fireAll();

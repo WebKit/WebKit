@@ -32,14 +32,14 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE AtomicValue : public MemoryValue {
+class JS_EXPORT_PRIVATE AtomicValue final : public MemoryValue {
 public:
     static bool accepts(Kind kind)
     {
         return isAtom(kind.opcode());
     }
     
-    ~AtomicValue();
+    ~AtomicValue() final;
     
     Type accessType() const { return child(0)->type(); }
     
@@ -47,10 +47,9 @@ public:
 
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
     
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
 private:
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+
     friend class Procedure;
     friend class Value;
 

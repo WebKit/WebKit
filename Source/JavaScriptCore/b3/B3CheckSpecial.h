@@ -48,7 +48,7 @@ struct Inst;
 // - CheckSub(0, x), which turns into BranchNeg32 x.
 // - CheckMul(a, b), which turns into Mul32 b, a but we pass Any for a's ValueRep.
 
-class CheckSpecial : public StackmapSpecial {
+class CheckSpecial final : public StackmapSpecial {
 public:
     // Support for hash consing these things.
     class Key {
@@ -113,9 +113,9 @@ public:
     
     CheckSpecial(Air::Kind, unsigned numArgs, RoleMode stackmapRole = SameAsRep);
     CheckSpecial(const Key&);
-    ~CheckSpecial();
+    ~CheckSpecial() final;
 
-protected:
+private:
     // Constructs and returns the Inst representing the branch that this will use.
     Air::Inst hiddenBranch(const Air::Inst&) const;
 
@@ -133,7 +133,6 @@ protected:
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;
 
-private:
     Air::Kind m_checkKind;
     RoleMode m_stackmapRole;
     unsigned m_numCheckArgs;

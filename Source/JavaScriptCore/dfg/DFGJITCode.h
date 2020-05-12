@@ -46,13 +46,13 @@ namespace DFG {
 
 class JITCompiler;
 
-class JITCode : public DirectJITCode {
+class JITCode final : public DirectJITCode {
 public:
     JITCode();
-    virtual ~JITCode();
+    ~JITCode() final;
     
-    CommonData* dfgCommon() override;
-    JITCode* dfg() override;
+    CommonData* dfgCommon() final;
+    JITCode* dfg() final;
     
     OSREntryData* appendOSREntryData(BytecodeIndex bytecodeIndex, CodeLocationLabel<OSREntryPtrTag> machineCode)
     {
@@ -113,11 +113,11 @@ public:
     void setOptimizationThresholdBasedOnCompilationResult(CodeBlock*, CompilationResult);
 #endif // ENABLE(FTL_JIT)
     
-    void validateReferences(const TrackedReferences&) override;
+    void validateReferences(const TrackedReferences&) final;
     
-    void shrinkToFit(const ConcurrentJSLocker&) override;
+    void shrinkToFit(const ConcurrentJSLocker&) final;
 
-    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
+    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) final;
 #if ENABLE(FTL_JIT)
     CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
     void setOSREntryBlock(VM&, const JSCell* owner, CodeBlock* osrEntryBlock);
@@ -126,7 +126,7 @@ public:
 
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
 
-    Optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
+    Optional<CodeOrigin> findPC(CodeBlock*, void* pc) final;
 
     using DirectJITCode::initializeCodeRefForDFG;
     

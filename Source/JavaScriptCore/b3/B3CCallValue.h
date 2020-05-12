@@ -32,11 +32,11 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE CCallValue : public Value {
+class JS_EXPORT_PRIVATE CCallValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == CCall; }
 
-    ~CCallValue();
+    ~CCallValue() final;
 
     void appendArgs(const Vector<Value*>&);
     

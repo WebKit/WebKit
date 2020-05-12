@@ -39,19 +39,19 @@
 
 using namespace JSC;
 
-struct OpaqueJSScript : public SourceProvider {
+struct OpaqueJSScript final : public SourceProvider {
 public:
     static WTF::Ref<OpaqueJSScript> create(VM& vm, const SourceOrigin& sourceOrigin, URL&& url, int startingLineNumber, const String& source)
     {
         return WTF::adoptRef(*new OpaqueJSScript(vm, sourceOrigin, WTFMove(url), startingLineNumber, source));
     }
 
-    unsigned hash() const override
+    unsigned hash() const final
     {
         return m_source.get().hash();
     }
 
-    StringView source() const override
+    StringView source() const final
     {
         return m_source.get();
     }
@@ -66,7 +66,7 @@ private:
     {
     }
 
-    virtual ~OpaqueJSScript() { }
+    ~OpaqueJSScript() final { }
 
     VM& m_vm;
     Ref<StringImpl> m_source;

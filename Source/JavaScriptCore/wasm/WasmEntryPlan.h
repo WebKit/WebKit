@@ -50,7 +50,7 @@ public:
     EntryPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&);
     JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
 
-    virtual ~EntryPlan() = default;
+    ~EntryPlan() override = default;
 
     void prepare();
 

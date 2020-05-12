@@ -36,7 +36,7 @@ namespace JSC {
 // sure to be main-thread-only. But if a class typically gets instantiated from multiple threads at
 // once, then this is not great, because concurrent allocations will probably contend on this thing's
 // lock.
-class IsoSubspacePerVM {
+class IsoSubspacePerVM final {
 public:
     struct SubspaceParameters {
         SubspaceParameters() { }

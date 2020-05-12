@@ -29,13 +29,13 @@
 
 namespace JSC {
 
-class JSDestructibleObjectHeapCellType : public HeapCellType {
+class JSDestructibleObjectHeapCellType final : public HeapCellType {
 public:
     JS_EXPORT_PRIVATE JSDestructibleObjectHeapCellType();
-    JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectHeapCellType();
+    JS_EXPORT_PRIVATE ~JSDestructibleObjectHeapCellType() final;
     
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
+    void finishSweep(MarkedBlock::Handle&, FreeList*) final;
+    void destroy(VM&, JSCell*) final;
 };
 
 } // namespace JSC

@@ -1,3 +1,78 @@
+2020-05-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [clang-tidy] Run modernize-use-override over JSC, then ensure as much as possible is final
+        https://bugs.webkit.org/show_bug.cgi?id=211743
+
+        Reviewed by Saam Barati.
+
+        * API/JSScriptRef.cpp:
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3AtomicValue.h:
+        * b3/B3CCallValue.h:
+        * b3/B3CheckSpecial.h:
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.h:
+        * b3/B3DataSection.h:
+        * b3/B3ExtractValue.h:
+        * b3/B3FenceValue.h:
+        * b3/B3MemoryValue.h:
+        * b3/B3PatchpointSpecial.h:
+        * b3/B3PatchpointValue.h:
+        * b3/B3SlotBaseValue.h:
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.h:
+        * b3/B3SwitchValue.h:
+        * b3/B3UpsilonValue.h:
+        * b3/B3VariableValue.h:
+        * b3/B3WasmAddressValue.h:
+        * b3/B3WasmBoundsCheckValue.h:
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirPrintSpecial.h:
+        * bytecode/BytecodeDumper.h:
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InstanceOfAccessCase.h:
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/ModuleNamespaceAccessCase.h:
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/Watchpoint.h:
+        * dfg/DFGFailedFinalizer.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGToFTLDeferredCompilationCallback.h:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.h:
+        * heap/CompleteSubspace.h:
+        * heap/FastMallocAlignedMemoryAllocator.h:
+        * heap/GigacageAlignedMemoryAllocator.h:
+        * heap/HeapSnapshotBuilder.h:
+        * heap/IsoAlignedMemoryAllocator.h:
+        * heap/IsoSubspace.h:
+        * heap/IsoSubspacePerVM.cpp:
+        * heap/IsoSubspacePerVM.h:
+        * heap/MarkStackMergingConstraint.h:
+        * heap/SimpleMarkingConstraint.h:
+        * heap/SpaceTimeMutatorScheduler.h:
+        * heap/StochasticSpaceTimeMutatorScheduler.h:
+        * heap/SynchronousStopTheWorldMutatorScheduler.h:
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JITCode.h:
+        * jit/JITThunks.h:
+        * jit/JITToDFGDeferredCompilationCallback.h:
+        * jit/PolymorphicCallStubRoutine.h:
+        * jsc.cpp:
+        * parser/Lexer.cpp: Address warning.
+        * runtime/JSDestructibleObjectHeapCellType.h:
+        * runtime/SimpleTypedArrayController.h:
+        * runtime/Structure.h:
+        * runtime/WeakGCMap.h:
+        * wasm/WasmEntryPlan.h:
+
 2020-05-11  Mark Lam  <mark.lam@apple.com>
 
         Introduce WTF::Config and put Signal.cpp's init-once globals in it.

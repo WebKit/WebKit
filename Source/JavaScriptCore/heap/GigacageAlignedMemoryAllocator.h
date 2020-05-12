@@ -34,19 +34,19 @@
 
 namespace JSC {
 
-class GigacageAlignedMemoryAllocator : public AlignedMemoryAllocator {
+class GigacageAlignedMemoryAllocator final : public AlignedMemoryAllocator {
 public:
     GigacageAlignedMemoryAllocator(Gigacage::Kind);
-    ~GigacageAlignedMemoryAllocator();
+    ~GigacageAlignedMemoryAllocator() final;
     
-    void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
-    void freeAlignedMemory(void*) override;
+    void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void freeAlignedMemory(void*) final;
     
-    void dump(PrintStream&) const override;
+    void dump(PrintStream&) const final;
 
-    void* tryAllocateMemory(size_t) override;
-    void freeMemory(void*) override;
-    void* tryReallocateMemory(void*, size_t) override;
+    void* tryAllocateMemory(size_t) final;
+    void freeMemory(void*) final;
+    void* tryReallocateMemory(void*, size_t) final;
 
 private:
     Gigacage::Kind m_kind;

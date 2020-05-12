@@ -35,7 +35,7 @@ namespace JSC {
 class JSModuleEnvironment;
 class JSModuleNamespaceObject;
 
-class ModuleNamespaceAccessCase : public AccessCase {
+class ModuleNamespaceAccessCase final : public AccessCase {
 public:
     using Base = AccessCase;
     friend class AccessCase;
@@ -46,11 +46,11 @@ public:
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);
 
-    std::unique_ptr<AccessCase> clone() const override;
+    std::unique_ptr<AccessCase> clone() const final;
 
     void emit(AccessGenerationState&, MacroAssembler::JumpList& fallThrough);
 
-    ~ModuleNamespaceAccessCase();
+    ~ModuleNamespaceAccessCase() final;
 
 private:
     ModuleNamespaceAccessCase(VM&, JSCell* owner, CacheableIdentifier, JSModuleNamespaceObject*, JSModuleEnvironment*, ScopeOffset);

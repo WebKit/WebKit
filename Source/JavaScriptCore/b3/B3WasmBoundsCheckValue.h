@@ -32,11 +32,11 @@
 
 namespace JSC { namespace B3 {
 
-class WasmBoundsCheckValue : public Value {
+class WasmBoundsCheckValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind == WasmBoundsCheck; }
     
-    ~WasmBoundsCheckValue();
+    ~WasmBoundsCheckValue() final;
 
     enum class Type {
         Pinned,
@@ -55,10 +55,9 @@ public:
     B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
 private:
+    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+
     friend class Procedure;
     friend class Value;
 
