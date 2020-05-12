@@ -1,5 +1,52 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r260598. rdar://problem/62978929
+
+    Allow credentials for same-origin css mask images
+    https://bugs.webkit.org/show_bug.cgi?id=210895
+    <rdar://problem/60093888>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-04-23
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Test: http/tests/security/css-mask-image-credentials.html
+    
+    r230006 went a step too far in restricting what is allowed with css mask images.
+    Basic authentication credentials should be allowed with such requests as they are in Chrome and Firefox.
+    This can be seen by doing run-webkit-httpd then opening http://127.0.0.1:8000/security/css-mask-image-credentials.html
+    In Chrome and Firefox you'll see it forward to a page that has a blue square.
+    In Safari before this change you'll see a yellow square and a basic authentication prompt.
+    In Safari after this change you'll see the same blue square you see in Chrome and Firefox.
+    
+    * style/StylePendingResources.cpp:
+    (WebCore::Style::loadPendingImage):
+    
+    LayoutTests:
+    
+    * http/tests/security/css-mask-image-credentials-expected.html: Added.
+    * http/tests/security/css-mask-image-credentials.html: Added.
+    * http/tests/security/resources/css-mask-image-credentials-2.html: Added.
+    * http/tests/security/resources/image-credential-check.php: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260598 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-23  Alex Christensen  <achristensen@webkit.org>
+
+            Allow credentials for same-origin css mask images
+            https://bugs.webkit.org/show_bug.cgi?id=210895
+            <rdar://problem/60093888>
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/security/css-mask-image-credentials-expected.html: Added.
+            * http/tests/security/css-mask-image-credentials.html: Added.
+            * http/tests/security/resources/css-mask-image-credentials-2.html: Added.
+            * http/tests/security/resources/image-credential-check.php: Added.
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r260528. rdar://problem/62978914
 
     REGRESSION (r249160): Deleting newline after pasting text ending in a newline results in a discontinuity
