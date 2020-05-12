@@ -1281,10 +1281,13 @@ TEST(_WKDownload, Resume)
 
     NSData *fileContents = [NSData dataWithContentsOfURL:expectedDownloadFile];
     EXPECT_EQ(fileContents.length, 10000u);
-    for (size_t i = 0; i < 5000; i++)
-        EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'a');
-    for (size_t i = 5000; i < 10000; i++)
-        EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'b');
+    EXPECT_TRUE(fileContents.bytes);
+    if (fileContents.bytes) {
+        for (size_t i = 0; i < 5000; i++)
+            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'a');
+        for (size_t i = 5000; i < 10000; i++)
+            EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'b');
+    }
 }
 
 #endif // HAVE(NETWORK_FRAMEWORK)
