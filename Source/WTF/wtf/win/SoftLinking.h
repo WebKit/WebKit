@@ -183,10 +183,10 @@
 
 #ifdef DEBUG_ALL
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) SOFT_LINK_DEBUG_FRAMEWORK(functionNamespace, framework)
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_DEBUG_FRAMEWORK_HELPER(functionNamespace, framework, L".dll", export)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L"_debug.dll", export)
 #else
 #define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) SOFT_LINK_FRAMEWORK(functionNamespace, framework)
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L"_debug.dll", export)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) SOFT_LINK_FRAMEWORK_HELPER(functionNamespace, framework, L".dll", export)
 #endif
 
 
