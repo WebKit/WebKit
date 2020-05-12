@@ -1,3 +1,18 @@
+2020-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbars flicker in RTL scrollable regions
+        https://bugs.webkit.org/show_bug.cgi?id=211757
+
+        Reviewed by Tim Horton.
+
+        Scrollbars deal in scroll offsets (zero-based), not scroll positions (scroll-origin based) so
+        the scrolling thread needs to update scrollbar painters using offsets.
+
+        Not testable because this is a transient state that gets fixed by the main thread.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters):
+
 2020-05-11  Ben Nham  <nham@apple.com>
 
         Improve accuracy of IndexedDB estimated write size computation

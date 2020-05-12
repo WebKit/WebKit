@@ -376,7 +376,7 @@ void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferr
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
 {
     if (m_verticalScrollerImp || m_horizontalScrollerImp) {
-        auto scrollPosition = currentScrollPosition();
+        auto scrollOffset = scrollingNode().currentScrollOffset();
 
         [CATransaction begin];
         [CATransaction lock];
@@ -384,14 +384,14 @@ void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
         if ([m_verticalScrollerImp shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollPosition.y(), totalContentsSize().height(), scrollableAreaSize().height(), presentationValue, overhangAmount);
+            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.y(), totalContentsSize().height(), scrollableAreaSize().height(), presentationValue, overhangAmount);
             [m_verticalScrollerImp setPresentationValue:presentationValue];
         }
 
         if ([m_horizontalScrollerImp shouldUsePresentationValue]) {
             float presentationValue;
             float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollPosition.x(), totalContentsSize().width(), scrollableAreaSize().width(), presentationValue, overhangAmount);
+            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.x(), totalContentsSize().width(), scrollableAreaSize().width(), presentationValue, overhangAmount);
             [m_horizontalScrollerImp setPresentationValue:presentationValue];
         }
 
