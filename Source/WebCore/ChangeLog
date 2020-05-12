@@ -1,3 +1,9 @@
+2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed PlayStation build fix following r261494.
+
+        * PlatformPlayStation.cmake:
+
 2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rework drag and drop handling in preparation for GTK4

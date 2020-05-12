@@ -27,8 +27,6 @@ list(APPEND WebCore_SOURCES
     page/scrolling/nicosia/ScrollingTreePositionedNode.cpp
     page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
 
-    page/scrolling/generic/ScrollingThreadGeneric.cpp
-
     platform/ScrollAnimationKinetic.cpp
     platform/ScrollAnimationSmooth.cpp
     platform/UserAgentQuirks.cpp
