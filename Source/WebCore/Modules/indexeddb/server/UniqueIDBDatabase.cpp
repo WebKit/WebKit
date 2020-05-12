@@ -80,15 +80,15 @@ static inline uint64_t estimateSize(const IDBObjectStoreInfo& info, const IndexI
     static constexpr uint64_t baseIndexRowSize = 12;
     uint64_t size = 0;
 
-    for (const auto& [indexID, indexKey] : indexKeys) {
-        auto indexIterator = info.indexMap().find(indexID);
+    for (const auto& entry : indexKeys) {
+        auto indexIterator = info.indexMap().find(entry.key);
         ASSERT(indexIterator != info.indexMap().end());
 
         if (indexIterator != info.indexMap().end() && indexIterator->value.multiEntry()) {
-            for (const auto& secondaryKey : indexKey.multiEntry())
+            for (const auto& secondaryKey : entry.value.multiEntry())
                 size += (baseIndexRowSize + primaryKeySize + estimateSize(secondaryKey));
         } else
-            size += (baseIndexRowSize + primaryKeySize + estimateSize(indexKey.asOneKey()));
+            size += (baseIndexRowSize + primaryKeySize + estimateSize(entry.value.asOneKey()));
     }
 
     return size;

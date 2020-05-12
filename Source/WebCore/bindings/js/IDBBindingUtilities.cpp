@@ -479,14 +479,14 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlo
     IndexIDToIndexKeyMap indexKeys;
     indexKeys.reserveInitialCapacity(indexCount);
 
-    for (const auto& [indexID, indexInfo] : indexMap) {
+    for (const auto& entry : indexMap) {
         IndexKey indexKey;
-        generateIndexKeyForValue(lexicalGlobalObject, indexInfo, jsValue, indexKey, storeInfo.keyPath(), key);
+        generateIndexKeyForValue(lexicalGlobalObject, entry.value, jsValue, indexKey, storeInfo.keyPath(), key);
 
         if (indexKey.isNull())
             continue;
 
-        indexKeys.add(indexID, WTFMove(indexKey));
+        indexKeys.add(entry.key, WTFMove(indexKey));
     }
 
     return indexKeys;

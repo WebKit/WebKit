@@ -1,3 +1,14 @@
+2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed PlayStation / clang-cl build fix following r261533.
+
+        Apparently r261572 only caught half of the cases.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::estimateSize):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::generateIndexKeyMapForValue):
+
 2020-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text is clipped when rendered with fonts which have a negative line gap metric
