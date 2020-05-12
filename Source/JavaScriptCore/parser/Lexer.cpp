@@ -746,7 +746,7 @@ static ALWAYS_INLINE bool isIdentStart(CharacterType c)
     return typesOfLatin1Characters[static_cast<LChar>(c)] == CharacterIdentifierStart;
 }
 
-static ALWAYS_INLINE UNUSED_FUNCTION bool isSingleCharacterIdentStart(UChar c)
+static ALWAYS_INLINE bool isSingleCharacterIdentStart(UChar c)
 {
     if (LIKELY(isLatin1(c)))
         return isIdentStart(static_cast<LChar>(c));

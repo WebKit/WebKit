@@ -226,7 +226,7 @@ protected:
     JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);
 
 public:
-    ~JITCodeWithCodeRef() override;
+    virtual ~JITCodeWithCodeRef();
 
     void* executableAddressAtOffset(size_t offset) override;
     void* dataAddressAtOffset(size_t offset) override;
@@ -245,7 +245,7 @@ public:
     DirectJITCode(JITType);
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared); // For generated thunk.
-    ~DirectJITCode() override;
+    virtual ~DirectJITCode();
     
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
 
@@ -260,7 +260,7 @@ class NativeJITCode : public JITCodeWithCodeRef {
 public:
     NativeJITCode(JITType);
     NativeJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
-    ~NativeJITCode() override;
+    virtual ~NativeJITCode();
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
 };
@@ -268,9 +268,9 @@ public:
 class NativeDOMJITCode final : public NativeJITCode {
 public:
     NativeDOMJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic, const DOMJIT::Signature*);
-    ~NativeDOMJITCode() final = default;
+    virtual ~NativeDOMJITCode() = default;
 
-    const DOMJIT::Signature* signature() const final { return m_signature; }
+    const DOMJIT::Signature* signature() const override { return m_signature; }
 
 private:
     const DOMJIT::Signature* m_signature;

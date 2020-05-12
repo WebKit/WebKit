@@ -33,13 +33,13 @@
 
 namespace JSC { namespace B3 {
 
-class PatchpointValue final : public StackmapValue {
+class PatchpointValue : public StackmapValue {
 public:
     typedef StackmapValue Base;
     
     static bool accepts(Kind kind) { return kind == Patchpoint; }
 
-    ~PatchpointValue() final;
+    ~PatchpointValue();
 
     // The effects of the patchpoint. This defaults to Effects::forCall(), but you can set it to anything.
     //
@@ -64,9 +64,10 @@ public:
 
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
 
-private:
-    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
+private:
     friend class Procedure;
     friend class Value;
 

@@ -972,26 +972,26 @@ static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>&
     return true;
 }
 
-class ShellSourceProvider final : public StringSourceProvider {
+class ShellSourceProvider : public StringSourceProvider {
 public:
     static Ref<ShellSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     {
         return adoptRef(*new ShellSourceProvider(source, sourceOrigin, WTFMove(url), startPosition, sourceType));
     }
 
-    ~ShellSourceProvider() final
+    ~ShellSourceProvider()
     {
         commitCachedBytecode();
     }
 
-    RefPtr<CachedBytecode> cachedBytecode() const final
+    RefPtr<CachedBytecode> cachedBytecode() const override
     {
         if (!m_cachedBytecode)
             loadBytecode();
         return m_cachedBytecode.copyRef();
     }
 
-    void updateCache(const UnlinkedFunctionExecutable* executable, const SourceCode&, CodeSpecializationKind kind, const UnlinkedFunctionCodeBlock* codeBlock) const final
+    void updateCache(const UnlinkedFunctionExecutable* executable, const SourceCode&, CodeSpecializationKind kind, const UnlinkedFunctionCodeBlock* codeBlock) const override
     {
         if (!cacheEnabled() || !m_cachedBytecode)
             return;
@@ -1001,7 +1001,7 @@ public:
             m_cachedBytecode->addFunctionUpdate(executable, kind, *cachedBytecode);
     }
 
-    void cacheBytecode(const BytecodeCacheGenerator& generator) const final
+    void cacheBytecode(const BytecodeCacheGenerator& generator) const override
     {
         if (!cacheEnabled())
             return;
@@ -1012,7 +1012,7 @@ public:
             m_cachedBytecode->addGlobalUpdate(*update);
     }
 
-    void commitCachedBytecode() const final
+    void commitCachedBytecode() const override
     {
         if (!cacheEnabled() || !m_cachedBytecode || !m_cachedBytecode->hasUpdates())
             return;

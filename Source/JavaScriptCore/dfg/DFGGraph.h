@@ -159,10 +159,10 @@ private:
 //
 // The order may be significant for nodes with side-effects (property accesses, value conversions).
 // Nodes that are 'dead' remain in the vector with refCount 0.
-class Graph final : public virtual Scannable {
+class Graph : public virtual Scannable {
 public:
     Graph(VM&, Plan&);
-    ~Graph() final;
+    ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)
     {
@@ -1001,7 +1001,7 @@ public:
     
     void registerFrozenValues();
     
-    void visitChildren(SlotVisitor&) final;
+    void visitChildren(SlotVisitor&) override;
     
     void logAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,

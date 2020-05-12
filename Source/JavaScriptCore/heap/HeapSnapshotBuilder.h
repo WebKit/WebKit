@@ -108,7 +108,7 @@ public:
     enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
 
     HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
-    ~HeapSnapshotBuilder() final;
+    ~HeapSnapshotBuilder();
 
     static void resetNextAvailableObjectIdentifier();
 
@@ -116,17 +116,17 @@ public:
     void buildSnapshot();
 
     // A root or marked cell.
-    void analyzeNode(JSCell*) final;
+    void analyzeNode(JSCell*);
 
     // A reference from one cell to another.
-    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason) final;
-    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName) final;
-    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName) final;
-    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index) final;
+    void analyzeEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason);
+    void analyzePropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName);
+    void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName);
+    void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t index);
 
-    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*) final;
-    void setWrappedObjectForCell(JSCell*, void*) final;
-    void setLabelForCell(JSCell*, const String&) final;
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*);
+    void setWrappedObjectForCell(JSCell*, void*);
+    void setLabelForCell(JSCell*, const String&);
 
     String json();
     String json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback);

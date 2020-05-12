@@ -31,7 +31,7 @@
 
 namespace JSC { namespace B3 {
 
-class CheckValue final : public StackmapValue {
+class CheckValue : public StackmapValue {
 public:
     static bool accepts(Kind kind)
     {
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    ~CheckValue() final;
+    ~CheckValue();
 
     void convertToAdd();
 

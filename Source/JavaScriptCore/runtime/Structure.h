@@ -96,26 +96,26 @@ struct PropertyMapEntry {
     }
 };
 
-class StructureFireDetail final : public FireDetail {
+class StructureFireDetail : public FireDetail {
 public:
     StructureFireDetail(const Structure* structure)
         : m_structure(structure)
     {
     }
     
-    void dump(PrintStream& out) const final;
+    void dump(PrintStream& out) const override;
 
 private:
     const Structure* m_structure;
 };
 
-class DeferredStructureTransitionWatchpointFire final : public DeferredWatchpointFire {
+class DeferredStructureTransitionWatchpointFire : public DeferredWatchpointFire {
     WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
 public:
     JS_EXPORT_PRIVATE DeferredStructureTransitionWatchpointFire(VM&, Structure*);
-    JS_EXPORT_PRIVATE ~DeferredStructureTransitionWatchpointFire() final;
+    JS_EXPORT_PRIVATE ~DeferredStructureTransitionWatchpointFire();
     
-    void dump(PrintStream& out) const final;
+    void dump(PrintStream& out) const override;
 
     const Structure* structure() const { return m_structure; }
 

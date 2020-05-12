@@ -80,14 +80,14 @@ private:
     CodeBlock* m_codeBlock;
 };
 
-class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine {
+class PolymorphicCallStubRoutine : public GCAwareJITStubRoutine {
 public:
     PolymorphicCallStubRoutine(
         const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner,
         CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
         UniqueArray<uint32_t>&& fastCounts);
     
-    ~PolymorphicCallStubRoutine() final;
+    virtual ~PolymorphicCallStubRoutine();
     
     CallVariantList variants() const;
     bool hasEdges() const;
@@ -102,11 +102,12 @@ public:
             functor(variant.get());
     }
 
-    bool visitWeak(VM&) final;
+    bool visitWeak(VM&) override;
+
+protected:
+    void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
-    void markRequiredObjectsInternal(SlotVisitor&) final;
-
     Vector<WriteBarrier<JSCell>, 2> m_variants;
     UniqueArray<uint32_t> m_fastCounts;
     Bag<PolymorphicCallNode> m_callNodes;

@@ -61,7 +61,7 @@ public:
         }
     }
 
-    ~StackmapValue() override;
+    ~StackmapValue();
 
     // Use this to add children.
     void append(const ConstrainedValue& value)

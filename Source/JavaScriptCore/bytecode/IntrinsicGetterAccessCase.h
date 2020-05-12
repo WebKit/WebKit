@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class IntrinsicGetterAccessCase final : public AccessCase {
+class IntrinsicGetterAccessCase : public AccessCase {
 public:
     typedef AccessCase Base;
     friend class AccessCase;
@@ -44,9 +44,9 @@ public:
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);
 
-    std::unique_ptr<AccessCase> clone() const final;
+    std::unique_ptr<AccessCase> clone() const override;
 
-    ~IntrinsicGetterAccessCase() final;
+    ~IntrinsicGetterAccessCase();
 
 private:
     IntrinsicGetterAccessCase(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, std::unique_ptr<PolyProtoAccessChain>);

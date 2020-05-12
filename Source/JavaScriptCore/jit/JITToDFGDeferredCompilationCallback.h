@@ -33,17 +33,17 @@ namespace JSC {
 
 class ScriptExecutable;
 
-class JITToDFGDeferredCompilationCallback final : public DeferredCompilationCallback {
+class JITToDFGDeferredCompilationCallback : public DeferredCompilationCallback {
+protected:
+    JITToDFGDeferredCompilationCallback();
+
 public:
-    ~JITToDFGDeferredCompilationCallback() final;
+    virtual ~JITToDFGDeferredCompilationCallback();
 
     static Ref<JITToDFGDeferredCompilationCallback> create();
     
-    void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) final;
-    void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) final;
-
-private:
-    JITToDFGDeferredCompilationCallback();
+    void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) override;
+    void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) override;
 };
 
 } // namespace JSC

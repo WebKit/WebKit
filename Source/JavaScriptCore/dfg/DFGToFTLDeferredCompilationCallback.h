@@ -36,17 +36,17 @@ class ScriptExecutable;
 
 namespace DFG {
 
-class ToFTLDeferredCompilationCallback final : public DeferredCompilationCallback {
+class ToFTLDeferredCompilationCallback : public DeferredCompilationCallback {
+protected:
+    ToFTLDeferredCompilationCallback();
+
 public:
-    ~ToFTLDeferredCompilationCallback() final;
+    virtual ~ToFTLDeferredCompilationCallback();
 
     static Ref<ToFTLDeferredCompilationCallback> create();
     
-    void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) final;
-    void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult) final;
-
-private:
-    ToFTLDeferredCompilationCallback();
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock);
+    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
 };
 
 } } // namespace JSC::DFG

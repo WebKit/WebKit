@@ -31,15 +31,15 @@
 
 namespace JSC { namespace B3 {
 
-class DataSection final : public OpaqueByproduct {
+class DataSection : public OpaqueByproduct {
 public:
     DataSection(size_t size);
-    ~DataSection() final;
+    virtual ~DataSection();
 
     void* data() const { return m_data; }
     size_t size() const { return m_size; }
 
-    void dump(PrintStream&) const final;
+    void dump(PrintStream&) const override;
 
 private:
     void* m_data;

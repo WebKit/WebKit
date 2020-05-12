@@ -46,20 +46,20 @@ namespace JSC {
 //   already been created and it didn't die, then you get the same
 //   one.
 
-class SimpleTypedArrayController final : public TypedArrayController {
+class SimpleTypedArrayController : public TypedArrayController {
 public:
     SimpleTypedArrayController();
-    ~SimpleTypedArrayController() final;
+    virtual ~SimpleTypedArrayController();
     
-    JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) final;
-    void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) final;
-    bool isAtomicsWaitAllowedOnCurrentThread() final;
+    JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) override;
+    void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) override;
+    bool isAtomicsWaitAllowedOnCurrentThread() override;
 
 private:
-    class JSArrayBufferOwner final : public WeakHandleOwner {
+    class JSArrayBufferOwner : public WeakHandleOwner {
     public:
-        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor&, const char** reason) final;
-        void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor&, const char** reason) override;
+        void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     };
 
     JSArrayBufferOwner m_owner;

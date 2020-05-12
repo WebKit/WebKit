@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class GetterSetterAccessCase final : public ProxyableAccessCase {
+class GetterSetterAccessCase : public ProxyableAccessCase {
 public:
     typedef ProxyableAccessCase Base;
     friend class AccessCase;
@@ -48,8 +48,8 @@ public:
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
     Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
-    bool hasAlternateBase() const final;
-    JSObject* alternateBase() const final;
+    bool hasAlternateBase() const override;
+    JSObject* alternateBase() const override;
 
     void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
 
@@ -62,10 +62,10 @@ public:
         const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>,
         FunctionPtr<OperationPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
-    void dumpImpl(PrintStream&, CommaPrinter&) const final;
-    std::unique_ptr<AccessCase> clone() const final;
+    void dumpImpl(PrintStream&, CommaPrinter&) const override;
+    std::unique_ptr<AccessCase> clone() const override;
 
-    ~GetterSetterAccessCase() final;
+    ~GetterSetterAccessCase();
 
     FunctionPtr<OperationPtrTag> customAccessor() const { return m_customAccessor; }
 

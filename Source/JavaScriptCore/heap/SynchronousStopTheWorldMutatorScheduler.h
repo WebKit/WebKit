@@ -35,19 +35,19 @@ namespace JSC {
 // than X86-64 and ARM64. This scheduler is a drop-in replacement for the concurrent GC's
 // SpaceTimeMutatorScheduler. It tells the GC to never resume the world once the GC cycle begins.
 
-class SynchronousStopTheWorldMutatorScheduler final : public MutatorScheduler {
+class SynchronousStopTheWorldMutatorScheduler : public MutatorScheduler {
 public:
     SynchronousStopTheWorldMutatorScheduler();
-    ~SynchronousStopTheWorldMutatorScheduler() final;
+    ~SynchronousStopTheWorldMutatorScheduler();
     
-    State state() const final;
+    State state() const override;
     
-    void beginCollection() final;
+    void beginCollection() override;
     
-    MonotonicTime timeToStop() final;
-    MonotonicTime timeToResume() final;
+    MonotonicTime timeToStop() override;
+    MonotonicTime timeToResume() override;
     
-    void endCollection() final;
+    void endCollection() override;
 
 private:
     State m_state { Normal };

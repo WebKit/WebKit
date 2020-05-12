@@ -31,11 +31,11 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE UpsilonValue final : public Value {
+class JS_EXPORT_PRIVATE UpsilonValue : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Upsilon; }
 
-    ~UpsilonValue() final;
+    ~UpsilonValue();
 
     Value* phi() const { return m_phi; }
     void setPhi(Value* phi)
@@ -48,9 +48,10 @@ public:
     B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
-private:
-    void dumpMeta(CommaPrinter&, PrintStream&) const final;
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
+private:
     friend class Procedure;
     friend class Value;
 

@@ -35,7 +35,7 @@ class JS_EXPORT_PRIVATE Const32Value : public Value {
 public:
     static bool accepts(Kind kind) { return kind == Const32; }
     
-    ~Const32Value() override;
+    ~Const32Value();
     
     int32_t value() const { return m_value; }
 

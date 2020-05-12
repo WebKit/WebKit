@@ -42,7 +42,7 @@ namespace Air { class Code; }
 class StackmapSpecial : public Air::Special {
 public:
     StackmapSpecial();
-    ~StackmapSpecial() override;
+    virtual ~StackmapSpecial();
 
     enum RoleMode : int8_t {
         SameAsRep,

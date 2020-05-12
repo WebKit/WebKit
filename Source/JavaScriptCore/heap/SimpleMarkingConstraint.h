@@ -33,7 +33,7 @@ namespace JSC {
 // This allows for an informal way to define constraints. Just pass a lambda to the constructor. The only
 // downside is that this makes it hard for constraints to override any functions in MarkingConstraint
 // other than executeImpl. In those cases, just subclass MarkingConstraint.
-class SimpleMarkingConstraint final : public MarkingConstraint {
+class SimpleMarkingConstraint : public MarkingConstraint {
 public:
     JS_EXPORT_PRIVATE SimpleMarkingConstraint(
         CString abbreviatedName, CString name,
@@ -51,10 +51,10 @@ public:
     {
     }
     
-    JS_EXPORT_PRIVATE ~SimpleMarkingConstraint() final;
+    JS_EXPORT_PRIVATE ~SimpleMarkingConstraint();
     
 private:
-    void executeImpl(SlotVisitor&) final;
+    void executeImpl(SlotVisitor&) override;
 
     ::Function<void(SlotVisitor&)> m_executeFunction;
 };

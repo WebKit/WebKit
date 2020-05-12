@@ -33,14 +33,14 @@
 
 namespace JSC { namespace DFG {
 
-class JITFinalizer final : public Finalizer {
+class JITFinalizer : public Finalizer {
 public:
     JITFinalizer(Plan&, Ref<JITCode>&&, std::unique_ptr<LinkBuffer>, MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>(MacroAssemblerCodePtr<JSEntryPtrTag>::EmptyValue));
-    ~JITFinalizer() final;
+    virtual ~JITFinalizer();
     
-    size_t codeSize() final;
-    bool finalize() final;
-    bool finalizeFunction() final;
+    size_t codeSize() override;
+    bool finalize() override;
+    bool finalizeFunction() override;
 
 private:
     void finalizeCommon();

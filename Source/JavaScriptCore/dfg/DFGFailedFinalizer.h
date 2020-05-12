@@ -31,14 +31,14 @@
 
 namespace JSC { namespace DFG {
 
-class FailedFinalizer final : public Finalizer {
+class FailedFinalizer : public Finalizer {
 public:
     FailedFinalizer(Plan&);
-    ~FailedFinalizer() final;
+    virtual ~FailedFinalizer();
     
-    size_t codeSize() final;
-    bool finalize() final;
-    bool finalizeFunction() final;
+    size_t codeSize() override;
+    bool finalize() override;
+    bool finalizeFunction() override;
 };
 
 } } // namespace JSC::DFG

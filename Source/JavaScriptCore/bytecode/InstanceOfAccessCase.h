@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-class InstanceOfAccessCase final : public AccessCase {
+class InstanceOfAccessCase : public AccessCase {
 public:
     using Base = AccessCase;
     
@@ -41,16 +41,17 @@ public:
     
     JSObject* prototype() const { return m_prototype.get(); }
     
-    void dumpImpl(PrintStream&, CommaPrinter&) const final;
-    std::unique_ptr<AccessCase> clone() const final;
+    void dumpImpl(PrintStream&, CommaPrinter&) const override;
+    std::unique_ptr<AccessCase> clone() const override;
     
-    ~InstanceOfAccessCase() final;
+    ~InstanceOfAccessCase();
 
-private:
+protected:
     InstanceOfAccessCase(
         VM&, JSCell*, AccessType, Structure*, const ObjectPropertyConditionSet&,
         JSObject* prototype);
 
+private:
     WriteBarrier<JSObject> m_prototype;
 };
 

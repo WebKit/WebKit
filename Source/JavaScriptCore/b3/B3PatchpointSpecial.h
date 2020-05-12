@@ -41,12 +41,12 @@ namespace JSC { namespace B3 {
 //
 //     Patch &patchpoint, result, args...
 
-class PatchpointSpecial final : public StackmapSpecial {
+class PatchpointSpecial : public StackmapSpecial {
 public:
     JS_EXPORT_PRIVATE PatchpointSpecial();
-    ~PatchpointSpecial() final;
+    virtual ~PatchpointSpecial();
 
-private:
+protected:
     void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) final;
     bool isValid(Air::Inst&) final;
     bool admitsStack(Air::Inst&, unsigned argIndex) final;
