@@ -1,5 +1,36 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r261024. rdar://problem/62978260
+
+    [IPC hardening] createMessageDecoder() needs a validity check
+    <https://webkit.org/b/211260>
+    <rdar://problem/61914087>
+    
+    Reviewed by Darin Adler.
+    
+    * Platform/IPC/cocoa/ConnectionCocoa.mm:
+    (IPC::createMessageDecoder):
+    - Add validity check and early return for
+      `numDescriptors`.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261024 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-01  David Kilzer  <ddkilzer@apple.com>
+
+            [IPC hardening] createMessageDecoder() needs a validity check
+            <https://webkit.org/b/211260>
+            <rdar://problem/61914087>
+
+            Reviewed by Darin Adler.
+
+            * Platform/IPC/cocoa/ConnectionCocoa.mm:
+            (IPC::createMessageDecoder):
+            - Add validity check and early return for
+              `numDescriptors`.
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r260832. rdar://problem/62978877
 
     [Mac] Adopt kMTSupportNotification_ShouldPlayHDRVideoChanged notification
