@@ -751,6 +751,10 @@ String StyleProperties::pageBreakPropertyValue(const StylePropertyShorthand& sho
     // FIXME: Remove this isGlobalKeyword check after we do this consistently for all shorthands in getPropertyValue.
     if (value->isGlobalKeyword())
         return value->cssText();
+    
+    if (!is<CSSPrimitiveValue>(*value))
+        return String();
+    
     CSSValueID valueId = downcast<CSSPrimitiveValue>(*value).valueID();
     switch (valueId) {
     case CSSValuePage:
