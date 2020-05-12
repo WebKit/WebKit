@@ -3343,7 +3343,7 @@ private:
             LValue operand = lowBigInt32(m_node->child1());
             // The following trick relies on details of the representation of BigInt32, and will have to be updated if we move bits around.
             static_assert(JSValue::BigInt32Tag == 0x12);
-            static_assert(JSValue::BigInt32Mask == 0xfffe000000000012);
+            static_assert(JSValue::BigInt32Mask == static_cast<int64_t>(0xfffe000000000012));
             uint64_t maskForBigInt32Bits = 0x0000ffffffff0000;
             LValue result = m_out.bitXor(operand, m_out.constInt64(maskForBigInt32Bits));
             setJSValue(result);

@@ -3597,7 +3597,7 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
 
         // The following trick relies on details of the representation of BigInt32, and will have to be updated if we move bits around.
         static_assert(JSValue::BigInt32Tag == 0x12);
-        static_assert(JSValue::BigInt32Mask == 0xfffe000000000012);
+        static_assert(JSValue::BigInt32Mask == static_cast<int64_t>(0xfffe000000000012));
         constexpr uint64_t maskForBigInt32Bits = 0x0000ffffffff0000;
         static_assert(!(JSValue::BigInt32Mask & maskForBigInt32Bits));
         m_jit.move(TrustedImm64(maskForBigInt32Bits), resultGPR);
