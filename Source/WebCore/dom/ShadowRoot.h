@@ -71,8 +71,8 @@ public:
     bool containsFocusedElement() const { return m_containsFocusedElement; }
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
-    Element* host() const { return m_host; }
-    void setHost(Element* host) { m_host = host; }
+    Element* host() const { return m_host.get(); }
+    void setHost(WeakPtr<Element>&& host) { m_host = WTFMove(host); }
 
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(const String&);
@@ -130,7 +130,7 @@ private:
     bool m_containsFocusedElement { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
-    Element* m_host { nullptr };
+    WeakPtr<Element> m_host;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;
