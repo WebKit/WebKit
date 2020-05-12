@@ -417,6 +417,8 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
     ASSERT(numDescriptors);
+    if (!numDescriptors)
+        return nullptr;
 
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
 
