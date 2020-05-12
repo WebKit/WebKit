@@ -716,6 +716,7 @@ class WebkitFlatpak:
             "GTK",
             "ICECC",
             "JSC",
+            "RUST",
             "SCCACHE",
             "WAYLAND",
             "WEBKIT",
@@ -829,8 +830,8 @@ class WebkitFlatpak:
 
         if regenerate_toolchains:
             self.icc_version = {}
-            self.setup_icecc("gcc")
-            self.setup_icecc("clang")
+            self.setup_icecc("gcc", "g++")
+            self.setup_icecc("clang", "clang++")
             self.save_config()
 
         return self.setup_dev_env()
@@ -852,19 +853,20 @@ class WebkitFlatpak:
             json_config = {'icecc_version': self.icc_version}
             json.dump(json_config, config)
 
-    def setup_icecc(self, name):
+    def setup_icecc(self, *compilers):
         with tempfile.NamedTemporaryFile() as tmpfile:
-            toolchain_path = "/usr/bin/%s" % name
-            self.run_in_sandbox('icecc', '--build-native', toolchain_path, stdout=tmpfile, cwd=self.source_root)
+            command = ['icecc', '--build-native']
+            command.extend(["/usr/bin/%s" % compiler for compiler in compilers])
+            self.run_in_sandbox(*command, stdout=tmpfile, cwd=self.source_root)
             tmpfile.flush()
             tmpfile.seek(0)
             icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
             toolchains_directory = os.path.join(self.build_root, "Toolchains")
             if not os.path.isdir(toolchains_directory):
                 os.makedirs(toolchains_directory)
-            archive_filename = os.path.join(toolchains_directory, "webkit-sdk-%s-%s" % (name, icc_version_filename))
+            archive_filename = os.path.join(toolchains_directory, "webkit-sdk-%s-%s" % (compilers[0], icc_version_filename))
             os.rename(icc_version_filename, archive_filename)
-            self.icc_version[name] = archive_filename
+            self.icc_version[compilers[0]] = archive_filename
             Console.message("Created %s self-contained toolchain archive", archive_filename)
 
     def setup_dev_env(self):
