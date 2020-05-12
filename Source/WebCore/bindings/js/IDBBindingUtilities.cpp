@@ -36,6 +36,7 @@
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
+#include "IDBObjectStoreInfo.h"
 #include "IDBValue.h"
 #include "IndexKey.h"
 #include "JSBlob.h"
@@ -461,6 +462,34 @@ void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBInde
         return;
 
     outKey = IndexKey(WTFMove(keyDatas));
+}
+
+IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlobalObject, const IDBObjectStoreInfo& storeInfo, const IDBKeyData& key, const IDBValue& value)
+{
+    auto& indexMap = storeInfo.indexMap();
+    auto indexCount = indexMap.size();
+    if (!indexCount)
+        return IndexIDToIndexKeyMap { };
+
+    JSLockHolder locker(lexicalGlobalObject.vm());
+    auto jsValue = deserializeIDBValueToJSValue(lexicalGlobalObject, value);
+    if (jsValue.isUndefinedOrNull())
+        return IndexIDToIndexKeyMap { };
+
+    IndexIDToIndexKeyMap indexKeys;
+    indexKeys.reserveInitialCapacity(indexCount);
+
+    for (const auto& [indexID, indexInfo] : indexMap) {
+        IndexKey indexKey;
+        generateIndexKeyForValue(lexicalGlobalObject, indexInfo, jsValue, indexKey, storeInfo.keyPath(), key);
+
+        if (indexKey.isNull())
+            continue;
+
+        indexKeys.add(indexID, WTFMove(indexKey));
+    }
+
+    return indexKeys;
 }
 
 Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexicalGlobalObject, const IDBValue& value, const IDBKeyData& key, const Optional<IDBKeyPath>& keyPath)

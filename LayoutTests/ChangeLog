@@ -1,3 +1,19 @@
+2020-05-11  Ben Nham  <nham@apple.com>
+
+        Improve accuracy of IndexedDB estimated write size computation
+        https://bugs.webkit.org/show_bug.cgi?id=211360
+
+        Reviewed by Brady Eidson.
+
+        Added a layout test to check that the size estimate associated with adding an object to a
+        store with many indices is reasonable.
+
+        * platform/mac-wk1/TestExpectations: Skip test on Mac WK1 since it doesn't implement quota checks.
+        * platform/win/TestExpectations: Skip test on Windows since it doesn't implement quota checks.
+        * storage/indexeddb/resources/storage-limit-with-indices.js: Added.
+        * storage/indexeddb/storage-limit-with-indices-expected.txt: Added.
+        * storage/indexeddb/storage-limit-with-indices.html: Added.
+
 2020-05-11  Kenneth Russell  <kbr@chromium.org>
 
         Enable conformance2/textures/canvas/ and image_data/ tests

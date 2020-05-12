@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyPath.h"
+#include "IndexKey.h"
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -42,6 +43,7 @@ namespace WebCore {
 class IDBIndexInfo;
 class IDBKey;
 class IDBKeyData;
+class IDBObjectStoreInfo;
 class IDBValue;
 class IndexKey;
 class JSDOMGlobalObject;
@@ -51,6 +53,8 @@ bool canInjectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, const JSC::JSValue&, c
 bool injectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, const IDBKeyData&, JSC::JSValue, const IDBKeyPath&);
 
 void generateIndexKeyForValue(JSC::JSGlobalObject&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey, const Optional<IDBKeyPath>&, const IDBKeyData&);
+
+IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject&, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&);
 
 Ref<IDBKey> scriptValueToIDBKey(JSC::JSGlobalObject&, const JSC::JSValue&);
 

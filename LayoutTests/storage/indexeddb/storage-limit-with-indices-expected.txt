@@ -1,0 +1,23 @@
+This test checks that the size estimate associated with adding an object to a store with many indices is reasonable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+db = event.target.result
+store = db.createObjectStore('store')
+
+onOpenSuccess():
+db = event.target.result
+store = db.transaction('store', 'readwrite').objectStore('store')
+request = store.add({a0: 0, a1: 1, payload: new Uint8Array(40960)}, 42)
+PASS reqEvent.target.result is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

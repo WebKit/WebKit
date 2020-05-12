@@ -38,6 +38,7 @@
 #include "IDBServer.h"
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"
+#include "IndexKey.h"
 #include "Logging.h"
 #include "StorageQuotaManager.h"
 #include "UniqueIDBDatabaseConnection.h"
@@ -67,6 +68,29 @@ static inline uint64_t estimateSize(const IDBKeyData& keyData)
     default:
         break;
     }
+    return size;
+}
+
+static inline uint64_t estimateSize(const IDBObjectStoreInfo& info, const IndexIDToIndexKeyMap& indexKeys, uint64_t primaryKeySize)
+{
+    // Each IndexRecord has 5 columns:
+    //  - indexID, objectStoreID, recordID: these are varints, estimate 4 bytes each = 12 bytes
+    //  - primary key: use primaryKeySize
+    //  - secondary index key: use estimateSize(secondary key)
+    static constexpr uint64_t baseIndexRowSize = 12;
+    uint64_t size = 0;
+
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto indexIterator = info.indexMap().find(indexID);
+        ASSERT(indexIterator != info.indexMap().end());
+
+        if (indexIterator != info.indexMap().end() && indexIterator->value.multiEntry()) {
+            for (const auto& secondaryKey : indexKey.multiEntry())
+                size += (baseIndexRowSize + primaryKeySize + estimateSize(secondaryKey));
+        } else
+            size += (baseIndexRowSize + primaryKeySize + estimateSize(indexKey.asOneKey()));
+    }
+
     return size;
 }
 
@@ -712,16 +736,6 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
         return;
     }
 
-    // Quota check.
-    auto taskSize = defaultWriteOperationCost + estimateSize(keyData) + estimateSize(value);
-    auto* objectStore = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
-    if (objectStore)
-        taskSize += objectStore->indexNames().size() * taskSize;
-    if (m_server.requestSpace(m_identifier.origin(), taskSize) == StorageQuotaManager::Decision::Deny) {
-        callback(IDBError { QuotaExceededError, quotaErrorMessageName("PutOrAdd") }, usedKey);
-        return;
-    }
-
     bool usedKeyIsGenerated = false;
     uint64_t keyNumber;
     auto transactionIdentifier = requestData.transactionIdentifier();
@@ -741,6 +755,9 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     } else
         usedKey = keyData;
 
+    // Generate index keys up front for more accurate quota check.
+    auto indexKeys = generateIndexKeyMapForValue(m_backingStore->serializationContext().execState(), *objectStoreInfo, usedKey, value);
+
     if (overwriteMode == IndexedDB::ObjectStoreOverwriteMode::NoOverwrite) {
         bool keyExists;
         error = m_backingStore->keyExistsInObjectStore(transactionIdentifier, objectStoreIdentifier, usedKey, keyExists);
@@ -752,6 +769,20 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
             return;
         }
     }
+
+    // Quota check.
+    auto keySize = estimateSize(usedKey);
+    auto valueSize = estimateSize(value);
+    auto indexSize = estimateSize(*objectStoreInfo, indexKeys, keySize);
+    auto taskSize = defaultWriteOperationCost + keySize + valueSize + indexSize;
+
+    LOG(IndexedDB, "UniqueIDBDatabase::putOrAdd quota check with task size: %llu key size: %llu value size: %llu index size: %llu", taskSize, keySize, valueSize, indexSize);
+
+    if (m_server.requestSpace(m_identifier.origin(), taskSize) == StorageQuotaManager::Decision::Deny) {
+        callback(IDBError { QuotaExceededError, quotaErrorMessageName("PutOrAdd") }, usedKey);
+        return;
+    }
+
     // If a record already exists in store, then remove the record from store using the steps for deleting records from an object store.
     // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
     error = m_backingStore->deleteRange(transactionIdentifier, objectStoreIdentifier, usedKey);
@@ -760,7 +791,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
         return;
     }
 
-    error = m_backingStore->addRecord(transactionIdentifier, *objectStoreInfo, usedKey, value);
+    error = m_backingStore->addRecord(transactionIdentifier, *objectStoreInfo, usedKey, indexKeys, value);
     if (!error.isNull()) {
         callback(error, usedKey);
         return;

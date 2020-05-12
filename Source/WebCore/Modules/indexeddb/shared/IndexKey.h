@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyData.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -47,6 +48,8 @@ public:
 private:
     Vector<IDBKeyData> m_keys;
 };
+
+typedef HashMap<uint64_t, IndexKey> IndexIDToIndexKeyMap;
 
 } // namespace WebCore
 

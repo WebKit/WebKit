@@ -252,6 +252,12 @@ void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
 
 IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const IDBValue& value)
 {
+    auto indexKeys = generateIndexKeyMapForValue(m_serializationContext->execState(), m_info, keyData, value);
+    return addRecord(transaction, keyData, indexKeys, value);
+}
+
+IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys, const IDBValue& value)
+{
     LOG(IndexedDB, "MemoryObjectStore::addRecord");
 
     ASSERT(m_writeTransaction);
@@ -271,7 +277,7 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     ASSERT(listResult.second);
 
     // If there was an error indexing this addition, then revert it.
-    auto error = updateIndexesForPutRecord(keyData, value.data());
+    auto error = updateIndexesForPutRecord(keyData, indexKeys);
     if (!error.isNull()) {
         m_keyValueStore->remove(mapResult.iterator);
         m_orderedKeys->erase(listResult.first);
@@ -299,29 +305,24 @@ void MemoryObjectStore::updateIndexesForDeleteRecord(const IDBKeyData& value)
         index->removeEntriesWithValueKey(value);
 }
 
-IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, const ThreadSafeDataBuffer& value)
+IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, const IndexIDToIndexKeyMap& indexKeys)
 {
-    JSLockHolder locker(m_serializationContext->vm());
-
-    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
-    if (jsValue.isUndefinedOrNull())
-        return IDBError { };
-
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
 
-    for (auto& index : m_indexesByName.values()) {
-        IndexKey indexKey;
-        generateIndexKeyForValue(m_serializationContext->execState(), index->info(), jsValue, indexKey, m_info.keyPath(), key);
-
-        if (indexKey.isNull())
-            continue;
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto* index = m_indexesByIdentifier.get(indexID);
+        ASSERT(index);
+        if (!index) {
+            error = IDBError { InvalidStateError, "Missing index metadata" };
+            break;
+        }
 
         error = index->putIndexKey(key, indexKey);
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index.get(), indexKey));
+        changedIndexRecords.append(std::make_pair(index, indexKey));
     }
 
     // If any of the index puts failed, revert all of the ones that went through.

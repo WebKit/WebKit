@@ -1,3 +1,51 @@
+2020-05-11  Ben Nham  <nham@apple.com>
+
+        Improve accuracy of IndexedDB estimated write size computation
+        https://bugs.webkit.org/show_bug.cgi?id=211360
+
+        Reviewed by Brady Eidson.
+
+        We currently estimate the size of a put in IndexedDB for quota check purposes with something
+        like:
+
+          estimatedWriteSize = (1 + numIndices) * (keySize + valueSize)
+
+        However, this can lead to large overestimates of write sizes. This is because secondary
+        indices only store a mapping of secondary index key => primary key; they do not store the
+        entire value. In the example site attached to 202137 (another DB quota-related bug), the
+        the heuristic estimates that one of the put operations would use more than 800 MB when it
+        actually uses 220 MB. This inaccuracy leads to spurious disk quota permission modals being
+        presented in Safari.
+
+        This patch improves the write size computation by generating the secondary index keys before
+        estimating the write size. The performance should be about the same since we save the
+        generated index keys for later usage when we actually add the record to the DB.
+
+        * Headers.cmake:
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::MemoryIDBBackingStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::serializationContext):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::addRecord):
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::serializationContext):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::estimateSize):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        * Modules/indexeddb/shared/IndexKey.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::generateIndexKeyMapForValue):
+        * bindings/js/IDBBindingUtilities.h:
+
 2020-05-11  Kate Cheney  <katherine_cheney@apple.com>
 
         Fail navigations to non app-bound domains after use of app-bound APIs

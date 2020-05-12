@@ -30,6 +30,7 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBResourceIdentifier.h"
+#include "IndexKey.h"
 #include "MemoryBackingStoreTransaction.h"
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
@@ -37,6 +38,7 @@
 namespace WebCore {
 namespace IDBServer {
 
+class IDBSerializationContext;
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore final : public IDBBackingStore {
@@ -51,6 +53,8 @@ public:
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
 
+    IDBSerializationContext& serializationContext() final;
+
 private:
     IDBError beginTransaction(const IDBTransactionInfo&) final;
     IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) final;
@@ -64,7 +68,7 @@ private:
     IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName) final;
     IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists) final;
     IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&) final;
-    IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&) final;
+    IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IndexIDToIndexKeyMap&, const IDBValue&) final;
     IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType, IDBGetResult& outValue) final;
     IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue) final;
     IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue) final;
@@ -92,6 +96,7 @@ private:
 
     IDBDatabaseIdentifier m_identifier;
     PAL::SessionID m_sessionID;
+    Ref<IDBSerializationContext> m_serializationContext;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;

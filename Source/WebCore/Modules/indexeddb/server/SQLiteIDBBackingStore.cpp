@@ -1852,24 +1852,22 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
     return uncheckedPutIndexKey(info, key, indexKey, recordID);
 }
 
-IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStoreInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value, int64_t recordID)
+IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStoreInfo& info, const IDBKeyData& key, const IndexIDToIndexKeyMap& indexKeys, int64_t recordID)
 {
-    JSLockHolder locker(m_serializationContext->vm());
-
-    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->execState(), value);
-    if (jsValue.isUndefinedOrNull())
-        return IDBError { };
-
     IDBError error;
+    const auto& indexMap = info.indexMap();
     bool anyRecordsSucceeded = false;
-    for (auto& index : info.indexMap().values()) {
-        IndexKey indexKey;
-        generateIndexKeyForValue(m_serializationContext->execState(), index, jsValue, indexKey, info.keyPath(), key);
 
-        if (indexKey.isNull())
-            continue;
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto indexIterator = indexMap.find(indexID);
+        ASSERT(indexIterator != indexMap.end());
 
-        error = uncheckedPutIndexKey(index, key, indexKey, recordID);
+        if (indexIterator == indexMap.end()) {
+            error = IDBError { InvalidStateError, "Missing index metadata" };
+            break;
+        }
+
+        error = uncheckedPutIndexKey(indexIterator->value, key, indexKey, recordID);
         if (!error.isNull())
             break;
 
@@ -1891,7 +1889,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     return error;
 }
 
-IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IDBValue& value)
+IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const IndexIDToIndexKeyMap& indexKeys, const IDBValue& value)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::addRecord - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreInfo.identifier());
 
@@ -1930,7 +1928,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         recordID = m_sqliteDB->lastInsertRowID();
     }
 
-    auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value.data(), recordID);
+    auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, indexKeys, recordID);
 
     if (!error.isNull()) {
         auto sql = cachedStatement(SQL::DeleteObjectStoreRecord, "DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
@@ -2735,6 +2733,11 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     }
 
     return IDBError { };
+}
+
+IDBSerializationContext& SQLiteIDBBackingStore::serializationContext()
+{
+    return m_serializationContext.get();
 }
 
 IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
