@@ -1729,9 +1729,13 @@ void Document::visibilityStateChanged()
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 
-#if ENABLE(MEDIA_STREAM)
-    if (auto* page = this->page())
-        RealtimeMediaSourceCenter::singleton().setCapturePageState(hidden(), page->isMediaCaptureMuted());
+#if PLATFORM(IOS_FAMILY)
+    if (hidden()) {
+        RealtimeMediaSourceCenter::singleton().setCapturePageState(hidden(), page()->isMediaCaptureMuted());
+        return;
+    }
+    if (!PlatformMediaSessionManager::sharedManager().isInterrupted())
+        MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
 #endif
 }
 

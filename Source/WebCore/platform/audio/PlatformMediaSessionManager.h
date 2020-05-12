@@ -137,6 +137,8 @@ public:
 
     bool processIsSuspended() const { return m_processIsSuspended; }
 
+    bool isInterrupted() const { return m_interrupted; }
+
 protected:
     friend class PlatformMediaSession;
     explicit PlatformMediaSessionManager();

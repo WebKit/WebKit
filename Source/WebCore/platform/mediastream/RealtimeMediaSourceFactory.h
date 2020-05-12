@@ -43,7 +43,6 @@ public:
     WEBCORE_EXPORT void setActiveSource(RealtimeMediaSource&);
     WEBCORE_EXPORT void unsetActiveSource(RealtimeMediaSource&);
 
-protected:
     RealtimeMediaSource* activeSource() { return m_activeSource; }
 
 private:
