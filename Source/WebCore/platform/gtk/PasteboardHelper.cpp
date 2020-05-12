@@ -28,7 +28,6 @@
 #include "BitmapImage.h"
 #include "SelectionData.h"
 #include <gtk/gtk.h>
-#include <wtf/SetForScope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -94,41 +93,6 @@ static String selectionDataToUTF8String(GtkSelectionData* data)
     // g_strndup guards against selection data that is not null-terminated.
     GUniquePtr<gchar> markupString(g_strndup(reinterpret_cast<const char*>(gtk_selection_data_get_data(data)), gtk_selection_data_get_length(data)));
     return String::fromUTF8(markupString.get());
-}
-
-void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard, SelectionData& selection)
-{
-    if (gtk_clipboard_wait_is_text_available(clipboard)) {
-        GUniquePtr<gchar> textData(gtk_clipboard_wait_for_text(clipboard));
-        if (textData)
-            selection.setText(String::fromUTF8(textData.get()));
-    }
-
-    if (gtk_clipboard_wait_is_target_available(clipboard, markupAtom)) {
-        if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, markupAtom)) {
-            String markup(selectionDataToUTF8String(data));
-            removeMarkupPrefix(markup);
-            selection.setMarkup(markup);
-            gtk_selection_data_free(data);
-        }
-    }
-
-    if (gtk_clipboard_wait_is_target_available(clipboard, uriListAtom)) {
-        if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, uriListAtom)) {
-            selection.setURIList(selectionDataToUTF8String(data));
-            gtk_selection_data_free(data);
-        }
-    }
-
-    if (gtk_clipboard_wait_is_image_available(clipboard)) {
-        if (GRefPtr<GdkPixbuf> pixbuf = adoptGRef(gtk_clipboard_wait_for_image(clipboard))) {
-            RefPtr<cairo_surface_t> surface = adoptRef(gdk_cairo_surface_create_from_pixbuf(pixbuf.get(), 1, nullptr));
-            Ref<Image> image = BitmapImage::create(WTFMove(surface));
-            selection.setImage(image.ptr());
-        }
-    }
-
-    selection.setCanSmartReplace(gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom));
 }
 
 GRefPtr<GtkTargetList> PasteboardHelper::targetListForSelectionData(const SelectionData& selection)
@@ -263,57 +227,6 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
         dropAtoms.append(atom);
 
     return dropAtoms;
-}
-
-static SelectionData* settingClipboardSelection;
-
-struct ClipboardSetData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    ClipboardSetData(SelectionData& selection, WTF::Function<void()>&& selectionClearedCallback)
-        : selectionData(selection)
-        , selectionClearedCallback(WTFMove(selectionClearedCallback))
-    {
-    }
-
-    ~ClipboardSetData() = default;
-
-    Ref<SelectionData> selectionData;
-    WTF::Function<void()> selectionClearedCallback;
-};
-
-static void getClipboardContentsCallback(GtkClipboard*, GtkSelectionData *selectionData, guint info, gpointer userData)
-{
-    auto* data = static_cast<ClipboardSetData*>(userData);
-    PasteboardHelper::singleton().fillSelectionData(data->selectionData, info, selectionData);
-}
-
-static void clearClipboardContentsCallback(GtkClipboard*, gpointer userData)
-{
-    std::unique_ptr<ClipboardSetData> data(static_cast<ClipboardSetData*>(userData));
-    if (data->selectionClearedCallback)
-        data->selectionClearedCallback();
-}
-
-void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, const SelectionData& selection, WTF::Function<void()>&& primarySelectionCleared)
-{
-    GRefPtr<GtkTargetList> list = targetListForSelectionData(selection);
-
-    int numberOfTargets;
-    GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
-
-    if (numberOfTargets > 0 && table) {
-        SetForScope<SelectionData*> change(settingClipboardSelection, const_cast<SelectionData*>(&selection));
-        auto data = makeUnique<ClipboardSetData>(*settingClipboardSelection, WTFMove(primarySelectionCleared));
-        if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, data.get())) {
-            gtk_clipboard_set_can_store(clipboard, nullptr, 0);
-            // When gtk_clipboard_set_with_data() succeeds clearClipboardContentsCallback takes the ownership of data, so we leak it here.
-            data.release();
-        }
-    } else
-        gtk_clipboard_clear(clipboard);
-
-    if (table)
-        gtk_target_table_free(table, numberOfTargets);
 }
 
 } // namespace WebCore

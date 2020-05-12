@@ -34,6 +34,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
 
+namespace IPC {
+class SharedBufferDataReference;
+}
+
 namespace WebCore {
 class Color;
 class PasteboardCustomData;
@@ -66,6 +70,7 @@ public:
 
 #if PLATFORM(GTK)
     void setPrimarySelectionOwner(WebFrameProxy*);
+    WebFrameProxy* primarySelectionOwner() const { return m_primarySelectionOwner; }
     void didDestroyFrame(WebFrameProxy*);
 #endif
 
@@ -118,11 +123,14 @@ private:
     void urlStringSuitableForLoading(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&&);
 
 #if PLATFORM(GTK)
-    void writeToClipboard(const String& pasteboardName, const WebSelectionData&);
-    void readFromClipboard(const String& pasteboardName, CompletionHandler<void(WebSelectionData&&)>&&);
+    void getTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
+    void readText(const String& pasteboardName, CompletionHandler<void(String&&)>&&);
+    void readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
+    void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferDataReference&&)>&&);
+    void writeToClipboard(const String& pasteboardName, WebSelectionData&&);
+    void clearClipboard(const String& pasteboardName);
 
     WebFrameProxy* m_primarySelectionOwner { nullptr };
-    WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif // PLATFORM(GTK)
 
 #if USE(LIBWPE)

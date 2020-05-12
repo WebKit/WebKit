@@ -61,8 +61,12 @@ messages -> WebPasteboardProxy NotRefCounted {
 #endif
 
 #if PLATFORM(GTK)
+    GetTypes(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadText(String pasteboardName) -> (String text) Synchronous
+    ReadFilePaths(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadBuffer(String pasteboardName, String pasteboardType) -> (IPC::SharedBufferDataReference data) Synchronous
     WriteToClipboard(String pasteboardName, struct WebKit::WebSelectionData pasteboardContent)
-    ReadFromClipboard(String pasteboardName) -> (struct WebKit::WebSelectionData pasteboardContent) Synchronous
+    ClearClipboard(String pasteboardName)
 #endif
 
 #if USE(LIBWPE)

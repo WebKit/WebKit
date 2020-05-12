@@ -50,5 +50,18 @@ MSOListQuirks FrameWebContentReader::msoListQuirksForMarkup() const
     return contentOrigin.isNull() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
 }
 
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+bool WebContentReader::readFilePaths(const Vector<String>& paths)
+{
+    if (paths.isEmpty() || !frame.document())
+        return false;
+
+    for (auto& path : paths)
+        readFilePath(path);
+
+    return true;
+}
+#endif
+
 }
 

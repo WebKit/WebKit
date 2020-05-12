@@ -798,17 +798,6 @@ bool WebContentReader::readFilePath(const String& path, PresentationSize preferr
     return true;
 }
 
-bool WebContentReader::readFilePaths(const Vector<String>& paths)
-{
-    if (paths.isEmpty() || !frame.document())
-        return false;
-
-    for (auto& path : paths)
-        readFilePath(path);
-
-    return true;
-}
-
 bool WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.isEmpty())

@@ -253,6 +253,9 @@ UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
+UIProcess/gtk/Clipboard.cpp
+UIProcess/gtk/ClipboardGtk3.cpp @no-unify
+UIProcess/gtk/ClipboardGtk4.cpp @no-unify
 UIProcess/gtk/DragAndDropHandler.cpp
 UIProcess/gtk/GestureController.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp

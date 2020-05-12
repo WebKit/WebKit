@@ -31,6 +31,7 @@ struct WebSelectionData {
     WebSelectionData();
     explicit WebSelectionData(const WebCore::SelectionData&);
     explicit WebSelectionData(Ref<WebCore::SelectionData>&&);
+    explicit WebSelectionData(WebCore::SelectionData&&);
 
     Ref<WebCore::SelectionData> selectionData;
 

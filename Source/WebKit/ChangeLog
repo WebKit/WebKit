@@ -1,3 +1,64 @@
+2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework clipboard handling in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=211511
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use async APIs to avoid blocking the UI process during the communication with the clipboard. In GTK4 only async
+        APIs are available. Add Clipboard class to handle the communication with the clipboard with the GTK
+        implementation in ClipboardGtk3 and ClipboardGtk4 files.
+
+        * Shared/gtk/WebSelectionData.cpp:
+        (WebKit::WebSelectionData::WebSelectionData): Add constructor receivnig an rvalue reference.
+        * Shared/gtk/WebSelectionData.h:
+        * SourcesGTK.txt:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/gtk/Clipboard.cpp: Added.
+        (WebKit::clipboard):
+        (WebKit::primary):
+        (WebKit::Clipboard::get):
+        * UIProcess/gtk/Clipboard.h: Added.
+        * UIProcess/gtk/ClipboardGtk3.cpp: Added.
+        (WebKit::Clipboard::Clipboard):
+        (WebKit::isPrimaryClipboard):
+        (WebKit::Clipboard::type const):
+        (WebKit::FormatsAsyncData::FormatsAsyncData):
+        (WebKit::Clipboard::formats):
+        (WebKit::ReadTextAsyncData::ReadTextAsyncData):
+        (WebKit::Clipboard::readText):
+        (WebKit::ReadFilePathsAsyncData::ReadFilePathsAsyncData):
+        (WebKit::Clipboard::readFilePaths):
+        (WebKit::ReadBufferAsyncData::ReadBufferAsyncData):
+        (WebKit::Clipboard::readBuffer):
+        (WebKit::Clipboard::write):
+        (WebKit::Clipboard::clear):
+        * UIProcess/gtk/ClipboardGtk4.cpp: Added.
+        (WebKit::Clipboard::Clipboard):
+        (WebKit::Clipboard::type const):
+        (WebKit::Clipboard::formats):
+        (WebKit::Clipboard::readText):
+        (WebKit::Clipboard::readFilePaths):
+        (WebKit::Clipboard::readBuffer):
+        (WebKit::Clipboard::write):
+        (WebKit::Clipboard::clear):
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::getTypes):
+        (WebKit::WebPasteboardProxy::readText):
+        (WebKit::WebPasteboardProxy::readFilePaths):
+        (WebKit::WebPasteboardProxy::readBuffer):
+        (WebKit::WebPasteboardProxy::writeToClipboard):
+        (WebKit::WebPasteboardProxy::clearClipboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::types):
+        (WebKit::WebPlatformStrategies::readTextFromClipboard):
+        (WebKit::WebPlatformStrategies::readFilePathsFromClipboard):
+        (WebKit::WebPlatformStrategies::readBufferFromClipboard):
+        (WebKit::WebPlatformStrategies::writeToClipboard):
+        (WebKit::WebPlatformStrategies::clearClipboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2020-05-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce a RealtimeMediaSource video sample observer

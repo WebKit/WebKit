@@ -81,8 +81,13 @@ public:
     virtual bool containsStringSafeForDOMToReadForType(const String&, const String& pasteboardName) = 0;
 
 #if PLATFORM(GTK)
+    virtual Vector<String> types(const String& pasteboardName) = 0;
+    virtual String readTextFromClipboard(const String& pasteboardName) = 0;
+    virtual Vector<String> readFilePathsFromClipboard(const String& pasteboardName) = 0;
+    virtual RefPtr<SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType);
+    virtual void writeToClipboard(const String& pasteboardName, SelectionData&&) = 0;
     virtual void writeToClipboard(const String& pasteboardName, const SelectionData&) = 0;
-    virtual Ref<SelectionData> readFromClipboard(const String& pasteboardName) = 0;
+    virtual void clearClipboard(const String& pasteboardName) = 0;
 #endif // PLATFORM(GTK)
 
 #if USE(LIBWPE)

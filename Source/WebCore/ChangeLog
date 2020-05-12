@@ -1,3 +1,50 @@
+2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework clipboard handling in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=211511
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove PlatformPasteboard implementation that has been replaced by Clipboard class in the WebKit
+        layer. When Pasteboard class is created for copy and paste operations, it no longer has a SelectionData member,
+        it just uses the new methods in the pasteboard strategy to communicate with the clipboard. WebContentReader has
+        now an implementation for GTK and it's used when reading from the clipboard, the same way it's done in other ports.
+
+        * SourcesGTK.txt:
+        * editing/WebContentReader.h:
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::pasteWithPasteboard): Use webContentFromPasteboard().
+        (WebCore::Editor::webContentFromPasteboard): Use WebContentReader.
+        * editing/gtk/WebContentReaderGtk.cpp: Added.
+        (WebCore::WebContentReader::readFilePath):
+        (WebCore::WebContentReader::readFilePaths):
+        (WebCore::WebContentReader::readHTML):
+        (WebCore::WebContentReader::readPlainText):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::WebContentReader::readURL):
+        (WebCore::WebContentMarkupReader::readHTML):
+        * platform/Pasteboard.h:
+        (WebCore::PasteboardWebContentReader::readDataBuffer):
+        * platform/PasteboardStrategy.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::selectionData const):
+        (WebCore::Pasteboard::writeString):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::hasData):
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::fileContentState):
+        * platform/gtk/PasteboardHelper.cpp:
+        * platform/gtk/PasteboardHelper.h:
+        * platform/gtk/PlatformPasteboardGtk.cpp: Removed.
+        * platform/gtk/SelectionData.cpp:
+        (WebCore::SelectionData::setURL): Do not override the text and markup if it has already been set.
+
 2020-05-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce a RealtimeMediaSource video sample observer

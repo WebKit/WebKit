@@ -136,17 +136,20 @@ public:
 
     virtual ~PasteboardWebContentReader() = default;
 
-#if PLATFORM(COCOA)
-    virtual bool readWebArchive(SharedBuffer&) = 0;
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual bool readFilePath(const String&, PresentationSize preferredPresentationSize = { }, const String& contentType = { }) = 0;
     virtual bool readFilePaths(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
-    virtual bool readRTFD(SharedBuffer&) = 0;
-    virtual bool readRTF(SharedBuffer&) = 0;
     virtual bool readImage(Ref<SharedBuffer>&&, const String& type, PresentationSize preferredPresentationSize = { }) = 0;
     virtual bool readURL(const URL&, const String& title) = 0;
-    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
     virtual bool readPlainText(const String&) = 0;
+#endif
+
+#if PLATFORM(COCOA)
+    virtual bool readWebArchive(SharedBuffer&) = 0;
+    virtual bool readRTFD(SharedBuffer&) = 0;
+    virtual bool readRTF(SharedBuffer&) = 0;
+    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
 #endif
 };
 
@@ -313,9 +316,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    void writeToClipboard();
-    void readFromClipboard();
-    Ref<SelectionData> m_selectionData;
+    RefPtr<SelectionData> m_selectionData;
     String m_name;
 #endif
 

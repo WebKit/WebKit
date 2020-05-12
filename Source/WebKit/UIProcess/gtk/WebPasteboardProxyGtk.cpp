@@ -26,27 +26,45 @@
 #include "config.h"
 #include "WebPasteboardProxy.h"
 
+#include "Clipboard.h"
+#include "SharedBufferDataReference.h"
 #include "WebFrameProxy.h"
 #include "WebSelectionData.h"
 #include <WebCore/PlatformPasteboard.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/SetForScope.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const WebSelectionData& selection)
+void WebPasteboardProxy::getTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    SetForScope<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, m_primarySelectionOwner);
-    PlatformPasteboard(pasteboardName).writeToClipboard(selection.selectionData, [this] {
-        if (m_frameWritingToClipboard == m_primarySelectionOwner)
-            return;
-        setPrimarySelectionOwner(nullptr);
-    });
+    Clipboard::get(pasteboardName).formats(WTFMove(completionHandler));
 }
 
-void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, CompletionHandler<void(WebSelectionData&&)>&& completionHandler)
+void WebPasteboardProxy::readText(const String& pasteboardName, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    completionHandler(WebSelectionData(PlatformPasteboard(pasteboardName).readFromClipboard()));
+    Clipboard::get(pasteboardName).readText(WTFMove(completionHandler));
+}
+
+void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    Clipboard::get(pasteboardName).readFilePaths(WTFMove(completionHandler));
+}
+
+void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferDataReference&&)>&& completionHandler)
+{
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), WTFMove(completionHandler));
+}
+
+void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, WebSelectionData&& selection)
+{
+    Clipboard::get(pasteboardName).write(WTFMove(selection.selectionData));
+}
+
+void WebPasteboardProxy::clearClipboard(const String& pasteboardName)
+{
+    Clipboard::get(pasteboardName).clear();
 }
 
 void WebPasteboardProxy::setPrimarySelectionOwner(WebFrameProxy* frame)

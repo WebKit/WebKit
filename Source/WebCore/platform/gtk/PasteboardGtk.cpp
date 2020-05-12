@@ -23,10 +23,12 @@
 #include "Color.h"
 #include "DragData.h"
 #include "Image.h"
+#include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 #include "SelectionData.h"
+#include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
@@ -66,26 +68,22 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dra
 #endif
 
 Pasteboard::Pasteboard(SelectionData& selectionData)
-    : m_selectionData(selectionData)
+    : m_selectionData(&selectionData)
 {
 }
 
 Pasteboard::Pasteboard(const String& name)
-    : m_selectionData(SelectionData::create())
-    , m_name(name)
+    : m_name(name)
 {
 }
 
-Pasteboard::Pasteboard()
-    : m_selectionData(SelectionData::create())
-{
-}
-
+Pasteboard::Pasteboard() = default;
 Pasteboard::~Pasteboard() = default;
 
 const SelectionData& Pasteboard::selectionData() const
 {
-    return m_selectionData.get();
+    ASSERT(m_selectionData);
+    return *m_selectionData.get();
 }
 
 static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& type)
@@ -103,23 +101,9 @@ static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& ty
     return ClipboardDataTypeUnknown;
 }
 
-void Pasteboard::writeToClipboard()
-{
-    if (m_name.isNull())
-        return;
-
-    platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, m_selectionData);
-}
-
-void Pasteboard::readFromClipboard()
-{
-    if (m_name.isNull())
-        return;
-    m_selectionData = platformStrategies()->pasteboardStrategy()->readFromClipboard(m_name);
-}
-
 void Pasteboard::writeString(const String& type, const String& data)
 {
+    ASSERT(m_selectionData);
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
     case ClipboardDataTypeURIList:
     case ClipboardDataTypeURL:
@@ -137,26 +121,33 @@ void Pasteboard::writeString(const String& type, const String& data)
     case ClipboardDataTypeImage:
         break;
     }
-    writeToClipboard();
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
-    m_selectionData->clearAll();
-    m_selectionData->setText(text);
-    m_selectionData->setCanSmartReplace(smartReplaceOption == CanSmartReplace);
-
-    writeToClipboard();
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        m_selectionData->setText(text);
+        m_selectionData->setCanSmartReplace(smartReplaceOption == CanSmartReplace);
+    } else {
+        SelectionData data;
+        data.setText(text);
+        data.setCanSmartReplace(smartReplaceOption == CanSmartReplace);
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+    }
 }
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
     ASSERT(!pasteboardURL.url.isEmpty());
-
-    m_selectionData->clearAll();
-    m_selectionData->setURL(pasteboardURL.url, pasteboardURL.title);
-
-    writeToClipboard();
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        m_selectionData->setURL(pasteboardURL.url, pasteboardURL.title);
+    } else {
+        SelectionData data;
+        data.setURL(pasteboardURL.url, pasteboardURL.title);
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+    }
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
@@ -166,38 +157,57 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    m_selectionData->clearAll();
-    if (!pasteboardImage.url.url.isEmpty()) {
-        m_selectionData->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
-        m_selectionData->setMarkup(pasteboardImage.url.markup);
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        if (!pasteboardImage.url.url.isEmpty()) {
+            m_selectionData->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
+            m_selectionData->setMarkup(pasteboardImage.url.markup);
+        }
+        m_selectionData->setImage(pasteboardImage.image.get());
+    } else {
+        SelectionData data;
+        if (!pasteboardImage.url.url.isEmpty()) {
+            data.setURL(pasteboardImage.url.url, pasteboardImage.url.title);
+            data.setMarkup(pasteboardImage.url.markup);
+        }
+        data.setImage(pasteboardImage.image.get());
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
     }
-    m_selectionData->setImage(pasteboardImage.image.get());
-
-    writeToClipboard();
 }
 
 void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
 {
-    m_selectionData->clearAll();
-    m_selectionData->setText(pasteboardContent.text);
-    m_selectionData->setMarkup(pasteboardContent.markup);
-    m_selectionData->setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
-
-    writeToClipboard();
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        m_selectionData->setText(pasteboardContent.text);
+        m_selectionData->setMarkup(pasteboardContent.markup);
+        m_selectionData->setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
+    } else {
+        SelectionData data;
+        data.setText(pasteboardContent.text);
+        data.setMarkup(pasteboardContent.markup);
+        data.setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
+        platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
+    }
 }
 
 void Pasteboard::clear()
 {
+    if (!m_selectionData) {
+        platformStrategies()->pasteboardStrategy()->clearClipboard(m_name);
+        return;
+    }
+
     // We do not clear filenames. According to the spec: "The clearData() method
     // does not affect whether any files were included in the drag, so the types
     // attribute's list might still not be empty after calling clearData() (it would
     // still contain the "Files" string if any files were included in the drag)."
     m_selectionData->clearAllExceptFilenames();
-    writeToClipboard();
 }
 
 void Pasteboard::clear(const String& type)
 {
+    ASSERT(m_selectionData);
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
     case ClipboardDataTypeURIList:
     case ClipboardDataTypeURL:
@@ -216,14 +226,13 @@ void Pasteboard::clear(const String& type)
         m_selectionData->clearAll();
         break;
     }
-
-    writeToClipboard();
 }
 
 bool Pasteboard::canSmartReplace()
 {
-    readFromClipboard();
-    return m_selectionData->canSmartReplace();
+    if (m_selectionData)
+        return m_selectionData->canSmartReplace();
+    return platformStrategies()->pasteboardStrategy()->types(m_name).contains("application/vnd.webkitgtk.smartpaste"_s);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -234,25 +243,71 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
 {
-    readFromClipboard();
-    text.text = m_selectionData->text();
+    text.text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 }
 
-void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t>)
 {
+    if (m_selectionData) {
+        if (m_selectionData->hasMarkup() && reader.readHTML(m_selectionData->markup()))
+            return;
+
+        if (policy == WebContentReadingPolicy::OnlyRichTextTypes)
+            return;
+
+        if (m_selectionData->hasFilenames() && reader.readFilePaths(m_selectionData->filenames()))
+            return;
+
+        if (m_selectionData->hasText() && reader.readPlainText(m_selectionData->text()))
+            return;
+
+        return;
+    }
+
+    auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
+    if (types.contains("text/html"_s)) {
+        auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, "text/html"_s);
+        if (buffer && reader.readHTML(String::fromUTF8(buffer->data(), buffer->size())))
+            return;
+    }
+
+    if (policy == WebContentReadingPolicy::OnlyRichTextTypes)
+        return;
+
+    static const ASCIILiteral imageTypes[] = { "image/png"_s, "image/jpeg"_s, "image/gif"_s, "image/bmp"_s, "image/vnd.microsoft.icon"_s, "image/x-icon"_s };
+    for (const auto& imageType : imageTypes) {
+        if (types.contains(imageType)) {
+            auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, imageType);
+            if (!buffer->isEmpty() && reader.readImage(buffer.releaseNonNull(), imageType))
+                return;
+        }
+    }
+
+    if (types.contains("text/uri-list"_s)) {
+        auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
+        if (reader.readFilePaths(filePaths))
+            return;
+    }
+
+    if (types.contains("text/plain"_s) || types.contains("text/plain;charset=utf-8"_s)) {
+        auto text = platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
+        if (!text.isNull() && reader.readPlainText(text))
+            return;
+    }
 }
 
 void Pasteboard::read(PasteboardFileReader& reader)
 {
-    readFromClipboard();
-    for (auto& filename : m_selectionData->filenames())
-        reader.readFilename(filename);
+    auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
+    for (const auto& filePath : filePaths)
+        reader.readFilename(filePath);
 }
 
 bool Pasteboard::hasData()
 {
-    readFromClipboard();
-    return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasUnknownTypeData();
+    if (m_selectionData)
+        return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasUnknownTypeData();
+    return !platformStrategies()->pasteboardStrategy()->types(m_name).isEmpty();
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String&)
@@ -263,7 +318,8 @@ Vector<String> Pasteboard::typesSafeForBindings(const String&)
 
 Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 {
-    readFromClipboard();
+    if (!m_selectionData)
+        return platformStrategies()->pasteboardStrategy()->types(m_name);
 
     Vector<String> types;
     if (m_selectionData->hasText()) {
@@ -294,7 +350,13 @@ String Pasteboard::readOrigin()
 
 String Pasteboard::readString(const String& type)
 {
-    readFromClipboard();
+    if (!m_selectionData) {
+        if (type.startsWith("text/plain"))
+            return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
+
+        auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, type);
+        return buffer ? String::fromUTF8(buffer->data(), buffer->size()) : String();
+    }
 
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
     case ClipboardDataTypeURIList:
@@ -311,7 +373,7 @@ String Pasteboard::readString(const String& type)
         break;
     }
 
-    return String();
+    return { };
 }
 
 String Pasteboard::readStringInCustomData(const String&)
@@ -322,8 +384,17 @@ String Pasteboard::readStringInCustomData(const String&)
 
 Pasteboard::FileContentState Pasteboard::fileContentState()
 {
-    readFromClipboard();
-    return m_selectionData->filenames().isEmpty() ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
+    if (m_selectionData)
+        return m_selectionData->filenames().isEmpty() ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
+
+    auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
+    if (types.contains("text/uri-list"_s))
+        return FileContentState::MayContainFilePaths;
+
+    auto result = types.findMatching([](const String& type) {
+        return MIMETypeRegistry::isSupportedImageMIMEType(type);
+    });
+    return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
 }
 
 void Pasteboard::writeMarkup(const String&)

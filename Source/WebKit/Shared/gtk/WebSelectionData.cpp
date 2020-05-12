@@ -41,6 +41,11 @@ WebSelectionData::WebSelectionData(Ref<WebCore::SelectionData>&& data)
 {
 }
 
+WebSelectionData::WebSelectionData(WebCore::SelectionData&& data)
+    : selectionData(data)
+{
+}
+
 void WebSelectionData::encode(IPC::Encoder& encoder) const
 {
     encoder << selectionData.get();

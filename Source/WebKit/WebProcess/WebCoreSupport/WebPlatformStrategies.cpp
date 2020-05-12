@@ -293,17 +293,49 @@ void WebPlatformStrategies::updateSupportedTypeIdentifiers(const Vector<String>&
 #if PLATFORM(GTK)
 // PasteboardStrategy
 
+Vector<String> WebPlatformStrategies::types(const String& pasteboardName)
+{
+    Vector<String> result;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetTypes(pasteboardName), Messages::WebPasteboardProxy::GetTypes::Reply(result), 0);
+    return result;
+}
+
+String WebPlatformStrategies::readTextFromClipboard(const String& pasteboardName)
+{
+    String result;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadText(pasteboardName), Messages::WebPasteboardProxy::ReadText::Reply(result), 0);
+    return result;
+}
+
+Vector<String> WebPlatformStrategies::readFilePathsFromClipboard(const String& pasteboardName)
+{
+    Vector<String> result;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFilePaths(pasteboardName), Messages::WebPasteboardProxy::ReadFilePaths::Reply(result), 0);
+    return result;
+}
+
+RefPtr<SharedBuffer> WebPlatformStrategies::readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType)
+{
+
+    IPC::SharedBufferDataReference data;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBuffer(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::ReadBuffer::Reply(data), 0);
+    return data.buffer();
+}
+
+void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, SelectionData&& selectionData)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, WebSelectionData(selectionData)), 0);
+}
+
 void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const SelectionData& selection)
 {
     WebSelectionData selectionData(selection);
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, selectionData), 0);
 }
 
-Ref<SelectionData> WebPlatformStrategies::readFromClipboard(const String& pasteboardName)
+void WebPlatformStrategies::clearClipboard(const String& pasteboardName)
 {
-    WebSelectionData selection;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFromClipboard(pasteboardName), Messages::WebPasteboardProxy::ReadFromClipboard::Reply(selection), 0);
-    return WTFMove(selection.selectionData);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::ClearClipboard(pasteboardName), 0);
 }
 
 #endif // PLATFORM(GTK)

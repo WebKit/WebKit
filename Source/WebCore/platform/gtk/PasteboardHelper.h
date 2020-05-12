@@ -40,15 +40,11 @@ class PasteboardHelper {
 public:
     static PasteboardHelper& singleton();
 
-    enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
-
     GtkTargetList* targetList() const;
     GRefPtr<GtkTargetList> targetListForSelectionData(const SelectionData&);
     void fillSelectionData(const SelectionData&, unsigned, GtkSelectionData*);
     void fillSelectionData(GtkSelectionData*, unsigned, SelectionData&);
     Vector<GdkAtom> dropAtomsForContext(GtkWidget*, GdkDragContext*);
-    void writeClipboardContents(GtkClipboard*, const SelectionData&, WTF::Function<void()>&& primarySelectionCleared = nullptr);
-    void getClipboardContents(GtkClipboard*, SelectionData&);
 
     enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeSmartPaste, TargetTypeUnknown };
 
