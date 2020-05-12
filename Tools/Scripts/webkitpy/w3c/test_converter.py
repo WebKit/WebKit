@@ -186,8 +186,8 @@ class _W3CTestConverter(HTMLParser):
             if converted.find(path) != -1:
                 # FIXME: This doesn't handle an edge case where simply removing the relative path doesn't work.
                 # See http://webkit.org/b/135677 for details.
-                new_path = re.sub(self.reference_support_info['reference_relpath'], '', path, 1)
-                converted = re.sub(path, new_path, converted)
+                new_path = re.sub(re.escape(self.reference_support_info['reference_relpath']), '', path, 1)
+                converted = re.sub(re.escape(path), new_path, converted)
 
         return converted
 
@@ -219,13 +219,19 @@ class _W3CTestConverter(HTMLParser):
                 new_style = self.convert_style_data(attr[1])
                 converted = re.sub(re.escape(attr[1]), new_style, converted)
 
+        # Convert relative paths
         src_tags = ('script', 'style', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')
-        if tag in src_tags and self.reference_support_info is not None and  self.reference_support_info != {}:
-            for attr_name, attr_value in attrs:
-                if attr_name == 'src':
-                    new_path = self.convert_reference_relpaths(attr_value)
-                    converted = re.sub(re.escape(attr_value), new_path, converted)
-
+        if self.reference_support_info is not None and self.reference_support_info != {}:
+            if tag in src_tags:
+                for attr_name, attr_value in attrs:
+                    if attr_name == 'src':
+                        new_path = self.convert_reference_relpaths(attr_value)
+                        converted = re.sub(re.escape(attr_value), new_path, converted)
+            if tag == 'link':
+                for attr_name, attr_value in attrs:
+                    if attr_name == 'href':
+                        new_path = self.convert_reference_relpaths(attr_value)
+                        converted = re.sub(re.escape(attr_value), new_path, converted)
         self.converted_data.append(converted)
 
     def add_webkit_test_runner_options_if_needed(self):

@@ -1,3 +1,24 @@
+2020-05-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        WPT test importer fails to update references in <link> tags
+        https://bugs.webkit.org/show_bug.cgi?id=211762
+
+        Reviewed by Youenn Fablet.
+
+        When importing WPT test references, ensure relative paths are also
+        updated for the href attribute in <link> tags.
+        Also fix a bug that was causing wrong updates on the paths due to
+        the characters in reference_relpath not escaped when performing
+        the regex substitution in convert_reference_relpaths(). For example:
+        "resources/script.js" was changed to "resourcscript.js" when reference_relpath was '../'
+
+        Improve also the unit test case to check for the fixes in this patch.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.convert_reference_relpaths):
+        (_W3CTestConverter.convert_attributes_if_needed):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+
 2020-05-12  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Include clang++ and g++ in toolchains

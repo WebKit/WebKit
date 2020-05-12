@@ -296,6 +296,8 @@ CONTENT OF TEST
 
         test_html = """<html>
 <head>
+<link href="../support/base-style.css">
+<video src="resources/video.mkv"></video>
 <script src="../../some-script.js"></script>
 <style src="../../../some-style.css"></style>
 </head>
@@ -304,7 +306,8 @@ CONTENT OF TEST
 </body>
 </html>
 """
-        test_reference_support_info = {'reference_relpath': '../', 'files': ['../../some-script.js', '../../../some-style.css', '../../../../some-image.jpg'], 'elements': ['script', 'style', 'img']}
+        test_reference_support_info = {'reference_relpath': '../', 'files': ['../../some-script.js', '../../../some-style.css', '../../../../some-image.jpg', '../support/base-style.css', 'resources/video.mkv'],
+                                       'elements': ['script', 'style', 'img', 'link', 'video']}
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, test_reference_support_info)
 
         oc = OutputCapture()
@@ -410,9 +413,10 @@ CONTENT OF TEST
     def verify_reference_relative_paths(self, converted, reference_support_info):
         idx = 0
         for path in reference_support_info['files']:
-            expected_path = re.sub(reference_support_info['reference_relpath'], '', path, 1)
+            expected_path = re.sub(re.escape(reference_support_info['reference_relpath']), '', path, 1)
             element = reference_support_info['elements'][idx]
-            expected_tag = '<' + element + ' src=\"' + expected_path + '\">'
+            element_src = 'href' if element == 'link' else 'src'
+            expected_tag = '<' + element + ' ' + element_src + '=\"' + expected_path + '\">'
             self.assertTrue(expected_tag in converted[2], 'relative path ' + path + ' was not converted correcty')
             idx += 1
 
