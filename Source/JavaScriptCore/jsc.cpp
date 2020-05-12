@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -76,7 +76,6 @@
 #include "VMInspector.h"
 #include "WasmCapabilities.h"
 #include "WasmContext.h"
-#include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include <locale.h>
 #include <math.h>
@@ -3231,9 +3230,6 @@ int jscmain(int argc, char** argv)
     // Initialize JSC before getting VM.
     JSC::initializeThreading();
     initializeTimeoutIfNeeded();
-#if ENABLE(WEBASSEMBLY)
-    JSC::Wasm::enableFastMemory();
-#endif
 
     bool gigacageDisableRequested = false;
 #if GIGACAGE_ENABLED && !COMPILER(MSVC)
