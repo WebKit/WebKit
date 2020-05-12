@@ -1,3 +1,12 @@
+2020-05-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed crash fix.
+
+        Use correct global name for icon service in RELEASE_ASSERT.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+
 2020-05-12  Youenn Fablet  <youenn@apple.com>
 
         Allow WebAudioBufferList to dynamically change its number of frames
