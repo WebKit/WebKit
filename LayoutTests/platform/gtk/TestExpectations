@@ -460,7 +460,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-vertex-array-object.h
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure Pass ]
 webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Timeout Pass ]
+webkit.org/b/169917 webkit.org/b/211768 compositing/video/video-border-radius.html [ ImageOnlyFailure Timeout Pass Crash ]
 webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
@@ -1044,7 +1044,7 @@ fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
-webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure Timeout ]
+webkit.org/b/175419 http/wpt/service-workers/persistent-importScripts.html [ Pass Failure Timeout Crash ]
 webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/activation.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/claim-with-redirect.https.html [ Skip ]
@@ -1360,8 +1360,6 @@ webkit.org/b/209725 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-draw
 webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
 
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php [ Failure ]
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
@@ -1454,6 +1452,8 @@ webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-impl
 
 webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
 webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass ]
+
+webkit.org/b/211770 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -2598,7 +2598,7 @@ webkit.org/b/198830 [ Release ] media/W3C/audio/events/event_loadstart_manual.ht
 webkit.org/b/198830 [ Release ] webrtc/audio-samplerate-change.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/concurrentVideoPlayback.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/stun-server-filtering.html [ Pass Crash ]
-webkit.org/b/198830 [ Release ] webrtc/video-autoplay.html [ Pass Crash ]
+webkit.org/b/198830 webkit.org/b/211765 [ Release ] webrtc/video-autoplay.html [ Pass Timeout Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay1.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay2.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] webrtc/video-autoplay3.html [ Pass Crash ]
@@ -2665,6 +2665,7 @@ webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/compositing
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.3arg.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.broken.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202782 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.floatsource.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeaty.coord1.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/fill-and-stroke-styles/2d.pattern.paint.repeat.coord3.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.transparent.1.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
@@ -2742,6 +2743,7 @@ webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animatio
 webkit.org/b/207992 imported/w3c/web-platform-tests/css/css-transitions/animations/z-index-interpolation.html [ Failure Pass ]
 
 webkit.org/b/206464 webrtc/peerconnection-page-cache-long.html [ Failure ]
+webkit.org/b/206464 webrtc/peerconnection-page-cache.html [ Failure Pass ]
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ] 
 
@@ -2889,6 +2891,7 @@ webkit.org/b/208429 fast/css/user-drag-none.html [ Timeout Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-001.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-003.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-004.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-005.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-006.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/blocks-extraneous-data-007.xht [ ImageOnlyFailure Pass ]
@@ -2964,6 +2967,10 @@ webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
 
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
+
+webkit.org/b/211764 http/wpt/webrtc/generateCertificate.html [ Failure Pass ]
+
+webkit.org/b/211767 memory/memory-pressure-simulation.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -4884,7 +4891,7 @@ webkit.org/b/160119 animations/negative-delay.html [ Pass Failure ]
 
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/160119 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
+webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
 
 webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
