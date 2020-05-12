@@ -175,9 +175,12 @@ static bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<R
 
     ASSERT(dataSize == types.size());
 
-    data.resize(dataSize);
-    for (auto& buffer : data)
-        decodeSharedBuffer(decoder, buffer);
+    for (uint64_t i = 0; i < dataSize; i++) {
+        RefPtr<SharedBuffer> buffer;
+        if (!decodeSharedBuffer(decoder, buffer))
+            return false;
+        data.append(WTFMove(buffer));
+    }
 
     return true;
 }
