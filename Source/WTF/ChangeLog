@@ -1,3 +1,29 @@
+2020-05-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        AtomString::init should temporarily disable checks via `isMainThread` due to WebThread's inconsistent state
+        https://bugs.webkit.org/show_bug.cgi?id=211754
+
+        Reviewed by Dean Jackson.
+
+        When starting WebThread via StartWebThread function, we have special period between the prologue of StartWebThread and spawning WebThread actually.
+        In this period, `isMainThread()` returns false even if this is called on the main thread since WebThread is now enabled and we are not taking a WebThread lock.
+        This causes assertion hits in MainThreadLazyNeverDestroyed initialization only in WebThread platforms.
+
+        This patch takes conservative approach to fix this assertion hits: just bypass these assertions since this should not be fired. We bypass assertions by using
+        constructWithoutAccessCheck, which intentionally skips `isMainThread()` check for construction. In non WebThread environment, we do not lose the assertion
+        coverage since we already have ASSERT(isUIThread()). And ASSERT(isUIThread()) ensures that this is called in system main thread in WebThread platforms.
+
+        Unfortunately, we have no mechanism to test this effectively. WK1 LayoutTests runner cannot show assertions since WK1 runners already initialize necessary
+        things somewhere before calling AtomString::init() in StartWebThread. This is the same in TestWebKitAPI. For now, I manually tested that assertion does not fire.
+
+        * wtf/NeverDestroyed.h:
+        (WTF::LazyNeverDestroyed::construct):
+        (WTF::LazyNeverDestroyed::constructWithoutAccessCheck):
+        (WTF::LazyNeverDestroyed::storagePointerWithoutAccessCheck const):
+        (WTF::LazyNeverDestroyed::storagePointer const):
+        * wtf/text/AtomString.cpp:
+        (WTF::AtomString::init):
+
 2020-05-11  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc][WTF] Add computing memory size implementation for FreeBSD

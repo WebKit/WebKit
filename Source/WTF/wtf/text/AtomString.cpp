@@ -148,9 +148,16 @@ void AtomString::init()
 
         nullAtomData.construct();
         emptyAtomData.construct("");
-        starAtomData.construct("*", AtomString::ConstructFromLiteral);
-        xmlAtomData.construct("xml", AtomString::ConstructFromLiteral);
-        xmlnsAtomData.construct("xmlns", AtomString::ConstructFromLiteral);
+
+        // When starting WebThread via StartWebThread function, we have special period between the prologue of StartWebThread and spawning WebThread actually.
+        // In this period, `isMainThread()` returns false even if this is called on the main thread since WebThread is now enabled and we are not taking a WebThread lock.
+        // This causes assertion hits in MainThreadLazyNeverDestroyed initialization only in WebThread platforms.
+        // We bypass this by using constructWithoutAccessCheck, which intentionally skips `isMainThread()` check for construction.
+        // In non WebThread environment, we do not lose the assertion coverage since we already have ASSERT(isUIThread()). And ASSERT(isUIThread()) ensures that this
+        // is called in system main thread in WebThread platforms.
+        starAtomData.constructWithoutAccessCheck("*", AtomString::ConstructFromLiteral);
+        xmlAtomData.constructWithoutAccessCheck("xml", AtomString::ConstructFromLiteral);
+        xmlnsAtomData.constructWithoutAccessCheck("xmlns", AtomString::ConstructFromLiteral);
     });
 }
 

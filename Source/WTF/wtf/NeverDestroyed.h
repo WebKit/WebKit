@@ -118,14 +118,18 @@ public:
     template<typename... Args>
     void construct(Args&&... args)
     {
-        ASSERT(!m_isConstructed);
         AccessTraits::assertAccess();
+        constructWithoutAccessCheck(std::forward<Args>(args)...);
+    }
 
+    template<typename... Args>
+    void constructWithoutAccessCheck(Args&&... args)
+    {
+        ASSERT(!m_isConstructed);
 #if ASSERT_ENABLED
         m_isConstructed = true;
 #endif
-
-        MaybeRelax<T>(new (storagePointer()) T(std::forward<Args>(args)...));
+        MaybeRelax<T>(new (storagePointerWithoutAccessCheck()) T(std::forward<Args>(args)...));
     }
 
     operator T&() { return *storagePointer(); }
@@ -145,11 +149,16 @@ public:
 private:
     using PointerType = typename std::remove_const<T>::type*;
 
-    PointerType storagePointer() const
+    PointerType storagePointerWithoutAccessCheck() const
     {
         ASSERT(m_isConstructed);
-        AccessTraits::assertAccess();
         return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage));
+    }
+
+    PointerType storagePointer() const
+    {
+        AccessTraits::assertAccess();
+        return storagePointerWithoutAccessCheck();
     }
 
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
