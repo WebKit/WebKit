@@ -1,5 +1,44 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r260528. rdar://problem/62978914
+
+    REGRESSION (r249160): Deleting newline after pasting text ending in a newline results in a discontinuity
+    https://bugs.webkit.org/show_bug.cgi?id=210677
+    <rdar://problem/61954169>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: fast/text/delete-line-break-in-pre.html
+    
+    * rendering/RenderTextLineBoxes.cpp:
+    (WebCore::RenderTextLineBoxes::dirtyRange):
+    
+    r249160 changed InlineTextBox end offset to be consistently first-past-end.
+    The code here that updates lineBreakPos needs to take this into account too.
+    
+    LayoutTests:
+    
+    * fast/text/delete-line-break-in-pre-expected.html: Added.
+    * fast/text/delete-line-break-in-pre.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260528 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-22  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r249160): Deleting newline after pasting text ending in a newline results in a discontinuity
+            https://bugs.webkit.org/show_bug.cgi?id=210677
+            <rdar://problem/61954169>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/text/delete-line-break-in-pre-expected.html: Added.
+            * fast/text/delete-line-break-in-pre.html: Added.
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r259877. rdar://problem/62978910
 
     [CSS Shadow Parts] Bad style sharing between sibling elements with different part attributes
