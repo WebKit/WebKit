@@ -1624,10 +1624,10 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, 
 // As above, but this assumes that the function you're defining doesn't have an
 // intrinsic.
 #define JSC_NATIVE_FUNCTION(jsName, cppName, attributes, length) \
-    JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, (attributes), (length), NoIntrinsic)
+    JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, (attributes), (length), JSC::NoIntrinsic)
 
 #define JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, attributes, length) \
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, (attributes), (length), NoIntrinsic)
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, (attributes), (length), JSC::NoIntrinsic)
 
 // Identical helpers but for builtins. Note that currently, we don't support builtins that are
 // also intrinsics, but we probably will do that eventually.
@@ -1641,24 +1641,24 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(JSGlobalObject*, JSObject*, 
 
 #define JSC_TO_STRING_TAG_WITHOUT_TRANSITION() \
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, \
-        jsNontrivialString(vm, info()->className), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly)
+        jsNontrivialString(vm, info()->className), JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly)
 
 // Helper for defining native getters on properties.
 #define JSC_NATIVE_INTRINSIC_GETTER(jsName, cppName, attributes, intrinsic)  \
     putDirectNativeIntrinsicGetter(\
         vm, globalObject, makeIdentifier(vm, (jsName)), (cppName), \
-        (intrinsic), ((attributes) | PropertyAttribute::Accessor))
+        (intrinsic), ((attributes) | JSC::PropertyAttribute::Accessor))
 
 #define JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION(jsName, cppName, attributes, intrinsic)  \
     putDirectNativeIntrinsicGetterWithoutTransition(\
         vm, globalObject, makeIdentifier(vm, (jsName)), (cppName), \
-        (intrinsic), ((attributes) | PropertyAttribute::Accessor))
+        (intrinsic), ((attributes) | JSC::PropertyAttribute::Accessor))
 
 #define JSC_NATIVE_GETTER(jsName, cppName, attributes) \
-    JSC_NATIVE_INTRINSIC_GETTER((jsName), (cppName), (attributes), NoIntrinsic)
+    JSC_NATIVE_INTRINSIC_GETTER((jsName), (cppName), (attributes), JSC::NoIntrinsic)
 
 #define JSC_NATIVE_GETTER_WITHOUT_TRANSITION(jsName, cppName, attributes) \
-    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION((jsName), (cppName), (attributes), NoIntrinsic)
+    JSC_NATIVE_INTRINSIC_GETTER_WITHOUT_TRANSITION((jsName), (cppName), (attributes), JSC::NoIntrinsic)
 
 
 #define STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(DerivedClass, BaseClass) \

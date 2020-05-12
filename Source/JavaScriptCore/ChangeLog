@@ -1,3 +1,15 @@
+2020-05-11  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
+
+        Fix build errors after r260992
+        https://bugs.webkit.org/show_bug.cgi?id=211756
+
+        Reviewed by Darin Adler.
+
+        Add JSC namespace specifier to NonIntrinsic and PropertyAttribute
+        in the macros in JSObject.h since those can be used outside of
+        or without introducing JSC namespace. 
+        * runtime/JSObject.h:
+
 2020-05-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         [clang-tidy] Run modernize-use-override over JSC, then ensure as much as possible is final
