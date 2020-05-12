@@ -1,3 +1,14 @@
+2020-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        [FlatPak SDK] Some packages in the SDK have missing debug symbols
+        https://bugs.webkit.org/show_bug.cgi?id=211621
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak._get_packages): Unconditionally install SDK Debug symbols, even for Release
+        builds. This should help improve the crash reports on the bots.
+
 2020-05-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         WPT test importer fails to update references in <link> tags

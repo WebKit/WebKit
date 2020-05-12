@@ -893,11 +893,15 @@ class WebkitFlatpak:
         return 0
 
     def _get_packages(self):
+        # FIXME: Make arch configurable.
+        arch = "x86_64"
         self.runtime = FlatpakPackage("org.webkit.Platform", self.sdk_branch,
-                                      self.sdk_repo, "x86_64")
+                                      self.sdk_repo, arch)
         self.sdk = FlatpakPackage("org.webkit.Sdk", self.sdk_branch,
-                                  self.sdk_repo, "x86_64")
+                                  self.sdk_repo, arch)
         packages = [self.runtime, self.sdk]
+        packages.append(FlatpakPackage('org.webkit.Sdk.Debug', self.sdk_branch,
+                                       self.sdk_repo, arch))
 
         # FIXME: For unknown reasons, the GL extension needs to be explicitely
         # installed for Flatpak 1.2.x to be able to make use of it. Seems like
@@ -907,14 +911,9 @@ class WebkitFlatpak:
         )
 
         packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", "19.08",
-                                       self.flathub_repo, "x86_64"))
+                                       self.flathub_repo, arch))
         packages.append(FlatpakPackage("org.freedesktop.Platform.ffmpeg-full", "19.08",
-                                       self.flathub_repo, "x86_64"))
-
-        if self.debug:
-            sdk_debug = FlatpakPackage('org.webkit.Sdk.Debug', self.sdk_branch,
-                                       self.sdk_repo, "x86_64")
-            packages.append(sdk_debug)
+                                       self.flathub_repo, arch))
         return packages
 
     def install_all(self):
