@@ -6835,6 +6835,20 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if ([_webView _isNavigationSwipeGestureRecognizer:gestureRecognizer])
         return NO;
 
+    auto webView = _webView.getAutoreleased();
+    auto view = gestureRecognizer.view;
+    BOOL gestureIsInstalledOnOrUnderWebView = NO;
+    while (view) {
+        if (view == webView) {
+            gestureIsInstalledOnOrUnderWebView = YES;
+            break;
+        }
+        view = view.superview;
+    }
+
+    if (!gestureIsInstalledOnOrUnderWebView)
+        return NO;
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     auto isOneFingerMultipleTapGesture = [](UIGestureRecognizer *gesture) -> BOOL {
         if (![gesture isKindOfClass:UITapGestureRecognizer.class])

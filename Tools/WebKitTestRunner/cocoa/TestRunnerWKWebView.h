@@ -45,6 +45,7 @@
 @property (nonatomic, copy) void (^didDismissPopoverCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
+@property (nonatomic, copy) void (^windowTapRecognizedCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
 
 - (void)setAllowedMenuActions:(NSArray<NSString *> *)actions;
