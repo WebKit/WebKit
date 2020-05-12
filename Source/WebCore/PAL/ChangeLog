@@ -1,3 +1,47 @@
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r260832. rdar://problem/62978877
+
+    [Mac] Adopt kMTSupportNotification_ShouldPlayHDRVideoChanged notification
+    https://bugs.webkit.org/show_bug.cgi?id=211028
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore/PAL:
+    
+    Make MediaToolboxSoftLink fully exported from PAL.
+    
+    * pal/cf/CoreMediaSoftLink.cpp:
+    * pal/cocoa/MediaToolboxSoftLink.cpp:
+    * pal/cocoa/MediaToolboxSoftLink.h:
+    
+    Source/WebKit:
+    
+    Adopt a new notification which signals that the receiver should re-query for HDR support.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::webProcessPoolHighDynamicRangeDidChangeCallback):
+    (WebKit::WebProcessPool::registerHighDynamicRangeChangeCallback):
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::registerHighDynamicRangeChangeCallback):
+    (WebKit::WebProcessPool::initializeNewWebProcess):
+    * UIProcess/WebProcessPool.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260832 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-28  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Adopt kMTSupportNotification_ShouldPlayHDRVideoChanged notification
+            https://bugs.webkit.org/show_bug.cgi?id=211028
+
+            Reviewed by Eric Carlson.
+
+            Make MediaToolboxSoftLink fully exported from PAL.
+
+            * pal/cf/CoreMediaSoftLink.cpp:
+            * pal/cocoa/MediaToolboxSoftLink.cpp:
+            * pal/cocoa/MediaToolboxSoftLink.h:
+
 2020-04-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r259388. rdar://problem/61269730

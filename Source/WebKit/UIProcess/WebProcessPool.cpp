@@ -894,6 +894,12 @@ static void registerDisplayConfigurationCallback()
 }
 #endif
 
+#if !PLATFORM(MAC)
+void WebProcessPool::registerHighDynamicRangeChangeCallback()
+{
+}
+#endif
+
 WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
     websiteDataStore.resolveDirectoriesIfNecessary();
@@ -1073,6 +1079,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #if PLATFORM(MAC)
     registerDisplayConfigurationCallback();
 #endif
+
+    registerHighDynamicRangeChangeCallback();
 }
 
 void WebProcessPool::prewarmProcess()
