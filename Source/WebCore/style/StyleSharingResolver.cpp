@@ -225,6 +225,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (candidateElement.shadowPseudoId() != element.shadowPseudoId())
         return false;
+    if (element.isInShadowTree() && candidateElement.partNames() != element.partNames())
+        return false;
     if (&candidateElement == m_document.cssTarget())
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(context, candidateElement))

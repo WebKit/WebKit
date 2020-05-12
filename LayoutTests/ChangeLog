@@ -1,5 +1,48 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r259877. rdar://problem/62978910
+
+    [CSS Shadow Parts] Bad style sharing between sibling elements with different part attributes
+    https://bugs.webkit.org/show_bug.cgi?id=210249
+    <rdar://problem/61547528>
+    
+    Reviewed by Daniel Bates.
+    
+    Source/WebCore:
+    
+    Style sharing optimization was unconditionally allowed for elements that were styled with part pseudo element.
+    This could lead to miscomputed style.
+    
+    Test case by Justin Fagnani.
+    
+    Test: fast/css/shadow-parts/shadow-part-style-sharing.html
+    
+    * style/StyleSharingResolver.cpp:
+    (WebCore::Style::SharingResolver::canShareStyleWithElement):
+    
+    Only allow style sharing if parts match.
+    
+    LayoutTests:
+    
+    * fast/css/shadow-parts/shadow-part-style-sharing-expected.html: Added.
+    * fast/css/shadow-parts/shadow-part-style-sharing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259877 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-10  Antti Koivisto  <antti@apple.com>
+
+            [CSS Shadow Parts] Bad style sharing between sibling elements with different part attributes
+            https://bugs.webkit.org/show_bug.cgi?id=210249
+            <rdar://problem/61547528>
+
+            Reviewed by Daniel Bates.
+
+            * fast/css/shadow-parts/shadow-part-style-sharing-expected.html: Added.
+            * fast/css/shadow-parts/shadow-part-style-sharing.html: Added.
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r259141. rdar://problem/62978919
 
     Web Inspector: should also escape the method when Copy as cURL
