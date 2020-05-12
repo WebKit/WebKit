@@ -1,5 +1,78 @@
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r260979. rdar://problem/62978869
+
+    REGRESSION: Double tap dispatches one click event on iOS 13.4 when it would dispatch two on iOS 13.3
+    https://bugs.webkit.org/show_bug.cgi?id=211179
+    <rdar://problem/62594779>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    https://trac.webkit.org/r253267 introduced deferring gesture recognizers as a way to handle preventable (non-
+    passive) touchstart events without blocking the UI process. These deferring gesture recognizers work by having
+    other gesture recognizers at or below WKWebView (with few exceptions) require the failure of these deferring
+    gestures. These gestures transition to possible state when beginning a touch inside a non-passive touch event
+    handling region, and transition to either failed or ended state (depending on whether `preventDefault()` was
+    called) after the web content process finished handling the touch event.
+    
+    However, this means that the resulting dependency graph now has an edge between each gesture under WKWebView and
+    one of the deferring gesture recognizers, due to these new failure requirements. Since gestures that have been
+    recognized or have failed don't get reset until all other gestures in the same dependency subgraph have also
+    recognized or failed, some gestures (such as the synthetic single tap gesture recognizer in this bug) might not
+    be resetting as soon after ending as they did before, since they may be connected to other gesture recognizers
+    that are still in possible state by way of the failure requirements added by the new deferring gestures.
+    
+    I was already aware of this problem in r253267, and attempted to solve this by bisecting the gesture dependency
+    graph into two subgraphs: one containing all the one-finger multi-tap gestures that are reset after a lengthy
+    delay, and another containing everything else. To do this, I added two different deferring gesture recognizers:
+    one for immediately resettable gestures (meant for gestures in the latter subgraph), and another for gestures
+    that are reset after a delay (meant for gestures in the former subgraph).
+    
+    Unfortunately, unrelated changes around text interactions in UIKit in iOS 13.4 caused the tap-and-a-half
+    gesture for selecting a range of text to now have a delayed reset; this means that gestures in the "immediately
+    resettable" gesture subgraph are all forced to wait on the tap-and-a-half text interaction gesture before
+    resetting, which causes the bug here, since the synthetic single tap gesture is in this "immediately resettable"
+    gesture subgraph.
+    
+    To mitigate this, this patch pushes the tap-and-a-half text selection gesture, along with the loupe gesture,
+    context menu relationship gesture, and drag lift gestures (i.e. the other gestures that are connected to the
+    tap-and-a-half gesture via failure requirements) out of the "immediately resettable" subgraph, and into the
+    "delayed" subgraph.
+    
+    Test: fast/events/touch/ios/two-click-events-after-double-tap-with-touch-handler.html
+    
+    * Platform/spi/ios/UIKitSPI.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that double tapping a button with fast-clicking enabled (i.e. in a device-width
+    viewport) fires two click events.
+    
+    * fast/events/touch/ios/two-click-events-after-double-tap-with-touch-handler-expected.txt: Added.
+    * fast/events/touch/ios/two-click-events-after-double-tap-with-touch-handler.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260979 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION: Double tap dispatches one click event on iOS 13.4 when it would dispatch two on iOS 13.3
+            https://bugs.webkit.org/show_bug.cgi?id=211179
+            <rdar://problem/62594779>
+
+            Reviewed by Tim Horton.
+
+            Add a new layout test to verify that double tapping a button with fast-clicking enabled (i.e. in a device-width
+            viewport) fires two click events.
+
+            * fast/events/touch/ios/two-click-events-after-double-tap-with-touch-handler-expected.txt: Added.
+            * fast/events/touch/ios/two-click-events-after-double-tap-with-touch-handler.html: Added.
+
+2020-05-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r259669. rdar://problem/63111225
 
     Preventing touch events should not prevent gestures installed above WKWebView from recognizing

@@ -6832,6 +6832,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
+#if ENABLE(IOS_TOUCH_EVENTS)
     if ([_webView _isNavigationSwipeGestureRecognizer:gestureRecognizer])
         return NO;
 
@@ -6849,39 +6850,46 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if (!gestureIsInstalledOnOrUnderWebView)
         return NO;
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-    auto isOneFingerMultipleTapGesture = [](UIGestureRecognizer *gesture) -> BOOL {
-        if (![gesture isKindOfClass:UITapGestureRecognizer.class])
-            return NO;
+    if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
+        return NO;
 
-        UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
-        return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
-    };
+    if (gestureRecognizer == _touchEventGestureRecognizer)
+        return NO;
 
-    if (deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures) {
-        if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-            return NO;
-
-        if (gestureRecognizer == _touchEventGestureRecognizer)
-            return NO;
-
-        return isOneFingerMultipleTapGesture(gestureRecognizer);
-    }
-
-    if (deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures) {
-        if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
-            return NO;
-
-        if (gestureRecognizer == _touchEventGestureRecognizer)
-            return NO;
-
-        return !isOneFingerMultipleTapGesture(gestureRecognizer);
-    }
-
-    ASSERT_NOT_REACHED();
+    auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
+#if USE(UICONTEXTMENU)
+        if (gesture == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+            return YES;
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+        if (gesture.delegate == [_dragInteraction _initiationDriver])
+            return YES;
+#endif
+
+        if ([gesture isKindOfClass:tapAndAHalfRecognizerClass()])
+            return YES;
+
+        if (gesture == [_textInteractionAssistant loupeGesture])
+            return YES;
+
+        if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
+            UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+            return tapGesture.numberOfTapsRequired > 1 && tapGesture.numberOfTouchesRequired < 2;
+        }
+
+        return NO;
+    };
+
+    if (mayDelayResetOfContainingSubgraph(gestureRecognizer))
+        return deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures;
+
+    return deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures;
+#else
+    UNUSED_PARAM(deferringGestureRecognizer);
+    UNUSED_PARAM(gestureRecognizer);
     return NO;
+#endif
 }
 
 #if ENABLE(DRAG_SUPPORT)
