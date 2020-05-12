@@ -164,6 +164,12 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
 void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
+
+    m_taskQueue.enqueueTask([weakSession = makeWeakPtr(session)] {
+        if (weakSession)
+            weakSession->updateMediaUsageIfChanged();
+    });
+
     if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No) {
         updateNowPlayingInfo();
         return;
