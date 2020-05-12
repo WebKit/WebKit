@@ -33,3 +33,6 @@ PASS: Command should be a PUT request.
 PASS: Command should have JSON Content-Type.
 PASS: Command should contain correct JSON data.
 
+-- Running test case: SpecialMethodGenerateCURLValidPOSIXOutput
+PASS: Command should contain method with properly escaped special characters.
+
