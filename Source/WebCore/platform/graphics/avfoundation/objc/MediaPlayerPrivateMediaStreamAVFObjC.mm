@@ -202,8 +202,10 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
     if (m_mediaStreamPrivate) {
         m_mediaStreamPrivate->removeObserver(*this);
 
-        for (auto& track : m_mediaStreamPrivate->tracks())
-            track->removeObserver(*this);
+        for (auto& track : m_audioTrackMap.values())
+            track->streamTrack().removeObserver(*this);
+        for (auto& track : m_videoTrackMap.values())
+            track->streamTrack().removeObserver(*this);
     }
 
     destroyLayers();
@@ -912,8 +914,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
     }
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate&)
+void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate& privateStream)
 {
+    ASSERT(m_mediaStreamPrivate);
     scheduleDeferredTask([this] {
         updateReadyState();
     });

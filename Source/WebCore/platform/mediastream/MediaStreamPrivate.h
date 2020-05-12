@@ -88,7 +88,7 @@ public:
     void updateActiveState(NotifyClientOption);
 
     void addTrack(RefPtr<MediaStreamTrackPrivate>&&, NotifyClientOption = NotifyClientOption::Notify);
-    void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption = NotifyClientOption::Notify);
+    WEBCORE_EXPORT void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption = NotifyClientOption::Notify);
 
     void startProducingData();
     void stopProducingData();
