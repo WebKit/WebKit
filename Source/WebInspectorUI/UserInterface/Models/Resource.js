@@ -1103,14 +1103,14 @@ WI.Resource = class Resource extends WI.SourceCode
                                  .replace(/\r/g, "\\r")
                                  .replace(/!/g, "\\041")
                                  .replace(/[^\x20-\x7E]/g, escapeCharacter) + "'";
-            } else {
-                // Use single quote syntax.
-                return `'${str}'`;
             }
+
+            // Use single quote syntax.
+            return `'${str}'`;
         }
 
         let command = ["curl " + escapeStringPosix(this.url).replace(/[[{}\]]/g, "\\$&")];
-        command.push(`-X${this.requestMethod}`);
+        command.push("-X " + escapeStringPosix(this.requestMethod));
 
         for (let key in this.requestHeaders)
             command.push("-H " + escapeStringPosix(`${key}: ${this.requestHeaders[key]}`));
