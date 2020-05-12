@@ -1,3 +1,17 @@
+2020-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Audio messages in web.whatsapp.com only play once.
+        https://bugs.webkit.org/show_bug.cgi?id=211627
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: media/video-src-blob-replay.html
+        
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag): Make sure on-disk
+        buffering is disabled for blob URIs, because it messes up the pipeline for replays, and it's
+        useless for that use-case anyway.
+
 2020-05-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Need to advertise support for WebP in the Accept header
