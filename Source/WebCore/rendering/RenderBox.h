@@ -160,6 +160,9 @@ public:
     LayoutRect contentBoxRect() const;
     LayoutPoint contentBoxLocation() const;
 
+    // .https://drafts.csswg.org/css-transforms-1/#reference-box
+    LayoutRect referenceBox(CSSBoxType) const;
+
     // The content box in absolute coords. Ignores transforms.
     IntRect absoluteContentBox() const;
     // The content box converted to absolute coords (taking transforms into account).

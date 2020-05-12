@@ -1,3 +1,35 @@
+2020-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Perpective origin should be relative to the reference box
+        https://bugs.webkit.org/show_bug.cgi?id=211769
+
+        Reviewed by Zalan Bujtas.
+
+        Use the reference box <https://drafts.csswg.org/css-transforms-1/#reference-box> when
+        computing perspective-origin <https://drafts.csswg.org/css-transforms-2/#perspective-origin-property>,
+        adding a referenceBox() helper on RenderBox.
+
+        The code to compute the perspective transform is wrong; for now, fudge it by passing in the border box,
+        but this code needs to account for GraphicsLayer geometry and transform-origin in future (webkit.org/b/211787).
+
+        Test: compositing/transforms/perspective-transform-box.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::referenceBox const):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceRectFromBox):
+        (WebCore::computeReferenceBox):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform const):
+        (WebCore::RenderLayer::perspectiveTransform const):
+        (WebCore::RenderLayer::computeClipPath const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed PlayStation / clang-cl build fix following r261533.

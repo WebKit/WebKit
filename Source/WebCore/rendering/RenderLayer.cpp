@@ -1246,37 +1246,14 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 }
 #endif
 
-static inline LayoutRect computeReferenceRectFromBox(const RenderBox& box, const CSSBoxType& boxType, const LayoutSize& offsetFromRoot)
+static inline LayoutRect computeReferenceRectFromBox(const RenderBox& box, CSSBoxType boxType, const LayoutSize& offsetFromRoot)
 {
-    LayoutRect referenceBox;
-    switch (boxType) {
-    case CSSBoxType::ContentBox:
-    case CSSBoxType::FillBox:
-        referenceBox = box.contentBoxRect();
-        referenceBox.move(offsetFromRoot);
-        break;
-    case CSSBoxType::PaddingBox:
-        referenceBox = box.paddingBoxRect();
-        referenceBox.move(offsetFromRoot);
-        break;
-    case CSSBoxType::MarginBox:
-        referenceBox = box.marginBoxRect();
-        referenceBox.move(offsetFromRoot);
-        break;
-    // stroke-box, view-box compute to border-box for HTML elements.
-    case CSSBoxType::StrokeBox:
-    case CSSBoxType::ViewBox:
-    case CSSBoxType::BorderBox:
-    case CSSBoxType::BoxMissing:
-        referenceBox = box.borderBoxRect();
-        referenceBox.move(offsetFromRoot);
-        break;
-    }
-
+    auto referenceBox = box.referenceBox(boxType);
+    referenceBox.move(offsetFromRoot);
     return referenceBox;
 }
 
-static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const CSSBoxType& boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds)
+static inline LayoutRect computeReferenceBox(const RenderObject& renderer, CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds)
 {
     // FIXME: Support different reference boxes for inline content.
     // https://bugs.webkit.org/show_bug.cgi?id=129047
@@ -1322,12 +1299,9 @@ void RenderLayer::updateTransform()
     }
     
     if (hasTransform) {
-        RenderBox* box = renderBox();
-        ASSERT(box);
+        auto& renderBox = downcast<RenderBox>(renderer());
         m_transform->makeIdentity();
-        LayoutSize offsetFromRoot;
-        auto computedReferenceBox = computeReferenceRectFromBox(*box, transformBoxToCSSBoxType(box->style().transformBox()), offsetFromRoot);
-        box->style().applyTransform(*m_transform, snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor()), RenderStyle::IncludeTransformOrigin);
+        renderBox.style().applyTransform(*m_transform, snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(renderBox.style().transformBox())), renderBox.document().deviceScaleFactor()), RenderStyle::IncludeTransformOrigin);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());
     }
 
@@ -1341,18 +1315,19 @@ void RenderLayer::updateTransform()
 TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOrigin applyOrigin) const
 {
     if (!m_transform)
-        return TransformationMatrix();
-    
-    RenderBox* box = renderBox();
+        return { };
+
+    if (!is<RenderBox>(renderer()))
+        return { };
+
+    auto& renderBox = downcast<RenderBox>(renderer());
 
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         if (auto* timeline = renderer().documentTimeline()) {
             if (timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
                 TransformationMatrix currTransform;
-                LayoutSize offsetFromRoot;
                 std::unique_ptr<RenderStyle> style = timeline->animatedStyleForRenderer(renderer());
-                auto computedReferenceBox = computeReferenceBox(renderer(), transformBoxToCSSBoxType(style->transformBox()), offsetFromRoot, box->borderBoxRect());
-                FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor());
+                FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
                 style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
                 makeMatrixRenderable(currTransform, canRender3DTransforms());
                 return currTransform;
@@ -1362,9 +1337,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
         if (renderer().legacyAnimation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
             TransformationMatrix currTransform;
             std::unique_ptr<RenderStyle> style = renderer().legacyAnimation().animatedStyleForRenderer(renderer());
-            LayoutSize offsetFromRoot;
-            auto computedReferenceBox = computeReferenceBox(renderer(), transformBoxToCSSBoxType(style->transformBox()), offsetFromRoot, box->borderBoxRect());
-            FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor());
+            FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
             style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
             makeMatrixRenderable(currTransform, canRender3DTransforms());
             return currTransform;
@@ -1375,11 +1348,9 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     // m_transform includes transform-origin, so we need to recompute the transform here.
     if (applyOrigin == RenderStyle::ExcludeTransformOrigin) {
         TransformationMatrix currTransform;
-        LayoutSize offsetFromRoot;
         std::unique_ptr<RenderStyle> style = renderer().legacyAnimation().animatedStyleForRenderer(renderer());
-        auto computedReferenceBox = computeReferenceBox(renderer(), transformBoxToCSSBoxType(style->transformBox()), offsetFromRoot, box->borderBoxRect());
-        FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(computedReferenceBox, box->document().deviceScaleFactor());
-        box->style().applyTransform(currTransform, pixelSnappedBorderRect, RenderStyle::ExcludeTransformOrigin);
+        FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
+        renderBox.style().applyTransform(currTransform, pixelSnappedBorderRect, RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
@@ -1761,34 +1732,35 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
     return positionOrOffsetChanged;
 }
 
-TransformationMatrix RenderLayer::perspectiveTransform() const
+TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRect) const
 {
-    RenderBox* box = renderBox();
-    if (!box)
-        return TransformationMatrix();
-    
-    if (!box->hasTransformRelatedProperty())
-        return TransformationMatrix();
+    if (!is<RenderBox>(renderer()))
+        return { };
 
-    const RenderStyle& style = box->style();
+    auto& renderBox = downcast<RenderBox>(renderer());
+    if (!renderBox.hasTransformRelatedProperty())
+        return { };
+
+    const auto& style = renderBox.style();
     if (!style.hasPerspective())
-        return TransformationMatrix();
+        return { };
 
-    // Maybe fetch the perspective from the backing?
-    const FloatRect borderBox = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
-    float perspectiveOriginX = floatValueForLength(style.perspectiveOriginX(), borderBox.width());
-    float perspectiveOriginY = floatValueForLength(style.perspectiveOriginY(), borderBox.height());
+    auto referenceBox = renderBox.referenceBox(transformBoxToCSSBoxType(style.transformBox()));
+    auto pixelSnappedReferenceBox = snapRectToDevicePixels(referenceBox, renderBox.document().deviceScaleFactor());
+
+    float perspectiveOriginX = pixelSnappedReferenceBox.x() + floatValueForLength(style.perspectiveOriginX(), pixelSnappedReferenceBox.width());
+    float perspectiveOriginY = pixelSnappedReferenceBox.y() + floatValueForLength(style.perspectiveOriginY(), pixelSnappedReferenceBox.height());
 
     // A perspective origin of 0,0 makes the vanishing point in the center of the element.
     // We want it to be in the top-left, so subtract half the height and width.
-    perspectiveOriginX -= borderBox.width() / 2.0f;
-    perspectiveOriginY -= borderBox.height() / 2.0f;
-    
+    perspectiveOriginX -= layerRect.width() / 2.0f;
+    perspectiveOriginY -= layerRect.height() / 2.0f;
+
     TransformationMatrix t;
     t.translate(perspectiveOriginX, perspectiveOriginY);
     t.applyPerspective(style.perspective());
     t.translate(-perspectiveOriginX, -perspectiveOriginY);
-    
+
     return t;
 }
 
@@ -4421,14 +4393,21 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
 
     if (is<ShapeClipPathOperation>(*style.clipPath())) {
         auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
-        FloatRect referenceBox = snapRectToDevicePixels(computeReferenceBox(renderer(), clipPath.referenceBox(), offsetFromRoot, rootRelativeBounds), deviceSaleFactor);
+
+        LayoutRect referenceBox;
+        if (is<RenderBox>(renderer())) {
+            referenceBox = downcast<RenderBox>(renderer()).referenceBox(clipPath.referenceBox());
+            referenceBox.move(offsetFromRoot);
+        } else
+            referenceBox = rootRelativeBounds;
+
+        FloatRect snappedReferenceBox = snapRectToDevicePixels(referenceBox, deviceSaleFactor);
 
         windRule = clipPath.windRule();
-        return clipPath.pathForReferenceRect(referenceBox);
+        return clipPath.pathForReferenceRect(snappedReferenceBox);
     }
-    
-    if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
 
+    if (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
         auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
 
         FloatRoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(deviceSaleFactor);
@@ -4437,7 +4416,7 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
         windRule = WindRule::NonZero;
         return clipPath.pathForReferenceRect(shapeRect);
     }
-    
+
     return Path();
 }
 

@@ -801,7 +801,7 @@ public:
     // Get the perspective transform, which is applied to transformed sublayers.
     // Returns true if the layer has a -webkit-perspective.
     // Note that this transform has the perspective-origin baked in.
-    TransformationMatrix perspectiveTransform() const;
+    TransformationMatrix perspectiveTransform(const LayoutRect& layerRect) const;
     FloatPoint perspectiveOrigin() const;
     bool preserves3D() const { return renderer().style().transformStyle3D() == TransformStyle3D::Preserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }

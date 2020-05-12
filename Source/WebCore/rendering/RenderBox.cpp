@@ -698,6 +698,27 @@ LayoutPoint RenderBox::contentBoxLocation() const
     return { borderLeft() + paddingLeft() + scrollbarSpace, borderTop() + paddingTop() };
 }
 
+LayoutRect RenderBox::referenceBox(CSSBoxType boxType) const
+{
+    LayoutRect referenceBox;
+    switch (boxType) {
+    case CSSBoxType::ContentBox:
+    case CSSBoxType::FillBox:
+        return contentBoxRect();
+    case CSSBoxType::PaddingBox:
+        return paddingBoxRect();
+    case CSSBoxType::MarginBox:
+        return marginBoxRect();
+    // stroke-box, view-box compute to border-box for HTML elements.
+    case CSSBoxType::StrokeBox:
+    case CSSBoxType::ViewBox:
+    case CSSBoxType::BorderBox:
+    case CSSBoxType::BoxMissing:
+        return borderBoxRect();
+    }
+    return { };
+}
+
 IntRect RenderBox::absoluteContentBox() const
 {
     // This is wrong with transforms and flipped writing modes.

@@ -2022,25 +2022,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         switch (style().clipPath()->type()) {
         case ClipPathOperation::Shape: {
             auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
-
-            LayoutRect referenceBoxRect;
-            switch (clipPath.referenceBox()) {
-            case CSSBoxType::MarginBox:
-                referenceBoxRect = marginBoxRect();
-                break;
-            case CSSBoxType::PaddingBox:
-                referenceBoxRect = paddingBoxRect();
-                break;
-            case CSSBoxType::FillBox:
-            case CSSBoxType::ContentBox:
-                referenceBoxRect = contentBoxRect();
-                break;
-            case CSSBoxType::StrokeBox:
-            case CSSBoxType::ViewBox:
-            case CSSBoxType::BorderBox:
-            case CSSBoxType::BoxMissing:
-                referenceBoxRect = borderBoxRect();
-            }
+            auto referenceBoxRect = referenceBox(clipPath.referenceBox());
             if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath.windRule()))
                 return false;
             break;
