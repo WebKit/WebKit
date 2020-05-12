@@ -547,11 +547,13 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
         firstRootBox->markDirty();
         dirtiedLines = true;
     }
+
     for (auto* current = firstRootBox; current && current != lastRootBox; current = current->nextRootBox()) {
-        if (current->lineBreakObj() == &renderer && current->lineBreakPos() > end)
+        auto lineBreakPos = current->lineBreakPos();
+        if (current->lineBreakObj() == &renderer && (lineBreakPos > end || (start != end && lineBreakPos == end)))
             current->setLineBreakPos(current->lineBreakPos() + lengthDelta);
     }
-    
+
     // If the text node is empty, dirty the line where new text will be inserted.
     if (!m_first && renderer.parent()) {
         renderer.parent()->dirtyLinesFromChangedChild(renderer);
