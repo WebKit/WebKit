@@ -1858,8 +1858,8 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     const auto& indexMap = info.indexMap();
     bool anyRecordsSucceeded = false;
 
-    for (const auto& [indexID, indexKey] : indexKeys) {
-        auto indexIterator = indexMap.find(indexID);
+    for (const auto& entry : indexKeys) {
+        auto indexIterator = indexMap.find(entry.key);
         ASSERT(indexIterator != indexMap.end());
 
         if (indexIterator == indexMap.end()) {
@@ -1867,7 +1867,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
             break;
         }
 
-        error = uncheckedPutIndexKey(indexIterator->value, key, indexKey, recordID);
+        error = uncheckedPutIndexKey(indexIterator->value, key, entry.value, recordID);
         if (!error.isNull())
             break;
 

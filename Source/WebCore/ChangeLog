@@ -1,5 +1,17 @@
 2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed PlayStation / clang-cl build fix following r261533.
+
+        clang for Windows (< v10.0.0) cannot destructure a const class.
+        See also r254471, r249524, etc.
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+
+2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
+
         Unreviewed PlayStation build fix following r261494.
 
         * PlatformPlayStation.cmake:
