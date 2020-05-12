@@ -1,3 +1,24 @@
+2020-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Poster set after playback begins should be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=211464
+        <rdar://problem/62605114>
+
+        Reviewed by Darin Adler.
+
+        Test: media/video-poster-set-after-playback.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Ignore `poster` changes after first video frame
+        is available.
+        (WebCore::HTMLVideoElement::updateDisplayState): Set mode to Video if the first video
+        frame is available.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementShouldDisplayPosterImage const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Perpective origin should be relative to the reference box

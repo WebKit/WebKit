@@ -132,6 +132,9 @@ bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == posterAttr) {
+        if (hasAvailableVideoFrame())
+            return;
+
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
         HTMLMediaElement::setDisplayMode(Unknown);
         updateDisplayState();
@@ -161,7 +164,6 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
         }
 #endif
     }
-
 }
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
@@ -278,7 +280,7 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 
 void HTMLVideoElement::updateDisplayState()
 {
-    if (posterImageURL().isEmpty())
+    if (posterImageURL().isEmpty() || hasAvailableVideoFrame())
         setDisplayMode(Video);
     else if (displayMode() < Poster)
         setDisplayMode(Poster);
