@@ -32,6 +32,7 @@
 #include "GestureController.h"
 #include "InputMethodState.h"
 #include "SameDocumentNavigationType.h"
+#include "ShareableBitmap.h"
 #include "ViewGestureController.h"
 #include "ViewSnapshotStore.h"
 #include "WebContextMenuProxyGtk.h"
@@ -39,6 +40,8 @@
 #include "WebKitInputMethodContext.h"
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
+#include <WebCore/DragActions.h>
+#include <WebCore/SelectionData.h>
 #include <wtf/Optional.h>
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
@@ -78,8 +81,9 @@ void webkitWebViewBaseDidExitWebProcess(WebKitWebViewBase*);
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
 void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 
-#if ENABLE(DRAG_SUPPORT) && !USE(GTK4)
-WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);
+#if ENABLE(DRAG_SUPPORT)
+void webkitWebViewBaseStartDrag(WebKitWebViewBase*, Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<WebKit::ShareableBitmap>&&);
+void webkitWebViewBaseDidPerformDragControllerAction(WebKitWebViewBase*);
 #endif
 
 #if !USE(GTK4)

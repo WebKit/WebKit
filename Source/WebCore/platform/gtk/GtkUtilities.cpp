@@ -102,4 +102,51 @@ unsigned stateModifierForGdkButton(unsigned button)
     return 1 << (8 + button - 1);
 }
 
+DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction)
+{
+    // We have no good way to detect DragOperationEvery other than
+    // to use it when all applicable flags are on.
+    if (gdkAction & GDK_ACTION_COPY
+        && gdkAction & GDK_ACTION_MOVE
+        && gdkAction & GDK_ACTION_LINK)
+        return DragOperationEvery;
+
+    unsigned action = DragOperationNone;
+    if (gdkAction & GDK_ACTION_COPY)
+        action |= DragOperationCopy;
+    if (gdkAction & GDK_ACTION_MOVE)
+        action |= DragOperationMove;
+    if (gdkAction & GDK_ACTION_LINK)
+        action |= DragOperationLink;
+
+    return static_cast<DragOperation>(action);
+}
+
+GdkDragAction dragOperationToGdkDragActions(DragOperation coreAction)
+{
+    unsigned gdkAction = 0;
+    if (coreAction == DragOperationNone)
+        return static_cast<GdkDragAction>(gdkAction);
+
+    if (coreAction & DragOperationCopy)
+        gdkAction |= GDK_ACTION_COPY;
+    if (coreAction & DragOperationMove)
+        gdkAction |= GDK_ACTION_MOVE;
+    if (coreAction & DragOperationLink)
+        gdkAction |= GDK_ACTION_LINK;
+
+    return static_cast<GdkDragAction>(gdkAction);
+}
+
+GdkDragAction dragOperationToSingleGdkDragAction(DragOperation coreAction)
+{
+    if (coreAction == DragOperationEvery || coreAction & DragOperationCopy)
+        return GDK_ACTION_COPY;
+    if (coreAction & DragOperationMove)
+        return GDK_ACTION_MOVE;
+    if (coreAction & DragOperationLink)
+        return GDK_ACTION_LINK;
+    return static_cast<GdkDragAction>(0);
+}
+
 } // namespace WebCore

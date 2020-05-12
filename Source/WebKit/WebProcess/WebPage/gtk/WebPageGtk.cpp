@@ -42,7 +42,6 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
-#include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/Settings.h>

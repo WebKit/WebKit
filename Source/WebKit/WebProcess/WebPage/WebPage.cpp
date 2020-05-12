@@ -3943,7 +3943,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
         return;
     }
     case DragControllerAction::Updated: {
-        DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
+        DragOperation resolvedDragOperation = m_page->dragController().dragUpdated(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().dragHandlingMethod(), m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }, { }));
         return;
     }

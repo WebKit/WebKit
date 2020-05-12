@@ -2424,6 +2424,7 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, WebCor
     m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
     m_currentDragCaretEditableElementRect = editableElementRect;
     setDragCaretRect(insertionRect);
+    pageClient().didPerformDragControllerAction();
 }
 
 #if PLATFORM(GTK)

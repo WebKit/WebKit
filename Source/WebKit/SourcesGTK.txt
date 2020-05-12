@@ -194,6 +194,10 @@ UIProcess/API/glib/WebKitWebsiteData.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
 UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
 
+UIProcess/API/gtk/DragSourceGtk3.cpp @no-unify
+UIProcess/API/gtk/DragSourceGtk4.cpp @no-unify
+UIProcess/API/gtk/DropTargetGtk3.cpp @no-unify
+UIProcess/API/gtk/DropTargetGtk4.cpp @no-unify
 UIProcess/API/gtk/InputMethodFilterGtk.cpp @no-unify
 UIProcess/API/gtk/PageClientImpl.cpp @no-unify
 UIProcess/API/gtk/WebKitAuthenticationDialog.cpp @no-unify
@@ -256,7 +260,6 @@ UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
 UIProcess/gtk/ClipboardGtk3.cpp @no-unify
 UIProcess/gtk/ClipboardGtk4.cpp @no-unify
-UIProcess/gtk/DragAndDropHandler.cpp
 UIProcess/gtk/GestureController.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp
 UIProcess/gtk/KeyBindingTranslator.cpp

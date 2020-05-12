@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "DragActions.h"
 #include <gtk/gtk.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
@@ -46,5 +47,9 @@ WallTime wallTimeForEvent(const GdkEvent*);
 String defaultGtkSystemFont();
 
 WEBCORE_EXPORT unsigned stateModifierForGdkButton(unsigned button);
+
+WEBCORE_EXPORT DragOperation gdkDragActionToDragOperation(GdkDragAction);
+WEBCORE_EXPORT GdkDragAction dragOperationToGdkDragActions(DragOperation);
+WEBCORE_EXPORT GdkDragAction dragOperationToSingleGdkDragAction(DragOperation);
 
 } // namespace WebCore

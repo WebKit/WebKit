@@ -330,14 +330,12 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
 #if ENABLE(DRAG_SUPPORT)
 void PageClientImpl::startDrag(Ref<SelectionData>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
 {
-#if !USE(GTK4)
-    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
-    webkitWebViewBaseDragAndDropHandler(webView).startDrag(WTFMove(selection), dragOperation, WTFMove(dragImage));
+    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperation, WTFMove(dragImage));
+}
 
-    // A drag starting should prevent a double-click from happening. This might
-    // happen if a drag is followed very quickly by another click (like in the WTR).
-    webkitWebViewBaseResetClickCounter(webView);
-#endif
+void PageClientImpl::didPerformDragControllerAction()
+{
+    webkitWebViewBaseDidPerformDragControllerAction(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 #endif
 

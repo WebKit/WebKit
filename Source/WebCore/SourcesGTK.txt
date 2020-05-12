@@ -107,7 +107,6 @@ platform/gtk/GRefPtrGtk.cpp
 platform/gtk/GtkUtilities.cpp
 platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
-platform/gtk/PasteboardHelper.cpp
 platform/gtk/PlatformKeyboardEventGtk.cpp
 platform/gtk/PlatformScreenGtk.cpp
 platform/gtk/PlatformWheelEventGtk.cpp

@@ -1,3 +1,51 @@
+2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rework drag and drop handling in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=211723
+
+        Reviewed by Adrian Perez de Castro.
+
+        Split DragAndDropHelper class into DragSource and DropTarget classes. This separates the source and destination
+        parts making it easier to follow. This patch also adds PageClient::didPerformDragControllerAction() to notify
+        back the view when an operation is done to update the result.
+
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/DragSource.h: Added.
+        * UIProcess/API/gtk/DragSourceGtk3.cpp: Added.
+        (WebKit::DragSource::DragSource):
+        (WebKit::DragSource::~DragSource):
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DropTarget.h: Added.
+        * UIProcess/API/gtk/DropTargetGtk3.cpp: Added.
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::~DropTarget):
+        (WebKit::DropTarget::accept):
+        (WebKit::DropTarget::enter):
+        (WebKit::DropTarget::update):
+        (WebKit::DropTarget::dataReceived):
+        (WebKit::DropTarget::didPerformAction):
+        (WebKit::DropTarget::leaveTimerFired):
+        (WebKit::DropTarget::leave):
+        (WebKit::DropTarget::drop):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        (WebKit::PageClientImpl::didPerformDragControllerAction):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseStartDrag):
+        (webkitWebViewBaseDidPerformDragControllerAction):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didPerformDragControllerAction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        * UIProcess/gtk/DragAndDropHandler.cpp: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+
 2020-05-12  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r261557.

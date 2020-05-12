@@ -61,7 +61,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/gtk/GUniquePtrGtk.h
     platform/gtk/GtkUtilities.h
     platform/gtk/GtkVersioning.h
-    platform/gtk/PasteboardHelper.h
     platform/gtk/ScrollbarThemeGtk.h
     platform/gtk/SelectionData.h
 

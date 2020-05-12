@@ -101,6 +101,7 @@ private:
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&) override;
 #if ENABLE(DRAG_SUPPORT)
     void startDrag(Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage) override;
+    void didPerformDragControllerAction() override;
 #endif
 
     void enterAcceleratedCompositingMode(const LayerTreeContext&) override;

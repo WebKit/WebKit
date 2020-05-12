@@ -250,6 +250,7 @@ public:
     virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
 #endif
     virtual void didPerformDragOperation(bool) { }
+    virtual void didPerformDragControllerAction() { }
 #endif // ENABLE(DRAG_SUPPORT)
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
