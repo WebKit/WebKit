@@ -1,3 +1,17 @@
+2020-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Speculative fix for crash in ScrollingTree::handleWheelEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=211763
+        <rdar://problem/62926117>
+
+        Reviewed by Andy Estes.
+
+        Crash data shows a null-deref crash in ScrollingTree::handleWheelEvent() which
+        is most likely because m_rootNode is null. Protect against this.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+
 2020-05-12  Youenn Fablet  <youenn@apple.com>
 
         Allow WebAudioBufferList to dynamically change its number of frames

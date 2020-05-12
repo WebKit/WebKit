@@ -104,12 +104,11 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
 
     auto result = [&] {
-        if (!asyncFrameOrOverflowScrollingEnabled()) {
-            if (m_rootNode)
-                return m_rootNode->handleWheelEvent(wheelEvent);
-
+        if (!m_rootNode)
             return ScrollingEventResult::DidNotHandleEvent;
-        }
+
+        if (!asyncFrameOrOverflowScrollingEnabled())
+            return m_rootNode->handleWheelEvent(wheelEvent);
 
         if (m_gestureState.handleGestureCancel(wheelEvent))
             return ScrollingEventResult::DidHandleEvent;
