@@ -1,3 +1,25 @@
+2020-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK1] requestAnimationFrame doesn't work since r244182 in Accelerated Compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=211798
+
+        Reviewed by Don Olmstead.
+
+        Page::updateRendering() should be called for every frames instead
+        of FrameView::updateLayoutAndStyleIfNeededRecursive for rAF after
+        r244182.
+
+        WinCairo doesn't destory m_acceleratedCompositingContext after it
+        was created. WebView::flushPendingGraphicsLayerChangesSoon should
+        check if accelerated compositing mode is enabled by using
+        isAcceleratedCompositing() not by null check of
+        m_acceleratedCompositingContext.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::flushAndRenderLayers): Call Page::updateRendering() instead of updateLayoutAndStyleIfNeededRecursive.
+        * WebView.cpp:
+        (WebView::flushPendingGraphicsLayerChangesSoon): Check isAcceleratedCompositing().
+
 2020-05-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK1] requestAnimationFrame doesn't work since r261113

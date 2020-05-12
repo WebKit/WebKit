@@ -297,11 +297,7 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     if (!enabled())
         return;
 
-    Frame& frame = core(&m_webView)->mainFrame();
-    if (!frame.contentRenderer() || !frame.view())
-        return;
-
-    frame.view()->updateLayoutAndStyleIfNeededRecursive();
+    core(&m_webView)->updateRendering();
 
     if (!enabled())
         return;
