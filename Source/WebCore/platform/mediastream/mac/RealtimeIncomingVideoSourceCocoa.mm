@@ -200,7 +200,6 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
 
 void RealtimeIncomingVideoSourceCocoa::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoRotation rotation)
 {
-    m_buffer = sample;
     auto size = this->size();
     if (WTF::safeCast<int>(width) != size.width() || WTF::safeCast<int>(height) != size.height())
         setIntrinsicSize(IntSize(width, height));

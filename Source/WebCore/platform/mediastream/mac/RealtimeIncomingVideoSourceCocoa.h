@@ -50,7 +50,6 @@ private:
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;
 
-    RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<CVPixelBufferRef> m_blackFrame;
     int m_blackFrameWidth { 0 };
     int m_blackFrameHeight { 0 };

@@ -46,7 +46,7 @@ private:
     friend std::unique_ptr<MediaRecorderPrivateAVFImpl> std::make_unique<MediaRecorderPrivateAVFImpl>(Ref<MediaRecorderPrivateWriter>&&, String&&, String&&);
 
     // MediaRecorderPrivate
-    void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) final;
+    void videoSampleAvailable(MediaSample&) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 

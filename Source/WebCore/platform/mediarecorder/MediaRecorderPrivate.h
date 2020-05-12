@@ -44,8 +44,9 @@ class MediaStreamTrackPrivate;
 class PlatformAudioData;
 class SharedBuffer;
 
-class MediaRecorderPrivate :
-    public RealtimeMediaSource::AudioSampleObserver {
+class MediaRecorderPrivate
+    : public RealtimeMediaSource::AudioSampleObserver
+    , public RealtimeMediaSource::VideoSampleObserver {
 public:
     ~MediaRecorderPrivate();
 
@@ -54,8 +55,6 @@ public:
         MediaStreamTrackPrivate* videoTrack { nullptr };
     };
     WEBCORE_EXPORT static AudioVideoSelectedTracks selectTracks(MediaStreamPrivate&);
-
-    virtual void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) = 0;
 
     using FetchDataCallback = CompletionHandler<void(RefPtr<SharedBuffer>&&, const String& mimeType)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
@@ -66,12 +65,14 @@ public:
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
+    void setVideoSource(RefPtr<RealtimeMediaSource>&&);
 
 protected:
     ErrorCallback m_errorCallback;
 
 private:
     RefPtr<RealtimeMediaSource> m_audioSource;
+    RefPtr<RealtimeMediaSource> m_videoSource;
 };
 
 inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& audioSource)
@@ -85,10 +86,26 @@ inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& a
         m_audioSource->addAudioSampleObserver(*this);
 }
 
+inline void MediaRecorderPrivate::setVideoSource(RefPtr<RealtimeMediaSource>&& videoSource)
+{
+    if (m_videoSource)
+        m_videoSource->removeVideoSampleObserver(*this);
+
+    m_videoSource = WTFMove(videoSource);
+
+    if (m_videoSource)
+        m_videoSource->addVideoSampleObserver(*this);
+}
+
 inline MediaRecorderPrivate::~MediaRecorderPrivate()
 {
+    // Subclasses should stop observing sonner than here. Otherwise they might be called from a background thread while half destroyed
+    ASSERT(!m_audioSource);
+    ASSERT(!m_videoSource);
     if (m_audioSource)
         m_audioSource->removeAudioSampleObserver(*this);
+    if (m_videoSource)
+        m_videoSource->removeVideoSampleObserver(*this);
 }
 
 } // namespace WebCore

@@ -222,11 +222,6 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
     stopRecording();
 }
 
-void MediaRecorder::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& mediaSample)
-{
-    m_private->sampleBufferUpdated(track, mediaSample);
-}
-
 bool MediaRecorder::virtualHasPendingActivity() const
 {
     return m_state != RecordingState::Inactive;

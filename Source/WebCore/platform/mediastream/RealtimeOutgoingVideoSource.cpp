@@ -74,6 +74,7 @@ void RealtimeOutgoingVideoSource::observeSource()
 void RealtimeOutgoingVideoSource::unobserveSource()
 {
     m_videoSource->removeObserver(*this);
+    m_videoSource->source().removeVideoSampleObserver(*this);
 }
 
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
@@ -114,11 +115,13 @@ void RealtimeOutgoingVideoSource::stop()
 void RealtimeOutgoingVideoSource::updateBlackFramesSending()
 {
     if (!m_muted && m_enabled) {
+        m_videoSource->source().addVideoSampleObserver(*this);
         if (m_blackFrameTimer.isActive())
             m_blackFrameTimer.stop();
         return;
     }
 
+    m_videoSource->source().removeVideoSampleObserver(*this);
     sendBlackFramesIfNeeded();
 }
 

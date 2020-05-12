@@ -50,11 +50,8 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 {
 }
 
-void RealtimeOutgoingVideoSourceLibWebRTC::sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample& sample)
+void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample)
 {
-    if (isSilenced())
-        return;
-
     switch (sample.videoRotation()) {
     case MediaSample::VideoRotation::None:
         m_currentRotation = webrtc::kVideoRotation_0;

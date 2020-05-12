@@ -1,3 +1,94 @@
+2020-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a RealtimeMediaSource video sample observer
+        https://bugs.webkit.org/show_bug.cgi?id=211718
+
+        Reviewed by Eric Carlson.
+
+        We introduce an observer dedicated to video samples similarly to AudioSampleObserver for audio.
+        This will allow to move video frame processing out of the main thread progressively.
+        For now, we remove video sample observing from the track private and observers should now register directly to the realtime media source.
+        We update the various users, including MediaRecorder and the media player.
+        In both cases, they will only observe the video track to be played/recorded, which is both more efficient and simpler.
+
+        We introduced RealtimeMediaSource::Observer::hasStartedProducingData callback for MediaStreamTrackPrivate so 
+        that the processing to do when the first samples are available can be done on the main thread.
+
+        MediaStreamTrackPrivate no longer filters out samples if it is not enabled.
+        As such, each consumer is now responsible to observe/unobserve the source when its track gets enabled/disabled similarly as for audio,
+        or do nothing if track is not enabled.
+
+        Similarly, RealtimeOutgoingVideoSourceCocoa will now only observe video samples when the track is enabled and not muted.
+
+        Covered by existing tests.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::sampleBufferUpdated): Deleted.
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        We can renove the track check since we only observe the active video track.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated): Deleted.
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        (WebCore::MediaRecorderPrivate::setVideoSource):
+        (WebCore::MediaRecorderPrivate::~MediaRecorderPrivate):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        (WebCore::MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl):
+        (WebCore::MediaRecorderPrivateAVFImpl::videoSampleAvailable):
+        (WebCore::MediaRecorderPrivateAVFImpl::stopRecording):
+        (WebCore::MediaRecorderPrivateAVFImpl::sampleBufferUpdated): Deleted.
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::MediaRecorderPrivateMock):
+        (WebCore::MediaRecorderPrivateMock::~MediaRecorderPrivateMock):
+        (WebCore::MediaRecorderPrivateMock::stopRecording):
+        (WebCore::MediaRecorderPrivateMock::videoSampleAvailable):
+        (WebCore::MediaRecorderPrivateMock::sampleBufferUpdated): Deleted.
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::hasStartedProducingData):
+        (WebCore::MediaStreamTrackPrivate::updateReadyState):
+        (WebCore::MediaStreamTrackPrivate::videoSampleAvailable): Deleted.
+        (WebCore::MediaStreamTrackPrivate::hasStartedProducingAudioData): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::addVideoSampleObserver):
+        (WebCore::RealtimeMediaSource::removeVideoSampleObserver):
+        (WebCore::RealtimeMediaSource::updateHasStartedProducingData):
+        (WebCore::RealtimeMediaSource::videoSampleAvailable):
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::unobserveSource):
+        (WebCore::RealtimeOutgoingVideoSource::updateBlackFramesSending):
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::~RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::startProducingData):
+        (WebCore::RealtimeVideoSource::stopProducingData):
+        (WebCore::RealtimeVideoSource::videoSampleAvailable):
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::processNewSample):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable):
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated): Deleted.
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::~Internals):
+        (WebCore::Internals::stopObservingRealtimeMediaSource):
+        (WebCore::Internals::observeMediaStreamTrack):
+        * testing/Internals.h:
+
 2020-05-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Audio messages in web.whatsapp.com only play once.

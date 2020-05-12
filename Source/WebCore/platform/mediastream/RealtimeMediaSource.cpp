@@ -74,6 +74,20 @@ void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observe
     m_audioSampleObservers.remove(&observer);
 }
 
+void RealtimeMediaSource::addVideoSampleObserver(VideoSampleObserver& observer)
+{
+    ASSERT(isMainThread());
+    auto locker = holdLock(m_videoSampleObserversLock);
+    m_videoSampleObservers.add(&observer);
+}
+
+void RealtimeMediaSource::removeVideoSampleObserver(VideoSampleObserver& observer)
+{
+    ASSERT(isMainThread());
+    auto locker = holdLock(m_videoSampleObserversLock);
+    m_videoSampleObservers.remove(&observer);
+}
+
 void RealtimeMediaSource::addObserver(Observer& observer)
 {
     ASSERT(isMainThread());
@@ -154,8 +168,27 @@ void RealtimeMediaSource::notifySettingsDidChangeObservers(OptionSet<RealtimeMed
     });
 }
 
+void RealtimeMediaSource::updateHasStartedProducingData()
+{
+    if (m_hasStartedProducingData)
+        return;
+
+    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+        if (m_hasStartedProducingData)
+            return;
+        m_hasStartedProducingData = true;
+        forEachObserver([&](auto& observer) {
+            observer.hasStartedProducingData();
+        });
+    });
+}
+
 void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 {
+    // FIXME: Migrate RealtimeMediaSource clients to non main thread processing.
+    ASSERT(isMainThread());
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;
 
@@ -170,25 +203,16 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
     }
 #endif
 
-    forEachObserver([&](auto& observer) {
-        observer.videoSampleAvailable(mediaSample);
-    });
+    updateHasStartedProducingData();
+
+    auto locker = holdLock(m_videoSampleObserversLock);
+    for (auto* observer : m_videoSampleObservers)
+        observer->videoSampleAvailable(mediaSample);
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
-    if (!m_hasSentStartProducedAudioData) {
-        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-            if (!weakThis)
-                return;
-            if (m_hasSentStartProducedAudioData)
-                return;
-            m_hasSentStartProducedAudioData = true;
-            forEachObserver([&](auto& observer) {
-                observer.hasStartedProducingAudioData();
-            });
-        });
-    }
+    updateHasStartedProducingData();
 
     auto locker = holdLock(m_audioSampleObserversLock);
     for (auto* observer : m_audioSampleObservers)

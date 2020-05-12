@@ -51,7 +51,12 @@ class PixelBufferConformerCV;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, public MediaStreamTrackPrivate::Observer, public SampleBufferDisplayLayer::Client
+class MediaPlayerPrivateMediaStreamAVFObjC final
+    : public MediaPlayerPrivateInterface
+    , private MediaStreamPrivate::Observer
+    , public MediaStreamTrackPrivate::Observer
+    , public RealtimeMediaSource::VideoSampleObserver
+    , public SampleBufferDisplayLayer::Client
     , private LoggerHelper
 {
 public:
@@ -134,7 +139,7 @@ private:
 
     MediaTime calculateTimelineOffset(const MediaSample&, double);
     
-    void enqueueVideoSample(MediaStreamTrackPrivate&, MediaSample&);
+    void enqueueVideoSample(MediaSample&);
     void enqueueCorrectedVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 
@@ -197,8 +202,10 @@ private:
     void trackMutedChanged(MediaStreamTrackPrivate&) override { };
     void trackSettingsChanged(MediaStreamTrackPrivate&) override { };
     void trackEnabledChanged(MediaStreamTrackPrivate&) override { };
-    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
     void readyStateChanged(MediaStreamTrackPrivate&) override;
+
+    // RealtimeMediaSouce::VideoSampleObserver
+    void videoSampleAvailable(MediaSample&) final;
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;

@@ -89,10 +89,7 @@ public:
         // Observer state queries.
         virtual bool preventSourceFromStopping() { return false; }
 
-        // Called on the main thread.
-        virtual void videoSampleAvailable(MediaSample&) { }
-
-        virtual void hasStartedProducingAudioData() { }
+        virtual void hasStartedProducingData() { }
     };
     class AudioSampleObserver {
     public:
@@ -100,6 +97,12 @@ public:
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
+    };
+    class VideoSampleObserver {
+    public:
+        virtual ~VideoSampleObserver() = default;
+
+        virtual void videoSampleAvailable(MediaSample&) { }
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -138,6 +141,9 @@ public:
 
     WEBCORE_EXPORT void addAudioSampleObserver(AudioSampleObserver&);
     WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
+
+    WEBCORE_EXPORT void addVideoSampleObserver(VideoSampleObserver&);
+    WEBCORE_EXPORT void removeVideoSampleObserver(VideoSampleObserver&);
 
     const IntSize size() const;
     void setSize(const IntSize&);
@@ -250,6 +256,8 @@ private:
 
     virtual void hasEnded() { }
 
+    void updateHasStartedProducingData();
+
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
@@ -266,6 +274,9 @@ private:
 
     mutable RecursiveLock m_audioSampleObserversLock;
     HashSet<AudioSampleObserver*> m_audioSampleObservers;
+
+    mutable RecursiveLock m_videoSampleObserversLock;
+    HashSet<VideoSampleObserver*> m_videoSampleObservers;
 
     IntSize m_size;
     IntSize m_intrinsicSize;
@@ -284,7 +295,7 @@ private:
     bool m_interrupted { false };
     bool m_captureDidFailed { false };
     bool m_isEnded { false };
-    bool m_hasSentStartProducedAudioData { false };
+    bool m_hasStartedProducingData { false };
 };
 
 struct CaptureSourceOrError {

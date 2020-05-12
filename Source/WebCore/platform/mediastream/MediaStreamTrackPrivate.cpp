@@ -236,28 +236,12 @@ bool MediaStreamTrackPrivate::preventSourceFromStopping()
     return !m_isEnded;
 }
 
-void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
+void MediaStreamTrackPrivate::hasStartedProducingData()
 {
     ASSERT(isMainThread());
-    if (!m_haveProducedData) {
-        m_haveProducedData = true;
-        updateReadyState();
-    }
-
-    if (!enabled())
+    if (m_hasStartedProducingData)
         return;
-
-    mediaSample.setTrackID(id());
-    forEachObserver([&](auto& observer) {
-        observer.sampleBufferUpdated(*this, mediaSample);
-    });
-}
-
-void MediaStreamTrackPrivate::hasStartedProducingAudioData()
-{
-    if (m_haveProducedData)
-        return;
-    m_haveProducedData = true;
+    m_hasStartedProducingData = true;
     updateReadyState();
 }
 
@@ -267,7 +251,7 @@ void MediaStreamTrackPrivate::updateReadyState()
 
     if (m_isEnded)
         state = ReadyState::Ended;
-    else if (m_haveProducedData)
+    else if (m_hasStartedProducingData)
         state = ReadyState::Live;
 
     if (state == m_readyState)

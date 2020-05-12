@@ -42,7 +42,7 @@ public:
 
 private:
     // MediaRecorderPrivate
-    void sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&) final;
+    void videoSampleAvailable(MediaSample&) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void stopRecording() final;

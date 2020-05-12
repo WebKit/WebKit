@@ -55,7 +55,7 @@ public:
 
 private:
     // WebCore::MediaRecorderPrivate
-    void sampleBufferUpdated(const WebCore::MediaStreamTrackPrivate&, WebCore::MediaSample&) final;
+    void videoSampleAvailable(WebCore::MediaSample&) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType)>&&) final;
     void stopRecording() final;
     void audioSamplesAvailable(const WTF::MediaTime&, const WebCore::PlatformAudioData&, const WebCore::AudioStreamDescription&, size_t) final;

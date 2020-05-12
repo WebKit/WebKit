@@ -33,7 +33,10 @@ namespace WebCore {
 
 class ImageTransferSessionVT;
 
-class RealtimeVideoSource final : public RealtimeMediaSource, public RealtimeMediaSource::Observer {
+class RealtimeVideoSource final
+    : public RealtimeMediaSource
+    , public RealtimeMediaSource::Observer
+    , public RealtimeMediaSource::VideoSampleObserver {
 public:
     static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source) { return adoptRef(*new RealtimeVideoSource(WTFMove(source))); }
 
@@ -58,11 +61,13 @@ private:
     bool interrupted() const final { return m_source->interrupted(); }
     bool isSameAs(RealtimeMediaSource& source) const final { return this == &source || m_source.ptr() == &source; }
 
-    // Observer
+    // RealtimeMediaSource::Observer
     void sourceMutedChanged() final;
     void sourceSettingsChanged() final;
     void sourceStopped() final;
     bool preventSourceFromStopping() final;
+
+    // RealtimeMediaSource::VideoSampleObserver
     void videoSampleAvailable(MediaSample&) final;
 
 #if PLATFORM(COCOA)

@@ -46,16 +46,19 @@ RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& sourc
 
 RealtimeVideoSource::~RealtimeVideoSource()
 {
+    m_source->removeVideoSampleObserver(*this);
     m_source->removeObserver(*this);
 }
 
 void RealtimeVideoSource::startProducingData()
 {
     m_source->start();
+    m_source->addVideoSampleObserver(*this);
 }
 
 void RealtimeVideoSource::stopProducingData()
 {
+    m_source->removeVideoSampleObserver(*this);
     m_source->stop();
 }
 
@@ -166,9 +169,6 @@ RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 
 void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample)
 {
-    if (!isProducingData())
-        return;
-
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;
 

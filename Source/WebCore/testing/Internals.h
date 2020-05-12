@@ -130,6 +130,7 @@ class Internals final : public RefCounted<Internals>, private ContextDestruction
 #if ENABLE(MEDIA_STREAM)
     , private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
+    , private RealtimeMediaSource::VideoSampleObserver
 #endif
     {
 public:
@@ -763,6 +764,8 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+    void stopObservingRealtimeMediaSource();
+
     void setMockAudioTrackChannelNumber(MediaStreamTrack&, unsigned short);
     void setCameraMediaStreamTrackOrientation(MediaStreamTrack&, int orientation);
     unsigned long trackAudioSampleCount() const { return m_trackAudioSampleCount; }

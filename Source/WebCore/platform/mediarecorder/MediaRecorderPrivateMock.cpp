@@ -40,21 +40,25 @@ MediaRecorderPrivateMock::MediaRecorderPrivateMock(MediaStreamPrivate& stream)
         m_audioTrackID = selectedTracks.audioTrack->id();
         setAudioSource(&selectedTracks.audioTrack->source());
     }
-    if (selectedTracks.videoTrack)
+    if (selectedTracks.videoTrack) {
         m_videoTrackID = selectedTracks.videoTrack->id();
+        setVideoSource(&selectedTracks.videoTrack->source());
+    }
 }
 
 MediaRecorderPrivateMock::~MediaRecorderPrivateMock()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
 }
 
 void MediaRecorderPrivateMock::stopRecording()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
 }
 
-void MediaRecorderPrivateMock::sampleBufferUpdated(const MediaStreamTrackPrivate&, MediaSample&)
+void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)
 {
     auto locker = holdLock(m_bufferLock);
     m_buffer.append("Video Track ID: ");

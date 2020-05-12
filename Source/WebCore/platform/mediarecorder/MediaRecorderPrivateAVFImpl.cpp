@@ -59,6 +59,8 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
     auto recorder = makeUnique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
     if (selectedTracks.audioTrack)
         recorder->setAudioSource(&selectedTracks.audioTrack->source());
+    if (selectedTracks.videoTrack)
+        recorder->setVideoSource(&selectedTracks.videoTrack->source());
     return recorder;
 }
 
@@ -72,12 +74,11 @@ MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivat
 MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
 }
 
-void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(const MediaStreamTrackPrivate& track, MediaSample& sampleBuffer)
+void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer)
 {
-    if (track.id() != m_recordedVideoTrackID)
-        return;
     m_writer->appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
 }
 
@@ -91,6 +92,7 @@ void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const WTF::MediaTime& me
 void MediaRecorderPrivateAVFImpl::stopRecording()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
     m_writer->stopRecording();
 }
 

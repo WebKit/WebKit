@@ -44,8 +44,8 @@ private:
 
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t width, size_t height) final;
 
-    // MediaStreamTrackPrivate::Observer API
-    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
+    // RealtimeMediaSource::VideoSampleObserver API
+    void videoSampleAvailable(MediaSample&) final;
 
     RetainPtr<CVPixelBufferRef> convertToYUV(CVPixelBufferRef);
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(CVPixelBufferRef, webrtc::VideoRotation);

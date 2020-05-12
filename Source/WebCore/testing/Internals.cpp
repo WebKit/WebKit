@@ -476,10 +476,7 @@ Ref<Internals> Internals::create(Document& document)
 Internals::~Internals()
 {
 #if ENABLE(MEDIA_STREAM)
-    if (m_trackSource) {
-        m_trackSource->removeObserver(*this);
-        m_trackSource->removeAudioSampleObserver(*this);
-    }
+    stopObservingRealtimeMediaSource();
 #endif
 }
 
@@ -5039,19 +5036,44 @@ void Internals::setCameraMediaStreamTrackOrientation(MediaStreamTrack& track, in
     source.monitorOrientation(m_orientationNotifier);
 }
 
+void Internals::stopObservingRealtimeMediaSource()
+{
+    if (!m_trackSource)
+        return;
+
+    switch (m_trackSource->type()) {
+    case RealtimeMediaSource::Type::Audio:
+        m_trackSource->removeAudioSampleObserver(*this);
+        break;
+    case RealtimeMediaSource::Type::Video:
+        m_trackSource->removeVideoSampleObserver(*this);
+        break;
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+    }
+    m_trackSource->removeObserver(*this);
+
+    m_trackSource = nullptr;
+    m_trackAudioSampleCount = 0;
+    m_trackVideoSampleCount = 0;
+}
+
 void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
-    if (m_trackSource) {
-        m_trackSource->removeObserver(*this);
-        m_trackSource->removeAudioSampleObserver(*this);
-
-        m_trackAudioSampleCount = 0;
-        m_trackVideoSampleCount = 0;
-    }
+    stopObservingRealtimeMediaSource();
 
     m_trackSource = &track.source();
     m_trackSource->addObserver(*this);
-    m_trackSource->addAudioSampleObserver(*this);
+    switch (m_trackSource->type()) {
+    case RealtimeMediaSource::Type::Audio:
+        m_trackSource->addAudioSampleObserver(*this);
+        break;
+    case RealtimeMediaSource::Type::Video:
+        m_trackSource->addVideoSampleObserver(*this);
+        break;
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)

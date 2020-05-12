@@ -59,7 +59,6 @@ public:
         virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) { };
         virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
     };
 
@@ -133,9 +132,8 @@ private:
     void sourceMutedChanged() final;
     void sourceSettingsChanged() final;
     bool preventSourceFromStopping() final;
-    void videoSampleAvailable(MediaSample&) final;
     void audioUnitWillStart() final;
-    void hasStartedProducingAudioData() final;
+    void hasStartedProducingData() final;
 
     void updateReadyState();
 
@@ -153,8 +151,7 @@ private:
     ReadyState m_readyState { ReadyState::None };
     bool m_isEnabled { true };
     bool m_isEnded { false };
-    bool m_haveProducedData { false };
-    bool m_hasSentStartProducedData { false };
+    bool m_hasStartedProducingData { false };
     HintValue m_contentHint { HintValue::Empty };
     RefPtr<WebAudioSourceProvider> m_audioSourceProvider;
     Ref<const Logger> m_logger;

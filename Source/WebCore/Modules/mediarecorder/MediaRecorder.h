@@ -108,7 +108,6 @@ private:
     void trackMutedChanged(MediaStreamTrackPrivate&) final { };
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
-    void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
 
     static CreatorFunction m_customCreator;
     

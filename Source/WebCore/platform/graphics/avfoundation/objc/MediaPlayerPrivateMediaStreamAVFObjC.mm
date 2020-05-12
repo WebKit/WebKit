@@ -155,15 +155,17 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
     for (const auto& track : m_audioTrackMap.values())
         track->pause();
 
-    if (m_mediaStreamPrivate) {
+    if (m_mediaStreamPrivate)
         m_mediaStreamPrivate->removeObserver(*this);
 
-        for (auto& track : m_audioTrackMap.values())
-            track->streamTrack().removeObserver(*this);
+    for (auto& track : m_audioTrackMap.values())
+        track->streamTrack().removeObserver(*this);
 
-        for (auto& track : m_videoTrackMap.values())
-            track->streamTrack().removeObserver(*this);
-    }
+    for (auto& track : m_videoTrackMap.values())
+        track->streamTrack().removeObserver(*this);
+
+    if (m_activeVideoTrack)
+        m_activeVideoTrack->source().removeVideoSampleObserver(*this);
 
     [m_boundsChangeListener invalidate];
 
@@ -279,11 +281,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSamp
     }
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
-    if (&track != activeVideoTrack())
-        return;
-
     if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
         m_imagePainter.mediaSample = &sample;
         m_imagePainter.cgImage = nullptr;
@@ -294,13 +293,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
         return;
 
-    auto videoTrack = m_videoTrackMap.get(track.id());
+    // FIXME: We should not query the map each time we get a sample.
+    auto videoTrack = m_videoTrackMap.get(m_activeVideoTrack->id());
     MediaTime timelineOffset = videoTrack->timelineOffset();
     if (timelineOffset == MediaTime::invalidTime()) {
         timelineOffset = calculateTimelineOffset(sample, rendererLatency);
         videoTrack->setTimelineOffset(timelineOffset);
 
-        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", track.id(), " set to ", timelineOffset);
+        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", m_activeVideoTrack->id(), " set to ", timelineOffset);
     }
 
     DEBUG_LOG(LOGIDENTIFIER, "original sample = ", sample);
@@ -471,7 +471,7 @@ PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
 
 MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
 {
-    if (m_intrinsicSize.isEmpty() || !metaDataAvailable() || !m_sampleBufferDisplayLayer)
+    if (m_intrinsicSize.isEmpty() || !metaDataAvailable())
         return None;
 
     if (auto* track = activeVideoTrack()) {
@@ -735,26 +735,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::didRemoveTrack(MediaStreamTrackPrivat
     updateTracks();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& mediaSample)
+void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& mediaSample)
 {
-    ASSERT(track.id() == mediaSample.trackID());
-    ASSERT(mediaSample.platformSample().type == PlatformSample::CMSampleBufferType);
-    ASSERT(m_mediaStreamPrivate);
-
     if (streamTime().toDouble() < 0)
         return;
 
-    switch (track.type()) {
-    case RealtimeMediaSource::Type::None:
-        // Do nothing.
-        break;
-    case RealtimeMediaSource::Type::Audio:
-        break;
-    case RealtimeMediaSource::Type::Video:
-        if (&track == m_activeVideoTrack.get())
-            enqueueVideoSample(track, mediaSample);
-        break;
-    }
+    enqueueVideoSample(mediaSample);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate&)
@@ -851,6 +837,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
     scheduleDeferredTask([this] {
         auto oldVideoTrack = m_activeVideoTrack;
         bool hideVideoLayer = true;
+
         m_activeVideoTrack = nullptr;
         if (auto* activeVideoTrack = this->activeVideoTrack()) {
             for (const auto& track : m_videoTrackMap.values()) {
@@ -877,6 +864,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
 
         m_pendingSelectedTrackCheck = false;
         updateDisplayMode();
+
+        if (oldVideoTrack != m_activeVideoTrack) {
+            if (oldVideoTrack)
+                oldVideoTrack->source().removeVideoSampleObserver(*this);
+            if (m_activeVideoTrack)
+                m_activeVideoTrack->source().addVideoSampleObserver(*this);
+        }
     });
 }
 

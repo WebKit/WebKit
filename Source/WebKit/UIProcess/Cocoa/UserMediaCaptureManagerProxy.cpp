@@ -50,8 +50,9 @@ namespace WebKit {
 using namespace WebCore;
 
 class UserMediaCaptureManagerProxy::SourceProxy
-    : public RealtimeMediaSource::Observer
-    , public RealtimeMediaSource::AudioSampleObserver
+    : private RealtimeMediaSource::Observer
+    , private RealtimeMediaSource::AudioSampleObserver
+    , private RealtimeMediaSource::VideoSampleObserver
     , public SharedRingBufferStorage::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -62,13 +63,32 @@ public:
         , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
     {
         m_source->addObserver(*this);
-        m_source->addAudioSampleObserver(*this);
+        switch (m_source->type()) {
+        case RealtimeMediaSource::Type::Audio:
+            m_source->addAudioSampleObserver(*this);
+            break;
+        case RealtimeMediaSource::Type::Video:
+            m_source->addVideoSampleObserver(*this);
+            break;
+        case RealtimeMediaSource::Type::None:
+            ASSERT_NOT_REACHED();
+        }
     }
 
     ~SourceProxy()
     {
         storage().invalidate();
-        m_source->removeAudioSampleObserver(*this);
+
+        switch (m_source->type()) {
+        case RealtimeMediaSource::Type::Audio:
+            m_source->removeAudioSampleObserver(*this);
+            break;
+        case RealtimeMediaSource::Type::Video:
+            m_source->removeVideoSampleObserver(*this);
+            break;
+        case RealtimeMediaSource::Type::None:
+            ASSERT_NOT_REACHED();
+        }
         m_source->removeObserver(*this);
     }
 

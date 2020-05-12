@@ -6,7 +6,5 @@ This test checks that a disabled video track in a MediaStream is rendered as bla
 
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Tests that a disabled video track in a MediaStream is rendered as blackness Test timed out
+PASS Tests that a disabled video track in a MediaStream is rendered as blackness 
 

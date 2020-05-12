@@ -64,26 +64,27 @@ MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream)
         width = selectedTracks.videoTrack->settings().width();
     }
 
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack)](auto&& exception) {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, width, height }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack)](auto&& exception) {
         if (!weakThis)
             return;
         if (exception)
             return m_errorCallback(Exception { exception->code, WTFMove(exception->message) });
         if (audioTrack)
             setAudioSource(&audioTrack->source());
+        if (videoTrack)
+            setVideoSource(&videoTrack->source());
     }, 0);
 }
 
 MediaRecorderPrivate::~MediaRecorderPrivate()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
 }
 
-void MediaRecorderPrivate::sampleBufferUpdated(const WebCore::MediaStreamTrackPrivate& track, WebCore::MediaSample& sample)
+void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample)
 {
-    if (track.id() != m_recordedVideoTrackID)
-        return;
     if (auto remoteSample = RemoteVideoSample::create(sample))
         m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample) }, m_identifier);
 }
@@ -128,6 +129,7 @@ void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::Shar
 void MediaRecorderPrivate::stopRecording()
 {
     setAudioSource(nullptr);
+    setVideoSource(nullptr);
     m_connection->send(Messages::RemoteMediaRecorder::StopRecording { }, m_identifier);
 }
 
