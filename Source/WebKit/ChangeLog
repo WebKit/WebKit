@@ -1,5 +1,38 @@
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r255456. rdar://problem/63112259
+
+    REGRESSION (r253267): Swipe from edge on Twitter images no longer goes back
+    https://bugs.webkit.org/show_bug.cgi?id=207011
+    <rdar://problem/58966044>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    The new touch-event async deferring gesture recognizer was erroneously deferring
+    edge swipes, which are not allowed to be blocked by touch events.
+    Opt them out of the new gesture gate mechanism.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@255456 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-01-30  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r253267): Swipe from edge on Twitter images no longer goes back
+            https://bugs.webkit.org/show_bug.cgi?id=207011
+            <rdar://problem/58966044>
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+            The new touch-event async deferring gesture recognizer was erroneously deferring
+            edge swipes, which are not allowed to be blocked by touch events.
+            Opt them out of the new gesture gate mechanism.
+
+2020-05-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r258675. rdar://problem/62978870
 
     WebCoreArgumentCoders should check bufferIsLargeEnoughToContain before allocating buffers
