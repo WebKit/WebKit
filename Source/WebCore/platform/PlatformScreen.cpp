@@ -48,21 +48,20 @@ void setScreenProperties(const ScreenProperties& properties)
     screenProperties() = properties;
 }
 
-Optional<const ScreenData&> screenData(PlatformDisplayID screendisplayID)
+const ScreenData* screenData(PlatformDisplayID screenDisplayID)
 {
     if (screenProperties().screenDataMap.isEmpty())
-        return WTF::nullopt;
+        return nullptr;
 
     // Return property of the first screen if the screen is not found in the map.
-    auto displayID = screendisplayID ? screendisplayID : primaryScreenDisplayID();
-    if (displayID) {
-        auto screenPropertiesForDisplay = screenProperties().screenDataMap.find(displayID);
-        if (screenPropertiesForDisplay != screenProperties().screenDataMap.end())
-            return screenPropertiesForDisplay->value;
+    if (auto displayID = screenDisplayID ? screenDisplayID : primaryScreenDisplayID()) {
+        auto properties = screenProperties().screenDataMap.find(displayID);
+        if (properties != screenProperties().screenDataMap.end())
+            return &properties->value;
     }
 
     // Last resort: use the first item in the screen list.
-    return screenProperties().screenDataMap.begin()->value;
+    return &screenProperties().screenDataMap.begin()->value;
 }
 
 } // namespace WebCore

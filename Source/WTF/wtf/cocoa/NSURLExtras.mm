@@ -102,7 +102,7 @@ static String decodePercentEscapes(const String& string)
 
 NSString *decodeHostName(NSString *string)
 {
-    Optional<String> host = mapHostName(string, nullopt);
+    Optional<String> host = mapHostName(string, nullptr);
     if (!host)
         return nil;
     return !*host ? string : (NSString *)*host;

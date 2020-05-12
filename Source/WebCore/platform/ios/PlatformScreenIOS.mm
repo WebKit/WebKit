@@ -60,27 +60,24 @@ int screenDepthPerComponent(Widget*)
 
 bool screenIsMonochrome(Widget*)
 {
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenIsMonochrome;
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenIsMonochrome;
     
     return PAL::softLinkUIKitUIAccessibilityIsGrayscaleEnabled();
 }
 
 bool screenHasInvertedColors()
 {
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenHasInvertedColors;
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenHasInvertedColors;
     
     return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
 }
 
 bool screenSupportsExtendedColor(Widget*)
 {
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenSupportsExtendedColor;
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenSupportsExtendedColor;
 
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
 }
@@ -155,9 +152,8 @@ FloatSize screenSize()
     if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
 
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenRect.size();
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenRect.size();
 
     return FloatSize([[PAL::getUIScreenClass() mainScreen] _referenceBounds].size);
 }
@@ -167,9 +163,8 @@ FloatSize availableScreenSize()
     if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
 
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenAvailableRect.size();
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenAvailableRect.size();
 
     return FloatSize([PAL::getUIScreenClass() mainScreen].bounds.size);
 }

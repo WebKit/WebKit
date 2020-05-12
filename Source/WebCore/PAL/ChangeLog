@@ -1,3 +1,15 @@
+2020-05-11  Darin Adler  <darin@apple.com>
+
+        Fix problems caught by replacing WTF::Optional with std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211703
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cg/CoreGraphicsSPI.h: Moved definition of CGDisplayUsesForceToGray
+        here from PlatformScreenMac.mm and also added include of the private header
+        it's from when compiling with the Apple internal SDK for the additional
+        checking that we get from using both.
+
 2020-05-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Add mechanism to turn on accessibility isolated tree mode from WebKitTestRunner.

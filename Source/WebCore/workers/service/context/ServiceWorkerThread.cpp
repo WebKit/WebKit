@@ -144,11 +144,11 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
 void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
     auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
-    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), jobDataIdentifier = m_data.jobDataIdentifier, serviceWorkerIdentifier = this->identifier()] {
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), serviceWorkerIdentifier = this->identifier()] {
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(installEvent);
 
-        installEvent->whenAllExtendLifetimePromisesAreSettled([jobDataIdentifier, serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
+        installEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
             bool hasRejectedAnyPromise = false;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {

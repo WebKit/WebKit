@@ -1,3 +1,75 @@
+2020-05-11  Darin Adler  <darin@apple.com>
+
+        Fix problems caught by replacing WTF::Optional with std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211703
+
+        Reviewed by Chris Dumez.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeSelectToMark): Remove erroneous code that converts
+        a live range to a SimpleRange and then back again.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest): Pass a pointer to
+        a ResourceRequest.
+        (WebCore::InspectorNetworkAgent::didLoadResourceFromMemoryCache): Ditto.
+        (WebCore::InspectorNetworkAgent::buildInitiatorObject): Take a const*
+        to a ResourceRequest instead of an Optional<const ResourceRequest&>
+        because std::optional does not work with reference types.
+        * inspector/agents/InspectorNetworkAgent.h: Update for the change above.
+
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::Iterator::operator++): Fix code that was accidentally
+        comparing two optionals, after already checking them for null. Instead
+        we should compare their values.
+
+        * platform/PlatformScreen.cpp:
+        (WebCore::screenData): Return a const* instead of an Optional<const&>
+        because std::optonal does not work with reference types.
+        * platform/PlatformScreen.h: Updated for the above. Also removed both
+        the unneeded include of Optional.h (could have included Forward.h) and
+        of HashMap.h and put the Mac-specific type IORegistryGPUID inside a
+        PLATFORM(MAC) #if statement.
+
+        * platform/ScreenProperties.h: Moved the HashMap.h include here, since
+        this is the header that uses it. Changed the EncodedColorSpaceDataType
+        enum to an enum class and gave it much shorter names.
+        (WebCore::ScreenData::encode const): Updated for the enum class change.
+        Also fixed a mistake where the code would use operator<< instead of
+        encodeEnum for the color space type of Null. This would lead to some
+        kind of decoding error, rather than a null cgColorSpace.
+        (WebCore::ScreenData::decode): Ditto.
+
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenIsMonochrome): Updated since screenData returns a pointer.
+        (WebCore::screenHasInvertedColors): Ditto.
+        (WebCore::screenSupportsExtendedColor): Ditto.
+        (WebCore::screenSize): Ditto.
+        (WebCore::availableScreenSize): Ditto.
+
+        * platform/mac/PlatformScreenMac.mm: Moved declaration of
+        CGDisplayUsesForceToGray to CoreGraphicsSPI.h. Removed unused declaration
+        of CGDisplayUsesInvertedPolarity.
+        (WebCore::primaryOpenGLDisplayMask): Updated since screendData returns a pointer.
+        (WebCore::displayMaskForDisplay): Ditto.
+        (WebCore::gpuIDForDisplay): Ditto.
+        (WebCore::screenProperties): Ditto. Also renamed from getScreenProperties to
+        adhere to WebKit coding style.
+        (WebCore::screenIsMonochrome): Ditto.
+        (WebCore::screenHasInvertedColors): Ditto.
+        (WebCore::screenDepth): Ditto.
+        (WebCore::screenDepthPerComponent): Ditto.
+        (WebCore::screenRectForDisplay): Ditto.
+        (WebCore::screenRect): Ditto.
+        (WebCore::screenAvailableRect): Ditto.
+        (WebCore::screenColorSpace): Ditto.
+        (WebCore::screenSupportsExtendedColor): Ditto.
+        (WebCore::screenSupportsHighDynamicRange): Ditto.
+
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFireInstallEvent):
+        Removed capture of unused jobDataIdentifier.
+
 2020-05-11  James Darpinian  <jdarpinian@chromium.org>
 
         WebGLLayer clobbers TEXTURE_2D binding on iOS

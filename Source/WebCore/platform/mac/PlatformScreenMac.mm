@@ -40,11 +40,6 @@
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #endif
 
-extern "C" {
-bool CGDisplayUsesInvertedPolarity(void);
-bool CGDisplayUsesForceToGray(void);
-}
-
 namespace WebCore {
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
@@ -148,18 +143,16 @@ void setShouldOverrideScreenSupportsHighDynamicRange(bool shouldOverride, bool s
 
 uint32_t primaryOpenGLDisplayMask()
 {
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->displayMask;
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->displayMask;
 
     return 0;
 }
 
 uint32_t displayMaskForDisplay(PlatformDisplayID displayID)
 {
-    auto v = screenData(displayID);
-    if (v.hasValue())
-        return v->displayMask;
+    if (auto data = screenData(displayID))
+        return data->displayMask;
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -173,13 +166,12 @@ IORegistryGPUID primaryGPUID()
 IORegistryGPUID gpuIDForDisplay(PlatformDisplayID displayID)
 {
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    auto v = screenData(displayID);
-    if (v.hasValue())
-        return v->gpuID;
+    if (auto data = screenData(displayID))
+        return data->gpuID;
+    return 0;
 #else
     return gpuIDForDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
 #endif
-    return 0;
 }
 
 IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
@@ -217,16 +209,15 @@ IORegistryGPUID gpuIDForDisplayMask(GLuint displayMask)
     return (IORegistryGPUID) gpuIDHigh << 32 | gpuIDLow;
 }
 
-static Optional<const ScreenData&> getScreenProperties(Widget* widget)
+static const ScreenData* screenProperties(Widget* widget)
 {
     return screenData(displayID(widget));
 }
 
 bool screenIsMonochrome(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->screenIsMonochrome;
+    if (auto data = screenProperties(widget))
+        return data->screenIsMonochrome;
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -235,9 +226,8 @@ bool screenIsMonochrome(Widget* widget)
 
 bool screenHasInvertedColors()
 {
-    auto v = screenData(primaryScreenDisplayID());
-    if (v.hasValue())
-        return v->screenHasInvertedColors;
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -246,11 +236,9 @@ bool screenHasInvertedColors()
 
 int screenDepth(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue()) {
-        auto screenDepth = v->screenDepth;
-        ASSERT(screenDepth);
-        return screenDepth;
+    if (auto data = screenProperties(widget)) {
+        ASSERT(data->screenDepth);
+        return data->screenDepth;
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -259,11 +247,9 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue()) {
-        auto depthPerComponent = v->screenDepthPerComponent;
-        ASSERT(depthPerComponent);
-        return depthPerComponent;
+    if (auto data = screenProperties(widget)) {
+        ASSERT(data->screenDepthPerComponent);
+        return data->screenDepthPerComponent;
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -272,11 +258,9 @@ int screenDepthPerComponent(Widget* widget)
 
 FloatRect screenRectForDisplay(PlatformDisplayID displayID)
 {
-    auto v = screenData(displayID);
-    if (v.hasValue()) {
-        auto screenRect = v->screenRect;
-        ASSERT(!screenRect.isEmpty());
-        return screenRect;
+    if (auto data = screenData(displayID)) {
+        ASSERT(!data->screenRect.isEmpty());
+        return data->screenRect;
     }
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -290,9 +274,8 @@ FloatRect screenRectForPrimaryScreen()
 
 FloatRect screenRect(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->screenRect;
+    if (auto data = screenProperties(widget))
+        return data->screenRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) frame], window(widget));
@@ -300,9 +283,8 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->screenAvailableRect;
+    if (auto data = screenProperties(widget))
+        return data->screenAvailableRect;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) visibleFrame], window(widget));
@@ -326,9 +308,8 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 CGColorSpaceRef screenColorSpace(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->colorSpace.get();
+    if (auto data = screenProperties(widget))
+        return data->colorSpace.get();
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return screen(widget).colorSpace.CGColorSpace;
@@ -336,9 +317,8 @@ CGColorSpaceRef screenColorSpace(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->screenSupportsExtendedColor;
+    if (auto data = screenProperties(widget))
+        return data->screenSupportsExtendedColor;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
@@ -346,9 +326,8 @@ bool screenSupportsExtendedColor(Widget* widget)
 
 bool screenSupportsHighDynamicRange(Widget* widget)
 {
-    auto v = getScreenProperties(widget);
-    if (v.hasValue())
-        return v->screenSupportsHighDynamicRange;
+    if (auto data = screenProperties(widget))
+        return data->screenSupportsHighDynamicRange;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 #if USE(MEDIATOOLBOX)

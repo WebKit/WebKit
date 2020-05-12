@@ -1,3 +1,24 @@
+2020-05-11  Darin Adler  <darin@apple.com>
+
+        Fix problems caught by replacing WTF::Optional with std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211703
+
+        Reviewed by Chris Dumez.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::mapHostName): Make URLDecodeFunction a function
+        pointer and use nullptr instead of trying to use Optional<> with
+        a function reference.
+        (WTF::URLHelpers::collectRangesThatNeedMapping): Ditto.
+        (WTF::URLHelpers::applyHostNameFunctionToMailToURLString): Ditto.
+        (WTF::URLHelpers::applyHostNameFunctionToURLString): Ditto.
+        (WTF::URLHelpers::mapHostNames): Ditto.
+        (WTF::URLHelpers::userVisibleURL): Ditto.
+        * wtf/URLHelpers.h: Ditto.
+
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::decodeHostName): Pass nullptr for URLDecodeFunction.
+
 2020-05-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         AtomString::init should temporarily disable checks via `isMainThread` due to WebThread's inconsistent state

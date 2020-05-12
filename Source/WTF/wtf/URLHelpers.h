@@ -34,14 +34,14 @@
 namespace WTF {
 namespace URLHelpers {
 
-using URLDecodeFunction = String(&)(const String&);
+using URLDecodeFunction = String(*)(const String&);
 
 WTF_EXPORT_PRIVATE String userVisibleURL(const CString& URL);
 void loadIDNScriptWhiteList();
 void whiteListIDNScript(const char* scriptName);
 void initializeDefaultIDNScriptWhiteList();
-Optional<String> mapHostName(const String&, const Optional<URLDecodeFunction>&);
-String mapHostNames(const String&, const Optional<URLDecodeFunction>&);
+Optional<String> mapHostName(const String&, URLDecodeFunction);
+String mapHostNames(const String&, URLDecodeFunction);
 
 } // namespace URLHelpers
 } // namespace WTF

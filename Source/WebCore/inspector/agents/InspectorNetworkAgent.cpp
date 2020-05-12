@@ -456,7 +456,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     auto protocolResourceType = InspectorPageAgent::resourceTypeJSON(type);
 
     Document* document = loader && loader->frame() ? loader->frame()->document() : nullptr;
-    auto initiatorObject = buildInitiatorObject(document, request);
+    auto initiatorObject = buildInitiatorObject(document, &request);
 
     String url = loader ? loader->url().string() : request.url().string();
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &protocolResourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
@@ -636,7 +636,7 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
 
     m_resourcesData->resourceCreated(requestId, loaderId, resource);
 
-    auto initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : nullptr, resource.resourceRequest());
+    auto initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : nullptr, &resource.resourceRequest());
 
     // FIXME: It would be ideal to generate the Network.Response with the MemoryCache source
     // instead of whatever ResourceResponse::Source the CachedResources's response has.
@@ -706,7 +706,7 @@ void InspectorNetworkAgent::didScheduleStyleRecalculation(Document& document)
         m_styleRecalculationInitiator = buildInitiatorObject(&document);
 }
 
-RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, Optional<const ResourceRequest&> resourceRequest)
+RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, const ResourceRequest* resourceRequest)
 {
     // FIXME: Worker support.
     if (!isMainThread()) {

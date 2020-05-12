@@ -150,14 +150,14 @@ static String plainTextForContext(const SimpleRange& range)
     return WebCore::plainTextReplacingNoBreakSpace(range);
 }
 
-static String plainTextForContext(const Optional<SimpleRange> range)
+static String plainTextForContext(const Optional<SimpleRange>& range)
 {
     return range ? plainTextForContext(*range) : emptyString();
 }
 
 static String plainTextForContext(const Range* range)
 {
-    return range ? plainTextForContext(*range) : emptyString();
+    return range ? plainTextForContext(SimpleRange { *range }) : emptyString();
 }
 
 static String plainTextForDisplay(const SimpleRange& range)

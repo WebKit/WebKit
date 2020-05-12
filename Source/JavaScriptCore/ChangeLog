@@ -1,3 +1,15 @@
+2020-05-11  Darin Adler  <darin@apple.com>
+
+        Fix problems caught by replacing WTF::Optional with std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211703
+
+        Reviewed by Chris Dumez.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::instructionPointer): Use explcit makeOptional here,
+        to work around the fact that MacroAssemblerCodePtr uses an unusual technique
+        to disable conversions to everything except bool.
+
 2020-05-11  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         Fix build errors after r260992

@@ -38,12 +38,14 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if PLATFORM(MAC)
-#include <ColorSync/ColorSyncPriv.h>
-#endif
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
+
+#if PLATFORM(MAC)
+#include <ColorSync/ColorSyncPriv.h>
+#include <CoreGraphics/CGAccessibility.h>
+#endif
 
 #else
 
@@ -309,6 +311,9 @@ void CGContextSetFocusRingWithColor(CGContextRef, CGFloat blur, CGColorRef, cons
 #endif // PLATFORM(WIN)
 
 #if PLATFORM(MAC)
+
+bool CGDisplayUsesForceToGray(void);
+
 void CGSShutdownServerConnections(void);
 
 CGSConnectionID CGSMainConnectionID(void);
@@ -324,6 +329,7 @@ size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
 CGError CGSSetDenyWindowServerConnections(bool);
 
 typedef int32_t CGSDisplayID;

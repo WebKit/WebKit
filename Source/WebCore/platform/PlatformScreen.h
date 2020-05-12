@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,11 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
-
 #if USE(GLIB)
 #include <wtf/Function.h>
 #endif
 
 #if PLATFORM(MAC)
-#include <wtf/HashMap.h>
-
 OBJC_CLASS NSScreen;
 OBJC_CLASS NSWindow;
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
@@ -60,13 +56,19 @@ class FloatSize;
 class Widget;
 
 using PlatformDisplayID = uint32_t;
+
+#if PLATFORM(MAC)
+
 using IORegistryGPUID = int64_t; // Global IOKit I/O registryID that can match a GPU across process boundaries.
+
+#endif
 
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);
 bool screenIsMonochrome(Widget*);
 
 bool screenHasInvertedColors();
+
 #if USE(GLIB)
 double screenDPI();
 void setScreenDPIObserverHandler(Function<void()>&&, void*);
@@ -92,10 +94,11 @@ struct ScreenData;
     
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
 WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
-Optional<const ScreenData&> screenData(PlatformDisplayID screendisplayID);
+const ScreenData* screenData(PlatformDisplayID screendisplayID);
 WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
     
 #if PLATFORM(MAC)
+
 WEBCORE_EXPORT PlatformDisplayID displayID(NSScreen *);
 
 WEBCORE_EXPORT NSScreen *screen(NSWindow *);

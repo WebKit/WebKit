@@ -1056,7 +1056,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
         PAL::systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionDOMRanges(createLiveRange(*mark), createLiveRange(*selection)).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(unionDOMRanges(createLiveRange(*mark), *selection).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 

@@ -27,6 +27,7 @@
 
 #include "FloatRect.h"
 #include "PlatformScreen.h"
+#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,12 +49,8 @@ struct ScreenData {
     uint32_t displayMask { 0 };
     IORegistryGPUID gpuID { 0 };
 #endif
-    enum EncodedColorSpaceDataType {
-        Null,
-        ColorSpaceName,
-        ColorSpaceData,
-    };
 
+    enum class ColorSpaceType : uint8_t { None, Name, Data };
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ScreenData> decode(Decoder&);
 };
@@ -103,25 +100,24 @@ void ScreenData::encode(Encoder& encoder) const
     if (colorSpace) {
         // Try to encode the name.
         if (auto name = adoptCF(CGColorSpaceCopyName(colorSpace.get()))) {
-            encoder.encodeEnum(ColorSpaceName);
+            encoder.encodeEnum(ColorSpaceType::Name);
             encoder << String(name.get());
             return;
         }
 
         // Failing that, just encode the ICC data.
         if (auto profileData = adoptCF(CGColorSpaceCopyICCData(colorSpace.get()))) {
-            encoder.encodeEnum(ColorSpaceData);
-
             Vector<uint8_t> iccData;
             iccData.append(CFDataGetBytePtr(profileData.get()), CFDataGetLength(profileData.get()));
 
+            encoder.encodeEnum(ColorSpaceType::Data);
             encoder << iccData;
             return;
         }
     }
 
     // The color space was null or failed to be encoded.
-    encoder << Null;
+    encoder.encodeEnum(ColorSpaceType::None);
 }
 
 template<class Decoder>
@@ -179,15 +175,15 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
         return WTF::nullopt;
 #endif
 
-    EncodedColorSpaceDataType dataType;
+    ColorSpaceType dataType;
     if (!decoder.decodeEnum(dataType))
         return WTF::nullopt;
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;
     switch (dataType) {
-    case Null:
+    case ColorSpaceType::None:
         break;
-    case ColorSpaceName: {
+    case ColorSpaceType::Name: {
         Optional<String> colorSpaceName;
         decoder >> colorSpaceName;
         ASSERT(colorSpaceName);
@@ -197,7 +193,7 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
         cgColorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName->createCFString().get()));
         break;
     }
-    case ColorSpaceData: {
+    case ColorSpaceType::Data: {
         Optional<Vector<uint8_t>> iccData;
         decoder >> iccData;
         ASSERT(iccData);
