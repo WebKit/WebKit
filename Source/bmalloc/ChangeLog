@@ -1,3 +1,13 @@
+2020-05-11  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc][WTF] Add computing memory size implementation for FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=211749
+
+        Reviewed by David Kilzer.
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::computeAvailableMemory):
+
 2020-05-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WEBKIT_EXECUTABLE in MallocBench

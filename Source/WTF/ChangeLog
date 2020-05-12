@@ -1,3 +1,15 @@
+2020-05-11  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc][WTF] Add computing memory size implementation for FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=211749
+
+        Reviewed by David Kilzer.
+
+        Share sysinfo(3) implementation with Linux and FreeBSD.
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize):
+
 2020-05-11  Mark Lam  <mark.lam@apple.com>
 
         Introduce WTF::Config and put Signal.cpp's init-once globals in it.
