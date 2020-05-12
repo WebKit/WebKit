@@ -27,7 +27,9 @@ promise_test(async (test) => {
 
     await Promise.all(promises);
 
-    return waitForServiceWorkerNoLongerRunning(worker);
+    await waitForServiceWorkerNoLongerRunning(worker);
+
+    await waitForState(worker, "activated");
 }, "Spin in activate");
 
 promise_test(async (test) => {
