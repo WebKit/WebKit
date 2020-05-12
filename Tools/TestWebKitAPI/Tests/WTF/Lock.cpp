@@ -143,12 +143,15 @@ TEST(WTF_Lock, UncontendedLongSection)
     runLockTest<Lock>(1, 1, 10000, 1000);
 }
 
+// FIXME: Re-enable this test for iOS Debug once webkit.org/b/211650 is resolved
+#if PLATFORM(IOS) && !defined(NDEBUG)
 TEST(WTF_Lock, ContendedShortSection)
 {
     if (skipSlow())
         return;
     runLockTest<Lock>(1, 10, 1, 10000000);
 }
+#endif
 
 TEST(WTF_Lock, ContendedLongSection)
 {
