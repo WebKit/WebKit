@@ -28,46 +28,167 @@
 
 #if USE(GTK4)
 
+#include "WebPasteboardProxy.h"
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
+#include <gtk/gtk.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
 
-Clipboard::Clipboard(Type)
+Clipboard::Clipboard(Type type)
+    : m_clipboard(type == Type::Clipboard ? gdk_display_get_clipboard(gdk_display_get_default()) : gdk_display_get_primary_clipboard(gdk_display_get_default()))
 {
+    if (type == Type::Primary) {
+        g_signal_connect(m_clipboard, "notify::local", G_CALLBACK(+[](GdkClipboard* clipboard, GParamSpec*, gpointer) {
+            if (!gdk_clipboard_is_local(clipboard))
+                WebPasteboardProxy::singleton().setPrimarySelectionOwner(nullptr);
+        }), nullptr);
+    }
 }
 
 Clipboard::Type Clipboard::type() const
 {
-    return Type::Clipboard;
+    return m_clipboard == gdk_display_get_primary_clipboard(gdk_display_get_default()) ? Type::Primary : Type::Clipboard;
 }
 
 void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    completionHandler({ });
+    gsize mimeTypesCount;
+    const char* const* mimeTypes = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
+
+    Vector<String> result;
+    result.reserveInitialCapacity(mimeTypesCount);
+    for (size_t i = 0; i < mimeTypesCount; ++i)
+        result.uncheckedAppend(String::fromUTF8(mimeTypes[i]));
+    completionHandler(WTFMove(result));
 }
+
+struct ReadTextAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    explicit ReadTextAsyncData(CompletionHandler<void(String&&)>&& handler)
+        : completionHandler(WTFMove(handler))
+    {
+    }
+
+    CompletionHandler<void(String&&)> completionHandler;
+};
 
 void Clipboard::readText(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    completionHandler({ });
+    gdk_clipboard_read_text_async(m_clipboard, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+        std::unique_ptr<ReadTextAsyncData> data(static_cast<ReadTextAsyncData*>(userData));
+        GUniquePtr<char> text(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(clipboard), result, nullptr));
+        data->completionHandler(String::fromUTF8(text.get()));
+    }, new ReadTextAsyncData(WTFMove(completionHandler)));
 }
+
+struct ReadFilePathsAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    explicit ReadFilePathsAsyncData(CompletionHandler<void(Vector<String>&&)>&& handler)
+        : completionHandler(WTFMove(handler))
+    {
+    }
+
+    CompletionHandler<void(Vector<String>&&)> completionHandler;
+};
 
 void Clipboard::readFilePaths(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    completionHandler({ });
+    gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+        std::unique_ptr<ReadFilePathsAsyncData> data(static_cast<ReadFilePathsAsyncData*>(userData));
+        Vector<String> filePaths;
+        if (const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, nullptr)) {
+            auto* list = static_cast<GSList*>(g_value_get_boxed(value));
+            for (auto* l = list; l && l->data; l = g_slist_next(l)) {
+                auto* file = G_FILE(l->data);
+                if (!g_file_is_native(file))
+                    continue;
+
+                GUniquePtr<gchar> filename(g_file_get_path(file));
+                if (filename)
+                    filePaths.append(String::fromUTF8(filename.get()));
+            }
+        }
+        data->completionHandler(WTFMove(filePaths));
+    }, new ReadFilePathsAsyncData(WTFMove(completionHandler)));
 }
+
+struct ReadBufferAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    explicit ReadBufferAsyncData(CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& handler)
+        : completionHandler(WTFMove(handler))
+    {
+    }
+
+    CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)> completionHandler;
+};
 
 void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    completionHandler(WebCore::SharedBuffer::create());
+    const char* mimeTypes[] = { format, nullptr };
+    gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+        std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
+        GRefPtr<GInputStream> inputStream = adoptGRef(gdk_clipboard_read_finish(GDK_CLIPBOARD(clipboard), result, nullptr, nullptr));
+        if (!inputStream) {
+            data->completionHandler(WebCore::SharedBuffer::create());
+            return;
+        }
+
+        GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new_resizable());
+        g_output_stream_splice_async(outputStream.get(), inputStream.get(),
+            static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+            G_PRIORITY_DEFAULT, nullptr, [](GObject* stream, GAsyncResult* result, gpointer userData) {
+                std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
+                gssize writtenBytes = g_output_stream_splice_finish(G_OUTPUT_STREAM(stream), result, nullptr);
+                if (writtenBytes <= 0) {
+                    data->completionHandler(WebCore::SharedBuffer::create());
+                    return;
+                }
+
+                GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
+                data->completionHandler(WebCore::SharedBuffer::create(bytes.get()));
+            }, data.release());
+    }, new ReadBufferAsyncData(WTFMove(completionHandler)));
 }
 
-void Clipboard::write(const WebCore::SelectionData&)
+void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
 {
+    Vector<GdkContentProvider*> providers;
+    if (selectionData->hasMarkup()) {
+        CString markup = selectionData->markup().utf8();
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(markup.data(), markup.length()));
+        providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
+    }
+
+    if (selectionData->hasImage()) {
+        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData->image()->getGdkPixbuf());
+        providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
+    }
+
+    if (selectionData->hasText())
+        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, selectionData->text().utf8().data()));
+
+    if (selectionData->canSmartReplace()) {
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
+        providers.append(gdk_content_provider_new_for_bytes("application/vnd.webkitgtk.smartpaste", bytes.get()));
+    }
+
+    if (providers.isEmpty()) {
+        clear();
+        return;
+    }
+
+    GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.data(), providers.size()));
+    gdk_clipboard_set_content(m_clipboard, provider.get());
 }
 
 void Clipboard::clear()
 {
+    gdk_clipboard_set_content(m_clipboard, nullptr);
 }
 
 } // namespace WebKit

@@ -28,7 +28,9 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
-#if !USE(GTK4)
+#if USE(GTK4)
+typedef struct _GdkClipboard GdkClipboard;
+#else
 typedef struct _GtkClipboard GtkClipboard;
 #endif
 
@@ -58,7 +60,9 @@ public:
     void clear();
 
 private:
-#if !USE(GTK4)
+#if USE(GTK4)
+    GdkClipboard* m_clipboard { nullptr };
+#else
     GtkClipboard* m_clipboard { nullptr };
     WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif
