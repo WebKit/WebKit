@@ -307,6 +307,8 @@ protected:
     bool m_isCompilationThread: 1;
     unsigned m_gcThreadType : 2;
 
+    bool m_didUnregisterFromAllThreads { false };
+
     // Lock & ParkingLot rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
     WordLock m_mutex;

@@ -176,9 +176,14 @@ Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
 #endif
     }
 
+    // We must register threads here since threads registered in allThreads are expected to have complete thread data which can be initialized in launched thread side.
+    // However, it is also possible that the launched thread has finished its execution before it is registered in allThreads here! In this case, the thread has already
+    // called Thread::didExit to unregister itself from allThreads. Registering such a thread will register a stale thread pointer to allThreads, which will not be removed
+    // even after Thread is destroyed. Register a thread only when it has not unregistered itself from allThreads yet.
     {
-        LockHolder lock(allThreadsMutex());
-        allThreads(lock).add(&thread.get());
+        auto locker = holdLock(allThreadsMutex());
+        if (!thread->m_didUnregisterFromAllThreads)
+            allThreads(locker).add(thread.ptr());
     }
 
     ASSERT(!thread->stack().isEmpty());
@@ -202,8 +207,9 @@ static bool shouldRemoveThreadFromThreadGroup()
 void Thread::didExit()
 {
     {
-        LockHolder lock(allThreadsMutex());
-        allThreads(lock).remove(this);
+        auto locker = holdLock(allThreadsMutex());
+        allThreads(locker).remove(this);
+        m_didUnregisterFromAllThreads = true;
     }
 
     if (shouldRemoveThreadFromThreadGroup()) {
