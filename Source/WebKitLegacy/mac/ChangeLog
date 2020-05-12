@@ -1,3 +1,32 @@
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r260315. rdar://problem/62978882
+
+    -[WebPreferences initWithCoder:] should use -[NSCoder decodeValueOfObjCType:at:size:]
+    <https://webkit.org/b/210621>
+    <rdar://problem/61906458>
+    
+    Reviewed by Anders Carlsson.
+    
+    * WebView/WebPreferences.mm:
+    (-[WebPreferences initWithCoder:]):
+    - Switch to -[NSCoder decodeValueOfObjCType:at:size:].
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260315 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-18  David Kilzer  <ddkilzer@apple.com>
+
+            -[WebPreferences initWithCoder:] should use -[NSCoder decodeValueOfObjCType:at:size:]
+            <https://webkit.org/b/210621>
+            <rdar://problem/61906458>
+
+            Reviewed by Anders Carlsson.
+
+            * WebView/WebPreferences.mm:
+            (-[WebPreferences initWithCoder:]):
+            - Switch to -[NSCoder decodeValueOfObjCType:at:size:].
+
 2020-02-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r256191. rdar://problem/59447003
