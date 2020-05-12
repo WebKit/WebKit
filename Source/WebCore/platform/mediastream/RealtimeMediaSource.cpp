@@ -76,25 +76,12 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer& observer
 
 void RealtimeMediaSource::setInterrupted(bool interrupted, bool pageMuted)
 {
-    if (interrupted == m_interrupted)
-        return;
-
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, interrupted, ", page muted : ", pageMuted);
-
-    m_interrupted = interrupted;
-    if (!interrupted && pageMuted)
-        return;
-
     setMuted(interrupted);
 }
 
 void RealtimeMediaSource::setMuted(bool muted)
 {
-    if (!muted && interrupted()) {
-        ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, "ignoring unmute because of interruption");
-        return;
-    }
-
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
 
     // Changed m_muted before calling start/stop so muted() will reflect the correct state.
