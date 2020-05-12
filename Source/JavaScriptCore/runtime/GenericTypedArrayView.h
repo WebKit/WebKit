@@ -110,12 +110,12 @@ public:
     RefPtr<GenericTypedArrayView> subarray(int start) const;
     RefPtr<GenericTypedArrayView> subarray(int start, int end) const;
     
-    TypedArrayType getType() const override
+    TypedArrayType getType() const final
     {
         return Adaptor::typeValue;
     }
 
-    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) override;
+    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) final;
 
 private:
     GenericTypedArrayView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);

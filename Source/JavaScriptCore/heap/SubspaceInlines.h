@@ -88,7 +88,7 @@ void Subspace::forEachMarkedCell(const Func& func)
 template<typename Func>
 Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const Func& func)
 {
-    class Task : public SharedTask<void(SlotVisitor&)> {
+    class Task final : public SharedTask<void(SlotVisitor&)> {
     public:
         Task(Subspace& subspace, const Func& func)
             : m_subspace(subspace)
@@ -97,7 +97,7 @@ Ref<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const 
         {
         }
         
-        void run(SlotVisitor& visitor) override
+        void run(SlotVisitor& visitor) final
         {
             while (MarkedBlock::Handle* handle = m_blockSource->run()) {
                 handle->forEachMarkedCell(

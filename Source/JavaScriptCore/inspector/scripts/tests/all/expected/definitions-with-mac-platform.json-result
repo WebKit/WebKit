@@ -153,7 +153,7 @@ protected:
 class NetworkBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<NetworkBackendDispatcher> create(BackendDispatcher&, NetworkBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void loadResource(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -589,7 +589,7 @@ class ObjCInspectorNetworkBackendDispatcher final : public AlternateNetworkBacke
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorNetworkBackendDispatcher(id<TestProtocolNetworkDomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource(long requestId) override;
+    void loadResource(long requestId) final;
 private:
     RetainPtr<id<TestProtocolNetworkDomainHandler>> m_delegate;
 };

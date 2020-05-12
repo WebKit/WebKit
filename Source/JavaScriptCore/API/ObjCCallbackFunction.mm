@@ -55,8 +55,8 @@ CallbackArgument::~CallbackArgument()
 {
 }
 
-class CallbackArgumentBoolean : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+class CallbackArgumentBoolean final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
         bool value = JSValueToBoolean([context JSGlobalContextRef], argument);
         [invocation setArgument:&value atIndex:argumentNumber];
@@ -64,8 +64,8 @@ class CallbackArgumentBoolean : public CallbackArgument {
 };
 
 template<typename T>
-class CallbackArgumentInteger : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentInteger final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         T value = (T)JSC::toInt32(JSValueToNumber([context JSGlobalContextRef], argument, exception));
@@ -76,8 +76,8 @@ class CallbackArgumentInteger : public CallbackArgument {
 };
 
 template<typename T>
-class CallbackArgumentDouble : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentDouble final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         T value = (T)JSValueToNumber([context JSGlobalContextRef], argument, exception);
@@ -87,23 +87,23 @@ class CallbackArgumentDouble : public CallbackArgument {
     }
 };
 
-class CallbackArgumentJSValue : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+class CallbackArgumentJSValue final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
         JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
 
-class CallbackArgumentId : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+class CallbackArgumentId final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
         id value = valueToObject(context, argument);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
 
-class CallbackArgumentOfClass : public CallbackArgument {
+class CallbackArgumentOfClass final : public CallbackArgument {
 public:
     CallbackArgumentOfClass(Class cls)
         : m_class(cls)
@@ -111,7 +111,7 @@ public:
     }
 
 private:
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
@@ -134,8 +134,8 @@ private:
     RetainPtr<Class> m_class;
 };
 
-class CallbackArgumentNSNumber : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentNSNumber final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         id value = valueToNumber([context JSGlobalContextRef], argument, exception);
@@ -145,8 +145,8 @@ class CallbackArgumentNSNumber : public CallbackArgument {
     }
 };
 
-class CallbackArgumentNSString : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentNSString final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         id value = valueToString([context JSGlobalContextRef], argument, exception);
@@ -156,8 +156,8 @@ class CallbackArgumentNSString : public CallbackArgument {
     }
 };
 
-class CallbackArgumentNSDate : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentNSDate final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         id value = valueToDate([context JSGlobalContextRef], argument, exception);
@@ -167,8 +167,8 @@ class CallbackArgumentNSDate : public CallbackArgument {
     }
 };
 
-class CallbackArgumentNSArray : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentNSArray final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         id value = valueToArray([context JSGlobalContextRef], argument, exception);
@@ -178,8 +178,8 @@ class CallbackArgumentNSArray : public CallbackArgument {
     }
 };
 
-class CallbackArgumentNSDictionary : public CallbackArgument {
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
+class CallbackArgumentNSDictionary final : public CallbackArgument {
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) final
     {
         ASSERT(exception && !*exception);
         id value = valueToDictionary([context JSGlobalContextRef], argument, exception);
@@ -189,7 +189,7 @@ class CallbackArgumentNSDictionary : public CallbackArgument {
     }
 };
 
-class CallbackArgumentStruct : public CallbackArgument {
+class CallbackArgumentStruct final : public CallbackArgument {
 public:
     CallbackArgumentStruct(NSInvocation *conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
@@ -198,7 +198,7 @@ public:
     }
     
 private:
-    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
+    void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) final
     {
         JSValue *value = [JSValue valueWithJSValueRef:argument inContext:context];
         [m_conversionInvocation invokeWithTarget:value];
@@ -210,7 +210,7 @@ private:
     StructBuffer m_buffer;
 };
 
-class ArgumentTypeDelegate {
+class ArgumentTypeDelegate final {
 public:
     typedef std::unique_ptr<CallbackArgument> ResultType;
 
@@ -289,15 +289,15 @@ public:
     virtual JSValueRef get(NSInvocation *, JSContext *, JSValueRef*) = 0;
 };
 
-class CallbackResultVoid : public CallbackResult {
-    JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) override
+class CallbackResultVoid final : public CallbackResult {
+    JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) final
     {
         return JSValueMakeUndefined([context JSGlobalContextRef]);
     }
 };
 
-class CallbackResultId : public CallbackResult {
-    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+class CallbackResultId final : public CallbackResult {
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
     {
         id value;
         [invocation getReturnValue:&value];
@@ -306,8 +306,8 @@ class CallbackResultId : public CallbackResult {
 };
 
 template<typename T>
-class CallbackResultNumeric : public CallbackResult {
-    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+class CallbackResultNumeric final : public CallbackResult {
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
     {
         T value;
         [invocation getReturnValue:&value];
@@ -315,8 +315,8 @@ class CallbackResultNumeric : public CallbackResult {
     }
 };
 
-class CallbackResultBoolean : public CallbackResult {
-    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+class CallbackResultBoolean final : public CallbackResult {
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
     {
         bool value;
         [invocation getReturnValue:&value];
@@ -324,7 +324,7 @@ class CallbackResultBoolean : public CallbackResult {
     }
 };
 
-class CallbackResultStruct : public CallbackResult {
+class CallbackResultStruct final : public CallbackResult {
 public:
     CallbackResultStruct(NSInvocation *conversionInvocation, const char* encodedType)
         : m_conversionInvocation(conversionInvocation)
@@ -333,7 +333,7 @@ public:
     }
     
 private:
-    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) override
+    JSValueRef get(NSInvocation *invocation, JSContext *context, JSValueRef*) final
     {
         [invocation getReturnValue:m_buffer];
 
@@ -350,7 +350,7 @@ private:
     StructBuffer m_buffer;
 };
 
-class ResultTypeDelegate {
+class ResultTypeDelegate final {
 public:
     typedef std::unique_ptr<CallbackResult> ResultType;
 
@@ -409,7 +409,7 @@ enum CallbackType {
 
 namespace JSC {
 
-class ObjCCallbackFunctionImpl {
+class ObjCCallbackFunctionImpl final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)

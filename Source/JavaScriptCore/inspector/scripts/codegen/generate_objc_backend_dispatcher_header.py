@@ -111,5 +111,5 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
             'commandName': command.command_name,
             'parameters': ', '.join(parameters),
         }
-        lines.append('    virtual void %(commandName)s(%(parameters)s) override;' % command_args)
+        lines.append('    void %(commandName)s(%(parameters)s) final;' % command_args)
         return '\n'.join(lines)

@@ -54,7 +54,7 @@ public:
 #else
     RemoteConnectionToTarget(RemoteControllableTarget&);
 #endif
-    ~RemoteConnectionToTarget() override;
+    ~RemoteConnectionToTarget() final;
 
     // Main API.
     bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);
@@ -77,8 +77,8 @@ public:
 #endif
 
     // FrontendChannel overrides.
-    ConnectionType connectionType() const override { return ConnectionType::Remote; }
-    void sendMessageToFrontend(const String&) override;
+    ConnectionType connectionType() const final { return ConnectionType::Remote; }
+    void sendMessageToFrontend(const String&) final;
 
 private:
 #if PLATFORM(COCOA)

@@ -36,18 +36,18 @@ class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
-    ~JSGlobalObjectDebuggerAgent() override;
+    ~JSGlobalObjectDebuggerAgent() final;
 
     // ScriptDebugListener
-    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
+    void breakpointActionLog(JSC::JSGlobalObject*, const String&) final;
 
 private:
-    InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
+    InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) final;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages
     // are sent to the console outside of the API boundary or console object.
-    void muteConsole() override { }
-    void unmuteConsole() override { }
+    void muteConsole() final { }
+    void unmuteConsole() final { }
 
     InspectorConsoleAgent* m_consoleAgent { nullptr };
 };

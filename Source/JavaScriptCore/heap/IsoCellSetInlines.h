@@ -94,7 +94,7 @@ void IsoCellSet::forEachMarkedCell(const Func& func)
 template<typename Func>
 Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Func& func)
 {
-    class Task : public SharedTask<void(SlotVisitor&)> {
+    class Task final : public SharedTask<void(SlotVisitor&)> {
     public:
         Task(IsoCellSet& set, const Func& func)
             : m_set(set)
@@ -103,7 +103,7 @@ Ref<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(cons
         {
         }
         
-        void run(SlotVisitor& visitor) override
+        void run(SlotVisitor& visitor) final
         {
             while (MarkedBlock::Handle* handle = m_blockSource->run()) {
                 unsigned blockIndex = handle->index();

@@ -162,7 +162,7 @@ protected:
 class DatabaseBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DatabaseBackendDispatcher> create(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void executeAllOptionalParameters(long requestId, RefPtr<JSON::Object>&& parameters);
     void executeNoOptionalParameters(long requestId, RefPtr<JSON::Object>&& parameters);
@@ -780,8 +780,8 @@ class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    virtual void executeAllOptionalParameters(long requestId, const JSON::Array* in_columnNames, const String* in_notes, const double* in_timestamp, const JSON::Object* in_values, const JSON::Value* in_payload, const int* in_databaseId, const JSON::Object* in_sqlError, const String* in_screenColor, const JSON::Array* in_alternateColors, const String* in_printColor) override;
-    virtual void executeNoOptionalParameters(long requestId, const JSON::Array& in_columnNames, const String& in_notes, double in_timestamp, const JSON::Object& in_values, JSON::Value in_payload, int in_databaseId, const JSON::Object& in_sqlError, const String& in_screenColor, const JSON::Array& in_alternateColors, const String& in_printColor) override;
+    void executeAllOptionalParameters(long requestId, const JSON::Array* in_columnNames, const String* in_notes, const double* in_timestamp, const JSON::Object* in_values, const JSON::Value* in_payload, const int* in_databaseId, const JSON::Object* in_sqlError, const String* in_screenColor, const JSON::Array* in_alternateColors, const String* in_printColor) final;
+    void executeNoOptionalParameters(long requestId, const JSON::Array& in_columnNames, const String& in_notes, double in_timestamp, const JSON::Object& in_values, JSON::Value in_payload, int in_databaseId, const JSON::Object& in_sqlError, const String& in_screenColor, const JSON::Array& in_alternateColors, const String& in_printColor) final;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };

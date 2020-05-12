@@ -31,12 +31,12 @@ namespace JSC {
 
 class Heap;
 
-class StopIfNecessaryTimer : public JSRunLoopTimer {
+class StopIfNecessaryTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
     explicit StopIfNecessaryTimer(VM&);
     
-    void doWork(VM&) override;
+    void doWork(VM&) final;
     
     void scheduleSoon();
 };

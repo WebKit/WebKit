@@ -55,7 +55,7 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
-class RunLoop : public FunctionDispatcher {
+class RunLoop final : public FunctionDispatcher {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread (except for the Mac platform, where it
@@ -65,9 +65,9 @@ public:
     WTF_EXPORT_PRIVATE static RunLoop& current();
     WTF_EXPORT_PRIVATE static RunLoop& main();
     WTF_EXPORT_PRIVATE static bool isMain();
-    ~RunLoop();
+    ~RunLoop() final;
 
-    void dispatch(Function<void()>&&) override;
+    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
 
     WTF_EXPORT_PRIVATE static void run();
     WTF_EXPORT_PRIVATE void stop();
@@ -177,7 +177,7 @@ public:
     };
 
 #if USE(WINDOWS_EVENT_LOOP)
-    class DispatchTimer : public TimerBase {
+    class DispatchTimer final : public TimerBase {
     public:
         DispatchTimer(RunLoop& runLoop)
             : TimerBase(runLoop)
@@ -189,7 +189,7 @@ public:
             m_function = WTFMove(function);
         }
     private:
-        void fired() override { m_function(); }
+        void fired() final { m_function(); }
 
         Function<void()> m_function;
     };

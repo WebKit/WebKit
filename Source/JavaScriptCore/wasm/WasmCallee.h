@@ -153,7 +153,7 @@ public:
     }
 
     OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) override
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) final
     {
         m_osrEntryCallee = WTFMove(osrEntryCallee);
     }
@@ -192,9 +192,9 @@ public:
     }
 
     JS_EXPORT_PRIVATE void setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag>);
-    JS_EXPORT_PRIVATE MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const override;
-    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() override;
-    JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const override;
+    JS_EXPORT_PRIVATE MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const final;
+    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() final;
+    JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
 
     JITCallee* replacement() { return m_replacement.get(); }
     void setReplacement(Ref<JITCallee>&& replacement)
@@ -203,7 +203,7 @@ public:
     }
 
     OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) override
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) final
     {
         m_osrEntryCallee = WTFMove(osrEntryCallee);
     }

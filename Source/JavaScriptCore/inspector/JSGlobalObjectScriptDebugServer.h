@@ -35,25 +35,25 @@ class JSGlobalObjectScriptDebugServer final : public ScriptDebugServer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectScriptDebugServer(JSC::JSGlobalObject&);
-    ~JSGlobalObjectScriptDebugServer() override { }
+    ~JSGlobalObjectScriptDebugServer() final { }
 
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 
     static RunLoopMode runLoopMode();
 
 private:
-    void attachDebugger() override;
-    void detachDebugger(bool isBeingDestroyed) override;
+    void attachDebugger() final;
+    void detachDebugger(bool isBeingDestroyed) final;
 
-    void didPause(JSC::JSGlobalObject*) override { }
-    void didContinue(JSC::JSGlobalObject*) override { }
-    void runEventLoopWhilePaused() override;
-    bool isContentScript(JSC::JSGlobalObject*) const override { return false; }
+    void didPause(JSC::JSGlobalObject*) final { }
+    void didContinue(JSC::JSGlobalObject*) final { }
+    void runEventLoopWhilePaused() final;
+    bool isContentScript(JSC::JSGlobalObject*) const final { return false; }
 
     // NOTE: Currently all exceptions are reported at the API boundary through reportAPIException.
     // Until a time comes where an exception can be caused outside of the API (e.g. setTimeout
     // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
-    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const override { }
+    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final { }
 
     JSC::JSGlobalObject& m_globalObject;
 };

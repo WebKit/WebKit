@@ -33,7 +33,7 @@ namespace JSC {
 
 struct AccessGenerationState;
 
-class AccessCaseSnippetParams : public SnippetParams {
+class AccessCaseSnippetParams final : public SnippetParams {
 public:
     AccessCaseSnippetParams(VM& vm, Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : SnippetParams(vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
@@ -50,7 +50,7 @@ public:
     CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSet& usedRegistersBySnippet, CCallHelpers&);
 
 private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
+#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) final;
     SNIPPET_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
     Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;

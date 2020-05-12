@@ -56,19 +56,19 @@ public:
 
     BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CodeBlock*, CompletionTask&&);
 
-    bool hasWork() const override
+    bool hasWork() const final
     {
         if (m_asyncWork == AsyncWork::Validation)
             return m_state < State::Validated;
         return m_state < State::Compiled;
     }
 
-    void work(CompilationEffort) override;
+    void work(CompilationEffort) final;
 
     using CalleeInitializer = Function<void(uint32_t, RefPtr<EmbedderEntrypointCallee>&&, Ref<BBQCallee>&&)>;
     void initializeCallees(const CalleeInitializer&);
 
-    bool didReceiveFunctionData(unsigned, const FunctionData&) override;
+    bool didReceiveFunctionData(unsigned, const FunctionData&) final;
 
     bool parseAndValidateModule()
     {
@@ -76,9 +76,9 @@ public:
     }
 
 private:
-    bool prepareImpl() override;
-    void compileFunction(uint32_t functionIndex) override;
-    void didCompleteCompilation(const AbstractLocker&) override;
+    bool prepareImpl() final;
+    void compileFunction(uint32_t functionIndex) final;
+    void didCompleteCompilation(const AbstractLocker&) final;
 
     std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
 

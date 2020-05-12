@@ -67,7 +67,7 @@ class JSGlobalObjectInspectorController final
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
-    ~JSGlobalObjectInspectorController() override;
+    ~JSGlobalObjectInspectorController() final;
 
     void connectFrontend(FrontendChannel&, bool isAutomaticInspection, bool immediatelyPause);
     void disconnectFrontend(FrontendChannel&);
@@ -83,22 +83,22 @@ public:
 
     JSC::ConsoleClient* consoleClient() const;
 
-    bool developerExtrasEnabled() const override;
-    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
-    InspectorFunctionCallHandler functionCallHandler() const override;
-    InspectorEvaluateHandler evaluateHandler() const override;
-    void frontendInitialized() override;
+    bool developerExtrasEnabled() const final;
+    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const final { return true; }
+    InspectorFunctionCallHandler functionCallHandler() const final;
+    InspectorEvaluateHandler evaluateHandler() const final;
+    void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const final;
-    JSGlobalObjectScriptDebugServer& scriptDebugServer() override;
-    JSC::VM& vm() override;
+    JSGlobalObjectScriptDebugServer& scriptDebugServer() final;
+    JSC::VM& vm() final;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const override { return m_augmentingClient; } 
-    void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) override { m_augmentingClient = client; }
+    AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const final { return m_augmentingClient; } 
+    void setAugmentableInspectorControllerClient(AugmentableInspectorControllerClient* client) final { m_augmentingClient = client; }
 
-    const FrontendRouter& frontendRouter() const override { return m_frontendRouter.get(); }
-    BackendDispatcher& backendDispatcher() override { return m_backendDispatcher.get(); }
-    void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) override;
+    const FrontendRouter& frontendRouter() const final { return m_frontendRouter.get(); }
+    BackendDispatcher& backendDispatcher() final { return m_backendDispatcher.get(); }
+    void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) final;
 #endif
 
 private:

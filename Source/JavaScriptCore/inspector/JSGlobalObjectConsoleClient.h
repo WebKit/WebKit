@@ -39,7 +39,7 @@ class JSGlobalObjectConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*);
-    ~JSGlobalObjectConsoleClient() override { }
+    ~JSGlobalObjectConsoleClient() final { }
 
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);
@@ -48,19 +48,19 @@ public:
     void setInspectorScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }
 
 private:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
-    void count(JSC::JSGlobalObject*, const String& label) override;
-    void countReset(JSC::JSGlobalObject*, const String& label) override;
-    void profile(JSC::JSGlobalObject*, const String& title) override;
-    void profileEnd(JSC::JSGlobalObject*, const String& title) override;
-    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) override;
-    void time(JSC::JSGlobalObject*, const String& label) override;
-    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<ScriptArguments>&&) override;
-    void timeEnd(JSC::JSGlobalObject*, const String& label) override;
-    void timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
-    void record(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
-    void recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
-    void screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
+    void count(JSC::JSGlobalObject*, const String& label) final;
+    void countReset(JSC::JSGlobalObject*, const String& label) final;
+    void profile(JSC::JSGlobalObject*, const String& title) final;
+    void profileEnd(JSC::JSGlobalObject*, const String& title) final;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) final;
+    void time(JSC::JSGlobalObject*, const String& label) final;
+    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<ScriptArguments>&&) final;
+    void timeEnd(JSC::JSGlobalObject*, const String& label) final;
+    void timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
+    void record(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
+    void recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
+    void screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;
 
     void warnUnimplemented(const String& method);
     void internalAddMessage(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&);

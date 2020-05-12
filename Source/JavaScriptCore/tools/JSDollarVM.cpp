@@ -246,10 +246,10 @@ private:
     WriteBarrier<Root> m_root;
 };
 
-class ElementHandleOwner : public WeakHandleOwner {
+class ElementHandleOwner final : public WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason) override
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason) final
     {
         DollarVMAssertScope assertScope;
         if (UNLIKELY(reason))
@@ -259,7 +259,7 @@ public:
     }
 };
 
-class Root : public JSDestructibleObject {
+class Root final : public JSDestructibleObject {
 public:
     using Base = JSDestructibleObject;
     template<typename CellType, SubspaceAccess>
@@ -1465,9 +1465,9 @@ public:
         {
         }
 
-        bool didReceiveSectionData(Wasm::Section) override { return true; }
-        bool didReceiveFunctionData(unsigned, const Wasm::FunctionData&) override { return true; }
-        void didFinishParsing() override { }
+        bool didReceiveSectionData(Wasm::Section) final { return true; }
+        bool didReceiveFunctionData(unsigned, const Wasm::FunctionData&) final { return true; }
+        void didFinishParsing() final { }
 
         WasmStreamingParser* m_parser;
     };
@@ -2691,7 +2691,7 @@ public:
     }
 
 private:
-    void sourceParsed(JSGlobalObject*, SourceProvider*, int, const WTF::String&) override
+    void sourceParsed(JSGlobalObject*, SourceProvider*, int, const WTF::String&) final
     {
         DollarVMAssertScope assertScope;
     }

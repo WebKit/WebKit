@@ -31,9 +31,9 @@
 #include "Structure.h"
 #include <wtf/NeverDestroyed.h>
 
-class JSAPIWrapperGlobalObjectHandleOwner : public JSC::WeakHandleOwner {
+class JSAPIWrapperGlobalObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void*) override;
+    void finalize(JSC::Handle<JSC::Unknown>, void*) final;
 };
 
 static JSAPIWrapperGlobalObjectHandleOwner* jsAPIWrapperGlobalObjectHandleOwner()

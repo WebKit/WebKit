@@ -309,14 +309,14 @@ void BlockDirectory::assertNoUnswept()
 
 RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlockSource()
 {
-    class Task : public SharedTask<MarkedBlock::Handle*()> {
+    class Task final : public SharedTask<MarkedBlock::Handle*()> {
     public:
         Task(BlockDirectory& directory)
             : m_directory(directory)
         {
         }
         
-        MarkedBlock::Handle* run() override
+        MarkedBlock::Handle* run() final
         {
             if (m_done)
                 return nullptr;

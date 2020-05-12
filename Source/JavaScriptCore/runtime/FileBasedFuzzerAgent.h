@@ -38,7 +38,7 @@ public:
     FileBasedFuzzerAgent(VM&);
 
 private:
-    SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) override;
+    SpeculatedType getPredictionInternal(CodeBlock*, PredictionTarget&, SpeculatedType original) final;
 };
 
 } // namespace JSC

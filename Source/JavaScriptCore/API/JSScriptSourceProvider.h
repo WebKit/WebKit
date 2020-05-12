@@ -29,7 +29,7 @@
 
 @class JSScript;
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
+class JSScriptSourceProvider final : public JSC::SourceProvider {
 public:
     template<typename... Args>
     static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
@@ -37,9 +37,9 @@ public:
         return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
     }
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+    unsigned hash() const final;
+    StringView source() const final;
+    RefPtr<JSC::CachedBytecode> cachedBytecode() const final;
 
 private:
     template<typename... Args>

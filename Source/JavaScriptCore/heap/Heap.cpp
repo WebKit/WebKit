@@ -237,7 +237,7 @@ private:
 
 } // anonymous namespace
 
-class Heap::HeapThread : public AutomaticThread {
+class Heap::HeapThread final : public AutomaticThread {
 public:
     HeapThread(const AbstractLocker& locker, Heap& heap)
         : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition.copyRef())
@@ -245,13 +245,13 @@ public:
     {
     }
 
-    const char* name() const override
+    const char* name() const final
     {
         return "JSC Heap Collector Thread";
     }
     
-protected:
-    PollResult poll(const AbstractLocker& locker) override
+private:
+    PollResult poll(const AbstractLocker& locker) final
     {
         if (m_heap.m_threadShouldStop) {
             m_heap.notifyThreadStopping(locker);
@@ -265,23 +265,22 @@ protected:
         return PollResult::Wait;
     }
     
-    WorkResult work() override
+    WorkResult work() final
     {
         m_heap.collectInCollectorThread();
         return WorkResult::Continue;
     }
     
-    void threadDidStart() override
+    void threadDidStart() final
     {
         Thread::registerGCThread(GCThreadType::Main);
     }
 
-    void threadIsStopping(const AbstractLocker&) override
+    void threadIsStopping(const AbstractLocker&) final
     {
         m_heap.m_collectorThreadIsRunning = false;
     }
 
-private:
     Heap& m_heap;
 };
 

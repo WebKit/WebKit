@@ -51,11 +51,11 @@ public:
         m_alternateDispatcher->setBackendDispatcher(nullptr);
     }
 
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override
+    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final
     {
     }
 
-    void willDestroyFrontendAndBackend(DisconnectReason) override
+    void willDestroyFrontendAndBackend(DisconnectReason) final
     {
     }
 

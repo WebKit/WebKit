@@ -40,11 +40,11 @@ namespace WTF {
 class WTF_EXPORT_PRIVATE OSLogPrintStream final : public PrintStream {
 public:
     OSLogPrintStream(os_log_t, os_log_type_t);
-    virtual ~OSLogPrintStream();
+    ~OSLogPrintStream() final;
     
     static std::unique_ptr<OSLogPrintStream> open(const char* subsystem, const char* category, os_log_type_t = OS_LOG_TYPE_DEFAULT);
     
-    void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
+    void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);
 
 private:
     os_log_t m_log;

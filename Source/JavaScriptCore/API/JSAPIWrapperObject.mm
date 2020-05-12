@@ -34,10 +34,10 @@
 
 #if JSC_OBJC_API_ENABLED
 
-class JSAPIWrapperObjectHandleOwner : public JSC::WeakHandleOwner {
+class JSAPIWrapperObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void*) override;
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) override;
+    void finalize(JSC::Handle<JSC::Unknown>, void*) final;
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) final;
 };
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()

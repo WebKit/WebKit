@@ -39,10 +39,10 @@
 #import "JSCInlines.h"
 #import <wtf/NeverDestroyed.h>
 
-class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
+class JSManagedValueHandleOwner final : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) override;
+    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**) final;
 };
 
 static JSManagedValueHandleOwner& managedValueHandleOwner()

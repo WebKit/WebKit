@@ -272,10 +272,10 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
     printCallSite(file, line, function);
 }
 
-class CrashLogPrintStream : public PrintStream {
+class CrashLogPrintStream final : public PrintStream {
 public:
     WTF_ATTRIBUTE_PRINTF(2, 0)
-    void vprintf(const char* format, va_list argList) override
+    void vprintf(const char* format, va_list argList) final
     {
         vprintf_stderr_common(format, argList);
     }

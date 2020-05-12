@@ -42,8 +42,8 @@ public:
         return makeUnique<IsoHeapCellType>(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, &CellType::destroy);
     }
 
-    JS_EXPORT_PRIVATE void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    JS_EXPORT_PRIVATE void destroy(VM&, JSCell*) override;
+    JS_EXPORT_PRIVATE void finishSweep(MarkedBlock::Handle&, FreeList*) final;
+    JS_EXPORT_PRIVATE void destroy(VM&, JSCell*) final;
 
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {

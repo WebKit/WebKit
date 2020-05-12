@@ -1,5 +1,104 @@
 2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Fix existing usage of final/override/virtual in JSC and WTF
+        https://bugs.webkit.org/show_bug.cgi?id=211772
+
+        Reviewed by Darin Adler.
+
+        * API/JSAPIWrapperObject.mm:
+        * API/JSManagedValue.mm:
+        * API/JSScriptSourceProvider.h:
+        * API/ObjCCallbackFunction.mm:
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        * API/glib/JSCWeakValue.cpp:
+        * bytecode/AccessCaseSnippetParams.cpp:
+        * bytecode/AccessCaseSnippetParams.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * bytecode/VariableWriteFireDetail.h:
+        * bytecode/Watchpoint.h:
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * dfg/DFGSnippetParams.h:
+        * dfg/DFGWorklist.cpp:
+        * ftl/FTLSnippetParams.h:
+        * heap/BlockDirectory.cpp:
+        * heap/EdenGCActivityCallback.h:
+        * heap/FullGCActivityCallback.h:
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        * heap/IncrementalSweeper.h:
+        * heap/IsoCellSet.cpp:
+        * heap/IsoCellSetInlines.h:
+        * heap/IsoHeapCellType.h:
+        * heap/IsoInlinedHeapCellType.h:
+        * heap/ParallelSourceAdapter.h:
+        * heap/StopIfNecessaryTimer.h:
+        * heap/Subspace.cpp:
+        * heap/SubspaceInlines.h:
+        * inspector/InjectedScript.h:
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/agents/JSGlobalObjectAuditAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/augmentable/AlternateDispatchableAgent.h:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/command-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domain-debuggableTypes.json-result:
+        * inspector/scripts/tests/generic/expected/domain-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/domain-targetTypes.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/event-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        * jit/JITWorklist.cpp:
+        * parser/Nodes.h:
+        * parser/SourceProvider.h:
+        * runtime/DataView.h:
+        * runtime/DoublePredictionFuzzerAgent.h:
+        * runtime/FileBasedFuzzerAgent.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/JSMicrotask.cpp:
+        * runtime/NarrowingNumberPredictionFuzzerAgent.h:
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h:
+        * runtime/PredictionFileCreatingFuzzerAgent.h:
+        * runtime/PromiseTimer.h:
+        * runtime/RandomizingFuzzerAgent.h:
+        * runtime/RegExpCache.h:
+        * runtime/Structure.cpp:
+        * runtime/StructureRareData.cpp:
+        * runtime/VMTraps.cpp:
+        * runtime/WideningNumberPredictionFuzzerAgent.h:
+        * tools/JSDollarVM.cpp:
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCallee.h:
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmOMGForOSREntryPlan.h:
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmWorklist.cpp:
+        * yarr/YarrJIT.cpp:
+
+2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
+
         [clang-tidy] Run modernize-use-override over JSC, then ensure as much as possible is final
         https://bugs.webkit.org/show_bug.cgi?id=211743
 

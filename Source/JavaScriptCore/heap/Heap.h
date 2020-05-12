@@ -431,12 +431,12 @@ private:
 
     static constexpr size_t minExtraMemory = 256;
     
-    class CFinalizerOwner : public WeakHandleOwner {
-        void finalize(Handle<Unknown>, void* context) override;
+    class CFinalizerOwner final : public WeakHandleOwner {
+        void finalize(Handle<Unknown>, void* context) final;
     };
 
-    class LambdaFinalizerOwner : public WeakHandleOwner {
-        void finalize(Handle<Unknown>, void* context) override;
+    class LambdaFinalizerOwner final : public WeakHandleOwner {
+        void finalize(Handle<Unknown>, void* context) final;
     };
 
     JS_EXPORT_PRIVATE bool isValidAllocation(size_t);

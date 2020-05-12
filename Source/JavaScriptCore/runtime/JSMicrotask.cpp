@@ -55,7 +55,7 @@ public:
     }
 
 private:
-    void run(JSGlobalObject*) override;
+    void run(JSGlobalObject*) final;
 
     Strong<Unknown> m_job;
     Strong<Unknown> m_arguments[maxArguments];

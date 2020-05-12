@@ -1,3 +1,23 @@
+2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Fix existing usage of final/override/virtual in JSC and WTF
+        https://bugs.webkit.org/show_bug.cgi?id=211772
+
+        Reviewed by Darin Adler.
+
+        * wtf/Assertions.cpp:
+        * wtf/Expected.h:
+        * wtf/FilePrintStream.h:
+        * wtf/JSONValues.h:
+        * wtf/LockedPrintStream.h:
+        * wtf/OSLogPrintStream.h:
+        * wtf/ParallelHelperPool.cpp:
+        * wtf/RunLoop.h:
+        * wtf/SharedTask.h:
+        * wtf/StringPrintStream.h:
+        * wtf/WorkQueue.h:
+        * wtf/WorkerPool.cpp:
+
 2020-05-11  Darin Adler  <darin@apple.com>
 
         Fix problems caught by replacing WTF::Optional with std::optional

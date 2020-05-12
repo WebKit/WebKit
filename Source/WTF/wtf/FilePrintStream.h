@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-class FilePrintStream : public PrintStream {
+class FilePrintStream final : public PrintStream {
 public:
     enum AdoptionMode {
         Adopt,
@@ -38,14 +38,14 @@ public:
     };
     
     FilePrintStream(FILE*, AdoptionMode = Adopt);
-    virtual ~FilePrintStream();
+    WTF_EXPORT_PRIVATE ~FilePrintStream() final;
     
     WTF_EXPORT_PRIVATE static std::unique_ptr<FilePrintStream> open(const char* filename, const char* mode);
     
     FILE* file() { return m_file; }
     
-    void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
-    void flush() override;
+    void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);
+    void flush() final;
 
 private:
     FILE* m_file;

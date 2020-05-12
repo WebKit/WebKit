@@ -37,7 +37,7 @@ class NarrowingNumberPredictionFuzzerAgent final : public NumberPredictionFuzzer
 public:
     NarrowingNumberPredictionFuzzerAgent(VM&);
 
-    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) override;
+    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) final;
 };
 
 } // namespace JSC

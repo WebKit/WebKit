@@ -179,7 +179,7 @@ protected:
 class DatabaseBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DatabaseBackendDispatcher> create(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void executeSQLSyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
     void executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
@@ -865,10 +865,10 @@ class ObjCInspectorDatabaseBackendDispatcher final : public AlternateDatabaseBac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorDatabaseBackendDispatcher(id<TestProtocolDatabaseDomainHandler> handler) { m_delegate = handler; }
-    virtual void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLSync(long requestId, int in_databaseId, const String& in_query) override;
-    virtual void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) override;
+    void executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) final;
+    void executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query) final;
+    void executeSQLSync(long requestId, int in_databaseId, const String& in_query) final;
+    void executeSQLAsync(long requestId, int in_databaseId, const String& in_query) final;
 private:
     RetainPtr<id<TestProtocolDatabaseDomainHandler>> m_delegate;
 };

@@ -46,8 +46,8 @@ private:
     friend class NeverDestroyed<RemoteInspectorServer>;
     RemoteInspectorServer() { Socket::init(); }
 
-    bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) override;
-    void didClose(ConnectionID) override { }
+    bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) final;
+    void didClose(ConnectionID) final { }
 
     Optional<ConnectionID> m_server;
 };

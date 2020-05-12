@@ -56,9 +56,9 @@ public:
     };
 
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
-    virtual ~WorkQueue();
+    ~WorkQueue() final;
 
-    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) override;
+    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
     WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
 
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&&);

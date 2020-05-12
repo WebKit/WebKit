@@ -266,7 +266,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const IC
 
 namespace {
 
-class PutToScopeFireDetail : public FireDetail {
+class PutToScopeFireDetail final : public FireDetail {
 public:
     PutToScopeFireDetail(CodeBlock* codeBlock, const Identifier& ident)
         : m_codeBlock(codeBlock)
@@ -274,7 +274,7 @@ public:
     {
     }
     
-    void dump(PrintStream& out) const override
+    void dump(PrintStream& out) const final
     {
         out.print("Linking put_to_scope in ", FunctionExecutableDump(jsCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())), " for ", m_ident);
     }

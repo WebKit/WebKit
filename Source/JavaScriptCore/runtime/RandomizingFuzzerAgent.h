@@ -38,7 +38,7 @@ class RandomizingFuzzerAgent final : public FuzzerAgent {
 public:
     RandomizingFuzzerAgent(VM&);
 
-    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) override;
+    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) final;
 
 private:
     WeakRandom m_random;

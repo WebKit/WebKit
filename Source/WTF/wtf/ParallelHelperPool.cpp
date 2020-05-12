@@ -169,7 +169,7 @@ void ParallelHelperPool::doSomeHelping()
     client->runTask(task);
 }
 
-class ParallelHelperPool::Thread : public AutomaticThread {
+class ParallelHelperPool::Thread final : public AutomaticThread {
 public:
     Thread(const AbstractLocker& locker, ParallelHelperPool& pool)
         : AutomaticThread(locker, pool.m_lock, pool.m_workAvailableCondition.copyRef())
@@ -177,13 +177,13 @@ public:
     {
     }
     
-    const char* name() const override
+    const char* name() const final
     {
         return m_pool.m_threadName.data();
     }
 
-protected:
-    PollResult poll(const AbstractLocker& locker) override
+private:
+    PollResult poll(const AbstractLocker& locker) final
     {
         if (m_pool.m_isDying)
             return PollResult::Stop;
@@ -195,15 +195,14 @@ protected:
         return PollResult::Wait;
     }
     
-    WorkResult work() override
+    WorkResult work() final
     {
         m_client->runTask(m_task);
         m_client = nullptr;
         m_task = nullptr;
         return WorkResult::Continue;
     }
-    
-private:
+
     ParallelHelperPool& m_pool;
     ParallelHelperClient* m_client { nullptr };
     RefPtr<SharedTask<void ()>> m_task;

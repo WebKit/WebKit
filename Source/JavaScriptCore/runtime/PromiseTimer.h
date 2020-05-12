@@ -38,11 +38,11 @@ class JSPromise;
 class VM;
 class JSCell;
 
-class PromiseTimer : public JSRunLoopTimer {
+class PromiseTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    void doWork(VM&) override;
+    void doWork(VM&) final;
 
     void addPendingPromise(VM&, JSPromise*, Vector<Strong<JSCell>>&& dependencies);
     JS_EXPORT_PRIVATE bool hasPendingPromise(JSPromise* ticket);

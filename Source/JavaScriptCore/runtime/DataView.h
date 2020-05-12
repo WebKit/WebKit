@@ -30,20 +30,17 @@
 
 namespace JSC {
 
-class DataView : public ArrayBufferView {
-protected:
-    DataView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned byteLength);
-    
+class DataView final : public ArrayBufferView {
 public:
     JS_EXPORT_PRIVATE static Ref<DataView> create(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     static Ref<DataView> create(RefPtr<ArrayBuffer>&&);
     
-    TypedArrayType getType() const override
+    TypedArrayType getType() const final
     {
         return TypeDataView;
     }
 
-    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) override;
+    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) final;
     
     template<typename T>
     T get(unsigned offset, bool littleEndian, bool* status = nullptr)
@@ -84,6 +81,9 @@ public:
         *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get(byteLength())) + offset) =
             flipBytesIfLittleEndian(value, littleEndian);
     }
+
+private:
+    DataView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned byteLength);
 };
 
 } // namespace JSC

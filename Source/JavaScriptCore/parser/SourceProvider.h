@@ -131,19 +131,19 @@ class UnlinkedFunctionCodeBlock;
     };
 
 #if ENABLE(WEBASSEMBLY)
-    class WebAssemblySourceProvider : public SourceProvider {
+    class WebAssemblySourceProvider final : public SourceProvider {
     public:
         static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, URL&& url)
         {
             return adoptRef(*new WebAssemblySourceProvider(WTFMove(data), sourceOrigin, WTFMove(url)));
         }
 
-        unsigned hash() const override
+        unsigned hash() const final
         {
             return m_source.impl()->hash();
         }
 
-        StringView source() const override
+        StringView source() const final
         {
             return m_source;
         }

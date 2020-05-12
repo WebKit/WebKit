@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    PollResult poll(const AbstractLocker&) override
+    PollResult poll(const AbstractLocker&) final
     {
         auto& queue = worklist.m_queue;
         synchronize.notifyAll();
@@ -90,7 +90,7 @@ private:
         return PollResult::Wait;
     }
 
-    WorkResult work() override
+    WorkResult work() final
     {
         auto complete = [&] (const AbstractLocker&) {
             // We need to hold the lock to release our plan otherwise the main thread, while canceling plans
@@ -117,12 +117,12 @@ private:
         return complete(holdLock(*worklist.m_lock));
     }
 
-    void threadIsStopping(const AbstractLocker&) override
+    void threadIsStopping(const AbstractLocker&) final
     {
         clearLLIntThreadSpecificCache();
     }
 
-    const char* name() const override
+    const char* name() const final
     {
         return "Wasm Worklist Helper Thread";
     }

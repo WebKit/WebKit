@@ -45,12 +45,12 @@ public:
         }
     };
 
-    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) override
+    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) final
     {
         handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
     }
 
-    void destroy(VM&, JSCell* cell) override
+    void destroy(VM&, JSCell* cell) final
     {
         CellType::destroy(cell);
     }

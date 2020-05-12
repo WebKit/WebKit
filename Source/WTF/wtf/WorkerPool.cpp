@@ -73,7 +73,7 @@ public:
         return m_pool.shouldSleep(locker);
     }
 
-    const char* name() const override
+    const char* name() const final
     {
         return m_pool.name();
     }

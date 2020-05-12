@@ -240,7 +240,7 @@ public:
         });
     }
 
-    const char* name() const override
+    const char* name() const final
     {
         return "JSC VMTraps Signal Sender Thread";
     }
@@ -248,7 +248,7 @@ public:
     VMTraps& traps() { return m_vm.traps(); }
 
 private:
-    PollResult poll(const AbstractLocker&) override
+    PollResult poll(const AbstractLocker&) final
     {
         if (traps().m_isShuttingDown)
             return PollResult::Stop;
@@ -262,7 +262,7 @@ private:
         return PollResult::Work;
     }
 
-    WorkResult work() override
+    WorkResult work() final
     {
         VM& vm = m_vm;
 

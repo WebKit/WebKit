@@ -69,7 +69,7 @@ MatchingContextHolder::~MatchingContextHolder()
 }
 
 template<YarrJITCompileMode compileMode>
-class YarrGenerator : public YarrJITInfo, private MacroAssembler {
+class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
 #if CPU(ARM_THUMB2)
     static const RegisterID input = ARMRegisters::r0;
@@ -3982,7 +3982,7 @@ public:
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
     }
 
-    const char* variant() override
+    const char* variant() final
     {
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
@@ -3997,17 +3997,17 @@ public:
         return "16-bit regular expression";
     }
 
-    unsigned opCount() override
+    unsigned opCount() final
     {
         return m_ops.size();
     }
 
-    void dumpPatternString(PrintStream& out) override
+    void dumpPatternString(PrintStream& out) final
     {
         m_pattern.dumpPatternString(out, m_patternString);
     }
 
-    int dumpFor(PrintStream& out, unsigned opIndex) override
+    int dumpFor(PrintStream& out, unsigned opIndex) final
     {
         if (opIndex >= opCount())
             return 0;

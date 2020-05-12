@@ -187,7 +187,7 @@ protected:
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void loadResource1(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -204,7 +204,7 @@ private:
 class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network3BackendDispatcher> create(BackendDispatcher&, Network3BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void loadResource1(long requestId, RefPtr<JSON::Object>&& parameters);
     void loadResource2(long requestId, RefPtr<JSON::Object>&& parameters);
@@ -745,7 +745,7 @@ class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1Bac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<TestProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource1(long requestId) override;
+    void loadResource1(long requestId) final;
 private:
     RetainPtr<id<TestProtocolNetwork1DomainHandler>> m_delegate;
 };
@@ -754,13 +754,13 @@ class ObjCInspectorNetwork3BackendDispatcher final : public AlternateNetwork3Bac
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorNetwork3BackendDispatcher(id<TestProtocolNetwork3DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource1(long requestId) override;
-    virtual void loadResource2(long requestId) override;
-    virtual void loadResource3(long requestId) override;
-    virtual void loadResource4(long requestId) override;
-    virtual void loadResource5(long requestId) override;
-    virtual void loadResource6(long requestId) override;
-    virtual void loadResource7(long requestId) override;
+    void loadResource1(long requestId) final;
+    void loadResource2(long requestId) final;
+    void loadResource3(long requestId) final;
+    void loadResource4(long requestId) final;
+    void loadResource5(long requestId) final;
+    void loadResource6(long requestId) final;
+    void loadResource7(long requestId) final;
 private:
     RetainPtr<id<TestProtocolNetwork3DomainHandler>> m_delegate;
 };

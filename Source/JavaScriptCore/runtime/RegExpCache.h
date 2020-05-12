@@ -41,7 +41,7 @@ namespace Yarr {
 enum class Flags : uint8_t;
 }
 
-class RegExpCache : private WeakHandleOwner {
+class RegExpCache final : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 
     friend class RegExp;
@@ -59,12 +59,11 @@ public:
     }
 
 private:
-    
     static constexpr unsigned maxStrongCacheablePatternLength = 256;
 
     static constexpr int maxStrongCacheableEntries = 32;
 
-    void finalize(Handle<Unknown>, void* context) override;
+    void finalize(Handle<Unknown>, void* context) final;
 
     RegExp* ensureEmptyRegExpSlow(VM&);
 

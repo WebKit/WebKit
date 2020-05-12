@@ -183,7 +183,7 @@ public:
     size_t memoryCost() const final;
 
 protected:
-    virtual ~ObjectBase();
+    ~ObjectBase() override;
 
     bool asObject(RefPtr<Object>& output) override;
 
@@ -301,7 +301,7 @@ public:
     size_t memoryCost() const final;
 
 protected:
-    virtual ~ArrayBase();
+    ~ArrayBase() override;
 
     bool asArray(RefPtr<Array>&) override;
 

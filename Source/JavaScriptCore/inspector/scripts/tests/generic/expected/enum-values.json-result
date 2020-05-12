@@ -170,7 +170,7 @@ protected:
 class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 private:
     void commandWithEnumReturnValue(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -633,7 +633,7 @@ class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateComman
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<TestProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
-    virtual void commandWithEnumReturnValue(long requestId) override;
+    void commandWithEnumReturnValue(long requestId) final;
 private:
     RetainPtr<id<TestProtocolCommandDomainDomainHandler>> m_delegate;
 };

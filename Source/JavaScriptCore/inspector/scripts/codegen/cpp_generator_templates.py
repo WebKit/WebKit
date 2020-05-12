@@ -95,7 +95,7 @@ protected:
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<${domainName}BackendDispatcher> create(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) final;
 ${commandDeclarations}
 private:
     ${domainName}BackendDispatcher(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
