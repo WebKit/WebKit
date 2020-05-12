@@ -4918,6 +4918,11 @@ void Internals::setMediaStreamTrackMuted(MediaStreamTrack& track, bool muted)
     track.source().setMuted(muted);
 }
 
+void Internals::removeMediaStreamTrackAndNotify(MediaStream& stream, MediaStreamTrack& track)
+{
+    stream.privateStream().removeTrack(track.privateTrack());
+}
+
 void Internals::removeMediaStreamTrack(MediaStream& stream, MediaStreamTrack& track)
 {
     stream.internalRemoveTrack(track.id(), MediaStream::StreamModifier::Platform);

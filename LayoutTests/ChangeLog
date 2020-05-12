@@ -1,3 +1,16 @@
+2020-05-11  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/62978903
+
+    2020-05-11  Youenn Fablet  <youenn@apple.com>
+
+            MediaPlayerPrivateMediaStreamAVFObjC should unobserve the tracks from its audio and video track sets
+            https://bugs.webkit.org/show_bug.cgi?id=211444
+            <rdar://problem/62886221>
+
+            * fast/mediastream/MediaStream-removeTrack-while-playing-expected.txt: Added.
+            * fast/mediastream/MediaStream-removeTrack-while-playing.html: Added.
+
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r260979. rdar://problem/62978869

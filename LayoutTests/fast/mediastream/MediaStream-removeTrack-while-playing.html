@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing addTrack/removeTrack while playing</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script>
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    const audioTrack = localStream.getAudioTracks()[0];
+    const videoTrack = localStream.getVideoTracks()[0];
+
+    video.srcObject = localStream;
+    await video.play();
+    localStream.onremovetrack = () => { video.srcObject = null; };
+
+    if (window.internals) {
+        internals.removeMediaStreamTrackAndNotify(localStream, videoTrack);
+        internals.removeMediaStreamTrackAndNotify(localStream, audioTrack);
+    }
+    audioTrack.stop();
+    videoTrack.stop();
+}, "removeTrack while playing");
+        </script>
+    </body>
+</html>
