@@ -1,3 +1,68 @@
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r260682. rdar://problem/62978266
+
+    [WTF] allThreads registration is racy with allThreads unregistration
+    https://bugs.webkit.org/show_bug.cgi?id=210995
+    <rdar://problem/61609690>
+    
+    Reviewed by Keith Miller.
+    
+    Source/WebCore:
+    
+    * page/cocoa/ResourceUsageThreadCocoa.mm:
+    (WebCore::ResourceUsageThread::platformCollectCPUData):
+    
+    Source/WTF:
+    
+    There is a race between registering a thread to allThreads and unregistering a thread from allThreads.
+    
+        1. Caller: A new thread is created, but not registering it to allThreads yet.
+        2. Thread: The thread is running.
+        3. Thread: The thread finishes its execution before the thread is registered into allThreads.
+        4. Thread: The thread unregisters itself from allThreads.
+        5. Caller: Registers the new thread to allThreads after it already finished its execution.
+        6. The thread is never removed from allThreads.
+    
+    This patch adds m_didUnregisterFromAllThreads flag to Thread, and add the thread to allThreads only when this flag is false.
+    
+    Covered by LayoutTests/inspector/cpu-profiler/threads.html.
+    
+    * wtf/Threading.cpp:
+    (WTF::Thread::create):
+    (WTF::Thread::didExit):
+    * wtf/Threading.h:
+    (WTF::Thread::Thread):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260682 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [WTF] allThreads registration is racy with allThreads unregistration
+            https://bugs.webkit.org/show_bug.cgi?id=210995
+            <rdar://problem/61609690>
+
+            Reviewed by Keith Miller.
+
+            There is a race between registering a thread to allThreads and unregistering a thread from allThreads.
+
+                1. Caller: A new thread is created, but not registering it to allThreads yet.
+                2. Thread: The thread is running.
+                3. Thread: The thread finishes its execution before the thread is registered into allThreads.
+                4. Thread: The thread unregisters itself from allThreads.
+                5. Caller: Registers the new thread to allThreads after it already finished its execution.
+                6. The thread is never removed from allThreads.
+
+            This patch adds m_didUnregisterFromAllThreads flag to Thread, and add the thread to allThreads only when this flag is false.
+
+            Covered by LayoutTests/inspector/cpu-profiler/threads.html.
+
+            * wtf/Threading.cpp:
+            (WTF::Thread::create):
+            (WTF::Thread::didExit):
+            * wtf/Threading.h:
+            (WTF::Thread::Thread):
+
 2020-04-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r259980. rdar://problem/61888315
