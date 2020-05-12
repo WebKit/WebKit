@@ -1,3 +1,14 @@
+2020-05-12  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wattribute warning in BreakLines.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=211784
+
+        Reviewed by Darin Adler.
+
+        Remove export attribute. These only work in header files.
+
+        * rendering/BreakLines.cpp:
+
 2020-05-12  Eric Carlson  <eric.carlson@apple.com>
 
         Poster set after playback begins should be ignored
