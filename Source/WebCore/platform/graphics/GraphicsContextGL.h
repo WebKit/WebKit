@@ -666,7 +666,8 @@ public:
         MAX_CLIENT_WAIT_TIMEOUT_WEBGL = 0x9247,
 
         // Necessary desktop OpenGL constants.
-        TEXTURE_RECTANGLE_ARB = 0x84F5
+        TEXTURE_RECTANGLE_ARB = 0x84F5,
+        TEXTURE_BINDING_RECTANGLE_ARB = 0x84F6,
     };
 
     // Attempt to enumerate all possible native image formats to
@@ -787,9 +788,11 @@ public:
         // reference them.
 #if PLATFORM(MAC)
         IOSurfaceTextureTarget = TEXTURE_RECTANGLE_ARB, // also GL_TEXTURE_RECTANGLE_ANGLE
+        IOSurfaceTextureTargetQuery = TEXTURE_BINDING_RECTANGLE_ARB,
         EGLIOSurfaceTextureTarget = 0x345B, // EGL_TEXTURE_RECTANGLE_ANGLE
 #else
         IOSurfaceTextureTarget = TEXTURE_2D,
+        IOSurfaceTextureTargetQuery = TEXTURE_BINDING_2D,
         EGLIOSurfaceTextureTarget = 0x305F, // EGL_TEXTURE_2D
 #endif // PLATFORM(MAC)
     };

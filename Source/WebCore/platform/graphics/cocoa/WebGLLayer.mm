@@ -57,6 +57,27 @@
 #import <ANGLE/gl2ext_angle.h>
 #endif
 
+namespace {
+    class ScopedRestoreTextureBinding {
+        WTF_MAKE_NONCOPYABLE(ScopedRestoreTextureBinding);
+    public:
+        ScopedRestoreTextureBinding(GLenum bindingPointQuery, GLenum bindingPoint)
+            : m_bindingPoint(bindingPoint)
+        {
+            gl::GetIntegerv(bindingPointQuery, &m_bindingValue);
+        }
+
+        ~ScopedRestoreTextureBinding()
+        {
+            gl::BindTexture(m_bindingPoint, m_bindingValue);
+        }
+
+    private:
+        GLint m_bindingPoint { 0 };
+        GLint m_bindingValue { 0 };
+    };
+}
+
 @implementation WebGLLayer
 
 @synthesize context=_context;
@@ -165,7 +186,10 @@ static void freeData(void *, const void *data, size_t /* size */)
     _context->prepareTexture();
     if (_drawingBuffer) {
         if (_latchedPbuffer) {
-
+            WTF::Optional<ScopedRestoreTextureBinding> restoreBinding;
+            // We don't need to restore GL_TEXTURE_RECTANGLE because it's not accessible from user code.
+            if (WebCore::GraphicsContextGL::IOSurfaceTextureTarget != WebCore::GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
+                restoreBinding.emplace(WebCore::GraphicsContextGL::IOSurfaceTextureTargetQuery, WebCore::GraphicsContextGL::IOSurfaceTextureTarget);
             GCGLenum texture = _context->platformTexture();
             gl::BindTexture(WebCore::GraphicsContextGL::IOSurfaceTextureTarget, texture);
             if (!EGL_ReleaseTexImage(_eglDisplay, _latchedPbuffer, EGL_BACK_BUFFER)) {
@@ -265,6 +289,11 @@ static void freeData(void *, const void *data, size_t /* size */)
     CGLError error = CGLTexImageIOSurface2D(cglContext, GL_TEXTURE_RECTANGLE_ARB, internalFormat, _bufferSize.width(), _bufferSize.height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, ioSurface, 0);
     ASSERT_UNUSED(error, error == kCGLNoError);
 #elif USE(ANGLE)
+    WTF::Optional<ScopedRestoreTextureBinding> restoreBinding;
+    // We don't need to restore GL_TEXTURE_RECTANGLE because it's not accessible from user code.
+    if (WebCore::GraphicsContextGL::IOSurfaceTextureTarget != WebCore::GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
+        restoreBinding.emplace(WebCore::GraphicsContextGL::IOSurfaceTextureTargetQuery, WebCore::GraphicsContextGL::IOSurfaceTextureTarget);
+
     GCGLenum texture = _context->platformTexture();
 
     gl::BindTexture(WebCore::GraphicsContextGL::IOSurfaceTextureTarget, texture);
