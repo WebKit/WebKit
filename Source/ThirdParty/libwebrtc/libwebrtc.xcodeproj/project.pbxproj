@@ -18552,7 +18552,6 @@
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
 			};
@@ -18565,7 +18564,6 @@
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
 			};
@@ -18578,7 +18576,6 @@
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USE_HEADERMAP = NO;
 			};
@@ -18695,7 +18692,6 @@
 					"Source/third_party/abseil-cpp",
 					Source/third_party/rnnoise,
 				);
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -18717,7 +18713,6 @@
 					"Source/third_party/abseil-cpp",
 					Source/third_party/rnnoise,
 				);
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -18771,7 +18766,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B4A8F1E42C431002651C8 /* opus.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -18780,7 +18774,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B4A8F1E42C431002651C8 /* opus.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -18789,7 +18782,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B4A8F1E42C431002651C8 /* opus.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -18822,7 +18814,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B43B01E42877A002651C8 /* boringssl.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -18831,7 +18822,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B43B01E42877A002651C8 /* boringssl.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -18840,7 +18830,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C4B43B01E42877A002651C8 /* boringssl.xcconfig */;
 			buildSettings = {
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -18861,7 +18850,6 @@
 					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "";
 			};
 			name = Production;
 		};
@@ -18901,7 +18889,6 @@
 					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "";
 			};
 			name = Release;
 		};
