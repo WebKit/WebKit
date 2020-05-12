@@ -1,3 +1,17 @@
+2020-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text is clipped when rendered with fonts which have a negative line gap metric
+        https://bugs.webkit.org/show_bug.cgi?id=211683
+        <rdar://problem/62192986>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text/negative-line-gap-expected.html: Added.
+        * fast/text/negative-line-gap.html: Added.
+        * fast/text/resources/Ahem-negative-line-gap.ttf: Added.
+        * platform/ios/fast/text/international/complex-character-based-fallback-expected.txt:
+        * platform/mac/fast/text/international/complex-character-based-fallback-expected.txt:
+
 2020-05-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Audio messages in web.whatsapp.com only play once.

@@ -1,3 +1,26 @@
+2020-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text is clipped when rendered with fonts which have a negative line gap metric
+        https://bugs.webkit.org/show_bug.cgi?id=211683
+        <rdar://problem/62192986>
+
+        Reviewed by Zalan Bujtas.
+
+        ... As seen on nytimes.com.
+
+        Some fonts have negative line gap metrics. Chrome and Firefox both clamp it to 0, so the
+        line-height isn't decreased. However, we were honoring the negative line gap, thereby decreasing
+        line-height.
+
+        There are some typographical reasons to want a negative line gap, which is why this clamping
+        behavior shouldn't be done in the platform text library. In the interest of matching other
+        browsers, we should perform this clamping ourselves in WebKit.
+
+        Test: fast/text/negative-line-gap.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::platformGlyphInit):
+
 2020-05-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed PlayStation / clang-cl build fix following r261533.

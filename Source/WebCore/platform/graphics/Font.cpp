@@ -137,6 +137,9 @@ void Font::platformGlyphInit()
     float width = widthForGlyph(m_spaceGlyph);
     m_spaceWidth = width;
     m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
+    auto amountToAdjustLineGap = std::min(m_fontMetrics.floatLineGap(), 0.0f);
+    m_fontMetrics.setLineGap(m_fontMetrics.floatLineGap() - amountToAdjustLineGap);
+    m_fontMetrics.setLineSpacing(m_fontMetrics.floatLineSpacing() - amountToAdjustLineGap);
     determinePitch();
     m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 }
