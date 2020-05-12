@@ -1,3 +1,16 @@
+2020-05-11  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] CStringBuffer::createUninitialized() should use Checked<size_t>
+        <https://webkit.org/b/211746>
+        <rdar://problem/62729848>
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        - Switch from RELEASE_ASSERT() to Checked<size_t>() for overflow
+          check.  RELEASE_ASSERT() was using the wrong type, too.
+
 2020-05-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r261440.
