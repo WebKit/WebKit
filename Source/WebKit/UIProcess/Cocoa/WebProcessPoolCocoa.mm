@@ -477,6 +477,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
             parameters.encodedGlobalPreferences = String([data base64EncodedStringWithOptions:0]);
     }
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (!_MGCacheValid())
+        [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

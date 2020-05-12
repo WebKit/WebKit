@@ -65,6 +65,12 @@ typedef enum {
 
 #endif
 
+#ifdef __OBJC__
+@interface MobileGestaltHelperProxy : NSObject
+- (BOOL) proxyRebuildCache;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 CFTypeRef MGCopyAnswer(CFStringRef question, CFDictionaryRef options);
@@ -80,6 +86,8 @@ SInt32 MGGetSInt32Answer(CFStringRef question, SInt32 defaultValue);
 #ifndef MGGetFloat32Answer
 Float32 MGGetFloat32Answer(CFStringRef question, Float32 defaultValue);
 #endif
+
+bool _MGCacheValid();
 
 WTF_EXTERN_C_END
 
