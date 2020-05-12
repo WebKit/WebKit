@@ -1,5 +1,41 @@
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r260229. rdar://problem/62978244
+
+    Re-land: [IPC Hardening] MachMessage::create() should use checked arithmetic
+    <https://webkit.org/b/210572>
+    <rdar://problem/61729947>
+    
+    Reviewed by Chris Dumez.
+    
+    * Platform/IPC/cocoa/ConnectionCocoa.mm:
+    (IPC::Connection::sendOutgoingMessage):
+    - Add nullptr check since MachMessage::create() can return an
+      empty std::unique_ptr<> now.
+    * Platform/IPC/cocoa/MachMessage.cpp:
+    (IPC::MachMessage::create):
+    - Use CheckedSize to compute the buffer size.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@260229 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-16  David Kilzer  <ddkilzer@apple.com>
+
+            Re-land: [IPC Hardening] MachMessage::create() should use checked arithmetic
+            <https://webkit.org/b/210572>
+            <rdar://problem/61729947>
+
+            Reviewed by Chris Dumez.
+
+            * Platform/IPC/cocoa/ConnectionCocoa.mm:
+            (IPC::Connection::sendOutgoingMessage):
+            - Add nullptr check since MachMessage::create() can return an
+              empty std::unique_ptr<> now.
+            * Platform/IPC/cocoa/MachMessage.cpp:
+            (IPC::MachMessage::create):
+            - Use CheckedSize to compute the buffer size.
+
+2020-05-07  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/62977667
 
     2020-05-07  Alex Christensen  <achristensen@webkit.org>

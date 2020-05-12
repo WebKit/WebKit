@@ -303,6 +303,8 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
     }
 
     auto message = MachMessage::create(encoder->messageReceiverName().toString(), encoder->messageName().toString(), messageSize);
+    if (!message)
+        return false;
 
     auto* header = message->header();
     header->msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
