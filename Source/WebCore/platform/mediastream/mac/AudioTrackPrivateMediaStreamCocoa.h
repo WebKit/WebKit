@@ -70,29 +70,22 @@ private:
     OSStatus render(UInt32 sampleCount, AudioBufferList&, UInt32 inBusNumber, const AudioTimeStamp&, AudioUnitRenderActionFlags&);
 
     AudioComponentInstance createAudioUnit(CAAudioStreamDescription&);
-    void cleanup();
-    void zeroBufferList(AudioBufferList&, size_t);
-    void playInternal();
     void stop();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "AudioTrackPrivateMediaStreamCocoa"; }
 #endif
 
-    // Audio thread members
-    AudioComponentInstance m_remoteIOUnit { nullptr };
-    std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
-    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
-    bool m_isAudioUnitStarted { false };
-    bool m_hasStartedAutoplay { false };
-
     // Cross thread members
     RefPtr<AudioSampleDataSource> m_dataSource;
+    RefPtr<AudioSampleDataSource> m_rendererDataSource;
+    bool m_shouldUpdateRendererDataSource { false };
 
     // Main thread writable members
+    AudioComponentInstance m_remoteIOUnit { nullptr };
+    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
     float m_volume { 1 };
     bool m_isPlaying { false };
-    bool m_autoPlay { false };
     bool m_muted { false };
     bool m_isCleared { false };
 };

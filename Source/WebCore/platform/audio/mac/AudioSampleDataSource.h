@@ -74,6 +74,8 @@ public:
     void setMuted(bool muted) { m_muted = muted; }
     bool muted() const { return m_muted; }
 
+    CAAudioStreamDescription* inputDescription() { return m_inputDescription.get(); }
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return m_logIdentifier; }
