@@ -742,7 +742,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     }
 
     RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
-    if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID)) {
+    if (auto worker = m_serviceWorkerProcesses.get(registrableDomainWithSessionID)) {
         WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess process already created");
         completionHandler();
         return;
@@ -779,8 +779,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
         m_processes.append(WTFMove(newProcessProxy));
     }
 
-    ASSERT(!m_serviceWorkerProcesses.contains(registrableDomainWithSessionID));
-    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), makeWeakPtr(serviceWorkerProcessProxy));
+    m_serviceWorkerProcesses.set(WTFMove(registrableDomainWithSessionID), makeWeakPtr(serviceWorkerProcessProxy));
 
     serviceWorkerProcessProxy->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), WTFMove(completionHandler));
     if (!m_serviceWorkerUserAgent.isNull())

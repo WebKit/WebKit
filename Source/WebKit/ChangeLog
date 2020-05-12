@@ -1,5 +1,19 @@
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/62978118
+
+    2020-05-11  youenn fablet  <youenn@apple.com>
+
+            Starting a service worker process may enter an infinite loop.
+            rdar://problem/62467974
+
+            * UIProcess/WebProcessPool.cpp:
+            Make sure that, if we have an entry in m_serviceWorkerProcesses, it is not null before completing the handler.
+            If we have a null entry, behave as if there was no entry.
+            This ensures the UIProcess will not answer to NetworkProcess too early to say that it has a service worker connection.
+
+2020-05-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r260979. rdar://problem/62978869
 
     REGRESSION: Double tap dispatches one click event on iOS 13.4 when it would dispatch two on iOS 13.3
