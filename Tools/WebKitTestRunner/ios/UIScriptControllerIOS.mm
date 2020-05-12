@@ -1225,6 +1225,16 @@ void UIScriptControllerIOS::copyText(JSStringRef text)
     UIPasteboard.generalPasteboard.string = text->string();
 }
 
+void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeWindowTapRecognized);
+    webView().windowTapRecognizedCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeWindowTapRecognized);
+    }).get();
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

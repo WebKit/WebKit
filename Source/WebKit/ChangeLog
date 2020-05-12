@@ -1,5 +1,86 @@
 2020-05-11  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r259669. rdar://problem/63111225
+
+    Preventing touch events should not prevent gestures installed above WKWebView from recognizing
+    https://bugs.webkit.org/show_bug.cgi?id=210080
+    <rdar://problem/61365814>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Makes a small adjustment to native gesture deferral logic, so that gestures installed above WKWebView (in the
+    view hierarchy) are not prevented from recognizing by WKDeferringGestureRecognizer. This makes it possible for
+    WebKit clients to install custom gestures outside of WKWebView that cannot be prevented by web content, without
+    having to create a separate window and pass touches through to the WKWebView.
+    
+    Test: fast/events/touch/ios/prevent-default-with-window-tap-gesture.html
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    
+    Tools:
+    
+    Add a UIScriptController helper method that allows a test to install a tap gesture recognizer on the UIWindow
+    containing the web view. This method additionally takes a JavaScript callback, which is invoked when the tap
+    gesture is recognized.
+    
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    (WTR::UIScriptController::installTapGestureOnWindow):
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+    (-[TestRunnerWKWebView resetInteractionCallbacks]):
+    (-[TestRunnerWKWebView didRecognizeTapOnWindow]):
+    (-[TestRunnerWKWebView windowTapRecognizedCallback]):
+    (-[TestRunnerWKWebView setWindowTapRecognizedCallback:]):
+    (-[TestRunnerWKWebView willMoveToWindow:]):
+    (-[TestRunnerWKWebView didMoveToWindow]):
+    (-[TestRunnerWKWebView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+    * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptControllerIOS::installTapGestureOnWindow):
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that calling preventDefault() on touchstart doesn't prevent gesture recognizers
+    installed above the WKWebView from recognizing. To do this, we use the new UIScriptController method to add a
+    gesture recognizer to the window containing the web view, and then simulate a tap over an element that prevents
+    the touchstart event.
+    
+    * fast/events/touch/ios/prevent-default-with-window-tap-gesture-expected.txt: Added.
+    * fast/events/touch/ios/prevent-default-with-window-tap-gesture.html: Added.
+    * resources/ui-helper.js:
+    (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow.return.new.Promise.):
+    (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow.return.new.Promise):
+    (window.UIHelper.async activateElementAfterInstallingTapGestureOnWindow):
+    (window.UIHelper):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@259669 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Preventing touch events should not prevent gestures installed above WKWebView from recognizing
+            https://bugs.webkit.org/show_bug.cgi?id=210080
+            <rdar://problem/61365814>
+
+            Reviewed by Tim Horton.
+
+            Makes a small adjustment to native gesture deferral logic, so that gestures installed above WKWebView (in the
+            view hierarchy) are not prevented from recognizing by WKDeferringGestureRecognizer. This makes it possible for
+            WebKit clients to install custom gestures outside of WKWebView that cannot be prevented by web content, without
+            having to create a separate window and pass touches through to the WKWebView.
+
+            Test: fast/events/touch/ios/prevent-default-with-window-tap-gesture.html
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
+2020-05-11  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r255456. rdar://problem/63112259
 
     REGRESSION (r253267): Swipe from edge on Twitter images no longer goes back

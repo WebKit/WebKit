@@ -117,6 +117,8 @@ public:
     virtual void removeViewFromWindow(JSValueRef) { notImplemented(); }
     virtual void addViewToWindow(JSValueRef) { notImplemented(); }
 
+    virtual void installTapGestureOnWindow(JSValueRef) { notImplemented(); }
+
     // Compositing
 
     virtual JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const { notImplemented(); return nullptr; }

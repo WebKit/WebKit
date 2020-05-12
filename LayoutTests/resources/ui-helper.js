@@ -1118,6 +1118,27 @@ window.UIHelper = class UIHelper {
                 })();`, resolve);
         });
     }
+
+    static async activateElementAfterInstallingTapGestureOnWindow(element)
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return activateElement(element);
+
+        const x = element.offsetLeft + element.offsetWidth / 2;
+        const y = element.offsetTop + element.offsetHeight / 2;
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    let progress = 0;
+                    function incrementProgress() {
+                        if (++progress == 2)
+                            uiController.uiScriptComplete();
+                    }
+                    uiController.installTapGestureOnWindow(incrementProgress);
+                    uiController.singleTapAtPoint(${x}, ${y}, incrementProgress);
+                })();`, resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

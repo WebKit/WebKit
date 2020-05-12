@@ -140,6 +140,7 @@ public:
     void setHardwareKeyboardAttached(bool) override;
     void setAllowsViewportShrinkToFit(bool) override;
     void copyText(JSStringRef) override;
+    void installTapGestureOnWindow(JSValueRef) override;
 
     void setDidStartFormControlInteractionCallback(JSValueRef) override;
     void setDidEndFormControlInteractionCallback(JSValueRef) override;
