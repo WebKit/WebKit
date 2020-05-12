@@ -33,7 +33,6 @@
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
-#include <WebCore/WebAudioBufferList.h>
 #include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>
 
@@ -72,7 +71,6 @@ private:
         Ref<RemoteRealtimeMediaSource> m_source;
         WebCore::CAAudioStreamDescription m_description;
         std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
-        std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     };
 
     Ref<WorkQueue> m_queue;

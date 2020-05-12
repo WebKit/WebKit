@@ -138,17 +138,17 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
     storage.setStorage(memory.releaseNonNull());
     storage.setReadOnly(true);
     m_ringBuffer->allocate(description, numberOfFrames);
-    m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
-    m_buffer->setSampleCount(numberOfFrames);
+    // FIXME: We should allocate this buffer once and resize it as needed.
+    WebAudioBufferList audioData(m_description, numberOfFrames);
 
     m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
-    m_ringBuffer->fetch(m_buffer->list(), numberOfFrames, time.timeValue());
+    m_ringBuffer->fetch(audioData.list(), numberOfFrames, time.timeValue());
 
-    m_source->remoteAudioSamplesAvailable(time, *m_buffer, m_description, numberOfFrames);
+    m_source->remoteAudioSamplesAvailable(time, audioData, m_description, numberOfFrames);
 }
 
 }

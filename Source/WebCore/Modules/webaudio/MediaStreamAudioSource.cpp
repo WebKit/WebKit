@@ -29,7 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "NotImplemented.h"
-#include "PlatformAudioData.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
@@ -38,8 +38,6 @@ MediaStreamAudioSource::MediaStreamAudioSource(float sampleRate)
 {
     m_currentSettings.setSampleRate(sampleRate);
 }
-
-MediaStreamAudioSource::~MediaStreamAudioSource() = default;
 
 const RealtimeMediaSourceCapabilities& MediaStreamAudioSource::capabilities()
 {
