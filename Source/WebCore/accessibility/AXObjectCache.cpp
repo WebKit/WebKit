@@ -1006,14 +1006,20 @@ void AXObjectCache::childrenChanged(AXCoreObject* obj)
 
     m_deferredChildrenChangedList.add(obj);
 }
-    
+
 void AXObjectCache::notificationPostTimerFired()
 {
+    // During LayoutTests, accessibility may be disabled between the time the notifications are queued and the timer fires.
+    // Thus check here and return if accessibility is disabled.
+    if (!accessibilityEnabled())
+        return;
+
     Ref<Document> protectorForCacheOwner(m_document);
     m_notificationPostTimer.stop();
+
     if (!m_document.hasLivingRenderTree())
         return;
-    
+
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTFMove(m_notificationsToPost);
