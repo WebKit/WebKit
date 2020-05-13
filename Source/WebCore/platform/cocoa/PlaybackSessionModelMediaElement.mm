@@ -47,6 +47,13 @@
 
 namespace WebCore {
 
+// This is the rate which we report to our clients, namely AVKit, when playback has stalled.
+// The value must be non-zero, so as to differentiate "playing-but-stalled" from "paused". But
+// the value also must be very small, so there is no visible movement in the system provided
+// timeline slider when stalled. The value below will cause the slider to move 1 second every
+// 3 years, so meets both goals.
+static const float StalledPlaybackRate = 0.00000001f;
+
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
@@ -143,8 +150,8 @@ void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomString&
         || eventName == eventNames().ratechangeEvent
         || eventName == eventNames().waitingEvent
         || eventName == eventNames().canplayEvent) {
-        bool isPlaying = this->isPlaying() && !isStalled();
-        float playbackRate = this->playbackRate();
+        bool isPlaying = this->isPlaying();
+        float playbackRate = isStalled() ? StalledPlaybackRate : this->playbackRate();
         for (auto client : m_clients)
             client->rateChanged(isPlaying, playbackRate);
     }
@@ -391,6 +398,7 @@ const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
 {
     // FIXME(157452): Remove the right-hand constructor notation once NeverDestroyed supports initializer_lists.
     static NeverDestroyed<Vector<AtomString>> names = Vector<AtomString>({
+        eventNames().canplayEvent,
         eventNames().durationchangeEvent,
         eventNames().pauseEvent,
         eventNames().playEvent,
@@ -398,6 +406,7 @@ const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
         eventNames().timeupdateEvent,
         eventNames().progressEvent,
         eventNames().volumechangeEvent,
+        eventNames().waitingEvent,
         eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent,
     });
     return names.get();

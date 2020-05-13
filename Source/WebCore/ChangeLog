@@ -1,5 +1,54 @@
 2020-05-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261587. rdar://problem/63195680
+
+    [iOS] REGRESSION: (r261342) Play/pause button doesn't work upon first entering fullscreen mode
+    https://bugs.webkit.org/show_bug.cgi?id=211797
+    <rdar://problem/63118008>
+    
+    Reviewed by Eric Carlson.
+    
+    In r261342 we added code to handle "canplay" and "waiting" events without ever actually
+    adding event listeners for them. So when we enter fullscreen before the "canplay" event, we
+    never re-evaluate whether we're playing or not.
+    
+    Drive-by fix: Also noticed that stalls will cause the play/pause toggle to switch from the
+    "pause icon" to the "play icon", which is incorrect; we're still "playing" event when we're
+    stalled. So when we are in the stalled state, set the "playbackRate" property to some very
+    small, but non-zero value. This will cause the playback slider to stop progressing, but
+    won't also cause the play/pause button to swap states.
+    
+    * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+    (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+    (WebCore::PlaybackSessionModelMediaElement::observedEventNames):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261587 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-12  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] REGRESSION: (r261342) Play/pause button doesn't work upon first entering fullscreen mode
+            https://bugs.webkit.org/show_bug.cgi?id=211797
+            <rdar://problem/63118008>
+
+            Reviewed by Eric Carlson.
+
+            In r261342 we added code to handle "canplay" and "waiting" events without ever actually
+            adding event listeners for them. So when we enter fullscreen before the "canplay" event, we
+            never re-evaluate whether we're playing or not.
+
+            Drive-by fix: Also noticed that stalls will cause the play/pause toggle to switch from the
+            "pause icon" to the "play icon", which is incorrect; we're still "playing" event when we're
+            stalled. So when we are in the stalled state, set the "playbackRate" property to some very
+            small, but non-zero value. This will cause the playback slider to stop progressing, but
+            won't also cause the play/pause button to swap states.
+
+            * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+            (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+            (WebCore::PlaybackSessionModelMediaElement::observedEventNames):
+
+2020-05-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261485. rdar://problem/63195719
 
     Fix assertion after r261414
