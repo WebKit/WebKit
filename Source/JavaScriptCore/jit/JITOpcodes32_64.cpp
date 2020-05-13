@@ -30,9 +30,12 @@
 #if USE(JSVALUE32_64)
 #include "JIT.h"
 
+#include "BasicBlockLocation.h"
+#include "BytecodeGenerator.h"
 #include "BytecodeStructs.h"
 #include "CCallHelpers.h"
 #include "Exception.h"
+#include "InterpreterInlines.h"
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSCast.h"

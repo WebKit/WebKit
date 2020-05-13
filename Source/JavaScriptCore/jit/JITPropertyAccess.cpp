@@ -1262,6 +1262,8 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
     emitWriteBarrier(base, value, ShouldFilterValue);
 }
 
+template void JIT::emit_op_put_by_val<OpPutByVal>(const Instruction*);
+
 #else // USE(JSVALUE64)
 
 void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode mode)
@@ -1300,6 +1302,48 @@ void JIT::emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMod
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
+}
+
+template <typename Op>
+JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, CacheableIdentifier propertyName, JumpList& doneCases, JumpList& slowCases)
+{
+    // base: tag(regT1), payload(regT0)
+    // property: tag(regT3), payload(regT2)
+
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister value = bytecode.m_value;
+
+    slowCases.append(branchIfNotCell(regT3));
+    emitByValIdentifierCheck(regT2, regT2, propertyName, slowCases);
+
+    // Write barrier breaks the registers. So after issuing the write barrier,
+    // reload the registers.
+    //
+    // IC can write new Structure without write-barrier if a base is cell.
+    // We are emitting write-barrier before writing here but this is OK since 32bit JSC does not have concurrent GC.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
+    emitLoadPayload(base, regT0);
+    emitLoad(value, regT3, regT2);
+
+    JITPutByIdGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
+        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), regT1, bytecode.m_ecmaMode, putKind);
+    gen.generateFastPath(*this);
+    doneCases.append(jump());
+
+    Label coldPathBegin = label();
+    gen.slowPathJump().link(this);
+
+    // JITPutByIdGenerator only preserve the value and the base's payload, we have to reload the tag.
+    emitLoadTag(base, regT1);
+
+    Call call = callOperation(gen.slowPathFunction(), m_codeBlock->globalObject(), gen.stubInfo(), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), propertyName.rawBits());
+    gen.reportSlowPathCall(coldPathBegin, call);
+    doneCases.append(jump());
+
+    return gen;
 }
 
 #endif // USE(JSVALUE64)
@@ -1662,8 +1706,6 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     
     return slowCases;
 }
-
-template void JIT::emit_op_put_by_val<OpPutByVal>(const Instruction*);
 
 } // namespace JSC
 
