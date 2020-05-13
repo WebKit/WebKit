@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ namespace WebCore {
 const HashSet<String>& defaultSupportedImageTypes()
 {
     static const auto defaultSupportedImageTypes = makeNeverDestroyed([] {
-        const String defaultSupportedImageTypes[] = {
+        HashSet<String> defaultSupportedImageTypes = {
             "com.compuserve.gif"_s,
             "com.microsoft.bmp"_s,
             "com.microsoft.cur"_s,
@@ -55,19 +55,24 @@ const HashSet<String>& defaultSupportedImageTypes()
 #if HAVE(WEBP)
             "public.webp"_s,
             "com.google.webp"_s,
+            "org.webmproject.webp"_s,
 #endif
         };
 
-        RetainPtr<CFArrayRef> systemImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
-        CFIndex count = CFArrayGetCount(systemImageTypes.get());
+        auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+        CFIndex count = CFArrayGetCount(systemSupportedCFImageTypes.get());
 
-        HashSet<String> defaultCGSupportedImageTypes;
-        for (auto& imageType : defaultSupportedImageTypes) {
-            RetainPtr<CFStringRef> string = imageType.createCFString();
-            if (CFArrayContainsValue(systemImageTypes.get(), CFRangeMake(0, count), string.get()))
-                defaultCGSupportedImageTypes.add(imageType);
-        }
-        return defaultCGSupportedImageTypes;
+        HashSet<String> systemSupportedImageTypes;
+        CFArrayApplyFunction(systemSupportedCFImageTypes.get(), CFRangeMake(0, count), [](const void *value, void *context) {
+            String imageType = static_cast<CFStringRef>(value);
+            static_cast<HashSet<String>*>(context)->add(imageType);
+        }, &systemSupportedImageTypes);
+
+        defaultSupportedImageTypes.removeIf([&systemSupportedImageTypes](const String& imageType) {
+            return !systemSupportedImageTypes.contains(imageType);
+        });
+
+        return defaultSupportedImageTypes;
     }());
 
     return defaultSupportedImageTypes;
