@@ -1457,9 +1457,6 @@ fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 
-# <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
-fast/text/ipa-tone-letters.html [ Pass Failure ]
-
 # <rdar://problem/32799624> REGRESSION: LayoutTests css3/font-variant-petite-caps-synthesis-coverage.html and css3/font-variant-small-caps-synthesis-coverage.html are failing
 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]

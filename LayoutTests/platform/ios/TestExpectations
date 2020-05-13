@@ -2831,9 +2831,6 @@ media/sources-fallback-codecs.html [ Failure ]
 # <rdar://problem/32715902> iOS 11: LayoutTest media/video-src-blob-using-open-panel.html is failing
 media/video-src-blob-using-open-panel.html [ Failure ]
 
-# <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
-fast/text/ipa-tone-letters.html [ Failure ]
-
 # <rdar://problem/33251388> REGRESSION: Multiple imported/w3c/web-platform-tests/ are failing with blobs
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]

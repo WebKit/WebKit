@@ -1,3 +1,17 @@
+2020-05-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        LayoutTest fast/text/ipa-tone-letters.html isn't failing any more
+        https://bugs.webkit.org/show_bug.cgi?id=211845
+        <rdar://problem/32799573>
+
+        Unreviewed.
+
+        The flakiness dashboard says it isn't failing anywhere. I ran it locally
+        and it passes on my two machines.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-05-13  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Calling reverse() on an accelerated animation has no effect
