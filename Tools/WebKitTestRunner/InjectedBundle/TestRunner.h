@@ -502,6 +502,7 @@ public:
     bool isMockRealtimeMediaSourceCenterEnabled();
 
     bool hasAppBoundSession();
+    void clearAppBoundSession();
     void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
     void didSetAppBoundDomainsCallback();
 

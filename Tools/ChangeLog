@@ -1,3 +1,21 @@
+2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add test for non-app-bound iframe under app-bound domain
+        https://bugs.webkit.org/show_bug.cgi?id=211815
+        <rdar://problem/63159707>
+
+        Reviewed by Brent Fulgham.
+
+        Clear the main frame app-bound session before loading the iframe so
+        we can be sure the iframe uses an app-bound session.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::clearAppBoundSession):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-05-13  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Proper handling of sccache scheduler URL command-line argument

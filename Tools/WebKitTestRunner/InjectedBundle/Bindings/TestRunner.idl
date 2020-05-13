@@ -395,6 +395,7 @@ interface TestRunner {
     boolean isMockRealtimeMediaSourceCenterEnabled();
 
     boolean hasAppBoundSession();
+    void clearAppBoundSession();
     void setAppBoundDomains(object originsArray, object callback);
 
     void injectUserScript(DOMString string);

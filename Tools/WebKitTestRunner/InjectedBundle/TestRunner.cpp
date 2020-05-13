@@ -2976,6 +2976,12 @@ bool TestRunner::hasAppBoundSession()
     return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
+void TestRunner::clearAppBoundSession()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("ClearAppBoundSession"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(DidSetAppBoundDomainsCallbackID, completionHandler);
