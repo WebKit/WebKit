@@ -8613,6 +8613,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& page, const WebCore::PromisedAttachmentInfo& info)
 {
     auto numberOfAdditionalTypes = info.additionalTypes.size();
@@ -8658,10 +8660,16 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return item;
 }
 
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 - (void)_writePromisedAttachmentToPasteboard:(WebCore::PromisedAttachmentInfo&&)info
 {
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (auto item = createItemProvider(*_page, WTFMove(info)))
         UIPasteboard.generalPasteboard.itemProviders = @[ item.get() ];
+#else
+    UNUSED_PARAM(info);
+#endif
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

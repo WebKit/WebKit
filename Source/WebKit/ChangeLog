@@ -1,3 +1,12 @@
+2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix tvOS and watchOS builds after r261638
+
+        `-[UIPasteboard itemProviders]` is not present on watchOS and tvOS.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _writePromisedAttachmentToPasteboard:]):
+
 2020-05-13  Timothy Horton  <timothy_horton@apple.com>
 
         Build fix.
