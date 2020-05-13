@@ -28,3 +28,6 @@ shouldThrow(() => {
 shouldThrow(() => {
     2n ** 0xfffffffffffffffn;
 }, `Error: Out of memory: BigInt generated from this operation is too big`);
+shouldThrow(() => {
+    10n ** 1000000n;
+}, `Error: Out of memory: BigInt generated from this operation is too big`);

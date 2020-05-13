@@ -1,3 +1,16 @@
+2020-05-12  Robin Morisset  <rmorisset@apple.com>
+
+        Exception check for OOM is a bit too late in JSBigInt::exponentiate.
+        https://bugs.webkit.org/show_bug.cgi?id=211823
+
+        Reviewed by Mark Lam.
+
+        We were doing multiplyImpl(...).payload.asHeapBigInt(), but multiplyImpl can return a null payload if it causes an exception.
+        So we must first check whether an exception was raised, and only if not can we do asHeapBigInt.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::exponentiateImpl):
+
 2020-05-12  Saam Barati  <sbarati@apple.com>
 
         handling of Check in VarargsForwardingPhase is too pessimistic

@@ -482,15 +482,21 @@ JSBigInt::ImplResult JSBigInt::exponentiateImpl(JSGlobalObject* globalObject, Bi
 
     n >>= 1;
     for (; n; n >>= 1) {
-        JSBigInt* maybeResult = JSBigInt::multiplyImpl(globalObject, HeapBigIntImpl { runningSquare }, HeapBigIntImpl { runningSquare }).payload.asHeapBigInt();
+        ImplResult temp = JSBigInt::multiplyImpl(globalObject, HeapBigIntImpl { runningSquare }, HeapBigIntImpl { runningSquare });
         RETURN_IF_EXCEPTION(scope, nullptr);
+        ASSERT(temp.payload);
+        ASSERT(temp.payload.isHeapBigInt());
+        JSBigInt* maybeResult = temp.payload.asHeapBigInt();
         runningSquare = maybeResult;
         if (n & 1) {
             if (!result)
                 result = runningSquare;
             else {
-                maybeResult = JSBigInt::multiplyImpl(globalObject, HeapBigIntImpl { result }, HeapBigIntImpl { runningSquare }).payload.asHeapBigInt();
+                temp = JSBigInt::multiplyImpl(globalObject, HeapBigIntImpl { result }, HeapBigIntImpl { runningSquare });
                 RETURN_IF_EXCEPTION(scope, nullptr);
+                ASSERT(temp.payload);
+                ASSERT(temp.payload.isHeapBigInt());
+                maybeResult = temp.payload.asHeapBigInt();
                 result = maybeResult;
             }
         }
