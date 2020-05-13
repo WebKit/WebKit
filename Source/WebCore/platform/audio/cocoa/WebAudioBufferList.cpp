@@ -33,11 +33,12 @@ namespace WebCore {
 using namespace PAL;
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
+    : m_bytesPerFrame(format.bytesPerFrame())
+    , m_channelCount(format.numberOfInterleavedChannels())
 {
     // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
     // with a custom size, and initialize the struct manually.
     uint32_t bufferCount = format.numberOfChannelStreams();
-    uint32_t channelCount = format.numberOfInterleavedChannels();
 
     uint64_t bufferListSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max(1U, bufferCount));
     ASSERT(bufferListSize <= SIZE_MAX);
@@ -47,7 +48,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     memset(m_canonicalList.get(), 0, m_listBufferSize);
     m_canonicalList->mNumberBuffers = bufferCount;
     for (uint32_t buffer = 0; buffer < bufferCount; ++buffer)
-        m_canonicalList->mBuffers[buffer].mNumberChannels = channelCount;
+        m_canonicalList->mBuffers[buffer].mNumberChannels = m_channelCount;
 
     reset();
 }
@@ -55,15 +56,18 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, uint32_t sampleCount)
     : WebAudioBufferList(format)
 {
-    if (!sampleCount)
+    setSampleCount(sampleCount);
+}
+
+void WebAudioBufferList::setSampleCount(uint32_t sampleCount)
+{
+    if (!sampleCount || m_sampleCount == sampleCount)
         return;
 
-    uint32_t bufferCount = format.numberOfChannelStreams();
-    uint32_t channelCount = format.numberOfInterleavedChannels();
-
-    size_t bytesPerBuffer = sampleCount * channelCount * format.bytesPerFrame();
-    m_flatBuffer.reserveInitialCapacity(bufferCount * bytesPerBuffer);
-    auto data = m_flatBuffer.data();
+    m_sampleCount = sampleCount;
+    size_t bytesPerBuffer = m_sampleCount * m_channelCount * m_bytesPerFrame;
+    m_flatBuffer.resize(m_canonicalList->mNumberBuffers * bytesPerBuffer);
+    auto* data = m_flatBuffer.data();
 
     for (uint32_t buffer = 0; buffer < m_canonicalList->mNumberBuffers; ++buffer) {
         m_canonicalList->mBuffers[buffer].mData = data;
@@ -77,7 +81,6 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, CMSampleBufferRef sampleBuffer)
     : WebAudioBufferList(format)
 {
-
     if (!sampleBuffer)
         return;
 

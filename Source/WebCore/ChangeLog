@@ -1,3 +1,32 @@
+2020-05-13  Youenn Fablet  <youenn@apple.com>
+
+        Allow WebAudioBufferList to dynamically change its number of frames
+        https://bugs.webkit.org/show_bug.cgi?id=211720
+
+        Reviewed by Eric Carlson.
+
+        We sometimes create WebAudioBufferList on the stack which triggers allocation of several vectors.
+        Instead of doing that for every audio sample chunk, we should allocate the WebAudioBufferList and resize it as necessary.
+        For that purpose, we introduce WebAudioBufferList::updateWithNumberOfFrames and use it in two places:
+        - When creating an audio track into WebAudio.
+        - When receiving audio chunks from another process.
+        Covered by existing tests.
+
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::~MediaStreamAudioSource):
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * Modules/webaudio/MediaStreamAudioSourceCocoa.cpp:
+        (WebCore::streamDescription):
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+        (WebCore::WebAudioBufferList::updateWithNumberOfFrames):
+        (WebCore::WebAudioBufferList::channelCount const):
+        * platform/audio/cocoa/WebAudioBufferList.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockAudioSharedUnit::reconfigure):
+        Drive-by fix, we do not need to give the size in bytes but the size in samples.
+
 2020-05-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Check for accessibilityEnabled() before posting notifications asynchronously.
