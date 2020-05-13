@@ -240,6 +240,18 @@ OptionSet<EventListenerRegionType> EventRegion::eventListenerRegionTypesForPoint
     return regionTypes;
 }
 
+const Region& EventRegion::eventListenerRegionForType(EventListenerRegionType type) const
+{
+    switch (type) {
+    case EventListenerRegionType::Wheel:
+        return m_wheelEventListenerRegion;
+    case EventListenerRegionType::NonPassiveWheel:
+        return m_nonPassiveWheelEventListenerRegion;
+    }
+    ASSERT_NOT_REACHED();
+    return m_wheelEventListenerRegion;
+}
+
 #if ENABLE(EDITABLE_REGION)
 
 bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const

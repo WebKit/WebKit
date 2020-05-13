@@ -84,8 +84,8 @@ bool operator!=(SimpleColor, SimpleColor);
 // FIXME: Remove this after migrating to the new name.
 using RGBA32 = SimpleColor;
 
-WEBCORE_EXPORT RGBA32 makeRGB(int r, int g, int b);
-WEBCORE_EXPORT RGBA32 makeRGBA(int r, int g, int b, int a);
+constexpr RGBA32 makeRGB(int r, int g, int b);
+constexpr RGBA32 makeRGBA(int r, int g, int b, int a);
 
 RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
@@ -416,6 +416,16 @@ inline bool Color::isWhiteColor(const Color& color)
     }
     
     return color.rgb() == Color::white;
+}
+
+constexpr RGBA32 makeRGB(int r, int g, int b)
+{
+    return makeRGBA(r, g, b, 0xFF);
+}
+
+constexpr RGBA32 makeRGBA(int r, int g, int b, int a)
+{
+    return { static_cast<unsigned>(std::max(0, std::min(a, 0xFF)) << 24 | std::max(0, std::min(r, 0xFF)) << 16 | std::max(0, std::min(g, 0xFF)) << 8 | std::max(0, std::min(b, 0xFF))) };
 }
 
 } // namespace WebCore

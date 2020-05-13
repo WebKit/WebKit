@@ -80,6 +80,7 @@ public:
     const Region* regionForTouchAction(TouchAction) const;
 
     OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
+    const Region& eventListenerRegionForType(EventListenerRegionType) const;
 
 #if ENABLE(EDITABLE_REGION)
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;

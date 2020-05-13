@@ -50,16 +50,6 @@ static inline unsigned unpremultipliedChannel(unsigned c, unsigned a)
     return (fastMultiplyBy255(c) + a - 1) / a;
 }
 
-RGBA32 makeRGB(int r, int g, int b)
-{
-    return makeRGBA(r, g, b, 0xFF);
-}
-
-RGBA32 makeRGBA(int r, int g, int b, int a)
-{
-    return { static_cast<unsigned>(std::max(0, std::min(a, 0xFF)) << 24 | std::max(0, std::min(r, 0xFF)) << 16 | std::max(0, std::min(g, 0xFF)) << 8 | std::max(0, std::min(b, 0xFF))) };
-}
-
 RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling)
 {
     return makeRGBA(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);

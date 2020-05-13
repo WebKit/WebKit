@@ -3081,6 +3081,49 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
     return paintFlags;
 }
 
+struct PatternDescription {
+    ASCIILiteral name;
+    FloatSize phase;
+    RGBA32 fillColor;
+};
+
+static RefPtr<Pattern> patternForDescription(PatternDescription description, FloatSize contentOffset, GraphicsContext& destContext)
+{
+    const FloatSize tileSize { 32, 18 };
+
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, ColorSpace::SRGB, destContext);
+    if (!imageBuffer)
+        return nullptr;
+
+    {
+        GraphicsContext& imageContext = imageBuffer->context();
+
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily("Helvetica");
+        fontDescription.setSpecifiedSize(10);
+        fontDescription.setComputedSize(10);
+        fontDescription.setWeight(FontSelectionValue(500));
+        FontCascade font(WTFMove(fontDescription), 0, 0);
+        font.update(nullptr);
+
+        TextRun textRun = TextRun(description.name);
+        imageContext.setFillColor(description.fillColor);
+
+        constexpr float textGap = 4;
+        constexpr float yOffset = 12;
+        imageContext.drawText(font, textRun, { textGap, yOffset }, 0);
+    }
+
+    auto tileImage = ImageBuffer::sinkIntoImage(WTFMove(imageBuffer));
+    auto fillPattern = Pattern::create(tileImage.releaseNonNull(), true, true);
+    AffineTransform patternOffsetTransform;
+    patternOffsetTransform.translate(contentOffset + description.phase);
+    patternOffsetTransform.scale(1 / destContext.scaleFactor());
+    fillPattern->setPatternSpaceTransform(patternOffsetTransform);
+
+    return fillPattern;
+};
+
 static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
 {
     auto toIndex = [](TouchAction touchAction) -> unsigned {
@@ -3101,58 +3144,40 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
         return 0;
     };
 
-    struct TouchActionAndRGB {
-        TouchAction action;
-        ASCIILiteral name;
-        FloatSize phase;
-    };
-    static const TouchActionAndRGB actionsAndColors[] = {
-        { TouchAction::Auto, "auto"_s, { } },
-        { TouchAction::None, "none"_s, { } },
-        { TouchAction::Manipulation, "manip"_s, { } },
-        { TouchAction::PanX, "pan-x"_s, { } },
-        { TouchAction::PanY, "pan-y"_s, { 0, 9 } },
-        { TouchAction::PinchZoom, "p-z"_s, { 16, 4.5 } },
+    constexpr auto fillColor = makeRGBA(0, 0, 0, 128);
+
+    static const PatternDescription patternDescriptions[] = {
+        { "auto"_s, { }, fillColor },
+        { "none"_s, { }, fillColor },
+        { "manip"_s, { }, fillColor },
+        { "pan-x"_s, { }, fillColor },
+        { "pan-y"_s, { 0, 9 }, fillColor },
+        { "p-z"_s, { 16, 4.5 }, fillColor },
     };
     
     auto actionIndex = toIndex(touchAction);
-    if (!actionIndex || actionIndex >= ARRAY_SIZE(actionsAndColors))
+    if (!actionIndex || actionIndex >= ARRAY_SIZE(patternDescriptions))
         return nullptr;
 
-    const FloatSize tileSize { 32, 18 };
+    return patternForDescription(patternDescriptions[actionIndex], contentOffset, destContext);
+}
 
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(tileSize, ColorSpace::SRGB, destContext);
-    if (!imageBuffer)
-        return nullptr;
+static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
+{
+    constexpr auto fillColor = makeRGBA(0, 128, 0, 128);
 
-    const auto& touchActionData = actionsAndColors[actionIndex];
-    {
-        GraphicsContext& imageContext = imageBuffer->context();
+    auto patternAndPhase = [&]() -> PatternDescription {
+        switch (type) {
+        case EventListenerRegionType::Wheel:
+            return { "wheel"_s, { }, fillColor };
+        case EventListenerRegionType::NonPassiveWheel:
+            return { "sync"_s, { 0, 9 }, fillColor };
+        }
+        ASSERT_NOT_REACHED();
+        return { ""_s, { }, fillColor };
+    }();
 
-        FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily("Helvetica");
-        fontDescription.setSpecifiedSize(10);
-        fontDescription.setComputedSize(10);
-        fontDescription.setWeight(FontSelectionValue(500));
-        FontCascade font(WTFMove(fontDescription), 0, 0);
-        font.update(nullptr);
-
-        TextRun textRun = TextRun(touchActionData.name);
-        imageContext.setFillColor(Color(0, 0, 0, 128));
-
-        constexpr float textGap = 4;
-        constexpr float yOffset = 12;
-        imageContext.drawText(font, textRun, { textGap, yOffset }, 0);
-    }
-
-    auto tileImage = ImageBuffer::sinkIntoImage(WTFMove(imageBuffer));
-    auto fillPattern = Pattern::create(tileImage.releaseNonNull(), true, true);
-    AffineTransform patternOffsetTransform;
-    patternOffsetTransform.translate(contentOffset + touchActionData.phase);
-    patternOffsetTransform.scale(1 / destContext.scaleFactor());
-    fillPattern->setPatternSpaceTransform(patternOffsetTransform);
-
-    return fillPattern;
+    return patternForDescription(patternAndPhase, contentOffset, destContext);
 }
 
 void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, GraphicsContext& context)
@@ -3196,6 +3221,17 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
             context.setFillPattern(fillPattern.releaseNonNull());
             for (auto rect : actionRegion->rects())
+                context.fillRect(rect);
+        }
+    }
+
+    if (visibleDebugOverlayRegions & WheelEventHandlerRegion) {
+        for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {
+            auto fillPattern = patternForEventListenerRegionType(type, contentOffsetInCompositingLayer(), context);
+            context.setFillPattern(fillPattern.releaseNonNull());
+
+            auto& region = graphicsLayer->eventRegion().eventListenerRegionForType(type);
+            for (auto rect : region.rects())
                 context.fillRect(rect);
         }
     }
@@ -3249,7 +3285,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
-        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion))
+        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion | WheelEventHandlerRegion))
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
