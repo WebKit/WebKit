@@ -1,3 +1,35 @@
+2020-05-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261485. rdar://problem/63195719
+
+    Fix assertion after r261414
+    https://bugs.webkit.org/show_bug.cgi?id=211731
+    
+    This fixes a debug assertion that fired 100% of the time when running the test introduced in r261414
+    I also respond to Darin's and Youenn's post-commit feedback.
+    
+    * page/SecurityPolicy.cpp:
+    (WebCore::SecurityPolicy::generateReferrerHeader):
+    * platform/network/ResourceRequestBase.cpp:
+    (WebCore::ResourceRequestBase::setHTTPReferrer):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261485 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-11  Alex Christensen  <achristensen@webkit.org>
+
+            Fix assertion after r261414
+            https://bugs.webkit.org/show_bug.cgi?id=211731
+
+            This fixes a debug assertion that fired 100% of the time when running the test introduced in r261414
+            I also respond to Darin's and Youenn's post-commit feedback.
+
+            * page/SecurityPolicy.cpp:
+            (WebCore::SecurityPolicy::generateReferrerHeader):
+            * platform/network/ResourceRequestBase.cpp:
+            (WebCore::ResourceRequestBase::setHTTPReferrer):
+
 2020-05-10  Darin Adler  <darin@apple.com>
 
         Remove now-unneeded HAVE(CORE_VIDEO)

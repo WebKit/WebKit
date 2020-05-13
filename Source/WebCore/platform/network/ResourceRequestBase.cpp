@@ -378,7 +378,8 @@ bool ResourceRequestBase::hasHTTPReferrer() const
 
 void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
 {
-    const size_t maxLength = 4096;
+    // https://w3c.github.io/webappsec-referrer-policy/#determine-requests-referrer
+    constexpr size_t maxLength = 4096;
     if (httpReferrer.length() > maxLength) {
         RELEASE_LOG(Loading, "Truncating HTTP referer");
         String origin = SecurityOrigin::create(URL(URL(), httpReferrer))->toString();
