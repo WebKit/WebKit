@@ -1,3 +1,11 @@
+2020-05-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for iOS Simulator.
+
+        Add test expectations for webkit.org/b/211652 and webkit.org/b/211653.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Add test for non-app-bound iframe under app-bound domain
