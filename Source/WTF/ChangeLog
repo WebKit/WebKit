@@ -1,3 +1,92 @@
+2020-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Cherry-pick r260165, r261538. rdar://problem/63156083
+
+    2020-04-15  Robin Morisset  <rmorisset@apple.com>
+
+            Flaky Test: fetch/fetch-worker-crash.html
+            https://bugs.webkit.org/show_bug.cgi?id=187257
+            <rdar://problem/48527526>
+
+            Reviewed by Yusuke Suzuki.
+
+            Make startMachExceptionHandlerThread visible so that we can make sure it is called whenever initializing JSC.
+
+            * wtf/threads/Signals.cpp:
+            (WTF::startMachExceptionHandlerThread):
+            * wtf/threads/Signals.h:
+
+    2020-05-11  Mark Lam  <mark.lam@apple.com>
+
+            Introduce WTF::Config and put Signal.cpp's init-once globals in it.
+            https://bugs.webkit.org/show_bug.cgi?id=211729
+            <rdar://problem/62938878>
+
+            Reviewed by Keith Miller and Saam Barati.
+
+            1. Added WTF::Config for storing globals that effectively serve as constants i.e
+               we'll be initializing them before or during the first VM instantiation, but
+               should not have any reason to modify them later.  The WTF::Config will be frozen
+               (along with JSC::Config) at the end of instantiating the first VM instance.
+
+            2. Added a Config::AssertNotFrozenScope RAII object to ensure that initialization
+               operations that should only be called at initialization time, will not be
+               called once the Config has been frozen.
+
+            3. Moved most of Signal.cpp's globals into WTF::Config.  The only globals (or
+               statics) not moved are ones that cannot be moved because they require a
+               non-trivial default constructor (once_flag), or need to be modifiable
+               at runtime (e.g. Lock).
+
+               Instead of freezing the once_flag, we sanity check the call_once block with
+               the Config::AssertNotFrozenScope.
+
+            4. SignalHandler records are now allocated from arrays of SignalHandlerMemory in
+               the WTF::Config.  The number of signal handlers we will ever install is always
+               finite.  Hence, there's no reason to use a dynamic data structure like the
+               LocklessBag to hold it.
+
+               We introduce a SignalHandlers struct to manage these arrays (and all the other
+               Signal.cpp globals that we want to move to the WTF::Config).  Amongst other
+               things, SignalHandlers provides the abstractions for:
+
+               a. allocating memory for the SignalHandler instances.  See SignalHandlers::alloc().
+               b. iterating SignalHandler instances. See SignalHandlers::forEachHandler().
+
+               To maintain the synchronization properties of the LocklessBag,
+               SignalHandlers::alloc() uses a mutex.  In practice, this mutex will never be
+               contended on because all signal handlers are now installed at initialization
+               time before any concurrency comes into play.
+
+            5. We now initialize activeThreads() eagerly via initializeThreading.  In
+               production configurations, this does not matter because signal handler
+               installations will always trigger its initialization.  However, in debugging
+               configurations, we may end up disabling the use of all signal handlers.  As a
+               result, we need to do this eager initialization to ensure that it is done
+               before we freeze the WTF::Config.
+
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/CMakeLists.txt:
+            * wtf/Threading.cpp:
+            (WTF::initializeThreading):
+            * wtf/WTFConfig.cpp: Added.
+            (WTF::Config::disableFreezingForTesting):
+            (WTF::Config::permanentlyFreeze):
+            * wtf/WTFConfig.h: Added.
+            (WTF::Config::configureForTesting):
+            (WTF::Config::AssertNotFrozenScope::~AssertNotFrozenScope):
+            * wtf/threads/Signals.cpp:
+            (WTF::SignalHandlers::alloc):
+            (WTF::SignalHandlers::forEachHandler const):
+            (WTF::startMachExceptionHandlerThread):
+            (WTF::handleSignalsWithMach):
+            (WTF::setExceptionPorts):
+            (WTF::activeThreads):
+            (WTF::installSignalHandler):
+            (WTF::jscSignalHandler):
+            (WTF::SignalHandlers::initialize):
+            * wtf/threads/Signals.h:
+
 2020-05-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r260907. rdar://problem/62978877

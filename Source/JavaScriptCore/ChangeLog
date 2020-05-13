@@ -1,3 +1,61 @@
+2020-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Cherry-pick r260165, r261538. rdar://problem/63156083
+
+    2020-04-15  Robin Morisset  <rmorisset@apple.com>
+
+            Flaky Test: fetch/fetch-worker-crash.html
+            https://bugs.webkit.org/show_bug.cgi?id=187257
+            <rdar://problem/48527526>
+
+            Reviewed by Yusuke Suzuki.
+
+            The crash is coming from setExceptionPorts which is inlined in WTF::registerThreadForMachExceptionHandling.
+            From the error message we know that the problem is an "invalid port right".
+            http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_set_exception_ports.html tells us that the "port right" is the third parameter to thread_set_exception_ports, which is exceptionPort in our case.
+            exceptionPort is a global variable defined at the top of Signals.cpp:
+              static mach_port_t exceptionPort;
+            It is set in exactly one place:
+              kern_return_t kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &exceptionPort);
+            in a std::call_once, in startMachExceptionHandlerThread().
+            Note that startMachExceptionHandlerThread() is called from the main thread just before the point where we are stuck.. and there is no synchronization to make sure it completed and its effect is visible to the worker thread before it uses exceptionPort.
+
+            So I think the crash is due to this race between allocating exceptionPort and using it, resulting in an invalid exceptionPort being sometimes passed to the kernel.
+            So this patch is a simple speculative fix, by running startMachExceptionHandlerThread() in initializeThreading(), before JSLock()::lock() can be run.
+
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+
+    2020-05-11  Mark Lam  <mark.lam@apple.com>
+
+            Introduce WTF::Config and put Signal.cpp's init-once globals in it.
+            https://bugs.webkit.org/show_bug.cgi?id=211729
+            <rdar://problem/62938878>
+
+            Reviewed by Keith Miller and Saam Barati.
+
+            1. Initialize VMTraps' signals early now that we'll be freezing signals at the end
+               of the first VM initialization.
+
+            2. Move the !initializeThreadingHasBeenCalled RELEASE_ASSERT in initializeThreading()
+               to the bottom of the function.  This way, we'll also catch bugs which may cause
+               us to jump into the middle of the function.
+
+               Added a compilerFence there to ensure that the RELEASE_ASSERT is only executed
+               after all initialization is done.  This guarantees that it will only be executed
+               at the end.
+
+            3. Call WTF::Config::permanentlyFreeze() from JSC::Config::permanentlyFreeze()
+               for obvious reasons: freezing one should freeze the other.
+
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+            * runtime/JSCConfig.cpp:
+            (JSC::Config::permanentlyFreeze):
+            * runtime/VMTraps.cpp:
+            (JSC::VMTraps::initializeSignals):
+            * runtime/VMTraps.h:
+
 2020-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Branch build fix after r260286
