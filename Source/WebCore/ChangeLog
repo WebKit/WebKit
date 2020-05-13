@@ -1,3 +1,34 @@
+2020-05-13  Kenneth Russell  <kbr@chromium.org>
+
+        Bad flicker on three.js example
+        https://bugs.webkit.org/show_bug.cgi?id=183151
+
+        Reviewed by Dean Jackson.
+
+        With preserveDrawingBuffer:true and antialias:false, allocate an
+        intermediate texture and FBO, and blit from it to the destination
+        texture in prepareTexture(). Use wipeAlphaChannelFromPixels on iOS
+        as well as macOS.
+
+        In addition to fixing the test case from the bug, this also fixes
+        the webgl/2.0.0/conformance2/textures/webgl_canvas/ layout tests,
+        which will be re-enabled in a subsequent patch. It also passes the
+        more stringent webgl_canvas conformance tests in
+        https://github.com/KhronosGroup/WebGL/pull/3071 .
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+        (WebCore::GraphicsContextGLOpenGL::resolveMultisamplingIfNecessary):
+        (WebCore::GraphicsContextGLOpenGL::readPixels):
+        (WebCore::GraphicsContextGLOpenGL::validateDepthStencil):
+        (WebCore::GraphicsContextGLOpenGL::prepareTexture):
+        (WebCore::GraphicsContextGLOpenGL::reshape):
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] "Copy" context menu action for attachment element does not work in Mail

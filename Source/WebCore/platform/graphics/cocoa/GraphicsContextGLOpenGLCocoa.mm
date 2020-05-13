@@ -495,8 +495,19 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         gl::GenRenderbuffers(1, &m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth)
             gl::GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+    } else if (attrs.preserveDrawingBuffer) {
+        // If necessary, create another texture to handle preserveDrawingBuffer:true without
+        // antialiasing.
+        gl::GenTextures(1, &m_preserveDrawingBufferTexture);
+        gl::BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::BindTexture(GL_TEXTURE_2D, 0);
+        // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
+        gl::GenFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
-
 #endif // USE(ANGLE)
 
 #if !USE(ANGLE)
@@ -580,6 +591,10 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
                 gl::DeleteRenderbuffers(1, &m_depthStencilBuffer);
         }
         gl::DeleteFramebuffers(1, &m_fbo);
+        if (m_preserveDrawingBufferTexture)
+            gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
+        if (m_preserveDrawingBufferFBO)
+            gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
 #endif
 
 #if USE(OPENGL_ES)

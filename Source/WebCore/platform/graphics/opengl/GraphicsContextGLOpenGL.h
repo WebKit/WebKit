@@ -867,6 +867,13 @@ private:
     GCGLuint m_multisampleDepthStencilBuffer { 0 };
     GCGLuint m_multisampleColorBuffer { 0 };
 
+#if USE(ANGLE)
+    // For preserveDrawingBuffer:true without multisampling.
+    GCGLuint m_preserveDrawingBufferTexture { 0 };
+    // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
+    GCGLuint m_preserveDrawingBufferFBO { 0 };
+#endif
+
     // Errors raised by synthesizeGLError().
     ListHashSet<GCGLenum> m_syntheticErrors;
 
