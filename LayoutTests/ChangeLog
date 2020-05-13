@@ -1,3 +1,14 @@
+2020-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+        media/video-poster-set-after-playback.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211856
+        <rdar://problem/63194296>
+
+        Unreviewed test fix.
+
+        * media/video-poster-set-after-playback.html: Change a `testExpected` to `testExpectedEventually`
+        because the state change may take a while on a heavily loaded system.
+
 2020-05-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         LayoutTest fast/text/ipa-tone-letters.html isn't failing any more

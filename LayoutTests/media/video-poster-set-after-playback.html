@@ -20,10 +20,8 @@
             
             video.poster = 'content/green.png';
             
-            await sleepFor(1000);
-            
             if (window.internals)
-                testExpected('internals.elementShouldDisplayPosterImage(video)', false);
+                testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
             else
                 consoleWrite("video should not be blank")
 
