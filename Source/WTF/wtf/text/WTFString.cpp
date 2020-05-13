@@ -22,11 +22,9 @@
 #include "config.h"
 #include <wtf/text/WTFString.h>
 
-#include <stdarg.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>

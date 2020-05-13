@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/UniqueArray.h>
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WTF {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UniqueArray);

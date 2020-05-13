@@ -29,10 +29,6 @@
 #include <cstdio>
 
 #if OS(DARWIN)
-#include <sys/param.h>
-// sys/types.h must come before sys/sysctl.h because the latter uses
-// data types defined in the former. See sysctl(3) and style(9).
-#include <sys/types.h>
 #include <sys/sysctl.h>
 #elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
 #include <unistd.h>

@@ -28,9 +28,9 @@
 
 #include <wtf/Atomics.h>
 #include <wtf/PageBlock.h>
-#include <wtf/OSAllocator.h>
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#include <wtf/OSAllocator.h>
 
 namespace Gigacage {
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/OSLogPrintStream.h>
 
-#include <wtf/StringPrintStream.h>
-
 namespace WTF {
 
 #if OS(DARWIN)

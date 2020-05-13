@@ -27,8 +27,6 @@
 #include <wtf/JSValueMalloc.h>
 
 #include <wtf/DataLog.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/Gigacage.h>
 #include <wtf/RawPointer.h>
 
 #if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)

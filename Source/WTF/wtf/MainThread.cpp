@@ -37,7 +37,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
 namespace WTF {

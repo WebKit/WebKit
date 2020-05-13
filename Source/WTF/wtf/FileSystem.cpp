@@ -34,10 +34,8 @@
 #include <wtf/text/StringBuilder.h>
 
 #if !OS(WINDOWS)
-#include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #endif
 
 #if USE(GLIB)

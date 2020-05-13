@@ -29,7 +29,6 @@
 #include <array>
 #include <mutex>
 #include <unicode/uidna.h>
-#include <unicode/utf8.h>
 #include <unicode/utypes.h>
 
 namespace WTF {

@@ -21,11 +21,8 @@
 #include "config.h"
 #include <wtf/RefCountedLeakCounter.h>
 
-#include <wtf/HashCountedSet.h>
-
-namespace WTF {
-
 #ifdef NDEBUG
+namespace WTF {
 
 void RefCountedLeakCounter::suppressMessages(const char*) { }
 void RefCountedLeakCounter::cancelMessageSuppression(const char*) { }
@@ -36,7 +33,11 @@ RefCountedLeakCounter::~RefCountedLeakCounter() { }
 void RefCountedLeakCounter::increment() { }
 void RefCountedLeakCounter::decrement() { }
 
+} // namespace WTF
 #else
+#include <wtf/HashCountedSet.h>
+
+namespace WTF {
 
 #define LOG_CHANNEL_PREFIX Log
 #if RELEASE_LOG_DISABLED
@@ -95,6 +96,5 @@ void RefCountedLeakCounter::decrement()
     --m_count;
 }
 
-#endif
-
 } // namespace WTF
+#endif

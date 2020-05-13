@@ -28,7 +28,6 @@
 #include <wtf/text/StringBuilder.h>
 
 #include <wtf/dtoa.h>
-#include <wtf/MathExtras.h>
 
 namespace WTF {
 

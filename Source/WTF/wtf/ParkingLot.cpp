@@ -26,9 +26,7 @@
 #include "config.h"
 #include <wtf/ParkingLot.h>
 
-#include <condition_variable>
 #include <mutex>
-#include <thread>
 #include <wtf/DataLog.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/StringPrintStream.h>

@@ -28,7 +28,6 @@
 
 #include <condition_variable>
 #include <mutex>
-#include <thread>
 #include <wtf/Threading.h>
 
 namespace WTF {

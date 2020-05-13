@@ -36,7 +36,6 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Ref.h>
 #include <wtf/Threading.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WTF {
 

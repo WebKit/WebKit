@@ -29,11 +29,6 @@
 #include "config.h"
 #include <wtf/MetaAllocator.h>
 
-#include <wtf/DataLog.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ProcessID.h>
-
 namespace WTF {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);

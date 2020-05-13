@@ -73,30 +73,15 @@
 #include <wtf/DateMath.h>
 
 #include <algorithm>
-#include <limits.h>
 #include <limits>
 #include <stdint.h>
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/MathExtras.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
-#endif
-
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if HAVE(SYS_TIMEB_H)
-#include <sys/timeb.h>
 #endif
 
 namespace WTF {

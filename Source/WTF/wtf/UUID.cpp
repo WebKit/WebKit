@@ -35,7 +35,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
-#include <wtf/text/StringBuilder.h>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>

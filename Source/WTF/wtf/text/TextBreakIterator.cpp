@@ -27,9 +27,7 @@
 #include <wtf/text/icu/UTextProviderLatin1.h>
 #include <wtf/text/icu/UTextProviderUTF16.h>
 #include <atomic>
-#include <mutex>
 #include <unicode/ubrk.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WTF {
 

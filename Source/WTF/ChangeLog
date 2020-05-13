@@ -1,3 +1,71 @@
+2020-05-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [IWYU] Try removing redundant includes in WTF implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=211821
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Assertions.cpp:
+        * wtf/Bag.cpp:
+        * wtf/BitVector.cpp:
+        * wtf/ConcurrentBuffer.cpp:
+        * wtf/ConcurrentPtrHashSet.cpp:
+        * wtf/CrossThreadCopier.cpp:
+        * wtf/CurrentTime.cpp:
+        * wtf/DataLog.cpp:
+        * wtf/DateMath.cpp:
+        * wtf/FastBitVector.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/FileSystem.cpp:
+        * wtf/Gigacage.cpp:
+        * wtf/HashTable.cpp:
+        * wtf/JSValueMalloc.cpp:
+        * wtf/Language.cpp:
+        * wtf/MainThread.cpp:
+        * wtf/MetaAllocator.cpp:
+        * wtf/MonotonicTime.cpp:
+        * wtf/NumberOfCores.cpp:
+        * wtf/OSLogPrintStream.cpp:
+        * wtf/ParallelHelperPool.cpp:
+        * wtf/ParkingLot.cpp:
+        * wtf/PrintStream.cpp:
+        * wtf/RAMSize.cpp:
+        * wtf/RandomDevice.cpp:
+        * wtf/RandomNumber.cpp:
+        * wtf/RefCountedArray.cpp:
+        * wtf/RefCountedLeakCounter.cpp:
+        * wtf/SegmentedVector.cpp:
+        * wtf/SmallPtrSet.cpp:
+        * wtf/StackBounds.cpp:
+        * wtf/ThreadGroup.cpp:
+        * wtf/Threading.cpp:
+        * wtf/TimeWithDynamicClockType.cpp:
+        * wtf/URL.cpp:
+        * wtf/URLParser.cpp:
+        * wtf/UUID.cpp:
+        * wtf/UniqueArray.cpp:
+        * wtf/Vector.cpp:
+        * wtf/WTFConfig.cpp:
+        * wtf/WallTime.cpp:
+        * wtf/WordLock.cpp:
+        * wtf/WorkQueue.cpp:
+        * wtf/WorkerPool.cpp:
+        * wtf/generic/WorkQueueGeneric.cpp:
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        * wtf/text/AtomString.cpp:
+        * wtf/text/AtomStringImpl.cpp:
+        * wtf/text/AtomStringTable.cpp:
+        * wtf/text/CString.cpp:
+        * wtf/text/StringBuffer.cpp:
+        * wtf/text/StringBuilder.cpp:
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringView.cpp:
+        * wtf/text/TextBreakIterator.cpp:
+        * wtf/text/TextStream.cpp:
+        * wtf/text/WTFString.cpp:
+        * wtf/threads/Signals.cpp:
+
 2020-05-13  Jer Noble  <jer.noble@apple.com>
 
         Replace isNullFunctionPointer with real weak-linking support

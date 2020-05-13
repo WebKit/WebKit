@@ -35,11 +35,8 @@
 #if USE(PTHREADS)
 
 #include <errno.h>
-#include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RawPointer.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadGroup.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WordLock.h>
 

@@ -26,9 +26,7 @@
 #include "config.h"
 #include <wtf/PrintStream.h>
 
-#include <stdio.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

@@ -29,8 +29,6 @@
 #include <algorithm>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

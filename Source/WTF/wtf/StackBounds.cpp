@@ -21,13 +21,8 @@
 #include "config.h"
 #include <wtf/StackBounds.h>
 
-#include <mutex>
-#include <wtf/NoTailCalls.h>
-
 #if OS(DARWIN)
 
-#include <mach/task.h>
-#include <mach/thread_act.h>
 #include <pthread.h>
 
 #elif OS(WINDOWS)

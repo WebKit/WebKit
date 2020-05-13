@@ -25,13 +25,11 @@
 #include "config.h"
 #include <wtf/text/StringImpl.h>
 
-#include <wtf/ProcessID.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ExternalStringImpl.h>
 #include <wtf/text/StringBuffer.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>

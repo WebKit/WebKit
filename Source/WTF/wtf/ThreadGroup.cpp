@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/ThreadGroup.h>
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WTF {
 
 ThreadGroup::~ThreadGroup()

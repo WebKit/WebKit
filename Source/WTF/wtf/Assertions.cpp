@@ -42,16 +42,10 @@
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/StackTrace.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
-
-#if HAVE(SIGNAL_H)
-#include <signal.h>
-#endif
 
 #if USE(CF)
 #include <CoreFoundation/CFString.h>

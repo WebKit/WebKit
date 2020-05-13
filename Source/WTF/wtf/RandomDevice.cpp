@@ -27,7 +27,6 @@
 #include "config.h"
 #include <wtf/RandomDevice.h>
 
-#include <stdint.h>
 #include <stdlib.h>
 
 #if !OS(DARWIN) && !OS(FUCHSIA) && OS(UNIX)
@@ -42,7 +41,6 @@
 #endif
 
 #if OS(DARWIN)
-#include <CommonCrypto/CommonCryptoError.h>
 #include <CommonCrypto/CommonRandom.h>
 #endif
 

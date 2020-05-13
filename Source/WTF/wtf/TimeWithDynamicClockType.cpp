@@ -26,10 +26,8 @@
 #include "config.h"
 #include <wtf/TimeWithDynamicClockType.h>
 
-#include <cfloat>
 #include <cmath>
 #include <wtf/Condition.h>
-#include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Lock.h>
 

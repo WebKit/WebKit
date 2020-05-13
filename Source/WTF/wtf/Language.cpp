@@ -28,7 +28,6 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF) && !PLATFORM(WIN)

@@ -27,7 +27,6 @@
 #include <wtf/RAMSize.h>
 
 #include <mutex>
-#include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

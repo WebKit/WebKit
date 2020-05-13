@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/WorkerPool.h>
 
-#include <wtf/NeverDestroyed.h>
-
 namespace WTF {
 
 class WorkerPool::Worker final : public AutomaticThread {

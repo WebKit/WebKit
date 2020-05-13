@@ -26,7 +26,6 @@
 #include "config.h"
 #include <wtf/text/TextStream.h>
 
-#include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

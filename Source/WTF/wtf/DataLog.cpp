@@ -31,13 +31,7 @@
 #include <wtf/FilePrintStream.h>
 #include <wtf/LockedPrintStream.h>
 #include <wtf/ProcessID.h>
-#include <wtf/Threading.h>
 #include <mutex>
-#include <thread>
-
-#if OS(UNIX) || OS(DARWIN)
-#include <unistd.h>
-#endif
 
 #define DATA_LOG_TO_FILE 0
 

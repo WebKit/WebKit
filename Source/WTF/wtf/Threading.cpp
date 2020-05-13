@@ -26,19 +26,13 @@
 #include "config.h"
 #include <wtf/Threading.h>
 
-#include <algorithm>
-#include <cmath>
 #include <cstring>
-#include <thread>
 #include <wtf/DateMath.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadGroup.h>
-#include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
-#include <wtf/text/AtomStringTable.h>
-#include <wtf/text/StringView.h>
 #include <wtf/threads/Signals.h>
 
 #if HAVE(QOS_CLASSES)

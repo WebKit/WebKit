@@ -27,8 +27,6 @@
 #include <wtf/ParallelHelperPool.h>
 
 #include <wtf/AutomaticThread.h>
-#include <wtf/DataLog.h>
-#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 

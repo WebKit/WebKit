@@ -27,13 +27,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include <wtf/text/StringView.h>
 
-#include <mutex>
 #include <unicode/ubrk.h>
 #include <unicode/unorm2.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
