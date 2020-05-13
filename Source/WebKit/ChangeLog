@@ -1,3 +1,10 @@
+2020-05-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed compile fix after r261584.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-05-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r261254): Broke Apple Pay on macOS
