@@ -646,11 +646,15 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         m_graphicsLayer->setAnchorPoint(defaultAnchorPoint);
         if (m_contentsContainmentLayer)
             m_contentsContainmentLayer->setAnchorPoint(defaultAnchorPoint);
+
+        if (m_scrolledContentsLayer)
+            m_scrolledContentsLayer->setPreserves3D(false);
         return;
     }
 
+    auto& renderBox = downcast<RenderBox>(renderer());
     const auto deviceScaleFactor = this->deviceScaleFactor();
-    auto borderBoxRect = downcast<RenderBox>(renderer()).borderBoxRect();
+    auto borderBoxRect = renderBox.borderBoxRect();
     auto transformOrigin = computeTransformOriginForPainting(borderBoxRect);
     auto layerOffset = roundPointToDevicePixels(toLayoutPoint(offsetFromParentGraphicsLayer), deviceScaleFactor);
     auto anchor = FloatPoint3D {
@@ -664,23 +668,46 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     else
         m_graphicsLayer->setAnchorPoint(anchor);
 
-    auto* clipLayer = clippingLayer();
-    if (!renderer().style().hasPerspective()) {
-        if (clipLayer)
-            clipLayer->setChildrenTransform({ });
-        else
+    auto removeChildrenTransformFromLayers = [&](GraphicsLayer* layerToIgnore = nullptr) {
+        auto* clippingLayer = this->clippingLayer();
+        if (clippingLayer && clippingLayer != layerToIgnore)
+            clippingLayer->setChildrenTransform({ });
+        
+        if (m_scrollContainerLayer && m_scrollContainerLayer != layerToIgnore) {
+            m_scrollContainerLayer->setChildrenTransform({ });
+            m_scrolledContentsLayer->setPreserves3D(false);
+        }
+
+        if (m_graphicsLayer != layerToIgnore)
             m_graphicsLayer->setChildrenTransform({ });
+    };
+
+    if (!renderer().style().hasPerspective()) {
+        removeChildrenTransformFromLayers();
         return;
     }
 
-    // FIXME: borderBoxRect isn't quite right here. This needs work: webkit.org/b/211787.
-    auto perspectiveRelativeBox = clipLayer ? clippingLayerBox(downcast<RenderBox>(renderer())) : borderBoxRect;
+    auto layerForChildrenTransform = [&] {
+        if (m_scrollContainerLayer)
+            return std::make_tuple(m_scrollContainerLayer.get(), scrollContainerLayerBox(renderBox));
+
+        if (auto* layer = clippingLayer())
+            return std::make_tuple(layer, clippingLayerBox(renderBox));
+
+        return std::make_tuple(m_graphicsLayer.get(), borderBoxRect);
+    };
+
+    auto [layerForPerspective, perspectiveRelativeBox] = layerForChildrenTransform();
+    // FIXME: perspectiveRelativeBox isn't quite right here. This needs work: webkit.org/b/211787.
     auto perspectiveTransform = owningLayer().perspectiveTransform(perspectiveRelativeBox);
-    if (clipLayer) {
-        clipLayer->setChildrenTransform(perspectiveTransform);
-        m_graphicsLayer->setChildrenTransform({ });
-    } else
-        m_graphicsLayer->setChildrenTransform(perspectiveTransform);
+    
+    // If we have scrolling layers, we need the children transform on m_scrollContainerLayer to
+    // affect children of m_scrolledContentsLayer, so set setPreserves3D(true).
+    if (layerForPerspective == m_scrollContainerLayer)
+        m_scrolledContentsLayer->setPreserves3D(true);
+    
+    layerForPerspective->setChildrenTransform(perspectiveTransform);
+    removeChildrenTransformFromLayers(layerForPerspective);
 }
 
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
