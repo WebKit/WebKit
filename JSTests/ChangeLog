@@ -1,3 +1,13 @@
+2020-05-13  Paulo Matos  <pmatos@igalia.com>
+
+        Skip on MIPS test stress/has-own-property-name-cache-symbols-and-strings.js
+
+        Unreviewed Gardening.
+        Test started to fail unpredictably with segfault in bots -
+        requires further investigation.
+
+        * stress/has-own-property-name-cache-symbols-and-strings.js:
+
 2020-05-13  Saam Barati  <sbarati@apple.com>
 
         MovHint can see an arguments object be MovHinted to a Tmp

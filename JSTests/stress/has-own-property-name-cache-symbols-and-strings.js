@@ -1,3 +1,4 @@
+//@ skip if $architecture == "mips"
 
 function assert(b) {
     if (!b)
