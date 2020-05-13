@@ -37,6 +37,8 @@ import re
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.factory import PortFactory
 from webkitpy.common.system.logutils import configure_logging
+import webkitpy.thirdparty.autoinstalled.toml
+import toml
 
 try:
     from urllib.parse import urlparse  # pylint: disable=E0611
@@ -417,10 +419,16 @@ class WebkitFlatpak:
                              help="The command to run in the sandbox",
                              dest="user_command")
         general.add_argument('--available', action='store_true', dest="check_available", help='Check if required dependencies are available.'),
-        general.add_argument("--use-icecream", dest="use_icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
-        general.add_argument("-r", "--regenerate-toolchains", dest="regenerate_toolchains", action="store_true",
-                             help="Regenerate IceCC distribuable toolchain archives")
         general.add_argument("--repo", help="Filesystem absolute path to the Flatpak repository to use", dest="user_repo")
+
+        distributed_build_options = parser.add_argument_group("Distributed building")
+        distributed_build_options.add_argument("--use-icecream", dest="use_icecream", help="Use the distributed icecream (icecc) compiler.", action="store_true")
+        distributed_build_options.add_argument("-r", "--regenerate-toolchains", dest="regenerate_toolchains", action="store_true",
+                             help="Regenerate IceCC distribuable toolchain archives")
+        distributed_build_options.add_argument("-t", "--sccache-token", dest="sccache_token",
+                                               help="sccache authentication token")
+        distributed_build_options.add_argument("-s", "--sccache-scheduler", dest="sccache_scheduler", default='https://sccache.igalia.com',
+                                               help="sccache scheduler URL")
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -475,6 +483,8 @@ class WebkitFlatpak:
         self.use_icecream = False
         self.icc_version = {}
         self.regenerate_toolchains = False
+        self.sccache_token = ""
+        self.sccache_scheduler = ""
 
     def execute_command(self, args, stdout=None, stderr=None):
         _log.debug('Running in sandbox: %s\n' % ' '.join(args))
@@ -520,6 +530,7 @@ class WebkitFlatpak:
         self.build_root = os.path.join(self.source_root, 'WebKitBuild')
         self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
+        self.sccache_config_file = os.path.join(self.flatpak_build_path, 'sccache.toml')
 
         Console.quiet = self.quiet
         if not check_flatpak():
@@ -606,6 +617,10 @@ class WebkitFlatpak:
             if output == "true":
                 return True
         return False
+
+    def host_path_to_sandbox_path(self, host_path):
+        # For now this supports only files in the WebKit path
+        return host_path.replace(self.source_root, self.sandbox_source_root)
 
     def run_in_sandbox(self, *args, **kwargs):
         self.setup_builddir(stdout=kwargs.get("stdout", sys.stdout))
@@ -768,6 +783,9 @@ class WebkitFlatpak:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
+            if os.path.isfile(self.sccache_config_file) and not self.regenerate_toolchains and "SCCACHE_CONF" not in os.environ.keys():
+                sandbox_environment["SCCACHE_CONF"] = self.host_path_to_sandbox_path(self.sccache_config_file)
+
         override_sccache_server_port = os.environ.get("WEBKIT_SCCACHE_SERVER_PORT")
         if override_sccache_server_port:
             _log.debug("Overriding sccache server port to %s" % override_sccache_server_port)
@@ -836,9 +854,9 @@ class WebkitFlatpak:
 
         if regenerate_toolchains:
             self.icc_version = {}
-            self.setup_icecc("gcc", "g++")
-            self.setup_icecc("clang", "clang++")
-            self.save_config()
+            toolchains = self.pack_toolchain(("gcc", "g++"), {"/usr/bin/c++": "/usr/bin/g++"})
+            toolchains.extend(self.pack_toolchain(("clang", "clang++"), {"/usr/bin/clang++": "/usr/bin/clang++"}))
+            self.save_config(toolchains)
 
         return self.setup_dev_env()
 
@@ -854,12 +872,24 @@ class WebkitFlatpak:
     def has_environment(self):
         return os.path.exists(self.flatpak_build_path)
 
-    def save_config(self):
+    def save_config(self, toolchains):
         with open(self.config_file, 'w') as config:
             json_config = {'icecc_version': self.icc_version}
             json.dump(json_config, config)
 
-    def setup_icecc(self, *compilers):
+        if not self.sccache_token:
+            Console.message("No authentication token provided. Re-run this with the -t option if an sccache token was provided to you. Skipping sccache configuration for now.")
+            return
+
+        with open(self.sccache_config_file, 'w') as config:
+            sccache_config = {'dist': {'scheduler_url': self.sccache_scheduler,
+                                       'auth': {'type': 'token',
+                                                'token': self.sccache_token},
+                                       'toolchains': toolchains}}
+            toml.dump(sccache_config, config)
+            Console.message("Created %s sccache config file. It will automatically be used when building WebKit", self.sccache_config_file)
+
+    def pack_toolchain(self, compilers, path_mapping):
         with tempfile.NamedTemporaryFile() as tmpfile:
             command = ['icecc', '--build-native']
             command.extend(["/usr/bin/%s" % compiler for compiler in compilers])
@@ -874,6 +904,15 @@ class WebkitFlatpak:
             os.rename(icc_version_filename, archive_filename)
             self.icc_version[compilers[0]] = archive_filename
             Console.message("Created %s self-contained toolchain archive", archive_filename)
+
+            sccache_toolchains = []
+            for (compiler_executable, archive_compiler_executable) in path_mapping.iteritems():
+                item = {'type': 'path_override',
+                        'compiler_executable': compiler_executable,
+                        'archive': archive_filename,
+                        'archive_compiler_executable': archive_compiler_executable}
+                sccache_toolchains.append(item)
+            return sccache_toolchains
 
     def setup_dev_env(self):
         if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:

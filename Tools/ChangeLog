@@ -1,3 +1,27 @@
+2020-05-13  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Craft a custom sccache config file from SDK toolchains
+        https://bugs.webkit.org/show_bug.cgi?id=211781
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Optionally generate a sccache config file and use it when building WebKit.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_toml):
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.host_path_to_sandbox_path):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.save_config):
+        (WebkitFlatpak):
+        (WebkitFlatpak.pack_toolchain):
+        (WebkitFlatpak.setup_icecc): Deleted.
+
 2020-05-13  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [Flatpak] *PROCESS_CMD_PREFIX are ignored

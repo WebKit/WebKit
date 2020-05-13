@@ -128,6 +128,8 @@ class AutoinstallImportHook(object):
             self._install_beautifulsoup()
         elif '.html5lib' in fullname:
             self._install_html5lib()
+        elif '.toml' in fullname:
+            self._install_toml()
 
     def _install_six(self):
         self._install("https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
@@ -322,6 +324,11 @@ class AutoinstallImportHook(object):
             all_firefox_release_urls = "\n".join(re.findall(r'.*browser_download_url.*', firefox_releases_line_separated))
             full_firefox_url = re.findall(r'.*%s.*' % filename_postfix, all_firefox_release_urls)[0].split('"')[3]
             self.install_binary(full_firefox_url, 'geckodriver')
+
+    def _install_toml(self):
+        toml_dir = self._fs.join(_AUTOINSTALLED_DIR, "toml")
+        installer = AutoInstaller(prepend_to_search_path=True, target_dir=toml_dir)
+        installer.install(url="https://files.pythonhosted.org/packages/b9/19/5cbd78eac8b1783671c40e34bb0fa83133a06d340a38b55c645076d40094/toml-0.10.0.tar.gz", url_subpath="toml-0.10.0/toml")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
